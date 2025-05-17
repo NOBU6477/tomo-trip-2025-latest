@@ -1,0 +1,61 @@
+<!-- 観光客アップロードボタン緊急修正 -->
+<script>
+  // 直接観光客アップロードボタンを修正
+  (function() {
+    const initTouristBtn = function() {
+      const touristBtn = document.getElementById("tourist-upload-id");
+      if (touristBtn) {
+        touristBtn.onclick = function(e) {
+          e.preventDefault();
+          console.log("観光客アップロードボタンがクリックされました（インライン）");
+          
+          const idModal = document.getElementById("idDocumentModal");
+          if (idModal) {
+            // ユーザータイプを設定
+            let typeField = idModal.querySelector("input[name=\"user-type\"]");
+            if (!typeField) {
+              typeField = document.createElement("input");
+              typeField.type = "hidden";
+              typeField.name = "user-type";
+              idModal.querySelector("form").appendChild(typeField);
+            }
+            typeField.value = "tourist";
+            
+            // 現在のモーダルを閉じる
+            const currentModal = bootstrap.Modal.getInstance(document.getElementById("touristRegisterModal"));
+            if (currentModal) {
+              currentModal.hide();
+              setTimeout(() => {
+                const modal = new bootstrap.Modal(idModal);
+                modal.show();
+              }, 300);
+            } else {
+              const modal = new bootstrap.Modal(idModal);
+              modal.show();
+            }
+          } else {
+            alert("身分証明書モーダルが見つかりません");
+          }
+          
+          return false;
+        };
+        console.log("観光客アップロードボタンを設定しました（インライン）");
+      }
+    };
+    
+    // DOM読み込み完了時に実行
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+      initTouristBtn();
+    } else {
+      document.addEventListener("DOMContentLoaded", initTouristBtn);
+    }
+    
+    // モーダル表示時にも確認
+    document.addEventListener("shown.bs.modal", function(e) {
+      if (e.target.id === "touristRegisterModal") {
+        console.log("観光客登録モーダルが表示されました");
+        initTouristBtn();
+      }
+    });
+  })();
+</script>

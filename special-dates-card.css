@@ -1,0 +1,768 @@
+/* 特別な日付一覧のカードスタイル - 超モダンバージョン */
+
+.special-dates-card {
+  position: relative;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 30px;
+  border: none;
+}
+
+.special-dates-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center center;
+  z-index: 0;
+}
+
+.special-dates-card-header {
+  position: relative;
+  color: white;
+  padding: 20px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.special-dates-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.special-dates-card-title i {
+  margin-right: 12px;
+  font-size: 1.3rem;
+  background: linear-gradient(45deg, #60a5fa, #93c5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.special-dates-card-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.special-dates-card-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.special-dates-card-body {
+  position: relative;
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 5px;
+  z-index: 1;
+  background-color: rgba(30, 64, 175, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* タイムライン表示 */
+.special-date-timeline {
+  position: relative;
+  padding: 30px 0 20px;
+}
+
+.special-date-timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 30px;
+  width: 3px;
+  background: linear-gradient(to bottom, #0061ff, #60efff);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(96, 239, 255, 0.5), 0 0 20px rgba(0, 97, 255, 0.3);
+  animation: timelineGlow 4s infinite alternate;
+}
+
+@keyframes timelineGlow {
+  0% {
+    box-shadow: 0 0 10px rgba(96, 239, 255, 0.5), 0 0 20px rgba(0, 97, 255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(96, 239, 255, 0.7), 0 0 30px rgba(0, 97, 255, 0.5);
+  }
+}
+
+.special-date-item {
+  position: relative;
+  padding: 0 30px 30px 65px;
+}
+
+.special-date-item::before {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  border: 3px solid #0061ff;
+  z-index: 1;
+  box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.15), 0 0 8px rgba(96, 239, 255, 0.5);
+  animation: pulsePoint 2s infinite alternate;
+}
+
+@keyframes pulsePoint {
+  0% {
+    box-shadow: 0 0 0 4px rgba(0, 97, 255, 0.15), 0 0 8px rgba(96, 239, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 5px rgba(0, 97, 255, 0.2), 0 0 12px rgba(96, 239, 255, 0.8);
+  }
+}
+
+.special-date-item.available::before {
+  border-color: #10b981;
+  animation: pulsePointGreen 2s infinite alternate;
+}
+
+@keyframes pulsePointGreen {
+  0% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.15), 0 0 8px rgba(16, 185, 129, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.2), 0 0 12px rgba(16, 185, 129, 0.8);
+  }
+}
+
+.special-date-item.unavailable::before {
+  border-color: #ef4444;
+  animation: pulsePointRed 2s infinite alternate;
+}
+
+@keyframes pulsePointRed {
+  0% {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.15), 0 0 8px rgba(239, 68, 68, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.2), 0 0 12px rgba(239, 68, 68, 0.8);
+  }
+}
+
+.special-date-item-content {
+  position: relative;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  color: white;
+  transition: all 0.3s;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.special-date-item-content::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.special-date-item-content:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+}
+
+.special-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.special-date-date {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  line-height: 1.4;
+}
+
+.special-date-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.special-date-status.available {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.special-date-status.unavailable {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.special-date-status i {
+  margin-right: 6px;
+  font-size: 0.85rem;
+}
+
+.special-date-time,
+.special-date-reason {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.special-date-time i,
+.special-date-reason i {
+  min-width: 22px;
+  margin-right: 10px;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.special-date-delete-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.special-date-delete-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  transform: rotate(90deg);
+}
+
+/* スピナー */
+#special-dates-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 0;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.spinner::before, .spinner::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+}
+
+.spinner::before {
+  width: 100%;
+  height: 100%;
+  border: 3px solid transparent;
+  border-top-color: #0061ff;
+  border-bottom-color: #60efff;
+  animation: spinBefore 1.5s linear infinite;
+}
+
+.spinner::after {
+  width: 70%;
+  height: 70%;
+  border: 3px solid transparent;
+  border-left-color: #0061ff;
+  border-right-color: #60efff;
+  animation: spinAfter 1.2s linear infinite;
+}
+
+@keyframes spinBefore {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes spinAfter {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+/* 空メッセージ */
+#special-dates-empty {
+  text-align: center;
+  padding: 50px 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#special-dates-empty i {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+#special-dates-empty p {
+  font-size: 1.1rem;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* スクロールバー */
+.special-dates-card-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.special-dates-card-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.special-dates-card-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.special-dates-card-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.special-date-item {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* 特別な日付追加フォーム */
+.special-date-form-card {
+  position: relative;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.05);
+  overflow: visible !important; /* 重要: ドロップダウンメニューが表示されるように変更 */
+  transition: all 0.3s ease;
+  margin-bottom: 30px;
+  border: none;
+  z-index: 100 !important; /* 非常に高いz-indexを設定 */
+}
+
+.special-date-form-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center center;
+  z-index: 0;
+}
+
+.special-date-form-header {
+  position: relative;
+  color: white;
+  padding: 20px 25px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+.special-date-form-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.special-date-form-title i {
+  margin-right: 12px;
+  font-size: 1.3rem;
+  background: linear-gradient(45deg, #60a5fa, #93c5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.special-date-form-close {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.special-date-form-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  transform: rotate(90deg);
+}
+
+.special-date-form-body {
+  position: relative;
+  padding: 25px;
+  z-index: 1;
+  background-color: rgba(30, 64, 175, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.special-date-form-body label {
+  color: white;
+  font-weight: 500;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.special-date-form-body .form-control,
+.special-date-form-body .form-select {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  border-radius: 12px !important;
+  padding: 12px 16px !important;
+  height: auto !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  /* タイムセレクタの見た目向上 */
+  min-height: 48px !important;
+  font-size: 0.95rem !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.special-date-form-body .form-control:focus,
+.special-date-form-body .form-select:focus {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3) !important;
+}
+
+.special-date-form-body .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.special-date-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.special-date-toggle-label {
+  color: white;
+  font-weight: 500;
+  margin: 0;
+}
+
+.special-date-switch {
+  position: relative;
+  display: inline-block;
+  width: 56px;
+  height: 28px;
+}
+
+.special-date-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.special-date-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.special-date-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .special-date-slider {
+  background-color: #3b82f6;
+}
+
+input:focus + .special-date-slider {
+  box-shadow: 0 0 1px #3b82f6;
+}
+
+input:checked + .special-date-slider:before {
+  transform: translateX(28px);
+}
+
+#special-date-time-container {
+  transition: all 0.3s ease !important;
+  margin-bottom: 20px !important;
+  display: block !important; /* 常に表示されるようにする */
+}
+
+.time-selects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 200 !important; /* 非常に高いz-indexを設定 */
+}
+
+/* 時間セレクターの特別スタイル */
+.time-selects select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300d1ff' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 15px center !important;
+  background-size: 16px !important;
+  padding: 14px 45px 14px 18px !important;
+  position: relative !important;
+  z-index: 210 !important;
+  color: white !important; /* テキストカラーを白に固定 */
+  background-color: rgba(13, 110, 253, 0.25) !important; /* 明るい青色の背景 */
+  border: 2px solid rgba(0, 209, 255, 0.6) !important; /* 明るい青色のボーダー */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25), 0 0 0 2px rgba(0, 209, 255, 0.1) !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  border-radius: 14px !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.25s ease !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* selectの選択肢のスタイル */
+.time-selects select option {
+  background-color: #162b44 !important; /* ドロップダウンの背景色 */
+  color: white !important; /* ドロップダウンのテキスト色 */
+  padding: 14px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* フォーカス時のセレクトスタイル */
+.time-selects select:focus,
+.time-selects select:hover {
+  border-color: rgba(0, 209, 255, 0.8) !important;
+  box-shadow: 0 4px 20px rgba(0, 209, 255, 0.35), 0 0 0 3px rgba(0, 209, 255, 0.2) !important;
+  transform: translateY(-2px) !important;
+  background-color: rgba(13, 110, 253, 0.35) !important;
+}
+
+/* アクティブ時の状態 */
+.time-selects select:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 10px rgba(0, 209, 255, 0.25) !important;
+}
+
+.time-selects .form-group {
+  position: relative;
+  margin-bottom: 15px !important;
+}
+
+.time-selects .form-group::after {
+  content: '';
+  position: absolute;
+  top: 53px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 209, 255, 0.15);
+  pointer-events: none;
+  z-index: 0;
+  box-shadow: 0 0 15px rgba(0, 209, 255, 0.2);
+}
+
+/* セレクトボックスのオプション強調 */
+.time-selects select option:hover,
+.time-selects select option:focus,
+.time-selects select option:checked {
+  background-color: rgba(0, 209, 255, 0.3) !important;
+  color: white !important;
+  box-shadow: 0 0 10px rgba(0, 209, 255, 0.5) !important;
+}
+
+/* 時間セレクターホバー効果の強化 */
+.time-selects select:hover {
+  cursor: pointer !important;
+  background-color: rgba(13, 110, 253, 0.3) !important;
+}
+
+/* 時間セレクタラベルの強調 */
+.time-selects label {
+  color: rgba(255, 255, 255, 1) !important;
+  font-weight: 600 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  margin-bottom: 10px !important;
+  display: block !important;
+  font-size: 16px !important;
+  letter-spacing: 0.5px !important;
+  position: relative !important;
+  padding-left: 24px !important;
+}
+
+/* 時間セレクタにアイコンを追加 */
+.time-selects label:before {
+  content: '\F551';
+  font-family: 'bootstrap-icons';
+  position: absolute !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-right: 8px;
+  font-size: 18px !important;
+  color: rgba(0, 209, 255, 0.9) !important;
+  text-shadow: 0 0 10px rgba(0, 209, 255, 0.5) !important;
+}
+
+/* 時間選択のコンテナの高さを固定 */
+#special-date-time-container.mb-3 {
+  min-height: 100px;
+  overflow: visible;
+}
+
+.add-special-date-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: linear-gradient(135deg, #0061ff, #60efff);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 24px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 97, 255, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  margin-top: 16px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.add-special-date-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0061ff, #60efff);
+  z-index: -1;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.add-special-date-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 97, 255, 0.4), 0 0 0 2px rgba(96, 239, 255, 0.2);
+}
+
+.add-special-date-btn:hover::before {
+  opacity: 1;
+}
+
+.add-special-date-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 97, 255, 0.3);
+}
+
+.add-special-date-btn::after {
+  content: '';
+  position: absolute;
+  width: 30px;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(35deg);
+  top: -50%;
+  left: -150%;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.add-special-date-btn:hover::after {
+  left: 120%;
+}
+
+.add-special-date-btn i {
+  margin-right: 10px;
+  font-size: 1.2rem;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}

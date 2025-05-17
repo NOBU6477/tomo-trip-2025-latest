@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ローカルガイド</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+      background-color: #fff;
+    }
+    
+    .container {
+      max-width: 980px;
+      padding: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+    
+    .card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s, box-shadow 0.3s;
+      background-color: #fff;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-body {
+      padding: 2rem;
+      text-align: center;
+    }
+    
+    .card-title {
+      font-size: 1.75rem;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    
+    .card-text {
+      color: #666;
+      margin-bottom: 1.5rem;
+    }
+    
+    .btn-register {
+      padding: 0.5rem 2rem;
+      font-weight: 500;
+    }
+    
+    .btn-primary {
+      background-color: #007bff;
+    }
+    
+    .btn-success {
+      background-color: #198754;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ローカルガイド</h1>
+    
+    <div class="row">
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <img src="./uploads/tourist.svg" alt="Tourist" class="mb-3" onerror="this.src='https://via.placeholder.com/150?text=Tourist'">
+            <h2 class="card-title">観光客</h2>
+            <p class="card-text">地元の隠れた名所を地元ガイドと一緒に訪れよう</p>
+            <button type="button" class="btn btn-primary btn-register" id="tourist-register-btn">登録</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6 mb-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <img src="./uploads/guide.svg" alt="Guide" class="mb-3" onerror="this.src='https://via.placeholder.com/150?text=Guide'">
+            <h2 class="card-title">ガイド</h2>
+            <p class="card-text">あなたの地元の魅力を観光客に伝えよう</p>
+            <button type="button" class="btn btn-success btn-register" id="guide-register-btn">登録</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // ここに関連するJSの動作を追加
+      document.getElementById('tourist-register-btn').addEventListener('click', function() {
+        window.location.href = "tourist_registration.html";
+      });
+      
+      document.getElementById('guide-register-btn').addEventListener('click', function() {
+        window.location.href = "guide_registration.html";
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+/* パーソナライズされたウェルカムセクションのスタイル */
+.personalized-welcome-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.personalized-welcome-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.welcome-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.welcome-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.journey-progress .progress {
+  height: 10px;
+  border-radius: 5px;
+  background-color: #e9ecef;
+}
+
+.journey-progress .progress-bar {
+  background-color: #28a745;
+  border-radius: 5px;
+}
+
+.next-steps {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 20px;
+}
+
+.next-steps h6 {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #495057;
+}
+
+.next-step-link {
+  color: #333;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.next-step-link:hover {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.journey-summary {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  height: 100%;
+}
+
+.journey-summary-title {
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #495057;
+}
+
+.journey-summary ul li {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.booking-stats {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #dee2e6;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #343a40;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* 推奨都市カード */
+.city-card {
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.city-card:hover {
+  transform: translateY(-5px);
+}
+
+.city-card img {
+  height: 180px;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.city-card:hover img {
+  transform: scale(1.05);
+}
+
+.city-card .card-body {
+  padding: 1.25rem;
+}
+
+.city-card .card-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.city-card .card-text {
+  color: #6c757d;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 992px) {
+  .welcome-title {
+    font-size: 1.5rem;
+  }
+  
+  .journey-summary {
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .city-card {
+    margin-bottom: 20px;
+  }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.personalized-welcome-card, .city-card {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.city-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.city-card:nth-child(3) {
+  animation-delay: 0.4s;
+}

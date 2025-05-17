@@ -1,0 +1,60 @@
+/**
+ * 電話認証UI用のスタイル定義
+ */
+
+/* 認証バッジの見た目 */
+.verification-badge {
+  display: inline-block;
+  padding: 0.25em 0.6em;
+  font-size: 0.85em;
+  font-weight: 500;
+  border-radius: 0.25rem;
+  margin-left: 0.5rem;
+}
+
+.verification-badge.verified {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+/* 未表示テキスト */
+.unverified-text {
+  color: #6c757d;
+  font-size: 0.85em;
+  padding: 0.25em 0;
+}
+
+/* 認証コード入力欄 */
+.verification-code-container {
+  transition: all 0.3s ease;
+}
+
+/* 認証コード入力フィールド */
+#guide-verification-code {
+  letter-spacing: 4px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 電話認証セクション全体 */
+#direct-phone-auth-section {
+  border: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* 電話認証タイトル */
+#direct-phone-auth-section h5 {
+  color: #212529;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  padding-bottom: 0.5rem;
+}
+
+/* 認証アラート領域 */
+#guide-verification-alert {
+  transition: all 0.3s ease;
+}

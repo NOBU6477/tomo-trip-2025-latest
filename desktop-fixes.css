@@ -1,0 +1,37 @@
+/**
+ * デスクトップ環境のみに適用される修正用スタイルシート
+ * スマートフォンには影響しません
+ */
+
+/* PC専用のドロップダウンスタイル調整 */
+@media only screen and (min-width: 768px) {
+  /* 新規登録ボタンのドロップダウンメニュー調整 */
+  .dropdown-menu {
+    min-width: auto !important; 
+    width: auto !important;
+    padding: 0.5rem 0;
+  }
+  
+  /* ドロップダウンアイテムのスタイル調整 */
+  .dropdown-item {
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    width: 100%;
+  }
+  
+  /* ドロップダウンメニューの位置調整 */
+  .dropdown-menu.show {
+    transform: translate(0px, 42px) !important;
+  }
+  
+  /* ナビゲーション項目のドロップダウンメニュー調整 */
+  .navbar .dropdown-menu {
+    margin-top: 0.25rem;
+  }
+  
+  /* 登録タイプの選択メニュー特別調整 */
+  .dropdown-menu.registration-types {
+    min-width: 220px !important;
+    width: auto !important;
+  }
+}

@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ガイド詳細 | Local Guide</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  
+  <!-- ログインモーダルスタイル -->
+  <link href="login-modal-styles.css" rel="stylesheet">
+  
+  <!-- ギャラリーライブラリ（lightbox） -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lg-zoom.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lg-thumbnail.css">
+  
+  <!-- ガイドデータ初期化スクリプト -->
+  <script src="initialize-guide-data.js"></script>
+  
+  <!-- カスタムスタイル -->
+  <style>
+    .guide-hero {
+      background-color: #3498db;
+      padding: 3rem 0;
+      color: white;
+    }
+    
+    .guide-profile-header {
+      position: relative;
+    }
+    
+    .guide-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.25rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      background-color: #f8f9fa;
+      color: #343a40;
+    }
+    
+    .tab-pane {
+      padding: 1.5rem 0;
+    }
+    
+    .gallery-image {
+      cursor: pointer;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 0.375rem;
+      transition: transform 0.2s;
+    }
+    
+    .gallery-image:hover {
+      transform: scale(1.05);
+    }
+    
+    .review-card {
+      border-bottom: 1px solid #dee2e6;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .review-card:last-child {
+      border-bottom: none;
+    }
+    
+    /* ログインプロンプト */
+    .guide-details-login-prompt {
+      padding: 3rem 0;
+      text-align: center;
+    }
+    
+    /* モバイル端末のみカメラ機能表示 */
+    @media (min-width: 768px) {
+      .mobile-only {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- アラートコンテナ -->
+  <div id="alert-container" style="position: fixed; top: 20px; right: 20px; max-width: 400px; z-index: 9999;"></div>
+  
+  <!-- ナビゲーションバー -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Local Guide</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html#guides">ガイドを探す</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="index.html#how-it-works">使い方</a>
+          </li>
+        </ul>
+        
+        <div class="dropdown me-3">
+          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown">
+            日本語
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#" data-lang="ja">日本語</a></li>
+            <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+          </ul>
+        </div>
+        
+        <!-- ユーザーメニューエリア - 未ログイン時 -->
+        <div id="navbar-user-area">
+          <button class="btn btn-outline-light me-2" id="nav-login-btn" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+          
+          <!-- 新規登録ドロップダウン -->
+          <div class="dropdown d-inline-block">
+            <button class="btn btn-light dropdown-toggle" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              新規登録
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#registerTouristModal">観光客として登録</a></li>
+              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#registerGuideModal">ガイドとして登録</a></li>
+            </ul>
+          </div>
+        </div>
+        
+        <!-- ログイン済みユーザーメニュー（初期状態では非表示） -->
+        <div id="nav-user-menu" class="dropdown d-none">
+          <button class="btn btn-outline-light dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle me-1"></i>
+            <span id="nav-user-name">ユーザー</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="profile.html">マイプロフィール</a></li>
+            <li><a class="dropdown-item" href="bookings.html">予約管理</a></li>
+            <li><a class="dropdown-item" href="messages.html">メッセージ</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" onclick="touristLogout()">ログアウト</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- ログインが必要なメッセージ（初期表示は非表示） -->
+  <div class="guide-details-login-prompt container py-5 d-none">
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center">
+        <i class="bi bi-lock-fill text-primary" style="font-size: 4rem;"></i>
+        <h2 class="mt-4">ガイド詳細の閲覧にはログインが必要です</h2>
+        <p class="lead mb-4">ガイドの詳細情報、写真ギャラリー、レビュー、予約機能を利用するには、ログインまたは新規登録が必要です。</p>
+        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center">
+          <button type="button" class="btn btn-primary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#loginModal">
+            <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+          </button>
+          <button type="button" class="btn btn-outline-primary btn-lg px-4" data-bs-toggle="modal" data-bs-target="#registerTouristModal">
+            <i class="bi bi-person-plus me-1"></i>観光客として登録
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ガイド詳細コンテンツ（ログイン時のみ表示） -->
+  <div class="guide-details-content">
+    <!-- ガイドプロフィールヒーローセクション -->
+    <div class="guide-hero">
+      <div class="container">
+        <div class="guide-profile-header">
+          <p class="text-white-50 mb-1" id="guide-breadcrumb">
+            <a href="index.html" class="text-white-50">ホーム</a> &gt; <span class="text-white" id="guide-breadcrumb-name">ガイド詳細</span>
+          </p>
+          <h1 class="display-5 fw-bold text-white" id="guide-name">ガイド名</h1>
+          <p class="lead text-white-50 mb-2" id="guide-location">
+            <i class="bi bi-geo-alt-fill me-1"></i>場所
+          </p>
+          <div class="d-flex align-items-center mb-3">
+            <div class="text-warning me-2">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+            </div>
+            <span class="text-white" id="guide-rating">4.5 (12件のレビュー)</span>
+          </div>
+          <div class="mb-3" id="guide-languages">
+            <span class="badge bg-white text-dark me-1">日本語</span>
+            <span class="badge bg-white text-dark">英語</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- メインコンテンツ -->
+    <div class="container py-5">
+      <div class="row">
+        <!-- 左側：ガイド情報タブ -->
+        <div class="col-lg-8">
+          <!-- タブナビゲーション -->
+          <ul class="nav nav-tabs" id="guideTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">プロフィール</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery" type="button" role="tab" aria-controls="gallery" aria-selected="false">写真ギャラリー</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">レビュー</button>
+            </li>
+          </ul>
+          
+          <!-- タブコンテンツ -->
+          <div class="tab-content" id="guideTabContent">
+            <!-- プロフィールタブ -->
+            <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+              <h3 class="mt-4 mb-3">自己紹介</h3>
+              <p id="guide-bio">
+                こんにちは！私は沖縄県与那国島在住の加藤九郎です。10年間で100人以上の外国人の方々に与那国島の魅力をご案内してきました。特に西崎や祖納などのエリアに詳しく、観光スポットだけでなく、地元の人しか知らない隠れた名所や美味しいお店もご紹介できます。日本語、英語、中国語でのガイドが可能で、写真撮影も得意なので、旅の思い出作りもお手伝いします。お客様のリクエストに柔軟に対応し、あなただけの特別な与那国島観光をご提案します。
+              </p>
+              
+              <h3 class="mt-4 mb-3">得意分野</h3>
+              <div class="mb-4" id="guide-specialties">
+                <span class="guide-badge">海洋アクティビティ</span>
+                <span class="guide-badge">与那国島グルメツアー</span>
+                <span class="guide-badge">歴史・文化</span>
+                <span class="guide-badge">沖縄料理</span>
+                <span class="guide-badge">伝統的集落巡り</span>
+              </div>
+              
+              <h3 class="mt-4 mb-3">ガイドするエリア</h3>
+              <div class="mb-4">
+                <div class="ratio ratio-16x9" id="guide-map-container">
+                  <!-- 地図はJavaScriptで動的に生成されます -->
+                  <div id="guide-map-placeholder" class="bg-light d-flex justify-content-center align-items-center">
+                    <p class="text-muted">地図を読み込み中...</p>
+                  </div>
+                </div>
+              </div>
+              
+              <h3 class="mt-4 mb-3">ツアープラン例</h3>
+              <div id="tour-plans-container">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                  </div>
+                  <p class="mt-2 text-muted">ツアープラン情報を読み込み中...</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 写真ギャラリータブ -->
+            <div class="tab-pane fade" id="gallery" role="tabpanel" aria-labelledby="gallery-tab">
+              <h3 class="mt-4 mb-3">写真ギャラリー</h3>
+              <div id="guide-gallery-container">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                  </div>
+                  <p class="mt-2 text-muted">ギャラリー写真を読み込み中...</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- レビュータブ -->
+            <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+              <h3 class="mt-4 mb-3">レビュー</h3>
+              
+              <!-- レビュー概要 -->
+              <div id="review-summary-container">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                  </div>
+                  <p class="mt-2 text-muted">レビュー概要を読み込み中...</p>
+                </div>
+              </div>
+              
+              <!-- レビュー一覧 -->
+              <div id="reviews-container">
+                <div class="text-center py-4">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">読み込み中...</span>
+                  </div>
+                  <p class="mt-2 text-muted">レビューを読み込み中...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 右側：料金と予約 -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+          <div class="card shadow-sm sticky-top" style="top: 20px; z-index: 10;">
+            <div class="card-body">
+              <h4 class="card-title mb-4">料金</h4>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="fw-bold">セッション料金</span>
+                <span class="text-primary fw-bold fs-4" id="guide-fee">¥6,000 / セッション</span>
+              </div>
+              <p class="text-muted small mb-4">1セッション = 2時間の基本ガイドサービス</p>
+              
+              <div class="d-grid gap-2">
+                <a href="booking-payment.html?guide_id=1" class="btn btn-primary btn-lg">
+                  予約する
+                </a>
+                <button type="button" id="send-message-btn" class="btn btn-outline-primary">
+                  メッセージを送る
+                </button>
+              </div>
+              
+              <hr class="my-4">
+              
+              <div class="small text-muted mb-3">
+                <i class="bi bi-calendar-check me-2"></i>通常24時間以内に返信
+              </div>
+              <div class="small text-muted">
+                <i class="bi bi-shield-check me-2"></i>本人確認済みガイド
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 旧ログインモーダルは削除しました -->
+  
+  <!-- 観光客登録モーダル -->
+  <div class="modal fade" id="registerTouristModal" tabindex="-1" aria-labelledby="registerTouristModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registerTouristModalLabel">観光客として登録</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="tourist-register-form">
+            <div class="mb-3">
+              <label for="tourist-name" class="form-label">お名前</label>
+              <input type="text" class="form-control" id="tourist-name" required>
+            </div>
+            <div class="mb-3">
+              <label for="tourist-email" class="form-label">メールアドレス</label>
+              <input type="email" class="form-control" id="tourist-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="tourist-password" class="form-label">パスワード</label>
+              <input type="password" class="form-control" id="tourist-password" required>
+            </div>
+            <div class="mb-3">
+              <label for="tourist-password-confirm" class="form-label">パスワード（確認）</label>
+              <input type="password" class="form-control" id="tourist-password-confirm" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+              <label class="form-check-label" for="agreeTerms">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">利用規約</a>に同意します
+              </label>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">登録</button>
+            </div>
+          </form>
+          <hr class="my-4">
+          <div class="text-center">
+            <p>すでにアカウントをお持ちの場合</p>
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">
+              <i class="bi bi-box-arrow-in-right me-1"></i>ログイン
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- ガイド登録モーダル -->
+  <div class="modal fade" id="registerGuideModal" tabindex="-1" aria-labelledby="registerGuideModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registerGuideModalLabel">ガイドとして登録</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            ガイド登録には本人確認と追加情報の入力が必要です。登録後、審査が完了すると活動を開始できます。
+          </div>
+          
+          <!-- ステップ表示 -->
+          <div class="mb-4">
+            <div class="progress" style="height: 4px;">
+              <div class="progress-bar" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <div class="text-primary">Step 1: 基本情報</div>
+              <div class="text-muted">Step 2: 本人確認</div>
+              <div class="text-muted">Step 3: プロフィール</div>
+            </div>
+          </div>
+          
+          <form id="guide-register-form-step1">
+            <div class="mb-3">
+              <label for="guide-name" class="form-label">お名前</label>
+              <input type="text" class="form-control" id="guide-name" required>
+            </div>
+            <div class="mb-3">
+              <label for="guide-email" class="form-label">メールアドレス</label>
+              <input type="email" class="form-control" id="guide-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="guide-phone" class="form-label">電話番号</label>
+              <input type="tel" class="form-control" id="guide-phone" required>
+            </div>
+            <div class="mb-3">
+              <label for="guide-password" class="form-label">パスワード</label>
+              <input type="password" class="form-control" id="guide-password" required>
+            </div>
+            <div class="mb-3">
+              <label for="guide-password-confirm" class="form-label">パスワード（確認）</label>
+              <input type="password" class="form-control" id="guide-password-confirm" required>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="guide-agree-terms" required>
+              <label class="form-check-label" for="guide-agree-terms">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">利用規約</a>に同意します
+              </label>
+            </div>
+            <div class="d-grid gap-2">
+              <a href="guide-registration.html" class="btn btn-primary">次へ進む</a>
+              <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">キャンセル</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>Local Guide</h5>
+          <p class="text-muted">
+            地元の人だからこそ知っている特別な体験を提供します。
+            旅行者と地元のガイドをつなぎ、より深い旅の体験をサポートします。
+          </p>
+        </div>
+        <div class="col-md-2 mb-4 mb-md-0">
+          <h5>企業情報</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted">会社概要</a></li>
+            <li><a href="#" class="text-muted">利用規約</a></li>
+            <li><a href="#" class="text-muted">プライバシー</a></li>
+            <li><a href="#" class="text-muted">ヘルプ</a></li>
+          </ul>
+        </div>
+        <div class="col-md-2 mb-4 mb-md-0">
+          <h5>ガイド向け</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted">ガイドになる</a></li>
+            <li><a href="#" class="text-muted">ガイドライン</a></li>
+            <li><a href="#" class="text-muted">報酬システム</a></li>
+            <li><a href="#" class="text-muted">安全対策</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>ニュースレター登録</h5>
+          <p class="text-muted">最新情報をメールでお届けします</p>
+          <div class="input-group mb-3">
+            <input type="email" class="form-control" placeholder="メールアドレス" aria-label="メールアドレス">
+            <button class="btn btn-primary" type="button">登録</button>
+          </div>
+          <div class="d-flex mt-3">
+            <a href="#" class="text-muted me-3"><i class="bi bi-facebook fs-5"></i></a>
+            <a href="#" class="text-muted me-3"><i class="bi bi-twitter fs-5"></i></a>
+            <a href="#" class="text-muted me-3"><i class="bi bi-instagram fs-5"></i></a>
+            <a href="#" class="text-muted"><i class="bi bi-youtube fs-5"></i></a>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4 bg-secondary">
+      <div class="text-center">
+        <p class="mb-0 text-muted">&copy; 2023 Local Guide. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 統一ログインモーダル -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">ログイン</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="login-form">
+            <div class="mb-3">
+              <label class="form-label">ユーザータイプ</label>
+              <div class="user-type-selector">
+                <div class="btn-group w-100" role="group" aria-label="ユーザータイプ選択">
+                  <input type="radio" class="btn-check" name="login-user-type" id="login-user-tourist" value="tourist" autocomplete="off" checked>
+                  <label class="btn btn-outline-primary" for="login-user-tourist">
+                    <i class="bi bi-person me-1"></i> 観光客
+                  </label>
+                  
+                  <input type="radio" class="btn-check" name="login-user-type" id="login-user-guide" value="guide" autocomplete="off">
+                  <label class="btn btn-outline-primary" for="login-user-guide">
+                    <i class="bi bi-map me-1"></i> ガイド
+                  </label>
+                </div>
+              </div>
+              <div class="user-type-helper text-center mt-1 mb-3">
+                <small id="user-type-description" class="text-muted">
+                  観光客としてログインすると、ガイドを探したり予約できます
+                </small>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="login-email" class="form-label">メールアドレス</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                  <i class="bi bi-envelope text-muted"></i>
+                </span>
+                <input type="email" class="form-control border-start-0" id="login-email" placeholder="example@email.com" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="login-password" class="form-label">パスワード</label>
+              <input type="password" class="form-control" id="login-password" placeholder="パスワードを入力" required>
+              <div class="mt-2">
+                <a href="#" class="password-reset-link">
+                  <i class="bi bi-question-circle me-1"></i>パスワードをお忘れですか？
+                </a>
+              </div>
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="login-remember">
+              <label class="form-check-label" for="login-remember">ログイン情報を保存する</label>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary login-button" id="main-login-btn">
+                <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+              </button>
+            </div>
+          </form>
+          <hr>
+          <div class="text-center">
+            <p class="mb-2">アカウントをお持ちでない方</p>
+            <button class="btn btn-outline-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerTouristModal">
+              <i class="bi bi-person-plus me-1"></i>新規登録
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- アクセス制御スクリプト -->
+  <script src="access-control.js"></script>
+  
+  <!-- 観光客ログインスクリプト -->
+  <script src="tourist-login.js"></script>
+  
+  <!-- ガイド詳細データ読み込みスクリプト -->
+  <script src="guide-details-data-fixed.js"></script>
+  
+  <!-- ガイド詳細スクリプト -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // URLからガイドIDを取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const guideId = urlParams.get('id');
+      
+      // ログインステータスを確認し、適切なビューを表示
+      checkLoginStatus();
+      
+      // ガイドデータを取得（本番環境ではAPIから取得）
+      if (guideId) {
+        fetchGuideDetails(guideId);
+      }
+      
+      // 画像ギャラリーのクリックイベント
+      setupGalleryModal();
+      
+      // メッセージ送信ボタンの設定
+      setupMessageButton(guideId);
+      
+      // 詳細ログインボタンは直接data-bs-toggleを使用しているため
+      // ここでのイベント設定は不要になりました
+    });
+    
+    /**
+     * メッセージ送信ボタンのセットアップ
+     * @param {string} guideId ガイドID
+     */
+    function setupMessageButton(guideId) {
+      const messageButton = document.getElementById('send-message-btn');
+      if (!messageButton) {
+        console.error('メッセージ送信ボタンが見つかりません');
+        return;
+      }
+      
+      messageButton.addEventListener('click', function() {
+        // ログイン状態を確認
+        const isLoggedIn = localStorage.getItem('touristData') !== null;
+        
+        if (!isLoggedIn) {
+          // 未ログインの場合は統一ログインモーダルを表示
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          loginModal.show();
+          return;
+        }
+        
+        // ガイドデータを取得
+        let guideName = 'ガイド';
+        const guideNameElement = document.getElementById('guide-name');
+        if (guideNameElement) {
+          guideName = guideNameElement.textContent;
+        }
+        
+        // メッセージページに遷移
+        window.location.href = `messages.html?guide_id=${guideId}&guide_name=${encodeURIComponent(guideName)}`;
+      });
+    }
+    
+    // ログイン状態確認
+    function checkLoginStatus() {
+      const isLoggedIn = localStorage.getItem('touristData') !== null;
+      const detailsContent = document.querySelector('.guide-details-content');
+      const loginPrompt = document.querySelector('.guide-details-login-prompt');
+      
+      if (isLoggedIn) {
+        // ログイン済み - コンテンツを表示
+        detailsContent.classList.remove('d-none');
+        loginPrompt.classList.add('d-none');
+      } else {
+        // 未ログイン - ログインプロンプトを表示
+        detailsContent.classList.add('d-none');
+        loginPrompt.classList.remove('d-none');
+      }
+    }
+    
+    // ガイド詳細データを取得
+    function fetchGuideDetails(guideId) {
+      console.log(`fetchGuideDetails: ガイドID=${guideId}を取得します`);
+      
+      // まずはガイド一覧から探す（index.jsで保存されたガイドリスト）
+      let guideData = null;
+      
+      try {
+        // ガイド一覧データを確認（カード表示用のデータ）
+        const guidesDataJson = localStorage.getItem('guidesData');
+        if (guidesDataJson) {
+          const guidesList = JSON.parse(guidesDataJson);
+          console.log(`guidesDataから${guidesList.length}件のガイドを読み込みました`);
+          
+          // ガイドIDに一致するデータを探す
+          const matchedGuide = guidesList.find(g => g.id.toString() === guideId.toString());
+          if (matchedGuide) {
+            console.log(`guidesDataから一致するガイドを見つけました: ${matchedGuide.name}`);
+            guideData = matchedGuide;
+          }
+        }
+        
+        // 個別に保存されたガイドデータを確認
+        if (!guideData) {
+          const specificGuideJson = localStorage.getItem(`guide_${guideId}`);
+          if (specificGuideJson) {
+            guideData = JSON.parse(specificGuideJson);
+            console.log(`guide_${guideId}から読み込みました: ${guideData.name}`);
+          }
+        }
+        
+        // ログイン中のユーザーデータ（touristData）を確認
+        if (!guideData) {
+          const touristDataJson = localStorage.getItem('touristData');
+          if (touristDataJson) {
+            const userData = JSON.parse(touristDataJson);
+            console.log('ユーザーデータ:', userData);
+            
+            // ユーザーがガイドIDと一致する場合
+            if (userData.id && userData.id.toString() === guideId.toString()) {
+              console.log('ログイン中のユーザーとガイドIDが一致します');
+              guideData = userData;
+            }
+          }
+        }
+      } catch (e) {
+        console.error('ローカルストレージのデータ解析に失敗しました:', e);
+      }
+      
+      // 格納されているガイドデータからIDによって取得を試みる（従来の方法）
+      if (!guideData && window.guideDetailsManager) {
+        guideData = window.guideDetailsManager.getGuideById(guideId);
+        console.log(`ガイドID ${guideId} のデータをguideDetailsManagerから検索しています...`);
+      }
+      
+      // それでも見つからなければテストデータを使用
+      if (!guideData) {
+        console.log(`ガイドID ${guideId} のデータが見つからないため、テストデータを使用します`);
+        
+        // テストデータを使用 (URLパラメータからガイドIDのみ取得)
+        guideData = {
+          id: guideId,
+          name: '桃太郎',
+          location: '東京都 渋谷区',
+          bio: 'こんにちは！私は東京在住の桃太郎です。10年間で100人以上の外国人の方々に東京の魅力をご案内してまいりました。特に渋谷、原宿、新宿などのエリアに詳しく、観光スポットだけでなく、地元の人しか知らない隠れた名所や美味しいお店もご紹介できます。英語と日本語でのガイドが可能で、写真撮影も得意なので、旅の思い出作りもお手伝いします。お客様のリクエストに柔軟に対応し、あなただけの特別な東京観光をご提案します。',
+          languages: ['日本語', '英語'],
+          fee: 6000,
+          rating: 4.5,
+          reviewCount: 12,
+          specialties: ['グルメ', '写真スポット', 'ナイトツアー', 'ローカル体験']
+        };
+        
+        // 将来的に実際のガイド登録データに置き換えられることを示すメッセージ
+        console.log('注: 将来的には実際のガイド登録データが表示されます');
+      } else {
+        console.log('保存されたガイドデータを表示します:', guideData);
+      }
+      
+      // データにspecialtiesがない場合、デフォルト値を設定
+      if (!guideData.specialties) {
+        guideData.specialties = ['グルメ', '写真スポット'];
+        console.log('specializationがないため、デフォルト値を設定しました');
+      }
+      
+      // ガイド名と地域を表示してデバッグ
+      console.log('表示中のガイド名: ' + guideData.name);
+      console.log('表示中の地域: ' + guideData.location);
+      
+      // データを表示
+      displayGuideDetails(guideData);
+      
+      // guide-details-data.jsのloadGuideData関数がある場合は呼び出す（ツアープランなどの詳細データを取得）
+      if (typeof loadGuideData === 'function') {
+        console.log('loadGuideData関数を呼び出します');
+        loadGuideData(guideId);
+      } else {
+        console.log('loadGuideData関数が見つかりません');
+      }
+    }
+    
+    // ガイド詳細を表示
+    function displayGuideDetails(guide) {
+      // 基本情報の表示
+      document.getElementById('guide-name').textContent = guide.name;
+      document.getElementById('guide-location').innerHTML = `<i class="bi bi-geo-alt-fill me-1"></i>${guide.location}`;
+      document.getElementById('guide-fee').textContent = `¥${guide.fee.toLocaleString()} / セッション`;
+      document.getElementById('guide-rating').textContent = `${guide.rating} (${guide.reviewCount}件のレビュー)`;
+      document.getElementById('guide-bio').textContent = guide.bio;
+      
+      // 言語の表示
+      const languagesContainer = document.getElementById('guide-languages');
+      languagesContainer.innerHTML = '';
+      guide.languages.forEach(lang => {
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-white text-dark me-1';
+        badge.textContent = lang;
+        languagesContainer.appendChild(badge);
+      });
+      
+      // 専門分野の表示
+      const specialtiesContainer = document.getElementById('guide-specialties');
+      specialtiesContainer.innerHTML = '';
+      guide.specialties.forEach(specialty => {
+        const badge = document.createElement('span');
+        badge.className = 'guide-badge';
+        badge.textContent = specialty;
+        specialtiesContainer.appendChild(badge);
+      });
+      
+      // 予約ボタンのURLを更新
+      const bookingButton = document.querySelector('.btn-primary.btn-lg');
+      if (bookingButton) {
+        bookingButton.href = `booking-payment.html?guide_id=${guide.id}`;
+      }
+    }
+    
+    // ギャラリーモーダルの設定
+    function setupGalleryModal() {
+      const galleryImages = document.querySelectorAll('.gallery-image');
+      galleryImages.forEach(img => {
+        img.addEventListener('click', function() {
+          const src = this.src;
+          const alt = this.alt;
+          
+          // モーダルを作成
+          const modal = document.createElement('div');
+          modal.className = 'modal fade';
+          modal.id = 'galleryModal';
+          modal.tabIndex = '-1';
+          modal.innerHTML = `
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">${alt}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                  <img src="${src}" class="img-fluid" alt="${alt}">
+                </div>
+              </div>
+            </div>
+          `;
+          
+          document.body.appendChild(modal);
+          
+          const bsModal = new bootstrap.Modal(modal);
+          bsModal.show();
+          
+          // モーダルが閉じられたら削除
+          modal.addEventListener('hidden.bs.modal', function() {
+            document.body.removeChild(modal);
+          });
+        });
+      });
+    }
+  </script>
+  
+  <!-- ガイドデータAPI (新機能) -->
+  <script src="guide-data-storage-api.js"></script>
+  
+  <!-- ガイドデータ初期化 (新機能) -->
+  <script src="initialize-guide-data.js"></script>
+  
+  <!-- ガイドデータ デバッグAPI (緊急対応) -->
+  <script src="guide-data-api-debug.js"></script>
+  
+  <!-- ガイド詳細 緊急修正スクリプト -->
+  <script src="guide-details-emergency-fix.js"></script>
+  
+  <!-- 最終修正スクリプト -->
+  <script src="guide-data-final-fix.js"></script>
+  
+  <!-- ログイン機能 -->
+  <script src="tourist-login.js"></script>
+  
+  <!-- ガイドデータ最終修正スクリプト -->
+  <script src="guide-data-final-fix.js"></script>
+  
+  <!-- ツアープラン修正スクリプト -->
+  <script src="tour-plan-injector.js"></script>
+
+  <!-- 言語切り替えスクリプト -->
+  <script src="https://cdn.jsdelivr.net/npm/i18next@21.6.10/i18next.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('言語切り替え機能を初期化');
+      
+      // 言語切り替えボタンの参照を取得
+      const enButton = document.querySelector('a[data-lang="en"]');
+      const jaButton = document.querySelector('a[data-lang="ja"]');
+      
+      if (enButton) {
+        console.log('英語ボタン:', '見つかりました');
+        enButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          changeLang('en');
+        });
+      }
+      
+      if (jaButton) {
+        console.log('日本語ボタン:', '見つかりました');
+        jaButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          changeLang('ja');
+        });
+      }
+      
+      // 言語設定を確認して適用（ページ間で統一した言語表示を維持するため）
+      const savedLanguage = localStorage.getItem('selectedLanguage');
+      if (savedLanguage === 'en') {
+        console.log('保存された言語設定を復元: 英語');
+        changeLang('en');
+      }
+      
+      // 現在の言語を設定
+      function changeLang(lang) {
+        // 言語ボタンのテキストを更新
+        document.getElementById('languageDropdown').textContent = lang === 'ja' ? '日本語' : 'English';
+        
+        // 翻訳を適用
+        translatePage(lang);
+      }
+      
+      // ページ翻訳（拡張実装）
+      function translatePage(lang) {
+        // 言語データの設定（本来はJSONファイルから読み込む）
+        const translations = {
+          en: {
+            // ナビゲーション要素
+            'ホーム': 'Home',
+            'ガイドを探す': 'Find Guides',
+            '使い方': 'How It Works',
+            'ログイン': 'Login',
+            '新規登録': 'Sign Up',
+            
+            // ログインプロンプト
+            'ガイド詳細の閲覧にはログインが必要です': 'Login Required to View Guide Details',
+            'ガイドの詳細情報、写真ギャラリー、レビュー、予約機能を利用するには、ログインまたは新規登録が必要です。': 'To access guide details, photo gallery, reviews, and booking features, please login or sign up.',
+            '観光客として登録': 'Register as Tourist',
+            'ガイドとして登録': 'Register as Guide',
+            
+            // タブとセクション見出し
+            'プロフィール': 'Profile',
+            '写真ギャラリー': 'Photo Gallery',
+            'レビュー': 'Reviews',
+            '自己紹介': 'About Me',
+            '得意分野': 'Specialties',
+            'ガイドするエリア': 'Guide Area',
+            'ツアープラン例': 'Sample Tour Plans',
+            '料金': 'Fee',
+            'セッション料金': 'Session Fee',
+            '1セッション = 2時間の基本ガイドサービス': '1 Session = 2 hours of basic guide service',
+            
+            // アクション要素
+            '予約する': 'Book Now',
+            'メッセージを送る': 'Send Message',
+            '通常24時間以内に返信': 'Usually replies within 24 hours',
+            '本人確認済みガイド': 'Identity Verified Guide',
+            
+            // ガイド情報
+            '件のレビュー': 'reviews',
+            '所要時間': 'Duration',
+            '対応人数': 'Group Size',
+            '料金:': 'Price:',
+            '人': 'person',
+            '交通費・食事代別': 'Transportation and meals not included',
+            '食事代3店舗分込み': 'Meals at 3 restaurants included',
+            
+            // 固定されたセクション識別子
+            '日本語': 'Japanese',
+            '英語': 'English',
+            '中国語': 'Chinese',
+            '韓国語': 'Korean',
+            'ドイツ語': 'German',
+            'フランス語': 'French',
+            'スペイン語': 'Spanish',
+            'ロシア語': 'Russian',
+            
+            // 専門分野の翻訳
+            'グルメ': 'Cuisine',
+            '写真スポット': 'Photo Spots',
+            'ナイトツアー': 'Night Tour',
+            'ローカル体験': 'Local Experience',
+            '歴史': 'History',
+            '文化': 'Culture',
+            '寺院': 'Temples',
+            '建築': 'Architecture',
+            '街歩き': 'City Walk',
+            'ダイビング': 'Diving',
+            'シュノーケリング': 'Snorkeling',
+            '自然': 'Nature',
+            'アウトドア': 'Outdoor',
+            '観光': 'Sightseeing',
+            'アート': 'Art',
+            
+            // 都道府県の翻訳
+            '東京都': 'Tokyo',
+            '大阪府': 'Osaka',
+            '京都府': 'Kyoto',
+            '北海道': 'Hokkaido',
+            '沖縄県': 'Okinawa',
+            '福岡県': 'Fukuoka',
+            '神奈川県': 'Kanagawa',
+            '愛知県': 'Aichi',
+            '広島県': 'Hiroshima',
+            '山口県': 'Yamaguchi'
+          }
+        };
+        
+        // 現在の言語を保存
+        localStorage.setItem('selectedLanguage', lang);
+        
+        // 実際の翻訳処理
+        if (lang === 'en') {
+          // データ属性を持つ要素の翻訳
+          document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (translations.en[key]) {
+              element.textContent = translations.en[key];
+            }
+          });
+          
+          // textContentで直接翻訳（すべてのテキストノードを確認）
+          const allElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, a, button, label, li, div.nav-item, div.card-title, div.card-text');
+          allElements.forEach(element => {
+            // 子要素を持たない要素のみ翻訳
+            if (element.childElementCount === 0) {
+              const originalText = element.textContent.trim();
+              if (translations.en[originalText]) {
+                element.textContent = translations.en[originalText];
+              } 
+              // 地名などの複合的なテキストの場合
+              else {
+                Object.keys(translations.en).forEach(key => {
+                  if (originalText.includes(key)) {
+                    element.textContent = element.textContent.replace(key, translations.en[key]);
+                  }
+                });
+              }
+            }
+          });
+          
+          // ボタンやタイトル、特定のUIコンポーネントの翻訳
+          document.title = 'Guide Details | Local Guide';
+          
+          // 特殊なケース：ガイドバッジ（特定クラス名の要素）
+          document.querySelectorAll('.guide-badge').forEach(badge => {
+            const text = badge.textContent.trim();
+            if (translations.en[text]) {
+              badge.textContent = translations.en[text];
+            }
+          });
+          
+          // 特殊なケース：レビュー数
+          const ratingElement = document.getElementById('guide-rating');
+          if (ratingElement) {
+            const text = ratingElement.textContent;
+            const match = text.match(/(\d+\.?\d*)\s*\((\d+)件のレビュー\)/);
+            if (match) {
+              ratingElement.textContent = `${match[1]} (${match[2]} reviews)`;
+            }
+          }
+        } else {
+          // 日本語に戻す場合は、ページをリロード
+          // これは最も簡単な方法で、すべての要素が元の状態に戻ります
+          location.reload();
+        }
+      }
+    });
+  </script>
+  <script src="data-reset.js"></script>
+  <!-- ガイド詳細オブジェクト修正スクリプト -->
+  <script src="guide-details-object-fix.js"></script>
+  <!-- ツアープラン修正スクリプト -->
+  <script src="tour-plan-injector.js"></script>
+  <!-- ガイド詳細拡張スクリプト（マップ・ギャラリー・レビュー） -->
+  <script src="guide-details-enhancer.js"></script>
+  <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
+  <script src="shared-language-utils.js"></script>
+</body>
+</html>

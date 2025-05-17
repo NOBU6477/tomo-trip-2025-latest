@@ -1,0 +1,309 @@
+/* ウルトラモダンな特別な日付設定セクション */
+
+.special-dates-section {
+  position: relative;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #f7faff, #edf4ff);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.special-dates-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #1a68d4, #00bcd4);
+  z-index: 1;
+}
+
+.ultra-modern-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.ultra-modern-title i {
+  background: linear-gradient(135deg, #1a68d4, #00bcd4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-size: 1.8rem;
+  margin-right: 15px;
+}
+
+.ultra-modern-title h4 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #1a68d4, #00bcd4);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+.alert-custom.bg-info-subtle {
+  background: rgba(0, 188, 212, 0.08) !important;
+  border-left: 4px solid #00bcd4;
+  border-radius: 12px;
+  padding: 15px !important;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.alert-custom.bg-info-subtle i {
+  color: #00bcd4;
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+/* 特別な日付フォームカード */
+.special-date-form-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 188, 212, 0.1);
+}
+
+.special-date-form-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.special-date-form-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(0, 188, 212, 0.1);
+  position: relative;
+}
+
+.special-date-form-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0d47a1;
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.special-date-form-title i {
+  margin-right: 10px;
+  color: #00bcd4;
+  font-size: 1.2rem;
+}
+
+/* 特別な日付リストカード */
+.special-dates-list-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  padding: 25px;
+  position: relative;
+  border: 1px solid rgba(0, 188, 212, 0.1);
+}
+
+.special-dates-list-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0d47a1;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(0, 188, 212, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.special-dates-list-title i {
+  margin-right: 10px;
+  color: #00bcd4;
+  font-size: 1.2rem;
+}
+
+/* 特別な日付リストアイテム */
+.special-date-item {
+  background: linear-gradient(145deg, #f8faff, #f0f4ff);
+  border-radius: 15px;
+  padding: 20px;
+  margin-bottom: 15px;
+  position: relative;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+  border-left: 4px solid #1a68d4;
+}
+
+.special-date-item.unavailable {
+  border-left-color: #f44336;
+}
+
+.special-date-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.special-date-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.special-date-item-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d47a1;
+  margin: 0;
+}
+
+.special-date-item-date {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #455a64;
+}
+
+.special-date-item-date i {
+  margin-right: 5px;
+  color: #00bcd4;
+}
+
+.special-date-item-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.special-date-item-status {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #455a64;
+}
+
+.special-date-item-status.available {
+  color: #4caf50;
+}
+
+.special-date-item-status.unavailable {
+  color: #f44336;
+}
+
+.special-date-item-status i {
+  margin-right: 5px;
+}
+
+.special-date-item-time {
+  font-size: 0.9rem;
+  color: #455a64;
+}
+
+.special-date-item-actions {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.special-date-item-actions button {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #78909c;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 5px;
+}
+
+.special-date-item-actions button:hover {
+  color: #f44336;
+}
+
+/* 特別日付入力フィールド */
+#special-date {
+  height: 50px;
+  border-radius: 12px;
+  border: 2px solid rgba(0, 188, 212, 0.3);
+  padding: 0 15px;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+  transition: all 0.3s ease;
+  background-color: white;
+}
+
+#special-date:focus {
+  border-color: #00bcd4;
+  box-shadow: 0 4px 15px rgba(0, 188, 212, 0.2);
+}
+
+#special-date::placeholder {
+  color: #b0bec5;
+}
+
+/* 予約状況トグル */
+.availability-toggle-container {
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+}
+
+.availability-toggle-label {
+  margin-right: 15px;
+  font-weight: 600;
+  color: #455a64;
+  font-size: 1rem;
+}
+
+/* アニメーション */
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 188, 212, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 188, 212, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 188, 212, 0);
+  }
+}
+
+.special-date-form-card:focus-within {
+  animation: pulse-border 2s infinite;
+}
+
+/* スピナー */
+.spinner-border-sm {
+  width: 1.2rem;
+  height: 1.2rem;
+  border-width: 0.2em;
+}
+
+/* モバイル対応 */
+@media (max-width: 767.98px) {
+  .special-dates-section {
+    padding: 20px 15px;
+  }
+  
+  .special-date-form-card,
+  .special-dates-list-card {
+    padding: 20px 15px;
+  }
+  
+  .ultra-modern-title h4 {
+    font-size: 1.4rem;
+  }
+  
+  .special-date-form-title,
+  .special-dates-list-title {
+    font-size: 1.2rem;
+  }
+}

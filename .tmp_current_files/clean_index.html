@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Guide</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="basic_styles.css">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i data-feather="map"></i> Local Guide
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-i18n="nav.home">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#guides" data-i18n="nav.find_guides">ガイドを探す</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#how-it-works" data-i18n="nav.how_it_works">使い方</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about" data-i18n="nav.about">サービスについて</a>
+          </li>
+        </ul>
+        
+        <!-- 言語選択ドロップダウン -->
+        <div class="nav-item dropdown me-3">
+          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i data-feather="globe"></i> <span id="current-language">日本語</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+            <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja')">日本語</a></li>
+            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
+          </ul>
+        </div>
+        
+        <!-- 未ログイン時 -->
+        <div id="not-logged-in">
+          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-i18n="nav.login">ログイン</button>
+          <button type="button" class="btn btn-light" id="show-user-type-modal" data-i18n="nav.register">新規登録</button>
+        </div>
+        
+        <!-- ログイン時 -->
+        <div id="logged-in" class="d-none">
+          <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <img id="user-avatar" src="https://via.placeholder.com/30" alt="User" class="rounded-circle me-1" width="30" height="30">
+              <span id="user-name">ユーザー</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li><a class="dropdown-item" href="#" id="profile-link" data-i18n="nav.profile">プロフィール</a></li>
+              <li><a class="dropdown-item" href="bookings.html" data-i18n="nav.bookings">予約管理</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn" data-i18n="nav.logout">ログアウト</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- メインコンテンツ -->
+  <div class="container mt-4" id="main-content">
+    <!-- ここにメインコンテンツ挿入 -->
+  </div>
+
+  <!-- ユーザータイプ選択モーダル -->
+  <div class="modal fade" id="userTypeModal" tabindex="-1" aria-labelledby="userTypeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="userTypeModalLabel" data-i18n="user_type.title">アカウントタイプを選択</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3 mb-md-0">
+              <div class="card h-100">
+                <div class="card-body text-center">
+                  <i class="fas fa-user fa-3x mb-3 text-primary"></i>
+                  <h5 class="card-title" data-i18n="user_type.tourist">ツーリスト</h5>
+                  <p class="card-text" data-i18n="user_type.tourist_desc">現地ガイドを探して旅行を楽しみたい方</p>
+                  <button class="btn btn-primary" id="register-as-tourist-btn" data-i18n="user_type.register_tourist">ツーリストとして登録</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card h-100">
+                <div class="card-body text-center">
+                  <i class="fas fa-map-marked-alt fa-3x mb-3 text-success"></i>
+                  <h5 class="card-title" data-i18n="user_type.guide">ガイド</h5>
+                  <p class="card-text" data-i18n="user_type.guide_desc">あなたの地元を案内したい方</p>
+                  <button class="btn btn-success" id="register-as-guide-btn" data-i18n="user_type.register_guide">ガイドとして登録</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ガイド登録モーダル -->
+  <div class="modal fade" id="registerGuideModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" data-i18n="register.guide_title">ガイド登録</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="guide-registration-form">
+            <!-- 基本情報 -->
+            <h6 class="fw-bold mb-3" data-i18n="register.basic_info">基本情報</h6>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-name" class="form-label" data-i18n="register.name">氏名</label>
+                  <input type="text" class="form-control" id="guide-name" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-email" class="form-label" data-i18n="register.email">メールアドレス</label>
+                  <input type="email" class="form-control" id="guide-email" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-password" class="form-label" data-i18n="register.password">パスワード</label>
+                  <input type="password" class="form-control" id="guide-password" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-confirm-password" class="form-label" data-i18n="register.confirm_password">パスワード（確認）</label>
+                  <input type="password" class="form-control" id="guide-confirm-password" required>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-phone" class="form-label" data-i18n="register.phone">電話番号</label>
+                  <input type="tel" class="form-control" id="guide-phone" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-birthdate" class="form-label" data-i18n="register.birthdate">生年月日</label>
+                  <input type="date" class="form-control" id="guide-birthdate" required>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 電話番号認証 -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="form-label" data-i18n="register.phone_verification">電話番号認証</label>
+                  <div class="input-group">
+                    <span class="input-group-text">+81</span>
+                    <input type="tel" class="form-control" id="verification-phone" placeholder="電話番号（ハイフンなし）">
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- ガイド情報 -->
+            <h6 class="fw-bold mb-3 mt-4" data-i18n="register.guide_info">ガイド情報</h6>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-location" class="form-label" data-i18n="register.location">活動地域</label>
+                  <input type="text" class="form-control" id="guide-location" required>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="guide-languages" class="form-label" data-i18n="register.languages">対応言語</label>
+                  <select class="form-select" id="guide-languages" multiple required>
+                    <option value="ja">日本語</option>
+                    <option value="en">英語</option>
+                    <option value="zh">中国語</option>
+                    <option value="ko">韓国語</option>
+                    <option value="es">スペイン語</option>
+                    <option value="fr">フランス語</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="guide-bio" class="form-label" data-i18n="register.bio">自己紹介</label>
+              <textarea class="form-control" id="guide-bio" rows="3" required></textarea>
+            </div>
+            
+            <div class="mb-3">
+              <label for="guide-specialties" class="form-label" data-i18n="register.specialties">得意な案内分野</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="history" id="specialty-history">
+                    <label class="form-check-label" for="specialty-history" data-i18n="specialties.history">歴史・文化</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="nature" id="specialty-nature">
+                    <label class="form-check-label" for="specialty-nature" data-i18n="specialties.nature">自然・アウトドア</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="food" id="specialty-food">
+                    <label class="form-check-label" for="specialty-food" data-i18n="specialties.food">グルメ・食文化</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="art" id="specialty-art">
+                    <label class="form-check-label" for="specialty-art" data-i18n="specialties.art">芸術・伝統工芸</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="nightlife" id="specialty-nightlife">
+                    <label class="form-check-label" for="specialty-nightlife" data-i18n="specialties.nightlife">ナイトライフ</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="shopping" id="specialty-shopping">
+                    <label class="form-check-label" for="specialty-shopping" data-i18n="specialties.shopping">ショッピング</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 証明書類 -->
+            <h6 class="fw-bold mb-3 mt-4" data-i18n="register.documents">証明書類</h6>
+            <div class="mb-3">
+              <label for="id-document" class="form-label" data-i18n="register.id_document">身分証明書</label>
+              <input type="file" class="form-control" id="id-document" required>
+              <div class="form-text" data-i18n="register.id_document_help">運転免許証、パスポート、マイナンバーカードのいずれか</div>
+            </div>
+            
+            <!-- 注意事項と同意 -->
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" id="guide-terms" required>
+              <label class="form-check-label" for="guide-terms" data-i18n="register.terms">利用規約とプライバシーポリシーに同意します</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">キャンセル</button>
+          <button type="button" class="btn btn-primary" id="submit-guide-registration" data-i18n="common.register">登録する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Feather Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  
+  <!-- Custom Scripts -->
+  <script src="guideModal.js"></script>
+  <script src="pure_phone_auth.js"></script>
+
+  <script>
+    // Featherアイコンの初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      feather.replace();
+      
+      // ユーザータイプモーダルを表示
+      document.getElementById('show-user-type-modal').addEventListener('click', function() {
+        var modal = new bootstrap.Modal(document.getElementById('userTypeModal'));
+        modal.show();
+      });
+      
+      // ガイド登録ボタンのイベント
+      document.getElementById('register-as-guide-btn').addEventListener('click', function() {
+        var userTypeModal = bootstrap.Modal.getInstance(document.getElementById('userTypeModal'));
+        userTypeModal.hide();
+        
+        setTimeout(function() {
+          var guideModal = new bootstrap.Modal(document.getElementById('registerGuideModal'));
+          guideModal.show();
+        }, 500);
+      });
+    });
+  </script>
+</body>
+</html>

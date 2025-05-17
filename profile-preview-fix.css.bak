@@ -1,0 +1,92 @@
+/* 
+ * プロフィールプレビューのレイアウト修正スタイル
+ * プロフィールプレビューを右側から左側に移動し、横幅を広げる
+ */
+
+/* 基本セクションのスタイル定義 */
+.profile-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  order: -1; /* 左側に配置 */
+}
+
+/* プレビューカードのスタイル */
+.profile-preview-card {
+  background-color: #007bff;
+  border-radius: 8px;
+  color: white;
+  padding: 15px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.profile-preview-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.profile-preview-title i {
+  margin-right: 8px;
+}
+
+.profile-preview-content {
+  padding: 10px;
+  background-color: white;
+  color: #333;
+  border-radius: 5px;
+}
+
+.profile-preview-item {
+  margin-bottom: 10px;
+}
+
+.profile-preview-label {
+  font-size: 14px;
+  color: #666;
+  display: block;
+}
+
+.profile-preview-value {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* レスポンシブデザイン対応 */
+@media (max-width: 767px) {
+  .profile-preview-wrapper {
+    order: 0; /* モバイルでは通常の順序に戻す */
+    margin-top: 20px;
+  }
+}
+
+/* フレックスコンテナの調整 */
+.guide-profile-layout {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.guide-profile-layout .col-md-9 {
+  flex: 1;
+}
+
+.guide-profile-layout .profile-preview-wrapper {
+  flex: 0 0 300px; /* プレビュー部分の固定幅 */
+  margin-right: 20px;
+}
+
+/* すでにあるプロフィールプレビューを非表示にする */
+.profile-preview-original {
+  display: none !important;
+}
+
+/* 右側に表示されるプロフィールプレビューを非表示 */
+[id^="profile-preview-container"],
+.profile-preview-card-right,
+.profile-preview-section,
+div[class*="profile-preview"]:not(.profile-preview-wrapper):not(.profile-preview-card):not(.profile-preview-title):not(.profile-preview-content):not(.profile-preview-item):not(.profile-preview-label):not(.profile-preview-value) {
+  display: none !important;
+}

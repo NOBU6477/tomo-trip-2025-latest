@@ -1,0 +1,136 @@
+/**
+ * 改善されたモーダルスクロール修正CSS
+ */
+
+/* モーダルのコンテンツ部分がスクロール可能になるように */
+.modal-dialog {
+  max-height: 90vh;
+  display: flex !important;
+  flex-direction: column;
+  margin: 1.75rem auto; /* 上下の余白を確保 */
+}
+
+@media (max-height: 768px) {
+  .modal-dialog {
+    margin: 0.5rem auto; /* 小さい画面ではより狭い余白に */
+  }
+}
+
+.modal-content {
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body {
+  overflow-y: auto;
+  /* スムーズスクロール */
+  scroll-behavior: smooth;
+  /* スクロールバー関連 */
+  -ms-overflow-style: none; /* IE */
+  scrollbar-width: thin;   /* Firefox */
+  /* コンテンツが少ない場合にパディングを維持 */
+  min-height: 100px;
+  /* iOS用のスクロール修正 */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* スクロールバーのスタイリング (Webkit系) */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* モーダルのフェードイン/アウトアニメーションを改善 */
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out !important;
+  transform: scale(0.95) !important;
+}
+
+.modal.show .modal-dialog {
+  transform: none !important;
+}
+
+/* モーダルの背景を暗くする */
+.modal-backdrop {
+  opacity: 0.6 !important;
+  background-color: #000;
+}
+
+/* モーダルのボーダーを少し丸める */
+.modal-content {
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* フォーム送信時のローディングスピナーを中央に */
+.spinner-border {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* トースト通知のスタイル */
+.toast-container {
+  z-index: 9999;
+}
+
+.toast {
+  opacity: 1 !important;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* フォームエラーメッセージ */
+.alert-danger {
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* 成功メッセージ */
+.alert-success {
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* iOS特有の問題への対策 */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safariのみに適用 */
+  body.modal-open {
+    position: fixed;
+    width: 100%;
+  }
+  
+  /* iOS Safariでモーダル内のフォーム要素にフォーカスが当たった時の修正 */
+  .modal-open .modal {
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+  }
+}
+
+/* 電話確認モーダルの調整 - 通常より小さく表示 */
+#phone-verification-modal .modal-dialog {
+  max-width: 450px;
+}
+
+/* ID書類アップロードモーダルの調整 - 少し大きく表示 */
+#id-document-modal .modal-dialog {
+  max-width: 600px;
+}
+
+/* ガイド登録モーダルの調整 - 大きく表示 */
+#guide-registration-modal .modal-dialog {
+  max-width: 750px;
+}

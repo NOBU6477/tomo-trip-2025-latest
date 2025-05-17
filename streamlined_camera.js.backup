@@ -1,0 +1,1423 @@
+/**
+ * 証明写真と身分証明書のカメラ撮影機能を完全に刷新したスクリプト
+ * シンプルで確実な実装
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('ストリームラインカメラを初期化しています');
+  
+  // グローバル変数の定義
+  var mediaStream = null;        // カメラストリーム
+  var facingMode = 'environment'; // 初期カメラ向き (environment=背面, user=前面)
+  var capturedImageData = null;  // キャプチャした画像データ
+  
+  // 既存のカメラボタンを見つけてイベントリスナーを設定
+  setupAllDocumentControls();
+  
+  /**
+   * すべてのドキュメント関連コントロールを設定
+   */
+  function setupAllDocumentControls() {
+    setupCameraButtons();
+    setupFileSelectors();
+    setupRemoveButtons();
+    setupMobileFileInputs();
+    
+    // 30秒後に再度初期化（遅延ロードされる要素のため）
+    setTimeout(function() {
+      setupCameraButtons();
+      setupFileSelectors();
+      setupRemoveButtons();
+      setupMobileFileInputs();
+    }, 1000);
+  }
+  
+  /**
+   * スマホカメラ用のファイル入力を設定
+   */
+  function setupMobileFileInputs() {
+    const mobileFileInputs = document.querySelectorAll('.mobile-file-input');
+    mobileFileInputs.forEach(input => {
+      // クリックイベントがバブリングする可能性があるので、一度削除して再設定
+      input.removeEventListener('change', handleMobileFileChange);
+      input.addEventListener('change', handleMobileFileChange);
+    });
+  }
+  
+  /**
+   * スマホカメラからのファイル変更イベントハンドラ
+   */
+  function handleMobileFileChange(e) {
+    const mobileInput = this;
+    const relatedInput = findRelatedFileInput(mobileInput);
+    
+    if (relatedInput && mobileInput.files && mobileInput.files.length > 0) {
+      // モバイル入力からメインファイル入力にファイルをコピー
+      const file = mobileInput.files[0];
+      transferFileToInput(relatedInput, file);
+      
+      // メインファイル入力のchange処理を呼び出す
+      handleFileSelection(relatedInput);
+    }
+  }
+  
+  /**
+   * モバイルファイル入力に関連する通常のファイル入力を探す
+   */
+  function findRelatedFileInput(mobileInput) {
+    // 名前が _mobile で終わる場合、それを取り除いたものが関連ファイル入力の名前
+    const mobileName = mobileInput.name;
+    const mainName = mobileName.replace('_mobile', '');
+    
+    // メインのファイル入力を探索
+    const mainInput = document.querySelector(`input[name="${mainName}"]`);
+    if (mainInput) {
+      return mainInput;
+    }
+    
+    // 親要素内の別のファイル入力を探す
+    const section = mobileInput.closest('.document-upload-section, .mb-3, .form-group');
+    if (section) {
+      return section.querySelector('input.file-input');
+    }
+    
+    return null;
+  }
+  
+  /**
+   * ファイルをあるInputから別のInputに転送
+   */
+  function transferFileToInput(targetInput, file) {
+    if (!targetInput || !file) return;
+    
+    // DataTransferオブジェクトを使用してFileListを作成
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    targetInput.files = dataTransfer.files;
+    
+    // 変更イベントを発火
+    const event = new Event('change', { bubbles: true });
+    targetInput.dispatchEvent(event);
+  }
+  
+  /**
+   * カメラボタンを設定
+   */
+  function setupCameraButtons() {
+    console.log('カメラボタンの設定を開始...');
+    // 標準セレクタだけを使用（:hasや:containsは使わない）
+    const cameraButtonsList = Array.from(document.querySelectorAll('.camera-btn, [id$="-camera-btn"], button.btn-camera, button.camera-btn'));
+    
+    console.log(`初期検出: ${cameraButtonsList.length}個のカメラボタンを検出しました`);
+    
+    // 追加でbutton要素を手動でフィルタリング
+    const allButtons = document.querySelectorAll('button, .btn');
+    allButtons.forEach(button => {
+      if (!cameraButtonsList.includes(button)) {
+        // クラス名やIDに「カメラ」が含まれているか確認
+        const hasCamera = button.className.includes('camera') || 
+                         (button.id && button.id.includes('camera'));
+        
+        // アイコン要素を含むかチェック
+        const hasIcon = button.querySelector('.bi-camera, .fa-camera');
+        
+        // テキスト内容で判断
+        const buttonText = button.textContent.trim();
+        const hasCameraText = buttonText.includes('カメラで撮影');
+        
+        if (hasCamera || hasIcon || hasCameraText) {
+          cameraButtonsList.push(button);
+        }
+      }
+    });
+    
+    console.log(`検索後合計: ${cameraButtonsList.length}個のカメラボタンを検出しました`);
+    
+    cameraButtonsList.forEach(button => {
+      // 既存のイベントリスナーをすべて削除
+      const newButton = button.cloneNode(true);
+      if (button.parentNode) {
+        button.parentNode.replaceChild(newButton, button);
+      }
+      
+      // ボタンが非表示の場合は表示する
+      if (newButton.classList.contains('d-none')) {
+        newButton.classList.remove('d-none');
+      }
+      
+      // 新しいイベントリスナーを設定
+      newButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('カメラボタンがクリックされました:', this.textContent.trim());
+        
+        // ターゲットとなるファイル入力を特定
+        const targetInput = findAssociatedFileInput(this);
+        if (targetInput) {
+          console.log('関連するファイル入力を見つけました:', targetInput.id || 'ID無し');
+          openCameraInterface(targetInput);
+        } else {
+          console.error('関連するファイル入力が見つかりません');
+          
+          // エラーが発生した場合でも処理を継続
+          // どれか1つのファイル入力を見つけてカメラモーダルを表示する
+          const anyFileInput = document.querySelector('input[type="file"]');
+          if (anyFileInput) {
+            console.log('代替のファイル入力を使用します');
+            openCameraInterface(anyFileInput);
+          } else {
+            // モーダルの生成を試みる
+            console.log('代替手段でカメラモーダルを表示します');
+            openCameraInterface(null, this);
+          }
+        }
+      });
+    });
+    
+    // テキストでも検索 (ID/クラスが付いていないボタン用)
+    document.querySelectorAll('button, .btn, a.btn').forEach(btn => {
+      if (!btn.classList.contains('camera-btn') && !btn.id?.includes('camera')) {
+        const btnText = btn.textContent.trim();
+        if (btnText.includes('カメラ') && btnText.includes('撮影')) {
+          // カメラボタンとして追加設定
+          const newBtn = btn.cloneNode(true);
+          if (btn.parentNode) {
+            btn.parentNode.replaceChild(newBtn, btn);
+          }
+          
+          newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('テキスト検出したカメラボタンがクリックされました');
+            
+            const targetInput = findAssociatedFileInput(this);
+            if (targetInput) {
+              openCameraInterface(targetInput);
+            } else {
+              const anyFileInput = document.querySelector('input[type="file"]');
+              if (anyFileInput) {
+                openCameraInterface(anyFileInput);
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+  
+  /**
+   * ファイル選択ボタン・ラベルを設定
+   */
+  function setupFileSelectors() {
+    // ファイル入力要素のchangeイベントハンドラを設定
+    const fileInputs = document.querySelectorAll('input[type="file"]');
+    fileInputs.forEach(input => {
+      // クリックイベントがバブリングする可能性があるので、一度削除して再設定
+      input.removeEventListener('change', handleFileChange);
+      input.addEventListener('change', handleFileChange);
+    });
+    
+    // ファイル選択ボタン（標準セレクタのみ使用）
+    const fileButtons = document.querySelectorAll('.file-btn, .btn-file, [id$="-file-btn"]');
+    const fileButtonList = Array.from(fileButtons);
+    
+    // ファイルアイコンを持つボタンを追加
+    document.querySelectorAll('button, .btn').forEach(button => {
+      if (!fileButtonList.includes(button)) {
+        // クラス名やIDでファイル選択ボタンと判断
+        const isFileButton = 
+            button.classList.contains('file') || 
+            (button.id && button.id.includes('file'));
+            
+        // ボタン内のアイコン要素をチェック
+        const hasFileIcon = button.querySelector('.bi-file-earmark-image') !== null || 
+                           button.querySelector('.fa-file-image') !== null;
+                           
+        // テキスト内容から判断
+        const buttonText = button.textContent.trim().toLowerCase();
+        const hasFileText = buttonText.includes('ファイル') && 
+                          (buttonText.includes('選択') || buttonText.includes('アップロード'));
+        
+        if (isFileButton || hasFileIcon || hasFileText) {
+          fileButtonList.push(button);
+        }
+      }
+    });
+    fileButtonList.forEach(button => {
+      const newButton = button.cloneNode(true);
+      if (button.parentNode) {
+        button.parentNode.replaceChild(newButton, button);
+      }
+      
+      newButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('ファイル選択ボタンがクリックされました:', this.textContent.trim());
+        const fileInput = findAssociatedFileInput(this);
+        if (fileInput) {
+          console.log('関連するファイル入力を見つけました:', fileInput.id || 'ID無し');
+          fileInput.click();
+        } else {
+          console.error('関連するファイル入力が見つかりません');
+        }
+      });
+    });
+  }
+  
+  /**
+   * ファイル変更イベントハンドラ
+   */
+  function handleFileChange(e) {
+    handleFileSelection(this);
+  }
+  
+  /**
+   * 削除ボタンを設定
+   */
+  function setupRemoveButtons() {
+    console.log('削除ボタンの設定を開始...');
+    // 標準セレクタだけを使用
+    const removeButtons = document.querySelectorAll('.remove-btn, [id$="-remove-btn"], .btn-trash, button.delete-btn');
+    const removeButtonsList = Array.from(removeButtons);
+    
+    // 追加でbutton要素を手動でフィルタリング（アイコンを持つボタンなど）
+    const allButtons = document.querySelectorAll('button, .btn');
+    allButtons.forEach(button => {
+      if (!removeButtonsList.includes(button)) {
+        // ボタンのクラス名やIDから判断
+        const isTrashButton = 
+            button.classList.contains('trash') || 
+            button.classList.contains('delete') || 
+            (button.id && (button.id.includes('trash') || button.id.includes('delete') || button.id.includes('remove')));
+        
+        // ボタン内のアイコン要素をチェック
+        const hasTrashIcon = button.querySelector('.bi-trash') !== null || 
+                             button.querySelector('.fa-trash') !== null;
+        
+        // テキスト内容から判断
+        const buttonText = button.textContent.trim().toLowerCase();
+        const hasTrashText = buttonText.includes('削除') || 
+                             buttonText.includes('消去') ||
+                             buttonText.includes('クリア');
+        
+        if (isTrashButton || hasTrashIcon || hasTrashText) {
+          removeButtonsList.push(button);
+        }
+      }
+    });
+    
+    console.log(`${removeButtonsList.length}個の削除ボタンを検出しました`);
+    
+    removeButtonsList.forEach(button => {
+      const newButton = button.cloneNode(true);
+      if (button.parentNode) {
+        button.parentNode.replaceChild(newButton, button);
+      }
+      
+      newButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('削除ボタンがクリックされました:', this.textContent.trim());
+        removeUploadedFile(findAssociatedFileInput(this));
+      });
+    });
+  }
+  
+
+  
+  /**
+   * ボタンに関連するファイル入力要素を特定
+   */
+  function findAssociatedFileInput(button) {
+    console.log('関連するファイル入力要素を検索中...');
+    
+    // ボタンが無い場合
+    if (!button) {
+      console.error('ボタンが提供されていません');
+      return document.querySelector('input[type="file"]');
+    }
+    
+    // ボタンIDに基づく特定
+    const buttonId = button.id || '';
+    console.log('ボタンID:', buttonId);
+    
+    // IDベースでの詳細マッチング
+    if (buttonId) {
+      // 各種ID形式に対応
+      if (buttonId.includes('id-photo')) {
+        const input = document.getElementById('id-photo-input');
+        if (input) return input;
+      } else if (buttonId.includes('passport')) {
+        const input = document.querySelector('#passport-upload input[type="file"]');
+        if (input) return input;
+      } else if (buttonId.includes('license-back') || buttonId.includes('license_back')) {
+        const input = document.querySelector('input[name="license-back"], input[name="license-photo-back"]');
+        if (input) return input;
+      } else if (buttonId.includes('license')) {
+        const input = document.querySelector('#license-upload input[type="file"]') || 
+                     document.querySelector('input[name="license-front"], input[name="license-photo-front"]');
+        if (input) return input;
+      } else if (buttonId.includes('idcard')) {
+        const input = document.querySelector('#idcard-upload input[type="file"]');
+        if (input) return input;
+      } else if (buttonId.includes('residencecard')) {
+        const input = document.querySelector('#residencecard-upload input[type="file"]');
+        if (input) return input;
+      }
+      
+      // IDからファイルIDを推測
+      const possibleFileIds = [
+        buttonId.replace('camera', 'file'),
+        buttonId.replace('camera-btn', 'file'),
+        buttonId.replace('-camera-btn', '-file'),
+        buttonId.replace('-camera-btn', '_file'),
+        buttonId.replace('-camera', '-file'),
+        buttonId + '-file'
+      ];
+      
+      for (const id of possibleFileIds) {
+        const input = document.getElementById(id);
+        if (input && input.type === 'file') {
+          console.log('ID一致でファイル入力を見つけました:', id);
+          return input;
+        }
+      }
+    }
+    
+    // ボタンテキストに基づく検索
+    const buttonText = button.textContent.trim();
+    console.log('ボタンテキスト:', buttonText);
+    
+    if (buttonText.includes('運転免許証') && buttonText.includes('表面')) {
+      const input = document.querySelector('input[name="license-front"], input[name="license-photo-front"]');
+      if (input) return input;
+    } else if (buttonText.includes('運転免許証') && buttonText.includes('裏面')) {
+      const input = document.querySelector('input[name="license-back"], input[name="license-photo-back"]');
+      if (input) return input;
+    } else if (buttonText.includes('パスポート')) {
+      const input = document.querySelector('#passport-upload input[type="file"]');
+      if (input) return input;
+    }
+    
+    // データ属性を探す
+    const targetInput = button.getAttribute('data-target') || button.getAttribute('data-input');
+    if (targetInput) {
+      const input = document.getElementById(targetInput) || document.querySelector(targetInput);
+      if (input && input.type === 'file') {
+        console.log('データ属性一致でファイル入力を見つけました:', targetInput);
+        return input;
+      }
+    }
+    
+    // 親要素内を検索（より広く）
+    let section = button.closest('.document-upload-section, .mb-3, .form-group, .card');
+    if (section) {
+      const input = section.querySelector('input[type="file"]');
+      if (input) {
+        console.log('親セクション内でファイル入力を見つけました');
+        return input;
+      }
+    }
+    
+    // ボタンの兄弟要素を探す
+    if (button.parentNode) {
+      const siblings = Array.from(button.parentNode.children);
+      for (const sibling of siblings) {
+        if (sibling.tagName === 'INPUT' && sibling.type === 'file') {
+          console.log('兄弟要素からファイル入力を見つけました');
+          return sibling;
+        }
+      }
+    }
+    
+    // さらに上位の親から検索
+    const parentForm = button.closest('form');
+    if (parentForm) {
+      // ボタンの近くにある可能性が高いため、位置的に近いファイル入力を探す
+      const inputs = Array.from(parentForm.querySelectorAll('input[type="file"]'));
+      if (inputs.length > 0) {
+        console.log('フォーム内でファイル入力を見つけました');
+        return inputs[0]; // 最初のファイル入力を使用
+      }
+    }
+    
+    // 最終手段：ページ内の最初のファイル入力を使用
+    console.warn('関連するファイル入力が見つからないため、最初のファイル入力を使用します');
+    return document.querySelector('input[type="file"]');
+  }
+  
+  /**
+   * カメラインターフェースを開く
+   */
+  function openCameraInterface(fileInput, sourceButton) {
+    console.log('カメラインターフェースを開始...');
+    
+    // カメラ機能が初期化されているか確認
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error('このブラウザではカメラがサポートされていません');
+      alert('お使いのブラウザではカメラ機能がサポートされていません。\n別のブラウザでお試しいただくか、ファイルをアップロードしてください。');
+      return;
+    }
+    
+    // 既存のモーダルを削除
+    removeExistingCameraModals();
+    
+    // fileInputがない場合は一時的なものを作成
+    let tempFileInput = false;
+    if (!fileInput) {
+      console.log('ファイル入力が提供されていないため、一時的なものを作成します');
+      fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+      fileInput.id = 'temp-file-input-' + Date.now();
+      fileInput.style.display = 'none';
+      document.body.appendChild(fileInput);
+      tempFileInput = true;
+    }
+    
+    // 新しいカメラモーダルを作成
+    const modal = document.createElement('div');
+    modal.className = 'modal fade camera-modal';
+    modal.id = 'streamlined-camera-modal';
+    modal.setAttribute('tabindex', '-1');
+    modal.setAttribute('aria-hidden', 'true');
+    
+    // ラベルテキストを決定
+    let captureText = '写真を撮影';
+    let guideText = '書類全体がフレーム内に収まるようにしてください';
+    let documentType = '';
+    
+    // ファイル入力または元のボタンからテキストを推測
+    if (fileInput) {
+      const sectionId = fileInput.closest('.document-upload-section')?.id || '';
+      const isBackSide = fileInput.name?.includes('back') || sectionId.includes('back');
+      const isFrontSide = fileInput.name?.includes('front') || sectionId.includes('front');
+      
+      if (fileInput.id === 'id-photo-input') {
+        captureText = '証明写真を撮影';
+        guideText = 'あなたの顔がフレーム内に収まるようにしてください';
+        documentType = 'id-photo';
+      } else if (sectionId.includes('passport') || (sourceButton && sourceButton.textContent.includes('パスポート'))) {
+        captureText = 'パスポートを撮影';
+        documentType = 'passport';
+      } else if (sectionId.includes('license') || (sourceButton && sourceButton.textContent.includes('運転免許証'))) {
+        if (isBackSide || (sourceButton && sourceButton.textContent.includes('裏面'))) {
+          captureText = '運転免許証(裏面)を撮影';
+          documentType = 'license-back';
+        } else {
+          captureText = '運転免許証(表面)を撮影';
+          documentType = 'license-front';
+        }
+      } else if (sectionId.includes('idcard') || (sourceButton && sourceButton.textContent.includes('マイナンバー'))) {
+        if (isBackSide || (sourceButton && sourceButton.textContent.includes('裏面'))) {
+          captureText = 'マイナンバーカード(裏面)を撮影';
+          documentType = 'idcard-back';
+        } else {
+          captureText = 'マイナンバーカード(表面)を撮影';
+          documentType = 'idcard-front';
+        }
+      } else if (sectionId.includes('residencecard') || (sourceButton && sourceButton.textContent.includes('在留'))) {
+        if (isBackSide || (sourceButton && sourceButton.textContent.includes('裏面'))) {
+          captureText = '在留カード(裏面)を撮影';
+          documentType = 'residencecard-back';
+        } else {
+          captureText = '在留カード(表面)を撮影';
+          documentType = 'residencecard-front';
+        }
+      } else if (sourceButton) {
+        // ボタンのテキストから文脈を推測
+        const btnText = sourceButton.textContent.trim().toLowerCase();
+        if (btnText.includes('運転免許証') || btnText.includes('免許証')) {
+          if (btnText.includes('裏面')) {
+            captureText = '運転免許証(裏面)を撮影';
+            documentType = 'license-back';
+          } else {
+            captureText = '運転免許証(表面)を撮影';
+            documentType = 'license-front';
+          }
+        } else if (btnText.includes('パスポート')) {
+          captureText = 'パスポートを撮影';
+          documentType = 'passport';
+        }
+      }
+    }
+    
+    modal.innerHTML = `
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header bg-gradient-primary text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-camera-fill me-2"></i>${captureText}
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-0 position-relative">
+            <!-- カメラプレビュー -->
+            <div class="camera-container">
+              <video id="camera-video" autoplay playsinline class="w-100"></video>
+              <canvas id="camera-canvas" class="d-none"></canvas>
+              
+              <!-- キャプチャオーバーレイ -->
+              <div id="capture-overlay" class="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
+                <div class="capture-guide">
+                  <div class="guide-text">
+                    ${fileInput.id === 'id-photo-input' ? 
+                      'あなたの顔がフレーム内に収まるようにしてください' : 
+                      '書類全体がフレーム内に収まるようにしてください'}
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 撮影コントロール -->
+              <div id="camera-controls" class="position-absolute bottom-0 start-0 w-100 py-3 px-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <button id="switch-camera-btn" class="btn btn-light rounded-circle">
+                    <i class="bi bi-arrow-repeat"></i>
+                  </button>
+                  <button id="capture-btn" class="btn btn-light rounded-circle capture-button">
+                    <span class="capture-icon"></span>
+                  </button>
+                  <button id="camera-cancel-btn" class="btn btn-light rounded-circle" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- 撮影結果表示 -->
+              <div id="capture-result" class="position-absolute top-0 start-0 w-100 h-100 bg-light d-none">
+                <img id="captured-image" class="img-fluid capture-preview" src="" alt="撮影画像">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer d-none" id="capture-footer">
+            <button type="button" class="btn btn-secondary" id="retake-btn">
+              <i class="bi bi-arrow-counterclockwise me-1"></i>撮り直す
+            </button>
+            <button type="button" class="btn btn-primary" id="use-photo-btn">
+              <i class="bi bi-check-lg me-1"></i>この写真を使用
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // スタイルを追加
+    addCameraStyles();
+    
+    // モーダルを表示してカメラを起動
+    const bsModal = new bootstrap.Modal(document.getElementById('streamlined-camera-modal'));
+    
+    modal.addEventListener('shown.bs.modal', function() {
+      startCamera(fileInput);
+    });
+    
+    modal.addEventListener('hidden.bs.modal', function() {
+      stopCamera();
+      setTimeout(() => {
+        modal.remove();
+      }, 300);
+    });
+    
+    bsModal.show();
+  }
+  
+  /**
+   * カメラスタイルをページに追加
+   */
+  function addCameraStyles() {
+    if (document.getElementById('streamlined-camera-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'streamlined-camera-styles';
+    style.textContent = `
+      .camera-container {
+        position: relative;
+        background-color: #000;
+        overflow: hidden;
+        max-height: 70vh;
+      }
+      
+      #camera-video {
+        width: 100%;
+        max-height: 70vh;
+        object-fit: cover;
+        background-color: #000;
+      }
+      
+      .capture-guide {
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        width: 85%;
+        height: 70%;
+        position: relative;
+      }
+      
+      .guide-text {
+        position: absolute;
+        bottom: -40px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+      }
+      
+      #camera-controls {
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+      }
+      
+      .capture-button {
+        width: 70px;
+        height: 70px;
+        padding: 0;
+        border: 3px solid white;
+        background-color: rgba(255, 255, 255, 0.3);
+        position: relative;
+      }
+      
+      .capture-button:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+      
+      .capture-icon {
+        width: 54px;
+        height: 54px;
+        background-color: white;
+        border-radius: 50%;
+        display: block;
+      }
+      
+      #switch-camera-btn, #camera-cancel-btn {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      #switch-camera-btn i, #camera-cancel-btn i {
+        font-size: 1.5rem;
+      }
+      
+      #capture-result {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .capture-preview {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+      }
+      
+      .modal-header.bg-gradient-primary {
+        background: linear-gradient(135deg, #0d6efd, #0a58ca);
+      }
+      
+      .preview-success {
+        color: #198754;
+        background-color: rgba(25, 135, 84, 0.1);
+        border-radius: 4px;
+        padding: 5px 10px;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.875rem;
+      }
+      
+      .document-preview-img {
+        max-height: 200px;
+        object-fit: contain;
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+      }
+    `;
+    
+    document.head.appendChild(style);
+  }
+  
+  // グローバル変数を使用
+  // mediaStreamとfacingModeはすでにスクリプトのトップレベルで宣言されています
+  
+  /**
+   * カメラを起動
+   */
+  function startCamera(fileInput) {
+    console.log('カメラを起動しています...');
+    const video = document.getElementById('camera-video');
+    const captureBtn = document.getElementById('capture-btn');
+    const switchBtn = document.getElementById('switch-camera-btn');
+    
+    if (!video) {
+      console.error('カメラビデオ要素が見つかりません');
+      return;
+    }
+    
+    // カメラ向きの切り替えボタンのイベント設定
+    if (switchBtn) {
+      switchBtn.addEventListener('click', function() {
+        // カメラストリームを停止
+        if (mediaStream) {
+          mediaStream.getTracks().forEach(track => track.stop());
+        }
+        
+        // カメラ向きを切り替え
+        facingMode = facingMode === 'user' ? 'environment' : 'user';
+        console.log('カメラ向きを切り替えました:', facingMode);
+        
+        // 再度カメラを起動
+        startCamera(fileInput);
+      });
+    }
+    
+    // 撮影ボタンの設定
+    if (captureBtn) {
+      captureBtn.addEventListener('click', function() {
+        console.log('撮影ボタンがクリックされました');
+        capturePhoto();
+      });
+    }
+    
+    // カメラ設定（より柔軟な設定に変更）
+    const constraints = {
+      video: {
+        facingMode: facingMode,
+        width: { ideal: 1280 },  // 解像度を下げて互換性を向上
+        height: { ideal: 720 }
+      },
+      audio: false
+    };
+    
+    // エラーハンドリングを強化
+    try {
+      // カメラが利用可能かどうかをまず確認
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // フォールバックとしてデモモードを提供
+        console.error('このブラウザではカメラAPIがサポートされていません');
+        showCameraFallback(fileInput);
+        return;
+      }
+      
+      // カメラを起動
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then(function(stream) {
+          mediaStream = stream;
+          video.srcObject = stream;
+          
+          // ビデオが正常に読み込まれたことを確認
+          video.onloadedmetadata = function() {
+            video.play().catch(e => {
+              console.error('ビデオ再生エラー:', e);
+              showCameraFallback(fileInput);
+            });
+          };
+          
+          // エラーハンドリング
+          video.onerror = function() {
+            console.error('ビデオ要素エラー');
+            showCameraFallback(fileInput);
+          };
+          
+          // 撮影ボタンのイベントリスナー - 既存のハンドラを削除して再設定
+          const newCaptureBtn = captureBtn.cloneNode(true);
+          captureBtn.parentNode.replaceChild(newCaptureBtn, captureBtn);
+          newCaptureBtn.addEventListener('click', function() {
+            capturePhoto(fileInput);
+          });
+          
+          // カメラ切り替えボタンのイベントリスナー
+          const newSwitchBtn = switchBtn.cloneNode(true);
+          switchBtn.parentNode.replaceChild(newSwitchBtn, switchBtn);
+          newSwitchBtn.addEventListener('click', function() {
+            facingMode = facingMode === 'environment' ? 'user' : 'environment';
+            stopCamera();
+            startCamera(fileInput);
+          });
+        })
+        .catch(function(err) {
+          console.error('カメラの起動に失敗しました:', err);
+          showCameraFallback(fileInput);
+        });
+    } catch (e) {
+      console.error('カメラの初期化中にエラーが発生しました:', e);
+      showCameraFallback(fileInput);
+    }
+  }
+
+  /**
+   * カメラが利用できない場合のフォールバック表示
+   */
+  function showCameraFallback(fileInput) {
+    const container = document.querySelector('.camera-container');
+    if (!container) return;
+    
+    // デモモードのUIを表示
+    container.innerHTML = `
+      <div class="camera-fallback p-4 text-center">
+        <div class="alert alert-warning mb-3">
+          <h5><i class="bi bi-camera-video-off me-2"></i>カメラにアクセスできません</h5>
+          <p class="mb-1">以下の理由が考えられます：</p>
+          <ul class="text-start small mb-0">
+            <li>カメラへのアクセス許可が拒否されています</li>
+            <li>デバイスにカメラが接続されていません</li>
+            <li>別のアプリがカメラを使用しています</li>
+          </ul>
+        </div>
+        <div class="mb-3">
+          <p>代わりにファイルをアップロードできます：</p>
+          <label class="btn btn-primary">
+            <i class="bi bi-file-earmark-image me-2"></i>ファイルを選択
+            <input type="file" class="d-none" accept="image/*" id="fallback-file-input">
+          </label>
+        </div>
+      </div>
+    `;
+    
+    // ファイル選択のイベントリスナー
+    const fallbackInput = document.getElementById('fallback-file-input');
+    if (fallbackInput) {
+      fallbackInput.addEventListener('change', function(e) {
+        if (this.files && this.files[0]) {
+          // ファイルを元のinputに転送
+          transferFileToInput(fileInput, this.files[0]);
+          
+          // モーダルを閉じる
+          const modal = bootstrap.Modal.getInstance(document.getElementById('streamlined-camera-modal'));
+          if (modal) {
+            modal.hide();
+          }
+        }
+      });
+    }
+  }
+  
+  /**
+   * カメラの写真を撮影
+   */
+  function capturePhoto(fileInput) {
+    const video = document.getElementById('camera-video');
+    const canvas = document.getElementById('camera-canvas');
+    const captureBtn = document.getElementById('capture-btn');
+    
+    if (!video || !canvas) {
+      console.error('必要な要素が見つかりません。video:', !!video, 'canvas:', !!canvas);
+      return;
+    }
+    
+    // キャンバスの設定
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    
+    // 映像をキャンバスに描画
+    try {
+      const context = canvas.getContext('2d');
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    } catch (err) {
+      console.error('画像キャプチャ中にエラーが発生しました:', err);
+      alert('カメラ画像のキャプチャに失敗しました。もう一度お試しください。');
+      return;
+    }
+    
+    // 撮影結果を表示
+    const captureResult = document.getElementById('capture-result');
+    const capturedImage = document.getElementById('captured-image');
+    const captureOverlay = document.getElementById('capture-overlay');
+    const cameraControls = document.getElementById('camera-controls');
+    const captureFooter = document.getElementById('capture-footer');
+    
+    if (!capturedImage) {
+      console.error('撮影画像表示要素が見つかりません');
+      return;
+    }
+    
+    // 画像をセット
+    try {
+      capturedImage.src = canvas.toDataURL('image/jpeg');
+    } catch (err) {
+      console.error('画像の変換中にエラーが発生しました:', err);
+      return;
+    }
+    
+    // 表示を切り替え
+    if (captureResult) captureResult.classList.remove('d-none');
+    if (captureOverlay) captureOverlay.classList.add('d-none');
+    if (cameraControls) cameraControls.classList.add('d-none');
+    if (captureFooter) captureFooter.classList.remove('d-none');
+    
+    // 撮り直しボタンのイベントリスナー
+    const retakeBtn = document.getElementById('retake-btn');
+    if (retakeBtn) {
+      retakeBtn.onclick = function() {
+        if (captureResult) captureResult.classList.add('d-none');
+        if (captureOverlay) captureOverlay.classList.remove('d-none');
+        if (cameraControls) cameraControls.classList.remove('d-none');
+        if (captureFooter) captureFooter.classList.add('d-none');
+      };
+    }
+    
+    // 写真を使用ボタンのイベントリスナー
+    const usePhotoBtn = document.getElementById('use-photo-btn');
+    if (usePhotoBtn) {
+      usePhotoBtn.onclick = function() {
+        // キャンバスから画像ファイルを生成
+      canvas.toBlob(function(blob) {
+        try {
+          // DataTransferを使ってFileListを生成
+          const file = new File([blob], `camera_${Date.now()}.jpg`, { type: 'image/jpeg' });
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          
+          if (fileInput && fileInput instanceof HTMLInputElement) {
+            fileInput.files = dataTransfer.files;
+            
+            // 変更イベントを発火
+            const event = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(event);
+          } else {
+            console.error('有効なファイル入力が見つかりません');
+          }
+          
+          // モーダルを閉じる
+          const modal = bootstrap.Modal.getInstance(document.getElementById('streamlined-camera-modal'));
+          if (modal) {
+            modal.hide();
+          } else {
+            removeExistingCameraModals();
+          }
+        } catch (err) {
+          console.error('写真の適用中にエラーが発生しました:', err);
+          alert('写真の適用中にエラーが発生しました。もう一度お試しください。');
+          removeExistingCameraModals();
+        }
+      }, 'image/jpeg', 0.92);
+    };
+  }
+  
+  /**
+   * カメラを停止
+   */
+  function stopCamera() {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(track => {
+        track.stop();
+      });
+      mediaStream = null;
+    }
+  }
+  
+  /**
+   * 既存のカメラモーダルを削除
+   */
+  function removeExistingCameraModals() {
+    const existingModals = document.querySelectorAll('.camera-modal, #modern-camera-modal, #streamlined-camera-modal');
+    existingModals.forEach(modal => {
+      const bsModal = bootstrap.Modal.getInstance(modal);
+      if (bsModal) {
+        bsModal.hide();
+      }
+      setTimeout(() => {
+        if (modal.parentNode) {
+          modal.parentNode.removeChild(modal);
+        }
+      }, 300);
+    });
+  }
+  
+  /**
+   * ファイル選択時の処理
+   */
+  function handleFileSelection(fileInput) {
+    console.log('ファイル選択処理を開始...');
+    
+    if (!fileInput) {
+      console.error('fileInputが提供されていません');
+      return;
+    }
+    
+    if (!fileInput.files || fileInput.files.length === 0) {
+      console.log('ファイルが選択されていません');
+      return;
+    }
+    
+    const file = fileInput.files[0];
+    console.log('選択されたファイル:', file.name, 'サイズ:', Math.round(file.size / 1024), 'KB');
+    
+    // セクションを探す（より広範囲に検索）
+    const section = fileInput.closest('.document-upload-section, .mb-3, .form-group, .card, .document-upload');
+    if (!section) {
+      console.error('関連するセクションが見つかりません');
+      return;
+    }
+    
+    // ファイル情報の表示
+    console.log('ファイル選択処理:', fileInput.id || 'ID無し', file.name);
+    
+    // プレビュー要素を特定 - より広範囲のセレクタと多段階検索
+    let previewImg = section.querySelector('img.preview-img, img.document-preview-img, img[id$="-preview"], img.preview, img.img-preview');
+    let previewContainer = section.querySelector('.preview-container, .document-preview, [id$="-preview-container"], .preview, .img-preview-container');
+    let placeholder = section.querySelector('.placeholder-container, .upload-prompt, .document-prompt, .no-file-selected');
+    
+    // セクションID/クラスから特定の要素を検索
+    const sectionId = section.id || '';
+    if (sectionId) {
+      console.log('セクションID:', sectionId);
+      // IDベースの特別な処理
+      if (sectionId.includes('license')) {
+        const isBackSide = fileInput.name?.includes('back');
+        if (isBackSide) {
+          previewImg = document.querySelector('#license-back-preview, #license-back-img');
+        } else {
+          previewImg = document.querySelector('#license-front-preview, #license-front-img');
+        }
+      } else if (sectionId.includes('passport')) {
+        previewImg = document.querySelector('#passport-preview, #passport-img');
+      } else if (sectionId.includes('idcard')) {
+        previewImg = document.querySelector('#idcard-preview, #idcard-img');
+      } else if (sectionId.includes('id-photo')) {
+        previewImg = document.querySelector('#id-photo-preview, #photo-preview');
+      }
+    }
+    
+    // まだプレビュー画像が見つからなければ、より広範囲に検索
+    if (!previewImg) {
+      console.log('通常の検索でプレビューが見つかりません、より広範囲に検索します');
+      previewImg = section.querySelector('img:not(.icon):not(.logo)');
+      
+      // セクション外にも検索を広げる（特定のケース）
+      if (!previewImg && fileInput.id) {
+        const relatedId = fileInput.id.replace('input', 'preview').replace('file', 'preview');
+        previewImg = document.getElementById(relatedId);
+      }
+    }
+    
+    // さらに検索範囲を広げる
+    if (!previewImg) {
+      previewImg = section.querySelector('img');
+    }
+    
+    // 要素が見つからない場合は作成
+    if (!previewContainer) {
+      console.log('プレビューコンテナが見つからないため作成します');
+      previewContainer = document.createElement('div');
+      previewContainer.className = 'preview-container mt-3';
+      previewContainer.innerHTML = `
+        <div class="card p-2">
+          <img class="document-preview-img" src="" alt="プレビュー" style="max-height: 200px; object-fit: contain;">
+          <div class="card-body p-2">
+            <div class="text-success d-flex align-items-center">
+              <i class="bi bi-check-circle me-2"></i>
+              <span>正常にアップロードされました</span>
+            </div>
+          </div>
+        </div>
+      `;
+      section.appendChild(previewContainer);
+      previewImg = previewContainer.querySelector('img');
+    }
+    
+    // 画像プレビューを表示
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      console.log('ファイル読み込み完了');
+      
+      if (previewImg) {
+        previewImg.src = e.target.result;
+        console.log('プレビュー画像を更新しました');
+        
+        // 画像が表示されていることを確認
+        previewImg.style.display = 'block';
+        previewImg.style.visibility = 'visible';
+      } else {
+        console.error('プレビュー画像要素が見つかりません');
+      }
+      
+      if (previewContainer) {
+        previewContainer.classList.remove('d-none');
+        previewContainer.style.display = 'block';
+      }
+      
+      if (placeholder) {
+        placeholder.classList.add('d-none');
+        placeholder.style.display = 'none';
+      }
+      
+      // 関連する削除ボタンを表示（標準セレクタのみ使用）
+      let removeBtn = section.querySelector('.remove-btn, [id$="-remove-btn"], button.trash-btn, button.delete-btn');
+      
+      // ボタン内にアイコンがあるかチェック
+      if (!removeBtn) {
+        const buttons = section.querySelectorAll('button, .btn');
+        for (const btn of buttons) {
+          if (btn.querySelector('.bi-trash, .fa-trash')) {
+            removeBtn = btn;
+            break;
+          }
+        }
+      }
+      
+      // テキスト内容で探す
+      if (!removeBtn) {
+        const buttons = section.querySelectorAll('button, .btn');
+        for (const btn of buttons) {
+          const text = btn.textContent.trim().toLowerCase();
+          if (text.includes('削除') || text.includes('消去') || text.includes('クリア')) {
+            removeBtn = btn;
+            break;
+          }
+        }
+      }
+      if (removeBtn) {
+        removeBtn.classList.remove('d-none');
+        removeBtn.style.display = '';
+      }
+      
+      // 成功メッセージを表示
+      const successMsg = document.createElement('div');
+      successMsg.className = 'alert alert-success mt-2 small';
+      successMsg.innerHTML = '<i class="bi bi-check-circle me-2"></i>正常にアップロードされました';
+      
+      // 既存のメッセージを削除して新しいメッセージを追加
+      const existingMsg = section.querySelector('.alert-success');
+      if (existingMsg) {
+        existingMsg.remove();
+      }
+      
+      // 明示的にフォームグループ後にメッセージを追加
+      const formGroup = previewImg.closest('.form-group') || previewImg.closest('.mb-3');
+      if (formGroup && formGroup.nextElementSibling) {
+        formGroup.parentNode.insertBefore(successMsg, formGroup.nextElementSibling);
+      } else {
+        section.appendChild(successMsg);
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  /**
+   * アップロードしたファイルを削除
+   */
+  function removeUploadedFile(fileInput) {
+    console.log('ファイル削除処理を開始:', fileInput ? fileInput.id || fileInput.className : 'fileInput不明');
+    
+    // fileInputがHTML要素でない場合（例：削除ボタンが渡された場合）
+    if (fileInput && !(fileInput instanceof HTMLInputElement)) {
+      console.log('入力が入力要素ではありません。削除ボタンである可能性があります。');
+      const deleteBtn = fileInput;
+      
+      // 削除ボタンのクラスやIDから関連する写真セクションを特定
+      // よりセレクタを広げて対応
+      const section = deleteBtn.closest('.document-upload-section, .mb-3, .form-group, .card, .document-preview, .preview-container, [id$="-container"]');
+      
+      if (!section) {
+        console.error('セクションが見つかりませんでした。より広範囲に検索します。');
+        // 削除ボタンのテキストに基づいて写真セクションを特定
+        const buttonText = deleteBtn.textContent.trim().toLowerCase();
+        
+        // 親要素を登ってフォームグループを探す
+        let currentElement = deleteBtn.parentElement;
+        let foundSection = null;
+        
+        while (currentElement && !foundSection) {
+          if (currentElement.classList.contains('card') || 
+              currentElement.classList.contains('form-group') || 
+              currentElement.classList.contains('mb-3')) {
+            foundSection = currentElement;
+            break;
+          }
+          currentElement = currentElement.parentElement;
+          if (!currentElement) break;
+        }
+        
+        if (foundSection) {
+          console.log('親要素から関連セクションを見つけました');
+          fileInput = foundSection.querySelector('input[type="file"]');
+        } else {
+          // 特定のIDパターンに基づいてファイル入力を探す
+          const possibleFileInputs = document.querySelectorAll('input[type="file"]');
+          
+          for (const input of possibleFileInputs) {
+            if (input.id && (
+                buttonText.includes(input.id.replace('-input', '')) || 
+                input.id.includes(buttonText.replace('削除', '').trim())
+            )) {
+              fileInput = input;
+              break;
+            }
+          }
+        }
+        
+        if (!fileInput) {
+          // まだ見つからない場合は、ドキュメント全体でもっとも近いファイル入力を探す
+          console.log('特定の関連付けが見つからなかったため、近接性に基づいて検索します');
+          fileInput = document.querySelector('input[type="file"]');
+        }
+        
+        return;
+      }
+      
+      // 関連するファイル入力要素を見つける - より広範囲に検索
+      fileInput = section.querySelector('input[type="file"]');
+      
+      if (!fileInput) {
+        // 親要素に遡って検索を広げる
+        const parentSection = section.closest('form, .modal-body, .card-body') || section.parentElement;
+        if (parentSection) {
+          fileInput = parentSection.querySelector('input[type="file"]');
+        }
+      }
+      
+      if (!fileInput) {
+        console.log('関連するファイル入力が見つかりませんでした。IDベースの検索を試みます');
+        // セクションIDからファイル入力を推測
+        const sectionId = section.id || '';
+        if (sectionId) {
+          const relatedInputId = sectionId.replace('-container', '-input')
+                                         .replace('-preview', '-input')
+                                         .replace('-section', '-input');
+          fileInput = document.getElementById(relatedInputId);
+        }
+      }
+      
+      if (!fileInput) {
+        console.error('関連するファイル入力が見つかりませんでした。代替処理を実行します');
+        // ファイル入力が見つからなくても、UI要素を更新する処理は継続
+        
+        // 特定のケースのハードコード対応
+        if (section.querySelector('img[src*="license-front"]')) {
+          fileInput = document.getElementById('license-front-input') || document.getElementById('license-input');
+        } else if (section.querySelector('img[src*="license-back"]')) {
+          fileInput = document.getElementById('license-back-input');
+        } else if (section.querySelector('img[src*="passport"]')) {
+          fileInput = document.getElementById('passport-input');
+        }
+      }
+    }
+    
+    // fileInputがある場合はリセット
+    if (fileInput && fileInput instanceof HTMLInputElement) {
+      fileInput.value = '';
+    }
+    
+    // セクションを特定（削除ボタンからの場合もあるため柔軟に対応）
+    let section;
+    if (fileInput instanceof HTMLInputElement) {
+      section = fileInput.closest('.document-upload-section, .mb-3, .form-group');
+    } else {
+      section = fileInput.closest('.document-upload-section, .mb-3, .form-group');
+    }
+    
+    // セクションが見つからない場合はボタンの親要素から探す
+    if (!section && typeof fileInput === 'object' && fileInput !== null) {
+      // 親要素を辿って見つける
+      let parentEl = fileInput.parentElement;
+      while (parentEl && !section) {
+        section = parentEl.querySelector('.document-upload-section, .mb-3, .form-group');
+        parentEl = parentEl.parentElement;
+        if (!parentEl) break;
+      }
+    }
+    
+    if (!section) {
+      console.error('セクションが見つかりませんでした');
+      // 親ドキュメント全体から小さな写真のプレビューも探す
+      const smallPreviews = document.querySelectorAll('.preview-img, img.preview, .small-preview-img');
+      smallPreviews.forEach(preview => {
+        if (preview.closest('.card, .preview-container')) {
+          const previewCard = preview.closest('.card, .preview-container');
+          previewCard.classList.add('d-none');
+          // 成功メッセージがあれば非表示
+          const successMsg = previewCard.parentElement.querySelector('.alert-success');
+          if (successMsg) successMsg.remove();
+        }
+      });
+      return;
+    }
+    
+    console.log('セクションが見つかりました。プレビュー要素を更新します。');
+    
+    // プレビュー要素をより広範囲に探す - NodeListをArrayに変換して操作
+    const previewSelector = '.preview-container, .document-preview, [id$="-preview-container"]';
+    const previewContainers = Array.from(section.querySelectorAll(previewSelector));
+    console.log('初期プレビューコンテナ数:', previewContainers.length);
+    
+    // カード要素内の画像も探す
+    const cardElements = Array.from(section.querySelectorAll('.card'));
+    for (let card of cardElements) {
+      if (card.querySelector('img')) {
+        previewContainers.push(card);
+      }
+    }
+    
+    // スプレッド構文を使ってイテレート可能にする
+    const allPreviewContainers = [...previewContainers];
+    console.log(`${allPreviewContainers.length}個のプレビューコンテナを見つけました`);
+    
+    allPreviewContainers.forEach(container => {
+      container.classList.add('d-none');
+      if (container.style) container.style.display = 'none';
+    });
+    
+    // すべての画像も直接非表示
+    const allImages = section.querySelectorAll('img.preview-img, img.document-preview-img, img[id$="-preview"], img.preview, img');
+    console.log(`${allImages.length}個の画像を見つけました`);
+    
+    allImages.forEach(img => {
+      const imgContainer = img.closest('.card, .preview-container');
+      if (imgContainer) {
+        imgContainer.classList.add('d-none');
+        if (imgContainer.style) imgContainer.style.display = 'none';
+      } else {
+        img.classList.add('d-none');
+        if (img.style) img.style.display = 'none';
+      }
+    });
+    
+    // プレースホルダーを表示
+    const allPlaceholders = section.querySelectorAll('.placeholder-container, .upload-prompt, .document-prompt');
+    console.log(`${allPlaceholders.length}個のプレースホルダーを見つけました`);
+    
+    allPlaceholders.forEach(placeholder => {
+      placeholder.classList.remove('d-none');
+      if (placeholder.style) placeholder.style.display = '';
+    });
+    
+    // 成功メッセージがあれば削除
+    const successMessages = section.querySelectorAll('.alert-success, .preview-success');
+    successMessages.forEach(msg => msg.remove());
+    
+    // 削除ボタンを非表示（標準セレクタのみ使用）
+    const removeButtonSelector = '.remove-btn, [id$="-remove-btn"], button.delete-btn, .btn-trash, .trash-btn';
+    const removeButtonsBase = Array.from(section.querySelectorAll(removeButtonSelector));
+    const allButtons = Array.from(section.querySelectorAll('button, .btn'));
+    
+    // アイコンを持つボタンを検索
+    const buttonsWithTrashIcon = allButtons.filter(btn => 
+      !removeButtonsBase.includes(btn) && btn.querySelector('.bi-trash, .fa-trash')
+    );
+    
+    // テキスト内容で削除ボタンを検索
+    const buttonsWithTrashText = allButtons.filter(btn => {
+      if (removeButtonsBase.includes(btn) || buttonsWithTrashIcon.includes(btn)) return false;
+      const text = btn.textContent.trim().toLowerCase();
+      return text.includes('削除') || text.includes('クリア') || text.includes('消去');
+    });
+    
+    // すべての削除ボタンを結合
+    const allRemoveButtons = [...removeButtonsBase, ...buttonsWithTrashIcon, ...buttonsWithTrashText];
+    console.log(`${allRemoveButtons.length}個の削除ボタンを見つけました`);
+    
+    allRemoveButtons.forEach(btn => {
+      btn.classList.add('d-none');
+      if (btn.style) btn.style.display = 'none';
+    });
+    
+    console.log('ファイル削除処理が完了しました');
+  }

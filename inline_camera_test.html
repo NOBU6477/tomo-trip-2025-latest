@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インラインカメラテスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #0066cc;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .camera-section {
+            margin: 20px 0;
+        }
+        #video-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            background-color: #000;
+        }
+        #photo-preview {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            object-fit: cover;
+            display: none;
+        }
+        .btn {
+            display: inline-block;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+        }
+        .btn.capture {
+            background-color: #cc0000;
+        }
+        .btn.restart {
+            background-color: #00cc66;
+        }
+        .home-link {
+            display: block;
+            margin-top: 30px;
+            color: #0066cc;
+        }
+        .note {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #e8f5ff;
+            border-left: 5px solid #0066cc;
+            text-align: left;
+        }
+        .fallback {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #ccc;
+        }
+        label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #0066cc;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        input[type="file"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>インラインカメラテスト</h1>
+        
+        <div class="note">
+            <p>このページはインライン（ページ内）のカメラ機能を実装しています。</p>
+            <p>カメラへのアクセス許可が必要です。許可がなければ下部のファイル選択を使用できます。</p>
+        </div>
+        
+        <div class="camera-section">
+            <video id="video-preview" autoplay></video>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="photo-preview" src="#" alt="撮影プレビュー">
+            
+            <div>
+                <button id="capture-btn" class="btn capture">写真を撮影</button>
+                <button id="restart-btn" class="btn restart" style="display:none;">撮り直す</button>
+                <button id="use-btn" class="btn" style="display:none;">この写真を使用</button>
+            </div>
+        </div>
+        
+        <div class="fallback">
+            <h3>または、ファイルから選択:</h3>
+            <label for="file-upload">ファイルを選択</label>
+            <input type="file" id="file-upload" accept="image/*">
+        </div>
+        
+        <a href="/camera_links.html" class="btn" style="margin-top: 30px;">戻る</a>
+        
+        <a href="/" class="home-link">メインページに戻る</a>
+    </div>
+
+    <script>
+        // カメラ関連の変数
+        const videoElement = document.getElementById('video-preview');
+        const canvasElement = document.getElementById('canvas');
+        const photoElement = document.getElementById('photo-preview');
+        const captureButton = document.getElementById('capture-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const useButton = document.getElementById('use-btn');
+        const fileUpload = document.getElementById('file-upload');
+        
+        // キャンバスコンテキスト
+        const canvasContext = canvasElement.getContext('2d');
+        
+        // カメラストリーム
+        let stream = null;
+        
+        // カメラ初期化
+        async function initCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' }, 
+                    audio: false 
+                });
+                videoElement.srcObject = stream;
+                
+                // キャンバスのサイズをビデオに合わせる
+                videoElement.addEventListener('loadedmetadata', () => {
+                    canvasElement.width = videoElement.videoWidth;
+                    canvasElement.height = videoElement.videoHeight;
+                });
+                
+                captureButton.disabled = false;
+            } catch (err) {
+                console.error('カメラにアクセスできませんでした:', err);
+                alert('カメラにアクセスできませんでした。ファイル選択を使用してください。');
+            }
+        }
+        
+        // 写真を撮影
+        function capturePhoto() {
+            // ビデオのフレームをキャンバスに描画
+            canvasContext.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            
+            // キャンバスの内容を画像として取得
+            const photoData = canvasElement.toDataURL('image/png');
+            
+            // プレビュー画像に設定
+            photoElement.src = photoData;
+            
+            // UIの切り替え
+            videoElement.style.display = 'none';
+            photoElement.style.display = 'block';
+            captureButton.style.display = 'none';
+            restartButton.style.display = 'inline-block';
+            useButton.style.display = 'inline-block';
+        }
+        
+        // カメラをリスタート
+        function restartCamera() {
+            // UIの切り替え
+            videoElement.style.display = 'block';
+            photoElement.style.display = 'none';
+            captureButton.style.display = 'inline-block';
+            restartButton.style.display = 'none';
+            useButton.style.display = 'none';
+        }
+        
+        // 写真を使用
+        function usePhoto() {
+            alert('写真が選択されました！実際のアプリではここでフォームに写真を設定します。');
+        }
+        
+        // ファイル選択処理
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    // ストリームを停止
+                    if (stream) {
+                        stream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // プレビュー画像に設定
+                    photoElement.src = e.target.result;
+                    
+                    // UIの切り替え
+                    videoElement.style.display = 'none';
+                    photoElement.style.display = 'block';
+                    captureButton.style.display = 'none';
+                    restartButton.style.display = 'inline-block';
+                    useButton.style.display = 'inline-block';
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // イベントリスナー設定
+        captureButton.addEventListener('click', capturePhoto);
+        restartButton.addEventListener('click', restartCamera);
+        useButton.addEventListener('click', usePhoto);
+        fileUpload.addEventListener('change', handleFileSelect);
+        
+        // カメラ初期化を実行
+        initCamera();
+    </script>
+</body>
+</html>

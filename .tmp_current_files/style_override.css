@@ -1,0 +1,119 @@
+/**
+ * UIスタイルオーバーライド
+ * 文字列が正しく表示されない場合の視覚的対策
+ */
+
+/* photo frontとphoto backのラベルを視覚的に隠す */
+.modal-body label:empty,
+.modal-body span:empty,
+.modal-body label:only-child,
+.modal-body span:only-child {
+  display: inline-block;
+  min-height: 1px;
+}
+
+/* photo front/backのセレクター */
+.modal-body label,
+.modal-body span {
+  position: relative;
+}
+
+/* photo front直接スタイル上書き */
+.modal-body label:first-of-type,
+.modal-body *:first-child > label {
+  display: flex;
+}
+.modal-body label:first-of-type::before,
+.modal-body *:first-child > label::before {
+  content: "表面写真";
+  display: block;
+  font-weight: bold;
+}
+
+/* photo back直接スタイル上書き */
+.modal-body label:nth-of-type(2),
+.modal-body *:nth-child(3) > label {
+  display: flex;
+}
+.modal-body label:nth-of-type(2)::before,
+.modal-body *:nth-child(3) > label::before {
+  content: "裏面写真";
+  display: block;
+  font-weight: bold;
+}
+
+/* 写真選択ボタンのテキスト修正 */
+[class*="btn"]:not(.btn-close) {
+  position: relative;
+}
+
+/* 英字テキストを含むボタンを特定して上書き */
+.btn:nth-child(1) {
+  position: relative;
+}
+
+.btn:nth-child(1)[class*="btn-primary"]:not(.btn-close):not([class*="camera"]) {
+  color: rgba(0,0,0,0) !important; /* 元のテキストを透明に */
+}
+
+.btn:nth-child(1)[class*="btn-primary"]:not(.btn-close):not([class*="camera"])::after {
+  content: "表面写真を選択";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* 裏面ボタン */
+.btn:nth-child(2) {
+  position: relative;
+}
+
+.btn:nth-child(2)[class*="btn-primary"]:not(.btn-close):not([class*="camera"]) {
+  color: rgba(0,0,0,0) !important; /* 元のテキストを透明に */
+}
+
+.btn:nth-child(2)[class*="btn-primary"]:not(.btn-close):not([class*="camera"])::after {
+  content: "裏面写真を選択";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+/* カメラモーダル内のボタン表示を調整 */
+.modal-footer .btn-success {
+  display: inline-block !important;
+  visibility: visible !important;
+}
+
+/* プレビュー画像を確実に表示 */
+.modal-body img {
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* この写真を使用ボタンのスタイル */
+.modal-footer .btn-success {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* 確認メッセージのスタイル */
+.confirmation-message {
+  text-align: center;
+  margin-top: 1rem;
+  font-weight: bold;
+  color: #212529;
+}

@@ -1,0 +1,160 @@
+/**
+ * 電話番号認証バッジの最終的な修正用CSS
+ * 緊急対応として最強の優先度と詳細度で認証バッジを非表示にする
+ */
+
+/* 最高詳細度のセレクタ */
+html body #guideRegistrationModal .modal-content .modal-body form div:has(label:contains("電話番号認証")) .btn-success,
+html body #guideRegistrationModal .modal-content .modal-body form div:has(label:contains("電話番号認証")) .badge.bg-success,
+html body #guideRegistrationModal .modal-content .modal-body form div:has(label:contains("電話番号認証")) [class*="success"],
+html body #guideRegistrationModal .modal-content .modal-body form div:has(label:contains("電話番号認証")) [class*="badge"],
+html body #guideRegistrationModal .modal-content .modal-body div:has(label:contains("電話番号認証")) .btn-success,
+html body #guideRegistrationModal .modal-content .modal-body div:has(label:contains("電話番号認証")) .badge.bg-success,
+html body #guideRegistrationModal .modal-content .modal-body div:has(label:contains("電話番号認証")) [class*="success"],
+html body #guideRegistrationModal .modal-content .modal-body div:has(label:contains("電話番号認証")) [class*="badge"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+  pointer-events: none !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+}
+
+/* テキストコンテンツベースの削除 */
+html body #guideRegistrationModal *:not(style, script, meta, link, head, title):contains("認証済み") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+  pointer-events: none !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+}
+
+/* 緑色要素のピンポイント削除 */
+html body #guideRegistrationModal button.btn-success,
+html body #guideRegistrationModal .badge.bg-success,
+html body #guideRegistrationModal [style*="background-color: rgb(25, 135, 84)"],
+html body #guideRegistrationModal [style*="background-color: rgb(40, 167, 69)"],
+html body #guideRegistrationModal [style*="background-color:#198754"],
+html body #guideRegistrationModal [style*="background-color: #198754"],
+html body #guideRegistrationModal [style*="background-color:#28a745"],
+html body #guideRegistrationModal [style*="background-color: #28a745"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+  pointer-events: none !important;
+}
+
+/* 電話番号認証フィールド内のあらゆる緑色要素 */
+html body #guideRegistrationModal [class*="form-group"]:has(label:contains("電話番号認証")) *[class*="success"],
+html body #guideRegistrationModal [class*="mb-3"]:has(label:contains("電話番号認証")) *[class*="success"],
+html body #guideRegistrationModal [class*="row"]:has(label:contains("電話番号認証")) *[class*="success"],
+html body #guideRegistrationModal div:has(label:contains("電話番号認証")) *[class*="success"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+}
+
+/* 画面上のどの「認証済み」テキストも強制的に非表示 */
+html body button:contains("認証済み"),
+html body span:contains("認証済み"),
+html body div:contains("認証済み"):not(.modal-content, .modal-body, .modal-dialog, .modal-header, #main-content, .container),
+html body .btn-success:contains("認証済み"),
+html body .badge:contains("認証済み"),
+html body [class*="success"]:contains("認証済み") {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  max-height: 0 !important;
+  max-width: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  z-index: -9999 !important;
+  pointer-events: none !important;
+}
+
+/* 未表示テキストの表示を確保 */
+html body #guideRegistrationModal span.text-muted:contains("未表示"),
+html body #guideRegistrationModal span:contains("未表示"),
+html body #guideRegistrationModal div:contains("未表示"):not(.modal-content, .modal-body, .modal-dialog, .modal-header, #main-content, .container),
+html body #guideRegistrationModal .text-muted:contains("未表示") {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  width: auto !important;
+  max-height: none !important;
+  max-width: none !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  margin-left: 0.5rem !important;
+  border: inherit !important;
+  overflow: visible !important;
+  position: static !important;
+  left: auto !important;
+  top: auto !important;
+  z-index: auto !important;
+  pointer-events: auto !important;
+  clip: auto !important;
+  clip-path: none !important;
+  cursor: pointer !important;
+}
+
+/* アニメーション無効化 */
+html body #guideRegistrationModal .badge.bg-success,
+html body #guideRegistrationModal .btn-success,
+html body #guideRegistrationModal [class*="success"] {
+  animation: none !important;
+  transition: none !important;
+}

@@ -1,0 +1,47 @@
+/* ナビゲーションバーの固定スタイル */
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.85);
+}
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: white;
+}
+
+/* 新規登録ボタンスタイル修正 */
+.btn-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529 !important;
+}
+.btn-warning:hover {
+  background-color: #e0a800;
+  border-color: #d39e00;
+}
+
+/* モーダルスタイルの改善 */
+.modal-backdrop {
+  opacity: 0.5 !important;
+}
+.modal-content {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  border: 0;
+}
+.modal-header {
+  border-bottom: 1px solid #dee2e6;
+  background-color: #f8f9fa;
+}
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* コンテナ幅を調整し、枠内に収める */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+@media (min-width: 992px) and (max-width: 1199px) {
+  .container {
+    max-width: 960px;
+  }
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Guide - 緊急スタンドアロンモード</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: white;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      margin-top: 30px;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #0066cc;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 2rem;
+    }
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1.05rem;
+    }
+    .btn-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 2rem 0;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #0066cc;
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,102,204,0.2);
+    }
+    .btn:hover {
+      background-color: #0055aa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,102,204,0.3);
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+      box-shadow: 0 2px 5px rgba(108,117,125,0.2);
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      box-shadow: 0 4px 8px rgba(108,117,125,0.3);
+    }
+    .alert {
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      border-left: 4px solid;
+    }
+    .alert-info {
+      background-color: #e8f4fd;
+      border-color: #0066cc;
+    }
+    .alert-warning {
+      background-color: #fff3cd;
+      border-color: #ffca28;
+    }
+    .section {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #eaeaea;
+    }
+    .links {
+      margin-top: 2rem;
+      text-align: center;
+    }
+    .links a {
+      color: #0066cc;
+      margin: 0 10px;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .logo-text {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #0066cc;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-text">Local Guide</div>
+    <h1>緊急スタンドアロンモード</h1>
+    
+    <div class="alert alert-info">
+      このページは特別な緊急モードで表示されています。システム内部で発生する可能性のある問題からユーザーを保護するための最小限の機能を提供しています。
+    </div>
+    
+    <p>Local Guideアプリケーションは、地域の魅力を伝える「ガイド」と、新しい体験を求める「観光客」をつなぐマッチングサービスです。新しい旅の体験を一緒に創り出しましょう。</p>
+    
+    <div class="btn-container">
+      <a href="/" class="btn">通常モードを表示</a>
+      <a href="/?mode=simple" class="btn btn-secondary">シンプルモードで表示</a>
+    </div>
+    
+    <div class="section">
+      <h2>他の表示オプション</h2>
+      <ul>
+        <li><a href="/direct">直接表示ページ</a> - 新しいタブで直接開きます</li>
+        <li><a href="/auto-wait">自動待機モード</a> - 応答なしダイアログを自動的に処理します</li>
+        <li><a href="/?debug=true">デバッグモード</a> - 問題診断と修正オプションを提供します</li>
+      </ul>
+    </div>
+    
+    <div class="section">
+      <div class="alert alert-warning">
+        表示に問題がある場合は、ブラウザのキャッシュをクリアするか、新しいタブで直接URLを開いてみてください。
+      </div>
+    </div>
+    
+    <div class="links">
+      <a href="/">ホーム</a>
+      <a href="/about">サービスについて</a>
+      <a href="/help">ヘルプ</a>
+    </div>
+  </div>
+  
+  <script>
+    // 応答なしダイアログの自動クリック機能
+    function createWaitButtonClicker() {
+      setInterval(() => {
+        try {
+          // ダイアログ内のボタンを探す
+          const buttons = document.querySelectorAll('button');
+          buttons.forEach(button => {
+            if (button.textContent && 
+                (button.textContent.includes('待機') || 
+                 button.textContent.includes('Wait') || 
+                 button.textContent.includes('待つ'))) {
+              console.log('「待機」ボタンを自動クリックします');
+              setTimeout(() => button.click(), 10);
+            }
+          });
+          
+          // 親フレームも確認
+          if (window.parent && window.parent !== window) {
+            try {
+              const parentButtons = window.parent.document.querySelectorAll('button');
+              parentButtons.forEach(button => {
+                if (button.textContent && 
+                    (button.textContent.includes('待機') || 
+                     button.textContent.includes('Wait'))) {
+                  console.log('親フレームの「待機」ボタンを自動クリックします');
+                  setTimeout(() => button.click(), 10);
+                }
+              });
+            } catch (e) {
+              // クロスオリジンエラーは無視
+            }
+          }
+        } catch (e) {
+          // エラーは無視
+        }
+      }, 500);
+    }
+    
+    // 自動クリッカーを起動
+    createWaitButtonClicker();
+  </script>
+</body>
+</html>

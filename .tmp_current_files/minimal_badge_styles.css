@@ -1,0 +1,51 @@
+/**
+ * 最小限のスタイル定義
+ * エラーのない純粋CSSのみを使用
+ */
+
+/* 「未表示」テキストを含むスパンを非表示 */
+#registerGuideModal span:empty {
+  display: none !important;
+}
+
+/* 空の要素を非表示 */
+#registerGuideModal div:empty:not(.input-group):not(.input-group-text) {
+  display: none !important;
+}
+
+/* 非バッジを非表示 */
+#registerGuideModal .badge:not(.bg-success) {
+  display: none !important;
+}
+
+/* 通常のスパンを透明に */
+#registerGuideModal span:not(.input-group-text):not([class*="spinner"]) {
+  color: transparent !important;
+}
+
+/* 電話認証UIコンテナのスタイル */
+#ultra-simple-verification {
+  margin-bottom: 1rem;
+}
+
+/* 認証完了メッセージを強制表示 */
+#ultra-verified {
+  display: block !important;
+  visibility: visible !important;
+  color: #0f5132 !important;
+  background-color: #d1e7dd !important;
+  border-color: #badbcc !important;
+  padding: 0.75rem 1.25rem !important;
+  border-radius: 0.25rem !important;
+}
+
+/* 入力グループのスタイル */
+#ultra-simple-verification .input-group {
+  margin-bottom: 0.5rem;
+}
+
+/* 通知メッセージのスタイル */
+.ultra-notification {
+  z-index: 9999 !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+}

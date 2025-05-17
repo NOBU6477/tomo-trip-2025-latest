@@ -1,0 +1,33 @@
+/**
+ * 電話番号認証セクション向けスタイル
+ * ガイド登録モーダル内での認証バッジ表示問題を解決
+ */
+
+/* ガイド登録モーダル内の認証成功表示を強制的に表示 */
+#guide-phone-verified {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* ガイド登録モーダル内の認証成功メッセージが非表示にならないようにする */
+#guide-phone-verified.d-none {
+  display: block !important;
+}
+
+/* 認証済みバッジのスタイルを明示的に上書き */
+#guide-phone-verified.alert-success {
+  background-color: #d1e7dd !important;
+  border-color: #badbcc !important;
+  color: #0f5132 !important;
+  padding: 0.75rem 1.25rem !important;
+  margin-bottom: 1rem !important;
+  border-radius: 0.25rem !important;
+}
+
+/* アイコンのスタイルを確保 */
+#guide-phone-verified .fa-check-circle,
+#guide-phone-verified .fas.fa-check-circle {
+  color: #0f5132 !important;
+  margin-right: 0.5rem !important;
+}

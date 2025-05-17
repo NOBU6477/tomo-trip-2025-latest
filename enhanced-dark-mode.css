@@ -1,0 +1,158 @@
+/**
+ * 強化されたダークモードスタイル
+ * ダークモード時のコントラスト問題を修正
+ */
+
+/* ダークモード時のモーダル関連 */
+.dark-theme .modal-content,
+html[data-bs-theme="dark"] .modal-content,
+.auto-theme .modal-content {
+  background-color: #1a1a1a !important;
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.7) !important;
+  border: 1px solid #444 !important;
+}
+
+.dark-theme .modal-header,
+html[data-bs-theme="dark"] .modal-header,
+.auto-theme .modal-header {
+  border-bottom: 1px solid #444 !important;
+}
+
+.dark-theme .modal-footer,
+html[data-bs-theme="dark"] .modal-footer,
+.auto-theme .modal-footer {
+  border-top: 1px solid #444 !important;
+}
+
+/* モーダル閉じるボタンの強調（白色と光彩効果） */
+.dark-theme .btn-close,
+html[data-bs-theme="dark"] .btn-close,
+.auto-theme .btn-close {
+  filter: invert(1) brightness(200%) !important;
+  opacity: 1 !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 50% !important;
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  padding: 5px !important;
+}
+
+/* タイトルや見出しの強調 */
+.dark-theme h1, .dark-theme h2, .dark-theme h3, 
+.dark-theme h4, .dark-theme h5, .dark-theme h6,
+html[data-bs-theme="dark"] h1, html[data-bs-theme="dark"] h2, html[data-bs-theme="dark"] h3, 
+html[data-bs-theme="dark"] h4, html[data-bs-theme="dark"] h5, html[data-bs-theme="dark"] h6,
+.auto-theme h1, .auto-theme h2, .auto-theme h3, 
+.auto-theme h4, .auto-theme h5, .auto-theme h6 {
+  color: #ffffff !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* カードタイトルの強調 */
+.dark-theme .card-title,
+html[data-bs-theme="dark"] .card-title,
+.auto-theme .card-title {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+}
+
+/* モーダルタイトルの強調 - 特別に目立たせる */
+.dark-theme .modal-title,
+html[data-bs-theme="dark"] .modal-title,
+.auto-theme .modal-title {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 1.4rem !important;
+  letter-spacing: 0.5px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* セクションタイトルの強調 */
+.dark-theme .section-title,
+html[data-bs-theme="dark"] .section-title,
+.auto-theme .section-title {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid #4287f5 !important;
+  padding-bottom: 0.5rem !important;
+}
+
+/* ダークモード時のボタン強調 */
+.dark-theme .btn-primary,
+html[data-bs-theme="dark"] .btn-primary,
+.auto-theme .btn-primary {
+  background-color: #4287f5 !important;
+  border-color: #4287f5 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* ダークモード時のカード */
+.dark-theme .card,
+html[data-bs-theme="dark"] .card,
+.auto-theme .card {
+  background-color: #1e1e1e !important;
+  border-color: #444 !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* フォーム要素 */
+.dark-theme .form-control,
+html[data-bs-theme="dark"] .form-control,
+.auto-theme .form-control,
+.dark-theme .form-select,
+html[data-bs-theme="dark"] .form-select,
+.auto-theme .form-select {
+  background-color: #2a2a2a !important;
+  border-color: #555 !important;
+  color: #ffffff !important;
+}
+
+/* フォームラベル */
+.dark-theme label,
+html[data-bs-theme="dark"] label,
+.auto-theme label {
+  color: #e0e0e0 !important;
+  font-weight: 500 !important;
+}
+
+/* ドロップダウンメニュー */
+.dark-theme .dropdown-menu,
+html[data-bs-theme="dark"] .dropdown-menu,
+.auto-theme .dropdown-menu {
+  background-color: #222 !important;
+  border-color: #444 !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .dropdown-item,
+html[data-bs-theme="dark"] .dropdown-item,
+.auto-theme .dropdown-item {
+  color: #e0e0e0 !important;
+}
+
+.dark-theme .dropdown-item:hover,
+html[data-bs-theme="dark"] .dropdown-item:hover,
+.auto-theme .dropdown-item:hover {
+  background-color: #333 !important;
+}
+
+/* 新規登録ボタンとモーダル */
+.dark-theme .guide-registration-section,
+html[data-bs-theme="dark"] .guide-registration-section,
+.auto-theme .guide-registration-section,
+.dark-theme .tourist-registration-section,
+html[data-bs-theme="dark"] .tourist-registration-section,
+.auto-theme .tourist-registration-section {
+  background-color: #222 !important;
+  border: 1px solid #444 !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* 新規登録ボタン */
+.dark-theme #registerDropdown,
+html[data-bs-theme="dark"] #registerDropdown,
+.auto-theme #registerDropdown {
+  background-color: #3a7eff !important;
+  border-color: #3a7eff !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4) !important;
+}

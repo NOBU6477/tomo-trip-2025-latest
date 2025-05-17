@@ -1,0 +1,649 @@
+/**
+ * プロフィール編集ページの入力欄を修正するスクリプト
+ * 背景色と枠線のコントラストを高め、入力可能な状態にします
+ * 入力内容はリアルタイムでカードプレビューに反映されます
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('プロフィール入力欄の修正スクリプトを実行しています...');
+  
+  // ページが完全に読み込まれた後、少し遅延させて実行
+  setTimeout(fixProfileInputs, 500);
+  
+  // 短い間隔で複数回実行して確実に適用されるようにする
+  for (let i = 1; i <= 5; i++) {
+    setTimeout(fixProfileInputs, i * 1000);
+  }
+  
+  // プロフィールプレビューの初期表示
+  setTimeout(setupProfilePreview, 1000);
+  
+  // 興味・専門分野のチェックボックス変更を監視
+  setTimeout(setupInterestChangeListeners, 1500);
+});
+
+/**
+ * プロフィール入力欄のスタイルを修正
+ */
+function fixProfileInputs() {
+  console.log('プロフィール入力欄のスタイルを修正中...');
+  
+  // テキスト入力欄を修正
+  const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], textarea');
+  textInputs.forEach(input => {
+    applyInputStyles(input);
+  });
+  
+  // 対応言語セレクトボックスを特別に修正
+  fixLanguageSelect();
+  
+  // 特に自己紹介欄のテキストエリアを明示的に修正
+  const bioTextarea = document.getElementById('guide-description');
+  if (bioTextarea) {
+    console.log('自己紹介テキストエリアを修正します');
+    
+    // まず最初に、要素の readonly 属性を削除して編集可能にする
+    bioTextarea.removeAttribute('readonly');
+    bioTextarea.removeAttribute('disabled');
+    
+    // 現在のテキストエリアの状態をログに出力
+    console.log('テキストエリアの初期状態:', {
+      id: bioTextarea.id,
+      value: bioTextarea.value ? `"${bioTextarea.value.substring(0, 30)}${bioTextarea.value.length > 30 ? '...' : ''}"` : '(空)',
+      placeholder: bioTextarea.placeholder || '(なし)',
+      readOnly: bioTextarea.readOnly,
+      disabled: bioTextarea.disabled
+    });
+    
+    // 既存のテキストエリアを直接修正する
+    // スタイル適用
+    Object.assign(bioTextarea.style, {
+      backgroundColor: '#ffffff',
+      color: '#000000',
+      border: '2px solid #0077cc',
+      borderRadius: '8px',
+      padding: '16px',
+      minHeight: '150px',
+      fontSize: '16px',
+      lineHeight: '1.5',
+      fontWeight: '400',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+      width: '100%',
+      resize: 'vertical',
+      display: 'block',
+      opacity: '1',
+      pointerEvents: 'auto'
+    });
+    
+    // テキストエリアのラベルも強調
+    const bioLabel = document.querySelector('label[for="guide-description"]');
+    if (bioLabel) {
+      Object.assign(bioLabel.style, {
+        color: '#0066aa',
+        fontWeight: '600',
+        fontSize: '16px',
+        marginBottom: '10px',
+        display: 'block'
+      });
+    }
+    
+    // 補足説明を追加
+    let helpText = document.getElementById('bio-help-text');
+    if (!helpText) {
+      helpText = document.createElement('div');
+      helpText.id = 'bio-help-text';
+      helpText.className = 'form-text';
+      helpText.innerHTML = '<strong>ヒント:</strong> 具体的なガイド内容や特色を書くと予約が増える傾向があります。あなたならではの魅力をアピールしましょう。';
+      Object.assign(helpText.style, {
+        color: '#0066aa',
+        fontSize: '14px',
+        marginTop: '8px',
+        padding: '8px 12px',
+        backgroundColor: '#f0f7ff',
+        border: '1px solid #cce5ff',
+        borderRadius: '4px',
+        marginBottom: '16px'
+      });
+      
+      const bioContainer = bioTextarea.closest('.mb-3') || bioTextarea.closest('.form-group');
+      if (bioContainer) {
+        bioContainer.appendChild(helpText);
+      }
+    }
+  }
+  
+  // 料金入力欄を特別に修正
+  const feeInput = document.getElementById('guide-session-fee');
+  if (feeInput) {
+    console.log('料金入力欄を修正します');
+    const feeContainer = feeInput.closest('.input-group');
+    if (feeContainer) {
+      // 通貨記号部分も修正
+      const currencySymbol = feeContainer.querySelector('.input-group-text');
+      if (currencySymbol) {
+        Object.assign(currencySymbol.style, {
+          backgroundColor: '#f8f9fa',
+          color: '#0077cc',
+          border: '2px solid #0077cc',
+          borderRight: 'none',
+          fontWeight: 'bold',
+          fontSize: '16px',
+          padding: '8px 12px'
+        });
+      }
+      
+      // 入力欄自体も修正
+      Object.assign(feeInput.style, {
+        backgroundColor: '#ffffff',
+        color: '#000000',
+        border: '2px solid #0077cc',
+        borderLeft: 'none',
+        borderRadius: '0 8px 8px 0',
+        padding: '8px 12px',
+        fontSize: '16px',
+        fontWeight: '500',
+        width: '100%'
+      });
+    }
+    
+    // 料金説明文を明確に表示
+    const feeDescription = feeInput.parentElement.nextElementSibling;
+    if (feeDescription && feeDescription.classList.contains('form-text')) {
+      Object.assign(feeDescription.style, {
+        color: '#0066aa',
+        fontSize: '14px',
+        marginTop: '8px',
+        fontWeight: '500'
+      });
+    }
+  }
+  
+  // 興味・得意分野のチェックボックスも修正
+  const checkboxes = document.querySelectorAll('.form-check-input[type="checkbox"]');
+  checkboxes.forEach(checkbox => {
+    Object.assign(checkbox.style, {
+      cursor: 'pointer',
+      width: '20px',
+      height: '20px',
+      accentColor: '#0077cc'
+    });
+    
+    const label = checkbox.nextElementSibling;
+    if (label && label.classList.contains('form-check-label')) {
+      Object.assign(label.style, {
+        fontSize: '16px',
+        cursor: 'pointer',
+        marginLeft: '4px',
+        userSelect: 'none'
+      });
+    }
+  });
+  
+  // 保存ボタンも目立たせる
+  const saveButton = document.querySelector('button.btn-primary');
+  if (saveButton) {
+    Object.assign(saveButton.style, {
+      backgroundColor: '#0077cc',
+      borderColor: '#0066aa',
+      padding: '10px 24px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+      cursor: 'pointer'
+    });
+    
+    saveButton.addEventListener('mouseover', function() {
+      this.style.backgroundColor = '#0066aa';
+      this.style.boxShadow = '0 6px 8px rgba(0, 0, 0, 0.15)';
+    });
+    
+    saveButton.addEventListener('mouseout', function() {
+      this.style.backgroundColor = '#0077cc';
+      this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+    });
+  }
+}
+
+/**
+ * 入力欄に共通スタイルを適用
+ */
+function applyInputStyles(input) {
+  // 入力欄のID名を確認
+  console.log('入力欄を修正:', input.id);
+  
+  // 基本スタイル
+  Object.assign(input.style, {
+    backgroundColor: '#ffffff',
+    color: '#000000',
+    border: '2px solid #0077cc',
+    borderRadius: '8px',
+    padding: '10px 12px',
+    fontSize: '16px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    width: '100%'
+  });
+  
+  // プレースホルダーテキストの色を調整（ブラウザ間の違いに対応）
+  input.classList.add('visible-placeholder');
+  
+  // 既存の値を強制的に表示
+  if (input.value) {
+    console.log('入力欄の値を検出:', input.value.substring(0, 30) + (input.value.length > 30 ? '...' : ''));
+  } else {
+    console.log('入力欄が空です。プレースホルダーを表示します:', input.placeholder || 'なし');
+  }
+  
+  // ラベル要素も見やすく
+  const label = document.querySelector(`label[for="${input.id}"]`);
+  if (label) {
+    Object.assign(label.style, {
+      color: '#0066aa',
+      fontWeight: '600',
+      fontSize: '14px',
+      marginBottom: '8px',
+      display: 'block'
+    });
+  }
+}
+
+/**
+ * 対応言語選択を修正
+ */
+function fixLanguageSelect() {
+  const languagesSelect = document.getElementById('guide-languages');
+  if (!languagesSelect) {
+    console.warn('対応言語選択が見つかりません');
+    return;
+  }
+  
+  console.log('対応言語セレクトを修正します');
+  
+  // select要素自体のスタイル
+  Object.assign(languagesSelect.style, {
+    backgroundColor: '#ffffff',
+    color: '#000000',
+    border: '2px solid #0077cc',
+    borderRadius: '8px',
+    padding: '10px 12px',
+    fontSize: '16px',
+    minHeight: '150px',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    width: '100%'
+  });
+  
+  // 言語選択の変更イベント
+  languagesSelect.addEventListener('change', function() {
+    // 選択された言語をログ出力
+    const selectedLanguages = Array.from(this.selectedOptions).map(opt => opt.textContent);
+    console.log('選択された言語:', selectedLanguages.join(', '));
+    
+    // プロフィールプレビューの更新
+    updateProfilePreview();
+  });
+}
+
+/**
+ * プロフィールプレビューをセットアップ
+ */
+function setupProfilePreview() {
+  console.log('プロフィールプレビューをセットアップしています...');
+  
+  // 初回のプロフィールプレビュー更新
+  updateProfilePreview();
+  
+  // 入力値の変更を監視
+  const profileInputs = document.querySelectorAll('input, textarea, select');
+  profileInputs.forEach(input => {
+    // 既存のイベントリスナーを削除してから新しいものを追加
+    input.removeEventListener('input', updateProfilePreview);
+    input.removeEventListener('change', updateProfilePreview);
+    
+    // 入力や変更イベントにリスナーを追加
+    input.addEventListener('input', updateProfilePreview);
+    input.addEventListener('change', updateProfilePreview);
+  });
+}
+
+/**
+ * プロフィールプレビューを更新
+ */
+function updateProfilePreview() {
+  console.log('プロフィールプレビューを更新しています...');
+  
+  // プレビューコンテナを検索
+  const previewContainer = document.querySelector('.profile-preview-container');
+  if (!previewContainer) {
+    console.warn('プロフィールプレビューコンテナが見つかりませんでした');
+    return;
+  }
+  
+  // 各入力欄の値を取得
+  const nameInput = document.getElementById('guide-name');
+  const usernameInput = document.getElementById('guide-username');
+  const locationInput = document.getElementById('guide-location');
+  const descriptionInput = document.getElementById('guide-description');
+  const feeInput = document.getElementById('guide-session-fee');
+  const languagesSelect = document.getElementById('guide-languages');
+  
+  // プロフィール写真を取得して設定
+  updateProfilePhoto(previewContainer);
+  
+  // 値を更新
+  if (nameInput) {
+    const nameElement = previewContainer.querySelector('.guide-preview-name');
+    if (nameElement) {
+      nameElement.textContent = nameInput.value || 'ガイド名';
+    }
+  }
+  
+  if (usernameInput) {
+    const usernameElement = previewContainer.querySelector('.guide-preview-username');
+    if (usernameElement) {
+      usernameElement.textContent = '@' + (usernameInput.value || 'ユーザー名');
+    }
+  }
+  
+  if (locationInput) {
+    const locationElement = previewContainer.querySelector('.guide-preview-location');
+    if (locationElement) {
+      locationElement.innerHTML = `<i class="bi bi-geo-alt-fill me-1"></i>${locationInput.value || '活動地域'}`;
+    }
+  }
+  
+  if (descriptionInput) {
+    const descriptionElement = previewContainer.querySelector('.guide-preview-description p');
+    if (descriptionElement) {
+      // 改行を<br>に変換して表示
+      const descriptionText = descriptionInput.value || '自己紹介文がここに表示されます。';
+      descriptionElement.innerHTML = descriptionText.replace(/\n/g, '<br>');
+    }
+  }
+  
+  if (feeInput) {
+    const feeValueElement = previewContainer.querySelector('.guide-preview-fee-value');
+    if (feeValueElement) {
+      const feeValue = feeInput.value || '6,000';
+      // 数値をカンマ区切りで表示
+      const formattedFee = Number(feeValue).toLocaleString();
+      
+      // 料金タイプを判定（時間料金タブがアクティブかどうかで判断）
+      // タブの検出方法を修正（.fee-tab-activeクラスとdata-typeで判定）
+      const hourlyTabActive = document.querySelector('.fee-tab.fee-tab-active[data-type="hourly"]') !== null;
+      
+      // フォールバック検出方法（上記が失敗した場合）
+      const hourlyLabelActive = document.querySelector('label[for="guide-session-fee"]');
+      const isHourlyFromLabel = hourlyLabelActive && hourlyLabelActive.textContent.includes('時間料金');
+      
+      // グローバル変数からも確認（fee-display-fix.jsが設定している可能性がある）
+      const feeTypeFromGlobal = window.currentFeeType === 'hourly';
+      
+      // 3つの方法で判定した結果のいずれかがtrueなら時間料金と判断
+      const isHourlyRate = hourlyTabActive || isHourlyFromLabel || feeTypeFromGlobal;
+      
+      console.log('料金タイプ判定:', {
+        'hourlyTabActive': hourlyTabActive,
+        'isHourlyFromLabel': isHourlyFromLabel,
+        'feeTypeFromGlobal': feeTypeFromGlobal,
+        '最終判定': isHourlyRate
+      });
+      
+      if (isHourlyRate) {
+        feeValueElement.textContent = `¥${formattedFee} / 時間`;
+      } else {
+        feeValueElement.textContent = `¥${formattedFee} / セッション`;
+      }
+    }
+  }
+  
+  if (languagesSelect) {
+    const languagesContainer = previewContainer.querySelector('.guide-preview-languages');
+    if (languagesContainer) {
+      languagesContainer.innerHTML = '';
+      
+      // 選択された言語をバッジとして表示
+      for (let i = 0; i < languagesSelect.options.length; i++) {
+        const option = languagesSelect.options[i];
+        if (option.selected) {
+          const badge = document.createElement('span');
+          badge.className = 'badge bg-light text-dark me-1';
+          badge.textContent = option.textContent;
+          languagesContainer.appendChild(badge);
+        }
+      }
+      
+      // 言語が選択されていない場合のデフォルト表示
+      if (languagesContainer.children.length === 0) {
+        const defaultBadge = document.createElement('span');
+        defaultBadge.className = 'badge bg-light text-dark me-1';
+        defaultBadge.textContent = '日本語';
+        languagesContainer.appendChild(defaultBadge);
+      }
+    }
+  }
+  
+  // タグ情報を更新 - 興味・専門分野のタグ
+  console.log('タグ情報を更新します...');
+  updatePreviewTags();
+}
+
+/**
+ * プロフィール写真を更新
+ */
+function updateProfilePhoto(previewContainer) {
+  if (!previewContainer) return;
+  
+  // プレビュー内の写真要素を検索
+  const previewPhotoImg = previewContainer.querySelector('.guide-preview-photo');
+  if (!previewPhotoImg) return;
+  
+  console.log('プロフィール写真の更新を試みます...');
+  
+  // スクリーンショットから確認した具体的なセレクタで直接画像を特定
+  const mainProfileImg = document.querySelector('img[src*="guide-profile-image"]');
+  if (mainProfileImg && mainProfileImg.src) {
+    console.log('メインプロフィール画像を直接特定しました:', mainProfileImg.src);
+    previewPhotoImg.src = mainProfileImg.src;
+    previewPhotoImg.alt = 'プロフィール写真';
+    previewPhotoImg.style.objectFit = 'cover';
+    return; // 画像が見つかったので終了
+  }
+  
+  // スクリーンショットで確認できる左側プロフィール画像を確実に取得
+  const exactProfileImg = document.querySelector('.profile-photo img, img.rounded-circle, .basic-info img');
+  if (exactProfileImg && exactProfileImg.src) {
+    console.log('特定プロフィール画像を検出:', exactProfileImg.src);
+    previewPhotoImg.src = exactProfileImg.src;
+    previewPhotoImg.alt = 'プロフィール写真';
+    previewPhotoImg.style.objectFit = 'cover';
+    return; // 画像が見つかったので終了
+  }
+  
+  // 左サイドバーの丸いプロフィール写真を優先的に検索
+  const sidebarProfileImg = document.querySelector('img.rounded-circle, img[style*="border-radius: 50%"]');
+  if (sidebarProfileImg && sidebarProfileImg.src) {
+    console.log('丸型プロフィール写真を検出:', sidebarProfileImg.src);
+    previewPhotoImg.src = sidebarProfileImg.src;
+    previewPhotoImg.alt = 'プロフィール写真';
+    previewPhotoImg.style.objectFit = 'cover';
+    return; // 画像が見つかったので終了
+  }
+  
+  // 左サイドバーのプロフィール写真
+  const basicInfoSection = document.querySelector('.basic-info');
+  if (basicInfoSection) {
+    const imgInBasicInfo = basicInfoSection.querySelector('img');
+    if (imgInBasicInfo && imgInBasicInfo.src) {
+      console.log('basic-infoセクション内の写真を検出:', imgInBasicInfo.src);
+      previewPhotoImg.src = imgInBasicInfo.src;
+      previewPhotoImg.alt = 'プロフィール写真';
+      previewPhotoImg.style.objectFit = 'cover';
+      return; // 画像が見つかったので終了
+    }
+  }
+  
+  // その他のセレクタで検索
+  const otherProfileImg = document.querySelector(
+    '.profile-photo img, .profile-image img, .profile-avatar img, ' +
+    '.profile-header-photo img, .user-photo img, .avatar img, ' +
+    '.profile-photo-section img, .profile-image-container img'
+  );
+  
+  if (otherProfileImg && otherProfileImg.src) {
+    console.log('その他のセレクタでプロフィール写真を検出:', otherProfileImg.src);
+    previewPhotoImg.src = otherProfileImg.src;
+    previewPhotoImg.alt = 'プロフィール写真';
+    previewPhotoImg.style.objectFit = 'cover';
+    return; // 画像が見つかったので終了
+  }
+  
+  // ページ内のすべての画像をチェックして、プロフィール写真らしいものを探す
+  const allImages = document.querySelectorAll('img');
+  for (const img of allImages) {
+    // プロフィール画像に関連する特徴を持つものを探す
+    if ((img.width > 50 && img.height > 50) || img.classList.contains('rounded-circle')) {
+      if (
+        img.className.includes('profile') || 
+        img.className.includes('avatar') || 
+        img.className.includes('user-photo') || 
+        img.style.borderRadius === '50%' ||
+        img.closest('.profile-section, .user-info, .avatar-container, .basic-info') ||
+        img.src.includes('profile')
+      ) {
+        console.log('特徴検索でプロフィール写真を検出:', img.src);
+        previewPhotoImg.src = img.src;
+        previewPhotoImg.alt = 'プロフィール写真';
+        previewPhotoImg.style.objectFit = 'cover';
+        return; // 画像が見つかったので終了
+      }
+    }
+  }
+  
+  // デフォルト値設定（画像が見つからなかった場合）
+  console.log('プロフィール写真が見つからないためデフォルト画像を使用します');
+  previewPhotoImg.src = '/uploads/default-profile.jpg';
+  previewPhotoImg.alt = 'プロフィール写真';
+  previewPhotoImg.style.objectFit = 'cover';
+}
+
+/**
+ * 興味・専門分野のチェックボックス変更を監視
+ */
+function setupInterestChangeListeners() {
+  console.log('興味・専門分野のリスナーをセットアップしています...');
+  
+  // 興味・専門分野のチェックボックスを監視
+  const interestCheckboxes = document.querySelectorAll('.interest-checkbox, input[type="checkbox"][name^="interest"]');
+  interestCheckboxes.forEach(checkbox => {
+    console.log('興味チェックボックスを検出:', checkbox.id || checkbox.name);
+    // イベントリスナーが既に設定されている場合は追加しない
+    checkbox.removeEventListener('change', interestChangeHandler);
+    checkbox.addEventListener('change', interestChangeHandler);
+  });
+  
+  // カスタムタグの入力欄も監視
+  const customTagInput = document.getElementById('interest-custom');
+  if (customTagInput) {
+    console.log('カスタムタグ入力欄を検出');
+    customTagInput.removeEventListener('input', customTagInputHandler);
+    customTagInput.addEventListener('input', customTagInputHandler);
+  }
+  
+  // 新規タグ追加ボタンも監視
+  const addTagButton = document.querySelector('.add-custom-tag-btn, .add-tag-btn');
+  if (addTagButton) {
+    console.log('タグ追加ボタンを検出');
+    addTagButton.removeEventListener('click', addTagButtonHandler);
+    addTagButton.addEventListener('click', addTagButtonHandler);
+  }
+}
+
+/**
+ * 興味チェックボックスの変更ハンドラ
+ */
+function interestChangeHandler() {
+  console.log('興味チェックボックスが変更されました:', this.id, 'チェック状態:', this.checked);
+  updatePreviewTags();
+}
+
+/**
+ * カスタムタグ入力ハンドラ
+ */
+function customTagInputHandler() {
+  console.log('カスタムタグ入力中:', this.value);
+}
+
+/**
+ * タグ追加ボタンハンドラ
+ */
+function addTagButtonHandler() {
+  console.log('タグ追加ボタンがクリックされました');
+  setTimeout(updatePreviewTags, 100); // タグが追加された後に更新
+}
+
+/**
+ * プレビューのタグを更新
+ */
+function updatePreviewTags() {
+  // プレビューコンテナを検索
+  const previewContainer = document.querySelector('.profile-preview-container');
+  if (!previewContainer) return;
+  
+  // タグコンテナを検索
+  const tagsContainer = previewContainer.querySelector('.guide-preview-tags');
+  if (!tagsContainer) return;
+  
+  // タグコンテナを空にする
+  tagsContainer.innerHTML = '';
+  
+  // まず、プレビューに表示されるべきタグのリストを作成
+  const tagsList = [];
+  
+  // チェックボックスからタグを取得
+  const interestCheckboxes = document.querySelectorAll('.interest-checkbox:checked, input[type="checkbox"][name^="interest"]:checked');
+  interestCheckboxes.forEach(checkbox => {
+    const labelElement = document.querySelector(`label[for="${checkbox.id}"]`);
+    if (labelElement) {
+      tagsList.push(labelElement.textContent.trim());
+    } else if (checkbox.nextElementSibling && checkbox.nextElementSibling.tagName === 'LABEL') {
+      tagsList.push(checkbox.nextElementSibling.textContent.trim());
+    }
+  });
+  
+  // カスタムタグからもタグを取得（既に追加されたもの）
+  const customTags = document.querySelectorAll('.custom-tag, .tag-item');
+  customTags.forEach(tag => {
+    tagsList.push(tag.textContent.trim());
+  });
+  
+  // カスタムタグ入力欄の値も確認
+  const customTagInput = document.getElementById('interest-custom');
+  if (customTagInput && customTagInput.value.trim()) {
+    // 入力欄に値があり、まだ追加ボタンがクリックされていない場合はここで追加
+    // (本来はボタンクリック時に処理すべきだが、プレビューではその前に表示したい)
+    tagsList.push(customTagInput.value.trim());
+  }
+  
+  console.log('表示するタグリスト:', tagsList);
+  
+  // タグがない場合はデフォルトタグを表示
+  if (tagsList.length === 0) {
+    tagsList.push('観光', '食べ歩き', 'アート');
+  }
+  
+  // プレビューにタグを表示（最大5つまで）
+  const maxTags = 5;
+  for (let i = 0; i < Math.min(tagsList.length, maxTags); i++) {
+    const tagElement = document.createElement('span');
+    tagElement.className = 'badge bg-primary me-1';
+    tagElement.textContent = tagsList[i];
+    tagsContainer.appendChild(tagElement);
+  }
+  
+  // タグが多い場合は「+N」で残りの数を表示
+  if (tagsList.length > maxTags) {
+    const moreElement = document.createElement('span');
+    moreElement.className = 'badge bg-secondary';
+    moreElement.textContent = `+${tagsList.length - maxTags}`;
+    tagsContainer.appendChild(moreElement);
+  }
+}

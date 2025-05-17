@@ -1,0 +1,294 @@
+/* スケジュールセクション専用スタイル */
+.schedule-section-title {
+  color: #2c3e50;
+  font-weight: 600;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 4px;
+  display: inline-block;
+  margin-bottom: 5px; /* 余白をさらに減らす */
+  margin-top: 0; /* 上部余白を削除 */
+}
+
+.schedule-subsection-title {
+  font-size: 1.1rem;
+  color: #34495e;
+  font-weight: 500;
+  margin-bottom: 5px; /* 余白をさらに減らす */
+  margin-top: 0; /* 上部余白を削除 */
+}
+
+.schedule-calendar-container {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 8px; /* パディングをさらに減らす */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  margin-bottom: 5px; /* 下の余白をさらに減らす */
+  margin-top: 0; /* 上部余白を削除 */
+}
+
+.schedule-summary-container {
+  height: 100%;
+}
+
+.alert-custom {
+  background-color: #e8f4fd;
+  border-left: 4px solid #3498db;
+  padding: 8px 12px; /* パディングを減らす */
+  color: #2c3e50;
+  margin-bottom: 10px; /* 余白を減らす */
+  font-size: 0.95rem;
+}
+
+.stat-card {
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.next-booking-card {
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.next-booking-card:hover {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.booking-date-badge {
+  min-width: 50px;
+  height: 50px;
+  font-size: 0.85rem;
+}
+
+/* タブとフォームスタイル */
+.nav-pills .nav-link {
+  color: #6c757d;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  padding: 8px 12px;
+}
+
+.nav-pills .nav-link.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.form-check-input:checked {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+.form-select {
+  border-radius: 6px;
+  border-color: #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus {
+  border-color: #9ac3e0;
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+#save-schedule-button {
+  background-color: #3498db;
+  border-color: #3498db;
+  padding: 8px 20px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+#save-schedule-button:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+/* フラットピッカー統合用スタイル */
+.flatpickr-calendar {
+  width: 100% !important;
+  max-width: 320px !important;
+  font-size: 12px !important;
+  position: static !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+
+.flatpickr-days {
+  width: 245px !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+}
+
+.dayContainer {
+  width: 245px !important;
+  min-width: 245px !important;
+  max-width: 245px !important;
+  padding: 0 !important;
+}
+
+.flatpickr-current-month {
+  padding-top: 2px !important;
+  font-size: 100% !important;
+  height: 24px !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+  font-size: 100% !important;
+  font-weight: 600 !important;
+}
+
+.flatpickr-weekday {
+  font-size: 80% !important;
+  width: 35px !important;
+  height: 20px !important;
+}
+
+.flatpickr-day {
+  max-width: 35px !important;
+  height: 35px !important;
+  line-height: 35px !important;
+  margin: 0 !important;
+}
+
+.flatpickr-day.selected, 
+.flatpickr-day.startRange, 
+.flatpickr-day.endRange, 
+.flatpickr-day.selected.inRange, 
+.flatpickr-day.startRange.inRange, 
+.flatpickr-day.endRange.inRange, 
+.flatpickr-day.selected:focus, 
+.flatpickr-day.startRange:focus, 
+.flatpickr-day.endRange:focus, 
+.flatpickr-day.selected:hover, 
+.flatpickr-day.startRange:hover, 
+.flatpickr-day.endRange:hover, 
+.flatpickr-day.selected.prevMonthDay, 
+.flatpickr-day.startRange.prevMonthDay, 
+.flatpickr-day.endRange.prevMonthDay, 
+.flatpickr-day.selected.nextMonthDay, 
+.flatpickr-day.startRange.nextMonthDay, 
+.flatpickr-day.endRange.nextMonthDay {
+  background: #3498db;
+  border-color: #3498db;
+}
+
+.flatpickr-day.today {
+  border-color: #3498db;
+}
+
+/* カレンダー内の日付や月表示の修正 */
+.numInputWrapper span.arrowUp,
+.numInputWrapper span.arrowDown {
+  border: none !important;
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  padding: 5px !important;
+}
+
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* カレンダーナビゲーションボタンのスタイル */
+.calendar-navigation-buttons .btn-group {
+  width: 100%;
+  max-width: 280px;
+}
+
+.calendar-navigation-buttons .btn {
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.calendar-navigation-buttons .btn:hover {
+  background-color: #0077b6;
+  color: white;
+}
+
+.calendar-year-selector .btn-group {
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.calendar-year-selector .btn {
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.calendar-year-selector .btn:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* 特別な日付設定セクションのスタイル */
+.special-date-item .card {
+  transition: all 0.2s ease;
+  border: 1px solid #e9ecef;
+}
+
+.special-date-item .card:hover {
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.special-date-time {
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  margin-left: 5px;
+}
+
+.delete-special-date-btn {
+  opacity: 0.7;
+  transition: all 0.2s ease;
+}
+
+.delete-special-date-btn:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* スケジュール時間コンテナの調整 */
+#special-date-time-container {
+  padding: 8px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+#special-date-form .form-label {
+  font-weight: 500;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+#add-special-date-btn {
+  transition: all 0.2s ease;
+}
+
+#add-special-date-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 992px) {
+  .schedule-summary-container {
+    border-left: none !important;
+    border-top: 1px solid #dee2e6;
+    margin-top: 30px;
+    padding-top: 30px;
+    padding-left: 0 !important;
+  }
+}

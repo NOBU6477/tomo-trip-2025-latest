@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルカメラテスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .camera-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 15px;
+            margin: 0 5px;
+            border-radius: 5px;
+            border: none;
+            background-color: #4285f4;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3367d6;
+        }
+        #preview {
+            margin-top: 20px;
+            display: none;
+        }
+        #photo {
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #status {
+            margin-top: 10px;
+            color: #4285f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>シンプルカメラテスト</h1>
+    <p>このページは、Web カメラ機能のシンプルなテストです。</p>
+    
+    <div class="camera-container">
+        <video id="video" autoplay playsinline></video>
+        
+        <div class="controls">
+            <button id="startButton">カメラ起動</button>
+            <button id="captureButton" disabled>写真を撮影</button>
+            <button id="stopButton" disabled>カメラ停止</button>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div id="preview">
+            <h2>プレビュー</h2>
+            <img id="photo" src="">
+            <div class="controls">
+                <button id="retakeButton">再撮影</button>
+                <button id="acceptButton">この写真を使用</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM 要素
+        const video = document.getElementById('video');
+        const startButton = document.getElementById('startButton');
+        const captureButton = document.getElementById('captureButton');
+        const stopButton = document.getElementById('stopButton');
+        const retakeButton = document.getElementById('retakeButton');
+        const acceptButton = document.getElementById('acceptButton');
+        const preview = document.getElementById('preview');
+        const photo = document.getElementById('photo');
+        const status = document.getElementById('status');
+        
+        // グローバル変数
+        let stream = null;
+        
+        // カメラ起動ボタン
+        startButton.addEventListener('click', async () => {
+            try {
+                status.textContent = 'カメラへのアクセスを要求中...';
+                
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 },
+                        facingMode: 'user' 
+                    } 
+                });
+                
+                video.srcObject = stream;
+                status.textContent = 'カメラ準備完了！撮影ボタンを押してください。';
+                
+                // ボタンの状態を更新
+                startButton.disabled = true;
+                captureButton.disabled = false;
+                stopButton.disabled = false;
+                
+            } catch (err) {
+                console.error('カメラアクセスエラー:', err);
+                status.textContent = `エラー: ${err.message}`;
+            }
+        });
+        
+        // 写真撮影ボタン
+        captureButton.addEventListener('click', () => {
+            if (!stream) {
+                status.textContent = 'エラー: カメラが起動していません。';
+                return;
+            }
+            
+            // キャンバスを作成して写真を撮影
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // 画像データを取得
+            photo.src = canvas.toDataURL('image/png');
+            
+            // プレビュー表示
+            preview.style.display = 'block';
+            status.textContent = '写真を撮影しました。この写真を使用するか、再撮影してください。';
+        });
+        
+        // カメラ停止ボタン
+        stopButton.addEventListener('click', () => {
+            stopCamera();
+            status.textContent = 'カメラを停止しました。';
+        });
+        
+        // 再撮影ボタン
+        retakeButton.addEventListener('click', () => {
+            preview.style.display = 'none';
+            status.textContent = 'もう一度撮影してください。';
+        });
+        
+        // 写真確定ボタン
+        acceptButton.addEventListener('click', () => {
+            const imageData = photo.src;
+            console.log('画像データ:', imageData.substring(0, 100) + '...');
+            status.textContent = '写真が確定されました！（実際のアプリではここでデータを保存します）';
+            
+            // ここでデータの保存や送信などの処理を行う
+            alert('写真が確定されました！実際のアプリではこの画像データを保存します。');
+            
+            // カメラ停止とリセット
+            stopCamera();
+            preview.style.display = 'none';
+        });
+        
+        // カメラを停止する関数
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                video.srcObject = null;
+                
+                // ボタンの状態を更新
+                startButton.disabled = false;
+                captureButton.disabled = true;
+                stopButton.disabled = true;
+            }
+        }
+        
+        // ページ離脱時にカメラを停止
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+        
+        // 初期ステータス
+        status.textContent = 'カメラ起動ボタンを押してください。';
+    </script>
+</body>
+</html>

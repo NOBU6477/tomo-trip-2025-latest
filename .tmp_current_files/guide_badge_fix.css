@@ -1,0 +1,57 @@
+/**
+ * ガイド登録モーダル内の認証バッジ表示を修正するスタイル
+ * 「未表示」テキストを非表示にし、認証済みバッジのみを表示
+ */
+
+/* 「未表示」テキストを強制的に非表示 */
+#registerGuideModal [id*="phone"] + *:not([class*="alert"]):not([id*="phone"]):not(input):not(button):not(select):not(textarea) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* 「未表示」という単語を含むテキストノードを持つ要素を非表示 */
+#registerGuideModal *:contains('未表示') {
+  display: none !important;
+}
+
+/* 新しい認証成功アラートを確実に表示 */
+#new-guide-phone-verified.alert.alert-success {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 1rem 0 !important;
+}
+
+/* 電話番号認証セクションのスタイル */
+#new-guide-phone-auth-form {
+  position: relative;
+  z-index: 10;
+  background-color: white;
+}
+
+/* 認証コード入力欄の表示を改善 */
+#new-guide-verification-code {
+  font-family: monospace;
+  letter-spacing: 0.5em;
+  text-align: center;
+}
+
+/* 認証完了後のスタイルを適用 */
+.verification-completed #new-guide-phone-number,
+.verification-completed #new-guide-send-code-btn,
+.verification-completed #new-guide-verification-code {
+  opacity: 0.7;
+}
+
+/* 上書きスタイル：既存の緑色バッジをすべて非表示 */
+.badge.bg-success,
+span[class*="badge"][class*="success"],
+[style*="background-color: rgb(25, 135, 84)"],
+[style*="background-color: #198754"] {
+  display: none !important;
+}

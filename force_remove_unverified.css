@@ -1,0 +1,48 @@
+/**
+ * 「未表示」テキストの強制非表示用スタイル
+ * 絶対セレクタを使用して確実に非表示にする
+ */
+
+/* 「未表示」テキストを強制的に非表示 */
+#registerGuideModal span:not([class*="alert"]):not([id*="guide-phone"]),
+#registerGuideModal div:not([class*="alert"]):not([class*="form"]):not([class*="input"]):not([id*="guide-phone"]):not([id*="fixed-phone"]) {
+  display: none !important;
+}
+
+/* 電話番号認証セクションの特殊スタイル */
+#fixed-phone-verification {
+  width: 100%;
+}
+
+/* 認証済みメッセージを必ず表示 */
+#fixed-phone-verified,
+#fixed-phone-verified.alert-success,
+#fixed-phone-verified.alert.alert-success {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* 「未表示」テキストを絶対非表示 */
+span:empty,
+div:empty {
+  display: none !important;
+}
+
+/* 確認済みバッジをハイライト */
+#fixed-phone-verified.alert-success {
+  background-color: #d1e7dd !important;
+  border-color: #badbcc !important;
+  color: #0f5132 !important;
+  padding: 0.75rem 1.25rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  border-radius: 0.25rem !important;
+}
+
+/* 確認アイコンのスタイル */
+#fixed-phone-verified .fa-check-circle,
+#fixed-phone-verified .fas.fa-check-circle {
+  color: #0f5132 !important;
+  margin-right: 0.5rem !important;
+}

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ガイドを探す | Local Guide</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+  <style>
+    .guide-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .guide-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .guide-img {
+      height: 200px;
+      object-fit: cover;
+    }
+    .filter-section {
+      background-color: #f8f9fa;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .badge {
+      margin-right: 0.25rem;
+    }
+    .star-rating .bi-star-fill {
+      color: #ffc107;
+    }
+    .hidden-guide {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- ナビゲーションバー -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="/">Local Guide</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="search-page.html">ガイドを探す</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">使い方</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">サービスについて</a>
+          </li>
+        </ul>
+        
+        <!-- 言語選択 -->
+        <div class="nav-item dropdown me-3">
+          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown">
+            <span id="current-language">日本語</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja')">日本語</a></li>
+            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
+          </ul>
+        </div>
+        
+        <!-- ユーザーメニュー -->
+        <div id="not-logged-in">
+          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+          <button type="button" class="btn btn-light" id="show-user-type-modal">新規登録</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- メインコンテンツ -->
+  <div class="container py-5">
+    <h1 class="mb-4">ガイドを探す</h1>
+    
+    <!-- フィルターセクション -->
+    <div class="filter-section">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <label for="location-filter" class="form-label">地域</label>
+          <select class="form-select" id="location-filter">
+            <option value="">すべて</option>
+            <option value="tokyo">東京</option>
+            <option value="kyoto">京都</option>
+            <option value="osaka">大阪</option>
+            <option value="hokkaido">北海道</option>
+            <option value="fukuoka">福岡</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="language-filter" class="form-label">言語</label>
+          <select class="form-select" id="language-filter">
+            <option value="">すべて</option>
+            <option value="japanese">日本語</option>
+            <option value="english">英語</option>
+            <option value="chinese">中国語</option>
+            <option value="korean">韓国語</option>
+          </select>
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="fee-filter" class="form-label">料金</label>
+          <select class="form-select" id="fee-filter">
+            <option value="">すべて</option>
+            <option value="6000">〜¥6,000</option>
+            <option value="10000">〜¥10,000</option>
+            <option value="15000">〜¥15,000</option>
+            <option value="20000">〜¥20,000</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label class="form-label">キーワード</label>
+        <div class="d-flex flex-wrap">
+          <div class="form-check me-3 mb-2">
+            <input class="form-check-input keyword-checkbox" type="checkbox" value="nighttour" id="keyword-night">
+            <label class="form-check-label" for="keyword-night">ナイトツアー</label>
+          </div>
+          <div class="form-check me-3 mb-2">
+            <input class="form-check-input keyword-checkbox" type="checkbox" value="gourmet" id="keyword-gourmet">
+            <label class="form-check-label" for="keyword-gourmet">グルメ</label>
+          </div>
+          <div class="form-check me-3 mb-2">
+            <input class="form-check-input keyword-checkbox" type="checkbox" value="photospot" id="keyword-photo">
+            <label class="form-check-label" for="keyword-photo">写真スポット</label>
+          </div>
+          <div class="form-check me-3 mb-2">
+            <input class="form-check-input keyword-checkbox" type="checkbox" value="cuisine" id="keyword-cuisine">
+            <label class="form-check-label" for="keyword-cuisine">料理</label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input keyword-checkbox" type="checkbox" value="activities" id="keyword-activities">
+            <label class="form-check-label" for="keyword-activities">アクティビティ</label>
+          </div>
+        </div>
+        <div class="mt-3">
+          <label for="keyword-filter-custom" class="form-label">その他のキーワードを入力（コンマ区切りで複数入力可）</label>
+          <input type="text" class="form-control" id="keyword-filter-custom" placeholder="例: 温泉,登山,ハイキング">
+          <div class="form-text">上記のチェックボックスまたは入力欄でキーワードを指定できます。複数のキーワードを入力する場合は、カンマ（,）区切りで入力してください。例: 「温泉,登山,ハイキング」</div>
+        </div>
+      </div>
+      
+      <div class="d-flex gap-2">
+        <button class="btn btn-primary" id="apply-filters">検索</button>
+        <button class="btn btn-outline-secondary" id="reset-filters">リセット</button>
+      </div>
+    </div>
+    
+    <!-- 検索結果カウンター -->
+    <div id="search-results-counter" class="alert alert-success my-3"></div>
+    
+    <!-- 検索結果なしメッセージ -->
+    <div id="no-results-message" class="alert alert-info text-center my-4 d-none">
+      検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。
+    </div>
+    
+    <!-- ガイド一覧 -->
+    <div id="guide-cards-container" class="row">
+      <!-- ガイドカード1 -->
+      <div class="col-md-6 col-lg-4 mb-4 guide-item">
+        <div class="card h-100 guide-card" data-guide-id="1" data-location="tokyo" data-languages="japanese,english" data-fee="6000" data-keywords="nighttour,gourmet">
+          <img src="https://via.placeholder.com/300x200?text=Guide+Photo" class="card-img-top guide-img" alt="ガイド写真">
+          <div class="card-body">
+            <h5 class="card-title">桃太郎</h5>
+            <p class="card-text guide-location"><i class="bi bi-geo-alt-fill text-danger"></i> 東京都 渋谷区</p>
+            <p class="text-muted guide-languages">
+              <i class="bi bi-translate text-info"></i> 
+              <span class="badge bg-light text-dark">日本語</span>
+              <span class="badge bg-light text-dark">英語</span>
+            </p>
+            <p class="guide-fee"><i class="bi bi-currency-yen text-success"></i> ¥6,000/セッション〜</p>
+            <div class="mb-2">
+              <span class="badge bg-secondary">ナイトツアー</span>
+              <span class="badge bg-secondary">グルメ</span>
+            </div>
+            <p class="card-text">東京の隠れた名所を案内します。グルメや写真スポットが得意です。</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+              <span class="ms-1">4.5</span>
+            </div>
+            <a href="guide-details.html?id=1" class="btn btn-primary guide-details-link">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ガイドカード2 -->
+      <div class="col-md-6 col-lg-4 mb-4 guide-item">
+        <div class="card h-100 guide-card" data-guide-id="2" data-location="kyoto" data-languages="japanese,english" data-fee="8000" data-keywords="photospot,cuisine">
+          <img src="https://via.placeholder.com/300x200?text=Guide+Photo" class="card-img-top guide-img" alt="ガイド写真">
+          <div class="card-body">
+            <h5 class="card-title">花子</h5>
+            <p class="card-text guide-location"><i class="bi bi-geo-alt-fill text-danger"></i> 京都府 京都市</p>
+            <p class="text-muted guide-languages">
+              <i class="bi bi-translate text-info"></i> 
+              <span class="badge bg-light text-dark">日本語</span>
+              <span class="badge bg-light text-dark">英語</span>
+            </p>
+            <p class="guide-fee"><i class="bi bi-currency-yen text-success"></i> ¥8,000/セッション〜</p>
+            <div class="mb-2">
+              <span class="badge bg-secondary">写真スポット</span>
+              <span class="badge bg-secondary">料理</span>
+            </div>
+            <p class="card-text">歴史と伝統が息づく京都の魅力を案内。歴史や文化体験が得意です。</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star"></i>
+              <span class="ms-1">4.0</span>
+            </div>
+            <a href="guide-details.html?id=2" class="btn btn-primary guide-details-link">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ガイドカード3 -->
+      <div class="col-md-6 col-lg-4 mb-4 guide-item">
+        <div class="card h-100 guide-card" data-guide-id="3" data-location="osaka" data-languages="japanese,chinese" data-fee="7000" data-keywords="gourmet,activities">
+          <img src="https://via.placeholder.com/300x200?text=Guide+Photo" class="card-img-top guide-img" alt="ガイド写真">
+          <div class="card-body">
+            <h5 class="card-title">一郎</h5>
+            <p class="card-text guide-location"><i class="bi bi-geo-alt-fill text-danger"></i> 大阪府 大阪市</p>
+            <p class="text-muted guide-languages">
+              <i class="bi bi-translate text-info"></i> 
+              <span class="badge bg-light text-dark">日本語</span>
+              <span class="badge bg-light text-dark">中国語</span>
+            </p>
+            <p class="guide-fee"><i class="bi bi-currency-yen text-success"></i> ¥7,000/セッション〜</p>
+            <div class="mb-2">
+              <span class="badge bg-secondary">グルメ</span>
+              <span class="badge bg-secondary">アクティビティ</span>
+            </div>
+            <p class="card-text">大阪のB級グルメや街歩きが専門。地元の人だけが知る場所にご案内します。</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+              <i class="bi bi-star"></i>
+              <span class="ms-1">3.5</span>
+            </div>
+            <a href="guide-details.html?id=3" class="btn btn-primary guide-details-link">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ガイドカード4 -->
+      <div class="col-md-6 col-lg-4 mb-4 guide-item">
+        <div class="card h-100 guide-card" data-guide-id="4" data-location="hokkaido" data-languages="japanese,english,korean" data-fee="10000" data-keywords="activities,photospot">
+          <img src="https://via.placeholder.com/300x200?text=Guide+Photo" class="card-img-top guide-img" alt="ガイド写真">
+          <div class="card-body">
+            <h5 class="card-title">雪子</h5>
+            <p class="card-text guide-location"><i class="bi bi-geo-alt-fill text-danger"></i> 北海道 札幌市</p>
+            <p class="text-muted guide-languages">
+              <i class="bi bi-translate text-info"></i> 
+              <span class="badge bg-light text-dark">日本語</span>
+              <span class="badge bg-light text-dark">英語</span>
+              <span class="badge bg-light text-dark">韓国語</span>
+            </p>
+            <p class="guide-fee"><i class="bi bi-currency-yen text-success"></i> ¥10,000/セッション〜</p>
+            <div class="mb-2">
+              <span class="badge bg-secondary">アクティビティ</span>
+              <span class="badge bg-secondary">写真スポット</span>
+            </div>
+            <p class="card-text">北海道の大自然と季節のアクティビティを案内。冬のスキーツアーも人気です。</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <span class="ms-1">5.0</span>
+            </div>
+            <a href="guide-details.html?id=4" class="btn btn-primary guide-details-link">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ガイドカード5 -->
+      <div class="col-md-6 col-lg-4 mb-4 guide-item">
+        <div class="card h-100 guide-card" data-guide-id="5" data-location="fukuoka" data-languages="japanese,english,chinese" data-fee="7500" data-keywords="gourmet,nighttour">
+          <img src="https://via.placeholder.com/300x200?text=Guide+Photo" class="card-img-top guide-img" alt="ガイド写真">
+          <div class="card-body">
+            <h5 class="card-title">太郎</h5>
+            <p class="card-text guide-location"><i class="bi bi-geo-alt-fill text-danger"></i> 福岡県 福岡市</p>
+            <p class="text-muted guide-languages">
+              <i class="bi bi-translate text-info"></i> 
+              <span class="badge bg-light text-dark">日本語</span>
+              <span class="badge bg-light text-dark">英語</span>
+              <span class="badge bg-light text-dark">中国語</span>
+            </p>
+            <p class="guide-fee"><i class="bi bi-currency-yen text-success"></i> ¥7,500/セッション〜</p>
+            <div class="mb-2">
+              <span class="badge bg-secondary">グルメ</span>
+              <span class="badge bg-secondary">ナイトツアー</span>
+            </div>
+            <p class="card-text">九州の食文化や夜の繁華街案内が得意。屋台やローカルフードをご紹介します。</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star"></i>
+              <span class="ms-1">4.0</span>
+            </div>
+            <a href="guide-details.html?id=5" class="btn btn-primary guide-details-link">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ガイドカード6 -->
+      <div class="col-md-6 col-lg-4 mb-4 guide-item">
+        <div class="card h-100 guide-card" data-guide-id="6" data-location="tokyo" data-languages="japanese,english" data-fee="9000" data-keywords="photospot,activities">
+          <img src="https://via.placeholder.com/300x200?text=Guide+Photo" class="card-img-top guide-img" alt="ガイド写真">
+          <div class="card-body">
+            <h5 class="card-title">次郎</h5>
+            <p class="card-text guide-location"><i class="bi bi-geo-alt-fill text-danger"></i> 東京都 新宿区</p>
+            <p class="text-muted guide-languages">
+              <i class="bi bi-translate text-info"></i> 
+              <span class="badge bg-light text-dark">日本語</span>
+              <span class="badge bg-light text-dark">英語</span>
+            </p>
+            <p class="guide-fee"><i class="bi bi-currency-yen text-success"></i> ¥9,000/セッション〜</p>
+            <div class="mb-2">
+              <span class="badge bg-secondary">写真スポット</span>
+              <span class="badge bg-secondary">アクティビティ</span>
+            </div>
+            <p class="card-text">インスタ映えする東京の隠れたフォトスポットを案内。写真撮影も手伝います。</p>
+          </div>
+          <div class="card-footer d-flex justify-content-between align-items-center">
+            <div class="star-rating">
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-fill"></i>
+              <i class="bi bi-star-half"></i>
+              <span class="ms-1">4.5</span>
+            </div>
+            <a href="guide-details.html?id=6" class="btn btn-primary guide-details-link">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- もっと見るボタン -->
+    <div class="text-center mt-4">
+      <button id="load-more-guides" class="btn btn-outline-primary">もっと見る</button>
+    </div>
+  </div>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <h5>Local Guide</h5>
+          <p class="small">地元ガイドとの特別な体験を提供します</p>
+          <p class="small">© 2025 Local Guide. All rights reserved.</p>
+        </div>
+        <div class="col-lg-4">
+          <h5>リンク</h5>
+          <ul class="list-unstyled small">
+            <li><a href="/" class="text-white">ホーム</a></li>
+            <li><a href="search-page.html" class="text-white">ガイドを探す</a></li>
+            <li><a href="#" class="text-white">サービスについて</a></li>
+            <li><a href="#" class="text-white">サポート</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h5>お問い合わせ</h5>
+          <ul class="list-unstyled small">
+            <li><i class="bi bi-envelope me-2"></i> info@localguide.example.com</li>
+            <li><i class="bi bi-telephone me-2"></i> 03-1234-5678</li>
+            <li><i class="bi bi-geo-alt me-2"></i> 東京都新宿区西新宿</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+  <script src="guide-filter-new.js"></script>
+  <script src="guide-search.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 検索結果数の初期表示
+      const searchResultsCounter = document.getElementById('search-results-counter');
+      const visibleGuides = document.querySelectorAll('.guide-item').length;
+      if (searchResultsCounter) {
+        searchResultsCounter.textContent = `${visibleGuides}件のガイドが見つかりました`;
+      }
+      
+      // 「もっと見る」ボタンの制御
+      const loadMoreBtn = document.getElementById('load-more-guides');
+      const allGuides = document.querySelectorAll('.guide-item');
+      
+      if (allGuides.length <= 6) {
+        loadMoreBtn.style.display = 'none';
+      }
+      
+      // 言語切り替え
+      window.changeLanguage = function(lang) {
+        console.log(`言語を${lang}に切り替えます`);
+        document.getElementById('current-language').textContent = lang === 'ja' ? '日本語' : 'English';
+        // 実際の翻訳処理はここに追加
+      };
+    });
+  </script>
+</body>
+</html>

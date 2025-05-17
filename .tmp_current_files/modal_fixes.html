@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Modal Fixes</title>
+</head>
+<body>
+
+<script>
+// ウィンドウ読み込み時にボタンを修正
+window.addEventListener('load', function() {
+  // 新規登録ボタン
+  const registerBtns = document.querySelectorAll('.btn.btn-warning');
+  registerBtns.forEach(function(btn) {
+    // クローンして置き換え
+    const newBtn = btn.cloneNode(true);
+    btn.parentNode.replaceChild(newBtn, btn);
+    
+    // 新しいイベントを設定
+    newBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('新規登録ボタンがクリックされました (インライン)');
+      
+      // すべてのモーダルをクリア
+      document.querySelectorAll('.modal.show').forEach(function(modal) {
+        modal.classList.remove('show');
+        modal.style.display = 'none';
+      });
+      
+      document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+        if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+      });
+      
+      // ユーザータイプモーダルを表示
+      const modal = document.getElementById('userTypeModal');
+      if (modal) {
+        // バックドロップを追加
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop fade show';
+        backdrop.style.opacity = '0.25';
+        document.body.appendChild(backdrop);
+        
+        // モーダルを表示
+        modal.classList.add('show');
+        modal.style.display = 'block';
+        modal.setAttribute('aria-modal', 'true');
+        modal.removeAttribute('aria-hidden');
+        
+        document.body.classList.add('modal-open');
+      }
+      
+      return false;
+    });
+  });
+});
+</script>
+
+</body>
+</html>

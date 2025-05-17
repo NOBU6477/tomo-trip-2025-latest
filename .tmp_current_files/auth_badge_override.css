@@ -1,0 +1,137 @@
+/**
+ * 認証済みバッジを強制非表示にするCSS
+ * さまざまなセレクタでスタイルを上書き
+ */
+
+/* 緑色系ボタン・バッジの一般的な非表示 - 強制的に消去する */
+.badge.bg-success,
+.btn-success,
+.alert-success:not(#verification-success),
+[id*="verified"],
+[class*="verified"],
+[class*="authentication"],
+#guide-phone-verified,
+.badge-success,
+button.verified-button,
+span.verified-button {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  position: absolute !important;
+  left: -9999px !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
+
+/* 電話番号認証セクション内のすべての緑色要素 - 特に重要なため冗長に指定 */
+[data-section="phone-verification"] .badge.bg-success,
+[data-section="phone-verification"] .btn-success,
+label:contains("電話番号認証") ~ .badge.bg-success,
+label:contains("電話番号認証") ~ .btn-success,
+label:contains("電話番号認証") + .badge.bg-success,
+label:contains("電話番号認証") + .btn-success,
+label:contains("電話番号認証") ~ * .badge.bg-success,
+label:contains("電話番号認証") ~ * .btn-success,
+.form-group:has(label:contains("電話番号認証")) .badge.bg-success,
+.form-group:has(label:contains("電話番号認証")) .btn-success,
+.mb-3:has(label:contains("電話番号認証")) .badge.bg-success,
+.mb-3:has(label:contains("電話番号認証")) .btn-success,
+.row:has(label:contains("電話番号認証")) .badge.bg-success,
+.row:has(label:contains("電話番号認証")) .btn-success,
+div:has(> label:contains("電話番号認証")) .badge.bg-success,
+div:has(> label:contains("電話番号認証")) .btn-success {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  position: absolute !important;
+  left: -9999px !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
+
+/* 認証関連要素の非表示 */
+button.verified-button,
+span.verified-badge,
+.verification-status-badge,
+.badge-authentication,
+.btn-verification,
+/* 認証済みテキストを含む要素は非表示（JQueryセレクタ互換用）*/
+.verified, .verification-badge, .badge-verified, [class*="verified"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* 緑色の背景を持つ任意の要素 */
+[style*="background-color: rgb(25, 135, 84)"],
+[style*="background-color: rgb(40, 167, 69)"],
+[style*="background-color:#198754"],
+[style*="background-color: #198754"],
+[style*="background-color:#28a745"],
+[style*="background-color: #28a745"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* ガイド登録モーダル内のすべての認証済み要素 */
+#guideRegistrationModal .btn-success,
+#guideRegistrationModal .badge.bg-success,
+#guideRegistrationModal [class*="success"]:not(#verification-success),
+#guideRegistrationModal .badge-success,
+#guideRegistrationModal button.verification-complete,
+#guideRegistrationModal span.verification-badge {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+}
+
+/* 「未表示」テキストの表示スタイル */
+.text-verification-status {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  font-size: 0.875rem !important;
+  color: #6c757d !important;
+  margin-left: 0.5rem !important;
+  padding: 0.25rem 0.5rem !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0.25rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s !important;
+}
+
+.text-verification-status:hover {
+  background-color: #e9ecef !important;
+  color: #495057 !important;
+}
+
+/* 例外: 認証モーダル内の成功要素は非表示にしない */
+#phoneVerificationModal .btn-success,
+#phoneVerificationModal .badge.bg-success,
+#phoneVerificationModal .alert-success,
+#phoneVerificationModal [class*="success"],
+#verification-success {
+  display: initial !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  width: auto !important;
+  overflow: initial !important;
+  padding: initial !important;
+  margin: initial !important;
+  border: initial !important;
+  position: initial !important;
+  left: initial !important;
+  pointer-events: initial !important;
+}

@@ -1,0 +1,1111 @@
+document.addEventListener('DOMContentLoaded', function() {
+  // Feather アイコンの初期化
+  feather.replace();
+  
+  // 強制的に非ログイン状態のUIに設定
+  document.getElementById('logged-in').classList.add('d-none');
+  document.getElementById('not-logged-in').classList.remove('d-none');
+  
+  // ログイン状態のチェック
+  checkAuthStatus();
+  
+  // 電話認証モーダルのリスナー設定
+  setupVerificationModalListeners();
+  
+  // 本人確認書類モーダルのリスナー設定
+  setupIdDocumentModalListeners();
+  
+  // 登録フォームの電話番号認証と本人確認書類アップロードボタンのリスナー設定
+  setupRegistrationVerificationListeners();
+  
+  // モーダル関連の要素
+  const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+  const userTypeModal = new bootstrap.Modal(document.getElementById('userTypeModal'));
+  const touristRegisterModal = new bootstrap.Modal(document.getElementById('touristRegisterModal'));
+  const guideRegisterModal = new bootstrap.Modal(document.getElementById('guideRegisterModal'));
+  const phoneVerificationModal = new bootstrap.Modal(document.getElementById('phoneVerificationModal'));
+  const idDocumentModal = new bootstrap.Modal(document.getElementById('idDocumentModal'));
+  
+  // ログイン、新規登録ボタンのイベントリスナー
+  document.getElementById('login-btn').addEventListener('click', function() {
+    loginModal.show();
+  });
+  
+  document.getElementById('register-btn').addEventListener('click', function() {
+    userTypeModal.show();
+  });
+  
+  // ユーザータイプ選択から各登録フォームへの遷移
+  // 観光客ボタンクリック時
+  document.getElementById('select-tourist-btn').addEventListener('click', function() {
+    userTypeModal.hide();
+    setTimeout(() => touristRegisterModal.show(), 500);
+  });
+  
+  // ガイドボタンクリック時
+  document.getElementById('select-guide-btn').addEventListener('click', function() {
+    userTypeModal.hide();
+    setTimeout(() => guideRegisterModal.show(), 500);
+  });
+  
+  // 観光客カードクリック時
+  document.getElementById('tourist-card').addEventListener('click', function(e) {
+    // ボタン自体がクリックされた場合はスキップ（ボタンのイベントハンドラが処理する）
+    if (e.target.id === 'select-tourist-btn' || e.target.closest('#select-tourist-btn')) {
+      return;
+    }
+    userTypeModal.hide();
+    setTimeout(() => touristRegisterModal.show(), 500);
+  });
+  
+  // ガイドカードクリック時
+  document.getElementById('guide-card').addEventListener('click', function(e) {
+    // ボタン自体がクリックされた場合はスキップ（ボタンのイベントハンドラが処理する）
+    if (e.target.id === 'select-guide-btn' || e.target.closest('#select-guide-btn')) {
+      return;
+    }
+    userTypeModal.hide();
+    setTimeout(() => guideRegisterModal.show(), 500);
+  });
+  
+  // 登録フォームからログインへの遷移
+  document.getElementById('show-login-from-type').addEventListener('click', function(e) {
+    e.preventDefault();
+    userTypeModal.hide();
+    setTimeout(() => loginModal.show(), 500);
+  });
+  
+  document.getElementById('show-login-from-tourist').addEventListener('click', function(e) {
+    e.preventDefault();
+    touristRegisterModal.hide();
+    setTimeout(() => loginModal.show(), 500);
+  });
+  
+  document.getElementById('show-login-from-guide').addEventListener('click', function(e) {
+    e.preventDefault();
+    guideRegisterModal.hide();
+    setTimeout(() => loginModal.show(), 500);
+  });
+  
+  // ログインから登録への遷移
+  document.getElementById('show-register').addEventListener('click', function(e) {
+    e.preventDefault();
+    loginModal.hide();
+    setTimeout(() => userTypeModal.show(), 500);
+  });
+  
+  // 登録フォームからユーザータイプ選択に戻る
+  document.getElementById('back-to-user-type').addEventListener('click', function(e) {
+    e.preventDefault();
+    touristRegisterModal.hide();
+    setTimeout(() => userTypeModal.show(), 500);
+  });
+  
+  document.getElementById('back-to-user-type-from-guide').addEventListener('click', function(e) {
+    e.preventDefault();
+    guideRegisterModal.hide();
+    setTimeout(() => userTypeModal.show(), 500);
+  });
+  
+  // ログアウトボタンのイベントリスナー
+  document.getElementById('logout-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    logout();
+  });
+  
+  // ガイドになるボタンのイベントリスナー
+  document.getElementById('become-guide-btn').addEventListener('click', function() {
+    const user = getCurrentUser();
+    if (user) {
+      window.location.href = '#become-guide';
+    } else {
+      // ユーザータイプ選択モーダルを表示して、ガイドを選択済みにする
+      userTypeModal.show();
+      // UIでガイドカードを強調表示
+      document.getElementById('guide-card').style.borderColor = 'var(--primary-color)';
+      document.getElementById('tourist-card').style.borderColor = 'transparent';
+    }
+  });
+  
+  // 言語追加ボタンのイベントリスナー
+  document.getElementById('add-language-btn').addEventListener('click', function() {
+    const select = document.getElementById('guide-language-select');
+    const selectedValue = select.value;
+    const selectedText = select.options[select.selectedIndex].text;
+    
+    // 既に選択されている言語かチェック
+    const existingLanguages = document.querySelectorAll('.language-tag');
+    for (let lang of existingLanguages) {
+      if (lang.dataset.value === selectedValue) {
+        return; // 既に追加済みならスキップ
+      }
+    }
+    
+    // 言語タグを作成
+    const languageTag = document.createElement('div');
+    languageTag.className = 'language-tag';
+    languageTag.dataset.value = selectedValue;
+    languageTag.innerHTML = `
+      ${selectedText}
+      <button type="button" class="remove-language">×</button>
+    `;
+    
+    // 言語タグをコンテナに追加
+    document.getElementById('selected-languages').appendChild(languageTag);
+    
+    // 入力フィールドに値を更新
+    updateLanguagesInput();
+    
+    // 削除ボタンにイベントリスナーを追加
+    languageTag.querySelector('.remove-language').addEventListener('click', function() {
+      languageTag.remove();
+      updateLanguagesInput();
+    });
+  });
+  
+  // 選択された言語をhidden inputに保存する関数
+  function updateLanguagesInput() {
+    const languageTags = document.querySelectorAll('.language-tag');
+    const languages = Array.from(languageTags).map(tag => tag.dataset.value);
+    document.getElementById('guide-languages-input').value = languages.join(',');
+  }
+  
+  // ログインフォームの送信
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    
+    login(username, password);
+  });
+  
+  // 観光客登録フォームの送信
+  document.getElementById('tourist-register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const firstName = document.getElementById('tourist-firstname').value;
+    const lastName = document.getElementById('tourist-lastname').value;
+    const username = document.getElementById('tourist-username').value;
+    const email = document.getElementById('tourist-email').value;
+    const phoneNumber = document.getElementById('tourist-phone').value;
+    const password = document.getElementById('tourist-password').value;
+    const confirmPassword = document.getElementById('tourist-confirm-password').value;
+    
+    if (password !== confirmPassword) {
+      showRegisterError('パスワードが一致しません', 'tourist-register-error');
+      return;
+    }
+    
+    register(firstName, lastName, username, email, phoneNumber, password, 'tourist');
+  });
+  
+  // ガイド登録フォームの送信
+  document.getElementById('guide-register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const firstName = document.getElementById('guide-firstname').value;
+    const lastName = document.getElementById('guide-lastname').value;
+    const username = document.getElementById('guide-username').value;
+    const email = document.getElementById('guide-email').value;
+    const phoneNumber = document.getElementById('guide-phone').value;
+    const city = document.getElementById('guide-city').value;
+    const languages = document.getElementById('guide-languages-input').value;
+    const password = document.getElementById('guide-password').value;
+    const confirmPassword = document.getElementById('guide-confirm-password').value;
+    
+    if (password !== confirmPassword) {
+      showRegisterError('パスワードが一致しません', 'guide-register-error');
+      return;
+    }
+    
+    // 少なくとも1つの言語が選択されていることを確認
+    if (!languages) {
+      showRegisterError('少なくとも1つの言語を選択してください', 'guide-register-error');
+      return;
+    }
+    
+    register(firstName, lastName, username, email, phoneNumber, password, 'guide', { city, languages });
+  });
+
+  // 電話認証関連のリスナーはsetupVerificationModalListeners()で設定
+
+  // 身分証明書アップロード関連のリスナーはsetupIdDocumentModalListeners()で設定
+
+  // 都市ボタンのイベントリスナー
+  document.querySelectorAll('.city-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const city = this.dataset.city;
+      document.getElementById('search-input').value = city;
+      searchGuides(city);
+    });
+  });
+
+  // 検索ボタンのイベントリスナー
+  document.getElementById('search-button').addEventListener('click', function() {
+    const city = document.getElementById('search-input').value.trim();
+    if (city) {
+      searchGuides(city);
+    }
+  });
+
+  // 検索入力フィールドのEnterキーイベントリスナー
+  document.getElementById('search-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const city = this.value.trim();
+      if (city) {
+        searchGuides(city);
+      }
+    }
+  });
+
+  // 言語選択のイベントリスナー
+  document.querySelectorAll('.language-option').forEach(option => {
+    option.addEventListener('click', function(e) {
+      e.preventDefault();
+      const lang = this.dataset.lang;
+      console.log('言語切り替え:', lang);
+      if (typeof changeLanguage === 'function') {
+        changeLanguage(lang);
+      } else {
+        console.error('changeLanguage関数が定義されていません');
+        // グローバルウィンドウを通じてi18n.jsの関数を呼び出す
+        if (window.changeLanguage) {
+          window.changeLanguage(lang);
+        }
+      }
+    });
+  });
+});
+
+// APIリクエスト関数
+async function fetchAPI(endpoint, method = 'GET', data = null) {
+  try {
+    const options = {
+      method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    };
+    
+    if (data && method !== 'GET') {
+      options.body = JSON.stringify(data);
+    }
+    
+    const response = await fetch(`/api/${endpoint}`, options);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `APIエラー: ${response.status}`);
+    }
+    
+    // 204 No Content の場合は null を返す
+    if (response.status === 204) {
+      return null;
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error(`API Error (${endpoint}):`, error);
+    throw error;
+  }
+}
+
+// 認証状態をチェックする関数
+async function checkAuthStatus() {
+  try {
+    const user = await fetchAPI('user');
+    if (user) {
+      setCurrentUser(user);
+      updateUIForLoggedInUser(user);
+    } else {
+      clearCurrentUser();
+      updateUIForLoggedOutUser();
+    }
+  } catch (error) {
+    console.error('認証状態の確認に失敗しました:', error);
+    clearCurrentUser();
+    updateUIForLoggedOutUser();
+    // API接続エラーでもUIは非ログイン状態に強制する
+    document.getElementById('logged-in').classList.add('d-none');
+    document.getElementById('not-logged-in').classList.remove('d-none');
+  }
+}
+
+// ログイン関数
+async function login(username, password) {
+  try {
+    const user = await fetchAPI('login', 'POST', { username, password });
+    setCurrentUser(user);
+    updateUIForLoggedInUser(user);
+    
+    // モーダルを閉じる
+    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    if (loginModal) {
+      loginModal.hide();
+    }
+    
+    // メッセージを表示
+    alert('ログインしました');
+  } catch (error) {
+    showLoginError(error.message || 'ログインに失敗しました');
+  }
+}
+
+// 新規登録関数
+async function register(firstName, lastName, username, email, phoneNumber, password, type = 'tourist', additionalData = {}) {
+  try {
+    const userData = {
+      firstName,
+      lastName,
+      username,
+      email,
+      phoneNumber,
+      password,
+      type,
+      ...additionalData
+    };
+    
+    const user = await fetchAPI('register', 'POST', userData);
+    setCurrentUser(user);
+    
+    // モーダルを閉じる
+    const touristRegisterModal = bootstrap.Modal.getInstance(document.getElementById('touristRegisterModal'));
+    const guideRegisterModal = bootstrap.Modal.getInstance(document.getElementById('guideRegisterModal'));
+    if (touristRegisterModal) touristRegisterModal.hide();
+    if (guideRegisterModal) guideRegisterModal.hide();
+    
+    updateUIForLoggedInUser(user);
+    
+    // 登録後の処理
+    if (type === 'guide') {
+      // ガイドの場合は身分証明書アップロードモーダルを表示
+      const idDocumentModal = new bootstrap.Modal(document.getElementById('idDocumentModal'));
+      setTimeout(() => idDocumentModal.show(), 500);
+    } else {
+      // 観光客の場合は電話認証モーダルを表示
+      const phoneVerificationModal = new bootstrap.Modal(document.getElementById('phoneVerificationModal'));
+      setTimeout(() => phoneVerificationModal.show(), 500);
+    }
+    
+    // メッセージを表示
+    alert('登録が完了しました');
+  } catch (error) {
+    const errorElementId = type === 'guide' ? 'guide-register-error' : 'tourist-register-error';
+    showRegisterError(error.message || '登録に失敗しました', errorElementId);
+  }
+}
+
+// 電話認証コード送信関数
+async function sendVerificationCode(phoneNumber) {
+  try {
+    // ステップ1を非表示にし、ステップ2を表示
+    document.getElementById('verification-step-1').classList.add('d-none');
+    document.getElementById('verification-step-2').classList.remove('d-none');
+    
+    // Firebase認証の場合
+    if (typeof window.firebaseEnabled !== 'undefined' && window.firebaseEnabled) {
+      return await window.sendVerificationCode(phoneNumber);
+    } else {
+      // 通常の認証の場合
+      const user = getCurrentUser();
+      try {
+        const response = await fetchAPI('user/verify-phone/send', 'POST', { phoneNumber });
+        
+        // コードタイマーの開始
+        startCodeTimer();
+        
+        return response;
+      } catch (error) {
+        console.error('認証コード送信エラー:', error);
+        // モックの成功レスポンスを返す（開発用）
+        alert('開発モード: SMSコード 123456 が送信されました');
+        startCodeTimer();
+        return { success: true, mockCode: '123456' };
+      }
+    }
+  } catch (error) {
+    showVerificationError(error.message || '認証コードの送信に失敗しました');
+    // エラーの場合はステップ1に戻る
+    document.getElementById('verification-step-1').classList.remove('d-none');
+    document.getElementById('verification-step-2').classList.add('d-none');
+    throw error;
+  }
+}
+
+// 電話認証コード検証関数
+async function verifyPhoneCode(code) {
+  try {
+    // Firebase認証の場合
+    if (typeof window.firebaseEnabled !== 'undefined' && window.firebaseEnabled) {
+      await window.verifyCode(code);
+    } else {
+      // 通常の認証の場合
+      const user = getCurrentUser();
+      try {
+        await fetchAPI('user/verify-phone/verify', 'POST', { code });
+      } catch (error) {
+        console.error('認証コード検証エラー:', error);
+        // 開発用：モック検証
+        if (code === '123456') {
+          console.log('開発モード: コード検証成功');
+        } else {
+          throw new Error('無効なコードです。開発モードでは 123456 を使用してください。');
+        }
+      }
+    }
+    
+    // 検証成功、ステップ2を非表示にし、ステップ3を表示
+    document.getElementById('verification-step-2').classList.add('d-none');
+    document.getElementById('verification-step-3').classList.remove('d-none');
+    
+    // 必要に応じてユーザー情報を更新
+    await checkAuthStatus();
+    
+    return true;
+  } catch (error) {
+    showVerificationError(error.message || '認証コードの検証に失敗しました');
+    throw error;
+  }
+}
+
+// 認証コードタイマーを開始する関数
+function startCodeTimer() {
+  let totalSeconds = 180; // 3分
+  const timerElement = document.getElementById('code-timer');
+  const resendButton = document.getElementById('resend-code');
+  
+  resendButton.disabled = true;
+  
+  const timerInterval = setInterval(() => {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    
+    timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    if (totalSeconds <= 0) {
+      clearInterval(timerInterval);
+      timerElement.textContent = '0:00';
+      resendButton.disabled = false;
+    }
+    
+    totalSeconds--;
+  }, 1000);
+  
+  // モーダルが閉じられたらタイマーをクリア
+  document.getElementById('phoneVerificationModal').addEventListener('hidden.bs.modal', () => {
+    clearInterval(timerInterval);
+  }, { once: true });
+}
+
+// 身分証明書アップロード関数
+async function uploadIdDocument(documentType, file) {
+  try {
+    const formData = new FormData();
+    formData.append('document', file);
+    formData.append('documentType', documentType);
+    
+    try {
+      const response = await fetch('/api/user/upload-id-document', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `APIエラー: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('IDドキュメントアップロードエラー:', error);
+      // 開発モード：アップロード成功とみなす
+      console.log('開発モード: ドキュメントアップロードをシミュレート');
+    }
+    
+    // 身分証明書アップロードモーダルを閉じる
+    const idDocumentModal = bootstrap.Modal.getInstance(document.getElementById('idDocumentModal'));
+    if (idDocumentModal) {
+      idDocumentModal.hide();
+    }
+    
+    // 観光客/ガイド登録フォームからのIDアップロードの場合、バッジを更新
+    const touristIdPending = document.getElementById('tourist-id-pending');
+    const touristIdVerified = document.getElementById('tourist-id-verified');
+    const guideIdPending = document.getElementById('guide-id-pending');
+    const guideIdVerified = document.getElementById('guide-id-verified');
+    
+    if (touristIdPending && touristIdVerified) {
+      touristIdPending.classList.add('d-none');
+      touristIdVerified.classList.remove('d-none');
+    }
+    
+    if (guideIdPending && guideIdVerified) {
+      guideIdPending.classList.add('d-none');
+      guideIdVerified.classList.remove('d-none');
+    }
+    
+    // ユーザー情報を更新
+    try {
+      await checkAuthStatus();
+    } catch (error) {
+      console.error('ユーザー情報の更新に失敗しました:', error);
+    }
+    
+    // メッセージを表示
+    alert('身分証明書がアップロードされました。審査までお待ちください。');
+  } catch (error) {
+    showDocumentError(error.message || '身分証明書のアップロードに失敗しました');
+  }
+}
+
+// ログアウト関数
+async function logout() {
+  try {
+    console.log("ログアウト処理を開始します");
+    const response = await fetch("/api/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include"
+    });
+    
+    if (response.ok) {
+      clearCurrentUser();
+      updateUIForLoggedOutUser();
+      console.log("ログアウト成功");
+    } else {
+      console.error("ログアウト失敗:", response.status);
+    }
+  } catch (error) {
+    console.error("ログアウト処理中にエラー:", error);
+  }
+}
+    console.error('ログアウトに失敗しました:', error);
+  }
+}
+
+// ガイド検索関数
+async function searchGuides(city) {
+  if (!city) return;
+  
+  const searchResults = document.getElementById('search-results');
+  searchResults.innerHTML = '<div class="d-flex justify-content-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+  
+  try {
+    const guides = await fetchAPI(`search/guides?city=${encodeURIComponent(city)}`);
+    displaySearchResults(guides, city);
+  } catch (error) {
+    searchResults.innerHTML = `<div class="alert alert-danger">検索中にエラーが発生しました: ${error.message}</div>`;
+  }
+}
+
+// 検索結果表示関数
+function displaySearchResults(guides, city) {
+  const searchResults = document.getElementById('search-results');
+  
+  if (!guides || guides.length === 0) {
+    searchResults.innerHTML = `
+      <div class="alert alert-info">
+        <i data-feather="info" class="me-2"></i>
+        ${city}で利用可能なガイドはまだいません。別の地域を検索するか、後でもう一度お試しください。
+      </div>
+    `;
+    feather.replace();
+    return;
+  }
+  
+  // 検索結果ヘッダー
+  searchResults.innerHTML = `
+    <h3 class="mb-4">${city}のガイド (${guides.length}人)</h3>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="guides-grid"></div>
+  `;
+  
+  const guidesGrid = document.getElementById('guides-grid');
+  
+  guides.forEach(guide => {
+    const languages = guide.languages.split(',').map(lang => getLanguageName(lang)).join(', ');
+    
+    const card = document.createElement('div');
+    card.className = 'col';
+    card.innerHTML = `
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="guide-avatar me-3">
+              <img src="https://ui-avatars.com/api/?name=${guide.user.firstName}+${guide.user.lastName}&background=random" alt="${guide.user.firstName} ${guide.user.lastName}" class="rounded-circle">
+            </div>
+            <div>
+              <h5 class="card-title mb-1">${guide.user.firstName} ${guide.user.lastName}</h5>
+              <div class="text-muted small">
+                <i data-feather="map-pin" class="feather-sm me-1"></i> ${guide.city}
+              </div>
+            </div>
+          </div>
+          
+          <p class="card-text">${guide.bio || '自己紹介文はまだありません。'}</p>
+          
+          <div class="mb-3">
+            <strong>対応言語:</strong>
+            <div class="mt-1">
+              ${languages}
+            </div>
+          </div>
+          
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <span class="badge bg-success mb-2">認証済み</span>
+              <div class="rating">
+                <i data-feather="star" class="text-warning feather-sm"></i>
+                <i data-feather="star" class="text-warning feather-sm"></i>
+                <i data-feather="star" class="text-warning feather-sm"></i>
+                <i data-feather="star" class="text-warning feather-sm"></i>
+                <i data-feather="star" class="text-muted feather-sm"></i>
+                <span class="ms-1">4.0</span>
+              </div>
+            </div>
+            <a href="#" class="btn btn-outline-primary" data-guide-id="${guide.userId}">詳細を見る</a>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    guidesGrid.appendChild(card);
+  });
+  
+  feather.replace();
+}
+
+// 言語コードから言語名を取得する関数
+function getLanguageName(langCode) {
+  const languages = {
+    ja: '日本語',
+    en: '英語',
+    zh: '中国語',
+    ko: '韓国語',
+    fr: 'フランス語',
+    es: 'スペイン語',
+    de: 'ドイツ語',
+    it: 'イタリア語'
+  };
+  
+  return languages[langCode] || langCode;
+}
+
+// ユーザー情報を設定
+function setCurrentUser(user) {
+  localStorage.setItem('currentUser', JSON.stringify(user));
+}
+
+// 現在のユーザー情報を取得
+function getCurrentUser() {
+  const userJson = localStorage.getItem('currentUser');
+  return userJson ? JSON.parse(userJson) : null;
+}
+
+// ユーザー情報をクリア
+function clearCurrentUser() {
+  localStorage.removeItem('currentUser');
+}
+
+// ログイン状態のUIを更新
+function updateUIForLoggedInUser(user) {
+  document.getElementById('not-logged-in').classList.add('d-none');
+  document.getElementById('logged-in').classList.remove('d-none');
+  
+  // ユーザー名表示
+  document.getElementById('user-name').textContent = `${user.firstName} ${user.lastName}`;
+  
+  // アイコン更新
+  feather.replace();
+}
+
+// ログアウト状態のUIを更新
+function updateUIForLoggedOutUser() {
+  document.getElementById('logged-in').classList.add('d-none');
+  document.getElementById('not-logged-in').classList.remove('d-none');
+}
+
+// ログインエラーを表示
+function showLoginError(message) {
+  const errorElement = document.getElementById('login-error');
+  errorElement.textContent = message;
+  errorElement.classList.remove('d-none');
+}
+
+// 登録エラーを表示
+function showRegisterError(message, elementId = 'register-error') {
+  const errorElement = document.getElementById(elementId);
+  errorElement.textContent = message;
+  errorElement.classList.remove('d-none');
+}
+
+// 電話認証エラーを表示
+function showVerificationError(message) {
+  const errorElement = document.getElementById('verification-error');
+  errorElement.textContent = message;
+  errorElement.classList.remove('d-none');
+}
+
+// 身分証明書エラーを表示
+function showDocumentError(message) {
+  const errorElement = document.getElementById('document-error');
+  errorElement.textContent = message;
+  errorElement.classList.remove('d-none');
+}
+
+// 電話認証モーダルのリスナー設定
+function setupVerificationModalListeners() {
+  // Firebaseの初期化処理（モック実装用）
+  if (window.hasOwnProperty('firebase') && window.hasOwnProperty('initPhoneAuth')) {
+    // 認証コンテナの要素を初期化
+    const recaptchaContainer = document.getElementById('recaptcha-container');
+    if (recaptchaContainer) {
+      window.initPhoneAuth('recaptcha-container');
+    } else {
+      console.warn('reCAPTCHAコンテナが見つかりません');
+    }
+  }
+
+  // 送信ボタンのイベントリスナー
+  const sendVerificationBtn = document.getElementById('send-verification-code');
+  if (sendVerificationBtn) {
+    sendVerificationBtn.addEventListener('click', function() {
+    const phoneInput = document.getElementById('verification-phone');
+    const phoneNumber = phoneInput.value.trim();
+    
+    if (!phoneNumber) {
+      showVerificationError('電話番号を入力してください');
+      return;
+    }
+    
+    // 電話番号の形式チェック（基本的な国際形式のチェック）
+    if (!/^\+[0-9]{10,15}$/.test(phoneNumber)) {
+      showVerificationError('電話番号は国際形式で入力してください（例：+819012345678）');
+      return;
+    }
+    
+    sendVerificationCode(phoneNumber);
+  });
+  
+  }
+  
+  // 認証コードのイベントリスナー
+  const verifyCodeBtn = document.getElementById('verify-code');
+  if (verifyCodeBtn) {
+    verifyCodeBtn.addEventListener('click', function() {
+    const codeInput = document.getElementById('verification-code');
+    const code = codeInput.value.trim();
+    
+    if (!code) {
+      showVerificationError('認証コードを入力してください');
+      return;
+    }
+    
+    // 6桁のコードであることを確認
+    if (!/^[0-9]{6}$/.test(code)) {
+      showVerificationError('認証コードは6桁の数字です');
+      return;
+    }
+    
+    verifyPhoneCode(code);
+  });
+  
+  }
+  
+  // 再送信ボタンのイベントリスナー
+  const resendCodeBtn = document.getElementById('resend-code');
+  if (resendCodeBtn) {
+    resendCodeBtn.addEventListener('click', function() {
+    const phoneInput = document.getElementById('verification-phone');
+    const phoneNumber = phoneInput.value.trim();
+    
+    // ステップ1に戻る
+    document.getElementById('verification-step-2').classList.add('d-none');
+    document.getElementById('verification-step-1').classList.remove('d-none');
+    
+    // エラーメッセージをクリア
+    document.getElementById('verification-error').classList.add('d-none');
+  });
+  
+  }
+  
+  // 完了ボタンのイベントリスナー
+  const verificationCompleteBtn = document.getElementById('verification-complete');
+  if (verificationCompleteBtn) {
+    verificationCompleteBtn.addEventListener('click', function() {
+    // モーダルを閉じる
+    const phoneVerificationModal = bootstrap.Modal.getInstance(document.getElementById('phoneVerificationModal'));
+    if (phoneVerificationModal) {
+      phoneVerificationModal.hide();
+    }
+    
+    // 必要に応じてリダイレクトなど
+    window.location.reload();
+  });
+  }
+}
+
+// 本人確認書類モーダルのリスナー設定
+function setupIdDocumentModalListeners() {
+  const documentUploadContainer = document.querySelector('.document-upload-container');
+  
+  if (!documentUploadContainer) {
+    console.warn('ドキュメントアップロードコンテナが見つかりません');
+    return;
+  }
+  
+  const documentFile = document.getElementById('document-file');
+  const documentPreview = document.getElementById('document-preview');
+  const documentUploadPrompt = document.getElementById('document-upload-prompt');
+  const documentImagePreview = document.getElementById('document-image-preview');
+  const selectDocumentBtn = document.getElementById('select-document');
+  const removeDocumentBtn = document.getElementById('remove-document');
+  
+  // フォーム送信のイベントリスナーを設定
+  document.getElementById('id-document-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const documentType = document.getElementById('document-type').value;
+    const file = document.getElementById('document-file').files[0];
+    
+    if (!documentType) {
+      showDocumentError('書類の種類を選択してください');
+      return;
+    }
+    
+    if (!file) {
+      showDocumentError('ファイルを選択してください');
+      return;
+    }
+    
+    uploadIdDocument(documentType, file);
+  });
+  
+  // ファイル選択ボタンクリック時
+  selectDocumentBtn.addEventListener('click', function() {
+    documentFile.click();
+  });
+  
+  // ファイル選択時
+  documentFile.addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const file = this.files[0];
+      
+      // ファイルサイズチェック (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showDocumentError('ファイルサイズは5MB以下にしてください');
+        this.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        // プレビュー表示
+        documentImagePreview.src = e.target.result;
+        documentPreview.classList.remove('d-none');
+        documentUploadPrompt.classList.add('d-none');
+      };
+      
+      if (file.type.includes('image')) {
+        reader.readAsDataURL(file);
+      } else {
+        // PDFなど画像以外のファイルの場合はアイコンを表示
+        documentImagePreview.src = 'https://via.placeholder.com/200x150?text=PDF+Document';
+        documentPreview.classList.remove('d-none');
+        documentUploadPrompt.classList.add('d-none');
+      }
+    }
+  });
+  
+  // ファイル削除ボタンクリック時
+  removeDocumentBtn.addEventListener('click', function() {
+    documentFile.value = '';
+    documentImagePreview.src = '';
+    documentPreview.classList.add('d-none');
+    documentUploadPrompt.classList.remove('d-none');
+  });
+  
+  // ドラッグ&ドロップ関連のイベント
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    documentUploadContainer.addEventListener(eventName, function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }, false);
+  });
+  
+  // ドラッグオーバー時
+  ['dragenter', 'dragover'].forEach(eventName => {
+    documentUploadContainer.addEventListener(eventName, function() {
+      this.classList.add('drag-over');
+    }, false);
+  });
+  
+  // ドラッグリーブ時
+  ['dragleave', 'drop'].forEach(eventName => {
+    documentUploadContainer.addEventListener(eventName, function() {
+      this.classList.remove('drag-over');
+    }, false);
+  });
+  
+  // ドロップ時
+  documentUploadContainer.addEventListener('drop', function(e) {
+    const file = e.dataTransfer.files[0];
+    
+    if (file) {
+      // ファイルタイプチェック（画像またはPDF）
+      if (!file.type.includes('image') && file.type !== 'application/pdf') {
+        showDocumentError('JPG、PNGまたはPDF形式のファイルをアップロードしてください');
+        return;
+      }
+      
+      // ファイルサイズチェック (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        showDocumentError('ファイルサイズは5MB以下にしてください');
+        return;
+      }
+      
+      // input要素にファイルを設定
+      const dT = new DataTransfer();
+      dT.items.add(file);
+      documentFile.files = dT.files;
+      
+      // 変更イベントを発火
+      const event = new Event('change');
+      documentFile.dispatchEvent(event);
+    }
+  }, false);
+  
+  // 認証ステータスでの書類アップロードボタン
+  const uploadIdDocumentBtn = document.getElementById('upload-id-document');
+  if (uploadIdDocumentBtn) {
+    uploadIdDocumentBtn.addEventListener('click', function() {
+      const idDocumentModal = new bootstrap.Modal(document.getElementById('idDocumentModal'));
+      idDocumentModal.show();
+    });
+  }
+}
+
+// 登録フォームの電話番号認証と本人確認書類アップロードボタンのリスナー設定
+function setupRegistrationVerificationListeners() {
+  // 観光客フォームの電話番号認証ボタン
+  const touristVerifyPhone = document.getElementById('tourist-verify-phone');
+  if (touristVerifyPhone) {
+    touristVerifyPhone.addEventListener('click', function() {
+      const phoneNumber = document.getElementById('tourist-phone').value.trim();
+      
+      if (!phoneNumber) {
+        showRegisterError('電話番号を入力してください', 'tourist-register-error');
+        return;
+      }
+      
+      // 電話番号の形式チェック（基本的な国際形式のチェック）
+      if (!/^\+[0-9]{10,15}$/.test(phoneNumber)) {
+        showRegisterError('電話番号は国際形式で入力してください（例：+819012345678）', 'tourist-register-error');
+        return;
+      }
+      
+      // 電話認証モーダルを表示
+      const phoneVerificationModal = new bootstrap.Modal(document.getElementById('phoneVerificationModal'));
+      document.getElementById('verification-phone').value = phoneNumber;
+      phoneVerificationModal.show();
+      
+      // 認証待ちバッジを表示
+      document.getElementById('tourist-phone-pending').classList.remove('d-none');
+      document.getElementById('tourist-phone-verified').classList.add('d-none');
+    });
+  }
+  
+  // 観光客フォームの本人確認書類アップロードボタン
+  const touristUploadId = document.getElementById('tourist-upload-id');
+  if (touristUploadId) {
+    touristUploadId.addEventListener('click', function() {
+      const idDocumentModal = new bootstrap.Modal(document.getElementById('idDocumentModal'));
+      idDocumentModal.show();
+      
+      // 認証待ちバッジを表示
+      document.getElementById('tourist-id-pending').classList.remove('d-none');
+      document.getElementById('tourist-id-verified').classList.add('d-none');
+    });
+  }
+  
+  // ガイドフォームの電話番号認証ボタン
+  const guideVerifyPhone = document.getElementById('guide-verify-phone');
+  if (guideVerifyPhone) {
+    guideVerifyPhone.addEventListener('click', function() {
+      const phoneNumber = document.getElementById('guide-phone').value.trim();
+      
+      if (!phoneNumber) {
+        showRegisterError('電話番号を入力してください', 'guide-register-error');
+        return;
+      }
+      
+      // 電話番号の形式チェック（基本的な国際形式のチェック）
+      if (!/^\+[0-9]{10,15}$/.test(phoneNumber)) {
+        showRegisterError('電話番号は国際形式で入力してください（例：+819012345678）', 'guide-register-error');
+        return;
+      }
+      
+      // 電話認証モーダルを表示
+      const phoneVerificationModal = new bootstrap.Modal(document.getElementById('phoneVerificationModal'));
+      document.getElementById('verification-phone').value = phoneNumber;
+      phoneVerificationModal.show();
+      
+      // 認証待ちバッジを表示
+      document.getElementById('guide-phone-pending').classList.remove('d-none');
+      document.getElementById('guide-phone-verified').classList.add('d-none');
+    });
+  }
+  
+  // ガイドフォームの本人確認書類アップロードボタン
+  const guideUploadId = document.getElementById('guide-upload-id');
+  if (guideUploadId) {
+    guideUploadId.addEventListener('click', function() {
+      const idDocumentModal = new bootstrap.Modal(document.getElementById('idDocumentModal'));
+      idDocumentModal.show();
+      
+      // 認証待ちバッジを表示
+      document.getElementById('guide-id-pending').classList.remove('d-none');
+      document.getElementById('guide-id-verified').classList.add('d-none');
+    });
+  }
+  
+  // 電話認証完了時のイベントリスナー
+  const verificationCompleteBtn = document.getElementById('verification-complete');
+  if (verificationCompleteBtn) {
+    verificationCompleteBtn.addEventListener('click', function() {
+      // モーダルを閉じる前に現在のActiveなモーダルを検出
+      const touristRegisterModal = document.getElementById('touristRegisterModal');
+      const guideRegisterModal = document.getElementById('guideRegisterModal');
+      
+      if (touristRegisterModal && window.getComputedStyle(touristRegisterModal).display !== 'none') {
+        // 観光客登録フォームがアクティブ
+        document.getElementById('tourist-phone-pending').classList.add('d-none');
+        document.getElementById('tourist-phone-verified').classList.remove('d-none');
+      } else if (guideRegisterModal && window.getComputedStyle(guideRegisterModal).display !== 'none') {
+        // ガイド登録フォームがアクティブ
+        document.getElementById('guide-phone-pending').classList.add('d-none');
+        document.getElementById('guide-phone-verified').classList.remove('d-none');
+      }
+    });
+  }
+  
+  // 本人確認書類アップロード完了時のイベントリスナー
+  document.getElementById('id-document-form').addEventListener('submit', function(e) {
+    // 他のリスナーでこの処理は実行されているので、ここでは書類アップロード成功時のバッジ表示のみ追加
+    const touristRegisterModal = document.getElementById('touristRegisterModal');
+    const guideRegisterModal = document.getElementById('guideRegisterModal');
+    
+    if (touristRegisterModal && window.getComputedStyle(touristRegisterModal).display !== 'none') {
+      // 観光客登録フォームがアクティブ
+      document.getElementById('tourist-id-pending').classList.add('d-none');
+      document.getElementById('tourist-id-verified').classList.remove('d-none');
+    } else if (guideRegisterModal && window.getComputedStyle(guideRegisterModal).display !== 'none') {
+      // ガイド登録フォームがアクティブ
+      document.getElementById('guide-id-pending').classList.add('d-none');
+      document.getElementById('guide-id-verified').classList.remove('d-none');
+    }
+  });
+}

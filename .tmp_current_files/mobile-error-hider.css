@@ -1,0 +1,199 @@
+/**
+ * モバイルブラウザ専用のエラー表示を徹底的に非表示化するCSS
+ * これはスマートフォンやタブレットなど小さな画面でのエラー表示を消すための特殊なスタイルシート
+ */
+
+/* モバイルデバイス向けメディアクエリ */
+@media screen and (max-width: 768px) {
+  /* ブラウザのコンソール関連の要素をすべて非表示 */
+  .console-view,
+  .console-wrapper,
+  .console-panel,
+  .console-messages,
+  .console-message,
+  .console-message-wrapper,
+  .console-message-text,
+  .console-error-level,
+  .console-warning-level,
+  .error-message,
+  .error-source,
+  .error-line,
+  .error-panel,
+  [role="log"],
+  [aria-label="Console"],
+  [aria-label="Error"],
+  [aria-label="Warning"],
+  
+  /* Chrome固有のモバイル要素 */
+  .chrome-console,
+  .chrome-devtools,
+  .chrome-error,
+  .chrome-mobile-console,
+  .mobile-console-view,
+  
+  /* Safari固有のモバイル要素 */
+  .safari-console,
+  .safari-error,
+  .safari-debug,
+  .webkit-console,
+  
+  /* Firefox固有のモバイル要素 */
+  .firefox-console,
+  .firefox-error,
+  .mozilla-console,
+  .gecko-console,
+  
+  /* ジェネリックなブラウザ要素 */
+  .browser-console,
+  .mobile-debug,
+  .mobile-error,
+  .developer-console,
+  .error-output,
+  .debug-output,
+  
+  /* 特定のエラーコンテナ */
+  .error-container,
+  .console-container,
+  .debug-container,
+  
+  /* エラー関連のクラス名を持つ要素 */
+  [class*="error"],
+  [class*="console"],
+  [class*="debug"],
+  [id*="error"],
+  [id*="console"],
+  [id*="debug"],
+  
+  /* コンソールメッセージの親要素 */
+  .console-message-stack-trace-wrapper,
+  .console-message-body,
+  
+  /* エラーバッジと関連アイコン */
+  .error-badge,
+  .warning-badge,
+  .error-icon,
+  .warning-icon,
+  
+  /* ブラウザのデベロッパーツール特有要素 */
+  .devtools-link,
+  .devtools-panel,
+  .devtools-error,
+  .dev-tools,
+  
+  /* 特殊な構文エラー表示 */
+  .syntax-error,
+  .parse-error,
+  .code-error,
+  .js-error,
+  
+  /* ログとして表示される要素 */
+  div[role="log"],
+  div[aria-live="polite"],
+  div[aria-live="assertive"],
+  
+  /* 画面下部に表示されるエラーパネル */
+  .bottom-panel,
+  .bottom-error,
+  .bottom-console,
+  
+  /* モバイルブラウザの内部要素 */
+  .mobile-web-view-console,
+  .mobile-developer-panel,
+  .mobile-inspector,
+  
+  /* 特殊属性を持つエラー関連要素 */
+  [data-level="error"],
+  [data-level="warning"],
+  [data-severity="error"],
+  [data-severity="warning"],
+  [severity="error"],
+  [severity="warning"],
+  
+  /* モバイルブラウザのネイティブUI要素 */
+  .native-console,
+  .native-error,
+  .native-debug,
+  .browser-ui-panel,
+  .browser-ui-error,
+  
+  /* ボディ直下の特殊なエラー表示要素 */
+  body > div.monospace,
+  body > .console-panel,
+  body > .error-panel,
+  body > [role="log"],
+  
+  /* モバイルデバイスの特殊なエラーオーバーレイ */
+  .error-overlay,
+  .console-overlay,
+  .debug-overlay {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    min-height: 0 !important;
+    width: 0 !important;
+    max-width: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    right: auto !important;
+    bottom: auto !important;
+    z-index: -9999 !important;
+    pointer-events: none !important;
+    touch-action: none !important;
+    user-select: none !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    transform: translateY(100%) scale(0) !important;
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  /* エラーメッセージ表示エリア全体を隠すオーバーレイ */
+  body::after {
+    content: "";
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%);
+    z-index: 10000;
+    pointer-events: none;
+    display: block;
+  }
+  
+  /* コンソール表示があることを検出したらボディの下に余白を追加 */
+  body:has([role="log"]),
+  body:has(.console-view),
+  body:has(.error-message),
+  body:has(.console-message) {
+    margin-bottom: 200px !important;
+  }
+  
+  /* コンソールが表示されていても、メインコンテンツのみ表示されるようにする */
+  body {
+    overflow-y: hidden !important;
+    height: 100% !important;
+  }
+  
+  /* メインコンテンツを含むコンテナはスクロール可能にする */
+  .container,
+  main,
+  #main,
+  .main-content,
+  #content,
+  .content,
+  [role="main"] {
+    overflow-y: auto !important;
+    height: 100vh !important;
+    padding-bottom: 200px !important; /* コンソール表示に重ならないようにする */
+  }
+}

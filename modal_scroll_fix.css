@@ -1,0 +1,31 @@
+/* モーダルのスクロール問題を修正するためのCSSスタイル */
+.modal-dialog {
+  max-height: 95vh;
+}
+
+.modal-content {
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+/* モバイルデバイスでのスクロール問題対応 */
+@media (max-width: 767.98px) {
+  .modal-dialog {
+    margin: 0.5rem auto;
+    max-height: 90vh;
+  }
+  
+  .modal-content {
+    max-height: 90vh;
+  }
+}
+
+/* モーダル背景の修正 */
+.modal-backdrop {
+  z-index: 1040;
+}
+
+/* モーダル自体の位置修正 */
+.modal {
+  z-index: 1050;
+}

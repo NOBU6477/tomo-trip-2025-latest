@@ -1,0 +1,44 @@
+<script>
+// ページ読み込み完了後に実行（確実に実行）
+document.addEventListener('DOMContentLoaded', function() {
+  // 新規登録ボタンを直接セットアップ
+  const registerBtn = document.querySelector('.btn.btn-warning, a.btn-warning');
+  if (registerBtn) {
+    // イベントを設定
+    registerBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      
+      // モーダル表示処理
+      const userTypeModal = document.getElementById('userTypeModal');
+      if (userTypeModal) {
+        // 他のモーダルを閉じる
+        document.querySelectorAll('.modal.show').forEach(function(modal) {
+          modal.classList.remove('show');
+          modal.style.display = 'none';
+        });
+        
+        // バックドロップ削除
+        document.querySelectorAll('.modal-backdrop').forEach(function(el) {
+          el.parentNode.removeChild(el);
+        });
+        
+        // 新しいバックドロップを作成
+        const backdrop = document.createElement('div');
+        backdrop.className = 'modal-backdrop fade show';
+        backdrop.style.opacity = '0.25';
+        document.body.appendChild(backdrop);
+        
+        // モーダル表示
+        userTypeModal.classList.add('show');
+        userTypeModal.style.display = 'block';
+        userTypeModal.setAttribute('aria-modal', 'true');
+        userTypeModal.removeAttribute('aria-hidden');
+        
+        document.body.classList.add('modal-open');
+      }
+      
+      return false;
+    });
+  }
+});
+</script>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>スポンサー特集</title>
+  </head>
+  <body>
+    <h1>🌟 スポンサー特集 🌟</h1>
+    <div id="sponsor-list"></div>
+
+    <script>
+      fetch("/api/advertisers")
+        .then((res) => res.json())
+        .then((data) => {
+          const container = document.getElementById("sponsor-list");
+          data.forEach((shop) => {
+            const box = document.createElement("div");
+            box.innerHTML = `
+            <h2>${shop.shop_name} [${shop.category}]</h2>
+            <p>${shop.description}</p>
+            <p><strong>特典：${shop.coupon_info}</strong></p>
+            <hr>
+          `;
+            container.appendChild(box);
+          });
+        });
+    </script>
+  </body>
+</html>
+<body>
+  <h1>スポンサー特集ページ</h1>
+
+  <div id="sponsor-list">
+    <!-- ここにスポンサー情報が表示されるよ -->
+  </div>
+</body>

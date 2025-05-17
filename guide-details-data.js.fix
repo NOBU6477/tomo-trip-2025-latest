@@ -1,0 +1,193 @@
+/**
+ * ガイド詳細データ生成器
+ * ガイド詳細ページで表示するデータを生成するモジュール
+ */
+
+function generateMockGuideData(guideId) {
+  // ガイドIDがない場合は適当な値を使用
+  guideId = guideId || Math.floor(Math.random() * 1000);
+  
+  const mockPlanData = generateMockPlanData();
+  const reviews = generateMockReviews();
+  
+  const mockGuideData = {
+    id: guideId,
+    name: "山田 太郎",
+    englishName: "Taro Yamada",
+    age: 32,
+    username: "taro-guide",
+    profileImage: "https://randomuser.me/api/portraits/men/32.jpg",
+    locationMain: "東京都",
+    locationAreas: ["新宿区", "渋谷区", "港区"],
+    rating: 4.8,
+    reviewCount: 56,
+    languages: ["日本語", "英語", "中国語"],
+    verified: true,
+    guidePrice: 6500,
+    guideAbout: `
+      東京で生まれ育ち、日本の文化と歴史に精通しています。
+      海外留学の経験もあり、異文化への理解が深く、東京の魅力を多角的に紹介できることが強みです。
+      特に食文化、現代アート、伝統的な寺社仏閣について案内することを得意としています。
+      あなたの興味に合わせた東京の街歩きを一緒に楽しみましょう！
+    `,
+    guideAboutEnglish: `
+      Born and raised in Tokyo, I am deeply familiar with Japanese culture and history.
+      Having studied abroad, I have a good understanding of different cultures, which allows me to present Tokyo's attractions from multiple perspectives.
+      I specialize in food culture, contemporary art, and traditional temples and shrines.
+      Let's enjoy exploring Tokyo together based on your interests!
+    `,
+    specialties: [
+      "グルメ",
+      "写真スポット",
+      "ナイトツアー",
+      "ローカル体験"
+    ],
+    guideAreas: [
+      {
+        name: "新宿",
+        description: "東京の中心地である新宿では、活気あふれる街並みや高層ビル群、ショッピングエリア、そして隠れた飲食店など多彩な魅力をご案内します。"
+      },
+      {
+        name: "浅草",
+        description: "伝統的な日本文化が残る浅草エリアでは、浅草寺や隠れた老舗店、地元の人しか知らない穴場スポットをご紹介します。"
+      },
+      {
+        name: "渋谷",
+        description: "若者文化の中心地である渋谷では、最新のトレンドショップやカフェ、エンターテイメントスポットなど、活気ある東京の今をお楽しみいただけます。"
+      }
+    ],
+    responseTime: "通常24時間以内に返信",
+    tourPlans: mockPlanData,
+    reviews: reviews
+  };
+  
+  console.log('モックガイドデータを生成しました:', mockGuideData);
+  return mockGuideData;
+}
+
+function generateMockPlanData() {
+  return [
+    {
+      title: "東京現代アート巡り",
+      duration: "4時間",
+      maxGroupSize: 5,
+      price: 12000,
+      includes: "入場料、軽食",
+      excludes: "交通費",
+      description: `
+        東京の現代アートシーンを巡るツアーです。六本木や天王洲のギャラリーやミュージアムを訪れ、日本の現代アートの魅力をご紹介します。
+        アート初心者の方でも楽しめるよう、分かりやすく解説いたします。
+      `,
+      highlights: [
+        "六本木アートトライアングルを巡る",
+        "現地アーティストのスタジオ訪問",
+        "隠れた名所ギャラリーの紹介",
+        "日本の現代アート史について学ぶ"
+      ],
+      images: [
+        "https://images.unsplash.com/photo-1547652577-b4fe2f34d7ee?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+        "https://images.unsplash.com/photo-1577720643360-00343afebf09?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
+      ]
+    },
+    {
+      title: "東京ストリートフード探検",
+      duration: "3時間",
+      maxGroupSize: 4,
+      price: 8000,
+      includes: "3店舗分の食事代",
+      excludes: "交通費",
+      description: `
+        東京のストリートフードを探検するツアーです。地元の人々に人気の屋台や小さな店舗を巡り、多彩な日本の食文化を体験していただきます。
+        各店舗では、料理の歴史や背景についても詳しく解説します。
+      `,
+      highlights: [
+        "築地市場周辺の名店巡り",
+        "地元の人に人気の隠れた名店を訪問",
+        "季節限定の特別な料理を体験",
+        "日本の食文化について学ぶ"
+      ],
+      images: [
+        "https://images.unsplash.com/photo-1535599301091-6c1b4c48cddb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+        "https://images.unsplash.com/photo-1513639776629-7b61b0ac49cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
+      ]
+    },
+    {
+      title: "東京ナイトライフ体験",
+      duration: "5時間",
+      maxGroupSize: 6,
+      price: 15000,
+      includes: "1ドリンク付き",
+      excludes: "追加の飲食代、交通費",
+      description: `
+        東京の夜の魅力を体験するツアーです。新宿や渋谷の夜景スポット、地元の人々に人気のバーやクラブ、伝統的な居酒屋など、東京の多彩な夜の顔をご案内します。
+        安全で楽しい夜の体験を提供します。
+      `,
+      highlights: [
+        "東京の絶景夜景スポットを訪問",
+        "地元の人に人気のバーやパブを巡る",
+        "伝統的な居酒屋での食事体験",
+        "東京の多彩な夜の文化を学ぶ"
+      ],
+      images: [
+        "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60",
+        "https://images.unsplash.com/photo-1542051841857-5f90071e7989?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=60"
+      ]
+    }
+  ];
+}
+
+function generateMockReviews() {
+  return {
+    average: 4.8,
+    count: 56,
+    distribution: {
+      5: 75,
+      4: 20,
+      3: 5,
+      2: 0,
+      1: 0
+    },
+    items: [
+      {
+        id: 1,
+        userName: "Emily Johnson",
+        userImage: "https://randomuser.me/api/portraits/women/12.jpg",
+        date: "2023-04-15",
+        rating: 5,
+        text: "東京初訪問でしたが、山田さんのガイドのおかげで素晴らしい体験ができました。特に、地元の人しか知らないようなレストランに連れて行ってもらえたのが良かったです。英語も流暢で、日本の文化や歴史についての説明がとても分かりやすかったです。次回の東京訪問でもぜひお願いしたいと思います！"
+      },
+      {
+        id: 2,
+        userName: "Michael Chen",
+        userImage: "https://randomuser.me/api/portraits/men/22.jpg",
+        date: "2023-03-28",
+        rating: 5,
+        text: "山田さんのガイドツアーは私たちの旅の大きなハイライトでした。彼の知識と情熱は素晴らしく、東京の魅力を新しい角度から発見することができました。特に現代アートツアーは期待以上でした。カスタマイズされた体験を作ってくれて本当に感謝しています。"
+      },
+      {
+        id: 3,
+        userName: "Sophie Martin",
+        userImage: "https://randomuser.me/api/portraits/women/33.jpg",
+        date: "2023-02-17",
+        rating: 4,
+        text: "山田さんは親切で知識豊かなガイドでした。観光客が行かないような地元のスポットを案内してくれたので、東京の隠れた魅力を発見できました。ただ、ツアーの終了時間が予定より少し延びてしまったのでマイナス1つです。それ以外は完璧でした！"
+      },
+      {
+        id: 4,
+        userName: "David Wilson",
+        userImage: "https://randomuser.me/api/portraits/men/45.jpg",
+        date: "2023-01-30",
+        rating: 5,
+        text: "家族での東京旅行で山田さんにガイドをお願いしました。子供たちも含めて全員が楽しめるようにプランを調整してくれて、本当に思い出に残る体験となりました。彼の親しみやすさと知識の深さは素晴らしかったです。ナイトツアーは特におすすめです！"
+      },
+      {
+        id: 5,
+        userName: "Anna Lee",
+        userImage: "https://randomuser.me/api/portraits/women/58.jpg",
+        date: "2022-12-12",
+        rating: 5,
+        text: "山田さんとの東京ストリートフード探検は最高でした！彼の食に関する知識は驚くべきもので、私たちを素晴らしい場所へ連れて行ってくれました。全ての店で彼がオーナーと話してくれたので、特別な対応を受けることができました。彼の案内なしでは絶対に見つけられないような場所ばかりでした。"
+      }
+    ]
+  };
+}

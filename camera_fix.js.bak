@@ -1,0 +1,775 @@
+/**
+ * 証明写真カメラ機能の最終的な修正スクリプト
+ * モーダル表示後に直接セクションを置き換えて確実にカメラ機能を実装
+ * 身分証明書タイプに応じた必要書類アップロード機能も追加
+ */
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('カメラ修正スクリプトが読み込まれました');
+  
+  // 観光客登録モーダル表示時の処理
+  document.body.addEventListener('shown.bs.modal', function(event) {
+    const modal = event.target;
+    if (modal.id === 'registerTouristModal') {
+      setTimeout(setupPhotoAndIdDocuments, 300);
+    }
+  });
+  
+  // ページロード時に既にモーダルが表示されていた場合
+  setTimeout(function() {
+    const modal = document.getElementById('registerTouristModal');
+    if (modal && modal.classList.contains('show')) {
+      setupPhotoAndIdDocuments();
+    }
+  }, 500);
+  
+  // カメラと写真アップロードセクションとID書類セクションをセットアップ
+  function setupPhotoAndIdDocuments() {
+    // モーダル内のすべてのセクションを取得
+    const modal = document.getElementById('registerTouristModal');
+    if (!modal) return;
+    
+    // すべてのセクションを取得
+    const sections = modal.querySelectorAll('.border-bottom');
+    if (sections.length < 2) return;
+    
+    // 証明写真セクションを特定（通常2番目のセクション）
+    const photoSection = sections[1];
+    if (!photoSection) return;
+    
+    // 新しいHTMLを挿入
+    photoSection.innerHTML = `
+      <div class="py-3">
+        <!-- 身分証明書の確認セクション -->
+        <h5 class="mb-3">身分証明書の確認</h5>
+        <div class="mb-4">
+          <div class="form-group mb-3">
+            <label for="id-document-type" class="form-label">書類の種類</label>
+            <select class="form-select" id="id-document-type" required>
+              <option value="" selected disabled>書類の種類を選択してください</option>
+              <option value="driver_license">運転免許証</option>
+              <option value="passport">パスポート</option>
+              <option value="residence_card">在留カード</option>
+              <option value="my_number_card">マイナンバーカード</option>
+              <option value="health_insurance_card">健康保険証</option>
+              <option value="other">その他</option>
+            </select>
+          </div>
+          
+          <!-- 身分証明書アップロードセクション（書類タイプに応じて表示が変わる） -->
+          <div id="id-document-upload-container" class="mt-3 d-none">
+            <!-- 運転免許証用フォーム -->
+            <div id="driver-license-form" class="document-form d-none">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="driver-license-front-preview" class="img-fluid rounded" alt="免許証表面">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> 表面がアップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center" style="height: 200px;">
+                    <i class="bi bi-credit-card fs-3 text-secondary" style="margin-top: 50px;"></i>
+                    <div><small>表面</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="driver-license-front">
+                      表面をアップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="driver-license-front">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="driver-license-front-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="driver-license-back-preview" class="img-fluid rounded" alt="免許証裏面">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> 裏面がアップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center" style="height: 200px;">
+                    <i class="bi bi-credit-card fs-3 text-secondary" style="margin-top: 50px;"></i>
+                    <div><small>裏面</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="driver-license-back">
+                      裏面をアップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="driver-license-back">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="driver-license-back-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+              </div>
+            </div>
+            
+            <!-- パスポート用フォーム -->
+            <div id="passport-form" class="document-form d-none">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="passport-preview" class="img-fluid rounded" alt="パスポート">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> アップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center" style="height: 200px;">
+                    <i class="bi bi-book fs-3 text-secondary" style="margin-top: 50px;"></i>
+                    <div><small>パスポート（顔写真ページ）</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="passport">
+                      アップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="passport">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="passport-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+              </div>
+            </div>
+            
+            <!-- 在留カード用フォーム -->
+            <div id="residence-card-form" class="document-form d-none">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="residence-card-front-preview" class="img-fluid rounded" alt="在留カード表面">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> 表面がアップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center" style="height: 200px;">
+                    <i class="bi bi-credit-card fs-3 text-secondary" style="margin-top: 50px;"></i>
+                    <div><small>表面</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="residence-card-front">
+                      表面をアップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="residence-card-front">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="residence-card-front-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="residence-card-back-preview" class="img-fluid rounded" alt="在留カード裏面">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> 裏面がアップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center"> style="height: 200px;">
+                    <i class="bi bi-credit-card fs-3 text-secondary"> style="margin-top: 50px;"></i>
+                    <div><small>裏面</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="residence-card-back">
+                      裏面をアップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="residence-card-back">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="residence-card-back-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+              </div>
+            </div>
+            
+            <!-- マイナンバーカード用フォーム -->
+            <div id="my-number-card-form" class="document-form d-none">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="my-number-card-front-preview" class="img-fluid rounded" alt="マイナンバーカード表面">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> 表面がアップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center"> style="height: 200px;">
+                    <i class="bi bi-credit-card fs-3 text-secondary"> style="margin-top: 50px;"></i>
+                    <div><small>表面（顔写真面）</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="my-number-card-front">
+                      表面をアップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="my-number-card-front">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="my-number-card-front-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+              </div>
+            </div>
+            
+            <!-- 健康保険証用フォーム -->
+            <div id="health-insurance-card-form" class="document-form d-none">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="health-insurance-card-preview" class="img-fluid rounded" alt="健康保険証">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> アップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center"> style="height: 200px;">
+                    <i class="bi bi-file-medical fs-3 text-secondary"> style="margin-top: 50px;"></i>
+                    <div><small>健康保険証</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="health-insurance-card">
+                      アップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="health-insurance-card">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="health-insurance-card-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+              </div>
+            </div>
+            
+            <!-- その他の身分証明書用フォーム -->
+            <div id="other-form" class="document-form d-none">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="id-document-preview mb-2 d-none">
+                    <img id="other-preview" class="img-fluid rounded" alt="その他の身分証明書">
+                    <div class="mt-1 text-center text-success">
+                      <small><i class="bi bi-check-circle"></i> アップロードされました</small>
+                    </div>
+                  </div>
+                  <div class="id-document-placeholder bg-light rounded p-2 text-center"> style="height: 200px;">
+                    <i class="bi bi-file-earmark fs-3 text-secondary"> style="margin-top: 50px;"></i>
+                    <div><small>身分証明書</small></div>
+                  </div>
+                  <div class="d-grid gap-2 mt-2">
+                    <button type="button" class="btn btn-sm btn-outline-primary select-document-btn" data-target="other">
+                      アップロード
+                    </button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary document-camera-btn" data-target="other">
+                      <i class="bi bi-camera me-2"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <input type="file" id="other-input" class="d-none document-input" accept="image/jpeg, image/png, image/jpg">
+                </div>
+              </div>
+            </div>
+            
+            <div class="small text-muted">
+              身分証明書は運営によって厳重に管理され、確認後に削除されます。
+              個人情報は当サービスのプライバシーポリシーに基づいて保護されます。
+            </div>
+          </div>
+        </div>
+
+        <!-- 証明写真セクション -->
+        <h5 class="mb-3">証明写真</h5>
+        <div class="row">
+          <div class="col-md-5">
+            <div id="photo-preview" class="d-none mb-2">
+              <img id="preview-image" src="" alt="証明写真" class="img-fluid rounded" style="max-height: 200px; width: auto;">
+              <div class="mt-2 text-center text-success">
+                <i class="bi bi-check-circle"></i> 証明写真がアップロードされました
+              </div>
+              <div class="text-center mt-2">
+                <button type="button" id="remove-photo-btn" class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-trash"></i> 削除
+                </button>
+              </div>
+            </div>
+            <div id="photo-placeholder" class="d-flex flex-column align-items-center justify-content-center bg-light rounded p-3 text-center" style="height: 200px;">
+              <i class="bi bi-person-badge fs-1 mb-2 text-secondary"></i>
+              <span>証明写真が未設定です</span>
+              <span class="text-danger small mt-2">※ 必須項目です</span>
+            </div>
+          </div>
+          <div class="col-md-7">
+            <p class="small text-muted mb-3">
+              正面から撮影した顔写真をアップロードしてください。身分証明書とは別に必要です。
+            </p>
+            <div class="mb-3">
+              <p class="text-center mb-2"><strong>アップロード方法を選択:</strong></p>
+              <div class="row">
+                <div class="col-md-6 mb-2">
+                  <button type="button" id="select-file-btn" class="btn btn-outline-primary w-100 py-3">
+                    <i class="bi bi-file-earmark-image fs-4 d-block mb-2"></i>
+                    ファイルから選択
+                  </button>
+                </div>
+                <div class="col-md-6 mb-2">
+                  <button type="button" id="open-camera-btn" class="btn btn-outline-secondary w-100 py-3">
+                    <i class="bi bi-camera fs-4 d-block mb-2"></i>
+                    カメラで撮影
+                  </button>
+                </div>
+              </div>
+              <input type="file" id="photo-file-input" class="d-none" accept="image/jpeg, image/png, image/jpg">
+            </div>
+            <div class="small text-muted">
+              JPG、PNG形式の画像（推奨サイズ500x500px以上、最大5MB）。顔がはっきり見える正面向きの証明写真を使用してください。
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    // 書類タイプ選択の変更イベントを設定
+    const idDocumentTypeSelect = document.getElementById('id-document-type');
+    if (idDocumentTypeSelect) {
+      idDocumentTypeSelect.addEventListener('change', function() {
+        const selectedType = this.value;
+        showIdDocumentForm(selectedType);
+      });
+    }
+    
+    // 書類アップロードボタンのイベントリスナーを設定
+    const documentButtons = document.querySelectorAll('.select-document-btn');
+    documentButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        document.getElementById(`${targetId}-input`).click();
+      });
+    });
+    
+    // 書類カメラボタンのイベントリスナーを設定
+    const documentCameraButtons = document.querySelectorAll('.document-camera-btn');
+    documentCameraButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        openDocumentCamera(targetId);
+      });
+    });
+    
+    // 書類入力にイベントリスナーを設定
+    const documentInputs = document.querySelectorAll('.document-input');
+    documentInputs.forEach(input => {
+      input.addEventListener('change', function(e) {
+        const targetId = this.id.replace('-input', '');
+        if (this.files && this.files[0]) {
+          handleDocumentFile(this.files[0], targetId);
+        }
+      });
+    });
+    
+    // 証明写真のイベントリスナーを設定
+    document.getElementById('select-file-btn').addEventListener('click', function() {
+      document.getElementById('photo-file-input').click();
+    });
+    
+    document.getElementById('photo-file-input').addEventListener('change', function(e) {
+      if (this.files && this.files[0]) {
+        handlePhotoFile(this.files[0]);
+      }
+    });
+    
+    document.getElementById('open-camera-btn').addEventListener('click', function() {
+      openCamera();
+    });
+    
+    document.getElementById('remove-photo-btn').addEventListener('click', function() {
+      clearPhotoPreview();
+    });
+  }
+  
+  // 身分証明書フォームを表示
+  function showIdDocumentForm(type) {
+    // すべてのフォームを非表示
+    const allForms = document.querySelectorAll('.document-form');
+    allForms.forEach(form => {
+      form.classList.add('d-none');
+    });
+    
+    // コンテナを表示
+    const container = document.getElementById('id-document-upload-container');
+    container.classList.remove('d-none');
+    
+    // 選択されたタイプに対応するフォームを表示
+    let formId = '';
+    switch (type) {
+      case 'driver_license':
+        formId = 'driver-license-form';
+        break;
+      case 'passport':
+        formId = 'passport-form';
+        break;
+      case 'residence_card':
+        formId = 'residence-card-form';
+        break;
+      case 'my_number_card':
+        formId = 'my-number-card-form';
+        break;
+      case 'health_insurance_card':
+        formId = 'health-insurance-card-form';
+        break;
+      case 'other':
+        formId = 'other-form';
+        break;
+      default:
+        return;
+    }
+    
+    // 対応するフォームを表示
+    const form = document.getElementById(formId);
+    if (form) {
+      form.classList.remove('d-none');
+    }
+  }
+  
+  // 身分証明書ファイルを処理する関数
+  function handleDocumentFile(file, targetId) {
+    if (!file) return;
+    
+    // ファイルサイズをチェック
+    if (file.size > 5 * 1024 * 1024) {
+      alert('ファイルサイズが大きすぎます（最大5MB）');
+      return;
+    }
+    
+    // ファイル形式をチェック
+    if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+      alert('JPGまたはPNG形式の画像ファイルを選択してください');
+      return;
+    }
+    
+    // ファイルをプレビュー表示
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      // プレビュー画像を表示
+      const previewImg = document.getElementById(`${targetId}-preview`);
+      if (previewImg) {
+        previewImg.src = e.target.result;
+        
+        // プレビュー表示を表示し、プレースホルダを非表示に
+        const previewContainer = previewImg.closest('.id-document-preview');
+        const placeholder = previewImg.closest('.col-md-6').querySelector('.id-document-placeholder');
+        
+        if (previewContainer) previewContainer.classList.remove('d-none');
+        if (placeholder) placeholder.classList.add('d-none');
+        
+        // 削除ボタンを追加
+        const col = previewImg.closest('.col-md-6');
+        let deleteBtn = col.querySelector('.document-delete-btn');
+        
+        if (!deleteBtn) {
+          deleteBtn = document.createElement('button');
+          deleteBtn.className = 'btn btn-outline-danger btn-sm mt-2 document-delete-btn';
+          deleteBtn.innerHTML = '<i class="bi bi-trash"></i> 削除';
+          deleteBtn.setAttribute('data-target', targetId);
+          deleteBtn.addEventListener('click', function() {
+            removeDocumentFile(this.getAttribute('data-target'));
+          });
+          
+          const buttonGroup = col.querySelector('.d-grid');
+          buttonGroup.parentNode.insertBefore(deleteBtn, buttonGroup.nextSibling);
+        } else {
+          deleteBtn.classList.remove('d-none');
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  // 書類をクリアする関数
+  function removeDocumentFile(targetId) {
+    const previewImg = document.getElementById(`${targetId}-preview`);
+    if (!previewImg) return;
+    
+    const col = previewImg.closest('.col-md-6');
+    const previewContainer = previewImg.closest('.id-document-preview');
+    const placeholder = col.querySelector('.id-document-placeholder');
+    const deleteBtn = col.querySelector('.document-delete-btn');
+    const fileInput = document.getElementById(`${targetId}-input`);
+    
+    // 画像データをクリア
+    previewImg.src = '';
+    if (fileInput) fileInput.value = '';
+    
+    // UIを元に戻す
+    if (previewContainer) previewContainer.classList.add('d-none');
+    if (placeholder) placeholder.classList.remove('d-none');
+    if (deleteBtn) deleteBtn.classList.add('d-none');
+  }
+  
+  // 書類用カメラを開く関数
+  function openDocumentCamera(targetId) {
+    // カメラモーダルを作成
+    const overlay = document.createElement('div');
+    overlay.className = 'camera-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    
+    overlay.innerHTML = `
+      <div class="camera-container" style="background: white; border-radius: 8px; padding: 20px; width: 90%; max-width: 500px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h5 style="margin: 0;">身分証明書の撮影</h5>
+          <button id="close-document-camera-btn" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <div id="document-camera-status" style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+          カメラへのアクセスを許可してください...
+        </div>
+        
+        <video id="document-camera-video" style="width: 100%; height: auto; border-radius: 4px; background: #000; display: none;" autoplay playsinline></video>
+        
+        <div class="d-flex justify-content-between mt-3">
+          <button id="cancel-document-camera-btn" class="btn btn-secondary">キャンセル</button>
+          <button id="take-document-photo-btn" class="btn btn-primary">撮影する</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // イベントリスナーを設定
+    document.getElementById('close-document-camera-btn').addEventListener('click', closeDocumentCamera);
+    document.getElementById('cancel-document-camera-btn').addEventListener('click', closeDocumentCamera);
+    document.getElementById('take-document-photo-btn').addEventListener('click', function() {
+      takeDocumentPhoto(targetId);
+    });
+    
+    // カメラにアクセス
+    let stream = null;
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'environment',  // 背面カメラ優先
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      })
+      .then(function(mediaStream) {
+        stream = mediaStream;
+        const video = document.getElementById('document-camera-video');
+        video.srcObject = mediaStream;
+        video.onloadedmetadata = function() {
+          video.play();
+          document.getElementById('document-camera-status').style.display = 'none';
+          video.style.display = 'block';
+        };
+      })
+      .catch(function(error) {
+        console.error('カメラアクセスエラー:', error);
+        document.getElementById('document-camera-status').textContent = 'カメラにアクセスできません。ブラウザの設定を確認してください。';
+        document.getElementById('document-camera-status').style.backgroundColor = '#f8d7da';
+        document.getElementById('document-camera-status').style.color = '#721c24';
+      });
+    } else {
+      document.getElementById('document-camera-status').textContent = 'お使いのブラウザはカメラをサポートしていません。';
+      document.getElementById('document-camera-status').style.backgroundColor = '#f8d7da';
+      document.getElementById('document-camera-status').style.color = '#721c24';
+    }
+    
+    // カメラを閉じる関数
+    function closeDocumentCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      
+      // モーダルがDOMにまだ存在する場合のみ削除
+      if (overlay && overlay.parentElement) {
+        document.body.removeChild(overlay);
+      }
+    }
+    
+    // 写真を撮影する関数
+    function takeDocumentPhoto(targetId) {
+      const video = document.getElementById('document-camera-video');
+      
+      if (!video || !stream) {
+        alert('カメラが利用できません');
+        return;
+      }
+      
+      // Canvas要素を作成して写真を撮影
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // 画像データを取得
+      canvas.toBlob(function(blob) {
+        if (blob) {
+          const file = new File([blob], `${targetId}.png`, { type: 'image/png' });
+          handleDocumentFile(file, targetId);
+        }
+        closeDocumentCamera();
+      }, 'image/png');
+    }
+  }
+  
+  // 写真ファイルを処理する関数
+  function handlePhotoFile(file) {
+    if (!file) return;
+    
+    // ファイルサイズをチェック
+    if (file.size > 5 * 1024 * 1024) {
+      alert('ファイルサイズが大きすぎます（最大5MB）');
+      return;
+    }
+    
+    // ファイル形式をチェック
+    if (!file.type.match('image/jpeg') && !file.type.match('image/png') && !file.type.match('image/jpg')) {
+      alert('JPGまたはPNG形式の画像ファイルを選択してください');
+      return;
+    }
+    
+    // ファイルをプレビュー表示
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById('preview-image').src = e.target.result;
+      document.getElementById('photo-preview').classList.remove('d-none');
+      document.getElementById('photo-placeholder').classList.add('d-none');
+      
+      // すでに削除ボタンが存在している場合は表示する
+      let deleteBtn = document.getElementById('remove-photo-btn');
+      if (deleteBtn) {
+        deleteBtn.classList.remove('d-none');
+      }
+    };
+    reader.readAsDataURL(file);
+  }
+  
+  // 写真プレビューをクリアする関数
+  function clearPhotoPreview() {
+    document.getElementById('preview-image').src = '';
+    document.getElementById('photo-preview').classList.add('d-none');
+    document.getElementById('photo-placeholder').classList.remove('d-none');
+    document.getElementById('remove-photo-btn').classList.add('d-none');
+    document.getElementById('photo-file-input').value = '';
+  }
+  
+  // カメラを開く関数
+  function openCamera() {
+    // カメラモーダルを作成
+    const overlay = document.createElement('div');
+    overlay.className = 'camera-overlay';
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100vw';
+    overlay.style.height = '100vh';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+    overlay.style.zIndex = '9999';
+    overlay.style.display = 'flex';
+    overlay.style.justifyContent = 'center';
+    overlay.style.alignItems = 'center';
+    
+    overlay.innerHTML = `
+      <div class="camera-container" style="background: white; border-radius: 8px; padding: 20px; width: 90%; max-width: 500px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <h5 style="margin: 0;">カメラ撮影</h5>
+          <button id="close-camera-btn" style="background: none; border: none; font-size: 24px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <div id="camera-status" style="background-color: #f8f9fa; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+          カメラへのアクセスを許可してください...
+        </div>
+        
+        <video id="camera-video" style="width: 100%; height: auto; border-radius: 4px; background: #000; display: none;" autoplay playsinline></video>
+        
+        <div class="d-flex justify-content-between mt-3">
+          <button id="cancel-camera-btn" class="btn btn-secondary">キャンセル</button>
+          <button id="take-photo-btn" class="btn btn-primary">撮影する</button>
+        </div>
+      </div>
+    `;
+    
+    document.body.appendChild(overlay);
+    
+    // イベントリスナーを設定
+    document.getElementById('close-camera-btn').addEventListener('click', closeCamera);
+    document.getElementById('cancel-camera-btn').addEventListener('click', closeCamera);
+    document.getElementById('take-photo-btn').addEventListener('click', takePhoto);
+    
+    // カメラにアクセス
+    let stream = null;
+    
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: 'user',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
+        } 
+      })
+      .then(function(mediaStream) {
+        stream = mediaStream;
+        const video = document.getElementById('camera-video');
+        video.srcObject = mediaStream;
+        video.onloadedmetadata = function() {
+          video.play();
+          document.getElementById('camera-status').style.display = 'none';
+          video.style.display = 'block';
+        };
+      })
+      .catch(function(error) {
+        console.error('カメラアクセスエラー:', error);
+        document.getElementById('camera-status').textContent = 'カメラにアクセスできません。ブラウザの設定を確認してください。';
+        document.getElementById('camera-status').style.backgroundColor = '#f8d7da';
+        document.getElementById('camera-status').style.color = '#721c24';
+      });
+    } else {
+      document.getElementById('camera-status').textContent = 'お使いのブラウザはカメラをサポートしていません。';
+      document.getElementById('camera-status').style.backgroundColor = '#f8d7da';
+      document.getElementById('camera-status').style.color = '#721c24';
+    }
+    
+    // カメラを閉じる関数
+    function closeCamera() {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+      // モーダルがDOMにまだ存在する場合のみ削除
+      if (overlay && overlay.parentElement) {
+        document.body.removeChild(overlay);
+      }
+    }
+    
+    // 写真を撮影する関数
+    function takePhoto() {
+      const video = document.getElementById('camera-video');
+      
+      if (!video || !stream) {
+        alert('カメラが利用できません');
+        return;
+      }
+      
+      // Canvas要素を作成して写真を撮影
+      const canvas = document.createElement('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      // 画像データを取得
+      canvas.toBlob(function(blob) {
+        if (blob) {
+          const file = new File([blob], 'camera-photo.png', { type: 'image/png' });
+          handlePhotoFile(file);
+        }
+        closeCamera();
+      }, 'image/png');
+    }
+  }
+  
+  // グローバルにアクセスできるよう関数をエクスポート
+  window.openCameraFunc = openCamera;
+  window.openDocumentCamera = openDocumentCamera;
+  window.removeDocumentFile = removeDocumentFile;
+});

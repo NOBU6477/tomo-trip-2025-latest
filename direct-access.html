@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Guide - 直接アクセス</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      visibility: visible !important;
+      opacity: 1 !important;
+      display: block !important;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    h1 {
+      color: #0066cc;
+      margin-bottom: 10px;
+    }
+    .button-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .btn {
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #0052a3;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+    .btn-secondary:hover {
+      background-color: #5a6268;
+    }
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: #0066cc;
+    }
+    .card-content {
+      color: #555;
+    }
+    iframe {
+      width: 100%;
+      height: 600px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    #loading-control {
+      background-color: #f1f8ff;
+      border: 1px solid #cce5ff;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+    .success-text {
+      color: #28a745;
+      font-weight: bold;
+    }
+    #status-display {
+      margin-top: 10px;
+      font-style: italic;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+      .button-container {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Local Guide - 直接アクセスモード</h1>
+      <p>このページはLoading問題を解決するための専用ページです</p>
+    </header>
+    
+    <div id="loading-control">
+      <div class="card-title">ローディング制御</div>
+      <p>下のボタンを押すとローディング画面を強制的に終了し、本来のコンテンツを表示します。</p>
+      <button id="force-load-btn" class="btn">ローディングを強制終了</button>
+      <button id="stop-iframe-load" class="btn btn-secondary">iframe読み込みを停止</button>
+      <div id="status-display">ステータス: 準備完了</div>
+    </div>
+    
+    <div class="button-container">
+      <a href="/" class="btn">トップページへ</a>
+      <a href="/emergency" class="btn">緊急スタンドアロンページへ</a>
+      <a href="/no-spinner" class="btn btn-secondary">スピン対策ページへ</a>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">使い方</div>
+      <div class="card-content">
+        <p>1. 「ローディングを強制終了」ボタンをクリックして、スピナーを排除します</p>
+        <p>2. それでも表示されない場合は、「iframe読み込みを停止」を押してから再度試してください</p>
+        <p>3. どうしても表示されない場合は、「緊急スタンドアロンページ」を使用してください</p>
+      </div>
+    </div>
+    
+    <div class="card">
+      <div class="card-title">サイト表示</div>
+      <div id="iframe-container">
+        <button id="load-iframe-btn" class="btn">サイトを読み込む</button>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const forceLoadBtn = document.getElementById('force-load-btn');
+      const stopIframeLoadBtn = document.getElementById('stop-iframe-load');
+      const loadIframeBtn = document.getElementById('load-iframe-btn');
+      const iframeContainer = document.getElementById('iframe-container');
+      const statusDisplay = document.getElementById('status-display');
+      
+      let iframe = null;
+      
+      // ローディングを強制終了
+      forceLoadBtn.addEventListener('click', function() {
+        statusDisplay.textContent = 'ステータス: ローディング強制終了を実行中...';
+        statusDisplay.className = '';
+        
+        try {
+          if (iframe) {
+            try {
+              const iframeDoc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+              
+              if (iframeDoc) {
+                // iframe内のスピナーを削除
+                const styleEl = iframeDoc.createElement('style');
+                styleEl.textContent = `
+                  .spinner, .loading, [role="progressbar"], [aria-busy="true"],
+                  *[class*="spinner"], *[class*="loading"],
+                  *[id*="spinner"], *[id*="loading"],
+                  .progress, .progress-bar {
+                    display: none !important;
+                    visibility: hidden !important;
+                    opacity: 0 !important;
+                    animation: none !important;
+                  }
+                  body {
+                    visibility: visible !important;
+                    display: block !important;
+                    opacity: 1 !important;
+                  }
+                `;
+                iframeDoc.head.appendChild(styleEl);
+                
+                // body要素を表示
+                if (iframeDoc.body) {
+                  iframeDoc.body.style.visibility = 'visible';
+                  iframeDoc.body.style.display = 'block';
+                  iframeDoc.body.style.opacity = '1';
+                }
+                
+                statusDisplay.textContent = 'ステータス: iframe内のローディングを終了しました';
+                statusDisplay.className = 'success-text';
+              }
+            } catch (e) {
+              console.log('iframe内部へのアクセスエラー (クロスオリジン制限の可能性):', e);
+            }
+          }
+          
+          // 親ウィンドウも対象
+          try {
+            if (window.parent && window.parent !== window) {
+              const parentDoc = window.parent.document;
+              const spinners = parentDoc.querySelectorAll('.spinner, .loading, [role="progressbar"]');
+              spinners.forEach(spinner => {
+                spinner.style.display = 'none';
+                spinner.style.visibility = 'hidden';
+              });
+            }
+          } catch (e) {
+            console.log('親フレームアクセスエラー:', e);
+          }
+          
+        } catch (err) {
+          statusDisplay.textContent = 'ステータス: エラーが発生しました: ' + err.message;
+        }
+      });
+      
+      // iframeの読み込みを停止
+      stopIframeLoadBtn.addEventListener('click', function() {
+        if (iframe) {
+          iframe.src = 'about:blank';
+          statusDisplay.textContent = 'ステータス: iframe読み込みを停止しました';
+        }
+      });
+      
+      // サイトを読み込む
+      loadIframeBtn.addEventListener('click', function() {
+        iframe = document.createElement('iframe');
+        iframe.src = '/';
+        iframe.title = 'Local Guide サイト';
+        
+        // 読み込み完了時の処理
+        iframe.addEventListener('load', function() {
+          statusDisplay.textContent = 'ステータス: iframeが読み込まれました';
+          // 自動的にスピナーを削除
+          forceLoadBtn.click();
+        });
+        
+        // エラー時の処理
+        iframe.addEventListener('error', function() {
+          statusDisplay.textContent = 'ステータス: iframe読み込みエラー';
+        });
+        
+        // iframeコンテナを空にして新しいiframeを追加
+        iframeContainer.innerHTML = '';
+        iframeContainer.appendChild(iframe);
+        
+        statusDisplay.textContent = 'ステータス: サイトを読み込み中...';
+      });
+      
+      // パラメータに基づいて自動的にiframeを読み込む
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('autoload') && urlParams.get('autoload') === 'true') {
+        setTimeout(() => {
+          loadIframeBtn.click();
+        }, 500);
+      }
+    });
+  </script>
+</body>
+</html>

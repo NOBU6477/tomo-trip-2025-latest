@@ -1,0 +1,154 @@
+/**
+ * 電話認証バッジ修正用CSS
+ * 初期状態では「認証済み」バッジを非表示にし、
+ * 認証が完了した場合に「未表示」テキストを非表示にする
+ */
+
+/* 電話認証セクション全体のスタイル */
+#guide-phone-verification-section,
+#tourist-phone-verification-section {
+  position: relative;
+  padding: 10px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* 認証ステータス表示の基本レイアウト */
+.phone-verification-status {
+  padding: 5px 0;
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+  transition: all 0.3s ease;
+}
+
+/* 初期状態では認証バッジを非表示にする */
+.phone-verification-status .verification-badge,
+.phone-verification-status .verified-text,
+.phone-verification-status .badge.bg-success {
+  display: none !important;
+}
+
+/* 認証完了時にバッジを表示し、未表示テキストを非表示にする */
+.phone-verification-status.verified .verification-badge,
+.phone-verification-status.verified .badge.bg-success {
+  display: inline-block !important;
+  animation: fadeInScale 0.4s ease;
+}
+
+.phone-verification-status.verified .unverified-text {
+  display: none !important;
+}
+
+.phone-verification-status.verified .verified-text {
+  display: inline-block !important;
+  margin-left: 5px;
+  animation: fadeIn 0.4s ease;
+}
+
+/* 認証された電話番号の表示 */
+.verified-phone-number {
+  display: none;
+  margin-left: 8px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.phone-verification-status.verified .verified-phone-number {
+  display: inline-block;
+  animation: fadeIn 0.4s ease;
+}
+
+/* 電話認証完了メッセージの強調 */
+.phone-verification-success {
+  background-color: #d1e7dd;
+  color: #0f5132;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  font-weight: 500;
+  border-left: 4px solid #198754;
+  animation: slideInDown 0.4s ease;
+}
+
+/* アラートメッセージ共通スタイル */
+#tourist-verification-alert,
+#guide-verification-alert,
+#common-verification-alert {
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin: 10px 0;
+  border-left: 4px solid transparent;
+  animation: slideInUp 0.3s ease;
+}
+
+/* エラーメッセージのスタイル */
+.alert-danger {
+  border-left-color: #dc3545 !important;
+}
+
+/* 成功メッセージのスタイル */
+.alert-success {
+  border-left-color: #198754 !important;
+}
+
+/* 認証インプットグループのスタイル */
+.input-group {
+  border-radius: 0.25rem;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+}
+
+.input-group:focus-within {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* コード入力フィールドのスタイル */
+input#tourist-verification-code,
+input#guide-verification-code,
+input#verification-code {
+  letter-spacing: 2px;
+  font-weight: 500;
+}
+
+/* ボタンのホバーエフェクト */
+#tourist-send-code-btn,
+#guide-send-code-btn,
+#send-code-btn,
+#tourist-verify-code-btn,
+#guide-verify-code-btn,
+#verify-code-btn {
+  transition: all 0.2s ease;
+}
+
+#tourist-send-code-btn:hover,
+#guide-send-code-btn:hover,
+#send-code-btn:hover,
+#tourist-verify-code-btn:hover,
+#guide-verify-code-btn:hover,
+#verify-code-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* アニメーション定義 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

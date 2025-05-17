@@ -1,0 +1,56 @@
+/**
+ * ログインモーダルのユーザータイプ選択修正用CSS
+ * 観光客オプションが表示されない問題を解決するための強制的なスタイル
+ */
+
+/* ユーザータイプセレクターの修正 */
+#loginModal .user-type-selector {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+#loginModal .btn-group {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+}
+
+/* ラジオボタンラベルの修正 */
+#loginModal label[for="login-user-tourist"],
+#loginModal label[for="login-user-guide"] {
+  display: inline-flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 50% !important;
+  height: auto !important;
+  position: relative !important;
+  pointer-events: auto !important;
+}
+
+/* モバイル表示での修正 */
+@media (max-width: 576px) {
+  #loginModal .btn-group {
+    flex-direction: column !important;
+  }
+  
+  #loginModal label[for="login-user-tourist"],
+  #loginModal label[for="login-user-guide"] {
+    width: 100% !important;
+  }
+}
+
+/* ラジオボタン自体の修正 */
+#loginModal input[type="radio"].btn-check#login-user-tourist,
+#loginModal input[type="radio"].btn-check#login-user-guide {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  pointer-events: none;
+}
+
+/* メッセージの表示調整 */
+#loginModal #user-type-description {
+  display: block !important;
+  visibility: visible !important;
+  margin-top: 0.5rem !important;
+}

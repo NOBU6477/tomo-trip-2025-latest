@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>カメラテストページ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #0066cc;
+            margin-bottom: 30px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: block;
+            background-color: #0066cc;
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            margin: 20px auto;
+            border-radius: 5px;
+            max-width: 300px;
+            font-weight: bold;
+        }
+        .btn.minimal {
+            background-color: #ff9933;
+        }
+        .btn.js-free {
+            background-color: #33cc33;
+        }
+        .home-link {
+            display: block;
+            margin-top: 30px;
+            color: #0066cc;
+        }
+        .note {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #fff8e1;
+            border-left: 5px solid #ffca28;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>カメラテストページ</h1>
+        
+        <div class="note">
+            <p>このページは、さまざまな方法でカメラ機能をテストするためのリンク集です。</p>
+            <p>複数の実装方法を用意しましたので、お使いの環境に合わせてお試しください。</p>
+        </div>
+        
+        <a href="/no_js_camera.html" class="btn js-free">JavaScriptなしのカメラテスト</a>
+        <a href="/inline_camera_test.html" class="btn">インラインカメラテスト</a>
+        <a href="/simple_camera_test.html" class="btn">シンプルカメラテスト</a>
+        <a href="/minimal_camera.html" class="btn minimal">ミニマルカメラテスト</a>
+        <a href="/camera_test.html" class="btn">標準カメラテスト</a>
+        
+        <a href="/" class="home-link">メインページに戻る</a>
+    </div>
+</body>
+</html>

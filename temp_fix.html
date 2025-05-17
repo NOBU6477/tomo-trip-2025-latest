@@ -1,0 +1,52 @@
+<script>
+// 最もシンプルな修正スクリプト
+(function() {
+  // ウィンドウロード時に実行
+  window.addEventListener('load', function() {
+    console.log('ウィンドウロード時のシンプルな修正を実行');
+    
+    // 新規登録ボタン
+    const registerButton = document.querySelector('.btn.btn-warning');
+    if (registerButton) {
+      console.log('新規登録ボタンを発見 (シンプル実装)');
+      
+      // イベントを修正
+      registerButton.onclick = function(e) {
+        e.preventDefault();
+        console.log('新規登録ボタンがクリックされました (シンプル実装)');
+        
+        // 既存のモーダルをクリア
+        document.querySelectorAll('.modal.show').forEach(function(modal) {
+          modal.classList.remove('show');
+          modal.style.display = 'none';
+        });
+        
+        document.querySelectorAll('.modal-backdrop').forEach(function(backdrop) {
+          backdrop.parentNode.removeChild(backdrop);
+        });
+        
+        // ユーザータイプモーダルを表示
+        const userTypeModal = document.getElementById('userTypeModal');
+        
+        if (userTypeModal) {
+          // バックドロップを追加
+          const backdrop = document.createElement('div');
+          backdrop.className = 'modal-backdrop fade show';
+          backdrop.style.opacity = '0.25';
+          document.body.appendChild(backdrop);
+          
+          // モーダルを表示
+          userTypeModal.classList.add('show');
+          userTypeModal.style.display = 'block';
+          userTypeModal.setAttribute('aria-modal', 'true');
+          userTypeModal.removeAttribute('aria-hidden');
+          
+          document.body.classList.add('modal-open');
+        }
+        
+        return false;
+      };
+    }
+  });
+})();
+</script>

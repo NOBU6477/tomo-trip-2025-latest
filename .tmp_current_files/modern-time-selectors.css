@@ -1,0 +1,319 @@
+/* モダンな時間帯設定のスタイル */
+
+/* 時間帯設定のコンテナ全体 */
+.schedule-time-container {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px !important;
+  margin-top: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 120, 212, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.schedule-time-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #0d47a1, #2196f3);
+  border-radius: 5px 5px 0 0;
+}
+
+/* 時間選択ラベル */
+.schedule-time-container label {
+  color: #0d47a1;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  position: relative;
+  padding-left: 26px;
+}
+
+/* ラベルにアイコンを追加 */
+.schedule-time-container label[for$="-start"]::before {
+  content: "\F551"; /* 時計アイコン */
+  font-family: 'bootstrap-icons';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0d47a1;
+  font-size: 1.1rem;
+}
+
+.schedule-time-container label[for$="-end"]::before {
+  content: "\F553"; /* 時計アイコン */
+  font-family: 'bootstrap-icons';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0d47a1;
+  font-size: 1.1rem;
+}
+
+/* 時間選択ドロップダウン */
+.schedule-time-container .form-select {
+  background-color: #ffffff;
+  border: 2px solid rgba(33, 150, 243, 0.5);
+  border-radius: 12px;
+  padding: 12px 15px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #0d47a1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%230d47a1' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 40px;
+}
+
+.schedule-time-container .form-select:hover {
+  border-color: rgba(33, 150, 243, 0.7);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+  transform: translateY(-2px);
+}
+
+.schedule-time-container .form-select:focus {
+  border-color: #2196f3;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.25);
+  outline: none;
+}
+
+/* 開始時間と終了時間のレイアウト */
+.schedule-time-container .row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* 開始時間用特別スタイル */
+.schedule-time-container .schedule-start {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+/* 終了時間用特別スタイル */
+.schedule-time-container .schedule-end {
+  position: relative;
+  background-color: rgba(33, 150, 243, 0.05);
+}
+
+/* スマホ表示の最適化 */
+@media (max-width: 767.98px) {
+  .schedule-time-container .row {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .schedule-time-container label {
+    font-size: 0.85rem;
+  }
+  
+  .schedule-time-container .form-select {
+    padding: 10px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* 特別な日付設定用の拡張スタイル */
+#special-date-time-container {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 25px !important;
+  margin-top: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  border: 2px solid rgba(0, 188, 212, 0.3);
+  position: relative;
+  overflow: visible;
+}
+
+#special-date-time-container::before {
+  content: '予約可能時間';
+  position: absolute;
+  top: -12px;
+  left: 25px;
+  background: linear-gradient(135deg, #0d47a1, #00bcd4);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.time-selects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  position: relative;
+  z-index: 2;
+}
+
+.time-selects label {
+  color: #0d47a1;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  font-size: 0.85rem;
+  position: relative;
+  padding-left: 28px;
+}
+
+.time-selects label::before {
+  font-family: 'bootstrap-icons';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+  color: #00bcd4;
+}
+
+.time-selects label[for="special-date-start"]::before {
+  content: "\F551"; /* 時計アイコン */
+}
+
+.time-selects label[for="special-date-end"]::before {
+  content: "\F553"; /* 時計アイコン */
+}
+
+.time-selects select {
+  width: 100%;
+  padding: 13px 18px;
+  font-size: 1rem;
+  color: #0d47a1;
+  background-color: #ffffff;
+  border: 2px solid rgba(0, 188, 212, 0.5);
+  border-radius: 12px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300bcd4' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  padding-right: 45px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.time-selects select:hover {
+  border-color: #00bcd4;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 188, 212, 0.15);
+}
+
+.time-selects select:focus {
+  outline: none;
+  border-color: #00bcd4;
+  box-shadow: 0 8px 25px rgba(0, 188, 212, 0.2);
+}
+
+.time-selects select option {
+  padding: 10px;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  color: #0d47a1;
+}
+
+/* ドロップダウンオプション共通設定 */
+select option {
+  background-color: #ffffff !important;
+  color: #0d47a1 !important;
+}
+
+@media (max-width: 767.98px) {
+  .time-selects {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  #special-date-time-container {
+    padding: 20px 15px !important;
+  }
+  
+  .time-selects select {
+    padding: 10px 15px;
+    font-size: 0.9rem;
+  }
+}
+
+/* 特別な日付のスイッチトグル */
+.special-date-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+  margin-bottom: 20px;
+}
+
+.special-date-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.special-date-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+  transition: .4s;
+  border-radius: 34px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.special-date-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+input:checked + .special-date-slider {
+  background: linear-gradient(135deg, #0d47a1, #00bcd4);
+}
+
+input:focus + .special-date-slider {
+  box-shadow: 0 0 1px #00bcd4;
+}
+
+input:checked + .special-date-slider:before {
+  transform: translateX(30px);
+}
+
+/* アニメーション効果 */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 188, 212, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 188, 212, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 188, 212, 0);
+  }
+}
+
+.time-selects select:focus {
+  animation: pulse 1.5s infinite;
+}

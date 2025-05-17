@@ -1,0 +1,393 @@
+/**
+ * 翻訳キーの問題を修正するスクリプト
+ * コンソールに表示される「翻訳キーが見つかりません」エラーを修正
+ */
+
+(function() {
+  console.log('翻訳キー修正スクリプトが読み込まれました');
+  
+  // デバッグモード（翻訳キーの問題をコンソールに表示）
+  const DEBUG_MODE = false;
+  
+  // 翻訳キーが欠けている場合のフォールバック
+  function fixMissingTranslations() {
+    console.log('翻訳キーの修正を実行します（強化版）');
+    
+    // グローバル翻訳オブジェクト
+    const translations = window.translations || {};
+    
+    // よく問題が発生する翻訳キーのセット
+    const problematicKeys = [
+      'nav.profile',
+      'featured.title', 'featured.view_profile', 'featured.view_all',
+      'how.step1_title', 'how.step1_desc', 'how.step2_title', 'how.step2_desc', 
+      'how.step3_title', 'how.step3_desc',
+      'become.title', 'become.subtitle', 'become.point1', 'become.point2', 
+      'become.point3', 'become.point4', 'become.button',
+      'login.title', 'login.username', 'login.password', 'login.submit',
+      'document.id_verification', 'document.japan', 'document.residenceCard', 
+      'document.international', 'document.int_passport', 'document.int_driverLicense', 
+      'document.int_idCard', 'document.upload_passport', 'document.camera', 
+      'document.passport_requirements', 'document.upload_license_front', 
+      'document.upload_license_back', 'document.license_requirements', 
+      'document.upload_idcard_front', 'document.upload_idcard_back', 
+      'document.idcard_requirements', 'document.upload_residencecard_front',
+      'document.upload_residencecard_back', 'document.residencecard_requirements'
+    ];
+    
+    // 追加の翻訳キー（画面から検出）
+    const additionalKeys = [
+      'become.point4', 'become.button', 'login.title', 'login.username', 
+      'login.password', 'login.submit', 'document.id_verification', 
+      'document.japan', 'document.residenceCard', 'document.international',
+      'document.int_passport', 'document.int_driverLicense', 'document.int_idCard',
+      'document.upload_passport', 'document.camera', 'document.passport_requirements',
+      'document.upload_license_front', 'document.upload_license_back',
+      'document.license_requirements', 'document.upload_idcard_front',
+      'document.upload_idcard_back', 'document.idcard_requirements',
+      'document.upload_residencecard_front', 'document.upload_residencecard_back',
+      'document.residencecard_requirements'
+    ];
+    
+    // すべてのキーをマージ
+    const allKeys = [...new Set([...problematicKeys, ...additionalKeys])];
+    
+    // 日本語の場合の代替翻訳
+    const jaReplacements = {
+      'nav.profile': 'プロフィール',
+      'featured.title': '人気のガイド',
+      'featured.view_profile': 'プロフィールを見る',
+      'featured.view_all': 'すべて表示',
+      'how.step1_title': 'ガイドを探す',
+      'how.step1_desc': '訪れたい地域と日時を指定して、あなたに合うガイドを見つけましょう。',
+      'how.step2_title': '予約を確定',
+      'how.step2_desc': '気に入ったガイドのプロフィールを確認し、希望の条件で予約しましょう。',
+      'how.step3_title': '体験を楽しむ',
+      'how.step3_desc': '現地で実際に会い、ガイドとともに特別な体験を楽しみましょう。',
+      'become.title': 'ガイドになる',
+      'become.subtitle': 'あなたの地元の知識と情熱を活かして、世界中の旅行者に特別な体験を提供しましょう',
+      'become.point1': '自分のスケジュールで働く',
+      'become.point2': '地元の文化や魅力を共有する',
+      'become.point3': '追加収入を得る',
+      'become.point4': '国際的な繋がりを作る',
+      'become.button': 'ガイドとして登録',
+      'login.title': 'ログイン',
+      'login.username': 'ユーザー名',
+      'login.password': 'パスワード',
+      'login.submit': 'ログイン',
+      'document.id_verification': '身分証明書の確認',
+      'document.japan': '日本',
+      'document.residenceCard': '在留カード',
+      'document.international': '外国籍の方',
+      'document.int_passport': '外国パスポート',
+      'document.int_driverLicense': '外国運転免許証',
+      'document.int_idCard': '外国IDカード',
+      'document.upload_passport': 'パスポートをアップロード',
+      'document.camera': 'カメラで撮影',
+      'document.passport_requirements': 'パスポートの顔写真ページをアップロードしてください',
+      'document.upload_license_front': '運転免許証（表面）をアップロード',
+      'document.upload_license_back': '運転免許証（裏面）をアップロード',
+      'document.license_requirements': '両面をアップロードしてください',
+      'document.upload_idcard_front': '身分証明書（表面）をアップロード',
+      'document.upload_idcard_back': '身分証明書（裏面）をアップロード',
+      'document.idcard_requirements': '両面をアップロードしてください',
+      'document.upload_residencecard_front': '在留カード（表面）をアップロード',
+      'document.upload_residencecard_back': '在留カード（裏面）をアップロード',
+      'document.residencecard_requirements': '両面をアップロードしてください'
+    };
+    
+    // 英語の場合の代替翻訳
+    const enReplacements = {
+      'nav.profile': 'Profile',
+      'featured.title': 'Featured Guides',
+      'featured.view_profile': 'View Profile',
+      'featured.view_all': 'View All',
+      'how.step1_title': 'Find a Guide',
+      'how.step1_desc': 'Search for guides in your desired location and date.',
+      'how.step2_title': 'Confirm Booking',
+      'how.step2_desc': 'Check the guide profile and confirm your booking with your preferences.',
+      'how.step3_title': 'Enjoy the Experience',
+      'how.step3_desc': 'Meet your guide and enjoy a special local experience.',
+      'become.title': 'Become a Guide',
+      'become.subtitle': 'Share your local knowledge and passion to provide special experiences to travelers',
+      'become.point1': 'Work on your own schedule',
+      'become.point2': 'Share your local culture',
+      'become.point3': 'Earn extra income',
+      'become.point4': 'Create international connections',
+      'become.button': 'Register as Guide',
+      'login.title': 'Login',
+      'login.username': 'Username',
+      'login.password': 'Password',
+      'login.submit': 'Login',
+      'document.id_verification': 'ID Verification',
+      'document.japan': 'Japan',
+      'document.residenceCard': 'Residence Card',
+      'document.international': 'International',
+      'document.int_passport': 'International Passport',
+      'document.int_driverLicense': 'International Driver License',
+      'document.int_idCard': 'International ID Card',
+      'document.upload_passport': 'Upload Passport',
+      'document.camera': 'Take Photo',
+      'document.passport_requirements': 'Please upload the photo page of your passport',
+      'document.upload_license_front': 'Upload Driver License (Front)',
+      'document.upload_license_back': 'Upload Driver License (Back)',
+      'document.license_requirements': 'Please upload both sides',
+      'document.upload_idcard_front': 'Upload ID Card (Front)',
+      'document.upload_idcard_back': 'Upload ID Card (Back)',
+      'document.idcard_requirements': 'Please upload both sides',
+      'document.upload_residencecard_front': 'Upload Residence Card (Front)',
+      'document.upload_residencecard_back': 'Upload Residence Card (Back)',
+      'document.residencecard_requirements': 'Please upload both sides'
+    };
+    
+    // 現在の言語に基づいて適切な代替翻訳を選択
+    const isEnglish = window.translationSystem && window.translationSystem.currentLanguage === 'en';
+    const replacements = isEnglish ? enReplacements : jaReplacements;
+    
+    // 元の翻訳警告関数を保存
+    const originalWarnMissingTranslation = console.warn;
+    
+    // 翻訳警告を一時的に抑制
+    if (!DEBUG_MODE) {
+      console.warn = function(message) {
+        // 翻訳警告のみ抑制
+        if (typeof message === 'string' && message.includes('翻訳キー')) {
+          return;
+        }
+        originalWarnMissingTranslation.apply(console, arguments);
+      };
+    }
+    
+    // 代替翻訳をグローバル翻訳オブジェクトに追加
+    let fixedCount = 0;
+    allKeys.forEach(key => {
+      if (!translations[key] && replacements[key]) {
+        translations[key] = replacements[key];
+        fixedCount++;
+      }
+    });
+    
+    // グローバル翻訳オブジェクトの更新
+    window.translations = translations;
+    
+    // 言語別の翻訳オブジェクトも更新
+    if (window.translations_ja) {
+      allKeys.forEach(key => {
+        if (!window.translations_ja[key] && jaReplacements[key]) {
+          window.translations_ja[key] = jaReplacements[key];
+        }
+      });
+    }
+    
+    if (window.translations_en) {
+      allKeys.forEach(key => {
+        if (!window.translations_en[key] && enReplacements[key]) {
+          window.translations_en[key] = enReplacements[key];
+        }
+      });
+    }
+    
+    // 翻訳システムがある場合はキャッシュを更新
+    if (window.translationSystem) {
+      window.translationSystem.translations = translations;
+    }
+    
+    // コンソール警告を元に戻す
+    console.warn = originalWarnMissingTranslation;
+    
+    console.log(`翻訳キーの修正が完了しました（${fixedCount}キーを追加）`);
+    
+    // ページ上の翻訳要素を更新
+    updateTranslationsInDOM();
+  }
+  
+  // DOM内の翻訳要素を更新
+  function updateTranslationsInDOM() {
+    // data-i18n属性を持つすべての要素を取得
+    const elements = document.querySelectorAll('[data-i18n]');
+    
+    elements.forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      const translation = window.translations && window.translations[key];
+      
+      if (translation) {
+        // 要素のタイプに応じて翻訳を適用
+        if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'password' || el.type === 'email')) {
+          el.placeholder = translation;
+        } else if (el.tagName === 'INPUT' && (el.type === 'button' || el.type === 'submit')) {
+          el.value = translation;
+        } else {
+          el.textContent = translation;
+        }
+      }
+    });
+  }
+  
+  // 翻訳オブジェクトへのプロキシ設定
+  function setupTranslationProxy() {
+    if (!window.translations) {
+      window.translations = {};
+    }
+    
+    // 元のオブジェクトをバックアップ
+    const originalTranslations = { ...window.translations };
+    
+    // 存在しないキーにアクセスした場合の処理を行うプロキシ
+    window.translations = new Proxy(originalTranslations, {
+      get: function(target, prop) {
+        if (prop in target) {
+          return target[prop];
+        }
+        
+        // キーが存在しない場合、日本語の場合は jaReplacements から、
+        // 英語の場合は enReplacements から取得
+        const isEnglish = window.translationSystem && window.translationSystem.currentLanguage === 'en';
+        const replacements = isEnglish ? enReplacements : jaReplacements;
+        
+        if (replacements && replacements[prop]) {
+          // 動的に追加した翻訳をキャッシュ
+          target[prop] = replacements[prop];
+          return replacements[prop];
+        }
+        
+        // 最後の手段として、キー自体を返す
+        if (typeof prop === 'string') {
+          const keyParts = prop.split('.');
+          return keyParts[keyParts.length - 1].replace(/_/g, ' ');
+        }
+        
+        return undefined;
+      }
+    });
+  }
+  
+  // ページロード時に実行
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log('翻訳修正: DOMContentLoaded');
+    
+    // 翻訳プロキシのセットアップ
+    setupTranslationProxy();
+    
+    // 翻訳が読み込まれた後に実行するため少し遅延
+    setTimeout(fixMissingTranslations, 1000);
+    
+    // 念のため追加の遅延実行
+    setTimeout(fixMissingTranslations, 3000);
+    
+    // モーダル表示時にも翻訳を修正
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      modal.addEventListener('shown.bs.modal', function() {
+        console.log('モーダルが表示されました:', this.id);
+        fixMissingTranslations();
+      });
+    });
+  });
+  
+  // 言語切り替え時にも翻訳を修正
+  if (window.translationSystem && window.translationSystem.changeLanguage) {
+    const originalChangeLanguage = window.translationSystem.changeLanguage;
+    window.translationSystem.changeLanguage = async function(lang) {
+      const result = await originalChangeLanguage.call(window.translationSystem, lang);
+      setTimeout(fixMissingTranslations, 100);
+      return result;
+    };
+  }
+  
+  // ウィンドウロード時にも実行
+  window.addEventListener('load', function() {
+    console.log('翻訳修正: window.load');
+    setTimeout(fixMissingTranslations, 500);
+  });
+  
+  // グローバル関数として公開（デバッグ用）
+  window.fixMissingTranslations = fixMissingTranslations;
+  
+  // 日本語の場合の代替翻訳
+  const jaReplacements = {
+    'nav.profile': 'プロフィール',
+    'featured.title': '人気のガイド',
+    'featured.view_profile': 'プロフィールを見る',
+    'featured.view_all': 'すべて表示',
+    'how.step1_title': 'ガイドを探す',
+    'how.step1_desc': '訪れたい地域と日時を指定して、あなたに合うガイドを見つけましょう。',
+    'how.step2_title': '予約を確定',
+    'how.step2_desc': '気に入ったガイドのプロフィールを確認し、希望の条件で予約しましょう。',
+    'how.step3_title': '体験を楽しむ',
+    'how.step3_desc': '現地で実際に会い、ガイドとともに特別な体験を楽しみましょう。',
+    'become.title': 'ガイドになる',
+    'become.subtitle': 'あなたの地元の知識と情熱を活かして、世界中の旅行者に特別な体験を提供しましょう',
+    'become.point1': '自分のスケジュールで働く',
+    'become.point2': '地元の文化や魅力を共有する',
+    'become.point3': '追加収入を得る',
+    'become.point4': '国際的な繋がりを作る',
+    'become.button': 'ガイドとして登録',
+    'login.title': 'ログイン',
+    'login.username': 'ユーザー名',
+    'login.password': 'パスワード',
+    'login.submit': 'ログイン',
+    'document.id_verification': '身分証明書の確認',
+    'document.japan': '日本',
+    'document.residenceCard': '在留カード',
+    'document.international': '外国籍の方',
+    'document.int_passport': '外国パスポート',
+    'document.int_driverLicense': '外国運転免許証',
+    'document.int_idCard': '外国IDカード',
+    'document.upload_passport': 'パスポートをアップロード',
+    'document.camera': 'カメラで撮影',
+    'document.passport_requirements': 'パスポートの顔写真ページをアップロードしてください',
+    'document.upload_license_front': '運転免許証（表面）をアップロード',
+    'document.upload_license_back': '運転免許証（裏面）をアップロード',
+    'document.license_requirements': '両面をアップロードしてください',
+    'document.upload_idcard_front': '身分証明書（表面）をアップロード',
+    'document.upload_idcard_back': '身分証明書（裏面）をアップロード',
+    'document.idcard_requirements': '両面をアップロードしてください',
+    'document.upload_residencecard_front': '在留カード（表面）をアップロード',
+    'document.upload_residencecard_back': '在留カード（裏面）をアップロード',
+    'document.residencecard_requirements': '両面をアップロードしてください'
+  };
+  
+  // 英語の場合の代替翻訳
+  const enReplacements = {
+    'nav.profile': 'Profile',
+    'featured.title': 'Featured Guides',
+    'featured.view_profile': 'View Profile',
+    'featured.view_all': 'View All',
+    'how.step1_title': 'Find a Guide',
+    'how.step1_desc': 'Search for guides in your desired location and date.',
+    'how.step2_title': 'Confirm Booking',
+    'how.step2_desc': 'Check the guide profile and confirm your booking with your preferences.',
+    'how.step3_title': 'Enjoy the Experience',
+    'how.step3_desc': 'Meet your guide and enjoy a special local experience.',
+    'become.title': 'Become a Guide',
+    'become.subtitle': 'Share your local knowledge and passion to provide special experiences to travelers',
+    'become.point1': 'Work on your own schedule',
+    'become.point2': 'Share your local culture',
+    'become.point3': 'Earn extra income',
+    'become.point4': 'Create international connections',
+    'become.button': 'Register as Guide',
+    'login.title': 'Login',
+    'login.username': 'Username',
+    'login.password': 'Password',
+    'login.submit': 'Login',
+    'document.id_verification': 'ID Verification',
+    'document.japan': 'Japan',
+    'document.residenceCard': 'Residence Card',
+    'document.international': 'International',
+    'document.int_passport': 'International Passport',
+    'document.int_driverLicense': 'International Driver License',
+    'document.int_idCard': 'International ID Card',
+    'document.upload_passport': 'Upload Passport',
+    'document.camera': 'Take Photo',
+    'document.passport_requirements': 'Please upload the photo page of your passport',
+    'document.upload_license_front': 'Upload Driver License (Front)',
+    'document.upload_license_back': 'Upload Driver License (Back)',
+    'document.license_requirements': 'Please upload both sides',
+    'document.upload_idcard_front': 'Upload ID Card (Front)',
+    'document.upload_idcard_back': 'Upload ID Card (Back)',
+    'document.idcard_requirements': 'Please upload both sides',
+    'document.upload_residencecard_front': 'Upload Residence Card (Front)',
+    'document.upload_residencecard_back': 'Upload Residence Card (Back)',
+    'document.residencecard_requirements': 'Please upload both sides'
+  };
+})();

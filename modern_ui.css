@@ -1,0 +1,311 @@
+/* モダンUI用のスタイル */
+:root {
+  --primary-color: #3a86ff;
+  --primary-dark: #2667cc;
+  --secondary-color: #ff9f1c;
+  --success-color: #38b000;
+  --danger-color: #e63946;
+  --warning-color: #ffb703;
+  --dark-color: #1a1a2e;
+  --light-color: #f8f9fa;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-400: #ced4da;
+  --gray-500: #adb5bd;
+  --gray-600: #6c757d;
+  --gray-700: #495057;
+  --gray-800: #343a40;
+  --gray-900: #212529;
+  --shadow-sm: 0 .125rem .25rem rgba(0,0,0,.075);
+  --shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+  --shadow-lg: 0 1rem 3rem rgba(0,0,0,.175);
+  --border-radius: 0.375rem;
+  --border-radius-lg: 0.5rem;
+  --transition: all 0.3s ease;
+}
+
+/* モーダルデザイン */
+.modal-content {
+  border: none;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom: none;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-body {
+  padding: 2rem 1.5rem;
+  background-color: white;
+}
+
+.modal-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--gray-200);
+  background-color: var(--gray-100);
+}
+
+/* フォーム要素 */
+.form-control {
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--gray-300);
+  transition: var(--transition);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(58, 134, 255, 0.25);
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: var(--gray-700);
+}
+
+.form-text {
+  color: var(--gray-600);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* ボタン */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  transition: var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-outline-primary {
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+}
+
+/* 電話認証モーダル */
+.phone-verification-modal .modal-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.phone-verification-card {
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  background-color: white;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+.phone-icon-container {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(58, 134, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.phone-icon {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+
+.verification-code-input {
+  letter-spacing: 0.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.verification-status {
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.verification-status.success {
+  background-color: rgba(56, 176, 0, 0.1);
+  color: var(--success-color);
+}
+
+.verification-status.error {
+  background-color: rgba(230, 57, 70, 0.1);
+  color: var(--danger-color);
+}
+
+.verification-status.info {
+  background-color: rgba(58, 134, 255, 0.1);
+  color: var(--primary-color);
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border-radius: var(--border-radius);
+}
+
+/* ドキュメントアップロード */
+.document-upload-section {
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: var(--gray-100);
+}
+
+.document-upload-header {
+  margin-bottom: 1rem;
+}
+
+.document-upload-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 0.5rem;
+}
+
+.document-upload-description {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+}
+
+.file-upload-area {
+  border: 2px dashed var(--gray-400);
+  border-radius: var(--border-radius);
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  background-color: white;
+}
+
+.file-upload-area:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(58, 134, 255, 0.05);
+}
+
+.file-upload-icon {
+  font-size: 2rem;
+  color: var(--gray-500);
+  margin-bottom: 1rem;
+}
+
+.file-upload-text {
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+.file-upload-help {
+  color: var(--gray-600);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.file-preview-container {
+  margin-top: 1rem;
+  display: none;
+  position: relative;
+}
+
+.file-preview-container.show {
+  display: block;
+}
+
+.file-preview-image {
+  width: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.file-remove-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: rgba(230, 57, 70, 0.8);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.file-remove-button:hover {
+  background-color: var(--danger-color);
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+  .modal-body {
+    padding: 1.5rem 1rem;
+  }
+  
+  .phone-verification-card {
+    padding: 1rem;
+  }
+  
+  .document-upload-section {
+    padding: 1rem;
+  }
+}

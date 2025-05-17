@@ -1,0 +1,62 @@
+/**
+ * 電話認証エラーメッセージ修正のためのCSS
+ * このCSSは電話番号入力時のエラーメッセージの表示問題を修正します
+ */
+
+/* 電話番号に関連するすべてのエラーメッセージを完全に非表示にする */
+.alert-danger,
+[class*="alert-danger"],
+div[role="alert"],
+.alert-danger i.bi-exclamation-circle,
+.alert-danger i.bi-exclamation-triangle,
+.alert:not(.alert-success),
+#registerGuideModal .alert-danger,
+#phoneVerificationModal .alert-danger,
+#registerTouristModal .alert-danger,
+[id$="verification-alert"],
+.alert-danger:has(i),
+.alert:has(i.bi-exclamation-circle),
+.phone-verification-section .alert-danger,
+.modal-body .alert-danger {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
+
+/* 電話番号入力欄に赤枠がついた時の修正 */
+input.is-invalid:focus,
+input.is-invalid,
+input.form-control.is-invalid,
+input[type="tel"].is-invalid,
+.form-control.is-invalid,
+.was-validated .form-control:invalid {
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+
+/* 未表示テキストの明示的表示 */
+.phone-verification-section .unverified-text,
+#unverified-text,
+.unverified-status {
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* 「未表示」テキストをユーザーに見せるための追加スタイル */
+.phone-verification-status:not(.verified) .unverified-text {
+  display: block !important;
+  color: #6c757d !important;
+  margin: 5px 0 !important;
+  padding: 5px !important;
+  font-size: 14px !important;
+}

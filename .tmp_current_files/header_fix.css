@@ -1,0 +1,32 @@
+/* ヘッダーのデザイン修正用CSS */
+.navbar {
+  padding: 0.5rem 1rem !important;
+}
+
+.navbar-brand {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.navbar-nav {
+  align-items: center !important;
+}
+
+.nav-link {
+  padding: 0.5rem 1rem !important;
+  font-size: 1rem !important;
+}
+
+/* 重複した登録ボタンの修正 */
+.navbar .btn-warning:not(:first-of-type) {
+  display: none !important;
+}
+
+/* ナビゲーションのレイアウト調整 */
+@media (min-width: 992px) {
+  .navbar-expand-lg .navbar-nav {
+    margin-left: auto !important;
+  }
+}

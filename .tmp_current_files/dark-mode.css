@@ -1,0 +1,364 @@
+/**
+ * ダークモードスタイル定義
+ * ユーザーがライトモードとダークモードを切り替えられるようにする
+ */
+
+/* システム設定に基づくダークモード */
+@media (prefers-color-scheme: dark) {
+  :root.auto-theme {
+    /* ダークモード用の変数 */
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-tertiary: #2c2c2c;
+    --text-primary: #ffffff;
+    --text-secondary: #d0d0d0;
+    --text-muted: #a0a0a0;
+    --border-color: #444444;
+    --card-bg: #1e1e1e;
+    --input-bg: #2a2a2a;
+    --input-border: #444444;
+    --input-color: #ffffff;
+    --modal-bg: #121212;
+    --navbar-bg: rgba(13, 13, 13, 0.98);
+    --highlight: #4287f5;
+    --highlight-hover: #2c69b2;
+    --dropdown-bg: #252525;
+    --dropdown-link-hover: #2c2c2c;
+  }
+  
+  /* システム設定がダークモードのときのスタイル強調 */
+  .auto-theme .navbar {
+    background: linear-gradient(to right, #111111, #1a1a1a) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .auto-theme .card {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  }
+  
+  .auto-theme .btn-primary {
+    background-color: #4287f5;
+    border-color: #4287f5;
+  }
+  
+  .auto-theme .btn-outline-primary {
+    color: #4287f5;
+    border-color: #4287f5;
+  }
+  
+  .auto-theme .text-primary {
+    color: #4287f5 !important;
+  }
+}
+
+/* 手動で設定したダークモード */
+:root.dark-theme {
+  /* ダークモード用の変数 */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2c2c2c;
+  --text-primary: #ffffff;
+  --text-secondary: #d0d0d0;
+  --text-muted: #a0a0a0;
+  --border-color: #444444;
+  --card-bg: #1e1e1e;
+  --input-bg: #2a2a2a;
+  --input-border: #444444;
+  --input-color: #ffffff;
+  --modal-bg: #121212;
+  --navbar-bg: rgba(13, 13, 13, 0.98);
+  --highlight: #4287f5;
+  --highlight-hover: #2c69b2;
+  --dropdown-bg: #252525;
+  --dropdown-link-hover: #2c2c2c;
+}
+
+/* ダークモード用のアクセントカラー強調 */
+.dark-theme .btn-primary {
+  background-color: #4287f5;
+  border-color: #4287f5;
+}
+
+.dark-theme .btn-outline-primary {
+  color: #4287f5;
+  border-color: #4287f5;
+}
+
+.dark-theme .text-primary {
+  color: #4287f5 !important;
+}
+
+/* ダークモード時のコントラスト強化 */
+.dark-theme .navbar-dark {
+  background-color: #0a0a0a !important; 
+}
+
+.dark-theme .navbar {
+  background: linear-gradient(to right, #111111, #1a1a1a) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark-theme .card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* ライトモード */
+:root.light-theme, :root:not(.dark-theme):not(.auto-theme) {
+  /* ライトモード用の変数 */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-tertiary: #f1f3f5;
+  --text-primary: #212529;
+  --text-secondary: #495057;
+  --text-muted: #6c757d;
+  --border-color: #dee2e6;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #ced4da;
+  --input-color: #212529;
+  --modal-bg: #ffffff;
+  --navbar-bg: rgba(255, 255, 255, 0.95);
+  --highlight: #0d6efd;
+  --highlight-hover: #0b5ed7;
+  --dropdown-bg: #ffffff;
+  --dropdown-link-hover: #f8f9fa;
+}
+
+/* テーマ変数を適用するスタイル */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.navbar {
+  background-color: var(--navbar-bg);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand, .nav-link, .navbar .btn-link {
+  color: var(--text-primary);
+}
+
+.nav-link:hover, .navbar .btn-link:hover {
+  color: var(--highlight);
+}
+
+.card, .modal-content, .list-group-item {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+.btn-primary {
+  background-color: var(--highlight);
+  border-color: var(--highlight);
+}
+
+.btn-primary:hover {
+  background-color: var(--highlight-hover);
+  border-color: var(--highlight-hover);
+}
+
+.btn-outline-primary {
+  color: var(--highlight);
+  border-color: var(--highlight);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--highlight);
+  color: white;
+}
+
+.form-control, .form-select {
+  background-color: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-color);
+}
+
+.form-control:focus, .form-select:focus {
+  background-color: var(--input-bg);
+  border-color: var(--highlight);
+  color: var(--input-color);
+}
+
+.dropdown-menu {
+  background-color: var(--dropdown-bg);
+  border-color: var(--border-color);
+}
+
+.dropdown-item {
+  color: var(--text-primary);
+}
+
+.dropdown-item:hover {
+  background-color: var(--dropdown-link-hover);
+  color: var(--text-primary);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+.border {
+  border-color: var(--border-color) !important;
+}
+
+.modal-header, .modal-footer {
+  border-color: var(--border-color);
+}
+
+/* ダークモード時のモーダル閉じるボタン強調 */
+.dark-theme .modal .btn-close,
+.auto-theme .modal .btn-close {
+  filter: invert(1) brightness(200%);
+  opacity: 0.8;
+}
+
+/* ダークモード時のカードタイトル強調 */
+.dark-theme .card-title,
+.auto-theme .card-title,
+.dark-theme .modal-title,
+.auto-theme .modal-title {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+/* ダークモード時のモーダル内の見出し強調 */
+.dark-theme .modal h1, .dark-theme .modal h2, .dark-theme .modal h3, 
+.dark-theme .modal h4, .dark-theme .modal h5, .dark-theme .modal h6,
+.auto-theme .modal h1, .auto-theme .modal h2, .auto-theme .modal h3, 
+.auto-theme .modal h4, .auto-theme .modal h5, .auto-theme .modal h6 {
+  color: #ffffff !important;
+}
+
+/* ダークモード時のモーダルボタン強調 */
+.dark-theme .modal .btn-primary,
+.auto-theme .modal .btn-primary {
+  background-color: #4287f5 !important;
+  border-color: #4287f5 !important;
+  color: white !important;
+}
+
+.alert-primary {
+  background-color: rgba(13, 110, 253, 0.15);
+  color: var(--text-primary);
+  border-color: rgba(13, 110, 253, 0.3);
+}
+
+.alert-success {
+  background-color: rgba(25, 135, 84, 0.15);
+  color: var(--text-primary);
+  border-color: rgba(25, 135, 84, 0.3);
+}
+
+.alert-warning {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: var(--text-primary);
+  border-color: rgba(255, 193, 7, 0.3);
+}
+
+.alert-danger {
+  background-color: rgba(220, 53, 69, 0.15);
+  color: var(--text-primary);
+  border-color: rgba(220, 53, 69, 0.3);
+}
+
+/* ダークモード時の画像調整 */
+.dark-theme img:not([src*=".svg"]), 
+.auto-theme img:not([src*=".svg"]) {
+  filter: brightness(0.9);
+}
+
+/* テーマモード切替ボタン */
+.theme-toggle {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.9rem;
+  border-radius: 0.25rem;
+  color: var(--text-primary);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--highlight);
+  color: var(--highlight);
+}
+
+.theme-toggle i {
+  margin-right: 0.5rem;
+}
+
+.theme-toggle-mobile {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--highlight);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  border: none;
+  font-size: 1.2rem;
+  animation: pulse-light 2s infinite;
+  transition: all 0.3s ease;
+}
+
+@keyframes pulse-light {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(13, 110, 253, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 110, 253, 0);
+  }
+}
+
+.dark-theme .theme-toggle-mobile,
+.auto-theme .theme-toggle-mobile {
+  background-color: #4287f5;
+  animation: pulse-dark 2s infinite;
+}
+
+@keyframes pulse-dark {
+  0% {
+    box-shadow: 0 0 0 0 rgba(66, 135, 245, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(66, 135, 245, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(66, 135, 245, 0);
+  }
+}
+
+.theme-toggle-mobile:hover {
+  transform: scale(1.1);
+}
+
+.theme-toggle-mobile:active {
+  transform: scale(0.95);
+}
+
+.theme-toggle-mobile i {
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .theme-toggle-mobile {
+    display: none;
+  }
+}

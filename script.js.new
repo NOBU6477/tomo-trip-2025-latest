@@ -1,0 +1,494 @@
+document.addEventListener('DOMContentLoaded', function() {
+  // Feather アイコンの初期化
+  feather.replace();
+  
+  // ログイン状態のチェック
+  checkAuthStatus();
+  
+  // モーダル関連の要素
+  const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+  const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+  const phoneVerificationModal = new bootstrap.Modal(document.getElementById('phoneVerificationModal'));
+  const idDocumentModal = new bootstrap.Modal(document.getElementById('idDocumentModal'));
+  
+  // ログイン、新規登録ボタンのイベントリスナー
+  document.getElementById('login-btn').addEventListener('click', function() {
+    loginModal.show();
+  });
+  
+  document.getElementById('register-btn').addEventListener('click', function() {
+    registerModal.show();
+  });
+  
+  document.getElementById('show-register').addEventListener('click', function(e) {
+    e.preventDefault();
+    loginModal.hide();
+    setTimeout(() => registerModal.show(), 500);
+  });
+  
+  document.getElementById('show-login').addEventListener('click', function(e) {
+    e.preventDefault();
+    registerModal.hide();
+    setTimeout(() => loginModal.show(), 500);
+  });
+  
+  // ログアウトボタンのイベントリスナー
+  document.getElementById('logout-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    logout();
+  });
+  
+  // ガイドになるボタンのイベントリスナー
+  document.getElementById('become-guide-btn').addEventListener('click', function() {
+    const user = getCurrentUser();
+    if (user) {
+      window.location.href = '#become-guide';
+    } else {
+      // ログインモーダルではなく登録モーダルを表示し、タイプをガイドに設定
+      registerModal.show();
+      
+      // タイプフィールドがある場合、「ガイド」に設定
+      const typeField = document.querySelector('input[name="type"][value="guide"]');
+      if (typeField) {
+        typeField.checked = true;
+      }
+    }
+  });
+  
+  // ログインフォームの送信
+  document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('login-username').value;
+    const password = document.getElementById('login-password').value;
+    
+    login(username, password);
+  });
+  
+  // 新規登録フォームの送信
+  document.getElementById('register-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const firstName = document.getElementById('register-firstname').value;
+    const lastName = document.getElementById('register-lastname').value;
+    const username = document.getElementById('register-username').value;
+    const email = document.getElementById('register-email').value;
+    const phoneNumber = document.getElementById('register-phone').value;
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm-password').value;
+    
+    // ユーザータイプの取得
+    const type = document.querySelector('input[name="type"]:checked').value;
+    
+    if (password !== confirmPassword) {
+      showRegisterError('パスワードが一致しません');
+      return;
+    }
+    
+    register(firstName, lastName, username, email, phoneNumber, password, type);
+  });
+
+  // 電話認証コード送信ボタンのイベントリスナー
+  document.getElementById('send-verification-code').addEventListener('click', function() {
+    const user = getCurrentUser();
+    if (user) {
+      sendVerificationCode(user.id);
+    }
+  });
+
+  // 電話認証コード検証ボタンのイベントリスナー
+  document.getElementById('verify-code').addEventListener('click', function() {
+    const code = document.getElementById('verification-code').value;
+    const user = getCurrentUser();
+    if (user && code) {
+      verifyPhoneCode(user.id, code);
+    } else {
+      showVerificationError('認証コードを入力してください');
+    }
+  });
+
+  // ID証明書アップロードフォームの送信
+  document.getElementById('id-document-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const documentType = document.getElementById('document-type').value;
+    const file = document.getElementById('document-file').files[0];
+    
+    if (!documentType || !file) {
+      showDocumentError('すべてのフィールドを入力してください');
+      return;
+    }
+    
+    uploadIdDocument(documentType, file);
+  });
+  
+  // 都市検索ボタンのイベントリスナー
+  document.getElementById('search-button').addEventListener('click', function() {
+    const city = document.getElementById('city-search').value;
+    if (city) {
+      searchGuides(city);
+    }
+  });
+  
+  // 人気の都市ボタンのイベントリスナー
+  document.querySelectorAll('.city-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const city = this.textContent;
+      document.getElementById('city-search').value = city;
+      searchGuides(city);
+    });
+  });
+  
+  // -------------------------
+  // API連携関数
+  // -------------------------
+  
+  // ログイン状態のチェック
+  function checkAuthStatus() {
+    fetch('/api/user')
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('未ログイン');
+      })
+      .then(user => {
+        setCurrentUser(user);
+        updateUIForLoggedInUser(user);
+      })
+      .catch(error => {
+        console.log('ログインしていません:', error);
+        clearCurrentUser();
+        updateUIForLoggedOutUser();
+      });
+  }
+  
+  // ログイン処理
+  function login(username, password) {
+    fetch('/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ username, password })
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      return response.json().then(err => {
+        const errorMsg = err.message || (window.translations && window.translations['msg.login_failed'] ? 
+          window.translations['msg.login_failed'] : 'ログインに失敗しました');
+        throw new Error(errorMsg);
+      });
+    })
+    .then(user => {
+      loginModal.hide();
+      setCurrentUser(user);
+      updateUIForLoggedInUser(user);
+      document.getElementById('login-form').reset();
+      document.getElementById('login-error').classList.add('d-none');
+      
+      // もし電話番号が未認証の場合、認証モーダルを表示
+      if (user.phoneVerificationStatus === 'unverified' && user.phoneNumber) {
+        phoneVerificationModal.show();
+      }
+    })
+    .catch(error => {
+      showLoginError(error.message);
+    });
+  }
+  
+  // 新規登録処理
+  function register(firstName, lastName, username, email, phoneNumber, password, type = 'tourist') {
+    fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        username,
+        email,
+        phoneNumber,
+        password,
+        type
+      })
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      return response.json().then(err => {
+        const errorMsg = err.message || (window.translations && window.translations['msg.register_failed'] ? 
+          window.translations['msg.register_failed'] : '登録に失敗しました');
+        throw new Error(errorMsg);
+      });
+    })
+    .then(user => {
+      registerModal.hide();
+      setCurrentUser(user);
+      updateUIForLoggedInUser(user);
+      document.getElementById('register-form').reset();
+      document.getElementById('register-error').classList.add('d-none');
+      
+      // 電話番号が入力されている場合、電話認証モーダルを表示
+      if (phoneNumber) {
+        phoneVerificationModal.show();
+      }
+    })
+    .catch(error => {
+      showRegisterError(error.message);
+    });
+  }
+  
+  // 電話認証コード送信
+  function sendVerificationCode(userId) {
+    fetch('/api/user/verify-phone/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId })
+    })
+    .then(response => {
+      if (response.ok) {
+        // ステップ1を非表示にし、ステップ2を表示
+        document.getElementById('phone-verification-step-1').classList.add('d-none');
+        document.getElementById('phone-verification-step-2').classList.remove('d-none');
+        // 成功メッセージを表示
+        const successElement = document.getElementById('verification-success');
+        successElement.textContent = '認証コードを送信しました';
+        successElement.classList.remove('d-none');
+        // エラーメッセージを非表示
+        document.getElementById('verification-error').classList.add('d-none');
+      } else {
+        return response.json().then(err => {
+          throw new Error(err.message || '認証コードの送信に失敗しました');
+        });
+      }
+    })
+    .catch(error => {
+      showVerificationError(error.message);
+    });
+  }
+  
+  // 電話認証コード検証
+  function verifyPhoneCode(userId, code) {
+    fetch('/api/user/verify-phone/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ userId, code })
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      return response.json().then(err => {
+        throw new Error(err.message || '認証コードの検証に失敗しました');
+      });
+    })
+    .then(result => {
+      const successElement = document.getElementById('verification-success');
+      successElement.textContent = '電話番号が認証されました';
+      successElement.classList.remove('d-none');
+      document.getElementById('verification-error').classList.add('d-none');
+      
+      // ユーザー情報を更新
+      checkAuthStatus();
+      
+      // 3秒後にモーダルを閉じる
+      setTimeout(() => {
+        phoneVerificationModal.hide();
+        
+        // ガイドの場合はID認証モーダルを表示
+        const user = getCurrentUser();
+        if (user && user.type === 'guide') {
+          idDocumentModal.show();
+        }
+      }, 3000);
+    })
+    .catch(error => {
+      showVerificationError(error.message);
+    });
+  }
+  
+  // ID証明書アップロード
+  function uploadIdDocument(documentType, file) {
+    const formData = new FormData();
+    formData.append('documentType', documentType);
+    formData.append('document', file);
+    
+    fetch('/api/user/upload-id-document', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      }
+      return response.json().then(err => {
+        throw new Error(err.message || '書類のアップロードに失敗しました');
+      });
+    })
+    .then(result => {
+      // 成功メッセージを表示
+      const successElement = document.createElement('div');
+      successElement.classList.add('alert', 'alert-success', 'mt-3');
+      successElement.textContent = '身分証明書がアップロードされました。審査までしばらくお待ちください。';
+      document.getElementById('id-document-form').appendChild(successElement);
+      
+      // フォームをリセット
+      document.getElementById('id-document-form').reset();
+      
+      // エラーメッセージを非表示
+      document.getElementById('document-error').classList.add('d-none');
+      
+      // 3秒後にモーダルを閉じる
+      setTimeout(() => idDocumentModal.hide(), 3000);
+    })
+    .catch(error => {
+      showDocumentError(error.message);
+    });
+  }
+  
+  // ログアウト処理
+  function logout() {
+    fetch('/api/logout', {
+      method: 'POST'
+    })
+    .then(response => {
+      if (response.ok) {
+        clearCurrentUser();
+        updateUIForLoggedOutUser();
+      } else {
+        const errorMsg = window.translations && window.translations['msg.logout_failed'] ? 
+          window.translations['msg.logout_failed'] : 'ログアウトに失敗しました';
+        throw new Error(errorMsg);
+      }
+    })
+    .catch(error => {
+      console.error('ログアウトエラー:', error);
+    });
+  }
+  
+  // ガイド検索
+  function searchGuides(city) {
+    const searchingMsg = window.translations && window.translations['msg.searching_guides'] ? 
+      window.translations['msg.searching_guides'].replace('{city}', city) : 
+      `${city}のガイドを検索します...`;
+    console.log(searchingMsg);
+    
+    fetch(`/api/guides/search/${encodeURIComponent(city)}`)
+      .then(response => response.json())
+      .then(guides => {
+        console.log(window.translations && window.translations['msg.search_results'] ? 
+          window.translations['msg.search_results'] : '検索結果:', guides);
+        displaySearchResults(guides, city);
+      })
+      .catch(error => {
+        console.error(window.translations && window.translations['msg.search_error'] ? 
+          window.translations['msg.search_error'] : '検索エラー:', error);
+      });
+  }
+  
+  // 検索結果の表示
+  function displaySearchResults(guides, city) {
+    // TODO: 検索結果を表示するUI実装
+    const resultMsg = window.translations && window.translations['msg.guides_found'] ? 
+      window.translations['msg.guides_found']
+        .replace('{city}', city)
+        .replace('{count}', guides.length) : 
+      `${city}で${guides.length}人のガイドが見つかりました。（実装中）`;
+    alert(resultMsg);
+  }
+  
+  // ログインユーザー情報の保存
+  function setCurrentUser(user) {
+    sessionStorage.setItem('currentUser', JSON.stringify(user));
+  }
+  
+  // ログインユーザー情報の取得
+  function getCurrentUser() {
+    const userJson = sessionStorage.getItem('currentUser');
+    return userJson ? JSON.parse(userJson) : null;
+  }
+  
+  // ログインユーザー情報のクリア
+  function clearCurrentUser() {
+    sessionStorage.removeItem('currentUser');
+  }
+  
+  // UIをログイン状態に更新
+  function updateUIForLoggedInUser(user) {
+    document.getElementById('auth-buttons').classList.add('d-none');
+    document.getElementById('user-profile').classList.remove('d-none');
+    document.getElementById('username-display').textContent = user.username;
+    
+    // ガイドユーザーの場合はガイドになるリンクを非表示
+    if (user.type === 'guide') {
+      document.getElementById('become-guide-link').classList.add('d-none');
+    } else {
+      document.getElementById('become-guide-link').classList.remove('d-none');
+    }
+    
+    // もしローカライゼーション後にログイン・更新した場合でも翻訳を適用
+    if (window.translations) {
+      updatePageTranslations(window.translations);
+    }
+  }
+  
+  // UIをログアウト状態に更新
+  function updateUIForLoggedOutUser() {
+    document.getElementById('auth-buttons').classList.remove('d-none');
+    document.getElementById('user-profile').classList.add('d-none');
+    
+    // もしローカライゼーション後にログアウトした場合でも翻訳を適用
+    if (window.translations) {
+      updatePageTranslations(window.translations);
+    }
+  }
+  
+  // ログインエラーの表示
+  function showLoginError(message) {
+    const errorElement = document.getElementById('login-error');
+    // メッセージが翻訳キーの場合は翻訳を取得、そうでなければそのまま表示
+    if (message === 'パスワードが間違っています' || message === 'ユーザーが見つかりません') {
+      const key = message === 'パスワードが間違っています' ? 'msg.wrong_password' : 'msg.user_not_found';
+      if (window.translations && window.translations[key]) {
+        message = window.translations[key];
+      }
+    }
+    errorElement.textContent = message;
+    errorElement.classList.remove('d-none');
+  }
+  
+  // 新規登録エラーの表示
+  function showRegisterError(message) {
+    const errorElement = document.getElementById('register-error');
+    // メッセージが翻訳キーの場合は翻訳を取得、そうでなければそのまま表示
+    if (message === 'パスワードが一致しません') {
+      if (window.translations && window.translations['msg.password_mismatch']) {
+        message = window.translations['msg.password_mismatch'];
+      }
+    }
+    errorElement.textContent = message;
+    errorElement.classList.remove('d-none');
+  }
+  
+  // 電話認証エラーの表示
+  function showVerificationError(message) {
+    const errorElement = document.getElementById('verification-error');
+    errorElement.textContent = message;
+    errorElement.classList.remove('d-none');
+    document.getElementById('verification-success').classList.add('d-none');
+  }
+  
+  // ID証明書アップロードエラーの表示
+  function showDocumentError(message) {
+    const errorElement = document.getElementById('document-error');
+    errorElement.textContent = message;
+    errorElement.classList.remove('d-none');
+  }
+});

@@ -1,0 +1,144 @@
+/**
+ * ガイド登録フォームのレイアウト修正用CSS
+ * 電話番号認証セクションの表示を整理
+ */
+
+/* 電話番号認証セクション整理 - 重複を非表示 */
+[id$="phone-verification-section"]:nth-child(n+2) {
+  display: none !important;
+  visibility: hidden !important;
+  max-height: 0 !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* モーダル内のセクションが直接配置されている場合も対処 */
+#registerGuideModal > .phone-verification-section {
+  display: none !important;
+}
+
+/* メインの電話番号認証セクションのスタイル */
+#guide-phone-verification-section {
+  margin-bottom: 20px !important;
+  padding: 15px !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0.375rem !important;
+  background-color: #f8f9fa !important;
+  position: relative !important;
+}
+
+/* セクションタイトルスタイル */
+#guide-phone-verification-section .section-title {
+  font-size: 1.125rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 15px !important;
+  color: #343a40 !important;
+}
+
+/* 重複する「電話番号認証」見出しを非表示 */
+#guide-phone-verification-section h5:nth-child(n+2),
+#guide-phone-verification-section h6:nth-child(n+2) {
+  display: none !important;
+}
+
+/* 重複する「未表示」テキスト要素の対応 */
+.unverified-text:nth-child(n+2),
+#unverified-text:nth-child(n+2),
+.verification-badge:nth-child(n+2) {
+  display: none !important;
+}
+
+/* 「未表示」テキストの明示的なスタイル設定 */
+.unverified-text,
+#unverified-text {
+  display: inline-block !important;
+  background-color: #f8f9fa !important;
+  color: #6c757d !important;
+  padding: 3px 8px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  border: 1px solid #dee2e6 !important;
+  margin-top: 5px !important;
+}
+
+/* 電話番号認証ラベルのスタイル調整 */
+label[for="guide-phone-number"],
+label[for="phone-number"] {
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 0.5rem !important;
+}
+
+/* モーダル内のフォーム要素全体の整理 */
+#registerGuideModal .form-group,
+#registerGuideModal .mb-3,
+#registerGuideModal .mb-4 {
+  margin-bottom: 1rem !important;
+}
+
+/* すべての認証バッジを調整（未表示のみを表示） */
+#registerGuideModal .badge.bg-success,
+#registerGuideModal .badge-success,
+#registerGuideModal .verification-badge.verified {
+  display: none !important;
+}
+
+/* 特定の重複エリアを非表示 */
+.phone-verification-section:not([id]),
+.phone-verification-status:nth-child(n+2),
+.phone-verification-status:empty,
+#verification-alert:empty {
+  display: none !important;
+}
+
+/* 認証済みバッジの重複表示を防止 */
+.verification-badge.verified:nth-child(n+2),
+.badge.bg-success:nth-child(n+2) {
+  display: none !important;
+}
+
+/* モーダル内のすっきりした縦方向の余白 */
+#registerGuideModal .modal-body > * {
+  margin-bottom: 15px !important;
+}
+
+/* 認証入力フィールドのスタイル調整 */
+#guide-verification-code,
+#verification-code {
+  font-size: 1.5rem !important;
+  letter-spacing: 0.5rem !important;
+  text-align: center !important;
+}
+
+/* 認証ボタンのスタイル調整 */
+#guide-verify-code-btn,
+#verify-code-btn {
+  background: linear-gradient(135deg, #3a86ff, #2667cc) !important;
+  border: none !important;
+  font-weight: 600 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important;
+}
+
+/* 電話入力フィールドの調整 */
+#guide-phone-number,
+#phone-number {
+  font-size: 1.1rem !important;
+  padding: 0.7rem 1rem !important;
+  border-color: #dee2e6 !important;
+}
+
+/* 重複するテキスト入力フィールドを非表示 */
+input[type="tel"]:not(#guide-phone-number):not(#phone-number),
+input[type="text"]:not(:focus):nth-of-type(n+2) {
+  display: none !important;
+}
+
+/* 重複するボタンを非表示 */
+button[id$="send-code-btn"]:nth-of-type(n+2),
+button[id$="verify-code-btn"]:nth-of-type(n+2) {
+  display: none !important;
+}

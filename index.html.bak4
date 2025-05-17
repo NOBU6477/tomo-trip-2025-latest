@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Local Guide - 現地ガイドマッチングサービス</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i data-feather="map"></i> Local Guide
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#" data-i18n="nav.home">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#guides" data-i18n="nav.find_guides">ガイドを探す</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#how-it-works" data-i18n="nav.how_it_works">使い方</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#about" data-i18n="nav.about">サービスについて</a>
+          </li>
+        </ul>
+        
+        <!-- 言語選択ドロップダウン -->
+        <div class="nav-item dropdown me-3">
+          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i data-feather="globe"></i> <span id="current-language">日本語</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+            <li><a class="dropdown-item language-option" href="#" data-lang="ja">日本語</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="en">English</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="zh">中文</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="ko">한국어</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="fr">Français</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="es">Español</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="de">Deutsch</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="it">Italiano</a></li>
+            <li><a class="dropdown-item language-option" href="#" data-lang="ru">Русский</a></li>
+          </ul>
+        </div>
+        
+        <div id="auth-buttons" class="d-flex">
+          <button class="btn btn-outline-light me-2" id="login-btn" data-i18n="nav.login">ログイン</button>
+          <button class="btn btn-light" id="register-btn" data-i18n="nav.register">新規登録</button>
+        </div>
+        <div id="user-profile" class="d-none">
+          <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i data-feather="user"></i> <span id="username-display"></span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" href="#my-profile" data-i18n="nav.my_profile">マイプロフィール</a></li>
+              <li><a class="dropdown-item" href="#my-bookings" data-i18n="nav.my_bookings">予約管理</a></li>
+              <li><a class="dropdown-item" href="#become-guide" id="become-guide-link" data-i18n="nav.become_guide">ガイドになる</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#" id="logout-btn" data-i18n="nav.logout">ログアウト</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4" id="main-content">
+    <!-- ホームページコンテンツ -->
+    <section id="hero" class="py-5">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h1 class="display-4 fw-bold" data-i18n="hero.title">現地の案内人と巡る、特別な旅</h1>
+          <p class="lead" data-i18n="hero.subtitle">地元の人だけが知る隠れた名所や文化体験。現地ガイドとともに、忘れられない旅の思い出を作りましょう。</p>
+          <div class="mt-4">
+            <button class="btn btn-primary btn-lg me-3" id="search-guides-btn" data-i18n="hero.search_guides">ガイドを探す</button>
+            <button class="btn btn-outline-primary btn-lg" id="learn-more-btn" data-i18n="hero.learn_more">詳しく見る</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <img src="https://images.unsplash.com/photo-1486299267070-83823f5448dd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="世界の街並み" class="img-fluid rounded shadow">
+        </div>
+      </div>
+    </section>
+
+    <!-- 検索セクション -->
+    <section id="search" class="py-4 bg-light rounded my-4 p-4">
+      <h2 class="text-center mb-4" data-i18n="search.title">どの地域を訪れますか？</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control form-control-lg" id="city-search" data-i18n-attr="placeholder" data-i18n="search.placeholder" placeholder="地域名を入力（例：東京、京都、石垣島）">
+            <button class="btn btn-primary" type="button" id="search-button">
+              <i data-feather="search"></i> <span data-i18n="search.button">検索</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 地域タブ -->
+      <div class="row mt-3">
+        <div class="col-12">
+          <ul class="nav nav-tabs region-tabs" id="regionTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="popular-tab" data-bs-toggle="tab" data-bs-target="#popular" type="button" role="tab" aria-controls="popular" aria-selected="true" data-i18n="search.tab.popular">人気</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="hokkaido-tohoku-tab" data-bs-toggle="tab" data-bs-target="#hokkaido-tohoku" type="button" role="tab" aria-controls="hokkaido-tohoku" aria-selected="false" data-i18n="search.tab.hokkaido">北海道・東北</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="kanto-tab" data-bs-toggle="tab" data-bs-target="#kanto" type="button" role="tab" aria-controls="kanto" aria-selected="false" data-i18n="search.tab.kanto">関東</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="chubu-tab" data-bs-toggle="tab" data-bs-target="#chubu" type="button" role="tab" aria-controls="chubu" aria-selected="false" data-i18n="search.tab.chubu">中部</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="kinki-tab" data-bs-toggle="tab" data-bs-target="#kinki" type="button" role="tab" aria-controls="kinki" aria-selected="false" data-i18n="search.tab.kinki">近畿</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="chugoku-shikoku-tab" data-bs-toggle="tab" data-bs-target="#chugoku-shikoku" type="button" role="tab" aria-controls="chugoku-shikoku" aria-selected="false" data-i18n="search.tab.chugoku">中国・四国</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="kyushu-tab" data-bs-toggle="tab" data-bs-target="#kyushu" type="button" role="tab" aria-controls="kyushu" aria-selected="false" data-i18n="search.tab.kyushu">九州</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="okinawa-tab" data-bs-toggle="tab" data-bs-target="#okinawa" type="button" role="tab" aria-controls="okinawa" aria-selected="false" data-i18n="search.tab.okinawa">沖縄・離島</button>
+            </li>
+          </ul>
+          
+          <div class="tab-content p-3 bg-white border border-top-0 rounded-bottom" id="regionTabsContent">
+            <!-- 人気の地域 -->
+            <div class="tab-pane fade show active" id="popular" role="tabpanel" aria-labelledby="popular-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">東京</button>
+                <button type="button" class="btn btn-outline-primary city-btn">京都</button>
+                <button type="button" class="btn btn-outline-primary city-btn">大阪</button>
+                <button type="button" class="btn btn-outline-primary city-btn">札幌</button>
+                <button type="button" class="btn btn-outline-primary city-btn">那覇</button>
+                <button type="button" class="btn btn-outline-primary city-btn">福岡</button>
+                <button type="button" class="btn btn-outline-primary city-btn">名古屋</button>
+                <button type="button" class="btn btn-outline-primary city-btn">箱根</button>
+                <button type="button" class="btn btn-outline-primary city-btn">広島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">金沢</button>
+              </div>
+            </div>
+            
+            <!-- 北海道・東北 -->
+            <div class="tab-pane fade" id="hokkaido-tohoku" role="tabpanel" aria-labelledby="hokkaido-tohoku-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">札幌</button>
+                <button type="button" class="btn btn-outline-primary city-btn">函館</button>
+                <button type="button" class="btn btn-outline-primary city-btn">旭川</button>
+                <button type="button" class="btn btn-outline-primary city-btn">釧路</button>
+                <button type="button" class="btn btn-outline-primary city-btn">網走</button>
+                <button type="button" class="btn btn-outline-primary city-btn">仙台</button>
+                <button type="button" class="btn btn-outline-primary city-btn">青森</button>
+                <button type="button" class="btn btn-outline-primary city-btn">盛岡</button>
+                <button type="button" class="btn btn-outline-primary city-btn">秋田</button>
+                <button type="button" class="btn btn-outline-primary city-btn">山形</button>
+                <button type="button" class="btn btn-outline-primary city-btn">福島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">利尻島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">礼文島</button>
+              </div>
+            </div>
+            
+            <!-- 関東 -->
+            <div class="tab-pane fade" id="kanto" role="tabpanel" aria-labelledby="kanto-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">東京</button>
+                <button type="button" class="btn btn-outline-primary city-btn">横浜</button>
+                <button type="button" class="btn btn-outline-primary city-btn">鎌倉</button>
+                <button type="button" class="btn btn-outline-primary city-btn">箱根</button>
+                <button type="button" class="btn btn-outline-primary city-btn">千葉</button>
+                <button type="button" class="btn btn-outline-primary city-btn">さいたま</button>
+                <button type="button" class="btn btn-outline-primary city-btn">川越</button>
+                <button type="button" class="btn btn-outline-primary city-btn">宇都宮</button>
+                <button type="button" class="btn btn-outline-primary city-btn">水戸</button>
+                <button type="button" class="btn btn-outline-primary city-btn">前橋</button>
+                <button type="button" class="btn btn-outline-primary city-btn">伊豆諸島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">小笠原諸島</button>
+              </div>
+            </div>
+            
+            <!-- 中部 -->
+            <div class="tab-pane fade" id="chubu" role="tabpanel" aria-labelledby="chubu-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">名古屋</button>
+                <button type="button" class="btn btn-outline-primary city-btn">静岡</button>
+                <button type="button" class="btn btn-outline-primary city-btn">浜松</button>
+                <button type="button" class="btn btn-outline-primary city-btn">金沢</button>
+                <button type="button" class="btn btn-outline-primary city-btn">富山</button>
+                <button type="button" class="btn btn-outline-primary city-btn">福井</button>
+                <button type="button" class="btn btn-outline-primary city-btn">甲府</button>
+                <button type="button" class="btn btn-outline-primary city-btn">長野</button>
+                <button type="button" class="btn btn-outline-primary city-btn">新潟</button>
+                <button type="button" class="btn btn-outline-primary city-btn">岐阜</button>
+                <button type="button" class="btn btn-outline-primary city-btn">高山</button>
+                <button type="button" class="btn btn-outline-primary city-btn">佐渡島</button>
+              </div>
+            </div>
+            
+            <!-- 近畿 -->
+            <div class="tab-pane fade" id="kinki" role="tabpanel" aria-labelledby="kinki-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">大阪</button>
+                <button type="button" class="btn btn-outline-primary city-btn">京都</button>
+                <button type="button" class="btn btn-outline-primary city-btn">神戸</button>
+                <button type="button" class="btn btn-outline-primary city-btn">奈良</button>
+                <button type="button" class="btn btn-outline-primary city-btn">和歌山</button>
+                <button type="button" class="btn btn-outline-primary city-btn">彦根</button>
+                <button type="button" class="btn btn-outline-primary city-btn">姫路</button>
+                <button type="button" class="btn btn-outline-primary city-btn">伊勢</button>
+                <button type="button" class="btn btn-outline-primary city-btn">白浜</button>
+                <button type="button" class="btn btn-outline-primary city-btn">高野山</button>
+                <button type="button" class="btn btn-outline-primary city-btn">淡路島</button>
+              </div>
+            </div>
+            
+            <!-- 中国・四国 -->
+            <div class="tab-pane fade" id="chugoku-shikoku" role="tabpanel" aria-labelledby="chugoku-shikoku-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">広島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">岡山</button>
+                <button type="button" class="btn btn-outline-primary city-btn">松江</button>
+                <button type="button" class="btn btn-outline-primary city-btn">鳥取</button>
+                <button type="button" class="btn btn-outline-primary city-btn">下関</button>
+                <button type="button" class="btn btn-outline-primary city-btn">高松</button>
+                <button type="button" class="btn btn-outline-primary city-btn">松山</button>
+                <button type="button" class="btn btn-outline-primary city-btn">高知</button>
+                <button type="button" class="btn btn-outline-primary city-btn">徳島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">宮島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">直島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">小豆島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">隠岐諸島</button>
+              </div>
+            </div>
+            
+            <!-- 九州 -->
+            <div class="tab-pane fade" id="kyushu" role="tabpanel" aria-labelledby="kyushu-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">福岡</button>
+                <button type="button" class="btn btn-outline-primary city-btn">長崎</button>
+                <button type="button" class="btn btn-outline-primary city-btn">熊本</button>
+                <button type="button" class="btn btn-outline-primary city-btn">鹿児島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">宮崎</button>
+                <button type="button" class="btn btn-outline-primary city-btn">大分</button>
+                <button type="button" class="btn btn-outline-primary city-btn">佐賀</button>
+                <button type="button" class="btn btn-outline-primary city-btn">別府</button>
+                <button type="button" class="btn btn-outline-primary city-btn">阿蘇</button>
+                <button type="button" class="btn btn-outline-primary city-btn">対馬</button>
+                <button type="button" class="btn btn-outline-primary city-btn">壱岐島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">五島列島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">屋久島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">種子島</button>
+              </div>
+            </div>
+            
+            <!-- 沖縄・離島 -->
+            <div class="tab-pane fade" id="okinawa" role="tabpanel" aria-labelledby="okinawa-tab">
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn btn-outline-primary city-btn">那覇</button>
+                <button type="button" class="btn btn-outline-primary city-btn">石垣島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">宮古島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">与那国島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">久米島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">西表島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">座間味島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">小浜島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">竹富島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">伊良部島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">伊是名島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">渡嘉敷島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">粟国島</button>
+                <button type="button" class="btn btn-outline-primary city-btn">慶良間諸島</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 特徴セクション -->
+    <section id="features" class="py-5">
+      <h2 class="text-center mb-5">Local Guideの特徴</h2>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="feature-icon mb-3">
+                <i data-feather="users" class="text-primary" style="width: 48px; height: 48px;"></i>
+              </div>
+              <h3 class="card-title h5">地元の人と繋がる</h3>
+              <p class="card-text">ガイドブックには載っていない地元の人だけが知る特別な場所や体験を発見できます。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="feature-icon mb-3">
+                <i data-feather="shield" class="text-primary" style="width: 48px; height: 48px;"></i>
+              </div>
+              <h3 class="card-title h5">安心・安全</h3>
+              <p class="card-text">すべてのガイドは厳正な審査を経ており、レビュー評価システムで質の高いサービスを保証します。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="feature-icon mb-3">
+                <i data-feather="heart" class="text-primary" style="width: 48px; height: 48px;"></i>
+              </div>
+              <h3 class="card-title h5">パーソナライズされた体験</h3>
+              <p class="card-text">あなたの興味や好みに合わせたカスタマイズツアーで、一生の思い出に残る体験を。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 使い方セクション -->
+    <section id="how-it-works" class="py-5 bg-light rounded">
+      <h2 class="text-center mb-5">Local Guideの使い方</h2>
+      <div class="row g-4">
+        <div class="col-md-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="step-number mb-3">1</div>
+              <h3 class="card-title h5">アカウント登録</h3>
+              <p class="card-text">簡単な情報入力でアカウントを作成します。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="step-number mb-3">2</div>
+              <h3 class="card-title h5">ガイドを探す</h3>
+              <p class="card-text">訪問したい都市のガイドをプロフィールや評価から選びます。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="step-number mb-3">3</div>
+              <h3 class="card-title h5">予約を確定</h3>
+              <p class="card-text">日時や希望内容を指定して予約リクエストを送信します。</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+              <div class="step-number mb-3">4</div>
+              <h3 class="card-title h5">ツアーを楽しむ</h3>
+              <p class="card-text">現地で実際にガイドと会い、特別な体験を楽しみましょう。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- サービスについて -->
+    <section id="about" class="py-5">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h2 class="mb-4">Local Guideについて</h2>
+          <p>Local Guideは、旅行者と現地ガイドをつなぐマッチングサービスです。旅行の醍醐味は、その土地の文化や歴史、そして人々との交流にあります。</p>
+          <p>私たちは、旅行者がより深く、より本物の体験ができるよう、地元の知識を持ったガイドとの出会いの場を提供しています。</p>
+          <p>また、地元の方々がガイドとして活躍することで、地域の活性化や文化交流の促進も目指しています。</p>
+          <button class="btn btn-outline-primary mt-3">もっと詳しく</button>
+        </div>
+        <div class="col-md-6">
+          <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="風景写真" class="img-fluid rounded shadow">
+        </div>
+      </div>
+    </section>
+
+    <!-- ガイド向けセクション -->
+    <section id="become-guide-section" class="py-5 bg-primary text-white rounded">
+      <div class="row align-items-center">
+        <div class="col-md-7">
+          <h2 class="mb-3">あなたも地元ガイドになりませんか？</h2>
+          <p class="lead">あなたの地元の知識や情熱を活かして、世界中の旅行者に特別な体験を提供しましょう。</p>
+          <ul class="list-unstyled">
+            <li><i data-feather="check" class="me-2"></i> 自分のペースで働ける柔軟性</li>
+            <li><i data-feather="check" class="me-2"></i> 世界中の人々と交流する機会</li>
+            <li><i data-feather="check" class="me-2"></i> あなたの専門知識や情熱を共有</li>
+            <li><i data-feather="check" class="me-2"></i> 追加収入の獲得</li>
+          </ul>
+          <button class="btn btn-light mt-3" id="become-guide-btn">ガイドとして登録する</button>
+        </div>
+        <div class="col-md-5">
+          <img src="https://images.unsplash.com/photo-1516726817505-f5ed825624d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="地元ガイド" class="img-fluid rounded shadow">
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- モーダル：ログイン -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="loginModalLabel">ログイン</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="login-form">
+            <div class="mb-3">
+              <label for="login-username" class="form-label">ユーザー名</label>
+              <input type="text" class="form-control" id="login-username" required>
+            </div>
+            <div class="mb-3">
+              <label for="login-password" class="form-label">パスワード</label>
+              <input type="password" class="form-control" id="login-password" required>
+            </div>
+            <div class="alert alert-danger d-none" id="login-error"></div>
+            <button type="submit" class="btn btn-primary w-100">ログイン</button>
+          </form>
+          <div class="text-center mt-3">
+            <p>アカウントをお持ちでない方は <a href="#" id="show-register">新規登録</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- モーダル：新規登録 -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="registerModalLabel">新規アカウント登録</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="register-form">
+            <div class="row mb-3">
+              <div class="col">
+                <label for="register-firstname" class="form-label">名</label>
+                <input type="text" class="form-control" id="register-firstname" required>
+              </div>
+              <div class="col">
+                <label for="register-lastname" class="form-label">姓</label>
+                <input type="text" class="form-control" id="register-lastname" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="register-username" class="form-label">ユーザー名</label>
+              <input type="text" class="form-control" id="register-username" required>
+            </div>
+            <div class="mb-3">
+              <label for="register-email" class="form-label">メールアドレス</label>
+              <input type="email" class="form-control" id="register-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="register-password" class="form-label">パスワード</label>
+              <input type="password" class="form-control" id="register-password" required>
+            </div>
+            <div class="mb-3">
+              <label for="register-confirm-password" class="form-label">パスワード（確認）</label>
+              <input type="password" class="form-control" id="register-confirm-password" required>
+            </div>
+            <div class="alert alert-danger d-none" id="register-error"></div>
+            <button type="submit" class="btn btn-primary w-100">登録する</button>
+          </form>
+          <div class="text-center mt-3">
+            <p>すでにアカウントをお持ちの方は <a href="#" id="show-login">ログイン</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          <h5><i data-feather="map" class="me-2"></i> Local Guide</h5>
+          <p class="text-muted" data-i18n="footer.subtitle">現地ガイドとの出会い、特別な旅の体験を</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <h5 data-i18n="footer.links">リンク</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white-50">ホーム</a></li>
+            <li><a href="#guides" class="text-white-50">ガイドを探す</a></li>
+            <li><a href="#how-it-works" class="text-white-50">使い方</a></li>
+            <li><a href="#about" class="text-white-50">サービスについて</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5 data-i18n="footer.contact">お問い合わせ</h5>
+          <ul class="list-unstyled text-white-50">
+            <li><i data-feather="mail" class="me-2"></i> support@localguide.jp</li>
+            <li><i data-feather="phone" class="me-2"></i> 03-1234-5678</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4 bg-secondary">
+      <div class="text-center text-white-50">
+        <p data-i18n="footer.copyright"><p>&copy; 2023 Local Guide. All rights reserved.</p>copy; 2023 Local Guide. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 翻訳ファイルを先に読み込み -->
+  <script src="translations/ja.js"></script>
+  <script src="translations/en.js"></script>
+  <!-- 翻訳管理スクリプト -->
+  <!-- 翻訳ファイルを先に読み込み -->
+  <script src="translations/ja.js"></script>
+  <script src="translations/en.js"></script>
+  <!-- 翻訳管理スクリプト -->
+  <script src="translations/i18n.js"></script>
+  <script src="script.js"></script>
+  <script>
+    feather.replace();
+  </script>
+</body>
+</html>
