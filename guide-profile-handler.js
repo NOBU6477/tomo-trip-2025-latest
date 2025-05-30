@@ -49,11 +49,11 @@ function loadGuideProfile() {
       specialties: ['history', 'food', 'photography'],
       baseFee: 6000,
       hourlyFee: 3000,
-      profilePhotoUrl: 'https://via.placeholder.com/150',
-      certificationPhotoUrl: 'https://via.placeholder.com/150',
+      profilePhotoUrl: 'https://placehold.co/150',
+      certificationPhotoUrl: 'https://placehold.co/150',
       documentType: 'passport',
       documentUrls: {
-        passport: 'https://via.placeholder.com/120x80?text=ID'
+        passport: 'https://placehold.co/120x80?text=ID'
       }
     };
     
@@ -942,16 +942,16 @@ function setupIdDocumentEditFunctions() {
     const documentUrls = {};
     
     if (documentType === 'passport') {
-      documentUrls.passport = 'https://via.placeholder.com/120x80?text=Passport';
+      documentUrls.passport = 'https://placehold.co/120x80?text=Passport';
     } else if (documentType === 'driverLicense') {
-      documentUrls.driverLicenseFront = 'https://via.placeholder.com/120x80?text=License_F';
-      documentUrls.driverLicenseBack = 'https://via.placeholder.com/120x80?text=License_B';
+      documentUrls.driverLicenseFront = 'https://placehold.co/120x80?text=License_F';
+      documentUrls.driverLicenseBack = 'https://placehold.co/120x80?text=License_B';
     } else if (documentType === 'idCard') {
-      documentUrls.idCardFront = 'https://via.placeholder.com/120x80?text=ID_F';
-      documentUrls.idCardBack = 'https://via.placeholder.com/120x80?text=ID_B';
+      documentUrls.idCardFront = 'https://placehold.co/120x80?text=ID_F';
+      documentUrls.idCardBack = 'https://placehold.co/120x80?text=ID_B';
     } else if (documentType === 'residentCard') {
-      documentUrls.residentCardFront = 'https://via.placeholder.com/120x80?text=Res_F';
-      documentUrls.residentCardBack = 'https://via.placeholder.com/120x80?text=Res_B';
+      documentUrls.residentCardFront = 'https://placehold.co/120x80?text=Res_F';
+      documentUrls.residentCardBack = 'https://placehold.co/120x80?text=Res_B';
     }
     
     // ユーザー情報の更新

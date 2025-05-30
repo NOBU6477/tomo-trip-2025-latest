@@ -63,12 +63,12 @@ function loadGuideDetails(guideId) {
         sunday: { available: true, hours: '10:00 - 18:00' }
       },
       gallery: [
-        'https://via.placeholder.com/600x400?text=与那国島の景色1',
-        'https://via.placeholder.com/600x400?text=与那国島の景色2',
-        'https://via.placeholder.com/600x400?text=与那国島の景色3',
-        'https://via.placeholder.com/600x400?text=与那国島の景色4',
-        'https://via.placeholder.com/600x400?text=与那国島の景色5',
-        'https://via.placeholder.com/600x400?text=与那国島の景色6'
+        'https://placehold.co/600x400?text=与那国島の景色1',
+        'https://placehold.co/600x400?text=与那国島の景色2',
+        'https://placehold.co/600x400?text=与那国島の景色3',
+        'https://placehold.co/600x400?text=与那国島の景色4',
+        'https://placehold.co/600x400?text=与那国島の景色5',
+        'https://placehold.co/600x400?text=与那国島の景色6'
       ],
       reviews: [
         {

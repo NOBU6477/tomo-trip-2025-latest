@@ -192,7 +192,7 @@ const GuideDataAPI = {
              data-languages="${languagesEncoded}"
              data-fee="${guide.fee || 6000}"
              data-keywords="${keywordsEncoded}">
-          <img src="${guide.imageUrl || 'https://via.placeholder.com/400x300'}" class="card-img-top guide-image" alt="${guide.name || ''}のガイド写真">
+          <img src="${guide.imageUrl || 'https://placehold.co/400x300'}" class="card-img-top guide-image" alt="${guide.name || ''}のガイド写真">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <h5 class="card-title mb-0">${guide.name || 'ガイド'}</h5>

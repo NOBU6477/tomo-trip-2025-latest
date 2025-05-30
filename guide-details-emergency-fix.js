@@ -211,15 +211,15 @@ function updateGuideContentAreas(guideData) {
   // ギャラリーを表示
   const gallery = [
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(cityName)}+1`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(cityName)}+1`,
       alt: `${cityName}の風景1`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(cityName)}+2`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(cityName)}+2`,
       alt: `${cityName}の風景2`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(cityName)}+3`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(cityName)}+3`,
       alt: `${cityName}の風景3`
     }
   ];
@@ -239,14 +239,14 @@ function updateGuideContentAreas(guideData) {
     items: [
       {
         authorName: 'ジョン・スミス',
-        authorPhoto: 'https://via.placeholder.com/50',
+        authorPhoto: 'https://placehold.co/50',
         rating: 5,
         date: '2024-02-15',
         content: `${guideData.name}さんのガイドツアーは素晴らしかったです！${cityName}の魅力をたっぷり教えてもらい、大満足の旅行になりました。`
       },
       {
         authorName: '山田花子',
-        authorPhoto: 'https://via.placeholder.com/50',
+        authorPhoto: 'https://placehold.co/50',
         rating: 4,
         date: '2024-01-20',
         content: `地元民ならではの視点で${cityName}を案内してもらえて良かったです。時間がもう少し長ければもっと楽しめたと思います。`
