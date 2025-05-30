@@ -57,8 +57,6 @@ function displayGuideInfo(guideData) {
   const locationElement = document.getElementById('guide-location');
   if (locationElement) {
     locationElement.innerHTML = `<i class="bi bi-geo-alt-fill me-1"></i>${guideData.location}`;
-  } else {
-    console.warn('guide-location要素が見つかりません');
   }
   
   // 言語
@@ -71,8 +69,6 @@ function displayGuideInfo(guideData) {
       badge.textContent = lang;
       langContainer.appendChild(badge);
     });
-  } else {
-    console.warn('guide-languages要素が見つかりません');
   }
   
   // 評価
@@ -80,16 +76,13 @@ function displayGuideInfo(guideData) {
   const ratingElement = document.getElementById('guide-rating');
   if (ratingElement) {
     ratingElement.textContent = ratingText;
-  } else {
-    console.warn('guide-rating要素が見つかりません');
   }
   
   // 自己紹介
   const bioElement = document.getElementById('guide-bio');
   if (bioElement) {
     bioElement.textContent = guideData.bio;
-  } else {
-    console.warn('guide-bio要素が見つかりません');
+  }
   }
   
   // 得意分野
@@ -102,16 +95,14 @@ function displayGuideInfo(guideData) {
       span.textContent = specialty;
       specialtiesContainer.appendChild(span);
     });
-  } else {
-    console.warn('guide-specialties要素が見つかりません');
+  }
   }
   
   // 料金
   const feeElement = document.getElementById('guide-fee');
   if (feeElement) {
     feeElement.textContent = `¥${guideData.fee.toLocaleString()} / セッション`;
-  } else {
-    console.warn('guide-fee要素が見つかりません');
+  }
   }
   
   // 予約リンク
@@ -128,7 +119,6 @@ function displayGuideInfo(guideData) {
 function updateBreadcrumb(guideData) {
   const breadcrumb = document.getElementById('guide-breadcrumb');
   if (!breadcrumb) {
-    console.warn('guide-breadcrumb要素が見つかりません');
     return;
   }
   
@@ -158,7 +148,6 @@ function updateBreadcrumb(guideData) {
 function updateMap(guideData) {
   const mapContainer = document.getElementById('guide-map-container');
   if (!mapContainer) {
-    console.warn('guide-map-container要素が見つかりません');
     return;
   }
   
@@ -181,7 +170,6 @@ function updateMap(guideData) {
 function displayTourPlans(tourPlans) {
   const container = document.getElementById('tour-plans-container');
   if (!container) {
-    console.warn('tour-plans-container要素が見つかりません');
     return;
   }
   
@@ -214,7 +202,6 @@ function displayTourPlans(tourPlans) {
 function displayGallery(gallery) {
   const container = document.getElementById('guide-gallery-container');
   if (!container) {
-    console.warn('guide-gallery-container要素が見つかりません');
     return;
   }
   
@@ -305,7 +292,6 @@ function displayReviews(reviews) {
 function displayReviewSummary(reviews) {
   const container = document.getElementById('review-summary-container');
   if (!container) {
-    console.warn('review-summary-container要素が見つかりません');
     return;
   }
   
@@ -370,7 +356,6 @@ function generateRatingBars(distribution) {
 function displayReviewList(reviewItems) {
   const container = document.getElementById('reviews-container');
   if (!container) {
-    console.warn('reviews-container要素が見つかりません');
     return;
   }
   
@@ -465,28 +450,28 @@ function loadGuideData(guideId) {
     // ツアープランの表示
     if (guideData.tourPlans) {
       displayTourPlans(guideData.tourPlans);
-    } else {
+    }
       console.warn('ツアープランが見つかりません');
     }
     
     // ギャラリーの表示
     if (guideData.gallery) {
       displayGallery(guideData.gallery);
-    } else {
+    }
       console.warn('ギャラリーデータが見つかりません');
     }
     
     // レビューの表示
     if (guideData.reviews) {
       displayReviews(guideData.reviews);
-    } else {
+    }
       console.warn('レビューデータが見つかりません');
     }
     
     // マップの表示
     if (guideData.mapEmbedUrl) {
       updateMap({ mapEmbedUrl: guideData.mapEmbedUrl });
-    } else {
+    }
       console.warn('マップURLが見つかりません');
     }
     
@@ -494,7 +479,7 @@ function loadGuideData(guideId) {
     updateBreadcrumb(guideData);
     
     return true;
-  } else {
+  }
     console.error(`ガイドID=${guideId}のデータ取得に失敗しました`);
     return false;
   }
