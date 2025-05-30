@@ -398,7 +398,7 @@ const conversationData = {
   '1': {
     contact: {
       name: '佐藤太郎',
-      avatar: 'https://via.placeholder.com/40?text=佐藤',
+      avatar: 'https://placehold.co/40?text=佐藤',
       bookingInfo: '予約: 2025年6月10日 東京観光',
       status: 'online'
     },
@@ -423,7 +423,7 @@ const conversationData = {
   '2': {
     contact: {
       name: '鈴木花子',
-      avatar: 'https://via.placeholder.com/40?text=鈴木',
+      avatar: 'https://placehold.co/40?text=鈴木',
       bookingInfo: '予約: 2025年5月25日 鎌倉観光',
       status: 'offline'
     },
@@ -448,7 +448,7 @@ const conversationData = {
   '3': {
     contact: {
       name: '田中誠',
-      avatar: 'https://via.placeholder.com/40?text=田中',
+      avatar: 'https://placehold.co/40?text=田中',
       bookingInfo: '予約: 2025年4月15日 浅草観光',
       status: 'offline'
     },

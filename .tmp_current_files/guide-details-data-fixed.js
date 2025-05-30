@@ -363,15 +363,15 @@ function generateDefaultGallery(guideData) {
   
   return [
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(city)}+1`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(city)}+1`,
       alt: `${city}の風景1`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(city)}+2`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(city)}+2`,
       alt: `${city}の風景2`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(city)}+3`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(city)}+3`,
       alt: `${city}の風景3`
     }
   ];
@@ -475,14 +475,14 @@ function generateDefaultReviews(guideData) {
     items: [
       {
         authorName: 'ジョン・スミス',
-        authorPhoto: 'https://via.placeholder.com/50',
+        authorPhoto: 'https://placehold.co/50',
         rating: 5,
         date: '2023-03-15',
         content: '素晴らしいガイドでした！地元ならではの視点で案内してくれて、とても楽しい時間を過ごせました。'
       },
       {
         authorName: '佐藤 美咲',
-        authorPhoto: 'https://via.placeholder.com/50',
+        authorPhoto: 'https://placehold.co/50',
         rating: 4,
         date: '2023-02-28',
         content: 'とても親切に案内していただきました。英語も流暢で、海外からの友人も大満足でした。'

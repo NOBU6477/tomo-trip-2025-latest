@@ -605,19 +605,19 @@ function generateGallery(guideData) {
   // ギャラリー画像を生成
   const gallery = [
     {
-      url: `https://via.placeholder.com/800x600?text=${encodedLocation}+1`,
+      url: `https://placehold.co/800x600?text=${encodedLocation}+1`,
       alt: `${location} 風景1`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodedLocation}+2`,
+      url: `https://placehold.co/800x600?text=${encodedLocation}+2`,
       alt: `${location} 風景2`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodedLocation}+3`,
+      url: `https://placehold.co/800x600?text=${encodedLocation}+3`,
       alt: `${location} 風景3`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodedLocation}+4`,
+      url: `https://placehold.co/800x600?text=${encodedLocation}+4`,
       alt: `${location} 風景4`
     }
   ];
@@ -686,7 +686,7 @@ function generateReviews(guideData) {
         },
         items: guideData.reviews.map(review => ({
           authorName: review.user || review.authorName,
-          authorPhoto: 'https://via.placeholder.com/50',
+          authorPhoto: 'https://placehold.co/50',
           rating: review.rating,
           date: review.date,
           content: review.comment || review.content
@@ -715,7 +715,7 @@ function generateReviews(guideData) {
     items: [
       {
         authorName: '山田 健太',
-        authorPhoto: 'https://via.placeholder.com/50',
+        authorPhoto: 'https://placehold.co/50',
         rating: 4.5,
         date: '2023-03-15',
         content: `${guideData.name}さんのガイドは素晴らしかったです！地元の隠れた名所を案内してくれて、素敵な旅行になりました。`
@@ -734,7 +734,7 @@ function generateReviews(guideData) {
   
   reviewSummary.items.push({
     authorName: randomReviewer.name,
-    authorPhoto: 'https://via.placeholder.com/50',
+    authorPhoto: 'https://placehold.co/50',
     rating: randomReviewer.rating,
     date: '2023-02-20',
     content: `${guideData.location}の魅力を存分に教えてもらいました。${guideData.name}さんの知識が豊富で、質問にも丁寧に答えてくれました。`

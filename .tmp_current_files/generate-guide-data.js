@@ -87,7 +87,7 @@ const descriptionTemplates = [
 ];
 
 // 画像URL設定
-const imageBaseUrl = "https://via.placeholder.com/400x300?text=";
+const imageBaseUrl = "https://placehold.co/400x300?text=";
 
 // 料金設定 (6,000円〜20,000円)
 const fees = [6000, 7000, 8000, 9000, 10000, 12000, 15000, 18000, 20000];

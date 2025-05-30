@@ -132,7 +132,7 @@ function createFallbackGuideData(guideId) {
     languages: ['日本語', '英語'],
     fee: 6000,
     keywords: ['観光', 'グルメ', '文化'],
-    imageUrl: `https://via.placeholder.com/400x300?text=ガイド${guideId}`,
+    imageUrl: `https://placehold.co/400x300?text=ガイド${guideId}`,
     rating: 4.5,
     reviewCount: 10,
     bio: bio

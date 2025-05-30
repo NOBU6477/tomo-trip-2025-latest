@@ -221,9 +221,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function addSamplePhotos() {
     // サンプル画像URL（実際のアプリでは動的に生成）
     const sampleImageUrls = [
-      'https://via.placeholder.com/300x225/007bff/ffffff?text=Tokyo+Tower',
-      'https://via.placeholder.com/300x225/28a745/ffffff?text=Asakusa',
-      'https://via.placeholder.com/300x225/dc3545/ffffff?text=Shibuya'
+      'https://placehold.co/300x225/007bff/ffffff?text=Tokyo+Tower',
+      'https://placehold.co/300x225/28a745/ffffff?text=Asakusa',
+      'https://placehold.co/300x225/dc3545/ffffff?text=Shibuya'
     ];
     
     // サンプル画像を設定

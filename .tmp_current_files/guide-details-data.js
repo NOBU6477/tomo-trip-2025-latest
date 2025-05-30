@@ -558,15 +558,15 @@ function getGuideData(guideId) {
           tourPlans: tourPlans,
           gallery: [
             {
-              url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(cityName)}+1`,
+              url: `https://placehold.co/800x600?text=${encodeURIComponent(cityName)}+1`,
               alt: `${cityName}の風景1`
             },
             {
-              url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(cityName)}+2`,
+              url: `https://placehold.co/800x600?text=${encodeURIComponent(cityName)}+2`,
               alt: `${cityName}の風景2`
             },
             {
-              url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(cityName)}+3`,
+              url: `https://placehold.co/800x600?text=${encodeURIComponent(cityName)}+3`,
               alt: `${cityName}の風景3`
             }
           ],
@@ -583,7 +583,7 @@ function getGuideData(guideId) {
             items: [
               {
                 authorName: 'ジョン・スミス',
-                authorPhoto: 'https://via.placeholder.com/50',
+                authorPhoto: 'https://placehold.co/50',
                 rating: 5,
                 date: '2023-03-15',
                 content: `${matchedGuide.name}さんのガイドツアーは素晴らしかったです！${cityName}の隠れた名所を案内してくれて、とても思い出深い旅行になりました。`
@@ -626,15 +626,15 @@ function getGuideData(guideId) {
         ],
         gallery: [
           {
-            url: 'https://via.placeholder.com/800x600?text=Custom+Tour+1',
+            url: 'https://placehold.co/800x600?text=Custom+Tour+1',
             alt: 'カスタムツアー画像1'
           },
           {
-            url: 'https://via.placeholder.com/800x600?text=Custom+Tour+2',
+            url: 'https://placehold.co/800x600?text=Custom+Tour+2',
             alt: 'カスタムツアー画像2'
           },
           {
-            url: 'https://via.placeholder.com/800x600?text=Custom+Tour+3',
+            url: 'https://placehold.co/800x600?text=Custom+Tour+3',
             alt: 'カスタムツアー画像3'
           }
         ],
@@ -750,19 +750,19 @@ function getGuideData(guideId) {
   // ギャラリー画像を生成
   const gallery = [
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(location.city)}+1`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(location.city)}+1`,
       alt: `${location.city}の風景1`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(location.city)}+2`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(location.city)}+2`,
       alt: `${location.city}の風景2`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(location.city)}+3`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(location.city)}+3`,
       alt: `${location.city}の風景3`
     },
     {
-      url: `https://via.placeholder.com/800x600?text=${encodeURIComponent(location.city)}+4`,
+      url: `https://placehold.co/800x600?text=${encodeURIComponent(location.city)}+4`,
       alt: `${location.city}の風景4`
     }
   ];
@@ -784,7 +784,7 @@ function getGuideData(guideId) {
     items: [
       {
         authorName: `${reviewerName}様`,
-        authorPhoto: 'https://via.placeholder.com/50',
+        authorPhoto: 'https://placehold.co/50',
         rating: 5,
         date: '2023-03-15',
         content: `${fullName}さんのガイドは素晴らしかったです！${location.city}の隠れた名所を案内してくれて、現地の魅力を十分に堪能できました。また機会があればお願いしたいと思います。`
@@ -825,21 +825,21 @@ function getGuideData(guideId) {
         items: [
           {
             authorName: 'John Doe',
-            authorPhoto: 'https://via.placeholder.com/50',
+            authorPhoto: 'https://placehold.co/50',
             rating: 5,
             date: '2023-03-15',
             content: '加藤さんは素晴らしいガイドでした！与那国島の隠れた名所を案内してくれて、とても思い出深い旅行になりました。特に海中遺跡の案内が素晴らしく、SNSにアップしたら多くの人に好評でした。次回も必ずお願いしたいと思います！'
           },
           {
             authorName: 'Jane Smith',
-            authorPhoto: 'https://via.placeholder.com/50',
+            authorPhoto: 'https://placehold.co/50',
             rating: 4,
             date: '2023-02-20',
             content: 'とても親切で知識豊富なガイドさんでした。私が興味を持った与那国島の歴史や文化について時間をかけて丁寧に説明してくれ、柔軟に対応してくれました。観光客があまり行かない地元の美味しい海鮮料理店にも連れて行ってくれて、沖縄の食文化を深く体験できました。星4つの理由は、当日少し遅れてしまったことだけです。それ以外は完璧でした！'
           },
           {
             authorName: 'Carlos Rodriguez',
-            authorPhoto: 'https://via.placeholder.com/50',
+            authorPhoto: 'https://placehold.co/50',
             rating: 4.5,
             date: '2023-01-05',
             content: '家族で与那国島を訪れた際にお世話になりました。子供連れに配慮したプランを提案してくれて、子供たちも飽きることなく一日中楽しめました。与那国島の自然体験アクティビティが特に良かったです。また、地元の食べ歩きスポット選びや、海中遺跡の見学の仕方なども丁寧に教えていただきました！'
@@ -882,27 +882,27 @@ function getGuideData(guideId) {
       ],
       gallery: [
         {
-          url: 'https://via.placeholder.com/800x600?text=Sapporo+1',
+          url: 'https://placehold.co/800x600?text=Sapporo+1',
           alt: '札幌の風景1'
         },
         {
-          url: 'https://via.placeholder.com/800x600?text=Sapporo+2',
+          url: 'https://placehold.co/800x600?text=Sapporo+2',
           alt: '札幌の風景2'
         },
         {
-          url: 'https://via.placeholder.com/800x600?text=Sapporo+3',
+          url: 'https://placehold.co/800x600?text=Sapporo+3',
           alt: '札幌の風景3'
         },
         {
-          url: 'https://via.placeholder.com/800x600?text=Sapporo+4',
+          url: 'https://placehold.co/800x600?text=Sapporo+4',
           alt: '札幌の風景4'
         },
         {
-          url: 'https://via.placeholder.com/800x600?text=Sapporo+5',
+          url: 'https://placehold.co/800x600?text=Sapporo+5',
           alt: '札幌の風景5'
         },
         {
-          url: 'https://via.placeholder.com/800x600?text=Sapporo+6',
+          url: 'https://placehold.co/800x600?text=Sapporo+6',
           alt: '札幌の風景6'
         }
       ],
@@ -919,21 +919,21 @@ function getGuideData(guideId) {
         items: [
           {
             authorName: 'David Wilson',
-            authorPhoto: 'https://via.placeholder.com/50',
+            authorPhoto: 'https://placehold.co/50',
             rating: 5,
             date: '2023-02-12',
             content: '山田さんのガイドで札幌を訪れたのは正解でした！冬の札幌の美しさを存分に体験できただけでなく、地元の方しか知らないような美味しいレストランや素晴らしい景色のスポットに連れて行ってもらいました。特に夜の雪景色とイルミネーションの組み合わせは感動的でした。'
           },
           {
             authorName: 'Emily Chen',
-            authorPhoto: 'https://via.placeholder.com/50',
+            authorPhoto: 'https://placehold.co/50',
             rating: 5,
             date: '2023-01-28',
             content: '山田さんは素晴らしいガイドです！流暢な中国語で案内してくれただけでなく、私たちの好みに合わせた柔軟なプランを提案してくれました。特に市場での海鮮丼の体験は忘れられない思い出です。次回は夏に北海道を訪れる予定ですので、またお願いしたいと思います。'
           },
           {
             authorName: 'Michael Brown',
-            authorPhoto: 'https://via.placeholder.com/50',
+            authorPhoto: 'https://placehold.co/50',
             rating: 4,
             date: '2022-12-15',
             content: '北海道の冬を体験するには最高のガイドでした。スキーのレッスンも丁寧で、初めてでも楽しく滑ることができました。ただ、予定していた雪祭りのイベントが天候の影響で一部中止になったのは残念でした（もちろんガイドさんのせいではありません）。代わりの観光地を素早く提案してくれて臨機応変な対応に感謝しています。'
