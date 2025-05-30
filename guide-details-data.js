@@ -2,6 +2,11 @@
  * ガイド詳細ページのデータ読み込みと表示を管理する
  */
 document.addEventListener('DOMContentLoaded', function() {
+  // ガイド詳細ページでのみ実行（guide-detail要素が存在する場合）
+  if (!document.getElementById('guide-detail') && !document.querySelector('.guide-detail-page')) {
+    return; // ガイド詳細ページではない場合は処理を停止
+  }
+
   // URLからガイドIDを取得
   const urlParams = new URLSearchParams(window.location.search);
   const guideId = urlParams.get('id') || '1'; // デフォルトは1
@@ -47,8 +52,6 @@ function displayGuideInfo(guideData) {
   const nameElement = document.getElementById('guide-name');
   if (nameElement) {
     nameElement.textContent = guideData.name;
-  } else {
-    console.warn('guide-name要素が見つかりません');
   }
 
   const locationElement = document.getElementById('guide-location');
