@@ -913,7 +913,7 @@ function setupIdDocumentModalListeners() {
         reader.readAsDataURL(file);
       } else {
         // PDFなど画像以外のファイルの場合はアイコンを表示
-        documentImagePreview.src = 'https://via.placeholder.com/200x150?text=PDF+Document';
+        documentImagePreview.src = 'https://placehold.co/200x150?text=PDF+Document';
         documentPreview.classList.remove('d-none');
         documentUploadPrompt.classList.add('d-none');
       }
