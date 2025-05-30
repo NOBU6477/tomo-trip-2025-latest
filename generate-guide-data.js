@@ -131,7 +131,7 @@ function generateGuideData(count) {
     
     // 地域名からシンプルな地名を抽出（画像テキスト用）
     const regionShort = region.split(" ")[0];
-    const imageUrl = `${imageBaseUrl}${encodeURIComponent(regionShort)}ガイド`;
+    const imageUrl = `${imageBaseUrl}${encodeURIComponent(regionShort + 'ガイド')}`;
     
     // 説明文の生成
     let description = getRandomElement(descriptionTemplates)
