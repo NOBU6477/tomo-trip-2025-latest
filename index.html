@@ -2651,13 +2651,60 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
     <!-- 協賛店スライダー -->
+    <style>
+      .sponsor-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .sponsor-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+      }
+      .sponsor-card:hover .sponsor-logo {
+        transform: scale(1.1);
+      }
+      .sponsor-card:hover .sponsor-name {
+        color: #1976d2 !important;
+      }
+      .sponsor-card:hover .sponsor-benefit {
+        background: #4CAF50;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+      }
+      .sponsor-logo {
+        transition: transform 0.3s ease;
+      }
+      .sponsor-name {
+        transition: color 0.3s ease;
+      }
+      .sponsor-benefit {
+        transition: all 0.3s ease;
+      }
+      .sponsor-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s;
+      }
+      .sponsor-card:hover::before {
+        left: 100%;
+      }
+    </style>
     <script>
       let sponsors = [
-        { name: "◯◯温泉旅館", benefit: "宿泊10%オフ", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo1" },
-        { name: "地元レストラン", benefit: "ドリンク1杯無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo2" },
-        { name: "お土産屋", benefit: "5%割引", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo3" },
-        { name: "カフェ◯◯", benefit: "デザート無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo4" },
-        { name: "観光案内所", benefit: "地図無料配布", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo5" }
+        { id: 1, name: "◯◯温泉旅館", benefit: "宿泊10%オフ", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo1" },
+        { id: 2, name: "地元レストラン", benefit: "ドリンク1杯無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo2" },
+        { id: 3, name: "お土産屋", benefit: "5%割引", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo3" },
+        { id: 4, name: "カフェ◯◯", benefit: "デザート無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo4" },
+        { id: 5, name: "観光案内所", benefit: "地図無料配布", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo5" }
       ];
 
       const sliderWrapper = document.getElementById("sponsor-slider-wrapper");
@@ -2668,13 +2715,21 @@
           const slide = document.createElement("div");
           slide.className = "swiper-slide";
           slide.innerHTML = `
-            <div class="p-4 bg-light rounded-3 shadow-sm text-center h-100">
-              <img src="${store.logo}" alt="${store.name}" class="mx-auto mb-3 rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" />
-              <h6 class="fw-bold mb-2">${store.name}</h6>
-              <p class="text-muted small mb-0">${store.benefit}</p>
+            <div class="sponsor-card p-4 bg-light rounded-3 shadow-sm text-center h-100" data-sponsor-id="${store.id}">
+              <img src="${store.logo}" alt="${store.name}" class="sponsor-logo mx-auto mb-3 rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" />
+              <h6 class="sponsor-name fw-bold mb-2">${store.name}</h6>
+              <p class="sponsor-benefit text-muted small mb-0">${store.benefit}</p>
             </div>
           `;
           sliderWrapper.appendChild(slide);
+        });
+        
+        // クリックイベントを追加
+        document.querySelectorAll('.sponsor-card').forEach(card => {
+          card.addEventListener('click', function() {
+            const sponsorId = this.getAttribute('data-sponsor-id');
+            window.location.href = `sponsor-detail.html?id=${sponsorId}`;
+          });
         });
       }
 
