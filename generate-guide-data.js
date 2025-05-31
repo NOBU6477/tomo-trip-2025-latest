@@ -87,7 +87,7 @@ const descriptionTemplates = [
 ];
 
 // 画像URL設定
-const imageBaseUrl = "https://placehold.co/400x300?text=";
+const imageBaseUrl = "https://placehold.co/400x300/e3f2fd/1976d2/png?text=";
 
 // 料金設定 (6,000円〜20,000円)
 const fees = [6000, 7000, 8000, 9000, 10000, 12000, 15000, 18000, 20000];
@@ -131,7 +131,8 @@ function generateGuideData(count) {
     
     // 地域名からシンプルな地名を抽出（画像テキスト用）
     const regionShort = region.split(" ")[0];
-    const imageUrl = `${imageBaseUrl}${regionShort}+Guide`;
+    const encodedText = encodeURIComponent(`${regionShort} Guide`);
+    const imageUrl = `${imageBaseUrl}${encodedText}`;
     
     // 説明文の生成
     let description = getRandomElement(descriptionTemplates)
