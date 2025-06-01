@@ -3032,7 +3032,9 @@
         
         // 新しいストアIDを生成
         const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        console.log('新規登録: 既存の協賛店データ:', sponsorData);
         const newStoreId = sponsorData.length > 0 ? Math.max(...sponsorData.map(s => s.id)) + 1 : 1;
+        console.log('新規登録: 生成された店舗ID:', newStoreId);
         
         // アカウント情報を保存
         sponsorAccounts[email] = {
@@ -3064,13 +3066,17 @@
         
         sponsorData.push(newStore);
         localStorage.setItem('sponsorData', JSON.stringify(sponsorData));
+        console.log('新規登録: 店舗データ保存完了:', newStore);
+        console.log('新規登録: 更新後の全協賛店データ:', sponsorData);
         
         // 個別の店舗データも保存
         const storeKey = `sponsor_${newStoreId}`;
         localStorage.setItem(storeKey, JSON.stringify(newStore));
+        console.log('新規登録: 個別データ保存完了:', storeKey);
         
         // 公開用データも即座に更新
         updatePublicSponsors(sponsorData);
+        console.log('新規登録: 公開データ更新完了');
         
         // セッション作成
         const session = {
