@@ -2700,6 +2700,87 @@
     <!-- トップページガイドカード翻訳 -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
+        // 動的ガイド説明文の汎用翻訳関数
+        function translateGuideDescription(text) {
+          // 地域名の翻訳
+          text = text.replace(/北海道/g, 'Hokkaido');
+          text = text.replace(/札幌/g, 'Sapporo');
+          text = text.replace(/函館/g, 'Hakodate');
+          text = text.replace(/沖縄県/g, 'Okinawa');
+          text = text.replace(/那覇/g, 'Naha');
+          text = text.replace(/広島県/g, 'Hiroshima');
+          text = text.replace(/京都府/g, 'Kyoto');
+          text = text.replace(/大阪府/g, 'Osaka');
+          text = text.replace(/東京都/g, 'Tokyo');
+          text = text.replace(/長崎県/g, 'Nagasaki');
+          text = text.replace(/対馬/g, 'Tsushima');
+          text = text.replace(/神奈川県/g, 'Kanagawa');
+          text = text.replace(/横浜市/g, 'Yokohama');
+          text = text.replace(/滋賀県/g, 'Shiga');
+          text = text.replace(/大津市/g, 'Otsu');
+          text = text.replace(/福岡県/g, 'Fukuoka');
+          text = text.replace(/石川県/g, 'Ishikawa');
+          text = text.replace(/高知県/g, 'Kochi');
+          text = text.replace(/高知市/g, 'Kochi City');
+          text = text.replace(/兵庫県/g, 'Hyogo');
+          text = text.replace(/神戸市/g, 'Kobe');
+          text = text.replace(/熊本県/g, 'Kumamoto');
+          text = text.replace(/熊本市/g, 'Kumamoto City');
+          text = text.replace(/与論島/g, 'Yoron Island');
+          text = text.replace(/香川県/g, 'Kagawa');
+          text = text.replace(/高松市/g, 'Takamatsu');
+          
+          // よく使用される表現の翻訳
+          text = text.replace(/の魅力を知り尽くしたローカルガイドです/g, 'is a local guide who knows all the charm of');
+          text = text.replace(/ローカルガイド/g, 'local guide');
+          text = text.replace(/地元ガイド/g, 'local guide');
+          text = text.replace(/在住10年以上のガイドが/g, 'guide with over 10 years of residence');
+          text = text.replace(/観光客だけでは見つけられない/g, 'that tourists alone cannot find');
+          text = text.replace(/をご案内します/g, 'I will guide you to');
+          text = text.replace(/にご案内します/g, 'I will guide you to');
+          text = text.replace(/をご紹介/g, 'will introduce');
+          text = text.replace(/ご案内可能です/g, 'can also guide you');
+          text = text.replace(/併せてお楽しみいただけます/g, 'you can also enjoy');
+          text = text.replace(/特化したツアーを提供しています/g, 'provides specialized tours');
+          text = text.replace(/生まれも育ちも/g, 'Born and raised in');
+          text = text.replace(/の地元っ子/g, ' local');
+          text = text.replace(/あなたの興味に合わせたプランをご提案します/g, 'I will propose plans tailored to your interests');
+          text = text.replace(/など、幅広くご案内/g, 'and guide you through a wide range');
+          text = text.replace(/が得意です/g, 'is my specialty');
+          text = text.replace(/が充実しています/g, 'are abundant');
+          text = text.replace(/スポットをご案内/g, 'will guide you to spots');
+          text = text.replace(/の場所にご案内/g, 'will guide you to places');
+          
+          // 活動・体験関連の翻訳
+          text = text.replace(/トレッキング/g, 'trekking');
+          text = text.replace(/ダイビング/g, 'diving');
+          text = text.replace(/アクティビティ/g, 'activities');
+          text = text.replace(/ナイトツアー/g, 'night tours');
+          text = text.replace(/グルメ/g, 'gourmet');
+          text = text.replace(/工芸品/g, 'crafts');
+          text = text.replace(/お土産/g, 'souvenirs');
+          text = text.replace(/登山/g, 'mountain climbing');
+          text = text.replace(/自然/g, 'nature');
+          text = text.replace(/伝統文化/g, 'traditional culture');
+          text = text.replace(/祭り/g, 'festivals');
+          text = text.replace(/酒蔵巡り/g, 'sake brewery tours');
+          text = text.replace(/地酒/g, 'local sake');
+          text = text.replace(/歴史/g, 'history');
+          text = text.replace(/文化/g, 'culture');
+          text = text.replace(/建築/g, 'architecture');
+          text = text.replace(/街歩き/g, 'city walks');
+          
+          // よく使用される形容詞・修飾語
+          text = text.replace(/隠れた/g, 'hidden');
+          text = text.replace(/美しい/g, 'beautiful');
+          text = text.replace(/独自の/g, 'unique');
+          text = text.replace(/地元の/g, 'local');
+          text = text.replace(/現地の/g, 'local');
+          text = text.replace(/特別な/g, 'special');
+          
+          return text;
+        }
+        
         function translateGuideCards() {
           const lang = localStorage.getItem('selectedLanguage') || 'ja';
           if (lang === 'en') {
@@ -2758,6 +2839,14 @@
                   text = 'Diving instructor with 15 years of experience in Okinawa. I\'ll guide you through beautiful seas and unique culture.';
                 } else if (text.includes('Hiroshima') && text.includes('History')) {
                   text = 'Guide well-versed in Hiroshima history and culture. Specializing in tours visiting Peace Memorial Park, Miyajima, and other historical and natural sites.';
+                }
+                
+                // 動的ガイド用の包括的な翻訳システム
+                if (originalText !== text) {
+                  // 既に翻訳済みの場合はそのまま
+                } else if (text.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/)) {
+                  // 日本語文字が含まれている場合の汎用翻訳
+                  text = translateGuideDescription(text);
                 }
                 
                 // その他の一般的な翻訳
