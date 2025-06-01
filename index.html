@@ -3021,11 +3021,11 @@
         loadSponsors();
         renderSponsors();
         
-        // 30秒ごとに自動更新（頻度を下げてスムーズさを確保）
-        setInterval(() => {
-          console.log('定期的なデータ更新実行');
-          updateSponsorsIfNeeded();
-        }, 30000);
+        // 定期更新を完全に停止（スライダーテストのため）
+        // setInterval(() => {
+        //   console.log('定期的なデータ更新実行');
+        //   updateSponsorsIfNeeded();
+        // }, 30000);
 
         // スライドが十分にあることを確認してからSwiper初期化
         let swiper;
@@ -3045,19 +3045,24 @@
             return;
           }
           
-          // スライドの最小数を確保（ループ用に複製）
-          if (slideCount < 3) {
-            console.log('スライドが不足しているため、複製スライドを追加');
-            const wrapper = document.getElementById('sponsor-slider-wrapper');
-            const existingSlides = Array.from(wrapper.children);
+          // ループ用に必要な最小スライド数を確保
+          const wrapper = document.getElementById('sponsor-slider-wrapper');
+          const existingSlides = Array.from(wrapper.children);
+          
+          if (slideCount > 0 && slideCount < 4) {
+            console.log('ループのために十分なスライドを複製中...');
+            // 元のスライドを数回複製してスムーズなループを確保
+            const targetSlides = 6; // 6つのスライドを目標にする
+            const duplicateCount = targetSlides - slideCount;
             
-            // 既存のスライドを複製して十分な数を確保
-            const duplicateCount = Math.max(3 - slideCount, slideCount);
             for (let i = 0; i < duplicateCount; i++) {
               const originalSlide = existingSlides[i % existingSlides.length];
               const clonedSlide = originalSlide.cloneNode(true);
+              // 複製されたスライドに識別用クラスを追加
+              clonedSlide.classList.add('swiper-slide-duplicate-manual');
               wrapper.appendChild(clonedSlide);
             }
+            console.log('複製完了、最終スライド数:', wrapper.children.length);
           }
           
           // 少し待ってからSwiper初期化
@@ -3083,10 +3088,11 @@
                 delay: 4000, 
                 disableOnInteraction: false,
                 pauseOnMouseEnter: false,
-                reverseDirection: false
+                stopOnLastSlide: false,
+                waitForTransition: false
               },
               loop: true,
-              loopedSlides: 3,
+              loopedSlides: 2,
               speed: 800,
               freeMode: false,
               navigation: {
