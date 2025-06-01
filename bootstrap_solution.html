@@ -567,6 +567,24 @@
           
           // 登録完了後にガイドプロフィール管理画面に遷移
           setTimeout(function() {
+            // ガイド情報をセッションストレージに保存（アクセス制御のため）
+            const guideInfo = {
+              id: Date.now(),
+              name: guideName,
+              username: guideUsername,
+              phone: phoneNumber,
+              document: documentType,
+              userType: 'guide',
+              isLoggedIn: true,
+              registrationCompleted: true
+            };
+            
+            // セッションストレージに保存
+            sessionStorage.setItem('currentUser', JSON.stringify(guideInfo));
+            sessionStorage.setItem('guideRegistrationCompleted', 'true');
+            sessionStorage.setItem('userType', 'guide');
+            sessionStorage.setItem('isLoggedIn', 'true');
+            
             // ガイド情報をURLパラメータとして渡す
             const params = new URLSearchParams({
               new: 'true',

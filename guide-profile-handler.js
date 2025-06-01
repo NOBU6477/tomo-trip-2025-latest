@@ -7,6 +7,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   console.log('ガイドプロフィールハンドラー初期化中...');
   
+  // 認証状態をチェックしてアクセス制御メッセージを非表示にする
+  checkAuthenticationStatus();
+  
   // 各種編集機能をセットアップ
   setupPhotoEditFunctions();
   setupCertPhotoEditFunctions();
@@ -20,6 +23,40 @@ document.addEventListener('DOMContentLoaded', function() {
   // プロフィールの初期化
   initGuideProfile();
 });
+
+/**
+ * 認証状態をチェックしてアクセス制御を解除
+ */
+function checkAuthenticationStatus() {
+  const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+  const userType = sessionStorage.getItem('userType');
+  const registrationCompleted = sessionStorage.getItem('guideRegistrationCompleted') === 'true';
+  
+  console.log('認証状態チェック:', { isLoggedIn, userType, registrationCompleted });
+  
+  // ガイドとしてログイン済みまたは新規登録完了の場合、アクセス許可
+  if ((isLoggedIn && userType === 'guide') || registrationCompleted) {
+    // アクセス拒否メッセージを非表示にする
+    const accessDeniedElements = document.querySelectorAll('[class*="access-denied"], [class*="login-required"], .alert-danger');
+    accessDeniedElements.forEach(element => {
+      if (element.textContent.includes('アクセスが拒否') || element.textContent.includes('ログインして')) {
+        element.style.display = 'none';
+      }
+    });
+    
+    // ガイド専用コンテンツを表示
+    const guideOnlyElements = document.querySelectorAll('.guide-only');
+    guideOnlyElements.forEach(element => {
+      element.classList.remove('d-none');
+    });
+    
+    // 制限されたコンテンツのアクセス許可
+    const restrictedElements = document.querySelectorAll('.content-restricted');
+    restrictedElements.forEach(element => {
+      element.classList.remove('content-restricted');
+    });
+  }
+}
 
 /**
  * セッションストレージからガイドプロフィールを読み込み
