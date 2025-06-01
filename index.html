@@ -3032,71 +3032,83 @@
         function initializeSwiper() {
           if (swiper) {
             swiper.destroy(true, true);
+            swiper = null;
           }
           
-          // スライドの最小数を確保
+          // まずスライドが存在することを確認
           const slideCount = document.querySelectorAll('.sponsor-swiper .swiper-slide').length;
-          console.log('スライド数:', slideCount);
+          console.log('現在のスライド数:', slideCount);
           
-          if (slideCount < 2) {
+          if (slideCount === 0) {
+            console.log('スライドが存在しません。Swiper初期化を中止');
+            return;
+          }
+          
+          // スライドの最小数を確保（ループ用に複製）
+          if (slideCount < 3) {
             console.log('スライドが不足しているため、複製スライドを追加');
             const wrapper = document.getElementById('sponsor-slider-wrapper');
             const existingSlides = Array.from(wrapper.children);
-            existingSlides.forEach(slide => {
-              const clonedSlide = slide.cloneNode(true);
+            
+            // 既存のスライドを複製して十分な数を確保
+            const duplicateCount = Math.max(3 - slideCount, slideCount);
+            for (let i = 0; i < duplicateCount; i++) {
+              const originalSlide = existingSlides[i % existingSlides.length];
+              const clonedSlide = originalSlide.cloneNode(true);
               wrapper.appendChild(clonedSlide);
-            });
+            }
           }
           
-          swiper = new Swiper('.sponsor-swiper', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            centeredSlides: true,
-            breakpoints: {
-              640: { 
-                slidesPerView: 2,
-                spaceBetween: 20,
-                centeredSlides: false
-              },
-              1024: { 
-                slidesPerView: 3,
-                spaceBetween: 30,
-                centeredSlides: false
-              }
-            },
-            autoplay: { 
-              delay: 4000, 
-              disableOnInteraction: false,
-              pauseOnMouseEnter: false
-            },
-            loop: true,
-            speed: 800,
-            navigation: {
-              nextEl: '.sponsor-next',
-              prevEl: '.sponsor-prev'
-            },
-            pagination: { 
-              el: '.swiper-pagination', 
-              clickable: true 
-            },
-            on: {
-              init: function() {
-                console.log('Swiper初期化完了、自動再生開始');
-                this.autoplay.start();
-              },
-              slideChange: function() {
-                console.log('スライド変更:', this.activeIndex);
-              }
-            }
-          });
-          
-          // 手動で自動再生を確実に開始
+          // 少し待ってからSwiper初期化
           setTimeout(() => {
-            if (swiper && swiper.autoplay) {
-              swiper.autoplay.start();
-              console.log('自動再生を手動で開始');
-            }
-          }, 500);
+            swiper = new Swiper('.sponsor-swiper', {
+              slidesPerView: 1,
+              spaceBetween: 20,
+              centeredSlides: true,
+              breakpoints: {
+                640: { 
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                  centeredSlides: false
+                },
+                1024: { 
+                  slidesPerView: 3,
+                  spaceBetween: 30,
+                  centeredSlides: false
+                }
+              },
+              autoplay: { 
+                delay: 4000, 
+                disableOnInteraction: false,
+                pauseOnMouseEnter: false,
+                stopOnLastSlide: false
+              },
+              loop: true,
+              loopAdditionalSlides: 1,
+              speed: 800,
+              watchSlidesProgress: true,
+              navigation: {
+                nextEl: '.sponsor-next',
+                prevEl: '.sponsor-prev'
+              },
+              pagination: { 
+                el: '.swiper-pagination', 
+                clickable: true 
+              },
+              on: {
+                init: function() {
+                  console.log('Swiper初期化完了、スライド数:', this.slides.length);
+                  setTimeout(() => {
+                    this.autoplay.start();
+                    console.log('自動再生開始');
+                  }, 100);
+                },
+                slideChange: function() {
+                  console.log('スライド変更:', this.realIndex);
+                }
+              }
+            });
+          }, 200);
         }
         
         // 初期化を実行
