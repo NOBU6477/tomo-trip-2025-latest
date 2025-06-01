@@ -2713,11 +2713,21 @@
                 let text = desc.textContent;
                 let originalText = text;
                 
-                // 説明文の翻訳（他スクリプトによる部分翻訳後のテキストに対応）
+                console.log('翻訳対象テキスト:', originalText);
+                
+                // 説明文の翻訳（様々なパターンに対応）
                 text = text.replace(/Tokyo隠れた名所を案内します。グルメや写真スポットが得意です。/g, 
                   'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
                 text = text.replace(/東京の隠れた名所を案内します。グルメや写真スポットが得意です。/g, 
                   'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
+                  
+                // より包括的なパターンマッチング
+                if (text.includes('Tokyo') && text.includes('隠れた名所')) {
+                  text = 'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.';
+                } else if (text.includes('東京') && text.includes('隠れた名所')) {
+                  text = 'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.';
+                }
+                
                 text = text.replace(/Historyと伝統が息づく京都の魅力をご案内。寺社巡りや伝統文化体験が得意です。/g,
                   'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.');
                 text = text.replace(/歴史と伝統が息づく京都の魅力をご案内。寺社巡りや伝統文化体験が得意です。/g,
@@ -2745,6 +2755,8 @@
                 if (text !== originalText) {
                   console.log('ガイドカード翻訳実行:', originalText, '->', text);
                   desc.textContent = text;
+                } else {
+                  console.log('翻訳対象外または既に翻訳済み:', originalText);
                 }
               });
               
