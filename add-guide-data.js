@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // 既存のガイドカードが表示されているかチェック
     const existingGuides = guideContainer.querySelectorAll('.guide-card');
     
+    // 新規登録されたガイドをローカルストレージから読み込み
+    loadUserAddedGuides();
+    
     // 追加のガイドカードを生成して追加
     if (window.generateAdditionalGuideCards) {
       // 生成したHTML
@@ -61,6 +64,69 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
+
+/**
+ * ユーザーが追加したガイドをローカルストレージから読み込み
+ */
+function loadUserAddedGuides() {
+  const guideContainer = document.getElementById('guide-cards-container');
+  if (!guideContainer) return;
+  
+  // ローカルストレージから新規追加されたガイドを取得
+  const additionalGuides = JSON.parse(localStorage.getItem('additionalGuides') || '[]');
+  
+  if (additionalGuides.length > 0) {
+    console.log(`${additionalGuides.length}件の新規登録ガイドを読み込み中...`);
+    
+    additionalGuides.forEach(guide => {
+      const guideHTML = `
+        <div class="col-lg-4 col-md-6 mb-4 guide-item">
+          <div class="card guide-card h-100" 
+               data-guide-id="${guide.id}"
+               data-keywords="${guide.specialties ? guide.specialties.join(' ') : ''}"
+               data-location="${guide.location}"
+               data-languages="ja en"
+               data-fee="${guide.fee}">
+            <img src="${guide.image}" class="card-img-top" alt="${guide.name}のプロフィール写真" style="height: 200px; object-fit: cover;">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${guide.name}</h5>
+              <p class="text-muted mb-2">
+                <i class="fas fa-map-marker-alt"></i> ${guide.location}
+              </p>
+              <p class="card-text flex-grow-1">${guide.description}</p>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <div class="rating">
+                  <span class="text-warning">
+                    ${guide.rating === '新規' ? '<span class="badge bg-success">新規</span>' : '★★★★★'}
+                  </span>
+                  <small class="text-muted">(${guide.reviews}件)</small>
+                </div>
+                <div class="price">
+                  <strong class="text-primary">¥${guide.fee}/時</strong>
+                </div>
+              </div>
+              <div class="mt-2">
+                <small class="text-muted">
+                  専門分野: ${guide.specialties ? guide.specialties.slice(0, 3).join(', ') : '一般'}
+                </small>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent">
+              <button class="btn btn-primary w-100" onclick="viewGuideDetails('${guide.id}')">
+                詳細を見る
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      // 新規ガイドを最初に表示（先頭に挿入）
+      guideContainer.insertAdjacentHTML('afterbegin', guideHTML);
+    });
+    
+    console.log('新規登録ガイドの読み込みが完了しました');
+  }
+}
 
 /**
  * 新しく追加されたカードの属性を設定

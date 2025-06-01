@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setupFeeEditFunctions();
   setupBasicInfoEditFunctions();
   setupIdDocumentEditFunctions();
+  setupGuideListRedirect();
   
   // プロフィールの初期化
   initGuideProfile();
@@ -825,6 +826,104 @@ function setupFeeEditFunctions() {
     // 成功メッセージ表示
     showSuccess('料金情報が更新されました');
   });
+}
+
+/**
+ * ガイド一覧への遷移機能の設定
+ */
+function setupGuideListRedirect() {
+  const saveAndViewButton = document.getElementById('save-and-view-guide-list');
+  const profileForm = document.getElementById('profile-basic-form');
+  
+  if (!saveAndViewButton) {
+    console.warn('ガイド一覧遷移ボタンが見つかりません');
+    return;
+  }
+  
+  // 「保存してガイド一覧を見る」ボタンのクリックイベント
+  saveAndViewButton.addEventListener('click', function() {
+    console.log('保存してガイド一覧を見るボタンがクリックされました');
+    
+    // プロフィール情報を保存
+    const guideName = document.getElementById('guide-name')?.value || '新規ガイド';
+    const guideUsername = document.getElementById('guide-username')?.value || 'new_guide';
+    const guideLocation = document.getElementById('guide-location')?.value || '東京';
+    const sessionFee = document.getElementById('guide-session-fee')?.value || '6000';
+    
+    // 保存処理のシミュレーション
+    saveAndViewButton.textContent = '保存中...';
+    saveAndViewButton.disabled = true;
+    
+    setTimeout(function() {
+      // 新しいガイドデータを作成
+      const newGuideData = {
+        id: Date.now(), // 一意のIDとして現在時刻を使用
+        name: guideName,
+        username: guideUsername,
+        location: guideLocation,
+        fee: sessionFee,
+        rating: '新規',
+        reviews: 0,
+        image: 'https://via.placeholder.com/300x200/0d6efd/ffffff?text=' + encodeURIComponent(guideName),
+        description: document.getElementById('guide-bio')?.value || 'プロフィールを編集中です。',
+        specialties: getSelectedSpecialties()
+      };
+      
+      // 新しいガイドをガイドリストに追加
+      addNewGuideToList(newGuideData);
+      
+      // 成功メッセージを表示
+      alert('プロフィールが保存されました！ガイド一覧ページに移動します。');
+      
+      // ガイド一覧ページに遷移（ガイドセクションにスクロール）
+      window.location.href = 'index.html#guides';
+    }, 1500);
+  });
+  
+  // 通常の保存ボタンにも遷移オプションを追加
+  if (profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // 確認ダイアログを表示
+      const shouldRedirect = confirm('プロフィールを保存しました。ガイド一覧ページを確認しますか？');
+      if (shouldRedirect) {
+        window.location.href = 'index.html#guides';
+      }
+    });
+  }
+}
+
+/**
+ * 選択された専門分野を取得
+ */
+function getSelectedSpecialties() {
+  const specialties = [];
+  const checkboxes = document.querySelectorAll('#guide-interests input[type="checkbox"]:checked');
+  checkboxes.forEach(checkbox => {
+    specialties.push(checkbox.value);
+  });
+  
+  // カスタムキーワードも追加
+  const customKeywords = document.getElementById('interest-custom')?.value;
+  if (customKeywords) {
+    const keywords = customKeywords.split(',').map(k => k.trim()).filter(k => k);
+    specialties.push(...keywords);
+  }
+  
+  return specialties;
+}
+
+/**
+ * 新しいガイドをガイドリストに追加
+ */
+function addNewGuideToList(guideData) {
+  // ローカルストレージに保存
+  let guideList = JSON.parse(localStorage.getItem('additionalGuides') || '[]');
+  guideList.push(guideData);
+  localStorage.setItem('additionalGuides', JSON.stringify(guideList));
+  
+  console.log('新しいガイドが追加されました:', guideData);
 }
 
 /**
