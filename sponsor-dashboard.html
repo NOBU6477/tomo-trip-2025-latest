@@ -363,22 +363,48 @@
 
       // 店舗データの読み込み
       function loadStoreData() {
-        const storeId = session.storeId || 1;
+        const storeId = session.storeId;
+        console.log('セッションから取得した店舗ID:', storeId);
+        console.log('セッション情報:', session);
+        
         const allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
-        storeData = allStores.find(s => s.id === storeId) || {
-          id: storeId,
-          name: session.storeName || "新規店舗",
-          benefit: "",
-          description: "",
-          hours: "",
-          phone: "",
-          address: "",
-          access: "",
-          benefitDetail: "",
-          highlights: [],
-          gallery: [],
-          status: "active"
-        };
+        console.log('全店舗データ:', allStores);
+        
+        storeData = allStores.find(s => s.id === storeId);
+        console.log('マッチした店舗データ:', storeData);
+        
+        if (!storeData) {
+          // 個別ストレージからも試行
+          const individualKey = `sponsor_${storeId}`;
+          const individualData = localStorage.getItem(individualKey);
+          if (individualData) {
+            try {
+              storeData = JSON.parse(individualData);
+              console.log('個別ストレージから取得:', storeData);
+            } catch (e) {
+              console.error('個別データ解析エラー:', e);
+            }
+          }
+        }
+        
+        // それでも見つからない場合は新規作成
+        if (!storeData) {
+          storeData = {
+            id: storeId,
+            name: session.storeName || "新規店舗",
+            benefit: "",
+            description: "",
+            hours: "",
+            phone: "",
+            address: "",
+            access: "",
+            benefitDetail: "",
+            highlights: [],
+            gallery: [],
+            status: "active"
+          };
+          console.log('新規データを作成:', storeData);
+        }
 
         // フォームに既存データを設定
         document.getElementById('storeName').value = storeData.name || '';
@@ -790,7 +816,14 @@
 
       // 公開ページ確認
       function viewPublicPage() {
-        window.open(`sponsor-detail.html?id=${storeData.id}`, '_blank');
+        console.log('公開ページ確認: 現在の店舗データ:', storeData);
+        console.log('公開ページ確認: 店舗ID:', storeData.id);
+        console.log('公開ページ確認: 店舗名:', storeData.name);
+        
+        const url = `sponsor-detail.html?id=${storeData.id}`;
+        console.log('公開ページURL:', url);
+        
+        window.open(url, '_blank');
       }
 
       // ログアウト

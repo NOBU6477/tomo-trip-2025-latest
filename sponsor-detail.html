@@ -326,73 +326,127 @@
       // ページ読み込み時に詳細情報を表示
       document.addEventListener('DOMContentLoaded', function() {
         const sponsorId = getSponsorId();
-        const sponsor = sponsorDetails[sponsorId];
+        console.log('公開ページ: 取得した店舗ID:', sponsorId);
+        
+        // まず登録済みデータから探す
+        let sponsor = null;
+        
+        // 1. 個別ストレージから取得を試行
+        const individualKey = `sponsor_${sponsorId}`;
+        const individualData = localStorage.getItem(individualKey);
+        if (individualData) {
+          try {
+            sponsor = JSON.parse(individualData);
+            console.log('個別ストレージから店舗データ取得:', sponsor);
+          } catch (e) {
+            console.error('個別データ解析エラー:', e);
+          }
+        }
+        
+        // 2. 全体データから探す
+        if (!sponsor) {
+          const allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
+          sponsor = allStores.find(s => s.id == sponsorId);
+          console.log('全体データから店舗データ取得:', sponsor);
+        }
+        
+        // 3. 公開用データから探す
+        if (!sponsor) {
+          const publicSponsors = JSON.parse(localStorage.getItem('publicSponsors')) || [];
+          sponsor = publicSponsors.find(s => s.id == sponsorId);
+          console.log('公開データから店舗データ取得:', sponsor);
+        }
+        
+        // 4. 最後にデフォルトデータから探す
+        if (!sponsor) {
+          sponsor = sponsorDetails[sponsorId];
+          console.log('デフォルトデータから店舗データ取得:', sponsor);
+        }
         
         if (sponsor) {
-          document.getElementById('sponsor-name').textContent = sponsor.name;
-          document.getElementById('sponsor-benefit').textContent = sponsor.benefit;
-          document.getElementById('sponsor-logo').src = sponsor.logo;
-          document.getElementById('sponsor-logo').alt = sponsor.name;
-          document.getElementById('sponsor-description').textContent = sponsor.description;
-          document.getElementById('sponsor-hours').textContent = sponsor.hours;
-          document.getElementById('sponsor-phone').textContent = sponsor.phone;
-          document.getElementById('sponsor-address').textContent = sponsor.address;
-          document.getElementById('sponsor-access').textContent = sponsor.access;
-          document.getElementById('sponsor-benefit-detail').textContent = sponsor.benefitDetail;
+          document.getElementById('sponsor-name').textContent = sponsor.name || '店舗名未設定';
+          document.getElementById('sponsor-benefit').textContent = sponsor.benefit || '特典未設定';
+          document.getElementById('sponsor-logo').src = sponsor.logo || `https://placehold.co/120x120/e3f2fd/1976d2/png?text=${encodeURIComponent(sponsor.name?.charAt(0) || 'S')}`;
+          document.getElementById('sponsor-logo').alt = sponsor.name || '店舗ロゴ';
+          document.getElementById('sponsor-description').textContent = sponsor.description || '店舗の説明はまだ設定されていません。';
+          document.getElementById('sponsor-hours').textContent = sponsor.hours || '営業時間未設定';
+          document.getElementById('sponsor-phone').textContent = sponsor.phone || '電話番号未設定';
+          document.getElementById('sponsor-address').textContent = sponsor.address || '住所未設定';
+          document.getElementById('sponsor-access').textContent = sponsor.access || 'アクセス情報未設定';
+          document.getElementById('sponsor-benefit-detail').textContent = sponsor.benefitDetail || sponsor.benefit || '特典の詳細情報はまだ設定されていません。';
           
-          // 写真ギャラリーを表示（複数ソースから最新データを取得）
-          let currentSponsor = sponsor;
+          // おすすめポイントを表示
+          displayHighlights(sponsor.highlights || []);
           
-          // 個別ストレージから取得を試行
-          const individualKey = `sponsor_${sponsorId}`;
-          const individualData = localStorage.getItem(individualKey);
-          if (individualData) {
-            try {
-              currentSponsor = JSON.parse(individualData);
-            } catch (e) {
-              console.log('個別データの解析に失敗:', e);
-            }
-          }
+          // 写真ギャラリーを表示
+          displayGallery(sponsor.gallery || []);
           
-          // 全体データからも取得を試行
-          const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
-          const sponsorFromList = sponsorData.find(s => s.id === parseInt(sponsorId));
-          if (sponsorFromList) {
-            currentSponsor = sponsorFromList;
-          }
-          
-          // 公開用データからも取得を試行
-          const publicSponsors = JSON.parse(localStorage.getItem('publicSponsors')) || [];
-          const publicSponsor = publicSponsors.find(s => s.id === parseInt(sponsorId));
-          if (publicSponsor) {
-            currentSponsor = publicSponsor;
-          }
-          
-          // 基本情報も更新
-          if (currentSponsor.name && currentSponsor.name !== sponsor.name) {
-            document.getElementById('sponsor-name').textContent = currentSponsor.name;
-            document.getElementById('sponsor-benefit').textContent = currentSponsor.benefit || sponsor.benefit;
-            if (currentSponsor.phone) document.getElementById('sponsor-phone').textContent = currentSponsor.phone;
-            if (currentSponsor.hours) document.getElementById('sponsor-hours').textContent = currentSponsor.hours;
-            if (currentSponsor.address) document.getElementById('sponsor-address').textContent = currentSponsor.address;
-            if (currentSponsor.access) document.getElementById('sponsor-access').textContent = currentSponsor.access;
-            if (currentSponsor.benefitDetail) document.getElementById('sponsor-benefit-detail').textContent = currentSponsor.benefitDetail;
-          }
-          
-          const galleryContainer = document.getElementById('sponsor-gallery');
-          if (currentSponsor.gallery && currentSponsor.gallery.length > 0) {
-            galleryContainer.innerHTML = '';
-            
-            // 写真が6枚を超える場合は最初の6枚のみ表示
-            const displayImages = currentSponsor.gallery.length > 6 ? currentSponsor.gallery.slice(0, 6) : currentSponsor.gallery;
-            
-            displayImages.forEach((image, index) => {
-              const col = document.createElement('div');
-              col.className = 'col-12 col-sm-6 col-md-4 mb-3';
-              col.innerHTML = `
-                <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
-                  <img src="${image.url}" alt="${image.caption}" loading="lazy" />
-                  <div class="image-overlay">
+        } else {
+          console.error('店舗データが見つかりません:', sponsorId);
+          document.getElementById('sponsor-name').textContent = '店舗が見つかりません';
+          document.getElementById('sponsor-benefit').textContent = '';
+          document.getElementById('sponsor-description').textContent = '指定された店舗IDの情報が見つかりませんでした。';
+        }
+      });
+
+      // おすすめポイントを表示
+      function displayHighlights(highlights) {
+        const container = document.getElementById('sponsor-highlights');
+        container.innerHTML = '';
+        
+        if (highlights && highlights.length > 0) {
+          highlights.forEach(highlight => {
+            const div = document.createElement('div');
+            div.className = 'mb-2';
+            div.innerHTML = `<i class="bi bi-check-circle-fill text-success me-2"></i>${highlight}`;
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = '<p class="text-muted">おすすめポイントはまだ設定されていません。</p>';
+        }
+      }
+
+      // ギャラリーを表示
+      function displayGallery(gallery) {
+        const container = document.getElementById('sponsor-gallery');
+        container.innerHTML = '';
+        
+        if (gallery && gallery.length > 0) {
+          gallery.forEach((image, index) => {
+            const div = document.createElement('div');
+            div.className = 'col-md-6 mb-3';
+            div.innerHTML = `
+              <div class="card">
+                <img src="${image.url}" class="card-img-top" alt="${image.caption || '店舗画像'}" style="height: 200px; object-fit: cover;">
+                <div class="card-body p-2">
+                  <p class="card-text small text-muted">${image.caption || `画像 ${index + 1}`}</p>
+                </div>
+              </div>
+            `;
+            container.appendChild(div);
+          });
+        } else {
+          container.innerHTML = '<div class="col-12"><p class="text-muted text-center">写真はまだ登録されていません。</p></div>';
+        }
+      }
+
+      // 共有機能
+      function shareStore() {
+        if (navigator.share) {
+          navigator.share({
+            title: document.getElementById('sponsor-name').textContent,
+            text: document.getElementById('sponsor-benefit').textContent,
+            url: window.location.href
+          });
+        } else {
+          // フォールバック: URLをクリップボードにコピー
+          navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('URLをクリップボードにコピーしました！');
+          });
+        }
+      }
+
+
                     <i class="bi bi-zoom-in" style="font-size: 1.5rem;"></i>
                   </div>
                 </div>
