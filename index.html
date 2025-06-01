@@ -2743,6 +2743,23 @@
                 text = text.replace(/広島の平和記念公園や宮島など、歴史と自然を巡るツアーが得意。心に残る体験を提供します。/g,
                   'Specializing in tours visiting Hiroshima\'s Peace Memorial Park, Miyajima, and other historical and natural sites. I provide memorable experiences.');
                 
+                // 動的ガイドの説明文翻訳
+                text = text.replace(/北海道の札幌でローカルガイド。白雪公園の魅力をお伝えします。トレッキングにもご案内可能です。/g,
+                  'Local guide in Sapporo, Hokkaido. I\'ll share the charm of Shirayuki Park. I can also guide you on trekking.');
+                text = text.replace(/沖縄県は15年のダイビングインストラクター。美しい海と独自の文化をご案内します。/g,
+                  'Diving instructor with 15 years of experience in Okinawa. I\'ll guide you through beautiful seas and unique culture.');
+                text = text.replace(/Hiroshima History文化に精通したガイド。平和記念公園、宮島など歴史と自然を巡るツアーが得意。/g,
+                  'Guide well-versed in Hiroshima history and culture. Specializing in tours visiting Peace Memorial Park, Miyajima, and other historical and natural sites.');
+                
+                // より一般的なパターンマッチング
+                if (text.includes('北海道') && text.includes('ローカルガイド')) {
+                  text = 'Local guide in Sapporo, Hokkaido. I\'ll share the charm of Shirayuki Park. I can also guide you on trekking.';
+                } else if (text.includes('沖縄県') && text.includes('ダイビング')) {
+                  text = 'Diving instructor with 15 years of experience in Okinawa. I\'ll guide you through beautiful seas and unique culture.';
+                } else if (text.includes('Hiroshima') && text.includes('History')) {
+                  text = 'Guide well-versed in Hiroshima history and culture. Specializing in tours visiting Peace Memorial Park, Miyajima, and other historical and natural sites.';
+                }
+                
                 // その他の一般的な翻訳
                 text = text.replace(/セッション/g, 'Session');
                 text = text.replace(/(\d+,?\d*)円/g, '¥$1');
