@@ -85,42 +85,46 @@ function loadUserAddedGuides() {
     console.log(`${allGuides.length}件の新規登録ガイドを読み込み中...`);
     
     allGuides.forEach(guide => {
+      // 言語バッジHTML
+      const languageBadgesHTML = ['日本語', '英語'].map(lang => 
+        `<span class="badge bg-light text-dark guide-lang me-1">${lang}</span>`
+      ).join('');
+      
+      // 評価星HTML
+      const starsHTML = guide.rating === '新規' ? 
+        '<span class="badge bg-success">新規</span>' : 
+        '<i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>';
+      
       const guideHTML = `
-        <div class="col-lg-4 col-md-6 mb-4 guide-item">
-          <div class="card guide-card h-100" 
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" 
                data-guide-id="${guide.id}"
-               data-keywords="${guide.specialties ? guide.specialties.join(' ') : ''}"
-               data-location="${guide.location}"
-               data-languages="ja en"
-               data-fee="${guide.fee}">
-            <img src="${guide.image}" class="card-img-top" alt="${guide.name}のプロフィール写真" style="height: 200px; object-fit: cover;">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title">${guide.name}</h5>
-              <p class="text-muted mb-2">
-                <i class="fas fa-map-marker-alt"></i> ${guide.location}
-              </p>
-              <p class="card-text flex-grow-1">${guide.description}</p>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <div class="rating">
-                  <span class="text-warning">
-                    ${guide.rating === '新規' ? '<span class="badge bg-success">新規</span>' : '★★★★★'}
-                  </span>
-                  <small class="text-muted">(${guide.reviews}件)</small>
-                </div>
-                <div class="price">
-                  <strong class="text-primary">¥${guide.fee}/時</strong>
-                </div>
+               data-location="${encodeURIComponent(guide.location)}"
+               data-languages="日本語,英語"
+               data-fee="${guide.fee}"
+               data-keywords="${encodeURIComponent(guide.specialties ? guide.specialties.join(',') : '')}">
+            <img src="${guide.image}" class="card-img-top guide-image" alt="${guide.name}のガイド写真">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">${guide.name}</h5>
+                <span class="badge bg-primary guide-fee">¥${parseInt(guide.fee).toLocaleString()}/セッション</span>
               </div>
-              <div class="mt-2">
-                <small class="text-muted">
-                  専門分野: ${guide.specialties ? guide.specialties.slice(0, 3).join(', ') : '一般'}
-                </small>
+              <p class="card-text text-muted mb-2 guide-location">
+                <i class="bi bi-geo-alt-fill me-1"></i>${guide.location}
+              </p>
+              <p class="card-text mb-3">${guide.description}</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="guide-languages">
+                  ${languageBadgesHTML}
+                </div>
+                <div class="text-warning">
+                  ${starsHTML}
+                  ${guide.rating !== '新規' ? `<span class="text-dark ms-1">${guide.rating}</span>` : ''}
+                </div>
               </div>
             </div>
-            <div class="card-footer bg-transparent">
-              <button class="btn btn-primary w-100" onclick="viewGuideDetails('${guide.id}')">
-                詳細を見る
-              </button>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}">詳細を見る</a>
             </div>
           </div>
         </div>
