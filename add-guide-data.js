@@ -75,10 +75,16 @@ function loadUserAddedGuides() {
   // ローカルストレージから新規追加されたガイドを取得
   const additionalGuides = JSON.parse(localStorage.getItem('additionalGuides') || '[]');
   
-  if (additionalGuides.length > 0) {
-    console.log(`${additionalGuides.length}件の新規登録ガイドを読み込み中...`);
+  // セッションストレージから新規登録ガイド情報を取得
+  const sessionGuides = getSessionGuides();
+  
+  // 両方のソースを結合
+  const allGuides = [...additionalGuides, ...sessionGuides];
+  
+  if (allGuides.length > 0) {
+    console.log(`${allGuides.length}件の新規登録ガイドを読み込み中...`);
     
-    additionalGuides.forEach(guide => {
+    allGuides.forEach(guide => {
       const guideHTML = `
         <div class="col-lg-4 col-md-6 mb-4 guide-item">
           <div class="card guide-card h-100" 
@@ -126,6 +132,64 @@ function loadUserAddedGuides() {
     
     console.log('新規登録ガイドの読み込みが完了しました');
   }
+}
+
+/**
+ * セッションストレージから新規登録ガイドを取得
+ */
+function getSessionGuides() {
+  const sessionGuides = [];
+  
+  // 現在のユーザー情報をチェック
+  const currentUser = sessionStorage.getItem('currentUser');
+  if (currentUser) {
+    try {
+      const user = JSON.parse(currentUser);
+      if (user.userType === 'guide' || user.type === 'guide') {
+        // ガイド情報をガイドカード形式に変換
+        const guideCard = {
+          id: user.id || Date.now(),
+          name: user.name || user.username || 'ガイド',
+          location: user.city || '東京',
+          description: user.bio || '新規登録ガイドです。よろしくお願いします。',
+          image: user.profileImage || 'https://via.placeholder.com/300x200?text=New+Guide',
+          fee: user.price ? user.price.replace(/[^\d]/g, '') : '5000',
+          rating: '新規',
+          reviews: '0',
+          specialties: user.specialties || ['観光案内', '文化紹介'],
+          phone: user.phone,
+          email: user.email,
+          isNewGuide: true
+        };
+        sessionGuides.push(guideCard);
+        console.log('セッションからガイド情報を取得:', guideCard);
+      }
+    } catch (e) {
+      console.error('セッションガイド情報の解析エラー:', e);
+    }
+  }
+  
+  // URLパラメータからの情報もチェック（新規登録完了時）
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('new') === 'true' && urlParams.get('name')) {
+    const urlGuide = {
+      id: Date.now(),
+      name: urlParams.get('name'),
+      location: '東京',
+      description: '新規登録ガイドです。よろしくお願いします。',
+      image: 'https://via.placeholder.com/300x200?text=New+Guide',
+      fee: '5000',
+      rating: '新規',
+      reviews: '0',
+      specialties: ['観光案内'],
+      phone: urlParams.get('phone'),
+      isNewGuide: true
+    };
+    sessionGuides.push(urlGuide);
+    console.log('URLパラメータからガイド情報を取得:', urlGuide);
+  }
+  
+  return sessionGuides;
 }
 
 /**
