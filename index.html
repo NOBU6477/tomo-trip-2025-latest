@@ -2692,6 +2692,99 @@
 
     <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
     <script src="shared-language-utils.js"></script>
+    
+    <!-- 統一多言語システム -->
+    <script src="translations/translation-data-fix.js"></script>
+    <script src="universal-multilingual.js"></script>
+    
+    <!-- トップページガイドカード翻訳 -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        function translateGuideCards() {
+          const lang = localStorage.getItem('selectedLanguage') || 'ja';
+          if (lang === 'en') {
+            console.log('ガイドカード翻訳開始:', lang);
+            
+            // ガイドカード内のテキストを翻訳
+            document.querySelectorAll('.guide-card, .card').forEach(card => {
+              // ガイド名や地域情報は維持し、説明文のみ翻訳
+              const descriptionElements = card.querySelectorAll('p, .description, .guide-description');
+              descriptionElements.forEach(desc => {
+                let text = desc.textContent;
+                let originalText = text;
+                
+                // 説明文の翻訳
+                text = text.replace(/東京の隠れた名所を案内します。グルメや写真スポットが得意です。/g, 
+                  'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
+                text = text.replace(/歴史と伝統が息づく京都の魅力を案内。寺社巡りや伝統文化体験が得意です。/g,
+                  'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.');
+                text = text.replace(/大阪ならではの食べ歩きや街歩きが専門。地元の人だけが知る名店にご案内します。/g,
+                  'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to famous restaurants known only to locals.');
+                text = text.replace(/北海道の大自然と美食を堪能できるツアーをご提案。四季折々の魅力をお伝えします。/g,
+                  'Proposing tours to enjoy Hokkaido\'s great nature and gourmet food. I\'ll share the charm of each season.');
+                text = text.replace(/沖縄の美しい海と独特な文化を体験。マリンスポーツから歴史散策まで幅広く対応。/g,
+                  'Experience Okinawa\'s beautiful sea and unique culture. From marine sports to historical walks, I offer a wide range of activities.');
+                text = text.replace(/広島の平和記念公園や宮島など、歴史と自然を巡るツアーが得意。心に残る体験を提供します。/g,
+                  'Specializing in tours visiting Hiroshima\'s Peace Memorial Park, Miyajima, and other historical and natural sites. I provide memorable experiences.');
+                
+                // その他の一般的な翻訳
+                text = text.replace(/セッション/g, 'Session');
+                text = text.replace(/(\d+,?\d*)円/g, '¥$1');
+                text = text.replace(/日本語/g, 'Japanese');
+                text = text.replace(/英語/g, 'English');
+                text = text.replace(/中国語/g, 'Chinese');
+                text = text.replace(/韓国語/g, 'Korean');
+                text = text.replace(/基礎/g, 'Basic');
+                
+                if (text !== originalText) {
+                  console.log('ガイドカード翻訳実行:', originalText, '->', text);
+                  desc.textContent = text;
+                }
+              });
+              
+              // ボタンテキストの翻訳
+              const buttons = card.querySelectorAll('button, .btn');
+              buttons.forEach(btn => {
+                if (btn.textContent.trim() === 'See Details') {
+                  // 既に英語の場合はそのまま
+                  return;
+                } else if (btn.textContent.includes('詳細を見る') || btn.textContent.includes('詳細')) {
+                  btn.textContent = 'See Details';
+                  console.log('ボタン翻訳:', btn.textContent);
+                }
+              });
+            });
+          }
+        }
+        
+        // 初回実行
+        setTimeout(translateGuideCards, 100);
+        setTimeout(translateGuideCards, 500);
+        setTimeout(translateGuideCards, 1000);
+        
+        // 言語変更時の実行
+        document.addEventListener('click', function(e) {
+          if (e.target.getAttribute('data-lang') || e.target.closest('[data-lang]')) {
+            setTimeout(translateGuideCards, 100);
+            setTimeout(translateGuideCards, 500);
+          }
+        });
+        
+        // DOM変更監視
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              setTimeout(translateGuideCards, 100);
+            }
+          });
+        });
+        
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      });
+    </script>
 
     <!-- ナビゲーションボタン -->
     <script src="navigation-buttons.js"></script>
