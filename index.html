@@ -3100,19 +3100,35 @@
               on: {
                 init: function() {
                   console.log('Swiper初期化完了、スライド数:', this.slides.length);
-                  console.log('自動再生開始準備');
-                  // 自動再生を確実に開始
-                  this.autoplay.start();
-                  console.log('自動再生が開始されました');
+                  console.log('自動再生設定:', this.autoplay);
+                  // 1秒後に自動再生を開始
+                  setTimeout(() => {
+                    this.autoplay.start();
+                    console.log('自動再生が開始されました');
+                  }, 1000);
                 },
                 slideChange: function() {
                   console.log('スライド変更 - 現在位置:', this.realIndex);
+                  // 自動再生が停止していないか確認
+                  if (!this.autoplay.running) {
+                    console.log('自動再生が停止しているため再開します');
+                    this.autoplay.start();
+                  }
                 },
                 autoplayStart: function() {
                   console.log('自動再生が正式に開始されました');
                 },
                 autoplayStop: function() {
-                  console.log('自動再生が停止されました');
+                  console.log('自動再生が停止されました - 理由調査中');
+                },
+                touchStart: function() {
+                  console.log('タッチ開始 - 自動再生一時停止');
+                },
+                touchEnd: function() {
+                  console.log('タッチ終了 - 自動再生再開');
+                  setTimeout(() => {
+                    this.autoplay.start();
+                  }, 100);
                 }
               }
             });
@@ -3126,18 +3142,17 @@
           initializeSwiper();
         }, 300);
         
-        // 5秒ごとにデータを更新（頻繁な再初期化を避ける）
-        setInterval(() => {
-          const currentSponsors = loadSponsors();
-          if (currentSponsors.length !== sponsors.length) {
-            sponsors = currentSponsors;
-            renderSponsors();
-            // スライダーを一度だけ再初期化
-            setTimeout(() => {
-              initializeSwiper();
-            }, 100);
-          }
-        }, 10000); // 10秒間隔に変更
+        // 定期更新を一時的に停止してスライダーの自動再生をテスト
+        // setInterval(() => {
+        //   const currentSponsors = loadSponsors();
+        //   if (currentSponsors.length !== sponsors.length) {
+        //     sponsors = currentSponsors;
+        //     renderSponsors();
+        //     setTimeout(() => {
+        //       initializeSwiper();
+        //     }, 100);
+        //   }
+        // }, 30000); // 30秒間隔に変更
       });
 
       // 協賛店ログイン・登録機能
