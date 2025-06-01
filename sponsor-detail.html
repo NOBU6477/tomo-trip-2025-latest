@@ -320,7 +320,9 @@
       // URLパラメータから協賛店IDを取得
       function getSponsorId() {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('id') || '1';
+        const id = urlParams.get('id') || '1';
+        console.log('URLから取得した店舗ID:', id);
+        return id;
       }
 
       // ページ読み込み時に詳細情報を表示
@@ -343,22 +345,25 @@
           }
         }
         
-        // 2. 全体データから探す
+        // 2. 全体データから探す（数値型と文字列型の両方で比較）
         if (!sponsor) {
           const allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
-          sponsor = allStores.find(s => s.id == sponsorId);
+          console.log('全体データ一覧:', allStores.map(s => ({id: s.id, name: s.name})));
+          sponsor = allStores.find(s => s.id == sponsorId || s.id === parseInt(sponsorId));
           console.log('全体データから店舗データ取得:', sponsor);
         }
         
         // 3. 公開用データから探す
         if (!sponsor) {
           const publicSponsors = JSON.parse(localStorage.getItem('publicSponsors')) || [];
-          sponsor = publicSponsors.find(s => s.id == sponsorId);
+          console.log('公開データ一覧:', publicSponsors.map(s => ({id: s.id, name: s.name})));
+          sponsor = publicSponsors.find(s => s.id == sponsorId || s.id === parseInt(sponsorId));
           console.log('公開データから店舗データ取得:', sponsor);
         }
         
-        // 4. 最後にデフォルトデータから探す
-        if (!sponsor) {
+        // 4. デフォルトデータは最終手段としてのみ使用
+        if (!sponsor && sponsorDetails[sponsorId]) {
+          console.warn('注意：デフォルトデータを使用します');
           sponsor = sponsorDetails[sponsorId];
           console.log('デフォルトデータから店舗データ取得:', sponsor);
         }
