@@ -93,6 +93,25 @@
                     <input type="text" class="form-control" id="guide-username" required>
                   </div>
                 </div>
+                
+                <!-- プロフィール画像セクション -->
+                <div class="mt-4">
+                  <label class="form-label">プロフィール画像</label>
+                  <div class="border rounded p-3 text-center">
+                    <div id="profile-preview" class="mb-3">
+                      <img id="profile-image-preview" src="" alt="プロフィール画像プレビュー" class="img-thumbnail d-none" style="max-width: 200px; max-height: 200px;">
+                      <div id="profile-placeholder" class="text-muted">
+                        <i class="bi bi-person-circle" style="font-size: 4rem;"></i>
+                        <p>プロフィール画像を選択してください</p>
+                      </div>
+                    </div>
+                    <div class="d-flex gap-2 justify-content-center">
+                      <button type="button" class="btn btn-outline-primary" id="upload-profile-btn">ファイルを選択</button>
+                      <button type="button" class="btn btn-outline-success" id="camera-profile-btn">カメラで撮影</button>
+                    </div>
+                    <input type="file" id="profile-file-input" accept="image/*" class="d-none">
+                  </div>
+                </div>
               </div>
               
               <!-- 電話番号認証セクション -->
@@ -140,6 +159,49 @@
                     <option value="driving_license">運転免許証</option>
                     <option value="id_card">マイナンバーカード</option>
                   </select>
+                </div>
+                
+                <!-- 身分証明書撮影セクション -->
+                <div id="document-photos-section" class="d-none">
+                  <div class="row g-3">
+                    <!-- 表面写真 -->
+                    <div class="col-md-6">
+                      <label class="form-label">表面写真</label>
+                      <div class="border rounded p-3 text-center">
+                        <div id="front-preview" class="mb-3">
+                          <img id="front-image-preview" src="" alt="表面写真プレビュー" class="img-thumbnail d-none" style="max-width: 100%; max-height: 200px;">
+                          <div id="front-placeholder" class="text-muted">
+                            <i class="bi bi-credit-card" style="font-size: 3rem;"></i>
+                            <p>表面を撮影してください</p>
+                          </div>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center">
+                          <button type="button" class="btn btn-outline-primary btn-sm" id="upload-front-btn">ファイル選択</button>
+                          <button type="button" class="btn btn-outline-success btn-sm" id="camera-front-btn">カメラ撮影</button>
+                        </div>
+                        <input type="file" id="front-file-input" accept="image/*" class="d-none">
+                      </div>
+                    </div>
+                    
+                    <!-- 裏面写真（運転免許証の場合のみ） -->
+                    <div class="col-md-6" id="back-photo-container">
+                      <label class="form-label">裏面写真</label>
+                      <div class="border rounded p-3 text-center">
+                        <div id="back-preview" class="mb-3">
+                          <img id="back-image-preview" src="" alt="裏面写真プレビュー" class="img-thumbnail d-none" style="max-width: 100%; max-height: 200px;">
+                          <div id="back-placeholder" class="text-muted">
+                            <i class="bi bi-credit-card-fill" style="font-size: 3rem;"></i>
+                            <p>裏面を撮影してください</p>
+                          </div>
+                        </div>
+                        <div class="d-flex gap-2 justify-content-center">
+                          <button type="button" class="btn btn-outline-primary btn-sm" id="upload-back-btn">ファイル選択</button>
+                          <button type="button" class="btn btn-outline-success btn-sm" id="camera-back-btn">カメラ撮影</button>
+                        </div>
+                        <input type="file" id="back-file-input" accept="image/*" class="d-none">
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -243,6 +305,206 @@
             alertDiv.classList.add('d-none');
           }, 5000);
         }
+      }
+      
+      // プロフィール画像関連の要素
+      const profileFileInput = document.getElementById('profile-file-input');
+      const profilePreview = document.getElementById('profile-image-preview');
+      const profilePlaceholder = document.getElementById('profile-placeholder');
+      const uploadProfileBtn = document.getElementById('upload-profile-btn');
+      const cameraProfileBtn = document.getElementById('camera-profile-btn');
+      
+      // 身分証明書関連の要素
+      const documentTypeSelect = document.getElementById('document-type');
+      const documentPhotosSection = document.getElementById('document-photos-section');
+      const backPhotoContainer = document.getElementById('back-photo-container');
+      
+      // 身分証明書撮影関連の要素
+      const frontFileInput = document.getElementById('front-file-input');
+      const backFileInput = document.getElementById('back-file-input');
+      const frontPreview = document.getElementById('front-image-preview');
+      const backPreview = document.getElementById('back-image-preview');
+      const frontPlaceholder = document.getElementById('front-placeholder');
+      const backPlaceholder = document.getElementById('back-placeholder');
+      
+      // プロフィール画像のファイル選択
+      uploadProfileBtn.addEventListener('click', function() {
+        profileFileInput.click();
+      });
+      
+      profileFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            profilePreview.src = e.target.result;
+            profilePreview.classList.remove('d-none');
+            profilePlaceholder.classList.add('d-none');
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      // プロフィール画像のカメラ撮影
+      cameraProfileBtn.addEventListener('click', function() {
+        openCameraModal('profile');
+      });
+      
+      // 身分証明書の種類選択
+      documentTypeSelect.addEventListener('change', function() {
+        const selectedType = this.value;
+        if (selectedType) {
+          documentPhotosSection.classList.remove('d-none');
+          
+          // 運転免許証の場合のみ裏面写真を表示
+          if (selectedType === 'driving_license') {
+            backPhotoContainer.classList.remove('d-none');
+          } else {
+            backPhotoContainer.classList.add('d-none');
+          }
+        } else {
+          documentPhotosSection.classList.add('d-none');
+        }
+      });
+      
+      // 身分証明書表面撮影
+      document.getElementById('upload-front-btn').addEventListener('click', function() {
+        frontFileInput.click();
+      });
+      
+      document.getElementById('camera-front-btn').addEventListener('click', function() {
+        openCameraModal('front');
+      });
+      
+      frontFileInput.addEventListener('change', function(e) {
+        handleImageUpload(e, frontPreview, frontPlaceholder);
+      });
+      
+      // 身分証明書裏面撮影
+      document.getElementById('upload-back-btn').addEventListener('click', function() {
+        backFileInput.click();
+      });
+      
+      document.getElementById('camera-back-btn').addEventListener('click', function() {
+        openCameraModal('back');
+      });
+      
+      backFileInput.addEventListener('change', function(e) {
+        handleImageUpload(e, backPreview, backPlaceholder);
+      });
+      
+      // 画像アップロード処理
+      function handleImageUpload(event, previewElement, placeholderElement) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewElement.src = e.target.result;
+            previewElement.classList.remove('d-none');
+            placeholderElement.classList.add('d-none');
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+      
+      // カメラモーダルを開く
+      function openCameraModal(type) {
+        const modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.innerHTML = `
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">カメラで撮影</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body text-center">
+                <video id="camera-video" autoplay muted style="max-width: 100%; height: 300px; background: #000;"></video>
+                <canvas id="camera-canvas" style="display: none;"></canvas>
+                <div class="mt-3">
+                  <button class="btn btn-success" id="capture-btn">撮影</button>
+                  <button class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                </div>
+                <div id="camera-preview" class="mt-3 d-none">
+                  <img id="captured-image" style="max-width: 100%; max-height: 200px;" class="img-thumbnail">
+                  <div class="mt-2">
+                    <button class="btn btn-primary" id="use-photo-btn">この写真を使用</button>
+                    <button class="btn btn-secondary" id="retake-btn">撮り直し</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+        
+        // カメラを起動
+        navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function(stream) {
+            const video = modal.querySelector('#camera-video');
+            video.srcObject = stream;
+            
+            // 撮影ボタン
+            modal.querySelector('#capture-btn').addEventListener('click', function() {
+              const canvas = modal.querySelector('#camera-canvas');
+              const context = canvas.getContext('2d');
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              context.drawImage(video, 0, 0);
+              
+              const dataURL = canvas.toDataURL('image/jpeg');
+              modal.querySelector('#captured-image').src = dataURL;
+              modal.querySelector('#camera-preview').classList.remove('d-none');
+              video.style.display = 'none';
+              modal.querySelector('#capture-btn').style.display = 'none';
+            });
+            
+            // 写真を使用ボタン
+            modal.querySelector('#use-photo-btn').addEventListener('click', function() {
+              const dataURL = modal.querySelector('#captured-image').src;
+              
+              // タイプに応じて適切なプレビューに設定
+              if (type === 'profile') {
+                profilePreview.src = dataURL;
+                profilePreview.classList.remove('d-none');
+                profilePlaceholder.classList.add('d-none');
+              } else if (type === 'front') {
+                frontPreview.src = dataURL;
+                frontPreview.classList.remove('d-none');
+                frontPlaceholder.classList.add('d-none');
+              } else if (type === 'back') {
+                backPreview.src = dataURL;
+                backPreview.classList.remove('d-none');
+                backPlaceholder.classList.add('d-none');
+              }
+              
+              // ストリーム停止とモーダル閉じる
+              stream.getTracks().forEach(track => track.stop());
+              bsModal.hide();
+            });
+            
+            // 撮り直しボタン
+            modal.querySelector('#retake-btn').addEventListener('click', function() {
+              modal.querySelector('#camera-preview').classList.add('d-none');
+              video.style.display = 'block';
+              modal.querySelector('#capture-btn').style.display = 'inline-block';
+            });
+          })
+          .catch(function(err) {
+            modal.querySelector('#camera-video').innerHTML = '<p class="text-danger">カメラにアクセスできません。ファイルを選択してください。</p>';
+          });
+        
+        // モーダル閉じる時にストリームを停止
+        modal.addEventListener('hidden.bs.modal', function() {
+          const video = modal.querySelector('#camera-video');
+          if (video.srcObject) {
+            video.srcObject.getTracks().forEach(track => track.stop());
+          }
+          document.body.removeChild(modal);
+        });
       }
       
       // フォームの送信イベント
