@@ -2781,10 +2781,48 @@
           return text;
         }
         
+        // 混在翻訳を修正する関数
+        function fixMixedTranslation(text) {
+          // 日英混在パターンを完全な英語に修正
+          text = text.replace(/Born and raised in([^\\s]+) local。/g, 'Born and raised in $1, a local resident.');
+          text = text.replace(/([^\\s]+)出身のガイドがlocalhidden名所will introduce/g, 'Local guide from $1 will introduce hidden spots');
+          text = text.replace(/([^\\s]+)guide with over 10 years of residence、that tourists alone cannot find([^\\s]+)の場所I will guide you to/g, '$1 guide with over 10 years of residence will guide you to $2 places that tourists alone cannot find');
+          text = text.replace(/([^\\s]+)is a local guide who knows all the charm of。([^\\s]+)のスポットI will guide you to/g, 'Local guide from $1 who knows all the charm. I will guide you to $2 spots');
+          text = text.replace(/([^\\s]+)のhistoryとcultureに精通したガイドです。([^\\s]+)からculture体験まで幅広くご案内します/g, 'Guide well-versed in $1 history and culture. I will guide you through a wide range from $2 to cultural experiences');
+          
+          // 残った日本語部分を翻訳
+          text = text.replace(/料理/g, 'cuisine');
+          text = text.replace(/ショッピング/g, 'shopping');
+          text = text.replace(/ファッション/g, 'fashion');
+          text = text.replace(/マリンスポーツ/g, 'marine sports');
+          text = text.replace(/ビーチ/g, 'beach');
+          text = text.replace(/音楽/g, 'music');
+          text = text.replace(/エンターテイメント/g, 'entertainment');
+          text = text.replace(/を中心に/g, 'focusing on');
+          text = text.replace(/の魅力をお伝えします/g, ' charm will be shared');
+          text = text.replace(/生活/g, 'lifestyle');
+          text = text.replace(/も体験できます/g, ' can also be experienced');
+          text = text.replace(/ローカルフード/g, 'local food');
+          text = text.replace(/トレンドスポット/g, 'trendy spots');
+          text = text.replace(/を知り尽くしています/g, ' are thoroughly known');
+          text = text.replace(/アート/g, 'art');
+          text = text.replace(/好きの方におすすめです/g, ' lovers are recommended');
+          text = text.replace(/現地ガイドと一緒に/g, 'together with local guide');
+          text = text.replace(/旅行体験を探しましょう/g, 'let\\'s find travel experiences');
+          text = text.replace(/あなたの知識と経験を共有し、収入を得ましょう/g, 'Share your knowledge and experience, and earn income');
+          
+          return text;
+        }
+        
         function translateGuideCards() {
           const lang = localStorage.getItem('selectedLanguage') || 'ja';
           if (lang === 'en') {
             console.log('ガイドカード翻訳開始:', lang);
+            
+            // 翻訳フラグをリセット
+            document.querySelectorAll('[data-translated]').forEach(el => {
+              el.removeAttribute('data-translated');
+            });
             
             // ガイドカード内のテキストを翻訳
             document.querySelectorAll('.guide-card, .card').forEach(card => {
@@ -2841,8 +2879,11 @@
                   text = 'Guide well-versed in Hiroshima history and culture. Specializing in tours visiting Peace Memorial Park, Miyajima, and other historical and natural sites.';
                 }
                 
-                // 動的ガイド用の包括的な翻訳システム
-                if (originalText !== text) {
+                // 混在翻訳をクリーンアップしてから処理
+                if (text.includes('Born and raised in') || text.includes('guide with over 10 years') || text.includes('is a local guide')) {
+                  // 混在状態を修正
+                  text = fixMixedTranslation(text);
+                } else if (originalText !== text) {
                   // 既に翻訳済みの場合はそのまま
                 } else if (text.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/)) {
                   // 日本語文字が含まれている場合の汎用翻訳
