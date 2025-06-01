@@ -512,7 +512,73 @@
       if (guideForm) {
         guideForm.addEventListener('submit', function(e) {
           e.preventDefault();
-          alert('登録が完了しました！');
+          
+          // 入力データを取得
+          const guideName = document.getElementById('guide-name').value;
+          const guideUsername = document.getElementById('guide-username').value;
+          const phoneNumber = document.getElementById('phone-number').value;
+          const verifyStatus = document.getElementById('verify-status').textContent;
+          
+          // バリデーション
+          if (!guideName || !guideUsername) {
+            alert('氏名とユーザー名は必須です。');
+            return;
+          }
+          
+          if (verifyStatus !== '認証済み') {
+            alert('電話番号認証を完了してください。');
+            return;
+          }
+          
+          // 身分証明書の確認
+          const documentType = document.getElementById('document-type').value;
+          if (!documentType) {
+            alert('身分証明書の種類を選択してください。');
+            return;
+          }
+          
+          const frontPreview = document.getElementById('front-image-preview');
+          if (frontPreview.classList.contains('d-none')) {
+            alert('身分証明書の表面写真を撮影してください。');
+            return;
+          }
+          
+          // 運転免許証の場合は裏面も必要
+          if (documentType === 'driving_license') {
+            const backPreview = document.getElementById('back-image-preview');
+            if (backPreview.classList.contains('d-none')) {
+              alert('運転免許証の場合は裏面写真も必要です。');
+              return;
+            }
+          }
+          
+          // プロフィール画像の確認
+          const profilePreview = document.getElementById('profile-image-preview');
+          if (profilePreview.classList.contains('d-none')) {
+            alert('プロフィール画像を設定してください。');
+            return;
+          }
+          
+          // 登録処理のシミュレーション
+          const submitBtn = e.target.querySelector('button[type="submit"]');
+          const originalText = submitBtn.textContent;
+          submitBtn.textContent = '登録中...';
+          submitBtn.disabled = true;
+          
+          // 登録完了後にガイドプロフィール管理画面に遷移
+          setTimeout(function() {
+            // ガイド情報をURLパラメータとして渡す
+            const params = new URLSearchParams({
+              new: 'true',
+              name: guideName,
+              username: guideUsername,
+              phone: phoneNumber,
+              document: documentType
+            });
+            
+            // ガイドプロフィール管理画面に遷移
+            window.location.href = `guide-profile.html?${params.toString()}`;
+          }, 2000);
         });
       }
     });
