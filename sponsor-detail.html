@@ -340,12 +340,16 @@
           document.getElementById('sponsor-access').textContent = sponsor.access;
           document.getElementById('sponsor-benefit-detail').textContent = sponsor.benefitDetail;
           
-          // 写真ギャラリーを表示
+          // 写真ギャラリーを表示（LocalStorageから最新データを取得）
+          const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
+          const currentSponsor = sponsorData.find(s => s.id === parseInt(sponsorId)) || sponsor;
+          
           const galleryContainer = document.getElementById('sponsor-gallery');
-          if (sponsor.gallery && sponsor.gallery.length > 0) {
-            sponsor.gallery.forEach((image, index) => {
+          if (currentSponsor.gallery && currentSponsor.gallery.length > 0) {
+            galleryContainer.innerHTML = '';
+            currentSponsor.gallery.forEach((image, index) => {
               const col = document.createElement('div');
-              col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+              col.className = 'col-12 col-sm-6 col-md-4 mb-3';
               col.innerHTML = `
                 <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
                   <img src="${image.url}" alt="${image.caption}" loading="lazy" />
@@ -357,12 +361,12 @@
               galleryContainer.appendChild(col);
             });
             
-            // 写真が多い場合の「もっと見る」機能
-            if (sponsor.gallery.length > 8) {
+            // 写真が6枚を超える場合は最初の6枚のみ表示
+            if (currentSponsor.gallery.length > 6) {
               galleryContainer.innerHTML = '';
-              sponsor.gallery.slice(0, 8).forEach((image, index) => {
+              currentSponsor.gallery.slice(0, 6).forEach((image, index) => {
                 const col = document.createElement('div');
-                col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+                col.className = 'col-12 col-sm-6 col-md-4 mb-3';
                 col.innerHTML = `
                   <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
                     <img src="${image.url}" alt="${image.caption}" loading="lazy" />
@@ -379,7 +383,7 @@
               moreCol.className = 'col-12 text-center mt-3';
               moreCol.innerHTML = `
                 <button class="btn btn-outline-primary" onclick="showAllImages()">
-                  <i class="bi bi-grid-3x3-gap me-2"></i>すべての写真を見る（${sponsor.gallery.length}枚）
+                  <i class="bi bi-grid-3x3-gap me-2"></i>すべての写真を見る（${currentSponsor.gallery.length}枚）
                 </button>
               `;
               galleryContainer.appendChild(moreCol);
@@ -433,13 +437,14 @@
       // すべての写真を表示
       function showAllImages() {
         const sponsorId = getSponsorId();
-        const sponsor = sponsorDetails[sponsorId];
+        const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        const currentSponsor = sponsorData.find(s => s.id === parseInt(sponsorId)) || sponsorDetails[sponsorId];
         const galleryContainer = document.getElementById('sponsor-gallery');
         
         galleryContainer.innerHTML = '';
-        sponsor.gallery.forEach((image, index) => {
+        currentSponsor.gallery.forEach((image, index) => {
           const col = document.createElement('div');
-          col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+          col.className = 'col-12 col-sm-6 col-md-4 col-lg-3 mb-3';
           col.innerHTML = `
             <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
               <img src="${image.url}" alt="${image.caption}" loading="lazy" />
