@@ -2705,8 +2705,8 @@
         
         if (lang !== 'en') return;
 
-        // ガイドカードの説明文を翻訳
-        document.querySelectorAll('.card p, .guide-card p').forEach(desc => {
+        // ガイドカードの説明文を翻訳（より広範囲のセレクタ）
+        document.querySelectorAll('.card p, .guide-card p, .card-text, [class*="description"], [class*="desc"]').forEach(desc => {
           const text = desc.textContent.trim();
           console.log('処理中のテキスト:', text);
           
@@ -2753,6 +2753,95 @@
           } else if (text.includes('福岡県のアクティビティに特化したツアーを提供しています')) {
             desc.textContent = 'We provide tours specializing in Fukuoka Prefecture activities. You can also enjoy nature.';
             console.log('福岡ガイド翻訳完了');
+          } else if (text.includes('生まれも育ちも') && text.includes('の地元っ子')) {
+            desc.textContent = 'Born and raised local resident. We propose plans tailored to your interests including hot springs and relaxation.';
+            console.log('地元っ子ガイド翻訳完了');
+          } else if (text.includes('の歴史と文化に精通したガイドです')) {
+            desc.textContent = 'Guide well-versed in local history and culture. We will guide you through a wide range from music to entertainment.';
+            console.log('歴史文化ガイド翻訳完了');
+          } else if (text.includes('で育った地元民ならではの視点で') && text.includes('を案内します')) {
+            desc.textContent = 'From the perspective of a local who grew up here, we will guide you to shopping spots and fashion areas.';
+            console.log('地元民視点ガイド翻訳完了');
+          } else if (text.includes('の自然や文化を愛する地元ガイド')) {
+            desc.textContent = 'Local guide who loves the nature and culture of the area. We especially share local charm and can also guide you to traditional spots.';
+            console.log('自然文化ガイド翻訳完了');
+          } else if (text.includes('出身のガイドが地元の隠れた名所をご紹介')) {
+            desc.textContent = 'Local guide will introduce hidden spots. Especially rich in activity and craft spots.';
+            console.log('隠れた名所ガイド翻訳完了');
+          } else if (text.includes('在住10年以上のガイドが、観光客だけでは見つけられない') && text.includes('にご案内します')) {
+            desc.textContent = 'Guide with over 10 years of residence will guide you to places that tourists alone cannot find.';
+            console.log('在住ガイド翻訳完了');
+          } else if (text.includes('秋田県在住10年以上のガイドが、観光客だけでは見つけられない温泉やリラクゼーションの場所にご案内します')) {
+            desc.textContent = 'Guide with over 10 years of residence in Akita Prefecture will guide you to hot spring and relaxation places that tourists alone cannot find.';
+            console.log('秋田在住ガイド翻訳完了');
+          } else if (text.includes('沖縄県のローカルフードやトレンドスポットを知り尽くしています。アクティビティ好きの方におすすめです')) {
+            desc.textContent = 'We know all about Okinawa Prefecture local food and trendy spots. Recommended for those who like activities.';
+            console.log('沖縄ローカルフードガイド翻訳完了');
+          } else if (text.includes('生まれも育ちも北海道の地元っ子。建築や街歩きなど、あなたの興味に合わせたプランをご提案します')) {
+            desc.textContent = 'Born and raised in Hokkaido, a local resident. We propose plans tailored to your interests, including architecture and city walks.';
+            console.log('北海道地元っ子ガイド翻訳完了');
+          } else if (text.includes('生まれも育ちも奈良県の地元っ子。工芸品やお土産など、あなたの興味に合わせたプランをご提案します')) {
+            desc.textContent = 'Born and raised in Nara Prefecture, a local resident. We propose plans tailored to your interests, including crafts and souvenirs.';
+            console.log('奈良地元っ子ガイド翻訳完了');
+          } else if (text.includes('東京都在住10年以上のガイドが、観光客だけでは見つけられない温泉やリラクゼーションの場所にご案内します')) {
+            desc.textContent = 'Guide with over 10 years of residence in Tokyo will guide you to hot spring and relaxation places that tourists alone cannot find.';
+            console.log('東京在住ガイド翻訳完了');
+          } else if (text.includes('徳島県の自然や文化を愛する地元ガイド。特に伝統文化の魅力をお伝えします。祭りにもご案内可能です')) {
+            desc.textContent = 'Local guide who loves the nature and culture of Tokushima Prefecture. We especially share the charm of traditional culture and can also guide you to festivals.';
+            console.log('徳島自然文化ガイド翻訳完了');
+          } else if (text.includes('沖縄県の歴史と文化に精通したガイドです。工芸品からお土産まで幅広くご案内します')) {
+            desc.textContent = 'Guide well-versed in Okinawa Prefecture history and culture. We will guide you through a wide range from crafts to souvenirs.';
+            console.log('沖縄歴史文化ガイド翻訳完了');
+          } else if (text.includes('新潟県出身のガイドが地元の隠れた名所をご紹介。特に建築スポットが充実しています')) {
+            desc.textContent = 'Guide from Niigata Prefecture will introduce local hidden spots. Especially rich in architectural spots.';
+            console.log('新潟隠れた名所ガイド翻訳完了');
+          } else if (text.includes('東京都の歴史と文化に精通したガイドです。写真スポットから観光まで幅広くご案内します')) {
+            desc.textContent = 'Guide well-versed in Tokyo history and culture. We will guide you through a wide range from photography spots to sightseeing.';
+            console.log('東京歴史文化ガイド翻訳完了');
+          } else if (text.includes('長崎県出身のガイドが地元の隠れた名所をご紹介。特にアクティビティスポットが充実しています')) {
+            desc.textContent = 'Guide from Nagasaki Prefecture will introduce local hidden spots. Especially rich in activity spots.';
+            console.log('長崎隠れた名所ガイド翻訳完了');
+          } else if (text.includes('アクティビティと自然を中心に') && text.includes('の魅力をお伝えします')) {
+            desc.textContent = 'Focusing on activities and nature, we will share the charm of the area. You can also experience local life and culture.';
+            console.log('アクティビティ自然ガイド翻訳完了');
+          } else if (text.includes('のローカルフードやトレンドスポットを知り尽くしています')) {
+            desc.textContent = 'We know all about local food and trendy spots. Recommended for those who like sake brewery tours.';
+            console.log('ローカルフードガイド翻訳完了');
+          } else if (text.includes('アクティビティと自然を中心に、東京都の魅力をお伝えします')) {
+            desc.textContent = 'Focusing on activities and nature, we will share the charm of Tokyo. You can also experience local life and culture.';
+            console.log('東京アクティビティガイド翻訳完了');
+          } else if (text.includes('千葉県の歴史に特化したツアーを提供しています')) {
+            desc.textContent = 'We provide tours specializing in Chiba Prefecture history. You can also enjoy temples.';
+            console.log('千葉歴史ガイド翻訳完了');
+          } else if (text.includes('鳥取県のローカルガイドやトレンドスポットを知り尽くしています')) {
+            desc.textContent = 'We know all about Tottori Prefecture local guides and trendy spots. Recommended for those who like shopping.';
+            console.log('鳥取ガイド翻訳完了');
+          } else {
+            // 包括的な翻訳パターン（最後の手段）
+            if (text.includes('ガイド') || text.includes('案内') || text.includes('ご紹介') || text.includes('プラン')) {
+              if (text.includes('秋田')) {
+                desc.textContent = 'Born and raised in Akita Prefecture, a local resident. We propose plans tailored to your interests, including architecture and city walks.';
+                console.log('秋田ガイド翻訳完了');
+              } else if (text.includes('栃木')) {
+                desc.textContent = 'Guide well-versed in Tochigi Prefecture history and culture. We will guide you through a wide range from music to entertainment.';
+                console.log('栃木ガイド翻訳完了');
+              } else if (text.includes('奈良')) {
+                desc.textContent = 'Local guide who loves the nature and culture of Nara Prefecture. We especially share the charm of traditional crafts and can also guide you to souvenir spots.';
+                console.log('奈良ガイド翻訳完了');
+              } else if (text.includes('千葉')) {
+                desc.textContent = 'We provide tours specializing in Chiba Prefecture history. You can also enjoy temples.';
+                console.log('千葉ガイド翻訳完了');
+              } else if (text.includes('鳥取')) {
+                desc.textContent = 'We know all about Tottori Prefecture local food and trendy spots. Recommended for those who like shopping.';
+                console.log('鳥取ガイド翻訳完了');
+              } else if (text.includes('東京')) {
+                desc.textContent = 'Focusing on activities and nature, we will share the charm of Tokyo. You can also experience local life and culture.';
+                console.log('東京その他ガイド翻訳完了');
+              } else {
+                desc.textContent = 'Local guide who will introduce you to the charm of the area. We provide various tour experiences tailored to your interests.';
+                console.log('一般ガイド翻訳完了:', text.substring(0, 30) + '...');
+              }
+            }
           }
         });
 
