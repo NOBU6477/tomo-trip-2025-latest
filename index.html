@@ -2839,32 +2839,47 @@
 
       // 協賛店データを動的に読み込む関数
       function loadSponsors() {
+        console.log('協賛店データを読み込み中...');
+        
         // LocalStorageから公開済みの協賛店データを取得
         const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
-        const publicSponsors = JSON.parse(localStorage.getItem('publicSponsors')) || [];
+        console.log('登録済み協賛店データ:', sponsorData);
         
         // 公開中の協賛店のみを取得
         const activeSponsors = sponsorData.filter(sponsor => sponsor.status === 'active');
-        
-        // デフォルトデータと統合
-        const defaultSponsors = [
-          { id: 1, name: "◯◯温泉旅館", benefit: "宿泊10%オフ", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo1" },
-          { id: 2, name: "地元レストラン", benefit: "ドリンク1杯無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo2" },
-          { id: 3, name: "お土産屋", benefit: "5%割引", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo3" },
-          { id: 4, name: "カフェ◯◯", benefit: "デザート無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo4" },
-          { id: 5, name: "観光案内所", benefit: "地図無料配布", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo5" }
-        ];
+        console.log('公開中の協賛店:', activeSponsors);
         
         // 登録済み協賛店をスライダー用に変換
         const registeredSponsors = activeSponsors.map(sponsor => ({
           id: sponsor.id,
           name: sponsor.name,
           benefit: sponsor.benefit,
-          logo: sponsor.gallery && sponsor.gallery.length > 0 ? sponsor.gallery[0].url : sponsor.logo
+          logo: sponsor.gallery && sponsor.gallery.length > 0 ? sponsor.gallery[0].url : sponsor.logo,
+          category: sponsor.category || 'その他',
+          location: sponsor.address || '',
+          isRegistered: true
         }));
         
-        // デフォルトデータと登録済みデータを統合
-        sponsors = [...defaultSponsors, ...registeredSponsors];
+        // デフォルトデータ（登録済みIDと重複しないもののみ）
+        const defaultSponsors = [
+          { id: 1, name: "◯◯温泉旅館", benefit: "宿泊10%オフ", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo1", isRegistered: false },
+          { id: 3, name: "お土産屋", benefit: "5%割引", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo3", isRegistered: false },
+          { id: 4, name: "カフェ◯◯", benefit: "デザート無料", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo4", isRegistered: false },
+          { id: 5, name: "観光案内所", benefit: "地図無料配布", logo: "https://placehold.co/100x100/e3f2fd/1976d2/png?text=Logo5", isRegistered: false }
+        ];
+        
+        // 登録済みのIDを取得
+        const registeredIds = registeredSponsors.map(s => s.id);
+        console.log('登録済みID:', registeredIds);
+        
+        // デフォルトデータから重複IDを除外
+        const availableDefaultSponsors = defaultSponsors.filter(defaultSponsor => 
+          !registeredIds.includes(defaultSponsor.id)
+        );
+        
+        // 登録済みデータを優先して統合
+        sponsors = [...registeredSponsors, ...availableDefaultSponsors];
+        console.log('最終的な協賛店リスト:', sponsors);
         
         return sponsors;
       }
@@ -2895,6 +2910,11 @@
           loadSponsors();
           renderSponsors();
           
+          // Swiperが存在する場合は再初期化
+          if (window.sponsorSwiper) {
+            window.sponsorSwiper.update();
+          }
+          
           return true;
         } catch (error) {
           console.error('公開データ更新エラー:', error);
@@ -2904,9 +2924,17 @@
 
       // DOM読み込み完了後に実行
       document.addEventListener('DOMContentLoaded', function() {
+        console.log('ページ初期化開始');
         // 最新のデータを読み込んでからレンダリング
         loadSponsors();
         renderSponsors();
+        
+        // 5秒ごとに自動更新（登録済みデータの反映確保）
+        setInterval(() => {
+          console.log('定期的なデータ更新実行');
+          loadSponsors();
+          renderSponsors();
+        }, 5000);
 
         const swiper = new Swiper('.sponsor-swiper', {
           slidesPerView: 1,
