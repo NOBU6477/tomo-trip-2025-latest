@@ -1075,28 +1075,50 @@
             sampleTourTitle.textContent = 'Sample Tour Plans';
           }
           
+          // 全てのテキスト要素を翻訳
+          console.log('ガイド詳細翻訳開始:', lang);
+          
           // ツアープランの詳細翻訳
-          document.querySelectorAll('.tour-plan, .card').forEach(card => {
-            const text = card.innerHTML;
-            card.innerHTML = text
-              .replace(/渋谷区ハイライトツアー/g, 'Shibuya District Highlights Tour')
-              .replace(/渋谷区グルメ満喫ツアー/g, 'Shibuya Gourmet Experience Tour')
-              .replace(/東京都の魅力がつまった本場谷区を巡る特別なツアーです。地元の人だけが知る隠れた名所や、観光客に人気のスポットもバランスよく案内します。/g, 'A special tour exploring the authentic Shibuya district filled with Tokyo\'s charm. We guide you through hidden gems known only to locals and popular tourist spots in a well-balanced way.')
-              .replace(/東京都渋谷区の美味しいグルメスポットを巡るフードツアーです。地元の人だけが知る名店、最新のトレンド店まで、様々なジャンルを楽しめます。/g, 'A food tour exploring delicious gourmet spots in Shibuya, Tokyo. Enjoy various genres from famous restaurants known only to locals to the latest trendy spots.')
-              .replace(/所要時間/g, 'Duration')
-              .replace(/約(\d+)時間/g, 'About $1 hours')
-              .replace(/対応人数/g, 'Group Size')
-              .replace(/(\d+)〜(\d+)人/g, '$1-$2 people')
-              .replace(/料金/g, 'Fee')
-              .replace(/¥(\d+,?\d*)/g, '¥$1')
-              .replace(/\/人/g, '/person')
-              .replace(/\(交通費・食事代別\)/g, '(Transportation and meals not included)')
-              .replace(/\(食事代3店舗分込み\)/g, '(Meals at 3 restaurants included)')
-              .replace(/セッション料金/g, 'Session Fee')
-              .replace(/1 Session = 2時間の基本ガイドサービス/g, '1 Session = 2 hours of basic guide service')
-              .replace(/通常24時間以内に返信/g, 'Usually replies within 24 hours')
-              .replace(/過去24時間以内に確認/g, 'Checked within the last 24 hours')
-              .replace(/本人確認済みガイド/g, 'Verified Guide');
+          document.querySelectorAll('*').forEach(element => {
+            // テキストノードのみを処理
+            for (let i = 0; i < element.childNodes.length; i++) {
+              const node = element.childNodes[i];
+              if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                let text = node.textContent;
+                let originalText = text;
+                
+                // ツアー名の翻訳
+                text = text.replace(/那覇市ハイライトツアー/g, 'Naha City Highlights Tour');
+                text = text.replace(/那覇市グルメ満喫ツアー/g, 'Naha Gourmet Experience Tour');
+                
+                // 詳細情報の翻訳
+                text = text.replace(/所要時間/g, 'Duration');
+                text = text.replace(/約(\d+)時間/g, 'About $1 hours');
+                text = text.replace(/対応人数/g, 'Group Size');
+                text = text.replace(/(\d+)～(\d+)人/g, '$1-$2 people');
+                text = text.replace(/(\d+)〜(\d+)人/g, '$1-$2 people');
+                text = text.replace(/料金/g, 'Fee');
+                text = text.replace(/¥(\d+,?\d*)／人/g, '¥$1/person');
+                text = text.replace(/／人/g, '/person');
+                text = text.replace(/\(交通費・食事代別\)/g, '(Transportation and meals not included)');
+                text = text.replace(/\(食事代3店舗分込み\)/g, '(Meals at 3 restaurants included)');
+                text = text.replace(/セッション料金/g, 'Session Fee');
+                text = text.replace(/1 Session = 2時間の基本ガイドサービス/g, '1 Session = 2 hours of basic guide service');
+                text = text.replace(/通常24時間以内に返信/g, 'Usually replies within 24 hours');
+                text = text.replace(/本人確認済みガイド/g, 'Verified Guide');
+                
+                // 説明文の翻訳
+                text = text.replace(/沖縄県の魅力がつまった那覇市を巡る特別なツアーです。地元の人だけが知る隠れた名所や、観光客に人気のスポットもバランスよく案内します。/g, 
+                  'A special tour exploring Naha City filled with Okinawa\'s charm. We guide you through hidden gems known only to locals and popular tourist spots in a well-balanced way.');
+                text = text.replace(/沖縄県那覇市の美味しいグルメスポットを巡るフードツアーです。地元の人だけが知る名店、最新のトレンド店まで、様々なジャンルを楽しめます。/g,
+                  'A food tour exploring delicious gourmet spots in Naha, Okinawa. Enjoy various genres from famous restaurants known only to locals to the latest trendy spots.');
+                
+                if (text !== originalText) {
+                  console.log('翻訳実行:', originalText, '->', text);
+                  node.textContent = text;
+                }
+              }
+            }
           });
           
           // 地図のGoogle Maps言語設定
@@ -1114,14 +1136,32 @@
         }
       }
       
-      // 初回実行
+      // 複数回実行してコンテンツが読み込まれてから翻訳
+      setTimeout(translateGuideDetailsContent, 100);
       setTimeout(translateGuideDetailsContent, 500);
+      setTimeout(translateGuideDetailsContent, 1000);
+      setTimeout(translateGuideDetailsContent, 2000);
       
       // 言語変更時にも実行
       document.addEventListener('click', function(e) {
-        if (e.target.getAttribute('data-lang')) {
+        if (e.target.getAttribute('data-lang') || e.target.closest('[data-lang]')) {
+          setTimeout(translateGuideDetailsContent, 100);
           setTimeout(translateGuideDetailsContent, 500);
         }
+      });
+      
+      // MutationObserverでDOM変更を監視
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            setTimeout(translateGuideDetailsContent, 100);
+          }
+        });
+      });
+      
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
       });
     });
   </script>
