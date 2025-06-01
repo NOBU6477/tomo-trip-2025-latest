@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>協賛店管理画面 - Local Guide</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+      }
+      .dashboard-header {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        color: white;
+        padding: 2rem 0;
+        box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      }
+      .dashboard-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+      }
+      .dashboard-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+      }
+      .stats-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+      }
+      .stats-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #4CAF50, #45a049);
+      }
+      .stats-number {
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(45deg, #4CAF50, #2196F3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .gallery-upload {
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        padding: 3rem 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.8);
+      }
+      .gallery-upload:hover {
+        border-color: #4CAF50;
+        background: rgba(76, 175, 80, 0.05);
+      }
+      .gallery-upload.dragover {
+        border-color: #4CAF50;
+        background: rgba(76, 175, 80, 0.1);
+        transform: scale(1.02);
+      }
+      .uploaded-image {
+        position: relative;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+      }
+      .uploaded-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      }
+      .uploaded-image img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+      .image-controls {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 5px;
+      }
+      .btn-image-control {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        color: white;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+      .btn-delete {
+        background: rgba(220, 53, 69, 0.8);
+      }
+      .btn-delete:hover {
+        background: rgba(220, 53, 69, 1);
+        transform: scale(1.1);
+      }
+      .form-modern {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      }
+      .form-control-modern {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+      }
+      .form-control-modern:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+      }
+      .btn-save {
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        border: none;
+        border-radius: 10px;
+        padding: 12px 30px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.3s ease;
+      }
+      .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+        color: white;
+      }
+      .section-title {
+        color: #2d3748;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        position: relative;
+        padding-left: 1rem;
+      }
+      .section-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #4CAF50, #45a049);
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- セッションチェック -->
+    <script>
+      function checkSponsorSession() {
+        const sponsorSession = localStorage.getItem('sponsorSession');
+        if (!sponsorSession) {
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        const session = JSON.parse(sponsorSession);
+        const now = new Date().getTime();
+        
+        if (now - session.timestamp > 24 * 60 * 60 * 1000) {
+          localStorage.removeItem('sponsorSession');
+          window.location.href = 'index.html';
+          return;
+        }
+        
+        return session;
+      }
+      
+      const session = checkSponsorSession();
+    </script>
+
+    <!-- ダッシュボードヘッダー -->
+    <div class="dashboard-header">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col">
+            <h1 class="mb-1">
+              <i class="bi bi-shop me-2"></i>協賛店管理画面
+            </h1>
+            <p class="mb-0 opacity-75" id="store-welcome">ようこそ</p>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-outline-light me-3" onclick="viewPublicPage()">
+              <i class="bi bi-eye me-2"></i>公開ページ確認
+            </button>
+            <button class="btn btn-light" onclick="logout()">
+              <i class="bi bi-box-arrow-right me-2"></i>ログアウト
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container py-4">
+      <!-- 統計情報 -->
+      <div class="row mb-5">
+        <div class="col-md-3 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="view-count">0</div>
+            <div class="text-muted">今月の閲覧数</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="photo-count">0</div>
+            <div class="text-muted">登録写真数</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stats-card">
+            <div class="stats-number text-success">公開中</div>
+            <div class="text-muted">ステータス</div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3">
+          <div class="stats-card">
+            <div class="stats-number" id="last-update">-</div>
+            <div class="text-muted">最終更新</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- 店舗情報編集 -->
+        <div class="col-lg-6 mb-4">
+          <div class="form-modern">
+            <h4 class="section-title">基本情報</h4>
+            <form id="storeInfoForm">
+              <div class="mb-3">
+                <label class="form-label fw-bold">店舗名</label>
+                <input type="text" class="form-control form-control-modern" id="storeName" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">提供特典</label>
+                <input type="text" class="form-control form-control-modern" id="storeBenefit" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">営業時間</label>
+                <input type="text" class="form-control form-control-modern" id="storeHours" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">電話番号</label>
+                <input type="tel" class="form-control form-control-modern" id="storePhone" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">住所</label>
+                <input type="text" class="form-control form-control-modern" id="storeAddress" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">アクセス情報</label>
+                <input type="text" class="form-control form-control-modern" id="storeAccess" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">店舗説明</label>
+                <textarea class="form-control form-control-modern" id="storeDescription" rows="4"></textarea>
+              </div>
+              <div class="mb-4">
+                <label class="form-label fw-bold">特典詳細</label>
+                <textarea class="form-control form-control-modern" id="storeBenefitDetail" rows="3"></textarea>
+              </div>
+              <button type="submit" class="btn btn-save w-100">
+                <i class="bi bi-check-circle me-2"></i>基本情報を更新
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- おすすめポイント編集 -->
+        <div class="col-lg-6 mb-4">
+          <div class="form-modern">
+            <h4 class="section-title">おすすめポイント</h4>
+            <div id="highlights-container">
+              <!-- おすすめポイントがここに表示されます -->
+            </div>
+            <button type="button" class="btn btn-outline-success btn-sm mb-3" onclick="addHighlight()">
+              <i class="bi bi-plus-circle me-1"></i>ポイント追加
+            </button>
+            <button type="button" class="btn btn-save w-100" onclick="saveHighlights()">
+              <i class="bi bi-check-circle me-2"></i>おすすめポイントを更新
+            </button>
+          </div>
+        </div>
+
+        <!-- 写真ギャラリー管理 -->
+        <div class="col-12">
+          <div class="form-modern">
+            <h4 class="section-title">店舗写真ギャラリー</h4>
+            
+            <!-- 写真アップロード -->
+            <div class="gallery-upload mb-4" onclick="document.getElementById('photoUpload').click()">
+              <i class="bi bi-cloud-upload display-4 text-muted mb-3"></i>
+              <h5 class="text-muted">写真をアップロード</h5>
+              <p class="text-muted mb-0">クリックまたはドラッグ&ドロップで写真を追加</p>
+              <input type="file" id="photoUpload" multiple accept="image/*" style="display: none;" />
+            </div>
+
+            <!-- 既存の写真一覧 -->
+            <div class="row" id="gallery-container">
+              <!-- 写真がここに表示されます -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+      // 店舗データの管理
+      let storeData = {};
+
+      // ページ読み込み時の初期化
+      document.addEventListener('DOMContentLoaded', function() {
+        if (session) {
+          loadStoreData();
+          setupEventListeners();
+        }
+      });
+
+      // 店舗データの読み込み
+      function loadStoreData() {
+        const storeId = session.storeId || 1;
+        const allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        storeData = allStores.find(s => s.id === storeId) || {
+          id: storeId,
+          name: session.storeName || "新規店舗",
+          benefit: "",
+          description: "",
+          hours: "",
+          phone: "",
+          address: "",
+          access: "",
+          benefitDetail: "",
+          highlights: [],
+          gallery: [],
+          status: "active"
+        };
+
+        // フォームに既存データを設定
+        document.getElementById('storeName').value = storeData.name || '';
+        document.getElementById('storeBenefit').value = storeData.benefit || '';
+        document.getElementById('storeHours').value = storeData.hours || '';
+        document.getElementById('storePhone').value = storeData.phone || '';
+        document.getElementById('storeAddress').value = storeData.address || '';
+        document.getElementById('storeAccess').value = storeData.access || '';
+        document.getElementById('storeDescription').value = storeData.description || '';
+        document.getElementById('storeBenefitDetail').value = storeData.benefitDetail || '';
+
+        // ウェルカムメッセージを更新
+        document.getElementById('store-welcome').textContent = `ようこそ、${storeData.name}さん`;
+
+        // おすすめポイントと写真を表示
+        renderHighlights();
+        renderGallery();
+        updateStats();
+      }
+
+      // イベントリスナーの設定
+      function setupEventListeners() {
+        // 基本情報フォーム
+        document.getElementById('storeInfoForm').addEventListener('submit', saveStoreInfo);
+
+        // 写真アップロード
+        const fileInput = document.getElementById('photoUpload');
+        fileInput.addEventListener('change', handleFileUpload);
+
+        // ドラッグ&ドロップ
+        const uploadArea = document.querySelector('.gallery-upload');
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('drop', handleDrop);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+      }
+
+      // 基本情報の保存
+      function saveStoreInfo(event) {
+        event.preventDefault();
+        
+        storeData.name = document.getElementById('storeName').value;
+        storeData.benefit = document.getElementById('storeBenefit').value;
+        storeData.hours = document.getElementById('storeHours').value;
+        storeData.phone = document.getElementById('storePhone').value;
+        storeData.address = document.getElementById('storeAddress').value;
+        storeData.access = document.getElementById('storeAccess').value;
+        storeData.description = document.getElementById('storeDescription').value;
+        storeData.benefitDetail = document.getElementById('storeBenefitDetail').value;
+
+        saveToStorage();
+        showSuccess('基本情報を更新しました！');
+      }
+
+      // おすすめポイントの表示
+      function renderHighlights() {
+        const container = document.getElementById('highlights-container');
+        container.innerHTML = '';
+
+        if (storeData.highlights && storeData.highlights.length > 0) {
+          storeData.highlights.forEach((highlight, index) => {
+            addHighlightInput(highlight, index);
+          });
+        } else {
+          addHighlightInput('', 0);
+        }
+      }
+
+      // おすすめポイント入力欄の追加
+      function addHighlightInput(value = '', index = null) {
+        const container = document.getElementById('highlights-container');
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2';
+        div.innerHTML = `
+          <input type="text" class="form-control form-control-modern highlight-input" value="${value}" placeholder="おすすめポイントを入力" />
+          <button type="button" class="btn btn-outline-danger" onclick="removeHighlight(this)">
+            <i class="bi bi-trash"></i>
+          </button>
+        `;
+        container.appendChild(div);
+      }
+
+      // おすすめポイントの追加
+      function addHighlight() {
+        addHighlightInput();
+      }
+
+      // おすすめポイントの削除
+      function removeHighlight(button) {
+        button.parentElement.remove();
+      }
+
+      // おすすめポイントの保存
+      function saveHighlights() {
+        const inputs = document.querySelectorAll('.highlight-input');
+        storeData.highlights = Array.from(inputs)
+          .map(input => input.value.trim())
+          .filter(value => value);
+
+        saveToStorage();
+        showSuccess('おすすめポイントを更新しました！');
+      }
+
+      // 写真ギャラリーの表示
+      function renderGallery() {
+        const container = document.getElementById('gallery-container');
+        container.innerHTML = '';
+
+        if (storeData.gallery && storeData.gallery.length > 0) {
+          storeData.gallery.forEach((image, index) => {
+            const col = document.createElement('div');
+            col.className = 'col-md-6 col-lg-4 mb-3';
+            col.innerHTML = `
+              <div class="uploaded-image">
+                <img src="${image.url}" alt="${image.caption}" />
+                <div class="image-controls">
+                  <button class="btn-image-control btn-delete" onclick="removeImage(${index})">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+            container.appendChild(col);
+          });
+        }
+      }
+
+      // ファイルアップロード処理
+      function handleFileUpload(event) {
+        const files = event.target.files;
+        processFiles(files);
+      }
+
+      // ドラッグ&ドロップ処理
+      function handleDragOver(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('dragover');
+      }
+
+      function handleDragLeave(event) {
+        event.currentTarget.classList.remove('dragover');
+      }
+
+      function handleDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('dragover');
+        const files = event.dataTransfer.files;
+        processFiles(files);
+      }
+
+      // ファイル処理
+      function processFiles(files) {
+        Array.from(files).forEach(file => {
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              addImageToGallery(e.target.result, file.name);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      // ギャラリーに画像追加
+      function addImageToGallery(dataURL, filename) {
+        if (!storeData.gallery) {
+          storeData.gallery = [];
+        }
+
+        storeData.gallery.push({
+          url: dataURL,
+          caption: filename.replace(/\.[^/.]+$/, "") // 拡張子を除いたファイル名
+        });
+
+        saveToStorage();
+        renderGallery();
+        updateStats();
+        showSuccess('写真を追加しました！');
+      }
+
+      // 画像削除
+      function removeImage(index) {
+        if (confirm('この写真を削除しますか？')) {
+          storeData.gallery.splice(index, 1);
+          saveToStorage();
+          renderGallery();
+          updateStats();
+          showSuccess('写真を削除しました！');
+        }
+      }
+
+      // データ保存
+      function saveToStorage() {
+        let allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        const index = allStores.findIndex(s => s.id === storeData.id);
+        
+        if (index >= 0) {
+          allStores[index] = storeData;
+        } else {
+          allStores.push(storeData);
+        }
+
+        localStorage.setItem('sponsorData', JSON.stringify(allStores));
+        
+        // アクティブな店舗データも更新
+        const activeStores = allStores.filter(s => s.status === 'active');
+        localStorage.setItem('activeSponsorData', JSON.stringify(activeStores));
+      }
+
+      // 統計情報の更新
+      function updateStats() {
+        document.getElementById('photo-count').textContent = storeData.gallery ? storeData.gallery.length : 0;
+        document.getElementById('view-count').textContent = Math.floor(Math.random() * 500) + 100; // サンプルデータ
+        document.getElementById('last-update').textContent = new Date().toLocaleDateString('ja-JP');
+      }
+
+      // 成功メッセージの表示
+      function showSuccess(message) {
+        const toast = document.createElement('div');
+        toast.className = 'toast position-fixed top-0 end-0 m-3';
+        toast.style.zIndex = '9999';
+        toast.innerHTML = `
+          <div class="toast-header bg-success text-white">
+            <i class="bi bi-check-circle me-2"></i>
+            <strong class="me-auto">成功</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+          </div>
+          <div class="toast-body">
+            ${message}
+          </div>
+        `;
+        document.body.appendChild(toast);
+        
+        const bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        
+        toast.addEventListener('hidden.bs.toast', () => {
+          document.body.removeChild(toast);
+        });
+      }
+
+      // 公開ページ確認
+      function viewPublicPage() {
+        window.open(`sponsor-detail.html?id=${storeData.id}`, '_blank');
+      }
+
+      // ログアウト
+      function logout() {
+        if (confirm('ログアウトしますか？')) {
+          localStorage.removeItem('sponsorSession');
+          window.location.href = 'index.html';
+        }
+      }
+
+      // セッション自動延長
+      setInterval(() => {
+        const sponsorSession = localStorage.getItem('sponsorSession');
+        if (sponsorSession) {
+          const session = JSON.parse(sponsorSession);
+          session.timestamp = new Date().getTime();
+          localStorage.setItem('sponsorSession', JSON.stringify(session));
+        }
+      }, 30 * 60 * 1000); // 30分ごと
+    </script>
+  </body>
+</html>

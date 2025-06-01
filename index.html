@@ -456,7 +456,21 @@
     <!-- 協賛店スライダー -->
     <section class="bg-white py-4">
       <div class="container">
-        <h2 class="text-center mb-4 fw-bold">協賛パートナー</h2>
+        <div class="row align-items-center mb-4">
+          <div class="col">
+            <h2 class="text-center mb-0 fw-bold">協賛パートナー</h2>
+          </div>
+          <div class="col-auto">
+            <div class="sponsor-auth-buttons">
+              <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#sponsorLoginModal">
+                <i class="bi bi-box-arrow-in-right me-1"></i>協賛店ログイン
+              </button>
+              <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sponsorRegisterModal">
+                <i class="bi bi-plus-circle me-1"></i>新規登録
+              </button>
+            </div>
+          </div>
+        </div>
         <div class="swiper sponsor-swiper">
           <div class="swiper-wrapper" id="sponsor-slider-wrapper">
             <!-- スライドはJavaScriptで挿入されます -->
@@ -2647,6 +2661,84 @@
     <script src="data-reset.js"></script>
     <script src="password-toggle.js"></script>
 
+    <!-- 協賛店ログインモーダル -->
+    <div class="modal fade" id="sponsorLoginModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">協賛店ログイン</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="sponsorLoginForm">
+              <div class="mb-3">
+                <label for="sponsorEmail" class="form-label">メールアドレス</label>
+                <input type="email" class="form-control" id="sponsorEmail" required>
+              </div>
+              <div class="mb-3">
+                <label for="sponsorPassword" class="form-label">パスワード</label>
+                <input type="password" class="form-control" id="sponsorPassword" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">ログイン</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 協賛店新規登録モーダル -->
+    <div class="modal fade" id="sponsorRegisterModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">協賛店新規登録</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="sponsorRegisterForm">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="regStoreName" class="form-label">店舗名 <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="regStoreName" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="regStoreEmail" class="form-label">メールアドレス <span class="text-danger">*</span></label>
+                  <input type="email" class="form-control" id="regStoreEmail" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="regStorePassword" class="form-label">パスワード <span class="text-danger">*</span></label>
+                  <input type="password" class="form-control" id="regStorePassword" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="regStorePhone" class="form-label">電話番号</label>
+                  <input type="tel" class="form-control" id="regStorePhone">
+                </div>
+                <div class="col-12 mb-3">
+                  <label for="regStoreAddress" class="form-label">住所</label>
+                  <input type="text" class="form-control" id="regStoreAddress">
+                </div>
+                <div class="col-12 mb-3">
+                  <label for="regStoreBenefit" class="form-label">提供特典 <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="regStoreBenefit" placeholder="例：10%割引、ドリンク1杯無料など" required>
+                </div>
+                <div class="col-12 mb-3">
+                  <label for="regStoreDescription" class="form-label">店舗説明</label>
+                  <textarea class="form-control" id="regStoreDescription" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                <label class="form-check-label" for="agreeTerms">
+                  利用規約に同意します
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">登録する</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Swiper.js -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
     
@@ -2696,6 +2788,18 @@
       }
       .sponsor-card:hover::before {
         left: 100%;
+      }
+      .sponsor-auth-buttons {
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+      }
+      .sponsor-auth-buttons:hover {
+        opacity: 1;
+      }
+      @media (max-width: 768px) {
+        .sponsor-auth-buttons {
+          margin-top: 1rem;
+        }
       }
     </style>
     <script>
@@ -2754,6 +2858,108 @@
             clickable: true 
           }
         });
+      });
+
+      // 協賛店ログイン・登録機能
+      document.getElementById('sponsorLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const email = document.getElementById('sponsorEmail').value;
+        const password = document.getElementById('sponsorPassword').value;
+        
+        // 簡易認証（実際のサービスでは適切な認証システムを使用）
+        const sponsorAccounts = JSON.parse(localStorage.getItem('sponsorAccounts')) || {};
+        
+        if (sponsorAccounts[email] && sponsorAccounts[email].password === password) {
+          // ログイン成功
+          const session = {
+            email: email,
+            storeName: sponsorAccounts[email].storeName,
+            storeId: sponsorAccounts[email].storeId,
+            timestamp: new Date().getTime()
+          };
+          
+          localStorage.setItem('sponsorSession', JSON.stringify(session));
+          bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal')).hide();
+          
+          // ダッシュボードにリダイレクト
+          window.location.href = 'sponsor-dashboard.html';
+        } else {
+          alert('メールアドレスまたはパスワードが正しくありません。');
+        }
+      });
+
+      document.getElementById('sponsorRegisterForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const storeName = document.getElementById('regStoreName').value;
+        const email = document.getElementById('regStoreEmail').value;
+        const password = document.getElementById('regStorePassword').value;
+        const phone = document.getElementById('regStorePhone').value;
+        const address = document.getElementById('regStoreAddress').value;
+        const benefit = document.getElementById('regStoreBenefit').value;
+        const description = document.getElementById('regStoreDescription').value;
+        const agreeTerms = document.getElementById('agreeTerms').checked;
+        
+        if (!agreeTerms) {
+          alert('利用規約に同意してください。');
+          return;
+        }
+        
+        // アカウント登録
+        let sponsorAccounts = JSON.parse(localStorage.getItem('sponsorAccounts')) || {};
+        
+        if (sponsorAccounts[email]) {
+          alert('このメールアドレスは既に登録されています。');
+          return;
+        }
+        
+        // 新しいストアIDを生成
+        const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        const newStoreId = sponsorData.length > 0 ? Math.max(...sponsorData.map(s => s.id)) + 1 : 1;
+        
+        // アカウント情報を保存
+        sponsorAccounts[email] = {
+          storeName: storeName,
+          password: password,
+          storeId: newStoreId,
+          registeredAt: new Date().getTime()
+        };
+        localStorage.setItem('sponsorAccounts', JSON.stringify(sponsorAccounts));
+        
+        // 店舗データを作成
+        const newStore = {
+          id: newStoreId,
+          name: storeName,
+          benefit: benefit,
+          description: description,
+          phone: phone,
+          address: address,
+          hours: '',
+          access: '',
+          benefitDetail: '',
+          highlights: [],
+          gallery: [],
+          status: 'draft',
+          logo: `https://placehold.co/100x100/e3f2fd/1976d2/png?text=${encodeURIComponent(storeName.charAt(0))}`
+        };
+        
+        sponsorData.push(newStore);
+        localStorage.setItem('sponsorData', JSON.stringify(sponsorData));
+        
+        // セッション作成
+        const session = {
+          email: email,
+          storeName: storeName,
+          storeId: newStoreId,
+          timestamp: new Date().getTime()
+        };
+        localStorage.setItem('sponsorSession', JSON.stringify(session));
+        
+        bootstrap.Modal.getInstance(document.getElementById('sponsorRegisterModal')).hide();
+        
+        alert('登録が完了しました！管理画面に移動します。');
+        window.location.href = 'sponsor-dashboard.html';
       });
     </script>
   </body>
