@@ -122,6 +122,21 @@
         background: rgba(220, 53, 69, 1);
         transform: scale(1.1);
       }
+      .image-caption {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 8px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .image-caption:hover {
+        background: rgba(0,0,0,0.9);
+      }
       .form-modern {
         background: white;
         border-radius: 15px;
@@ -474,19 +489,42 @@
         if (storeData.gallery && storeData.gallery.length > 0) {
           storeData.gallery.forEach((image, index) => {
             const col = document.createElement('div');
-            col.className = 'col-md-6 col-lg-4 mb-3';
+            col.className = 'col-md-6 col-lg-4 col-xl-3 mb-3';
             col.innerHTML = `
               <div class="uploaded-image">
-                <img src="${image.url}" alt="${image.caption}" />
+                <img src="${image.url}" alt="${image.caption}" loading="lazy" />
                 <div class="image-controls">
-                  <button class="btn-image-control btn-delete" onclick="removeImage(${index})">
+                  <button class="btn-image-control btn-delete" onclick="removeImage(${index})" title="写真を削除">
                     <i class="bi bi-trash"></i>
                   </button>
+                </div>
+                <div class="image-caption">
+                  <small class="text-muted">${image.caption}</small>
                 </div>
               </div>
             `;
             container.appendChild(col);
           });
+          
+          // 写真数の表示
+          const countInfo = document.createElement('div');
+          countInfo.className = 'col-12 mb-3';
+          countInfo.innerHTML = `
+            <div class="alert alert-info d-flex align-items-center">
+              <i class="bi bi-info-circle me-2"></i>
+              <span>登録写真数: ${storeData.gallery.length}/10枚</span>
+            </div>
+          `;
+          container.insertBefore(countInfo, container.firstChild);
+        } else {
+          container.innerHTML = `
+            <div class="col-12">
+              <div class="text-center text-muted py-4">
+                <i class="bi bi-image display-4 mb-3"></i>
+                <p>まだ写真が登録されていません。<br>上のアップロードエリアから写真を追加してください。</p>
+              </div>
+            </div>
+          `;
         }
       }
 
@@ -515,7 +553,22 @@
 
       // ファイル処理
       function processFiles(files) {
-        Array.from(files).forEach(file => {
+        const currentImageCount = storeData.gallery ? storeData.gallery.length : 0;
+        const maxImages = 10;
+        const remainingSlots = maxImages - currentImageCount;
+        
+        if (remainingSlots <= 0) {
+          alert(`写真は最大${maxImages}枚まで登録できます。既存の写真を削除してから新しい写真を追加してください。`);
+          return;
+        }
+        
+        const filesToProcess = Array.from(files).slice(0, remainingSlots);
+        
+        if (files.length > remainingSlots) {
+          alert(`${remainingSlots}枚まで追加できます。${files.length - remainingSlots}枚の写真は追加されませんでした。`);
+        }
+        
+        filesToProcess.forEach(file => {
           if (file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = function(e) {

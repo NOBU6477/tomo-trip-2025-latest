@@ -343,21 +343,49 @@
           // 写真ギャラリーを表示
           const galleryContainer = document.getElementById('sponsor-gallery');
           if (sponsor.gallery && sponsor.gallery.length > 0) {
-            sponsor.gallery.forEach(image => {
+            sponsor.gallery.forEach((image, index) => {
               const col = document.createElement('div');
-              col.className = 'col-md-6 col-lg-4';
+              col.className = 'col-6 col-md-4 col-lg-3 mb-3';
               col.innerHTML = `
                 <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
                   <img src="${image.url}" alt="${image.caption}" loading="lazy" />
                   <div class="image-overlay">
-                    <i class="bi bi-zoom-in" style="font-size: 2rem;"></i>
+                    <i class="bi bi-zoom-in" style="font-size: 1.5rem;"></i>
                   </div>
                 </div>
               `;
               galleryContainer.appendChild(col);
             });
+            
+            // 写真が多い場合の「もっと見る」機能
+            if (sponsor.gallery.length > 8) {
+              galleryContainer.innerHTML = '';
+              sponsor.gallery.slice(0, 8).forEach((image, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+                col.innerHTML = `
+                  <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
+                    <img src="${image.url}" alt="${image.caption}" loading="lazy" />
+                    <div class="image-overlay">
+                      <i class="bi bi-zoom-in" style="font-size: 1.5rem;"></i>
+                    </div>
+                  </div>
+                `;
+                galleryContainer.appendChild(col);
+              });
+              
+              // 「もっと見る」ボタン
+              const moreCol = document.createElement('div');
+              moreCol.className = 'col-12 text-center mt-3';
+              moreCol.innerHTML = `
+                <button class="btn btn-outline-primary" onclick="showAllImages()">
+                  <i class="bi bi-grid-3x3-gap me-2"></i>すべての写真を見る（${sponsor.gallery.length}枚）
+                </button>
+              `;
+              galleryContainer.appendChild(moreCol);
+            }
           } else {
-            galleryContainer.innerHTML = '<p class="text-muted">現在、写真は登録されていません。</p>';
+            galleryContainer.innerHTML = '<div class="col-12"><p class="text-muted text-center py-4">現在、写真は登録されていません。</p></div>';
           }
 
           // おすすめポイントを表示
@@ -400,6 +428,38 @@
         modal.addEventListener('hidden.bs.modal', () => {
           document.body.removeChild(modal);
         });
+      }
+
+      // すべての写真を表示
+      function showAllImages() {
+        const sponsorId = getSponsorId();
+        const sponsor = sponsorDetails[sponsorId];
+        const galleryContainer = document.getElementById('sponsor-gallery');
+        
+        galleryContainer.innerHTML = '';
+        sponsor.gallery.forEach((image, index) => {
+          const col = document.createElement('div');
+          col.className = 'col-6 col-md-4 col-lg-3 mb-3';
+          col.innerHTML = `
+            <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
+              <img src="${image.url}" alt="${image.caption}" loading="lazy" />
+              <div class="image-overlay">
+                <i class="bi bi-zoom-in" style="font-size: 1.5rem;"></i>
+              </div>
+            </div>
+          `;
+          galleryContainer.appendChild(col);
+        });
+        
+        // 「表示を縮小」ボタン
+        const lessCol = document.createElement('div');
+        lessCol.className = 'col-12 text-center mt-3';
+        lessCol.innerHTML = `
+          <button class="btn btn-outline-secondary" onclick="location.reload()">
+            <i class="bi bi-arrow-up me-2"></i>表示を縮小
+          </button>
+        `;
+        galleryContainer.appendChild(lessCol);
       }
 
       // 共有機能
