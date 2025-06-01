@@ -3097,7 +3097,9 @@
               freeMode: false,
               navigation: {
                 nextEl: '.sponsor-next',
-                prevEl: '.sponsor-prev'
+                prevEl: '.sponsor-prev',
+                disabledClass: 'swiper-button-disabled',
+                hiddenClass: 'swiper-button-hidden'
               },
               pagination: { 
                 el: '.swiper-pagination', 
@@ -3135,9 +3137,45 @@
                   setTimeout(() => {
                     this.autoplay.start();
                   }, 100);
+                },
+                navigationNext: function() {
+                  console.log('右矢印ボタンがクリックされました');
+                },
+                navigationPrev: function() {
+                  console.log('左矢印ボタンがクリックされました');
                 }
               }
             });
+            
+            // 手動でナビゲーションボタンの動作確認
+            setTimeout(() => {
+              const nextBtn = document.querySelector('.sponsor-next');
+              const prevBtn = document.querySelector('.sponsor-prev');
+              
+              if (nextBtn) {
+                console.log('右矢印ボタンが見つかりました');
+                nextBtn.addEventListener('click', function() {
+                  console.log('右矢印ボタンの直接クリックイベント');
+                  if (swiper) {
+                    swiper.slideNext();
+                  }
+                });
+              } else {
+                console.log('右矢印ボタンが見つかりません');
+              }
+              
+              if (prevBtn) {
+                console.log('左矢印ボタンが見つかりました');
+                prevBtn.addEventListener('click', function() {
+                  console.log('左矢印ボタンの直接クリックイベント');
+                  if (swiper) {
+                    swiper.slidePrev();
+                  }
+                });
+              } else {
+                console.log('左矢印ボタンが見つかりません');
+              }
+            }, 500);
           }, 200);
         }
         
