@@ -2710,6 +2710,11 @@
           const text = desc.textContent.trim();
           console.log('処理中のテキスト:', text);
           
+          // 地域名のみの場合はスキップ
+          if (text.length < 10 || text.match(/^[都道府県市町村\s]+$/)) {
+            return;
+          }
+          
           // 具体的な説明文パターンを翻訳
           if (text.includes('Tokyo') && text.includes('隠れた名所')) {
             desc.textContent = 'Tokyo hidden spots will be introduced. Gourmet and photography spots are specialty.';
@@ -2801,6 +2806,50 @@
           } else if (text.includes('長崎県出身のガイドが地元の隠れた名所をご紹介。特にアクティビティスポットが充実しています')) {
             desc.textContent = 'Guide from Nagasaki Prefecture will introduce local hidden spots. Especially rich in activity spots.';
             console.log('長崎隠れた名所ガイド翻訳完了');
+          } else if (text.includes('特化したツアーを提供しています') || text.includes('特化したツアーを提供して')) {
+            if (text.includes('建築')) {
+              desc.textContent = 'We provide tours specializing in architecture. You can also enjoy city walks.';
+              console.log('建築特化ツアー翻訳完了');
+            } else if (text.includes('アクティビティ')) {
+              desc.textContent = 'We provide tours specializing in activities. You can also enjoy nature.';
+              console.log('アクティビティ特化ツアー翻訳完了');
+            } else if (text.includes('歴史')) {
+              desc.textContent = 'We provide tours specializing in history. You can also enjoy temples.';
+              console.log('歴史特化ツアー翻訳完了');
+            } else if (text.includes('ショッピング')) {
+              desc.textContent = 'We provide tours specializing in shopping. You can also enjoy fashion.';
+              console.log('ショッピング特化ツアー翻訳完了');
+            } else if (text.includes('ナイトツアー')) {
+              desc.textContent = 'We provide tours specializing in night tours. You can also enjoy gourmet food.';
+              console.log('ナイトツアー特化翻訳完了');
+            } else if (text.includes('登山')) {
+              desc.textContent = 'We provide tours specializing in mountain climbing. You can also enjoy trekking.';
+              console.log('登山特化ツアー翻訳完了');
+            } else if (text.includes('マリンスポーツ')) {
+              desc.textContent = 'We provide tours specializing in marine sports. You can also enjoy beaches.';
+              console.log('マリンスポーツ特化ツアー翻訳完了');
+            } else if (text.includes('工芸品')) {
+              desc.textContent = 'We provide tours specializing in crafts. You can also enjoy souvenirs.';
+              console.log('工芸品特化ツアー翻訳完了');
+            } else {
+              desc.textContent = 'We provide specialized tours. You can enjoy various experiences.';
+              console.log('その他特化ツアー翻訳完了:', text.substring(0, 30) + '...');
+            }
+          } else if (text.includes('沖縄県のアクティビティに特化したツアーを提供しています。自然も併せてお楽しみいただけます')) {
+            desc.textContent = 'We provide tours specializing in Okinawa activities. You can also enjoy nature.';
+            console.log('沖縄アクティビティ特化ツアー翻訳完了');
+          } else if (text.includes('富山県のマリンスポーツに特化したツアーを提供しています。ビーチも併せてお楽しみいただけます')) {
+            desc.textContent = 'We provide tours specializing in Toyama marine sports. You can also enjoy beaches.';
+            console.log('富山マリンスポーツ特化ツアー翻訳完了');
+          } else if (text.includes('新潟県のショッピングに特化したツアーを提供しています。ファッションも併せてお楽しみいただけます')) {
+            desc.textContent = 'We provide tours specializing in Niigata shopping. You can also enjoy fashion.';
+            console.log('新潟ショッピング特化ツアー翻訳完了');
+          } else if (text.includes('沖縄県の歴史に特化したツアーを提供しています。寺院も併せてお楽しみいただけます')) {
+            desc.textContent = 'We provide tours specializing in Okinawa history. You can also enjoy temples.';
+            console.log('沖縄歴史特化ツアー翻訳完了');
+          } else if (text.includes('Photo Spotsと観光を中心に') && text.includes('の魅力をお伝えします')) {
+            desc.textContent = 'Focusing on photo spots and sightseeing, we will share the charm of the area. You can also experience local life and culture.';
+            console.log('Photo Spots観光ガイド翻訳完了');
           } else if (text.includes('アクティビティと自然を中心に') && text.includes('の魅力をお伝えします')) {
             desc.textContent = 'Focusing on activities and nature, we will share the charm of the area. You can also experience local life and culture.';
             console.log('アクティビティ自然ガイド翻訳完了');
@@ -2817,29 +2866,21 @@
             desc.textContent = 'We know all about Tottori Prefecture local guides and trendy spots. Recommended for those who like shopping.';
             console.log('鳥取ガイド翻訳完了');
           } else {
-            // 包括的な翻訳パターン（最後の手段）
-            if (text.includes('ガイド') || text.includes('案内') || text.includes('ご紹介') || text.includes('プラン')) {
-              if (text.includes('秋田')) {
-                desc.textContent = 'Born and raised in Akita Prefecture, a local resident. We propose plans tailored to your interests, including architecture and city walks.';
-                console.log('秋田ガイド翻訳完了');
-              } else if (text.includes('栃木')) {
-                desc.textContent = 'Guide well-versed in Tochigi Prefecture history and culture. We will guide you through a wide range from music to entertainment.';
-                console.log('栃木ガイド翻訳完了');
-              } else if (text.includes('奈良')) {
-                desc.textContent = 'Local guide who loves the nature and culture of Nara Prefecture. We especially share the charm of traditional crafts and can also guide you to souvenir spots.';
-                console.log('奈良ガイド翻訳完了');
-              } else if (text.includes('千葉')) {
-                desc.textContent = 'We provide tours specializing in Chiba Prefecture history. You can also enjoy temples.';
-                console.log('千葉ガイド翻訳完了');
-              } else if (text.includes('鳥取')) {
-                desc.textContent = 'We know all about Tottori Prefecture local food and trendy spots. Recommended for those who like shopping.';
-                console.log('鳥取ガイド翻訳完了');
-              } else if (text.includes('東京')) {
-                desc.textContent = 'Focusing on activities and nature, we will share the charm of Tokyo. You can also experience local life and culture.';
-                console.log('東京その他ガイド翻訳完了');
-              } else {
+            // 強制翻訳：日本語を含むすべてのテキストを翻訳（最後の手段）
+            if (text.match(/[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF]/)) {
+              // 日本語文字が含まれている場合、強制的に翻訳
+              if (text.includes('特化したツアー') || text.includes('ツアーを提供')) {
+                desc.textContent = 'We provide specialized tours. You can enjoy various experiences.';
+                console.log('強制特化ツアー翻訳完了:', text.substring(0, 30) + '...');
+              } else if (text.includes('Photo Spots') || text.includes('観光を中心に')) {
+                desc.textContent = 'Focusing on photo spots and sightseeing, we will share the charm of the area. You can also experience local life and culture.';
+                console.log('強制Photo Spots翻訳完了');
+              } else if (text.includes('ガイド') || text.includes('案内') || text.includes('ご紹介') || text.includes('プラン')) {
                 desc.textContent = 'Local guide who will introduce you to the charm of the area. We provide various tour experiences tailored to your interests.';
-                console.log('一般ガイド翻訳完了:', text.substring(0, 30) + '...');
+                console.log('強制ガイド翻訳完了:', text.substring(0, 30) + '...');
+              } else {
+                desc.textContent = 'Professional local guide. We provide unique tour experiences.';
+                console.log('強制一般翻訳完了:', text.substring(0, 30) + '...');
               }
             }
           }
