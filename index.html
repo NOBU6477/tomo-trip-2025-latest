@@ -199,6 +199,54 @@
         }
       }
 
+      /* スライダーナビゲーションボタンのスタイル */
+      .sponsor-swiper .swiper-button-next,
+      .sponsor-swiper .swiper-button-prev {
+        width: 40px;
+        height: 40px;
+        margin-top: -20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        color: #0d6efd;
+        transition: all 0.3s ease;
+      }
+
+      .sponsor-swiper .swiper-button-next:hover,
+      .sponsor-swiper .swiper-button-prev:hover {
+        background: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transform: scale(1.1);
+      }
+
+      .sponsor-swiper .swiper-button-next::after,
+      .sponsor-swiper .swiper-button-prev::after {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      .sponsor-swiper .swiper-button-next {
+        right: 10px;
+      }
+
+      .sponsor-swiper .swiper-button-prev {
+        left: 10px;
+      }
+
+      /* モバイルでの表示調整 */
+      @media (max-width: 768px) {
+        .sponsor-swiper .swiper-button-next,
+        .sponsor-swiper .swiper-button-prev {
+          width: 35px;
+          height: 35px;
+          margin-top: -17px;
+        }
+        .sponsor-swiper .swiper-button-next::after,
+        .sponsor-swiper .swiper-button-prev::after {
+          font-size: 14px;
+        }
+      }
+
       .guide-filter-fadeIn {
         animation: fadeIn 0.4s ease-out forwards;
       }
@@ -471,10 +519,16 @@
             </div>
           </div>
         </div>
-        <div class="swiper sponsor-swiper">
+        <div class="swiper sponsor-swiper position-relative">
           <div class="swiper-wrapper" id="sponsor-slider-wrapper">
             <!-- スライドはJavaScriptで挿入されます -->
           </div>
+          
+          <!-- ナビゲーションボタン -->
+          <div class="swiper-button-next sponsor-next"></div>
+          <div class="swiper-button-prev sponsor-prev"></div>
+          
+          <!-- ページネーション -->
           <div class="swiper-pagination mt-4"></div>
         </div>
       </div>
@@ -2980,10 +3034,15 @@
             1024: { slidesPerView: 3 }
           },
           autoplay: { 
-            delay: 3000, 
-            disableOnInteraction: false 
+            delay: 4000, 
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
           },
           loop: true,
+          navigation: {
+            nextEl: '.sponsor-next',
+            prevEl: '.sponsor-prev'
+          },
           pagination: { 
             el: '.swiper-pagination', 
             clickable: true 
