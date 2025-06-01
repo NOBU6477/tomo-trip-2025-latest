@@ -330,43 +330,46 @@
         const sponsorId = getSponsorId();
         console.log('公開ページ: 取得した店舗ID:', sponsorId);
         
-        // まず登録済みデータから探す
+        // 登録済みデータを優先して取得
         let sponsor = null;
         
-        // 1. 個別ストレージから取得を試行
-        const individualKey = `sponsor_${sponsorId}`;
-        const individualData = localStorage.getItem(individualKey);
-        if (individualData) {
-          try {
-            sponsor = JSON.parse(individualData);
-            console.log('個別ストレージから店舗データ取得:', sponsor);
-          } catch (e) {
-            console.error('個別データ解析エラー:', e);
+        console.log('公開ページ確認: 店舗ID:', sponsorId);
+        
+        // 1. 全体データから探す（最優先）
+        const allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        console.log('全体データ検索中:', allStores.map(s => ({id: s.id, name: s.name, status: s.status})));
+        
+        // IDを数値と文字列の両方で比較
+        sponsor = allStores.find(s => {
+          const match = s.id == sponsorId || s.id === parseInt(sponsorId);
+          if (match) {
+            console.log('マッチした店舗データ:', s);
+          }
+          return match;
+        });
+        
+        if (sponsor) {
+          console.log('公開ページ確認: 現在の店舗データ:', sponsor);
+          console.log('公開ページ確認: 店舗ID:', sponsor.id);
+          console.log('公開ページ確認: 店舗名:', sponsor.name);
+          console.log('公開ページURL:', `sponsor-detail.html?id=${sponsor.id}`);
+        }
+        
+        // 2. 個別ストレージから取得を試行（補完用）
+        if (!sponsor) {
+          const individualKey = `sponsor_${sponsorId}`;
+          const individualData = localStorage.getItem(individualKey);
+          if (individualData) {
+            try {
+              sponsor = JSON.parse(individualData);
+              console.log('個別ストレージから店舗データ取得:', sponsor);
+            } catch (e) {
+              console.error('個別データ解析エラー:', e);
+            }
           }
         }
         
-        // 2. 全体データから探す（数値型と文字列型の両方で比較）
-        if (!sponsor) {
-          const allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
-          console.log('全体データ一覧:', allStores.map(s => ({id: s.id, name: s.name})));
-          sponsor = allStores.find(s => s.id == sponsorId || s.id === parseInt(sponsorId));
-          console.log('全体データから店舗データ取得:', sponsor);
-        }
-        
-        // 3. 公開用データから探す
-        if (!sponsor) {
-          const publicSponsors = JSON.parse(localStorage.getItem('publicSponsors')) || [];
-          console.log('公開データ一覧:', publicSponsors.map(s => ({id: s.id, name: s.name})));
-          sponsor = publicSponsors.find(s => s.id == sponsorId || s.id === parseInt(sponsorId));
-          console.log('公開データから店舗データ取得:', sponsor);
-        }
-        
-        // 4. デフォルトデータは最終手段としてのみ使用
-        if (!sponsor && sponsorDetails[sponsorId]) {
-          console.warn('注意：デフォルトデータを使用します');
-          sponsor = sponsorDetails[sponsorId];
-          console.log('デフォルトデータから店舗データ取得:', sponsor);
-        }
+        // 3. デフォルトデータは使用しない（登録済みデータ優先）
         
         if (sponsor) {
           document.getElementById('sponsor-name').textContent = sponsor.name || '店舗名未設定';
