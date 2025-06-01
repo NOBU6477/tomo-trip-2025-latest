@@ -507,5 +507,18 @@
     }
   </script>
   <script src="navigation-buttons.js"></script>
+  <script src="translations/translation-data-fix.js"></script>
+  <script src="universal-multilingual.js"></script>
+  <script>
+    // changeLanguage関数と統一多言語システムの連携
+    function changeLanguage(lang) {
+      document.getElementById('current-lang').textContent = lang === 'en' ? 'English' : '日本語';
+      
+      // 統一多言語システムを使用
+      if (window.setUniversalLanguage) {
+        window.setUniversalLanguage(lang);
+      }
+    }
+  </script>
 </body>
 </html>
