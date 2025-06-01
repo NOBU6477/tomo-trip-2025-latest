@@ -428,8 +428,14 @@
         storeData.description = document.getElementById('storeDescription').value;
         storeData.benefitDetail = document.getElementById('storeBenefitDetail').value;
 
-        saveToStorage();
-        showSuccess('基本情報を更新しました！');
+        // 最終更新日時を記録
+        storeData.lastUpdate = new Date().toISOString();
+        storeData.status = 'active'; // ステータスを公開中に設定
+
+        if (saveToStorage()) {
+          updateStats();
+          showSuccess('基本情報を更新しました！');
+        }
       }
 
       // おすすめポイントの表示
@@ -551,7 +557,7 @@
         processFiles(files);
       }
 
-      // ファイル処理
+      // ファイル処理（圧縮機能付き）
       function processFiles(files) {
         const currentImageCount = storeData.gallery ? storeData.gallery.length : 0;
         const maxImages = 10;
@@ -570,13 +576,49 @@
         
         filesToProcess.forEach(file => {
           if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              addImageToGallery(e.target.result, file.name);
-            };
-            reader.readAsDataURL(file);
+            compressAndAddImage(file);
           }
         });
+      }
+
+      // 画像圧縮とギャラリー追加
+      function compressAndAddImage(file) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+          // 最大サイズ設定（600x400）でファイルサイズを大幅削減
+          const maxWidth = 600;
+          const maxHeight = 400;
+          let { width, height } = img;
+          
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width;
+              width = maxWidth;
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height;
+              height = maxHeight;
+            }
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // 圧縮率を0.6に設定してファイルサイズを削減
+          const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.6);
+          addImageToGallery(compressedDataUrl, file.name);
+        };
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
       }
 
       // ギャラリーに画像追加
@@ -590,10 +632,15 @@
           caption: filename.replace(/\.[^/.]+$/, "") // 拡張子を除いたファイル名
         });
 
-        saveToStorage();
-        renderGallery();
-        updateStats();
-        showSuccess('写真を追加しました！');
+        // 最終更新日時を記録
+        storeData.lastUpdate = new Date().toISOString();
+        storeData.status = 'active'; // ステータスを公開中に設定
+
+        if (saveToStorage()) {
+          renderGallery();
+          updateStats();
+          showSuccess('写真を追加しました！');
+        }
       }
 
       // 画像削除
@@ -607,22 +654,106 @@
         }
       }
 
-      // データ保存
+      // データ保存（エラーハンドリング付き）
       function saveToStorage() {
-        let allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
-        const index = allStores.findIndex(s => s.id === storeData.id);
-        
-        if (index >= 0) {
-          allStores[index] = storeData;
-        } else {
-          allStores.push(storeData);
-        }
+        try {
+          let allStores = JSON.parse(localStorage.getItem('sponsorData')) || [];
+          const index = allStores.findIndex(s => s.id === storeData.id);
+          
+          if (index >= 0) {
+            allStores[index] = storeData;
+          } else {
+            allStores.push(storeData);
+          }
 
-        localStorage.setItem('sponsorData', JSON.stringify(allStores));
-        
-        // アクティブな店舗データも更新
-        const activeStores = allStores.filter(s => s.status === 'active');
-        localStorage.setItem('activeSponsorData', JSON.stringify(activeStores));
+          // 容量制限を超える場合の対処
+          const dataString = JSON.stringify(allStores);
+          if (dataString.length > 5000000) { // 5MB制限
+            alert('データ容量が制限を超えています。一部の写真を削除してください。');
+            return false;
+          }
+
+          localStorage.setItem('sponsorData', dataString);
+          
+          // 個別の店舗データも保存（詳細ページ用）
+          const storeKey = `sponsor_${storeData.id}`;
+          localStorage.setItem(storeKey, JSON.stringify(storeData));
+          
+          // アクティブな店舗データも更新
+          const activeStores = allStores.filter(s => s.status === 'active');
+          localStorage.setItem('activeSponsorData', JSON.stringify(activeStores));
+          
+          // メインページのスライダー用データも更新
+          updateMainPageSponsors();
+          
+          return true;
+        } catch (error) {
+          if (error.name === 'QuotaExceededError') {
+            alert('ストレージ容量が不足しています。写真のサイズを小さくするか、一部の写真を削除してください。');
+            // 古いデータをクリーンアップ
+            cleanupOldData();
+          } else {
+            console.error('データ保存エラー:', error);
+            alert('データの保存に失敗しました。');
+          }
+          return false;
+        }
+      }
+
+      // 古いデータのクリーンアップ
+      function cleanupOldData() {
+        try {
+          // 30日以上古いデータを削除
+          const keys = Object.keys(localStorage);
+          const cutoffDate = new Date();
+          cutoffDate.setDate(cutoffDate.getDate() - 30);
+          
+          keys.forEach(key => {
+            if (key.startsWith('sponsor_') || key.startsWith('guide_')) {
+              try {
+                const data = JSON.parse(localStorage.getItem(key));
+                if (data.lastUpdate && new Date(data.lastUpdate) < cutoffDate) {
+                  localStorage.removeItem(key);
+                }
+              } catch (e) {
+                // 無効なデータは削除
+                localStorage.removeItem(key);
+              }
+            }
+          });
+          
+          alert('古いデータをクリーンアップしました。再度お試しください。');
+        } catch (error) {
+          console.error('クリーンアップエラー:', error);
+        }
+      }
+
+      // メインページの協賛店データを更新
+      function updateMainPageSponsors() {
+        try {
+          // メインページで使用する協賛店データを更新
+          const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
+          const publicSponsors = sponsorData.filter(s => s.status === 'active').map(sponsor => ({
+            id: sponsor.id,
+            name: sponsor.name,
+            image: sponsor.gallery && sponsor.gallery.length > 0 ? sponsor.gallery[0].url : 'https://placehold.co/400x300',
+            benefit: sponsor.benefit,
+            category: sponsor.category || 'レストラン',
+            location: sponsor.address || '',
+            description: sponsor.description || '',
+            gallery: sponsor.gallery || [],
+            highlights: sponsor.highlights || [],
+            address: sponsor.address || '',
+            access: sponsor.access || '',
+            benefitDetail: sponsor.benefitDetail || '',
+            phone: sponsor.phone || '',
+            hours: sponsor.hours || ''
+          }));
+          
+          localStorage.setItem('publicSponsors', JSON.stringify(publicSponsors));
+        } catch (error) {
+          console.error('メインページデータ更新エラー:', error);
+        }
       }
 
       // 統計情報の更新

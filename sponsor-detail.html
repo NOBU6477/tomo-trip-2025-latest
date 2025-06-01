@@ -340,14 +340,53 @@
           document.getElementById('sponsor-access').textContent = sponsor.access;
           document.getElementById('sponsor-benefit-detail').textContent = sponsor.benefitDetail;
           
-          // 写真ギャラリーを表示（LocalStorageから最新データを取得）
+          // 写真ギャラリーを表示（複数ソースから最新データを取得）
+          let currentSponsor = sponsor;
+          
+          // 個別ストレージから取得を試行
+          const individualKey = `sponsor_${sponsorId}`;
+          const individualData = localStorage.getItem(individualKey);
+          if (individualData) {
+            try {
+              currentSponsor = JSON.parse(individualData);
+            } catch (e) {
+              console.log('個別データの解析に失敗:', e);
+            }
+          }
+          
+          // 全体データからも取得を試行
           const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
-          const currentSponsor = sponsorData.find(s => s.id === parseInt(sponsorId)) || sponsor;
+          const sponsorFromList = sponsorData.find(s => s.id === parseInt(sponsorId));
+          if (sponsorFromList) {
+            currentSponsor = sponsorFromList;
+          }
+          
+          // 公開用データからも取得を試行
+          const publicSponsors = JSON.parse(localStorage.getItem('publicSponsors')) || [];
+          const publicSponsor = publicSponsors.find(s => s.id === parseInt(sponsorId));
+          if (publicSponsor) {
+            currentSponsor = publicSponsor;
+          }
+          
+          // 基本情報も更新
+          if (currentSponsor.name && currentSponsor.name !== sponsor.name) {
+            document.getElementById('sponsor-name').textContent = currentSponsor.name;
+            document.getElementById('sponsor-benefit').textContent = currentSponsor.benefit || sponsor.benefit;
+            if (currentSponsor.phone) document.getElementById('sponsor-phone').textContent = currentSponsor.phone;
+            if (currentSponsor.hours) document.getElementById('sponsor-hours').textContent = currentSponsor.hours;
+            if (currentSponsor.address) document.getElementById('sponsor-address').textContent = currentSponsor.address;
+            if (currentSponsor.access) document.getElementById('sponsor-access').textContent = currentSponsor.access;
+            if (currentSponsor.benefitDetail) document.getElementById('sponsor-benefit-detail').textContent = currentSponsor.benefitDetail;
+          }
           
           const galleryContainer = document.getElementById('sponsor-gallery');
           if (currentSponsor.gallery && currentSponsor.gallery.length > 0) {
             galleryContainer.innerHTML = '';
-            currentSponsor.gallery.forEach((image, index) => {
+            
+            // 写真が6枚を超える場合は最初の6枚のみ表示
+            const displayImages = currentSponsor.gallery.length > 6 ? currentSponsor.gallery.slice(0, 6) : currentSponsor.gallery;
+            
+            displayImages.forEach((image, index) => {
               const col = document.createElement('div');
               col.className = 'col-12 col-sm-6 col-md-4 mb-3';
               col.innerHTML = `
@@ -361,24 +400,8 @@
               galleryContainer.appendChild(col);
             });
             
-            // 写真が6枚を超える場合は最初の6枚のみ表示
+            // 「もっと見る」ボタン
             if (currentSponsor.gallery.length > 6) {
-              galleryContainer.innerHTML = '';
-              currentSponsor.gallery.slice(0, 6).forEach((image, index) => {
-                const col = document.createElement('div');
-                col.className = 'col-12 col-sm-6 col-md-4 mb-3';
-                col.innerHTML = `
-                  <div class="gallery-image" onclick="openImageModal('${image.url}', '${image.caption}')">
-                    <img src="${image.url}" alt="${image.caption}" loading="lazy" />
-                    <div class="image-overlay">
-                      <i class="bi bi-zoom-in" style="font-size: 1.5rem;"></i>
-                    </div>
-                  </div>
-                `;
-                galleryContainer.appendChild(col);
-              });
-              
-              // 「もっと見る」ボタン
               const moreCol = document.createElement('div');
               moreCol.className = 'col-12 text-center mt-3';
               moreCol.innerHTML = `
