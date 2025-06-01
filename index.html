@@ -2837,6 +2837,40 @@
         });
       }
 
+      // グローバル変数
+      let sponsorSwiper = null;
+      let lastSponsorCount = 0;
+
+      // 下書き状態の協賛店を公開状態に修正
+      function fixDraftSponsors() {
+        const sponsorData = JSON.parse(localStorage.getItem('sponsorData')) || [];
+        let hasChanges = false;
+        
+        sponsorData.forEach(store => {
+          if (store.status !== 'active') {
+            console.log(`協賛店「${store.name}」を公開状態に変更`);
+            store.status = 'active';
+            hasChanges = true;
+          }
+        });
+        
+        if (hasChanges) {
+          localStorage.setItem('sponsorData', JSON.stringify(sponsorData));
+          updatePublicSponsors(sponsorData);
+          console.log('協賛店データを更新しました');
+        }
+      }
+
+      // データ変更が必要かチェックして更新
+      function updateSponsorsIfNeeded() {
+        const currentSponsors = loadSponsors();
+        if (currentSponsors.length !== lastSponsorCount) {
+          console.log('協賛店数に変更があったため更新します');
+          renderSponsors();
+          lastSponsorCount = currentSponsors.length;
+        }
+      }
+
       // 協賛店データを動的に読み込む関数
       function loadSponsors() {
         console.log('協賛店データを読み込み中...');
@@ -2925,16 +2959,18 @@
       // DOM読み込み完了後に実行
       document.addEventListener('DOMContentLoaded', function() {
         console.log('ページ初期化開始');
+        // 登録済み協賛店のステータスを修正
+        fixDraftSponsors();
+        
         // 最新のデータを読み込んでからレンダリング
         loadSponsors();
         renderSponsors();
         
-        // 5秒ごとに自動更新（登録済みデータの反映確保）
+        // 30秒ごとに自動更新（頻度を下げてスムーズさを確保）
         setInterval(() => {
           console.log('定期的なデータ更新実行');
-          loadSponsors();
-          renderSponsors();
-        }, 5000);
+          updateSponsorsIfNeeded();
+        }, 30000);
 
         const swiper = new Swiper('.sponsor-swiper', {
           slidesPerView: 1,
