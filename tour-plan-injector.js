@@ -118,29 +118,71 @@ function extractGuideDataFromPage() {
 function generateTourPlans(prefecture, city, guideName, baseFee) {
   const container = document.createElement('div');
   
+  // 現在の言語設定を取得
+  const currentLang = localStorage.getItem('selectedLanguage') || 'ja';
+  const isEnglish = currentLang === 'en';
+  
   // 地域名が空白の場合は代替テキストを使用
-  const areaName = city || prefecture || '地元';
-  const prefName = prefecture || '地域';
+  const areaName = city || prefecture || (isEnglish ? 'Local Area' : '地元');
+  const prefName = prefecture || (isEnglish ? 'Region' : '地域');
+  
+  // 翻訳テキストの定義
+  const translations = {
+    ja: {
+      highlightTitle: `${areaName}ハイライトツアー`,
+      highlightDesc: `${prefName}の魅力が詰まった${areaName}を巡る特別なツアーです。地元の人だけが知る隠れた名所や、観光客に人気のスポットをバランスよくご案内します。`,
+      gourmetTitle: `${areaName}グルメ満喫ツアー`,
+      gourmetDesc: `${prefName}${areaName}の美味しいグルメスポットを巡るフードツアーです。地元の人だけが知る店や、最新のトレンド店など、様々な食べ物を楽しむことができます。`,
+      duration: '所要時間',
+      about3hours: '約3時間',
+      about4hours: '約4時間',
+      groupSize: '対応人数',
+      people14: '1～4人',
+      people13: '1～3人',
+      fee: '料金',
+      person: '人',
+      transportFood: '交通費・食事代別',
+      mealIncluded: '食事代3店舗分込み'
+    },
+    en: {
+      highlightTitle: `${areaName} Highlights Tour`,
+      highlightDesc: `A special tour exploring ${areaName} filled with ${prefName}'s charm. We guide you through hidden gems known only to locals and popular tourist spots in a well-balanced way.`,
+      gourmetTitle: `${areaName} Gourmet Experience Tour`,
+      gourmetDesc: `A food tour exploring delicious gourmet spots in ${prefName}${areaName}. Enjoy various foods from famous restaurants known only to locals to the latest trendy spots.`,
+      duration: 'Duration',
+      about3hours: 'About 3 hours',
+      about4hours: 'About 4 hours',
+      groupSize: 'Group Size',
+      people14: '1-4 people',
+      people13: '1-3 people',
+      fee: 'Fee',
+      person: 'person',
+      transportFood: 'Transportation and meals not included',
+      mealIncluded: 'Meals at 3 restaurants included'
+    }
+  };
+  
+  const t = translations[currentLang] || translations.ja;
   
   // ツアープラン1: ハイライトツアー
   const plan1 = document.createElement('div');
   plan1.className = 'card mb-3';
   plan1.innerHTML = `
     <div class="card-body">
-      <h5 class="card-title">${areaName}ハイライトツアー</h5>
-      <p class="card-text">${prefName}の魅力が詰まった${areaName}を巡る特別なツアーです。地元の人だけが知る隠れた名所や、観光客に人気のスポットをバランスよくご案内します。</p>
+      <h5 class="card-title">${t.highlightTitle}</h5>
+      <p class="card-text">${t.highlightDesc}</p>
       <hr>
       <div class="d-flex align-items-center mb-2">
         <i class="bi bi-clock me-2"></i>
-        <span>所要時間: 約3時間</span>
+        <span>${t.duration}: ${t.about3hours}</span>
       </div>
       <div class="d-flex align-items-center mb-2">
         <i class="bi bi-people me-2"></i>
-        <span>対応人数: 1～4人</span>
+        <span>${t.groupSize}: ${t.people14}</span>
       </div>
       <div class="d-flex align-items-center">
         <i class="bi bi-cash me-2"></i>
-        <span>料金: ¥${baseFee.toLocaleString()}／人（交通費・食事代別）</span>
+        <span>${t.fee}: ¥${baseFee.toLocaleString()}/${t.person} (${t.transportFood})</span>
       </div>
     </div>
   `;
@@ -150,20 +192,20 @@ function generateTourPlans(prefecture, city, guideName, baseFee) {
   plan2.className = 'card mb-3';
   plan2.innerHTML = `
     <div class="card-body">
-      <h5 class="card-title">${areaName}グルメ満喫ツアー</h5>
-      <p class="card-text">${prefName}${areaName}の美味しいグルメスポットを巡るフードツアーです。地元の人だけが知る店や、最新のトレンド店など、様々な食べ物を楽しむことができます。</p>
+      <h5 class="card-title">${t.gourmetTitle}</h5>
+      <p class="card-text">${t.gourmetDesc}</p>
       <hr>
       <div class="d-flex align-items-center mb-2">
         <i class="bi bi-clock me-2"></i>
-        <span>所要時間: 約4時間</span>
+        <span>${t.duration}: ${t.about4hours}</span>
       </div>
       <div class="d-flex align-items-center mb-2">
         <i class="bi bi-people me-2"></i>
-        <span>対応人数: 1～3人</span>
+        <span>${t.groupSize}: ${t.people13}</span>
       </div>
       <div class="d-flex align-items-center">
         <i class="bi bi-cash me-2"></i>
-        <span>料金: ¥${(baseFee * 1.2).toFixed(0).replace(/(\d)(?=(\d{3})+$)/g, '$1,')}／人（食事代3店舗分込み）</span>
+        <span>${t.fee}: ¥${(baseFee * 1.2).toFixed(0).replace(/(\d)(?=(\d{3})+$)/g, '$1,')}/${t.person} (${t.mealIncluded})</span>
       </div>
     </div>
   `;

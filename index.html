@@ -2713,11 +2713,17 @@
                 let text = desc.textContent;
                 let originalText = text;
                 
-                // 説明文の翻訳
+                // 説明文の翻訳（実際に表示されているテキストに合わせて調整）
+                text = text.replace(/Tokyo隠れた名所を案内します。グルメや写真スポットが得意です。/g, 
+                  'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
                 text = text.replace(/東京の隠れた名所を案内します。グルメや写真スポットが得意です。/g, 
                   'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
+                text = text.replace(/Historyと伝統が息づく京都の魅力をご案内。寺社巡りや伝統文化体験が得意です。/g,
+                  'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.');
                 text = text.replace(/歴史と伝統が息づく京都の魅力を案内。寺社巡りや伝統文化体験が得意です。/g,
                   'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.');
+                text = text.replace(/Osakaならではの食べ歩きや街歩きが専門。地元の人だけが知る名店にご案内します。/g,
+                  'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to famous restaurants known only to locals.');
                 text = text.replace(/大阪ならではの食べ歩きや街歩きが専門。地元の人だけが知る名店にご案内します。/g,
                   'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to famous restaurants known only to locals.');
                 text = text.replace(/北海道の大自然と美食を堪能できるツアーをご提案。四季折々の魅力をお伝えします。/g,
