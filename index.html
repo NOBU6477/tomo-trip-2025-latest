@@ -2765,19 +2765,38 @@
         });
       }
 
+      // 強制的に翻訳を実行する関数
+      function forceTranslateGuides() {
+        console.log('強制翻訳実行');
+        const lang = localStorage.getItem('selectedLanguage') || 'ja';
+        console.log('現在の言語設定:', lang);
+        
+        if (lang === 'en') {
+          translateGuideCards();
+        }
+      }
+
       // 初回実行
       document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM読み込み完了、翻訳実行');
-        translateGuideCards();
+        setTimeout(forceTranslateGuides, 500);
       });
 
       // 言語切り替え時に実行
       document.addEventListener('click', function(e) {
         if (e.target.closest('[data-lang]')) {
           console.log('言語切り替え検出');
-          setTimeout(translateGuideCards, 100);
+          setTimeout(forceTranslateGuides, 200);
         }
       });
+
+      // 定期的に翻訳チェック（英語モード時のみ）
+      setInterval(function() {
+        const lang = localStorage.getItem('selectedLanguage') || 'ja';
+        if (lang === 'en') {
+          forceTranslateGuides();
+        }
+      }, 2000);
     </script>
 
     <!-- ナビゲーションボタン -->
