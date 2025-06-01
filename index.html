@@ -3029,16 +3029,28 @@
         const swiper = new Swiper('.sponsor-swiper', {
           slidesPerView: 1,
           spaceBetween: 16,
+          centeredSlides: true,
           breakpoints: {
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 }
+            640: { 
+              slidesPerView: 2,
+              centeredSlides: false
+            },
+            1024: { 
+              slidesPerView: 3,
+              centeredSlides: false
+            }
           },
           autoplay: { 
             delay: 4000, 
             disableOnInteraction: false,
-            pauseOnMouseEnter: true
+            pauseOnMouseEnter: false,
+            reverseDirection: false,
+            waitForTransition: false
           },
           loop: true,
+          loopedSlides: 2,
+          speed: 600,
+          direction: 'horizontal',
           navigation: {
             nextEl: '.sponsor-next',
             prevEl: '.sponsor-prev'
@@ -3046,6 +3058,17 @@
           pagination: { 
             el: '.swiper-pagination', 
             clickable: true 
+          },
+          on: {
+            init: function() {
+              console.log('Swiper初期化完了');
+            },
+            autoplayStart: function() {
+              console.log('自動再生開始');
+            },
+            autoplayStop: function() {
+              console.log('自動再生停止');
+            }
           }
         });
         
@@ -3056,8 +3079,29 @@
           if (sponsors.length !== previousCount) {
             renderSponsors();
             swiper.update();
+            // 自動再生が停止した場合は再開
+            if (!swiper.autoplay.running) {
+              swiper.autoplay.start();
+            }
           }
         }, 5000);
+
+        // 手動ナビゲーション後の自動再生再開
+        document.querySelector('.sponsor-next')?.addEventListener('click', () => {
+          setTimeout(() => {
+            if (!swiper.autoplay.running) {
+              swiper.autoplay.start();
+            }
+          }, 100);
+        });
+
+        document.querySelector('.sponsor-prev')?.addEventListener('click', () => {
+          setTimeout(() => {
+            if (!swiper.autoplay.running) {
+              swiper.autoplay.start();
+            }
+          }, 100);
+        });
       });
 
       // 協賛店ログイン・登録機能
