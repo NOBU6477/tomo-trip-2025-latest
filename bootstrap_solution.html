@@ -567,35 +567,58 @@
           
           // 登録完了後にガイドプロフィール管理画面に遷移
           setTimeout(function() {
-            // ガイド情報をセッションストレージに保存（アクセス制御のため）
-            const guideInfo = {
-              id: Date.now(),
-              name: guideName,
-              username: guideUsername,
-              phone: phoneNumber,
-              document: documentType,
-              userType: 'guide',
-              isLoggedIn: true,
-              registrationCompleted: true
-            };
+            // プロフィール写真を取得
+            let profileImage = 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=New+Guide';
+            const photoInput = document.getElementById('profile-photo-input');
+            if (photoInput && photoInput.files && photoInput.files[0]) {
+              // 撮影した写真がある場合、それを使用
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                profileImage = e.target.result;
+                saveGuideInfo();
+              };
+              reader.readAsDataURL(photoInput.files[0]);
+              return; // ファイル読み込み完了後にsaveGuideInfo()が呼ばれる
+            }
             
-            // セッションストレージに保存
-            sessionStorage.setItem('currentUser', JSON.stringify(guideInfo));
-            sessionStorage.setItem('guideRegistrationCompleted', 'true');
-            sessionStorage.setItem('userType', 'guide');
-            sessionStorage.setItem('isLoggedIn', 'true');
+            function saveGuideInfo() {
+              // ガイド情報をセッションストレージに保存（アクセス制御のため）
+              const guideInfo = {
+                id: Date.now(),
+                name: guideName,
+                username: guideUsername,
+                phone: phoneNumber,
+                document: documentType,
+                userType: 'guide',
+                isLoggedIn: true,
+                registrationCompleted: true,
+                profileImage: profileImage,
+                city: '東京',
+                bio: '新規登録ガイドです。よろしくお願いします。',
+                specialties: ['観光案内', '文化紹介']
+              };
+              
+              // セッションストレージに保存
+              sessionStorage.setItem('currentUser', JSON.stringify(guideInfo));
+              sessionStorage.setItem('guideRegistrationCompleted', 'true');
+              sessionStorage.setItem('userType', 'guide');
+              sessionStorage.setItem('isLoggedIn', 'true');
+              
+              // ガイド情報をURLパラメータとして渡す
+              const params = new URLSearchParams({
+                new: 'true',
+                name: guideName,
+                username: guideUsername,
+                phone: phoneNumber,
+                document: documentType
+              });
+              
+              // ガイドプロフィール管理画面に遷移
+              window.location.href = `guide-profile.html?${params.toString()}`;
+            }
             
-            // ガイド情報をURLパラメータとして渡す
-            const params = new URLSearchParams({
-              new: 'true',
-              name: guideName,
-              username: guideUsername,
-              phone: phoneNumber,
-              document: documentType
-            });
-            
-            // ガイドプロフィール管理画面に遷移
-            window.location.href = `guide-profile.html?${params.toString()}`;
+            // 写真がない場合はそのまま保存
+            saveGuideInfo();
           }, 2000);
         });
       }
