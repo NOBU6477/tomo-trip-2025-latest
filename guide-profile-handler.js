@@ -698,12 +698,21 @@ function setupSpecialtiesEditFunctions() {
     const specialtyCheckboxes = document.querySelectorAll('.specialty-checkbox:checked');
     const selectedSpecialties = Array.from(specialtyCheckboxes).map(checkbox => checkbox.value);
     
-    // ユーザー情報の更新
-    setCurrentUser({
-      ...getCurrentUser(), 
+    // ユーザー情報の更新（データ同期システム使用）
+    const updateData = {
       languages: selectedLanguages,
       specialties: selectedSpecialties
-    });
+    };
+    
+    if (window.guideDataSync && typeof window.guideDataSync.updateGuideProfile === 'function') {
+      window.guideDataSync.updateGuideProfile(updateData);
+    } else {
+      // フォールバック: 従来のsetCurrentUser関数を使用
+      setCurrentUser({
+        ...getCurrentUser(), 
+        ...updateData
+      });
+    }
     
     // 画面の更新
     updateLanguagesDisplay(selectedLanguages);
@@ -831,12 +840,22 @@ function setupFeeEditFunctions() {
       return;
     }
     
-    // ユーザー情報の更新
-    setCurrentUser({
-      ...getCurrentUser(), 
+    // ユーザー情報の更新（データ同期システム使用）
+    const updateData = {
       baseFee: baseFee,
-      hourlyFee: hourlyFee
-    });
+      hourlyFee: hourlyFee,
+      price: baseFee // 基本料金をpriceフィールドにも設定
+    };
+    
+    if (window.guideDataSync && typeof window.guideDataSync.updateGuideProfile === 'function') {
+      window.guideDataSync.updateGuideProfile(updateData);
+    } else {
+      // フォールバック: 従来のsetCurrentUser関数を使用
+      setCurrentUser({
+        ...getCurrentUser(), 
+        ...updateData
+      });
+    }
     
     // 画面の更新
     const baseFeeDisplay = document.getElementById('guide-base-fee');
