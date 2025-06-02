@@ -297,13 +297,6 @@
         }
       }
       
-      // プロフィール画像関連の要素
-      const profileFileInput = document.getElementById('profile-file-input');
-      const profilePreview = document.getElementById('profile-image-preview');
-      const profilePlaceholder = document.getElementById('profile-placeholder');
-      const uploadProfileBtn = document.getElementById('upload-profile-btn');
-      const cameraProfileBtn = document.getElementById('camera-profile-btn');
-      
       // 身分証明書関連の要素
       const documentTypeSelect = document.getElementById('document-type');
       const documentPhotosSection = document.getElementById('document-photos-section');
@@ -316,29 +309,6 @@
       const backPreview = document.getElementById('back-image-preview');
       const frontPlaceholder = document.getElementById('front-placeholder');
       const backPlaceholder = document.getElementById('back-placeholder');
-      
-      // プロフィール画像のファイル選択
-      uploadProfileBtn.addEventListener('click', function() {
-        profileFileInput.click();
-      });
-      
-      profileFileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            profilePreview.src = e.target.result;
-            profilePreview.classList.remove('d-none');
-            profilePlaceholder.classList.add('d-none');
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-      
-      // プロフィール画像のカメラ撮影
-      cameraProfileBtn.addEventListener('click', function() {
-        openCameraModal('profile');
-      });
       
       // 身分証明書の種類選択
       documentTypeSelect.addEventListener('change', function() {
@@ -397,9 +367,10 @@
         }
       }
       
-      // カメラモーダルを開く
+      // カメラモーダルを開く関数（簡易版）
       function openCameraModal(type) {
-        const modal = document.createElement('div');
+        alert(`${type === 'front' ? '表面' : '裏面'}のカメラ撮影機能は開発中です。ファイル選択をご利用ください。`);
+      }
         modal.className = 'modal fade';
         modal.innerHTML = `
           <div class="modal-dialog modal-lg">
@@ -509,7 +480,7 @@
           const phoneNumber = document.getElementById('phone-number').value;
           const verifyStatus = document.getElementById('verify-status').textContent;
           
-          // 基本情報のバリデーション（必須項目のみ）
+          // 基本情報のバリデーション
           if (!guideName || !guideUsername) {
             alert('氏名とユーザー名は必須です。');
             return;
@@ -517,6 +488,20 @@
           
           if (verifyStatus !== '認証済み') {
             alert('電話番号認証を完了してください。');
+            return;
+          }
+          
+          // 身分証明書の基本情報確認
+          const nationality = document.getElementById('nationality').value;
+          const documentType = document.getElementById('document-type').value;
+          
+          if (!nationality) {
+            alert('国籍を選択してください。');
+            return;
+          }
+          
+          if (!documentType) {
+            alert('身分証明書の種類を選択してください。');
             return;
           }
           
@@ -534,6 +519,8 @@
               name: guideName,
               username: guideUsername,
               phone: phoneNumber,
+              nationality: nationality,
+              documentType: documentType,
               userType: 'guide',
               type: 'guide',
               isLoggedIn: true,
