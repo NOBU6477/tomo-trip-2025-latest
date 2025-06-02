@@ -211,3 +211,119 @@ function showAccessAlert(message, type = 'warning') {
     }, 300);
   }, 5000);
 }
+
+/**
+ * ユーザータイプアクセスモーダルを表示
+ * @param {string} title モーダルタイトル
+ * @param {string} message メッセージ
+ * @param {string} requiredUserType 必要なユーザータイプ ('guide' または 'tourist')
+ */
+function showUserTypeAccessModal(title, message, requiredUserType) {
+  const currentUserType = sessionStorage.getItem('userType') || '未ログイン';
+  
+  const modalHtml = `
+    <div class="modal fade" id="userTypeAccessModal" tabindex="-1" aria-labelledby="userTypeAccessModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-warning">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title" id="userTypeAccessModalLabel">
+              <i class="bi bi-exclamation-triangle me-2"></i>${title}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3">${message}</p>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="alert alert-info">
+                  <small><strong>現在のユーザータイプ:</strong><br>${getUserTypeDisplayText(currentUserType)}</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="alert alert-success">
+                  <small><strong>必要なユーザータイプ:</strong><br>${getUserTypeDisplayText(requiredUserType)}</small>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex gap-2 flex-wrap justify-content-center">
+              ${getActionButtons(requiredUserType)}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 既存のモーダルを削除
+  const existingModal = document.getElementById('userTypeAccessModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // 新しいモーダルを追加
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  // モーダルを表示
+  const modal = new bootstrap.Modal(document.getElementById('userTypeAccessModal'));
+  modal.show();
+}
+
+/**
+ * ユーザータイプの表示テキストを取得
+ */
+function getUserTypeDisplayText(userType) {
+  switch(userType) {
+    case 'guide': return 'ガイド';
+    case 'tourist': return '観光客';
+    default: return '未ログイン';
+  }
+}
+
+/**
+ * 必要なユーザータイプに応じたアクションボタンを生成
+ */
+function getActionButtons(requiredUserType) {
+  if (requiredUserType === 'guide') {
+    return `
+      <a href="bootstrap_solution.html" class="btn btn-primary">
+        <i class="bi bi-person-plus me-1"></i>ガイド登録
+      </a>
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+        <i class="bi bi-x me-1"></i>キャンセル
+      </button>
+    `;
+  } else if (requiredUserType === 'tourist') {
+    return `
+      <button type="button" class="btn btn-primary" onclick="showTouristLogin()">
+        <i class="bi bi-person-check me-1"></i>観光客ログイン
+      </button>
+      <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+        <i class="bi bi-x me-1"></i>キャンセル
+      </button>
+    `;
+  }
+  
+  return `
+    <a href="bootstrap_solution.html" class="btn btn-primary me-2">
+      <i class="bi bi-person-plus me-1"></i>ガイド登録
+    </a>
+    <button type="button" class="btn btn-outline-primary" onclick="showTouristLogin()">
+      <i class="bi bi-person-check me-1"></i>観光客ログイン
+    </button>
+  `;
+}
+
+/**
+ * 観光客ログインを表示
+ */
+function showTouristLogin() {
+  // モーダルを閉じてからアラートを表示
+  const currentModal = bootstrap.Modal.getInstance(document.getElementById('userTypeAccessModal'));
+  if (currentModal) {
+    currentModal.hide();
+  }
+  
+  setTimeout(() => {
+    alert('観光客ログイン機能は開発中です。現在はガイド登録のみ利用可能です。');
+  }, 300);
+}
