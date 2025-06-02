@@ -9,12 +9,32 @@ document.addEventListener('DOMContentLoaded', function() {
   
   console.log(`ガイド詳細ページを初期化中... ガイドID: ${guideId}`);
   
-  // ガイドIDがある場合はデータを読み込み
-  if (guideId) {
-    loadGuideDetails(guideId);
+  // データ同期システムの読み込みを待つ
+  function initializeGuideDetails() {
+    if (guideId) {
+      // 少し遅延を入れて他のスクリプトが完全に読み込まれてから実行
+      setTimeout(() => {
+        loadGuideDetails(guideId);
+      }, 500);
+    } else {
+      console.warn('ガイドIDがURLパラメータに含まれていません');
+      showErrorMessage('ガイドIDが指定されていません。');
+    }
+  }
+  
+  // データ同期システムが利用可能かチェック
+  if (window.guideDataSync) {
+    initializeGuideDetails();
   } else {
-    console.warn('ガイドIDがURLパラメータに含まれていません');
-    showErrorMessage('ガイドIDが指定されていません。');
+    // データ同期システムの読み込みを待つ
+    let checkCount = 0;
+    const checkInterval = setInterval(() => {
+      checkCount++;
+      if (window.guideDataSync || checkCount > 10) {
+        clearInterval(checkInterval);
+        initializeGuideDetails();
+      }
+    }, 100);
   }
   
   // 予約日選択
@@ -38,11 +58,64 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadGuideDetails(guideId) {
   console.log(`ガイドID ${guideId} の詳細情報を読み込み中...`);
   
-  // データ同期システムを使用してガイドデータを取得
+  // データ同期システムからガイドデータを取得
   let guideData = null;
   
+  // 1. データ同期システムから取得を試行
   if (window.guideDataSync && typeof window.guideDataSync.getGuideData === 'function') {
     guideData = window.guideDataSync.getGuideData(guideId);
+    if (guideData) {
+      console.log(`データ同期システムからデータを取得: ${guideData.name}`);
+    }
+  }
+  
+  // 2. データ同期システムで見つからない場合、直接ストレージから検索
+  if (!guideData) {
+    console.log('データ同期システムで見つからないため、直接検索します');
+    
+    // セッションストレージから個別データを検索
+    const individualKey = `guide_${guideId}`;
+    const individualData = sessionStorage.getItem(individualKey);
+    if (individualData) {
+      try {
+        guideData = JSON.parse(individualData);
+        console.log(`セッションストレージからデータを取得: ${guideData.name}`);
+      } catch (e) {
+        console.warn('個別データの解析に失敗:', e);
+      }
+    }
+    
+    // ローカルストレージからガイドリストを検索
+    if (!guideData) {
+      const savedGuides = localStorage.getItem('userAddedGuides');
+      if (savedGuides) {
+        try {
+          const guidesArray = JSON.parse(savedGuides);
+          guideData = guidesArray.find(guide => guide.id.toString() === guideId.toString());
+          if (guideData) {
+            console.log(`ローカルストレージからデータを取得: ${guideData.name}`);
+          }
+        } catch (e) {
+          console.warn('ローカルストレージデータの解析に失敗:', e);
+        }
+      }
+    }
+    
+    // 現在のユーザーデータを確認
+    if (!guideData) {
+      const currentUser = sessionStorage.getItem('currentUser');
+      if (currentUser) {
+        try {
+          const userData = JSON.parse(currentUser);
+          if (userData.id && userData.id.toString() === guideId.toString()) {
+            guideData = userData;
+            console.log(`現在のユーザーデータを使用: ${guideData.name}`);
+          }
+        } catch (e) {
+          console.warn('現在のユーザーデータの解析に失敗:', e);
+        }
+      }
+    }
   }
   
   // データが見つからない場合はエラーメッセージを表示
@@ -51,6 +124,8 @@ function loadGuideDetails(guideId) {
     showErrorMessage('ガイド情報が見つかりませんでした。');
     return;
   }
+  
+  console.log('取得したガイドデータ:', guideData);
   
   // 基本情報の表示
   updateGuideBasicInfo(guideData);
@@ -80,13 +155,27 @@ function loadGuideDetails(guideId) {
  * ガイドの基本情報を更新
  */
 function updateGuideBasicInfo(guideData) {
-  const nameElem = document.getElementById('guide-name');
-  const locationElem = document.getElementById('guide-location');
-  const bioElem = document.getElementById('guide-bio');
+  console.log('基本情報を更新中:', guideData.name);
   
-  if (nameElem) nameElem.textContent = guideData.name || 'ガイド名未設定';
-  if (locationElem) locationElem.textContent = guideData.city || guideData.location || '地域未設定';
-  if (bioElem) bioElem.textContent = guideData.bio || '自己紹介が未設定です。';
+  // 名前の更新
+  const nameElements = document.querySelectorAll('#guide-name, .guide-name, [data-field="name"]');
+  nameElements.forEach(elem => {
+    if (elem) elem.textContent = guideData.name || 'ガイド名未設定';
+  });
+  
+  // 地域の更新
+  const locationElements = document.querySelectorAll('#guide-location, .guide-location, [data-field="location"]');
+  locationElements.forEach(elem => {
+    if (elem) elem.textContent = guideData.city || guideData.location || '地域未設定';
+  });
+  
+  // 自己紹介の更新
+  const bioElements = document.querySelectorAll('#guide-bio, .guide-bio, [data-field="bio"]');
+  bioElements.forEach(elem => {
+    if (elem) elem.textContent = guideData.bio || '自己紹介が未設定です。';
+  });
+  
+  console.log('基本情報の更新が完了しました');
 }
 
 /**
@@ -110,65 +199,105 @@ function updateGuideDetailedInfo(guideData) {
  * ガイドの料金情報を更新
  */
 function updateGuidePricing(guideData) {
-  const priceElements = document.querySelectorAll('[data-field="price"], .guide-price, #guide-price');
-  const price = guideData.price || '価格未設定';
+  console.log('料金情報を更新中:', guideData.name);
+  
+  // 基本料金の表示
+  const price = guideData.price || guideData.baseFee || guideData.fee || '価格未設定';
+  const priceElements = document.querySelectorAll('[data-field="price"], .guide-price, #guide-price, .price-display');
   
   priceElements.forEach(elem => {
-    elem.textContent = typeof price === 'number' ? `¥${price.toLocaleString()}` : price;
+    if (elem) {
+      elem.textContent = typeof price === 'number' ? `¥${price.toLocaleString()}` : price;
+    }
   });
+  
+  // 時間単価がある場合は表示
+  if (guideData.hourlyFee) {
+    const hourlyElements = document.querySelectorAll('[data-field="hourlyFee"], .guide-hourly-fee, #guide-hourly-fee');
+    hourlyElements.forEach(elem => {
+      if (elem) {
+        elem.textContent = `¥${guideData.hourlyFee.toLocaleString()}/時間`;
+      }
+    });
+  }
+  
+  console.log('料金情報の更新が完了しました');
 }
 
 /**
  * ガイドのスキルと特技を更新
  */
 function updateGuideSkills(guideData) {
-  const specialtiesContainer = document.querySelector('[data-field="specialties"], .guide-specialties');
-  if (specialtiesContainer && guideData.specialties) {
-    const specialtiesHtml = guideData.specialties.map(specialty => 
-      `<span class="badge bg-primary me-2 mb-2">${specialty}</span>`
-    ).join('');
-    specialtiesContainer.innerHTML = specialtiesHtml;
-  }
+  console.log('スキルと特技を更新中:', guideData.name);
   
-  // キーワードも表示
-  const keywordsContainer = document.querySelector('[data-field="keywords"], .guide-keywords');
-  if (keywordsContainer && guideData.keywords) {
-    const keywordsHtml = guideData.keywords.map(keyword => 
-      `<span class="badge bg-secondary me-2 mb-2">${keyword}</span>`
-    ).join('');
-    keywordsContainer.innerHTML = keywordsHtml;
-  }
+  // 専門分野の表示
+  const specialtiesContainers = document.querySelectorAll('[data-field="specialties"], .guide-specialties, #guide-specialties');
+  specialtiesContainers.forEach(container => {
+    if (container && guideData.specialties && Array.isArray(guideData.specialties)) {
+      const specialtiesHtml = guideData.specialties.map(specialty => 
+        `<span class="badge bg-primary me-2 mb-2">${specialty}</span>`
+      ).join('');
+      container.innerHTML = specialtiesHtml;
+    }
+  });
+  
+  // キーワードの表示
+  const keywordsContainers = document.querySelectorAll('[data-field="keywords"], .guide-keywords, #guide-keywords');
+  keywordsContainers.forEach(container => {
+    if (container && guideData.keywords && Array.isArray(guideData.keywords)) {
+      const keywordsHtml = guideData.keywords.map(keyword => 
+        `<span class="badge bg-secondary me-2 mb-2">${keyword}</span>`
+      ).join('');
+      container.innerHTML = keywordsHtml;
+    }
+  });
+  
+  console.log('スキルと特技の更新が完了しました');
 }
 
 /**
  * ガイドの言語情報を更新
  */
 function updateGuideLanguages(guideData) {
-  const languagesContainer = document.querySelector('[data-field="languages"], .guide-languages');
+  console.log('言語情報を更新中:', guideData.name);
+  
   const languages = guideData.languages || ['日本語'];
   
-  if (languagesContainer) {
-    const languagesHtml = languages.map(lang => 
-      `<span class="badge bg-info me-2 mb-2">${lang}</span>`
-    ).join('');
-    languagesContainer.innerHTML = languagesHtml;
-  }
+  // 言語バッジコンテナの更新
+  const languagesContainers = document.querySelectorAll('[data-field="languages"], .guide-languages, #guide-languages');
+  languagesContainers.forEach(container => {
+    if (container) {
+      const languagesHtml = languages.map(lang => 
+        `<span class="badge bg-info me-2 mb-2">${lang}</span>`
+      ).join('');
+      container.innerHTML = languagesHtml;
+    }
+  });
   
   // 個別の言語要素も更新
-  const jpLangElem = document.getElementById('guide-language-jp');
-  const enLangElem = document.getElementById('guide-language-en');
+  const jpLangElements = document.querySelectorAll('#guide-language-jp, .guide-language-jp');
+  jpLangElements.forEach(elem => {
+    if (elem) elem.textContent = languages[0] || '日本語';
+  });
   
-  if (jpLangElem) jpLangElem.textContent = languages[0] || '日本語';
-  if (enLangElem && languages[1]) enLangElem.textContent = languages[1];
+  const enLangElements = document.querySelectorAll('#guide-language-en, .guide-language-en');
+  enLangElements.forEach(elem => {
+    if (elem && languages[1]) elem.textContent = languages[1];
+  });
+  
+  console.log('言語情報の更新が完了しました');
 }
 
 /**
  * ガイドのプロフィール画像を更新
  */
 function updateGuideProfileImage(guideData) {
-  const profileImages = document.querySelectorAll('.guide-profile-img, [data-field="profileImage"]');
-  const imageUrl = guideData.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide';
+  console.log('プロフィール画像を更新中:', guideData.name);
   
+  const imageUrl = guideData.profileImage || guideData.imageUrl || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide';
+  
+  // プロフィール画像要素の更新
+  const profileImages = document.querySelectorAll('.guide-profile-img, [data-field="profileImage"], .guide-image, #guide-profile-image');
   profileImages.forEach(img => {
     if (img.tagName === 'IMG') {
       img.src = imageUrl;
@@ -177,6 +306,8 @@ function updateGuideProfileImage(guideData) {
       img.style.backgroundImage = `url(${imageUrl})`;
     }
   });
+  
+  console.log('プロフィール画像の更新が完了しました');
 }
 
 /**
