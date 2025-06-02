@@ -891,13 +891,34 @@ function setupGuideListRedirect() {
   const saveAndViewButton = document.getElementById('save-and-view-guide-list');
   const profileForm = document.getElementById('profile-basic-form');
   
+  console.log('setupGuideListRedirect実行中...');
+  console.log('ボタン要素:', saveAndViewButton);
+  
   if (!saveAndViewButton) {
     console.warn('ガイド一覧遷移ボタンが見つかりません');
+    // DOMが完全に読み込まれてから再試行
+    setTimeout(() => {
+      const retryButton = document.getElementById('save-and-view-guide-list');
+      if (retryButton) {
+        console.log('再試行でボタンを発見、イベントを設定します');
+        setupButtonEvent(retryButton);
+      }
+    }, 1000);
     return;
   }
   
+  setupButtonEvent(saveAndViewButton);
+}
+
+/**
+ * ボタンイベントを設定する共通関数
+ */
+function setupButtonEvent(button) {
+  console.log('ボタンイベントを設定中:', button);
+  
   // 「保存してガイド一覧を見る」ボタンのクリックイベント
-  saveAndViewButton.addEventListener('click', function() {
+  button.addEventListener('click', function(event) {
+    event.preventDefault();
     console.log('保存してガイド一覧を見るボタンがクリックされました');
     
     // ユーザータイプを確認
@@ -905,10 +926,15 @@ function setupGuideListRedirect() {
     const userType = sessionStorage.getItem('userType');
     const isGuide = (currentUser && (currentUser.userType === 'guide' || currentUser.type === 'guide')) || userType === 'guide';
     
+    console.log('ユーザー確認:', { currentUser, userType, isGuide });
+    
     if (!isGuide) {
+      console.log('ガイドではないためアクセス拒否');
       showUserTypeError('ガイド専用機能です', 'この機能はガイドアカウント専用です。ガイドとして登録・ログインしてからご利用ください。');
       return;
     }
+    
+    console.log('ガイドとして認証済み、保存処理を開始します');
     
     // プロフィール情報を保存
     const guideName = document.getElementById('guide-name')?.value || currentUser?.name || '新規ガイド';
@@ -918,46 +944,83 @@ function setupGuideListRedirect() {
     const guideBio = document.getElementById('guide-bio')?.value || '新規登録ガイドです。よろしくお願いします。';
     
     // 保存処理開始
-    saveAndViewButton.textContent = '保存中...';
-    saveAndViewButton.disabled = true;
+    button.textContent = '保存中...';
+    button.disabled = true;
     
-    setTimeout(function() {
-      // ガイドデータを作成・更新
-      const guideData = {
-        id: currentUser?.id || Date.now(),
-        name: guideName,
-        username: guideUsername,
-        location: guideLocation,
-        description: guideBio,
-        fee: sessionFee.replace(/[^\d]/g, ''),
-        rating: '新規',
-        reviews: '0',
-        image: currentUser?.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide',
-        specialties: getSelectedSpecialties() || ['観光案内'],
-        languages: currentUser?.languages || ['日本語'],
-        phone: currentUser?.phone,
-        email: currentUser?.email,
-        isNewGuide: true
-      };
+    console.log('プロフィールデータ取得中...');
+    
+    // ガイドデータを作成・更新
+    const guideData = {
+      id: currentUser?.id || Date.now().toString(),
+      name: guideName,
+      username: guideUsername,
+      location: guideLocation,
+      city: guideLocation,
+      bio: guideBio,
+      description: guideBio,
+      fee: parseInt(sessionFee.replace(/[^\d]/g, '')) || 6000,
+      price: parseInt(sessionFee.replace(/[^\d]/g, '')) || 6000,
+      rating: '新規',
+      reviews: '0',
+      imageUrl: currentUser?.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide',
+      specialties: getSelectedSpecialties() || ['観光案内'],
+      keywords: getSelectedSpecialties() || ['観光案内'],
+      languages: currentUser?.languages || ['日本語'],
+      phone: currentUser?.phone,
+      email: currentUser?.email,
+      userType: 'guide',
+      type: 'guide',
+      isNewGuide: true
+    };
+    
+    console.log('作成されたガイドデータ:', guideData);
+    
+    // データ同期システムを使用してデータを保存
+    if (window.guideDataSync && typeof window.guideDataSync.saveGuideData === 'function') {
+      window.guideDataSync.saveGuideData(guideData);
+      console.log('データ同期システムでガイドデータを保存しました');
+    }
+    
+    // ガイドリストに追加（従来方式も併用）
+    addNewGuideToList(guideData);
+    
+    // セッションストレージも更新
+    const updatedUser = { ...currentUser, ...guideData };
+    sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
+    
+    console.log('ガイドデータの保存が完了しました');
+    
+    // ボタンを元に戻す
+    button.textContent = '保存してガイド一覧を見る';
+    button.disabled = false;
       
-      // ガイドリストに追加
-      addNewGuideToList(guideData);
-      
-      // セッションストレージも更新
-      const updatedUser = { ...currentUser, ...guideData, userType: 'guide', type: 'guide' };
-      sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
-      
-      // ボタンを元に戻す
-      saveAndViewButton.textContent = '保存してガイド一覧を見る';
-      saveAndViewButton.disabled = false;
-      
-      // 成功メッセージを表示
-      showSuccess('プロフィールが保存されました！ガイド一覧ページに移動します。');
-      
-      // ガイド一覧ページに遷移
-      setTimeout(() => {
-        window.location.href = 'index.html#guides';
-      }, 1500);
+    // 成功メッセージを表示
+    showSuccess('プロフィールが保存されました！ガイド一覧ページに移動します。');
+    
+    console.log('ガイド一覧ページに移動します...');
+    
+    // ガイド一覧ページに遷移
+    setTimeout(() => {
+      try {
+        console.log('現在のURL:', window.location.href);
+        console.log('ページ遷移を実行中...');
+        
+        // index.htmlに移動（ガイドセクションに直接移動）
+        window.location.href = './index.html#guides';
+        
+        // 念のため少し遅延を入れて再度確認
+        setTimeout(() => {
+          if (window.location.pathname.includes('guide-profile')) {
+            console.log('最初の遷移が失敗、再試行中...');
+            window.location.replace('./index.html#guides');
+          }
+        }, 500);
+        
+      } catch (error) {
+        console.error('ページ遷移でエラーが発生しました:', error);
+        alert('ガイド一覧ページへの自動移動に失敗しました。手動でトップページに戻ってください。');
+      }
     }, 1000);
   });
   
