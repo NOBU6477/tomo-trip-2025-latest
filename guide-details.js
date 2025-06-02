@@ -3,6 +3,20 @@
  * ガイド情報の表示、予約、チャット機能の制御
  */
 document.addEventListener('DOMContentLoaded', function() {
+  // URLからガイドIDを取得
+  const urlParams = new URLSearchParams(window.location.search);
+  const guideId = urlParams.get('id');
+  
+  console.log(`ガイド詳細ページを初期化中... ガイドID: ${guideId}`);
+  
+  // ガイドIDがある場合はデータを読み込み
+  if (guideId) {
+    loadGuideDetails(guideId);
+  } else {
+    console.warn('ガイドIDがURLパラメータに含まれていません');
+    showErrorMessage('ガイドIDが指定されていません。');
+  }
+  
   // 予約日選択
   setupDateSelection();
   
@@ -22,88 +36,163 @@ document.addEventListener('DOMContentLoaded', function() {
  * ガイド詳細情報を読み込む
  */
 function loadGuideDetails(guideId) {
-  // ガイドデータをローカルストレージから取得を試みる
+  console.log(`ガイドID ${guideId} の詳細情報を読み込み中...`);
+  
+  // データ同期システムを使用してガイドデータを取得
   let guideData = null;
   
-  // ローカルストレージからデータ取得を試みる
-  if (window.guideDetailsManager && typeof window.guideDetailsManager.getGuideById === 'function') {
-    guideData = window.guideDetailsManager.getGuideById(guideId);
-    console.log(`ガイドID ${guideId} のデータを検索しています...`);
-    // データが見つかった場合はログに出力
-    if (guideData) {
-      console.log('保存されたガイドデータを表示します:', guideData);
-    }
+  if (window.guideDataSync && typeof window.guideDataSync.getGuideData === 'function') {
+    guideData = window.guideDataSync.getGuideData(guideId);
   }
   
-  // データが見つからない場合はデフォルトのガイドデータを使用
+  // データが見つからない場合はエラーメッセージを表示
   if (!guideData) {
-    guideData = {
-      id: guideId,
-      name: '加藤 九郎',
-      location: '沖縄県 与那国島',
-      languages: ['日本語', '英語', '中国語'],
-      rating: 4.5,
-      reviewCount: 12,
-      bio: 'こんにちは！私は沖縄県与那国島在住の加藤九郎です。10年間で100人以上の外国人の方々に与那国島の魅力をご案内してきました。特に西崎や祖納（そない）地区などのエリアに詳しく、観光スポットだけでなく、地元の人しか知らない隠れた名所や美味しいお店もご紹介できます。\n\n日本語、英語、中国語でのガイドが可能で、写真撮影も得意なので、旅の思い出作りもお手伝いします。お客様のリクエストに柔軟に対応し、あなただけの特別な与那国島観光をご提案します。',
-      specialties: ['海洋アクティビティ', '歴史・文化', '与那国島グルメツアー', '沖縄料理', '伝統的集落巡り'],
-      services: [
-        { title: 'カスタマイズツアー', description: 'あなたの希望に沿った完全オーダーメイドツアー' },
-        { title: '通訳サポート', description: '買い物やレストランでの会話をサポート' },
-        { title: '写真撮影', description: '旅の思い出を素敵な写真に残すお手伝い' },
-        { title: '交通手段のサポート', description: '与那国島内の移動や観光施設へのアクセスをサポート' }
-      ],
-      price: 18000,
-      availability: {
-        monday: { available: true, hours: '9:00 - 17:00' },
-        tuesday: { available: true, hours: '9:00 - 17:00' },
-        wednesday: { available: false, hours: '休み' },
-        thursday: { available: true, hours: '12:00 - 20:00' },
-        friday: { available: true, hours: '12:00 - 20:00' },
-        saturday: { available: true, hours: '10:00 - 18:00' },
-        sunday: { available: true, hours: '10:00 - 18:00' }
-      },
-      gallery: [
-        'https://placehold.co/600x400?text=与那国島の景色1',
-        'https://placehold.co/600x400?text=与那国島の景色2',
-        'https://placehold.co/600x400?text=与那国島の景色3',
-        'https://placehold.co/600x400?text=与那国島の景色4',
-        'https://placehold.co/600x400?text=与那国島の景色5',
-        'https://placehold.co/600x400?text=与那国島の景色6'
-      ],
-      reviews: [
-        {
-          user: 'ジョン・スミス',
-          rating: 5,
-          date: '2025年3月15日',
-          comment: '加藤さんは素晴らしいガイドでした！与那国島の隠れた名所を案内してくれて、特に海中遺跡ツアーが素晴らしく、本当に特別な体験ができました。地元の美味しい海鮮料理店も紹介してくれて、次回も絶対にお願いしたいと思います。'
-        },
-        {
-          user: 'エミリー・ジョンソン',
-          rating: 4,
-          date: '2025年2月28日',
-          comment: '初めての与那国島旅行でしたが、加藤さんのおかげで不安なく島の歴史的な魅力を楽しむことができました。英語も流暢で、与那国島の文化について詳しく説明してくれました。写真もたくさん撮ってくれて、素敵な思い出になりました。'
-        },
-        {
-          user: 'マイケル・チェン',
-          rating: 4.5,
-          date: '2025年1月15日',
-          comment: '与那国島の秘密のスポットを案内してもらい、通常の観光では得られない深い知識を教えてもらいました。特に島の伝統的なお祭りに参加できたのは素晴らしい経験でした。加藤さんの知識と親しみやすさのおかげで素晴らしい時間を過ごせました。'
-        }
-      ]
-    };
+    console.error(`ガイドID ${guideId} のデータが見つかりません`);
+    showErrorMessage('ガイド情報が見つかりませんでした。');
+    return;
   }
   
   // 基本情報の表示
-  document.getElementById('guide-name').textContent = guideData.name;
-  document.getElementById('guide-location').textContent = guideData.location;
-  document.getElementById('guide-bio').textContent = guideData.bio;
+  updateGuideBasicInfo(guideData);
   
-  // 言語バッジの表示
-  document.getElementById('guide-language-jp').textContent = guideData.languages[0];
-  document.getElementById('guide-language-en').textContent = guideData.languages[1];
+  // 詳細情報の表示
+  updateGuideDetailedInfo(guideData);
+  
+  // 料金情報の表示
+  updateGuidePricing(guideData);
+  
+  // スキルと特技の表示
+  updateGuideSkills(guideData);
+  
+  // 言語の表示
+  updateGuideLanguages(guideData);
+  
+  // プロフィール画像の表示
+  updateGuideProfileImage(guideData);
   
   // 予約可能日の選択肢をセットアップ
   setupAvailabilityDates();
+  
+  console.log('ガイド詳細情報の表示が完了しました:', guideData.name);
+}
+
+/**
+ * ガイドの基本情報を更新
+ */
+function updateGuideBasicInfo(guideData) {
+  const nameElem = document.getElementById('guide-name');
+  const locationElem = document.getElementById('guide-location');
+  const bioElem = document.getElementById('guide-bio');
+  
+  if (nameElem) nameElem.textContent = guideData.name || 'ガイド名未設定';
+  if (locationElem) locationElem.textContent = guideData.city || guideData.location || '地域未設定';
+  if (bioElem) bioElem.textContent = guideData.bio || '自己紹介が未設定です。';
+}
+
+/**
+ * ガイドの詳細情報を更新
+ */
+function updateGuideDetailedInfo(guideData) {
+  // 自己紹介文の更新
+  const bioElements = document.querySelectorAll('[data-field="bio"]');
+  bioElements.forEach(elem => {
+    elem.textContent = guideData.bio || '自己紹介が未設定です。';
+  });
+  
+  // 経験年数の表示
+  const experienceElem = document.querySelector('[data-field="experience"]');
+  if (experienceElem && guideData.experience) {
+    experienceElem.textContent = `${guideData.experience}年の経験`;
+  }
+}
+
+/**
+ * ガイドの料金情報を更新
+ */
+function updateGuidePricing(guideData) {
+  const priceElements = document.querySelectorAll('[data-field="price"], .guide-price, #guide-price');
+  const price = guideData.price || '価格未設定';
+  
+  priceElements.forEach(elem => {
+    elem.textContent = typeof price === 'number' ? `¥${price.toLocaleString()}` : price;
+  });
+}
+
+/**
+ * ガイドのスキルと特技を更新
+ */
+function updateGuideSkills(guideData) {
+  const specialtiesContainer = document.querySelector('[data-field="specialties"], .guide-specialties');
+  if (specialtiesContainer && guideData.specialties) {
+    const specialtiesHtml = guideData.specialties.map(specialty => 
+      `<span class="badge bg-primary me-2 mb-2">${specialty}</span>`
+    ).join('');
+    specialtiesContainer.innerHTML = specialtiesHtml;
+  }
+  
+  // キーワードも表示
+  const keywordsContainer = document.querySelector('[data-field="keywords"], .guide-keywords');
+  if (keywordsContainer && guideData.keywords) {
+    const keywordsHtml = guideData.keywords.map(keyword => 
+      `<span class="badge bg-secondary me-2 mb-2">${keyword}</span>`
+    ).join('');
+    keywordsContainer.innerHTML = keywordsHtml;
+  }
+}
+
+/**
+ * ガイドの言語情報を更新
+ */
+function updateGuideLanguages(guideData) {
+  const languagesContainer = document.querySelector('[data-field="languages"], .guide-languages');
+  const languages = guideData.languages || ['日本語'];
+  
+  if (languagesContainer) {
+    const languagesHtml = languages.map(lang => 
+      `<span class="badge bg-info me-2 mb-2">${lang}</span>`
+    ).join('');
+    languagesContainer.innerHTML = languagesHtml;
+  }
+  
+  // 個別の言語要素も更新
+  const jpLangElem = document.getElementById('guide-language-jp');
+  const enLangElem = document.getElementById('guide-language-en');
+  
+  if (jpLangElem) jpLangElem.textContent = languages[0] || '日本語';
+  if (enLangElem && languages[1]) enLangElem.textContent = languages[1];
+}
+
+/**
+ * ガイドのプロフィール画像を更新
+ */
+function updateGuideProfileImage(guideData) {
+  const profileImages = document.querySelectorAll('.guide-profile-img, [data-field="profileImage"]');
+  const imageUrl = guideData.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide';
+  
+  profileImages.forEach(img => {
+    if (img.tagName === 'IMG') {
+      img.src = imageUrl;
+      img.alt = `${guideData.name}のプロフィール画像`;
+    } else {
+      img.style.backgroundImage = `url(${imageUrl})`;
+    }
+  });
+}
+
+/**
+ * エラーメッセージを表示
+ */
+function showErrorMessage(message) {
+  const alertContainer = document.getElementById('alert-container') || document.querySelector('.container');
+  if (alertContainer) {
+    const alertHtml = `
+      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    `;
+    alertContainer.insertAdjacentHTML('afterbegin', alertHtml);
+  }
 }
 
 /**
