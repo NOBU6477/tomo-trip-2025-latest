@@ -123,6 +123,41 @@ function setupGuideCardAccess() {
   guideCardLinks.forEach(link => {
     // イベントリスナーはtourist-login.jsにて設定
   });
+  
+  // ガイド専用機能へのアクセス制御
+  document.addEventListener('click', function(e) {
+    // ガイド登録・プロフィール関連のリンク
+    if (e.target.closest('[href="bootstrap_solution.html"], [href*="guide-profile"]')) {
+      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+      const userType = sessionStorage.getItem('userType');
+      
+      if (isLoggedIn && userType === 'tourist') {
+        e.preventDefault();
+        showUserTypeAccessModal(
+          'ガイド専用機能です', 
+          '現在観光客アカウントでログインされています。ガイド機能を利用するには、ガイドアカウントが必要です。',
+          'guide'
+        );
+        return false;
+      }
+    }
+    
+    // 観光客専用機能（ガイド詳細など）
+    if (e.target.closest('.guide-card, .guide-details-link')) {
+      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
+      const userType = sessionStorage.getItem('userType');
+      
+      if (isLoggedIn && userType === 'guide') {
+        e.preventDefault();
+        showUserTypeAccessModal(
+          '観光客専用機能です',
+          '現在ガイドアカウントでログインされています。ガイド詳細を見るには観光客アカウントが必要です。',
+          'tourist'
+        );
+        return false;
+      }
+    }
+  });
 }
 
 /**

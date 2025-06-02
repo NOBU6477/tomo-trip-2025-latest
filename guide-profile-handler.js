@@ -881,40 +881,65 @@ function setupGuideListRedirect() {
   saveAndViewButton.addEventListener('click', function() {
     console.log('保存してガイド一覧を見るボタンがクリックされました');
     
-    // プロフィール情報を保存
-    const guideName = document.getElementById('guide-name')?.value || '新規ガイド';
-    const guideUsername = document.getElementById('guide-username')?.value || 'new_guide';
-    const guideLocation = document.getElementById('guide-location')?.value || '東京';
-    const sessionFee = document.getElementById('guide-session-fee')?.value || '6000';
+    // ユーザータイプを確認
+    const currentUser = getCurrentUser();
+    const userType = sessionStorage.getItem('userType');
+    const isGuide = (currentUser && (currentUser.userType === 'guide' || currentUser.type === 'guide')) || userType === 'guide';
     
-    // 保存処理のシミュレーション
+    if (!isGuide) {
+      showUserTypeError('ガイド専用機能です', 'この機能はガイドアカウント専用です。ガイドとして登録・ログインしてからご利用ください。');
+      return;
+    }
+    
+    // プロフィール情報を保存
+    const guideName = document.getElementById('guide-name')?.value || currentUser?.name || '新規ガイド';
+    const guideUsername = document.getElementById('guide-username')?.value || currentUser?.username || 'new_guide';
+    const guideLocation = document.getElementById('guide-location')?.value || currentUser?.city || '東京';
+    const sessionFee = document.getElementById('guide-session-fee')?.value || '6000';
+    const guideBio = document.getElementById('guide-bio')?.value || '新規登録ガイドです。よろしくお願いします。';
+    
+    // 保存処理開始
     saveAndViewButton.textContent = '保存中...';
     saveAndViewButton.disabled = true;
     
     setTimeout(function() {
-      // 新しいガイドデータを作成
-      const newGuideData = {
-        id: Date.now(), // 一意のIDとして現在時刻を使用
+      // ガイドデータを作成・更新
+      const guideData = {
+        id: currentUser?.id || Date.now(),
         name: guideName,
         username: guideUsername,
         location: guideLocation,
-        fee: sessionFee,
+        description: guideBio,
+        fee: sessionFee.replace(/[^\d]/g, ''),
         rating: '新規',
-        reviews: 0,
-        image: 'https://via.placeholder.com/300x200/0d6efd/ffffff?text=' + encodeURIComponent(guideName),
-        description: document.getElementById('guide-bio')?.value || 'プロフィールを編集中です。',
-        specialties: getSelectedSpecialties()
+        reviews: '0',
+        image: currentUser?.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide',
+        specialties: getSelectedSpecialties() || ['観光案内'],
+        languages: currentUser?.languages || ['日本語'],
+        phone: currentUser?.phone,
+        email: currentUser?.email,
+        isNewGuide: true
       };
       
-      // 新しいガイドをガイドリストに追加
-      addNewGuideToList(newGuideData);
+      // ガイドリストに追加
+      addNewGuideToList(guideData);
+      
+      // セッションストレージも更新
+      const updatedUser = { ...currentUser, ...guideData, userType: 'guide', type: 'guide' };
+      sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
+      
+      // ボタンを元に戻す
+      saveAndViewButton.textContent = '保存してガイド一覧を見る';
+      saveAndViewButton.disabled = false;
       
       // 成功メッセージを表示
-      alert('プロフィールが保存されました！ガイド一覧ページに移動します。');
+      showSuccess('プロフィールが保存されました！ガイド一覧ページに移動します。');
       
-      // ガイド一覧ページに遷移（ガイドセクションにスクロール）
-      window.location.href = 'index.html#guides';
-    }, 1500);
+      // ガイド一覧ページに遷移
+      setTimeout(() => {
+        window.location.href = 'index.html#guides';
+      }, 1500);
+    }, 1000);
   });
   
   // 通常の保存ボタンにも遷移オプションを追加
@@ -1712,4 +1737,90 @@ function initGuideProfile() {
   } catch (e) {
     console.error('ユーザーデータ取得エラー:', e);
   }
+}
+
+/**
+ * ユーザータイプエラーメッセージを表示
+ * @param {string} title エラータイトル
+ * @param {string} message エラーメッセージ
+ */
+function showUserTypeError(title, message) {
+  // モーダルを作成
+  const modalHtml = `
+    <div class="modal fade" id="userTypeErrorModal" tabindex="-1" aria-labelledby="userTypeErrorModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-warning">
+          <div class="modal-header bg-warning text-dark">
+            <h5 class="modal-title" id="userTypeErrorModalLabel">
+              <i class="bi bi-exclamation-triangle me-2"></i>${title}
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-3">${message}</p>
+            <div class="alert alert-info">
+              <small><strong>現在のユーザータイプ:</strong> ${getUserTypeDisplay()}</small>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+              <a href="bootstrap_solution.html" class="btn btn-primary">
+                <i class="bi bi-person-plus me-1"></i>ガイド登録
+              </a>
+              <button type="button" class="btn btn-outline-primary" onclick="showLoginOptions()">
+                <i class="bi bi-box-arrow-in-right me-1"></i>ログイン
+              </button>
+              <a href="index.html" class="btn btn-outline-secondary">
+                <i class="bi bi-house me-1"></i>ホームに戻る
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 既存のモーダルを削除
+  const existingModal = document.getElementById('userTypeErrorModal');
+  if (existingModal) {
+    existingModal.remove();
+  }
+  
+  // 新しいモーダルを追加
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  
+  // モーダルを表示
+  const modal = new bootstrap.Modal(document.getElementById('userTypeErrorModal'));
+  modal.show();
+}
+
+/**
+ * 現在のユーザータイプ表示用テキストを取得
+ */
+function getUserTypeDisplay() {
+  const currentUser = getCurrentUser();
+  const userType = sessionStorage.getItem('userType');
+  
+  if (currentUser) {
+    if (currentUser.userType === 'guide' || currentUser.type === 'guide' || userType === 'guide') {
+      return 'ガイド';
+    } else if (currentUser.userType === 'tourist' || currentUser.type === 'tourist' || userType === 'tourist') {
+      return '観光客';
+    }
+  }
+  
+  return '未ログイン';
+}
+
+/**
+ * ログインオプションを表示
+ */
+function showLoginOptions() {
+  // userTypeErrorModal を非表示にしてから新しいモーダルを表示
+  const currentModal = bootstrap.Modal.getInstance(document.getElementById('userTypeErrorModal'));
+  if (currentModal) {
+    currentModal.hide();
+  }
+  
+  setTimeout(() => {
+    alert('ログイン機能は開発中です。新規登録からガイドアカウントを作成してください。');
+  }, 300);
 }
