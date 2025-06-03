@@ -2023,44 +2023,75 @@ function updateGuideCardsData(guideData) {
 function setupDirectButtonEvent() {
   console.log('直接的なボタンイベント設定を開始');
   
-  // DOMが完全に読み込まれてから実行
-  setTimeout(() => {
+  // 複数の方法でボタンイベントを設定
+  function attachButtonEvent() {
     const button = document.getElementById('save-and-view-guide-list');
-    console.log('直接検索したボタン:', button);
+    console.log('ボタン検索結果:', button);
     
-    if (button && !button.hasAttribute('data-event-attached')) {
-      button.setAttribute('data-event-attached', 'true');
+    if (button) {
+      // 既存のイベントリスナーを削除
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
       
-      button.addEventListener('click', function(e) {
+      // 新しいイベントリスナーを追加
+      newButton.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log('直接設定したイベントが発火しました');
+        e.stopPropagation();
+        console.log('=== ボタンクリックイベント発火 ===');
         
-        // 現在のユーザーデータを取得
-        const currentUser = getCurrentUser();
-        if (!currentUser) {
-          alert('ユーザー情報が見つかりません。再度ログインしてください。');
-          return;
+        try {
+          // 現在のユーザーデータを取得
+          const currentUser = getCurrentUser();
+          console.log('現在のユーザー:', currentUser);
+          
+          if (!currentUser) {
+            console.error('ユーザー情報が見つかりません');
+            alert('ユーザー情報が見つかりません。再度ログインしてください。');
+            return;
+          }
+          
+          // プロフィール情報を収集
+          const guideData = collectGuideProfileData(currentUser);
+          console.log('収集したガイドデータ:', guideData);
+          
+          // データを保存
+          console.log('データ保存を開始します...');
+          saveGuideProfileData(guideData);
+          
+          // 成功メッセージ
+          console.log('成功メッセージを表示します');
+          showSuccess('プロフィールを保存しました！ガイド一覧ページに移動します。');
+          
+          // ページ遷移
+          console.log('ページ遷移を実行します');
+          setTimeout(() => {
+            console.log('index.htmlに移動中...');
+            window.location.href = './index.html#guides';
+          }, 1500);
+          
+        } catch (error) {
+          console.error('ボタンクリック処理でエラーが発生:', error);
+          alert('処理中にエラーが発生しました: ' + error.message);
         }
-        
-        // プロフィール情報を収集
-        const guideData = collectGuideProfileData(currentUser);
-        console.log('収集したガイドデータ:', guideData);
-        
-        // データを保存
-        saveGuideProfileData(guideData);
-        
-        // 成功メッセージ
-        showSuccess('プロフィールを保存しました！ガイド一覧ページに移動します。');
-        
-        // ページ遷移
-        setTimeout(() => {
-          window.location.href = './index.html#guides';
-        }, 1000);
       });
       
-      console.log('直接的なボタンイベントを設定しました');
+      console.log('ボタンイベントを正常に設定しました');
+      return true;
+    } else {
+      console.warn('ボタンが見つかりません');
+      return false;
     }
-  }, 500);
+  }
+  
+  // 即座に試行
+  if (!attachButtonEvent()) {
+    // 1秒後に再試行
+    setTimeout(() => {
+      if (!attachButtonEvent()) {
+        console.error('ボタンの設定に失敗しました');
+      }
+    }, 1000);
+  }
 }
 
 /**
@@ -2070,32 +2101,61 @@ function collectGuideProfileData(currentUser) {
   console.log('プロフィールデータを収集中...');
   console.log('現在のユーザー:', currentUser);
   
-  // プロフィール編集画面のフォーム要素から値を取得
-  const guideName = document.getElementById('guide-name')?.textContent || 
-                   document.getElementById('guide-name')?.value ||
-                   document.querySelector('.guide-name')?.textContent ||
-                   currentUser?.name || 'test金太郎1000';
+  // HTMLの実際のフォーム要素から値を取得
+  const nameInput = document.getElementById('guide-name');
+  const locationInput = document.getElementById('guide-location');
+  const descriptionInput = document.getElementById('guide-description');
+  const feeInput = document.getElementById('guide-session-fee');
+  const languagesSelect = document.getElementById('guide-languages');
   
-  const guideLocation = document.getElementById('guide-location')?.textContent || 
-                       document.getElementById('guide-location')?.value ||
-                       document.querySelector('.guide-location')?.textContent ||
-                       currentUser?.city || '東京';
+  console.log('フォーム要素:', {
+    nameInput, locationInput, descriptionInput, feeInput, languagesSelect
+  });
   
-  const guideBio = document.getElementById('guide-bio')?.textContent || 
-                  document.getElementById('guide-bio')?.value ||
-                  document.querySelector('.guide-bio')?.textContent ||
-                  currentUser?.bio || '新規登録ガイドです。よろしくお願いします。';
+  const guideName = nameInput?.value || currentUser?.name || 'test金太郎1000';
+  const guideLocation = locationInput?.value || currentUser?.city || '東京';
+  const guideBio = descriptionInput?.value || currentUser?.bio || '新規登録ガイドです。よろしくお願いします。';
+  const guideFee = feeInput?.value || '10000';
   
-  const guideFee = document.getElementById('guide-session-fee')?.textContent ||
-                  document.getElementById('guide-session-fee')?.value ||
-                  document.querySelector('.guide-price')?.textContent ||
-                  '10000';
+  // 選択された言語を取得
+  let selectedLanguages = ['日本語', '英語'];
+  if (languagesSelect) {
+    const selectedOptions = Array.from(languagesSelect.selectedOptions);
+    if (selectedOptions.length > 0) {
+      selectedLanguages = selectedOptions.map(option => {
+        const langMap = {
+          'ja': '日本語',
+          'en': '英語',
+          'zh': '中国語',
+          'ko': '韓国語',
+          'fr': 'フランス語',
+          'de': 'ドイツ語',
+          'es': 'スペイン語',
+          'it': 'イタリア語',
+          'ru': 'ロシア語',
+          'other': 'その他'
+        };
+        return langMap[option.value] || option.value;
+      });
+    }
+  }
   
   // 料金から数字のみを抽出
   const feeNumber = parseInt(guideFee.replace(/[^\d]/g, '')) || 10000;
   
-  // 専門分野を取得
-  const specialties = getSelectedSpecialties() || ['ダイビング'];
+  // 専門分野を取得（チェックボックスから）
+  const specialtyCheckboxes = document.querySelectorAll('#guide-interests input[type="checkbox"]:checked');
+  const customKeywords = document.getElementById('interest-custom')?.value;
+  
+  let specialties = Array.from(specialtyCheckboxes).map(cb => cb.value);
+  if (customKeywords) {
+    const customArray = customKeywords.split(',').map(k => k.trim()).filter(k => k);
+    specialties = specialties.concat(customArray);
+  }
+  
+  if (specialties.length === 0) {
+    specialties = ['ダイビング']; // デフォルト値
+  }
   
   const guideData = {
     id: currentUser?.id || Date.now().toString(),
@@ -2108,7 +2168,7 @@ function collectGuideProfileData(currentUser) {
     price: feeNumber,
     specialties: specialties,
     keywords: specialties,
-    languages: currentUser?.languages || ['日本語', '英語'],
+    languages: selectedLanguages,
     imageUrl: currentUser?.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide',
     userType: 'guide',
     type: 'guide'
