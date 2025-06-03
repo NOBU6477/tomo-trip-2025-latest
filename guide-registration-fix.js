@@ -173,15 +173,15 @@
     // ガイドタイプを設定
     enableDirectGuideRegistration();
     
-    // ガイド登録ページに遷移
+    // 正しい新規登録フォームに遷移
     setTimeout(() => {
-      if (window.location.pathname.includes('guide-profile.html')) {
-        // 既にガイドプロフィールページにいる場合は何もしない
-        console.log('既にガイドプロフィールページにいます');
+      if (window.location.pathname.includes('guide-registration-form.html')) {
+        // 既に正しい登録フォームにいる場合は何もしない
+        console.log('既に新規登録フォームにいます');
       } else {
-        // ガイドプロフィールページに遷移
-        console.log('ガイドプロフィールページに遷移します');
-        window.location.href = 'guide-profile.html';
+        // 新規登録フォームに遷移
+        console.log('新規ガイド登録フォームに遷移します');
+        window.location.href = 'guide-registration-form.html';
       }
     }, 200);
   }
