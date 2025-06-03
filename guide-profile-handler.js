@@ -2143,11 +2143,18 @@ function collectGuideProfileData(currentUser) {
   // 料金から数字のみを抽出
   const feeNumber = parseInt(guideFee.replace(/[^\d]/g, '')) || 10000;
   
-  // 専門分野を取得（チェックボックスから）
-  const specialtyCheckboxes = document.querySelectorAll('#guide-interests input[type="checkbox"]:checked');
+  // 専門分野を取得（実際のHTMLに合わせて修正）
+  const specialtyCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
   const customKeywords = document.getElementById('interest-custom')?.value;
   
-  let specialties = Array.from(specialtyCheckboxes).map(cb => cb.value);
+  console.log('専門分野チェックボックス:', specialtyCheckboxes);
+  console.log('カスタムキーワード:', customKeywords);
+  
+  let specialties = Array.from(specialtyCheckboxes).map(cb => {
+    const label = document.querySelector(`label[for="${cb.id}"]`);
+    return label ? label.textContent.trim() : cb.value;
+  });
+  
   if (customKeywords) {
     const customArray = customKeywords.split(',').map(k => k.trim()).filter(k => k);
     specialties = specialties.concat(customArray);
@@ -2156,6 +2163,8 @@ function collectGuideProfileData(currentUser) {
   if (specialties.length === 0) {
     specialties = ['ダイビング']; // デフォルト値
   }
+  
+  console.log('収集された専門分野:', specialties);
   
   const guideData = {
     id: currentUser?.id || Date.now().toString(),
@@ -2184,22 +2193,77 @@ function collectGuideProfileData(currentUser) {
 function saveGuideProfileData(guideData) {
   console.log('ガイドプロフィールデータを保存中:', guideData);
   
-  // 複数の場所にデータを保存
   try {
-    // 1. ローカルストレージのガイドリスト
-    updateGuideInList(guideData);
+    // 1. LocalStorageのガイドリストを更新
+    let guides = JSON.parse(localStorage.getItem('guides')) || [];
+    const existingIndex = guides.findIndex(g => g.id === guideData.id);
     
-    // 2. セッションストレージ
+    if (existingIndex !== -1) {
+      guides[existingIndex] = { ...guides[existingIndex], ...guideData };
+      console.log('既存ガイドを更新しました');
+    } else {
+      guides.push(guideData);
+      console.log('新規ガイドを追加しました');
+    }
+    
+    localStorage.setItem('guides', JSON.stringify(guides));
+    
+    // 2. 複数のストレージキーに保存して確実性を高める
+    localStorage.setItem('guideProfiles', JSON.stringify(guides));
+    localStorage.setItem('userAddedGuides', JSON.stringify(guides));
+    
+    // 3. セッションストレージにも保存
     sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
     sessionStorage.setItem('currentUser', JSON.stringify(guideData));
     
-    // 3. データ同期システム
+    // 4. ガイド詳細ページ用のデータを保存
+    let guideDetailsData = JSON.parse(localStorage.getItem('guideDetailsData')) || {};
+    guideDetailsData[guideData.id] = guideData;
+    localStorage.setItem('guideDetailsData', JSON.stringify(guideDetailsData));
+    
+    // 5. データ同期システムを呼び出し
     if (window.guideDataSync && typeof window.guideDataSync.saveGuideData === 'function') {
       window.guideDataSync.saveGuideData(guideData);
     }
     
+    // 6. 即座にガイドカードを更新
+    updateGuideCardsInBackground(guideData);
+    
     console.log('ガイドデータの保存が完了しました');
+    console.log('保存されたデータ:', guideData);
+    return true;
   } catch (error) {
     console.error('ガイドデータの保存中にエラーが発生しました:', error);
+    return false;
+  }
+}
+
+/**
+ * バックグラウンドでガイドカードを更新
+ */
+function updateGuideCardsInBackground(guideData) {
+  console.log('バックグラウンドでガイドカードを更新中...', guideData);
+  
+  try {
+    // 1. LocalStorageイベントを発火してタブ間同期
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'guides',
+      newValue: localStorage.getItem('guides'),
+      url: window.location.href
+    }));
+    
+    // 2. カスタムイベントを発火
+    window.dispatchEvent(new CustomEvent('guideDataUpdated', {
+      detail: { guideData: guideData }
+    }));
+    
+    // 3. index.htmlのガイドカード更新関数を呼び出し
+    if (window.updateGuideDisplayData) {
+      window.updateGuideDisplayData(guideData);
+    }
+    
+    console.log('ガイドカード更新イベントを発火しました');
+  } catch (error) {
+    console.error('ガイドカードの更新中にエラーが発生しました:', error);
   }
 }
