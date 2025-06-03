@@ -25,6 +25,11 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // プロフィールの初期化
   initGuideProfile();
+  
+  // 新しいプロフィールデータ管理システムを使用
+  setTimeout(() => {
+    loadProfileDataWithManager();
+  }, 1000);
 });
 
 /**
@@ -2265,5 +2270,174 @@ function updateGuideCardsInBackground(guideData) {
     console.log('ガイドカード更新イベントを発火しました');
   } catch (error) {
     console.error('ガイドカードの更新中にエラーが発生しました:', error);
+  }
+}
+
+/**
+ * 新しいプロフィールデータ管理システムを使用してデータを読み込み
+ */
+function loadProfileDataWithManager() {
+  console.log('新しいプロフィールデータ管理システムでデータを読み込み中...');
+  
+  if (!window.profileDataManager) {
+    console.error('プロフィールデータ管理システムが利用できません');
+    return;
+  }
+  
+  const currentUser = window.profileDataManager.getCurrentUser();
+  if (!currentUser) {
+    console.log('現在のユーザー情報が見つかりません');
+    return;
+  }
+  
+  const savedData = window.profileDataManager.loadProfileData(currentUser.id);
+  if (savedData) {
+    window.profileDataManager.populateForm(savedData);
+    console.log('プロフィールデータの読み込み完了');
+  } else {
+    console.log('保存されたプロフィールデータが見つかりませんでした');
+  }
+}
+
+/**
+ * 保存されたプロフィールデータを読み込み、フォームに表示（旧版）
+ */
+function loadSavedProfileData() {
+  console.log('保存されたプロフィールデータを読み込み中...');
+  
+  try {
+    // 現在のユーザー情報を取得
+    const currentUser = getCurrentUser();
+    if (!currentUser) {
+      console.log('現在のユーザー情報が見つかりません');
+      return;
+    }
+    
+    console.log('読み込み対象ユーザー:', currentUser);
+    
+    // 複数のストレージから保存されたデータを取得
+    let savedData = null;
+    
+    // 1. LocalStorageのガイドリストから検索
+    const guides = JSON.parse(localStorage.getItem('guides')) || [];
+    savedData = guides.find(g => g.id === currentUser.id);
+    
+    // 2. セッションストレージから検索
+    if (!savedData) {
+      const sessionData = sessionStorage.getItem(`guide_${currentUser.id}`);
+      if (sessionData) {
+        savedData = JSON.parse(sessionData);
+      }
+    }
+    
+    // 3. ガイド詳細データから検索
+    if (!savedData) {
+      const guideDetailsData = JSON.parse(localStorage.getItem('guideDetailsData')) || {};
+      savedData = guideDetailsData[currentUser.id];
+    }
+    
+    console.log('読み込まれた保存データ:', savedData);
+    
+    if (savedData) {
+      populateFormWithSavedData(savedData);
+    } else {
+      console.log('保存されたプロフィールデータが見つかりませんでした');
+    }
+  } catch (error) {
+    console.error('プロフィールデータの読み込み中にエラーが発生:', error);
+  }
+}
+
+/**
+ * 保存されたデータをフォームに入力
+ */
+function populateFormWithSavedData(data) {
+  console.log('フォームにデータを入力中...', data);
+  
+  try {
+    // 基本情報の入力
+    if (data.name) {
+      const nameInput = document.getElementById('guide-name');
+      if (nameInput) {
+        nameInput.value = data.name;
+        console.log('名前を設定:', data.name);
+      }
+    }
+    
+    if (data.location || data.city) {
+      const locationInput = document.getElementById('guide-location');
+      if (locationInput) {
+        locationInput.value = data.location || data.city;
+        console.log('活動エリアを設定:', data.location || data.city);
+      }
+    }
+    
+    if (data.bio || data.description) {
+      const bioInput = document.getElementById('guide-description');
+      if (bioInput) {
+        bioInput.value = data.bio || data.description;
+        console.log('自己紹介を設定:', data.bio || data.description);
+      }
+    }
+    
+    if (data.fee || data.price) {
+      const feeInput = document.getElementById('guide-session-fee');
+      if (feeInput) {
+        feeInput.value = data.fee || data.price;
+        console.log('料金を設定:', data.fee || data.price);
+      }
+    }
+    
+    // 言語の選択
+    if (data.languages && Array.isArray(data.languages)) {
+      const languagesSelect = document.getElementById('guide-languages');
+      if (languagesSelect) {
+        const langMap = {
+          '日本語': 'ja',
+          '英語': 'en',
+          '中国語': 'zh',
+          '韓国語': 'ko',
+          'フランス語': 'fr',
+          'ドイツ語': 'de',
+          'スペイン語': 'es',
+          'イタリア語': 'it',
+          'ロシア語': 'ru',
+          'その他': 'other'
+        };
+        
+        Array.from(languagesSelect.options).forEach(option => {
+          option.selected = false;
+        });
+        
+        data.languages.forEach(lang => {
+          const value = langMap[lang] || lang;
+          const option = languagesSelect.querySelector(`option[value="${value}"]`);
+          if (option) {
+            option.selected = true;
+          }
+        });
+        
+        console.log('言語を設定:', data.languages);
+      }
+    }
+    
+    // 専門分野のチェックボックス
+    if (data.specialties || data.keywords) {
+      const specialties = data.specialties || data.keywords || [];
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      
+      checkboxes.forEach(checkbox => {
+        const label = document.querySelector(`label[for="${checkbox.id}"]`);
+        const labelText = label ? label.textContent.trim() : '';
+        
+        checkbox.checked = specialties.includes(labelText) || specialties.includes(checkbox.value);
+      });
+      
+      console.log('専門分野を設定:', specialties);
+    }
+    
+    console.log('フォームへのデータ入力が完了しました');
+  } catch (error) {
+    console.error('フォームデータ入力中にエラーが発生:', error);
   }
 }
