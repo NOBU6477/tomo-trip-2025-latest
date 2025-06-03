@@ -20,6 +20,9 @@ document.addEventListener('DOMContentLoaded', function() {
   setupIdDocumentEditFunctions();
   setupGuideListRedirect();
   
+  // 追加の直接的なボタンイベント設定
+  setupDirectButtonEvent();
+  
   // プロフィールの初期化
   initGuideProfile();
 });
@@ -888,26 +891,49 @@ function setupFeeEditFunctions() {
  * ガイド一覧への遷移機能の設定
  */
 function setupGuideListRedirect() {
-  const saveAndViewButton = document.getElementById('save-and-view-guide-list');
-  const profileForm = document.getElementById('profile-basic-form');
-  
   console.log('setupGuideListRedirect実行中...');
-  console.log('ボタン要素:', saveAndViewButton);
   
-  if (!saveAndViewButton) {
-    console.warn('ガイド一覧遷移ボタンが見つかりません');
-    // DOMが完全に読み込まれてから再試行
-    setTimeout(() => {
-      const retryButton = document.getElementById('save-and-view-guide-list');
-      if (retryButton) {
-        console.log('再試行でボタンを発見、イベントを設定します');
-        setupButtonEvent(retryButton);
-      }
-    }, 1000);
-    return;
+  // 複数の方法でボタンを検索
+  function findAndSetupButton() {
+    const saveAndViewButton = document.getElementById('save-and-view-guide-list') ||
+                              document.querySelector('[data-key="save-and-view-list"]') ||
+                              document.querySelector('button:contains("保存してガイド一覧を見る")');
+    
+    console.log('ボタン検索結果:', saveAndViewButton);
+    
+    if (saveAndViewButton) {
+      setupButtonEvent(saveAndViewButton);
+      return true;
+    }
+    return false;
   }
   
-  setupButtonEvent(saveAndViewButton);
+  // 即座に試行
+  if (!findAndSetupButton()) {
+    console.warn('ガイド一覧遷移ボタンが見つかりません、再試行します');
+    
+    // 1秒後に再試行
+    setTimeout(() => {
+      if (!findAndSetupButton()) {
+        console.error('ボタンが見つかりません、代替手段を実装します');
+        setupAlternativeButtonEvent();
+      }
+    }, 1000);
+  }
+}
+
+/**
+ * 代替のボタンイベント設定
+ */
+function setupAlternativeButtonEvent() {
+  // より広範囲で要素を検索
+  const buttons = document.querySelectorAll('button');
+  buttons.forEach(button => {
+    if (button.textContent.includes('保存してガイド一覧を見る')) {
+      console.log('代替方法でボタンを発見:', button);
+      setupButtonEvent(button);
+    }
+  });
 }
 
 /**
@@ -975,19 +1001,29 @@ function setupButtonEvent(button) {
     
     console.log('作成されたガイドデータ:', guideData);
     
-    // データ同期システムを使用してデータを保存
+    // 複数の方法でデータを保存して確実に同期
+    
+    // 1. データ同期システムを使用
     if (window.guideDataSync && typeof window.guideDataSync.saveGuideData === 'function') {
       window.guideDataSync.saveGuideData(guideData);
       console.log('データ同期システムでガイドデータを保存しました');
     }
     
-    // ガイドリストに追加（従来方式も併用）
-    addNewGuideToList(guideData);
+    // 2. ガイドリストに追加/更新
+    updateGuideInList(guideData);
     
-    // セッションストレージも更新
+    // 3. 個別ストレージに保存
+    sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
+    
+    // 4. 現在のユーザー情報を更新
     const updatedUser = { ...currentUser, ...guideData };
     sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
+    
+    // 5. ローカルストレージのガイドリストも更新
+    updateLocalGuideList(guideData);
+    
+    // 6. 一覧ページのデータを直接更新
+    updateGuideCardsData(guideData);
     
     console.log('ガイドデータの保存が完了しました');
     
@@ -1002,26 +1038,12 @@ function setupButtonEvent(button) {
     
     // ガイド一覧ページに遷移
     setTimeout(() => {
-      try {
-        console.log('現在のURL:', window.location.href);
-        console.log('ページ遷移を実行中...');
-        
-        // index.htmlに移動（ガイドセクションに直接移動）
-        window.location.href = './index.html#guides';
-        
-        // 念のため少し遅延を入れて再度確認
-        setTimeout(() => {
-          if (window.location.pathname.includes('guide-profile')) {
-            console.log('最初の遷移が失敗、再試行中...');
-            window.location.replace('./index.html#guides');
-          }
-        }, 500);
-        
-      } catch (error) {
-        console.error('ページ遷移でエラーが発生しました:', error);
-        alert('ガイド一覧ページへの自動移動に失敗しました。手動でトップページに戻ってください。');
-      }
-    }, 1000);
+      console.log('現在のURL:', window.location.href);
+      console.log('ガイド一覧ページに移動中...');
+      
+      // 直接index.htmlに移動
+      window.location.href = './index.html#guides';
+    }, 1500);
   });
   
   // 通常の保存ボタンにも遷移オプションを追加
@@ -1905,4 +1927,92 @@ function showLoginOptions() {
   setTimeout(() => {
     alert('ログイン機能は開発中です。新規登録からガイドアカウントを作成してください。');
   }, 300);
+}
+
+/**
+ * ガイドリスト内のデータを更新または追加
+ */
+function updateGuideInList(guideData) {
+  try {
+    const existingGuides = JSON.parse(localStorage.getItem('userAddedGuides') || '[]');
+    
+    // 既存のガイドを検索（IDまたは名前で）
+    const existingIndex = existingGuides.findIndex(guide => 
+      guide.id === guideData.id || guide.name === guideData.name || guide.username === guideData.username
+    );
+    
+    if (existingIndex !== -1) {
+      // 既存のガイドを更新
+      existingGuides[existingIndex] = { ...existingGuides[existingIndex], ...guideData };
+      console.log(`ガイド「${guideData.name}」の情報を更新しました`);
+    } else {
+      // 新しいガイドを追加
+      existingGuides.push(guideData);
+      console.log(`新しいガイド「${guideData.name}」をリストに追加しました`);
+    }
+    
+    localStorage.setItem('userAddedGuides', JSON.stringify(existingGuides));
+    console.log('ガイドリストの更新が完了しました');
+  } catch (error) {
+    console.error('ガイドリストの更新中にエラーが発生しました:', error);
+  }
+}
+
+/**
+ * ローカルストレージのガイドリストを更新
+ */
+function updateLocalGuideList(guideData) {
+  try {
+    // セッションストレージにも保存
+    const sessionKey = `guide_${guideData.id}`;
+    sessionStorage.setItem(sessionKey, JSON.stringify(guideData));
+    
+    // ガイドデータの一覧も更新
+    const allGuides = JSON.parse(sessionStorage.getItem('allGuides') || '[]');
+    const existingIndex = allGuides.findIndex(guide => guide.id === guideData.id);
+    
+    if (existingIndex !== -1) {
+      allGuides[existingIndex] = guideData;
+    } else {
+      allGuides.push(guideData);
+    }
+    
+    sessionStorage.setItem('allGuides', JSON.stringify(allGuides));
+    console.log('ローカルガイドリストの更新が完了しました');
+  } catch (error) {
+    console.error('ローカルガイドリストの更新中にエラーが発生しました:', error);
+  }
+}
+
+/**
+ * ガイドカードのデータを直接更新
+ */
+function updateGuideCardsData(guideData) {
+  try {
+    // 現在表示されているガイドカードを検索して更新
+    const guideCards = document.querySelectorAll('.guide-card, [data-guide-id]');
+    
+    guideCards.forEach(card => {
+      const cardId = card.getAttribute('data-guide-id') || card.getAttribute('data-id');
+      
+      if (cardId === guideData.id.toString()) {
+        // カード内の要素を更新
+        const nameElement = card.querySelector('.guide-name, .card-title, h5, h6');
+        if (nameElement) nameElement.textContent = guideData.name;
+        
+        const locationElement = card.querySelector('.guide-location, .location, .text-muted');
+        if (locationElement) locationElement.textContent = guideData.location || guideData.city;
+        
+        const priceElement = card.querySelector('.guide-price, .price, .fee');
+        if (priceElement) priceElement.textContent = `¥${guideData.fee || guideData.price}/セッション`;
+        
+        const bioElement = card.querySelector('.guide-bio, .description');
+        if (bioElement) bioElement.textContent = guideData.bio || guideData.description;
+        
+        console.log(`ガイドカード「${guideData.name}」のデータを更新しました`);
+      }
+    });
+  } catch (error) {
+    console.error('ガイドカードの更新中にエラーが発生しました:', error);
+  }
 }
