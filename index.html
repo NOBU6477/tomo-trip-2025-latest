@@ -545,9 +545,17 @@
           >
             検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。
           </div>
+          
+          <!-- フィルター切り替えボタン -->
+          <div class="text-center mb-3">
+            <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
+              <i class="bi bi-funnel"></i> 詳細検索フィルター
+            </button>
+          </div>
+          
           <div class="row justify-content-center">
             <div class="col-md-10 col-lg-8">
-              <div class="card shadow-sm">
+              <div class="card shadow-sm d-none" id="filter-card">
                 <div class="card-body">
                   <h5 class="card-title mb-3">ガイドを絞り込む</h5>
                   <form id="guide-filter-form">
@@ -3809,5 +3817,8 @@
         window.location.href = 'sponsor-dashboard.html';
       });
     </script>
+    
+    <!-- フィルター切り替え機能 -->
+    <script src="filter-toggle.js"></script>
   </body>
 </html>
