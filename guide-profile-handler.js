@@ -1008,27 +1008,48 @@ function setupButtonEvent(button) {
     
     // 複数の方法でデータを保存して確実に同期
     
-    // 1. データ同期システムを使用
+    // 1. 新しいプロフィールデータ管理システムを使用
+    if (window.profileDataManager) {
+      const success = window.profileDataManager.saveProfileData(guideData);
+      if (success) {
+        window.profileDataManager.syncGuideDisplayData(guideData);
+        console.log('新システムでガイドデータを保存しました');
+      }
+    }
+    
+    // 2. データ同期システムを使用
     if (window.guideDataSync && typeof window.guideDataSync.saveGuideData === 'function') {
       window.guideDataSync.saveGuideData(guideData);
       console.log('データ同期システムでガイドデータを保存しました');
     }
     
-    // 2. ガイドリストに追加/更新
+    // 3. ガイドリストに追加/更新
     updateGuideInList(guideData);
     
-    // 3. 個別ストレージに保存
+    // 4. 個別ストレージに保存
     sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
     
-    // 4. 現在のユーザー情報を更新
+    // 5. 現在のユーザー情報を更新
     const updatedUser = { ...currentUser, ...guideData };
     sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
     
-    // 5. ローカルストレージのガイドリストも更新
+    // 6. ローカルストレージのガイドリストも更新
     updateLocalGuideList(guideData);
     
-    // 6. 一覧ページのデータを直接更新
+    // 7. 一覧ページのデータを直接更新
     updateGuideCardsData(guideData);
+    
+    // 8. ガイド一覧統合システムに更新を通知
+    document.dispatchEvent(new CustomEvent('guideDataUpdated', {
+      detail: { guideData: guideData }
+    }));
+    
+    // 9. ストレージイベントを発火
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'guides',
+      newValue: localStorage.getItem('guides'),
+      url: window.location.href
+    }));
     
     console.log('ガイドデータの保存が完了しました');
     
