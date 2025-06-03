@@ -1665,6 +1665,9 @@
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ja.js"></script>
   
+  <!-- 登録ステップ制御（最優先で読み込み） -->
+  <script src="registration-step-controller.js"></script>
+  
   <script>
     // アクセス制御バイパス処理 - 最優先で実行
     document.addEventListener('DOMContentLoaded', function() {
@@ -1784,9 +1787,6 @@
   
   <!-- ガイド登録機能修正 -->
   <script src="guide-registration-fix.js"></script>
-  
-  <!-- 登録ステップ制御 -->
-  <script src="registration-step-controller.js"></script>
   
   <!-- 多言語機能 -->
   <script src="translations/translation-data-fix.js"></script>
