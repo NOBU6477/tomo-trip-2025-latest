@@ -26,7 +26,13 @@ function saveGuideData(guideData) {
     // 4. ローカルストレージにも保存（永続化用）
     saveToLocalStorage(guideData);
     
-    console.log('ガイドデータの保存が完了しました');
+    // 5. 現在表示中のガイドカードを即座に更新
+    updateDisplayedGuideCards(guideData);
+    
+    // 6. ガイド詳細ページが表示されている場合は更新
+    updateDisplayedGuideDetails(guideData);
+    
+    console.log('ガイドデータの保存と表示更新が完了しました');
     return true;
   } catch (error) {
     console.error('ガイドデータの保存に失敗:', error);
@@ -190,12 +196,137 @@ function updateGuideProfile(updateData) {
   }
 }
 
+/**
+ * 現在表示されているガイドカードをリアルタイム更新
+ */
+function updateDisplayedGuideCards(guideData) {
+  console.log('ガイドカードの表示を更新中:', guideData.name);
+  
+  try {
+    const selectors = [
+      `[data-guide-id="${guideData.id}"]`,
+      `[data-id="${guideData.id}"]`,
+      `.guide-card[data-guide-id="${guideData.id}"]`,
+      `.swiper-slide[data-guide-id="${guideData.id}"]`
+    ];
+    
+    selectors.forEach(selector => {
+      const cards = document.querySelectorAll(selector);
+      
+      cards.forEach(card => {
+        const nameElements = card.querySelectorAll('.guide-name, .card-title, h5, h6, .name');
+        nameElements.forEach(elem => {
+          if (elem) elem.textContent = guideData.name;
+        });
+        
+        const locationElements = card.querySelectorAll('.guide-location, .location, .city, .text-muted');
+        locationElements.forEach(elem => {
+          if (elem && (elem.textContent.includes('都') || elem.textContent.includes('区') || elem.textContent.includes('市') || elem.classList.contains('location'))) {
+            elem.textContent = guideData.location || guideData.city;
+          }
+        });
+        
+        const priceElements = card.querySelectorAll('.guide-price, .price, .fee, .session-fee');
+        priceElements.forEach(elem => {
+          if (elem) {
+            const fee = guideData.fee || guideData.price || 6000;
+            elem.textContent = `¥${fee.toLocaleString()}/セッション`;
+          }
+        });
+        
+        const bioElements = card.querySelectorAll('.guide-bio, .description, .bio');
+        bioElements.forEach(elem => {
+          if (elem) elem.textContent = guideData.bio || guideData.description;
+        });
+        
+        const keywordElements = card.querySelectorAll('.guide-keywords, .keywords, .specialties');
+        keywordElements.forEach(elem => {
+          if (elem && guideData.keywords) {
+            elem.textContent = guideData.keywords.join(', ');
+          }
+        });
+        
+        console.log(`ガイドカード「${guideData.name}」を更新しました`);
+      });
+    });
+    
+    if (window.guidesSwiper && typeof window.guidesSwiper.update === 'function') {
+      window.guidesSwiper.update();
+    }
+    
+  } catch (error) {
+    console.error('ガイドカードの更新中にエラーが発生しました:', error);
+  }
+}
+
+/**
+ * ガイド詳細ページの表示をリアルタイム更新
+ */
+function updateDisplayedGuideDetails(guideData) {
+  console.log('ガイド詳細ページの表示を更新中:', guideData.name);
+  
+  try {
+    const currentUrl = window.location.href;
+    if (!currentUrl.includes('guide-details.html') && !currentUrl.includes(`id=${guideData.id}`)) {
+      return;
+    }
+    
+    const nameElements = document.querySelectorAll('#guide-name, .guide-name, [data-field="name"]');
+    nameElements.forEach(elem => {
+      if (elem) elem.textContent = guideData.name;
+    });
+    
+    const locationElements = document.querySelectorAll('#guide-location, .guide-location, [data-field="location"]');
+    locationElements.forEach(elem => {
+      if (elem) elem.textContent = guideData.location || guideData.city;
+    });
+    
+    const bioElements = document.querySelectorAll('#guide-bio, .guide-bio, [data-field="bio"]');
+    bioElements.forEach(elem => {
+      if (elem) elem.textContent = guideData.bio || guideData.description;
+    });
+    
+    const priceElements = document.querySelectorAll('#guide-price, .guide-price, [data-field="price"]');
+    priceElements.forEach(elem => {
+      if (elem) {
+        const fee = guideData.fee || guideData.price || 6000;
+        elem.textContent = `¥${fee.toLocaleString()}`;
+      }
+    });
+    
+    const specialtiesElements = document.querySelectorAll('#guide-specialties, .guide-specialties, [data-field="specialties"]');
+    specialtiesElements.forEach(elem => {
+      if (elem && guideData.keywords) {
+        elem.innerHTML = guideData.keywords.map(keyword => 
+          `<span class="badge bg-secondary me-2 mb-2">${keyword}</span>`
+        ).join('');
+      }
+    });
+    
+    const languageElements = document.querySelectorAll('#guide-languages, .guide-languages, [data-field="languages"]');
+    languageElements.forEach(elem => {
+      if (elem && guideData.languages) {
+        elem.innerHTML = guideData.languages.map(lang => 
+          `<span class="badge bg-info me-2 mb-2">${lang}</span>`
+        ).join('');
+      }
+    });
+    
+    console.log(`ガイド詳細ページ「${guideData.name}」を更新しました`);
+    
+  } catch (error) {
+    console.error('ガイド詳細ページの更新中にエラーが発生しました:', error);
+  }
+}
+
 // グローバルに関数をエクスポート
 window.guideDataSync = {
   saveGuideData,
   getGuideData,
   updateGuideProfile,
-  syncToGuideList
+  syncToGuideList,
+  updateDisplayedGuideCards,
+  updateDisplayedGuideDetails
 };
 
 console.log('ガイドデータ同期システムが初期化されました');

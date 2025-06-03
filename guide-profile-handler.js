@@ -2067,33 +2067,45 @@ function setupDirectButtonEvent() {
  * ガイドプロフィールデータを収集
  */
 function collectGuideProfileData(currentUser) {
-  const guideName = document.getElementById('guide-name')?.value || 
-                   document.querySelector('[name="guideName"]')?.value || 
-                   currentUser?.name || '新規ガイド';
+  console.log('プロフィールデータを収集中...');
+  console.log('現在のユーザー:', currentUser);
   
-  const guideLocation = document.getElementById('guide-location')?.value || 
-                       document.querySelector('[name="guideLocation"]')?.value || 
+  // プロフィール編集画面のフォーム要素から値を取得
+  const guideName = document.getElementById('guide-name')?.textContent || 
+                   document.getElementById('guide-name')?.value ||
+                   document.querySelector('.guide-name')?.textContent ||
+                   currentUser?.name || 'test金太郎1000';
+  
+  const guideLocation = document.getElementById('guide-location')?.textContent || 
+                       document.getElementById('guide-location')?.value ||
+                       document.querySelector('.guide-location')?.textContent ||
                        currentUser?.city || '東京';
   
-  const guideBio = document.getElementById('guide-bio')?.value || 
-                  document.querySelector('[name="guideBio"]')?.value || 
-                  currentUser?.bio || '新規登録ガイドです。';
+  const guideBio = document.getElementById('guide-bio')?.textContent || 
+                  document.getElementById('guide-bio')?.value ||
+                  document.querySelector('.guide-bio')?.textContent ||
+                  currentUser?.bio || '新規登録ガイドです。よろしくお願いします。';
   
-  const guideFee = document.getElementById('guide-session-fee')?.value || 
-                  document.querySelector('[name="guideFee"]')?.value || 
+  const guideFee = document.getElementById('guide-session-fee')?.textContent ||
+                  document.getElementById('guide-session-fee')?.value ||
+                  document.querySelector('.guide-price')?.textContent ||
                   '10000';
   
+  // 料金から数字のみを抽出
+  const feeNumber = parseInt(guideFee.replace(/[^\d]/g, '')) || 10000;
+  
+  // 専門分野を取得
   const specialties = getSelectedSpecialties() || ['ダイビング'];
   
-  return {
+  const guideData = {
     id: currentUser?.id || Date.now().toString(),
     name: guideName,
     location: guideLocation,
     city: guideLocation,
     bio: guideBio,
     description: guideBio,
-    fee: parseInt(guideFee.replace(/[^\d]/g, '')) || 10000,
-    price: parseInt(guideFee.replace(/[^\d]/g, '')) || 10000,
+    fee: feeNumber,
+    price: feeNumber,
     specialties: specialties,
     keywords: specialties,
     languages: currentUser?.languages || ['日本語', '英語'],
@@ -2101,6 +2113,9 @@ function collectGuideProfileData(currentUser) {
     userType: 'guide',
     type: 'guide'
   };
+  
+  console.log('収集されたガイドデータ:', guideData);
+  return guideData;
 }
 
 /**
