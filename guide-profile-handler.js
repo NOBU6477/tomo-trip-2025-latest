@@ -2199,7 +2199,21 @@ function saveGuideProfileData(guideData) {
   console.log('ガイドプロフィールデータを保存中:', guideData);
   
   try {
-    // 1. LocalStorageのガイドリストを更新
+    // 新しいプロフィールデータ管理システムを優先使用
+    if (window.profileDataManager) {
+      const success = window.profileDataManager.saveProfileData(guideData);
+      if (success) {
+        // データ同期を実行
+        window.profileDataManager.syncGuideDisplayData(guideData);
+        console.log('新システムでプロフィールデータの保存完了');
+        
+        // 追加の同期処理
+        updateGuideCardsInBackground(guideData);
+        return true;
+      }
+    }
+    
+    // フォールバック: 従来システム
     let guides = JSON.parse(localStorage.getItem('guides')) || [];
     const existingIndex = guides.findIndex(g => g.id === guideData.id);
     
@@ -2212,29 +2226,23 @@ function saveGuideProfileData(guideData) {
     }
     
     localStorage.setItem('guides', JSON.stringify(guides));
-    
-    // 2. 複数のストレージキーに保存して確実性を高める
     localStorage.setItem('guideProfiles', JSON.stringify(guides));
     localStorage.setItem('userAddedGuides', JSON.stringify(guides));
     
-    // 3. セッションストレージにも保存
     sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
     sessionStorage.setItem('currentUser', JSON.stringify(guideData));
     
-    // 4. ガイド詳細ページ用のデータを保存
     let guideDetailsData = JSON.parse(localStorage.getItem('guideDetailsData')) || {};
     guideDetailsData[guideData.id] = guideData;
     localStorage.setItem('guideDetailsData', JSON.stringify(guideDetailsData));
     
-    // 5. データ同期システムを呼び出し
     if (window.guideDataSync && typeof window.guideDataSync.saveGuideData === 'function') {
       window.guideDataSync.saveGuideData(guideData);
     }
     
-    // 6. 即座にガイドカードを更新
     updateGuideCardsInBackground(guideData);
     
-    console.log('ガイドデータの保存が完了しました');
+    console.log('フォールバックシステムでガイドデータの保存が完了しました');
     console.log('保存されたデータ:', guideData);
     return true;
   } catch (error) {
