@@ -9,11 +9,19 @@
   // 初期化フラグ
   let isInitialized = false;
 
+  // 即座に実行
+  setupGuideRegistrationFix();
+
   document.addEventListener('DOMContentLoaded', function() {
     if (isInitialized) return;
     isInitialized = true;
     
     console.log('ガイド登録機能修正スクリプトを初期化中...');
+    setupGuideRegistrationFix();
+  });
+
+  // ページロード後にも実行
+  window.addEventListener('load', function() {
     setupGuideRegistrationFix();
   });
 
@@ -26,6 +34,9 @@
     
     // 直接ガイド登録を有効化
     enableDirectGuideRegistration();
+    
+    // アクセス制御スクリプトを無効化
+    disableAccessControlInterference();
   }
 
   /**
@@ -175,9 +186,78 @@
     }, 200);
   }
 
+  /**
+   * アクセス制御スクリプトの干渉を無効化
+   */
+  function disableAccessControlInterference() {
+    // アクセス制御系のグローバル変数を無効化
+    if (window.showUserTypeAccessModal) {
+      window.showUserTypeAccessModal = function() {
+        console.log('アクセス制御ダイアログをバイパス - ガイド登録に直行');
+        openGuideRegistrationDirectly();
+      };
+    }
+    
+    // アクセス制御チェック関数を無効化
+    if (window.checkAccessPermission) {
+      window.checkAccessPermission = function() {
+        return true; // 常にアクセス許可
+      };
+    }
+    
+    // セッションストレージにガイド権限を設定
+    sessionStorage.setItem('userAccessType', 'guide');
+    sessionStorage.setItem('hasGuideAccess', 'true');
+    sessionStorage.setItem('bypassAccessControl', 'true');
+    
+    console.log('アクセス制御を無効化しました');
+  }
+
+  /**
+   * ガイド登録フォームの直接表示を強制
+   */
+  function forceShowGuideRegistrationForm() {
+    // guide-profile.htmlページの場合、フォームを直接表示
+    if (window.location.pathname.includes('guide-profile.html')) {
+      console.log('ガイドプロフィールページでフォーム表示を強制');
+      
+      // モーダルを全て閉じる
+      const openModals = document.querySelectorAll('.modal.show');
+      openModals.forEach(modal => {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      });
+      
+      // バックドロップを削除
+      const backdrops = document.querySelectorAll('.modal-backdrop');
+      backdrops.forEach(backdrop => backdrop.remove());
+      
+      // body の状態をリセット
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+      document.body.style.paddingRight = '';
+      
+      // フォームを表示状態に設定
+      const forms = document.querySelectorAll('form, .form-container');
+      forms.forEach(form => {
+        if (form.style) {
+          form.style.display = '';
+          form.style.visibility = '';
+        }
+      });
+    }
+  }
+
+  // フォーム表示強制も実行
+  setTimeout(forceShowGuideRegistrationForm, 100);
+
   // グローバル関数として公開
   window.openGuideRegistrationDirectly = openGuideRegistrationDirectly;
   window.enableDirectGuideRegistration = enableDirectGuideRegistration;
+  window.disableAccessControlInterference = disableAccessControlInterference;
+  window.forceShowGuideRegistrationForm = forceShowGuideRegistrationForm;
 
   console.log('ガイド登録機能修正スクリプトがロードされました');
 
