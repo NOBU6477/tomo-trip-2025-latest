@@ -2016,3 +2016,115 @@ function updateGuideCardsData(guideData) {
     console.error('ガイドカードの更新中にエラーが発生しました:', error);
   }
 }
+
+/**
+ * 直接的なボタンイベント設定
+ */
+function setupDirectButtonEvent() {
+  console.log('直接的なボタンイベント設定を開始');
+  
+  // DOMが完全に読み込まれてから実行
+  setTimeout(() => {
+    const button = document.getElementById('save-and-view-guide-list');
+    console.log('直接検索したボタン:', button);
+    
+    if (button && !button.hasAttribute('data-event-attached')) {
+      button.setAttribute('data-event-attached', 'true');
+      
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('直接設定したイベントが発火しました');
+        
+        // 現在のユーザーデータを取得
+        const currentUser = getCurrentUser();
+        if (!currentUser) {
+          alert('ユーザー情報が見つかりません。再度ログインしてください。');
+          return;
+        }
+        
+        // プロフィール情報を収集
+        const guideData = collectGuideProfileData(currentUser);
+        console.log('収集したガイドデータ:', guideData);
+        
+        // データを保存
+        saveGuideProfileData(guideData);
+        
+        // 成功メッセージ
+        showSuccess('プロフィールを保存しました！ガイド一覧ページに移動します。');
+        
+        // ページ遷移
+        setTimeout(() => {
+          window.location.href = './index.html#guides';
+        }, 1000);
+      });
+      
+      console.log('直接的なボタンイベントを設定しました');
+    }
+  }, 500);
+}
+
+/**
+ * ガイドプロフィールデータを収集
+ */
+function collectGuideProfileData(currentUser) {
+  const guideName = document.getElementById('guide-name')?.value || 
+                   document.querySelector('[name="guideName"]')?.value || 
+                   currentUser?.name || '新規ガイド';
+  
+  const guideLocation = document.getElementById('guide-location')?.value || 
+                       document.querySelector('[name="guideLocation"]')?.value || 
+                       currentUser?.city || '東京';
+  
+  const guideBio = document.getElementById('guide-bio')?.value || 
+                  document.querySelector('[name="guideBio"]')?.value || 
+                  currentUser?.bio || '新規登録ガイドです。';
+  
+  const guideFee = document.getElementById('guide-session-fee')?.value || 
+                  document.querySelector('[name="guideFee"]')?.value || 
+                  '10000';
+  
+  const specialties = getSelectedSpecialties() || ['ダイビング'];
+  
+  return {
+    id: currentUser?.id || Date.now().toString(),
+    name: guideName,
+    location: guideLocation,
+    city: guideLocation,
+    bio: guideBio,
+    description: guideBio,
+    fee: parseInt(guideFee.replace(/[^\d]/g, '')) || 10000,
+    price: parseInt(guideFee.replace(/[^\d]/g, '')) || 10000,
+    specialties: specialties,
+    keywords: specialties,
+    languages: currentUser?.languages || ['日本語', '英語'],
+    imageUrl: currentUser?.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide',
+    userType: 'guide',
+    type: 'guide'
+  };
+}
+
+/**
+ * ガイドプロフィールデータを保存
+ */
+function saveGuideProfileData(guideData) {
+  console.log('ガイドプロフィールデータを保存中:', guideData);
+  
+  // 複数の場所にデータを保存
+  try {
+    // 1. ローカルストレージのガイドリスト
+    updateGuideInList(guideData);
+    
+    // 2. セッションストレージ
+    sessionStorage.setItem(`guide_${guideData.id}`, JSON.stringify(guideData));
+    sessionStorage.setItem('currentUser', JSON.stringify(guideData));
+    
+    // 3. データ同期システム
+    if (window.guideDataSync && typeof window.guideDataSync.saveGuideData === 'function') {
+      window.guideDataSync.saveGuideData(guideData);
+    }
+    
+    console.log('ガイドデータの保存が完了しました');
+  } catch (error) {
+    console.error('ガイドデータの保存中にエラーが発生しました:', error);
+  }
+}
