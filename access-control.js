@@ -68,12 +68,14 @@ function handlePageSpecificAccess(isLoggedIn, userType) {
     const loginPrompt = document.querySelector('.guide-details-login-prompt');
     
     if (detailsContent && loginPrompt) {
-      if (isLoggedIn && userType === 'tourist') {
+      // 開発中のため、すべてのユーザーがガイド詳細を閲覧可能に変更
+      // 観光客ログイン機能が完成するまでの暫定対応
+      if (isLoggedIn || true) { // 暫定的にすべてのアクセスを許可
         // ガイド詳細コンテンツを表示
         detailsContent.classList.remove('d-none');
         loginPrompt.classList.add('d-none');
         
-        // ログイン成功メッセージは表示しない（tourist-login.jsで制御）
+        console.log('ガイド詳細ページへのアクセスを許可（開発中暫定対応）');
       } else {
         detailsContent.classList.add('d-none');
         loginPrompt.classList.remove('d-none');
