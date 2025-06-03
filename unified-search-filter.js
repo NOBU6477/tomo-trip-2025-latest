@@ -103,14 +103,18 @@
     
     let visibleCount = 0;
     
-    // 各カードを強制表示（フィルター無効化）
+    // 各カードをフィルタリング（正常動作版）
     allCards.forEach((card, index) => {
       const cardData = extractCardInformation(card);
+      const shouldShow = evaluateCardMatch(cardData, filterValues);
       
-      console.log(`カード${index + 1}: 強制表示 - ${cardData.name} (${cardData.location})`);
+      console.log(`カード${index + 1}: ${shouldShow ? '表示' : '非表示'} - ${cardData.name} (${cardData.location})`);
       
-      setCardVisibility(card, true);
-      visibleCount++;
+      setCardVisibility(card, shouldShow);
+      
+      if (shouldShow) {
+        visibleCount++;
+      }
     });
     
     // 結果を更新
@@ -317,20 +321,27 @@
    * カードの表示/非表示を設定
    */
   function setCardVisibility(card, visible) {
-    // 緊急修正: すべてのカードを強制表示
     const container = card.closest('.col, .guide-item, .col-md-4, .col-lg-4');
     
-    // 常に表示状態に設定（フィルターを無効化）
-    if (container) {
-      container.style.display = '';
-      container.style.visibility = 'visible';
-      container.classList.remove('d-none');
+    if (visible) {
+      // カードを表示
+      if (container) {
+        container.style.display = '';
+        container.style.visibility = 'visible';
+        container.classList.remove('d-none');
+      }
+      card.style.display = '';
+      card.style.visibility = 'visible';
+      card.classList.remove('d-none');
+    } else {
+      // カードを非表示
+      if (container) {
+        container.style.display = 'none';
+        container.classList.add('d-none');
+      }
+      card.style.display = 'none';
+      card.classList.add('d-none');
     }
-    card.style.display = '';
-    card.style.visibility = 'visible';
-    card.classList.remove('d-none');
-    
-    console.log('カード強制表示:', card);
   }
 
   /**
