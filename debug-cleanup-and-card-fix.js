@@ -5,36 +5,24 @@
 (function() {
   'use strict';
 
-  // デバッグ情報の非表示処理
+  // デバッグ情報の非表示処理（安全版）
   function hideDebugInfo() {
-    // デバッグテキストが表示されているエリアを非表示
-    const debugElements = document.querySelectorAll('*');
-    debugElements.forEach(element => {
-      if (element.textContent && 
-          (element.textContent.includes('text = text.replace') || 
-           element.textContent.includes('console.log') ||
-           element.textContent.includes('翻訳完了') ||
-           element.textContent.includes('ガイド翻訳') ||
-           element.textContent.length > 500)) {
+    console.log('デバッグ情報の非表示処理を開始（安全版）');
+    
+    // より安全な方法でデバッグ情報のみを非表示
+    const elements = document.querySelectorAll('*');
+    elements.forEach(element => {
+      const text = element.textContent || '';
+      
+      // 特定のデバッグ文字列のみを対象とし、重要なコンテンツは保護
+      if (text.includes('text = text.replace(/') && 
+          text.length > 200 &&
+          !element.closest('nav, header, main, .container, .card, .guide-card')) {
+        
         element.style.display = 'none';
+        console.log('デバッグ要素を非表示:', element.tagName);
       }
     });
-
-    // デバッグ用のスタイルを追加
-    const style = document.createElement('style');
-    style.textContent = `
-      /* デバッグ情報を非表示 */
-      body::before,
-      body::after {
-        display: none !important;
-      }
-      
-      /* 長いテキストを非表示 */
-      *[style*="white-space"] {
-        display: none !important;
-      }
-    `;
-    document.head.appendChild(style);
   }
 
   // ガイドカードの強制表示処理
