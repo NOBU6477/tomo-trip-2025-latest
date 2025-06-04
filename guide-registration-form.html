@@ -710,18 +710,29 @@
                 submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録中...';
                 submitBtn.disabled = true;
 
-                // フォームデータを収集
+                // フォームデータを収集（安全にnullチェック付き）
+                const getElementValue = (id) => {
+                    const element = document.getElementById(id);
+                    return element ? element.value : '';
+                };
+                
+                const getElementSrc = (id) => {
+                    const element = document.getElementById(id);
+                    return element ? element.src : '';
+                };
+
                 const formData = {
-                    firstName: document.getElementById('firstName').value,
-                    lastName: document.getElementById('lastName').value,
-                    email: document.getElementById('email').value,
-                    birthdate: document.getElementById('birthdate').value,
-                    phone: document.getElementById('phone').value,
-                    location: document.getElementById('location').value,
-                    languages: document.getElementById('languages').value,
+                    firstName: getElementValue('firstName'),
+                    lastName: getElementValue('lastName'),
+                    email: getElementValue('email'),
+                    birthdate: getElementValue('birthdate'),
+                    phone: getElementValue('phone'),
+                    location: getElementValue('location'),
+                    languages: getElementValue('selected-languages'), // 修正：正しいIDを使用
+                    customSpecialty: getElementValue('custom-specialty'), // 追加：任意入力欄
                     specialties: getSelectedSpecialties(),
-                    documentType: document.getElementById('document-type').value,
-                    profilePhoto: document.getElementById('profile-photo-preview').src
+                    documentType: getElementValue('document-type'),
+                    profilePhoto: getElementSrc('profile-photo-preview')
                 };
 
                 // セッションストレージに基本情報を保存
