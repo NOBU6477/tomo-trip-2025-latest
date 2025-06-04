@@ -365,56 +365,47 @@ app.get('/preview-keyword-fix.css', (req, res) => {
 app.get('/', (req, res) => {
   console.log('ルートページへのアクセスを検出');
   
-  // スピナーキラースクリプトを読み込む
-  let spinKillerScript = '';
-  try {
-    spinKillerScript = fs.readFileSync(path.join(__dirname, 'replit-spin-killer.js'), 'utf8');
-    console.log('スピナーキラースクリプトを読み込みました');
-  } catch (err) {
-    console.log('スピナーキラースクリプトの読み込みに失敗:', err);
-  }
-
-  // 自動待機スクリプトを読み込む
-  let autoWaitScript = '';
-  try {
-    autoWaitScript = fs.readFileSync(path.join(__dirname, 'auto-wait-dialog.js'), 'utf8');
-  } catch (err) {
-    console.log('自動待機スクリプトの読み込みに失敗:', err);
-  }
-
-  // Replitのプレビューフレームを検出して新しいタブで開くスクリプト
-  const frameDetectScript = `
-    <script>
-      // Replitのプレビューフレーム内での表示を検出
-      (function() {
-        try {
-          // フレーム内かどうかを確認
-          const isInFrame = window !== window.top;
-          
-          // URLパラメータをチェック（直接開いた場合はリダイレクトしない）
-          const urlParams = new URLSearchParams(window.location.search);
-          if (isInFrame && !urlParams.has('direct_tab') && !urlParams.has('no_redirect')) {
-            console.log('Replitのプレビューフレーム内を検出、新しいタブで開きます');
-            
-            // 新しいタブで同じURLを開く（direct_tabパラメータ付き）
-            const currentUrl = new URL(window.location.href);
-            currentUrl.searchParams.append('direct_tab', 'true');
-            
-            window.open(currentUrl.toString(), '_blank');
-          }
-        } catch (e) {
-          console.error('フレーム検出エラー:', e);
-        }
-      })();
-    </script>
-  `;
-  
   // シンプルモードの場合はミニマルなHTMLを返す
   if (req.query.mode === 'simple' || req.query.simple === 'true') {
     console.log('シンプルモードを表示');
     return res.send(generateBasicHtml());
   }
 
+  // メインのindex.htmlファイルを直接提供
+  try {
+    const htmlContent = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
+    res.status(200).send(htmlContent);
+  } catch (err) {
+    console.log('index.htmlの読み込みに失敗:', err);
+    res.status(500).send('ページの読み込みに失敗しました');
+  }
+});
+
+// ガイド登録フォーム
+app.get('/guide-registration-form.html', (req, res) => {
+  console.log('ガイド登録フォームへのアクセス');
+  try {
+    const htmlContent = fs.readFileSync(path.join(__dirname, 'guide-registration-fixed.html'), 'utf8');
+    res.status(200).send(htmlContent);
+  } catch (err) {
+    console.log('ガイド登録フォームの読み込みに失敗:', err);
+    res.status(500).send('ガイド登録フォームの読み込みに失敗しました');
+  }
+});
+
+// ガイドプロフィール編集
+app.get('/guide-profile.html', (req, res) => {
+  console.log('ガイドプロフィール編集ページへのアクセス');
+  try {
+    const htmlContent = fs.readFileSync(path.join(__dirname, 'guide-profile.html'), 'utf8');
+    res.status(200).send(htmlContent);
+  } catch (err) {
+    console.log('ガイドプロフィール編集ページの読み込みに失敗:', err);
+    res.status(500).send('ガイドプロフィール編集ページの読み込みに失敗しました');
+  }
+});
+
+app.get('/debug', (req, res) => {
   // Replit側のSpinnerが表示されていないかを確認するためのテスト拡張モード
   if (req.query.debug === 'true') {
     console.log('デバッグモードを表示');
