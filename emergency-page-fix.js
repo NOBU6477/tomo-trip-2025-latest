@@ -165,11 +165,12 @@
    * ナビゲーション修正
    */
   function fixNavigation() {
-    // 登録フロー修正
+    // ガイド登録ボタンのみ修正（観光客登録ボタンは除外）
     const registrationButtons = document.querySelectorAll('button, a');
     registrationButtons.forEach(button => {
       const text = button.textContent;
-      if (text.includes('ガイドとして登録') || text.includes('新規登録')) {
+      // ガイド登録のみ対象とし、観光客登録は除外
+      if (text.includes('ガイドとして登録') && !text.includes('旅行者')) {
         button.onclick = function(e) {
           e.preventDefault();
           window.location.href = 'guide-registration-form.html';
