@@ -1062,14 +1062,19 @@ function setupButtonEvent(button) {
     
     console.log('ガイド一覧ページに移動します...');
     
-    // ガイド一覧ページに遷移
-    setTimeout(() => {
-      console.log('現在のURL:', window.location.href);
-      console.log('ガイド一覧ページに移動中...');
-      
-      // 直接index.htmlに移動
-      window.location.href = './index.html#guides';
-    }, 1500);
+    // ガイド一覧ページに遷移（新規登録完了時のみ）
+    const isNewRegistration = sessionStorage.getItem('guideRegistrationCompleted') === 'true';
+    if (isNewRegistration) {
+      setTimeout(() => {
+        console.log('新規登録完了、ガイド一覧ページに移動します');
+        // 新規登録フラグをクリア
+        sessionStorage.removeItem('guideRegistrationCompleted');
+        // ガイド一覧ページに移動
+        window.location.href = './index.html#guides';
+      }, 1500);
+    } else {
+      console.log('既存ガイドの編集のため、ページに留まります');
+    }
   });
   
   // 通常の保存ボタンにも遷移オプションを追加

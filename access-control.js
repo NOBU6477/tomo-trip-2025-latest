@@ -128,8 +128,8 @@ function setupGuideCardAccess() {
   
   // ガイド専用機能へのアクセス制御
   document.addEventListener('click', function(e) {
-    // ガイド登録・プロフィール関連のリンク
-    if (e.target.closest('[href="bootstrap_solution.html"], [href*="guide-profile"]')) {
+    // ガイド登録・プロフィール関連のリンク（ページ内での制御はスキップ）
+    if (e.target.closest('[href="bootstrap_solution.html"]') && !window.location.pathname.includes('guide-profile.html')) {
       const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
       const userType = sessionStorage.getItem('userType');
       

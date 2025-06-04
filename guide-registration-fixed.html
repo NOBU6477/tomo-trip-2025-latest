@@ -767,6 +767,8 @@
 
                 // セッションストレージに基本情報を保存
                 sessionStorage.setItem('guideRegistrationData', JSON.stringify(formData));
+                // 新規登録完了フラグを設定
+                sessionStorage.setItem('guideRegistrationCompleted', 'true');
                 
                 // 進捗表示の更新
                 setTimeout(() => {
