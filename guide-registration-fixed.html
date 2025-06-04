@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ガイド登録 | Local Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .registration-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            max-width: 800px;
+            overflow: hidden;
+        }
+        
+        .progress-steps {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .step {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .step.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .step.completed {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .form-section {
+            padding: 3rem;
+        }
+        
+        .form-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .profile-photo-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px dashed #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .profile-photo-container:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+        
+        .profile-photo-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
+        }
+        
+        .verification-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .verification-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-unverified {
+            color: var(--warning-color);
+        }
+        
+        .status-verified {
+            color: var(--success-color);
+        }
+        
+        .verification-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .back-button {
+            background: none;
+            border: 2px solid #6c757d;
+            color: #6c757d;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            background: #6c757d;
+            color: white;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .registration-container {
+                margin: 1rem;
+                border-radius: 15px;
+            }
+            
+            .form-section {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="registration-container">
+            <!-- 進捗ステップ -->
+            <div class="progress-steps">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="step active">1</div>
+                        <small class="d-block mt-2 fw-bold text-primary">基本情報</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="step">2</div>
+                        <small class="d-block mt-2">認証</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="step">3</div>
+                        <small class="d-block mt-2">完了</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- フォーム本体 -->
+            <div class="form-section">
+                <div class="text-start mb-4">
+                    <a href="index.html" class="back-button">
+                        <i class="bi bi-arrow-left"></i> ホームに戻る
+                    </a>
+                </div>
+                
+                <h2 class="form-title">ガイド基本情報入力</h2>
+
+                <form id="guide-registration-form">
+                    <!-- プロフィール写真 -->
+                    <div class="text-center mb-4">
+                        <div class="profile-photo-container" onclick="document.getElementById('profile-photo-input').click()">
+                            <img id="profile-photo-preview" class="profile-photo-preview" style="display: none;" alt="プロフィール写真">
+                            <div id="photo-placeholder">
+                                <i class="bi bi-camera" style="font-size: 2rem; color: #ccc;"></i>
+                                <div style="color: #999; margin-top: 0.5rem;">プロフィール写真をクリックして変更</div>
+                            </div>
+                        </div>
+                        <input type="file" id="profile-photo-input" accept="image/*" style="display: none;">
+                    </div>
+
+                    <!-- 基本情報 -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="firstName" class="form-label">姓 *</label>
+                            <input type="text" class="form-control" id="firstName" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="lastName" class="form-label">名 *</label>
+                            <input type="text" class="form-control" id="lastName" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">メールアドレス *</label>
+                            <input type="email" class="form-control" id="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="birthdate" class="form-label">生年月日 *</label>
+                            <input type="date" class="form-control" id="birthdate" required>
+                        </div>
+                    </div>
+
+                    <!-- 電話認証 -->
+                    <div class="verification-section">
+                        <h5>電話番号認証</h5>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <label for="phone" class="form-label">電話番号 *</label>
+                                <input type="tel" class="form-control" id="phone" placeholder="080-1234-5678" required>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-primary w-100" id="send-code-btn">
+                                    認証コード送信
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="verification-code-section" style="display: none;">
+                            <div class="verification-input">
+                                <input type="text" class="form-control" id="verification-code" placeholder="認証コードを入力" maxlength="6">
+                                <button type="button" class="btn btn-success" id="verify-code-btn">確認</button>
+                            </div>
+                        </div>
+                        
+                        <div class="verification-status" id="verification-status">
+                            <i class="bi bi-exclamation-triangle status-unverified"></i>
+                            <span class="status-unverified">未認証</span>
+                        </div>
+                    </div>
+
+                    <!-- 活動地域と言語 -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="location" class="form-label">主な活動地域 *</label>
+                            <select class="form-select" id="location" required>
+                                <option value="">選択してください</option>
+                                <optgroup label="北海道・東北">
+                                    <option value="北海道">北海道</option>
+                                    <option value="青森県">青森県</option>
+                                    <option value="岩手県">岩手県</option>
+                                    <option value="宮城県">宮城県</option>
+                                    <option value="秋田県">秋田県</option>
+                                    <option value="山形県">山形県</option>
+                                    <option value="福島県">福島県</option>
+                                </optgroup>
+                                <optgroup label="関東">
+                                    <option value="茨城県">茨城県</option>
+                                    <option value="栃木県">栃木県</option>
+                                    <option value="群馬県">群馬県</option>
+                                    <option value="埼玉県">埼玉県</option>
+                                    <option value="千葉県">千葉県</option>
+                                    <option value="東京都">東京都</option>
+                                    <option value="神奈川県">神奈川県</option>
+                                </optgroup>
+                                <optgroup label="中部">
+                                    <option value="新潟県">新潟県</option>
+                                    <option value="富山県">富山県</option>
+                                    <option value="石川県">石川県</option>
+                                    <option value="福井県">福井県</option>
+                                    <option value="山梨県">山梨県</option>
+                                    <option value="長野県">長野県</option>
+                                    <option value="岐阜県">岐阜県</option>
+                                    <option value="静岡県">静岡県</option>
+                                    <option value="愛知県">愛知県</option>
+                                </optgroup>
+                                <optgroup label="近畿">
+                                    <option value="三重県">三重県</option>
+                                    <option value="滋賀県">滋賀県</option>
+                                    <option value="京都府">京都府</option>
+                                    <option value="大阪府">大阪府</option>
+                                    <option value="兵庫県">兵庫県</option>
+                                    <option value="奈良県">奈良県</option>
+                                    <option value="和歌山県">和歌山県</option>
+                                </optgroup>
+                                <optgroup label="中国・四国">
+                                    <option value="鳥取県">鳥取県</option>
+                                    <option value="島根県">島根県</option>
+                                    <option value="岡山県">岡山県</option>
+                                    <option value="広島県">広島県</option>
+                                    <option value="山口県">山口県</option>
+                                    <option value="徳島県">徳島県</option>
+                                    <option value="香川県">香川県</option>
+                                    <option value="愛媛県">愛媛県</option>
+                                    <option value="高知県">高知県</option>
+                                </optgroup>
+                                <optgroup label="九州・沖縄">
+                                    <option value="福岡県">福岡県</option>
+                                    <option value="佐賀県">佐賀県</option>
+                                    <option value="長崎県">長崎県</option>
+                                    <option value="熊本県">熊本県</option>
+                                    <option value="大分県">大分分県</option>
+                                    <option value="宮崎県">宮崎県</option>
+                                    <option value="鹿児島県">鹿児島県</option>
+                                    <option value="沖縄県">沖縄県</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="languages" class="form-label">対応言語 *</label>
+                            <select class="form-select" id="languages" required>
+                                <option value="">選択してください</option>
+                                <option value="日本語のみ">日本語のみ</option>
+                                <option value="日本語・英語">日本語・英語</option>
+                                <option value="日本語・中国語">日本語・中国語</option>
+                                <option value="日本語・韓国語">日本語・韓国語</option>
+                                <option value="日本語・スペイン語">日本語・スペイン語</option>
+                                <option value="日本語・フランス語">日本語・フランス語</option>
+                                <option value="日本語・ドイツ語">日本語・ドイツ語</option>
+                                <option value="日本語・英語・中国語">日本語・英語・中国語</option>
+                                <option value="日本語・英語・韓国語">日本語・英語・韓国語</option>
+                                <option value="日本語・英語・スペイン語">日本語・英語・スペイン語</option>
+                                <option value="日本語・英語・フランス語">日本語・英語・フランス語</option>
+                                <option value="日本語・英語・ドイツ語">日本語・英語・ドイツ語</option>
+                                <option value="多言語対応（5言語以上）">多言語対応（5言語以上）</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 専門分野 -->
+                    <div class="mb-3">
+                        <label class="form-label">専門分野・得意なガイド内容</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-history" value="歴史・文化">
+                                    <label class="form-check-label" for="specialty-history">歴史・文化</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-nature" value="自然・アウトドア">
+                                    <label class="form-check-label" for="specialty-nature">自然・アウトドア</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-food" value="グルメ・料理">
+                                    <label class="form-check-label" for="specialty-food">グルメ・料理</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-shopping" value="ショッピング">
+                                    <label class="form-check-label" for="specialty-shopping">ショッピング</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-art" value="アート・エンターテイメント">
+                                    <label class="form-check-label" for="specialty-art">アート・エンターテイメント</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-nightlife" value="ナイトライフ">
+                                    <label class="form-check-label" for="specialty-nightlife">ナイトライフ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-family" value="ファミリー向け">
+                                    <label class="form-check-label" for="specialty-family">ファミリー向け</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="specialty-business" value="ビジネス">
+                                    <label class="form-check-label" for="specialty-business">ビジネス</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 身分証明書 -->
+                    <div class="verification-section">
+                        <h5>身分証明書アップロード</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="document-type" class="form-label">書類タイプ *</label>
+                                <select class="form-select" id="document-type" required>
+                                    <option value="">選択してください</option>
+                                    <option value="運転免許証">運転免許証</option>
+                                    <option value="パスポート">パスポート</option>
+                                    <option value="マイナンバーカード">マイナンバーカード</option>
+                                    <option value="健康保険証">健康保険証</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">書類画像 *</label>
+                                <input type="file" class="form-control" id="document-photo" accept="image/*" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 利用規約 -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="terms-agreement" required>
+                            <label class="form-check-label" for="terms-agreement">
+                                <a href="#" class="text-decoration-none">利用規約</a>および<a href="#" class="text-decoration-none">プライバシーポリシー</a>に同意します
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 送信ボタン -->
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg px-5" id="submit-btn" disabled>
+                            <i class="bi bi-person-plus me-2"></i>登録する
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let isPhoneVerified = false;
+
+            // プロフィール写真アップロード
+            const profilePhotoInput = document.getElementById('profile-photo-input');
+            const profilePhotoPreview = document.getElementById('profile-photo-preview');
+            const photoPlaceholder = document.getElementById('photo-placeholder');
+            
+            profilePhotoInput.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profilePhotoPreview.src = e.target.result;
+                        profilePhotoPreview.style.display = 'block';
+                        photoPlaceholder.style.display = 'none';
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            // 電話認証
+            const sendCodeBtn = document.getElementById('send-code-btn');
+            const verifyCodeBtn = document.getElementById('verify-code-btn');
+            const verificationCodeSection = document.getElementById('verification-code-section');
+            const verificationStatus = document.getElementById('verification-status');
+            const phoneInput = document.getElementById('phone');
+
+            sendCodeBtn.addEventListener('click', function() {
+                const phone = phoneInput.value.trim();
+                if (!phone) {
+                    alert('電話番号を入力してください。');
+                    return;
+                }
+
+                sendCodeBtn.disabled = true;
+                sendCodeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>送信中...';
+
+                setTimeout(() => {
+                    verificationCodeSection.style.display = 'block';
+                    sendCodeBtn.innerHTML = '再送信';
+                    sendCodeBtn.disabled = false;
+                    alert('認証コードを送信しました。テスト用コード: 123456');
+                }, 1500);
+            });
+
+            verifyCodeBtn.addEventListener('click', function() {
+                const code = document.getElementById('verification-code').value.trim();
+                if (code === '123456') {
+                    isPhoneVerified = true;
+                    verificationStatus.innerHTML = '<i class="bi bi-check-circle status-verified"></i><span class="status-verified">認証済み</span>';
+                    verificationCodeSection.style.display = 'none';
+                    validateForm();
+                } else {
+                    alert('認証コードが正しくありません。');
+                }
+            });
+
+            // フォームバリデーション
+            function validateForm() {
+                const form = document.getElementById('guide-registration-form');
+                const submitBtn = document.getElementById('submit-btn');
+                const termsAgreement = document.getElementById('terms-agreement');
+                
+                const isValid = form.checkValidity() && isPhoneVerified && termsAgreement.checked;
+                submitBtn.disabled = !isValid;
+            }
+
+            // フォーム要素の変更監視
+            const formElements = document.querySelectorAll('#guide-registration-form input, #guide-registration-form select');
+            formElements.forEach(element => {
+                element.addEventListener('change', validateForm);
+                element.addEventListener('input', validateForm);
+            });
+
+            // フォーム送信
+            document.getElementById('guide-registration-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!isPhoneVerified) {
+                    alert('電話認証を完了してください。');
+                    return;
+                }
+
+                // 登録処理シミュレーション
+                const submitBtn = document.getElementById('submit-btn');
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録中...';
+                submitBtn.disabled = true;
+
+                // フォームデータを収集
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    birthdate: document.getElementById('birthdate').value,
+                    phone: document.getElementById('phone').value,
+                    location: document.getElementById('location').value,
+                    languages: document.getElementById('languages').value,
+                    specialties: getSelectedSpecialties(),
+                    documentType: document.getElementById('document-type').value,
+                    profilePhoto: document.getElementById('profile-photo-preview').src
+                };
+
+                // セッションストレージに基本情報を保存
+                sessionStorage.setItem('guideRegistrationData', JSON.stringify(formData));
+                
+                setTimeout(() => {
+                    // ガイド詳細編集ページに遷移
+                    window.location.href = 'guide-profile.html?mode=registration';
+                }, 2000);
+            });
+
+            // 専門分野の選択値を取得する関数
+            function getSelectedSpecialties() {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                const specialties = [];
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.value && checkbox.id.startsWith('specialty-')) {
+                        specialties.push(checkbox.value);
+                    }
+                });
+                return specialties;
+            }
+        });
+    </script>
+</body>
+</html>
