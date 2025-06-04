@@ -170,6 +170,25 @@
             text-decoration: none;
         }
         
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f0f8ff;
+        }
+        
+        .password-toggle {
+            border-radius: 0 8px 8px 0;
+        }
+        
         @media (max-width: 768px) {
             .registration-container {
                 margin: 1rem;
@@ -178,6 +197,10 @@
             
             .form-section {
                 padding: 2rem 1.5rem;
+            }
+            
+            .upload-area {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -345,86 +368,169 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="languages" class="form-label">対応言語 *</label>
-                            <select class="form-select" id="languages" required>
-                                <option value="">選択してください</option>
-                                <option value="日本語のみ">日本語のみ</option>
-                                <option value="日本語・英語">日本語・英語</option>
-                                <option value="日本語・中国語">日本語・中国語</option>
-                                <option value="日本語・韓国語">日本語・韓国語</option>
-                                <option value="日本語・スペイン語">日本語・スペイン語</option>
-                                <option value="日本語・フランス語">日本語・フランス語</option>
-                                <option value="日本語・ドイツ語">日本語・ドイツ語</option>
-                                <option value="日本語・英語・中国語">日本語・英語・中国語</option>
-                                <option value="日本語・英語・韓国語">日本語・英語・韓国語</option>
-                                <option value="日本語・英語・スペイン語">日本語・英語・スペイン語</option>
-                                <option value="日本語・英語・フランス語">日本語・英語・フランス語</option>
-                                <option value="日本語・英語・ドイツ語">日本語・英語・ドイツ語</option>
-                                <option value="多言語対応（5言語以上）">多言語対応（5言語以上）</option>
-                            </select>
+                            <label class="form-label">対応言語 *（複数選択可）</label>
+                            <div class="verification-section">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-japanese" value="日本語" checked disabled>
+                                            <label class="form-check-label" for="lang-japanese">
+                                                日本語 <small class="text-muted">（必須）</small>
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-english" value="英語">
+                                            <label class="form-check-label" for="lang-english">英語</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-chinese" value="中国語">
+                                            <label class="form-check-label" for="lang-chinese">中国語</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-korean" value="韓国語">
+                                            <label class="form-check-label" for="lang-korean">韓国語</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-spanish" value="スペイン語">
+                                            <label class="form-check-label" for="lang-spanish">スペイン語</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-french" value="フランス語">
+                                            <label class="form-check-label" for="lang-french">フランス語</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-german" value="ドイツ語">
+                                            <label class="form-check-label" for="lang-german">ドイツ語</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-other" value="その他">
+                                            <label class="form-check-label" for="lang-other">その他</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="selected-languages" name="languages" required>
                         </div>
                     </div>
 
                     <!-- 専門分野 -->
                     <div class="mb-3">
                         <label class="form-label">専門分野・得意なガイド内容</label>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-history" value="歴史・文化">
-                                    <label class="form-check-label" for="specialty-history">歴史・文化</label>
+                        <div class="verification-section">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-history" value="歴史・文化">
+                                        <label class="form-check-label" for="specialty-history">歴史・文化</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-nature" value="自然・アウトドア">
+                                        <label class="form-check-label" for="specialty-nature">自然・アウトドア</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-food" value="グルメ・料理">
+                                        <label class="form-check-label" for="specialty-food">グルメ・料理</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-shopping" value="ショッピング">
+                                        <label class="form-check-label" for="specialty-shopping">ショッピング</label>
+                                    </div>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-nature" value="自然・アウトドア">
-                                    <label class="form-check-label" for="specialty-nature">自然・アウトドア</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-food" value="グルメ・料理">
-                                    <label class="form-check-label" for="specialty-food">グルメ・料理</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-shopping" value="ショッピング">
-                                    <label class="form-check-label" for="specialty-shopping">ショッピング</label>
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-art" value="アート・エンターテイメント">
+                                        <label class="form-check-label" for="specialty-art">アート・エンターテイメント</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-nightlife" value="ナイトライフ">
+                                        <label class="form-check-label" for="specialty-nightlife">ナイトライフ</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-family" value="ファミリー向け">
+                                        <label class="form-check-label" for="specialty-family">ファミリー向け</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="specialty-business" value="ビジネス">
+                                        <label class="form-check-label" for="specialty-business">ビジネス</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-art" value="アート・エンターテイメント">
-                                    <label class="form-check-label" for="specialty-art">アート・エンターテイメント</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-nightlife" value="ナイトライフ">
-                                    <label class="form-check-label" for="specialty-nightlife">ナイトライフ</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-family" value="ファミリー向け">
-                                    <label class="form-check-label" for="specialty-family">ファミリー向け</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="specialty-business" value="ビジネス">
-                                    <label class="form-check-label" for="specialty-business">ビジネス</label>
-                                </div>
+                            
+                            <!-- 自由記入欄 -->
+                            <div class="mt-3">
+                                <label for="specialty-other" class="form-label">その他の専門分野（自由記入）</label>
+                                <textarea class="form-control" id="specialty-other" rows="3" placeholder="上記以外の専門分野や得意な内容があれば記入してください"></textarea>
                             </div>
                         </div>
                     </div>
 
                     <!-- 身分証明書 -->
                     <div class="verification-section">
-                        <h5>身分証明書アップロード</h5>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="document-type" class="form-label">書類タイプ *</label>
-                                <select class="form-select" id="document-type" required>
-                                    <option value="">選択してください</option>
-                                    <option value="運転免許証">運転免許証</option>
-                                    <option value="パスポート">パスポート</option>
-                                    <option value="マイナンバーカード">マイナンバーカード</option>
-                                    <option value="健康保険証">健康保険証</option>
-                                </select>
+                        <h5>本人確認書類</h5>
+                        <div class="mb-3">
+                            <label for="document-type" class="form-label">書類の種類 *</label>
+                            <select class="form-select" id="document-type" required>
+                                <option value="">選択してください</option>
+                                <option value="運転免許証">運転免許証</option>
+                                <option value="パスポート">パスポート</option>
+                                <option value="マイナンバーカード">マイナンバーカード</option>
+                                <option value="健康保険証">健康保険証</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">書類画像（表面） *</label>
+                                <div class="upload-area" onclick="document.getElementById('document-front').click()">
+                                    <i class="bi bi-cloud-upload" style="font-size: 2rem; color: #ccc;"></i>
+                                    <div class="mt-2">クリックして画像をアップロード</div>
+                                    <small class="text-muted">JPG, PNG形式（最大5MB）</small>
+                                </div>
+                                <input type="file" id="document-front" accept="image/*" style="display: none;" required>
+                                <div id="front-preview" class="mt-2" style="display: none;">
+                                    <img id="front-preview-img" style="max-width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">書類画像 *</label>
-                                <input type="file" class="form-control" id="document-photo" accept="image/*" required>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">書類画像（裏面）</label>
+                                <div class="upload-area" onclick="document.getElementById('document-back').click()">
+                                    <i class="bi bi-cloud-upload" style="font-size: 2rem; color: #ccc;"></i>
+                                    <div class="mt-2">クリックして画像をアップロード</div>
+                                    <small class="text-muted">JPG, PNG形式（最大5MB）</small>
+                                </div>
+                                <input type="file" id="document-back" accept="image/*" style="display: none;">
+                                <div id="back-preview" class="mt-2" style="display: none;">
+                                    <img id="back-preview-img" style="max-width: 100%; height: 150px; object-fit: cover; border-radius: 8px;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- パスワード設定 -->
+                    <div class="verification-section">
+                        <h5>パスワード設定</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">パスワード *</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="password" required minlength="8">
+                                    <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-0 h-100" id="toggle-password" style="border-left: none;">
+                                        <i class="bi bi-eye" id="password-icon"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted">8文字以上で入力してください</small>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="password-confirm" class="form-label">パスワード確認 *</label>
+                                <div class="position-relative">
+                                    <input type="password" class="form-control" id="password-confirm" required>
+                                    <button type="button" class="btn btn-outline-secondary position-absolute end-0 top-0 h-100" id="toggle-password-confirm" style="border-left: none;">
+                                        <i class="bi bi-eye" id="password-confirm-icon"></i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -509,6 +615,84 @@
                 }
             });
 
+            // 言語選択機能
+            const languageCheckboxes = document.querySelectorAll('.language-checkbox');
+            const selectedLanguagesInput = document.getElementById('selected-languages');
+
+            function updateSelectedLanguages() {
+                const selectedLanguages = [];
+                
+                languageCheckboxes.forEach(checkbox => {
+                    if (checkbox.checked) {
+                        selectedLanguages.push(checkbox.value);
+                    }
+                });
+                
+                selectedLanguagesInput.value = selectedLanguages.join(',');
+                validateForm();
+            }
+
+            languageCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateSelectedLanguages);
+            });
+
+            // パスワード表示機能
+            const togglePasswordBtn = document.getElementById('toggle-password');
+            const passwordInput = document.getElementById('password');
+            const passwordIcon = document.getElementById('password-icon');
+
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                passwordIcon.className = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+            });
+
+            const togglePasswordConfirmBtn = document.getElementById('toggle-password-confirm');
+            const passwordConfirmInput = document.getElementById('password-confirm');
+            const passwordConfirmIcon = document.getElementById('password-confirm-icon');
+
+            togglePasswordConfirmBtn.addEventListener('click', function() {
+                const type = passwordConfirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordConfirmInput.setAttribute('type', type);
+                passwordConfirmIcon.className = type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+            });
+
+            // 画像アップロード機能
+            function setupImageUpload(inputId, previewId, previewImgId) {
+                const input = document.getElementById(inputId);
+                const preview = document.getElementById(previewId);
+                const previewImg = document.getElementById(previewImgId);
+
+                input.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImg.src = e.target.result;
+                            preview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+            }
+
+            setupImageUpload('document-front', 'front-preview', 'front-preview-img');
+            setupImageUpload('document-back', 'back-preview', 'back-preview-img');
+
+            // パスワード一致確認
+            function checkPasswordMatch() {
+                const password = document.getElementById('password').value;
+                const passwordConfirm = document.getElementById('password-confirm').value;
+                
+                if (password && passwordConfirm && password !== passwordConfirm) {
+                    passwordConfirmInput.setCustomValidity('パスワードが一致しません');
+                } else {
+                    passwordConfirmInput.setCustomValidity('');
+                }
+            }
+
+            passwordInput.addEventListener('input', checkPasswordMatch);
+            passwordConfirmInput.addEventListener('input', checkPasswordMatch);
+
             // フォームバリデーション
             function validateForm() {
                 const form = document.getElementById('guide-registration-form');
@@ -572,8 +756,18 @@
                         specialties.push(checkbox.value);
                     }
                 });
+                
+                // 自由記入欄の内容も追加
+                const otherSpecialty = document.getElementById('specialty-other').value.trim();
+                if (otherSpecialty) {
+                    specialties.push(otherSpecialty);
+                }
+                
                 return specialties;
             }
+
+            // 初期化
+            updateSelectedLanguages();
         });
     </script>
 </body>
