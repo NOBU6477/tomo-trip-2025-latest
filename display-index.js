@@ -374,7 +374,24 @@ app.get('/', (req, res) => {
   // メインのindex.htmlファイルを直接提供
   try {
     const htmlContent = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
-    res.status(200).send(htmlContent);
+    
+    // ページのヘッダーにキャッシュ無効化とリダイレクト防止を追加
+    const modifiedContent = htmlContent.replace(
+      '<head>',
+      `<head>
+      <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Expires" content="0">
+      <script>
+        // ページ読み込み時にURLが正しいことを確認
+        if (window.location.pathname !== '/' && window.location.pathname !== '/index.html') {
+          console.log('不正なURLを検出、トップページにリダイレクト:', window.location.pathname);
+          window.location.replace('/');
+        }
+      </script>`
+    );
+    
+    res.status(200).send(modifiedContent);
   } catch (err) {
     console.log('index.htmlの読み込みに失敗:', err);
     res.status(500).send('ページの読み込みに失敗しました');
