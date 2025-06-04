@@ -47,6 +47,38 @@
             padding: 1.5rem;
             margin: 1rem 0;
         }
+        .language-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .language-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .language-tag:hover {
+            background: #e9ecef;
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+        }
+        
+        .language-tag.selected {
+            background: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+        
         .verification-status {
             display: flex;
             align-items: center;
@@ -300,23 +332,21 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label for="languages" class="form-label">対応言語 *</label>
-                            <select class="form-select" id="languages" required>
-                                <option value="">選択してください</option>
-                                <option value="日本語のみ">日本語のみ</option>
-                                <option value="日本語・英語">日本語・英語</option>
-                                <option value="日本語・中国語">日本語・中国語</option>
-                                <option value="日本語・韓国語">日本語・韓国語</option>
-                                <option value="日本語・スペイン語">日本語・スペイン語</option>
-                                <option value="日本語・フランス語">日本語・フランス語</option>
-                                <option value="日本語・ドイツ語">日本語・ドイツ語</option>
-                                <option value="日本語・英語・中国語">日本語・英語・中国語</option>
-                                <option value="日本語・英語・韓国語">日本語・英語・韓国語</option>
-                                <option value="日本語・英語・スペイン語">日本語・英語・スペイン語</option>
-                                <option value="日本語・英語・フランス語">日本語・英語・フランス語</option>
-                                <option value="日本語・英語・ドイツ語">日本語・英語・ドイツ語</option>
-                                <option value="多言語対応（5言語以上）">多言語対応（5言語以上）</option>
-                            </select>
+                            <label class="form-label">対応言語 *</label>
+                            <div class="verification-section">
+                                <div class="language-tags-container mb-3">
+                                    <span class="language-tag selected" data-lang="日本語">日本語</span>
+                                    <span class="language-tag" data-lang="英語">英語</span>
+                                    <span class="language-tag" data-lang="中国語">中国語</span>
+                                    <span class="language-tag" data-lang="韓国語">韓国語</span>
+                                    <span class="language-tag" data-lang="スペイン語">スペイン語</span>
+                                    <span class="language-tag" data-lang="フランス語">フランス語</span>
+                                    <span class="language-tag" data-lang="ドイツ語">ドイツ語</span>
+                                    <span class="language-tag" data-lang="その他">その他</span>
+                                </div>
+                                <small class="text-muted">タグをクリックして選択してください（複数選択可）</small>
+                            </div>
+                            <input type="hidden" id="selected-languages" name="languages" required>
                         </div>
                     </div>
 
@@ -552,7 +582,37 @@
                 submitBtn.disabled = !isValid;
             }
 
-            // 言語選択は通常のselectボックスなので特別な処理は不要
+            // 言語タグ選択機能
+            const languageTags = document.querySelectorAll('.language-tag');
+            const selectedLanguagesInput = document.getElementById('selected-languages');
+
+            function updateSelectedLanguages() {
+                const selectedLanguages = [];
+                
+                languageTags.forEach(tag => {
+                    if (tag.classList.contains('selected')) {
+                        selectedLanguages.push(tag.dataset.lang);
+                    }
+                });
+                
+                selectedLanguagesInput.value = selectedLanguages.join(',');
+                validateForm();
+            }
+
+            languageTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    // 日本語は必須なので削除不可
+                    if (this.dataset.lang === '日本語') {
+                        return;
+                    }
+                    
+                    this.classList.toggle('selected');
+                    updateSelectedLanguages();
+                });
+            });
+
+            // 初期化：日本語を選択状態で言語選択を更新
+            updateSelectedLanguages();
 
             // フォーム要素の変更監視
             const formElements = document.querySelectorAll('#guide-registration-form input, #guide-registration-form select');

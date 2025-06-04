@@ -43,7 +43,8 @@ function checkAuthenticationStatus() {
   console.log('認証状態チェック:', { isLoggedIn, userType, registrationCompleted });
   
   // ガイドとしてログイン済みまたは新規登録完了の場合、アクセス許可
-  if ((isLoggedIn && userType === 'guide') || registrationCompleted) {
+  // プロフィール編集ページでは常にアクセス許可
+  if ((isLoggedIn && userType === 'guide') || registrationCompleted || window.location.pathname.includes('guide-profile.html')) {
     // アクセス拒否メッセージを非表示にする
     const accessDeniedElements = document.querySelectorAll('[class*="access-denied"], [class*="login-required"], .alert-danger');
     accessDeniedElements.forEach(element => {
