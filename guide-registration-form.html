@@ -728,15 +728,30 @@
                     birthdate: getElementValue('birthdate'),
                     phone: getElementValue('phone'),
                     location: getElementValue('location'),
-                    languages: getElementValue('selected-languages'), // 修正：正しいIDを使用
-                    customSpecialty: getElementValue('custom-specialty'), // 追加：任意入力欄
+                    languages: getElementValue('selected-languages'),
+                    customSpecialty: getElementValue('custom-specialty'),
                     specialties: getSelectedSpecialties(),
-                    documentType: getElementValue('document-type'),
-                    profilePhoto: getElementSrc('profile-photo-preview')
+                    documentType: getElementValue('document-type')
+                    // 画像データは除外してサイズを削減
                 };
 
-                // セッションストレージに基本情報を保存
-                sessionStorage.setItem('guideRegistrationData', JSON.stringify(formData));
+                // 登録完了フラグを設定
+                sessionStorage.setItem('guideRegistrationCompleted', 'true');
+                sessionStorage.setItem('isLoggedIn', 'true');
+                sessionStorage.setItem('userType', 'guide');
+                
+                // 基本データのみ保存（画像は除外）
+                try {
+                    sessionStorage.setItem('guideRegistrationData', JSON.stringify(formData));
+                } catch (e) {
+                    console.log('セッションストレージ容量制限のため、最小限のデータのみ保存します');
+                    sessionStorage.setItem('guideBasicData', JSON.stringify({
+                        firstName: formData.firstName,
+                        lastName: formData.lastName,
+                        location: formData.location,
+                        languages: formData.languages
+                    }));
+                }
                 
                 setTimeout(() => {
                     // ガイド詳細編集ページに遷移
