@@ -300,67 +300,23 @@
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">対応言語 *（複数選択可）</label>
-                            <div class="border rounded p-3" style="max-height: 200px; overflow-y: auto;">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="lang-japanese" value="日本語" checked disabled>
-                                            <label class="form-check-label" for="lang-japanese">
-                                                日本語 <small class="text-muted">（必須）</small>
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-english" value="英語">
-                                            <label class="form-check-label" for="lang-english">英語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-chinese" value="中国語">
-                                            <label class="form-check-label" for="lang-chinese">中国語（簡体字）</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-chinese-traditional" value="中国語（繁体字）">
-                                            <label class="form-check-label" for="lang-chinese-traditional">中国語（繁体字）</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-korean" value="韓国語">
-                                            <label class="form-check-label" for="lang-korean">韓国語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-spanish" value="スペイン語">
-                                            <label class="form-check-label" for="lang-spanish">スペイン語</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-french" value="フランス語">
-                                            <label class="form-check-label" for="lang-french">フランス語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-german" value="ドイツ語">
-                                            <label class="form-check-label" for="lang-german">ドイツ語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-italian" value="イタリア語">
-                                            <label class="form-check-label" for="lang-italian">イタリア語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-portuguese" value="ポルトガル語">
-                                            <label class="form-check-label" for="lang-portuguese">ポルトガル語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-russian" value="ロシア語">
-                                            <label class="form-check-label" for="lang-russian">ロシア語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-thai" value="タイ語">
-                                            <label class="form-check-label" for="lang-thai">タイ語</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <input type="hidden" id="selected-languages" name="languages" required>
-                            <small class="text-muted">最低1つの外国語を選択してください</small>
+                            <label for="languages" class="form-label">対応言語 *</label>
+                            <select class="form-select" id="languages" required>
+                                <option value="">選択してください</option>
+                                <option value="日本語のみ">日本語のみ</option>
+                                <option value="日本語・英語">日本語・英語</option>
+                                <option value="日本語・中国語">日本語・中国語</option>
+                                <option value="日本語・韓国語">日本語・韓国語</option>
+                                <option value="日本語・スペイン語">日本語・スペイン語</option>
+                                <option value="日本語・フランス語">日本語・フランス語</option>
+                                <option value="日本語・ドイツ語">日本語・ドイツ語</option>
+                                <option value="日本語・英語・中国語">日本語・英語・中国語</option>
+                                <option value="日本語・英語・韓国語">日本語・英語・韓国語</option>
+                                <option value="日本語・英語・スペイン語">日本語・英語・スペイン語</option>
+                                <option value="日本語・英語・フランス語">日本語・英語・フランス語</option>
+                                <option value="日本語・英語・ドイツ語">日本語・英語・ドイツ語</option>
+                                <option value="多言語対応（5言語以上）">多言語対応（5言語以上）</option>
+                            </select>
                         </div>
                     </div>
 
@@ -490,21 +446,7 @@
         </div>
     </div>
 
-    <!-- 成功モーダル -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center p-4">
-                    <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
-                    <h4 class="mt-3">登録完了！</h4>
-                    <p class="mb-4">ガイド登録が完了しました。審査完了後、メールでお知らせいたします。</p>
-                    <button type="button" class="btn btn-primary" onclick="window.location.href='index.html'">
-                        ホームページに戻る
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -610,38 +552,7 @@
                 submitBtn.disabled = !isValid;
             }
 
-            // 言語選択機能
-            const languageCheckboxes = document.querySelectorAll('.language-checkbox');
-            const selectedLanguagesInput = document.getElementById('selected-languages');
-
-            function updateSelectedLanguages() {
-                const selectedLanguages = ['日本語']; // 日本語は必須
-                
-                languageCheckboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        selectedLanguages.push(checkbox.value);
-                    }
-                });
-                
-                selectedLanguagesInput.value = selectedLanguages.join(',');
-                
-                // 最低1つの外国語が選択されているかチェック
-                const hasOtherLanguage = languageCheckboxes.some(checkbox => checkbox.checked);
-                if (hasOtherLanguage) {
-                    selectedLanguagesInput.setCustomValidity('');
-                } else {
-                    selectedLanguagesInput.setCustomValidity('最低1つの外国語を選択してください');
-                }
-                
-                validateForm();
-            }
-
-            languageCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateSelectedLanguages);
-            });
-
-            // 初期化
-            updateSelectedLanguages();
+            // 言語選択は通常のselectボックスなので特別な処理は不要
 
             // フォーム要素の変更監視
             const formElements = document.querySelectorAll('#guide-registration-form input, #guide-registration-form select');
@@ -664,11 +575,40 @@
                 submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録中...';
                 submitBtn.disabled = true;
 
+                // フォームデータを収集
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    birthdate: document.getElementById('birthdate').value,
+                    phone: document.getElementById('phone').value,
+                    location: document.getElementById('location').value,
+                    languages: document.getElementById('languages').value,
+                    specialties: getSelectedSpecialties(),
+                    documentType: document.getElementById('document-type').value,
+                    profilePhoto: document.getElementById('profile-photo-preview').src
+                };
+
+                // セッションストレージに基本情報を保存
+                sessionStorage.setItem('guideRegistrationData', JSON.stringify(formData));
+                
                 setTimeout(() => {
-                    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                    successModal.show();
+                    // ガイド詳細編集ページに遷移
+                    window.location.href = 'guide-profile.html?mode=registration';
                 }, 2000);
             });
+
+            // 専門分野の選択値を取得する関数
+            function getSelectedSpecialties() {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+                const specialties = [];
+                checkboxes.forEach(checkbox => {
+                    if (checkbox.value && checkbox.id.startsWith('specialty-')) {
+                        specialties.push(checkbox.value);
+                    }
+                });
+                return specialties;
+            }
         });
     </script>
 </body>
