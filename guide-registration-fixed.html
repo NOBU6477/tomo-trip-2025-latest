@@ -189,6 +189,38 @@
             border-radius: 0 8px 8px 0;
         }
         
+        .language-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .language-tag {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .language-tag:hover {
+            background: #e9ecef;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .language-tag.selected {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
         @media (max-width: 768px) {
             .registration-container {
                 margin: 1rem;
@@ -360,56 +392,42 @@
                                     <option value="佐賀県">佐賀県</option>
                                     <option value="長崎県">長崎県</option>
                                     <option value="熊本県">熊本県</option>
-                                    <option value="大分県">大分分県</option>
+                                    <option value="大分県">大分県</option>
                                     <option value="宮崎県">宮崎県</option>
                                     <option value="鹿児島県">鹿児島県</option>
                                     <option value="沖縄県">沖縄県</option>
                                 </optgroup>
+                                <optgroup label="離島・特別地域">
+                                    <option value="沖縄本島北部">沖縄本島北部</option>
+                                    <option value="石垣島">石垣島</option>
+                                    <option value="宮古島">宮古島</option>
+                                    <option value="西表島">西表島</option>
+                                    <option value="与那国島">与那国島</option>
+                                    <option value="久米島">久米島</option>
+                                    <option value="奄美大島">奄美大島</option>
+                                    <option value="屋久島">屋久島</option>
+                                    <option value="種子島">種子島</option>
+                                    <option value="対馬">対馬</option>
+                                    <option value="壱岐">壱岐</option>
+                                    <option value="佐渡島">佐渡島</option>
+                                    <option value="隠岐諸島">隠岐諸島</option>
+                                </optgroup>
                             </select>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">対応言語 *（複数選択可）</label>
+                            <label class="form-label">対応言語 *</label>
                             <div class="verification-section">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-japanese" value="日本語" checked disabled>
-                                            <label class="form-check-label" for="lang-japanese">
-                                                日本語 <small class="text-muted">（必須）</small>
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-english" value="英語">
-                                            <label class="form-check-label" for="lang-english">英語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-chinese" value="中国語">
-                                            <label class="form-check-label" for="lang-chinese">中国語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-korean" value="韓国語">
-                                            <label class="form-check-label" for="lang-korean">韓国語</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-spanish" value="スペイン語">
-                                            <label class="form-check-label" for="lang-spanish">スペイン語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-french" value="フランス語">
-                                            <label class="form-check-label" for="lang-french">フランス語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-german" value="ドイツ語">
-                                            <label class="form-check-label" for="lang-german">ドイツ語</label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input language-checkbox" type="checkbox" id="lang-other" value="その他">
-                                            <label class="form-check-label" for="lang-other">その他</label>
-                                        </div>
-                                    </div>
+                                <div class="language-tags-container mb-3">
+                                    <span class="language-tag selected" data-lang="日本語">日本語</span>
+                                    <span class="language-tag" data-lang="英語">英語</span>
+                                    <span class="language-tag" data-lang="中国語">中国語</span>
+                                    <span class="language-tag" data-lang="韓国語">韓国語</span>
+                                    <span class="language-tag" data-lang="スペイン語">スペイン語</span>
+                                    <span class="language-tag" data-lang="フランス語">フランス語</span>
+                                    <span class="language-tag" data-lang="ドイツ語">ドイツ語</span>
+                                    <span class="language-tag" data-lang="その他">その他</span>
                                 </div>
+                                <small class="text-muted">タグをクリックして選択してください（複数選択可）</small>
                             </div>
                             <input type="hidden" id="selected-languages" name="languages" required>
                         </div>
@@ -615,16 +633,16 @@
                 }
             });
 
-            // 言語選択機能
-            const languageCheckboxes = document.querySelectorAll('.language-checkbox');
+            // 言語タグ選択機能
+            const languageTags = document.querySelectorAll('.language-tag');
             const selectedLanguagesInput = document.getElementById('selected-languages');
 
             function updateSelectedLanguages() {
                 const selectedLanguages = [];
                 
-                languageCheckboxes.forEach(checkbox => {
-                    if (checkbox.checked) {
-                        selectedLanguages.push(checkbox.value);
+                languageTags.forEach(tag => {
+                    if (tag.classList.contains('selected')) {
+                        selectedLanguages.push(tag.dataset.lang);
                     }
                 });
                 
@@ -632,8 +650,16 @@
                 validateForm();
             }
 
-            languageCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', updateSelectedLanguages);
+            languageTags.forEach(tag => {
+                tag.addEventListener('click', function() {
+                    // 日本語は必須なので削除不可
+                    if (this.dataset.lang === '日本語') {
+                        return;
+                    }
+                    
+                    this.classList.toggle('selected');
+                    updateSelectedLanguages();
+                });
             });
 
             // パスワード表示機能
@@ -732,19 +758,29 @@
                     birthdate: document.getElementById('birthdate').value,
                     phone: document.getElementById('phone').value,
                     location: document.getElementById('location').value,
-                    languages: document.getElementById('languages').value,
+                    languages: document.getElementById('selected-languages').value,
                     specialties: getSelectedSpecialties(),
                     documentType: document.getElementById('document-type').value,
-                    profilePhoto: document.getElementById('profile-photo-preview').src
+                    password: document.getElementById('password').value,
+                    profilePhoto: document.getElementById('profile-photo-preview').src || ''
                 };
 
                 // セッションストレージに基本情報を保存
                 sessionStorage.setItem('guideRegistrationData', JSON.stringify(formData));
                 
+                // 進捗表示の更新
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>基本情報を保存中...';
+                }, 500);
+                
+                setTimeout(() => {
+                    submitBtn.innerHTML = '<i class="bi bi-arrow-right me-2"></i>詳細編集ページへ移動中...';
+                }, 1500);
+                
                 setTimeout(() => {
                     // ガイド詳細編集ページに遷移
                     window.location.href = 'guide-profile.html?mode=registration';
-                }, 2000);
+                }, 2500);
             });
 
             // 専門分野の選択値を取得する関数
