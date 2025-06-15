@@ -17,6 +17,7 @@
       href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"
     />
     <link href="login-modal-styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="optimized-styles.css" />
     <style>
       body {
         background-color: #f8f9fa;
@@ -3277,7 +3278,7 @@
           slide.style.width = "300px"; // 固定幅を設定
           slide.innerHTML = `
             <div class="sponsor-card p-4 bg-light rounded-3 shadow-sm text-center h-100" data-sponsor-id="${store.id}">
-              <img src="${store.logo}" alt="${store.name}" class="sponsor-logo mx-auto mb-3 rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" />
+              <img src="${store.logo}" alt="${store.name}" class="sponsor-logo mx-auto mb-3 rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" / loading="lazy">
               <h6 class="sponsor-name fw-bold mb-2">${store.name}</h6>
               <p class="sponsor-benefit text-muted small mb-0">${store.benefit}</p>
             </div>
@@ -3732,5 +3733,7 @@
     
     <!-- フィルター切り替え機能 -->
     <script src="filter-toggle.js"></script>
+    <!-- 性能最適化スクリプト -->
+    <script src="performance-optimization.js"></script>
   </body>
 </html>

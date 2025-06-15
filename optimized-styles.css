@@ -1,0 +1,293 @@
+/**
+ * 性能最適化とモバイルUX改善CSS
+ * Critical CSS、モバイルタッチ操作、レスポンシブ最適化
+ */
+
+/* ========== Critical CSS ========== */
+/* Above-the-fold content styling */
+.navbar {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.hero-section {
+  min-height: 70vh;
+  background-attachment: scroll; /* モバイル性能向上 */
+}
+
+/* ========== モバイルタッチ最適化 ========== */
+/* 最小タッチエリア: 44x44px */
+.btn, button, .card, a[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+}
+
+/* タップ反応改善 */
+.btn, button, .card-clickable {
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  cursor: pointer;
+}
+
+.btn:active, button:active, .card-clickable:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* タッチエリア拡張 */
+.btn-sm {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 12px;
+}
+
+.btn-lg {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 16px 24px;
+}
+
+/* ========== レスポンシブ改善 ========== */
+/* モバイルファースト設計 */
+@media (max-width: 575.98px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  .card {
+    margin-bottom: 16px;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+  
+  /* フォント読みやすさ向上 */
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+  
+  /* カードレイアウト最適化 */
+  .guide-card {
+    max-width: 100%;
+    margin: 0 auto 16px;
+  }
+  
+  /* ナビゲーション改善 */
+  .navbar-nav {
+    text-align: center;
+  }
+  
+  .navbar-nav .nav-link {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+}
+
+/* タブレット対応 */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .guide-card {
+    max-width: calc(50% - 16px);
+  }
+  
+  .hero-section h1 {
+    font-size: 2.5rem;
+  }
+}
+
+/* デスクトップ対応 */
+@media (min-width: 992px) {
+  .guide-card {
+    max-width: calc(33.333% - 16px);
+  }
+  
+  .hero-section h1 {
+    font-size: 3rem;
+  }
+}
+
+/* ========== 画像最適化 ========== */
+.guide-image, .card-img-top {
+  object-fit: cover;
+  aspect-ratio: 4/3;
+  width: 100%;
+  height: auto;
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease;
+}
+
+.guide-image:hover, .card-img-top:hover {
+  transform: scale(1.05);
+}
+
+/* 画像読み込み中のプレースホルダー */
+.guide-image[loading="lazy"] {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========== フォーム最適化 ========== */
+.form-control, .form-select {
+  min-height: 44px;
+  font-size: 16px; /* iOS zoom防止 */
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid #dee2e6;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+  outline: none;
+}
+
+/* モバイルキーボード対応 */
+@media (max-width: 767.98px) {
+  .form-control, .form-select {
+    font-size: 16px; /* iOS zoom防止 */
+  }
+}
+
+/* ========== ナビゲーション最適化 ========== */
+.navbar-toggler {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* ハンバーガーメニューアニメーション */
+.navbar-toggler-icon {
+  transition: transform 0.3s ease;
+}
+
+.navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+  transform: rotate(90deg);
+}
+
+/* ドロップダウン改善 */
+.dropdown-menu {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  margin-top: 8px;
+}
+
+.dropdown-item {
+  padding: 12px 16px;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover, .dropdown-item:focus {
+  background-color: #f8f9fa;
+}
+
+/* ========== スライダー最適化 ========== */
+.swiper-container {
+  touch-action: pan-y pinch-zoom;
+}
+
+.swiper-slide {
+  height: auto;
+}
+
+.swiper-button-next, .swiper-button-prev {
+  width: 44px;
+  height: 44px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  opacity: 0.5;
+  transition: opacity 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1;
+  background-color: #0d6efd;
+}
+
+/* ========== アクセシビリティ改善 ========== */
+/* フォーカス表示 */
+*:focus {
+  outline: 2px solid #0d6efd;
+  outline-offset: 2px;
+}
+
+/* スクリーンリーダー用テキスト */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ========== 性能最適化 ========== */
+/* レイヤー分離によるGPU加速 */
+.card, .btn, .navbar {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* スムーススクロール */
+html {
+  scroll-behavior: smooth;
+}
+
+/* モーション設定考慮 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========== ダークモード対応 ========== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bs-body-bg: #212529;
+    --bs-body-color: #fff;
+    --bs-card-bg: #343a40;
+    --bs-border-color: #495057;
+  }
+  
+  .card {
+    background-color: var(--bs-card-bg);
+    border-color: var(--bs-border-color);
+  }
+  
+  .form-control, .form-select {
+    background-color: var(--bs-card-bg);
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+  }
+}
