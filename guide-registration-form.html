@@ -201,7 +201,7 @@
                     <!-- プロフィール写真 -->
                     <div class="text-center mb-4">
                         <div class="profile-photo-container" onclick="document.getElementById('profile-photo-input').click()">
-                            <img src="https://via.placeholder.com/150x150/f8f9fa/6c757d?text=+" class="profile-photo" id="profile-photo-preview">
+                            <img src="https://via.placeholder.com/150x150/f8f9fa/6c757d?text=+" class="profile-photo" id="profile-photo-preview" loading="lazy">
                             <div class="profile-photo-overlay">
                                 <i class="bi bi-camera text-white" style="font-size: 2rem;"></i>
                             </div>
@@ -453,7 +453,7 @@
                             </div>
                             <input type="file" id="document-front-input" accept="image/*" class="d-none">
                             <div id="document-front-preview" class="mt-2 d-none">
-                                <img class="compact-preview" id="document-front-img">
+                                <img class="compact-preview" id="document-front-img" loading="lazy">
                             </div>
                         </div>
                         
@@ -466,7 +466,7 @@
                             </div>
                             <input type="file" id="document-back-input" accept="image/*" class="d-none">
                             <div id="document-back-preview" class="mt-2 d-none">
-                                <img class="compact-preview" id="document-back-img">
+                                <img class="compact-preview" id="document-back-img" loading="lazy">
                             </div>
                         </div>
                     </div>
