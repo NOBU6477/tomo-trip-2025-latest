@@ -371,9 +371,9 @@ app.get('/', (req, res) => {
     return res.send(generateBasicHtml());
   }
 
-  // クリーンなHTMLファイルを直接提供
+  // メインのindex.htmlファイルを直接提供
   try {
-    const htmlContent = fs.readFileSync(path.join(__dirname, 'clean-index.html'), 'utf8');
+    const htmlContent = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
     
     // ページのヘッダーにキャッシュ無効化とリダイレクト防止を追加
     const modifiedContent = htmlContent.replace(
