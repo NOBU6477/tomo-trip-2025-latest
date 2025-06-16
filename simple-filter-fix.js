@@ -18,6 +18,16 @@
   function initSimpleFilter() {
     console.log('シンプルフィルター初期化開始');
     
+    // 初期化時にhidden-guideクラスを削除
+    const hiddenGuides = document.querySelectorAll('.guide-item.hidden-guide');
+    console.log('hidden-guideクラス付きガイド数:', hiddenGuides.length);
+    hiddenGuides.forEach(guide => {
+      guide.classList.remove('hidden-guide');
+      guide.style.display = '';
+      guide.style.visibility = 'visible';
+      guide.style.opacity = '1';
+    });
+    
     // 必要な要素の確認
     const toggleButton = document.getElementById('toggle-filter-button');
     const filterCard = document.getElementById('filter-card');
@@ -96,6 +106,12 @@
     const filters = getFilterValues();
     console.log('現在のフィルター設定:', filters);
     
+    // hidden-guideクラスを削除してすべてのガイドを表示可能にする
+    const hiddenGuides = document.querySelectorAll('.guide-item.hidden-guide');
+    hiddenGuides.forEach(guide => {
+      guide.classList.remove('hidden-guide');
+    });
+    
     // ガイドアイテムを取得
     const guideItems = document.querySelectorAll('.guide-item');
     console.log('検索対象ガイド数:', guideItems.length);
@@ -107,6 +123,8 @@
       
       if (shouldShow) {
         item.style.display = '';
+        item.style.visibility = 'visible';
+        item.style.opacity = '1';
         visibleCount++;
         console.log(`ガイド${index + 1}: 表示`);
       } else {
@@ -186,11 +204,25 @@
     if (feeSelect) feeSelect.value = '';
     if (keywordInput) keywordInput.value = '';
     
+    // hidden-guideクラスを削除してすべてのガイドを表示可能にする
+    const hiddenGuides = document.querySelectorAll('.guide-item.hidden-guide');
+    hiddenGuides.forEach(guide => {
+      guide.classList.remove('hidden-guide');
+    });
+    
     // すべてのガイドを表示
     const guideItems = document.querySelectorAll('.guide-item');
     guideItems.forEach(item => {
       item.style.display = '';
+      item.style.visibility = 'visible';
+      item.style.opacity = '1';
     });
+    
+    // 結果メッセージを削除
+    const existingMessage = document.querySelector('.search-results-message');
+    if (existingMessage) {
+      existingMessage.remove();
+    }
     
     console.log('フィルターリセット完了');
     console.log(`${guideItems.length}件のガイドがすべて表示されています`);
