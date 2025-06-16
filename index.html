@@ -2977,30 +2977,23 @@
                 console.log('翻訳対象テキスト:', originalText);
                 
                 // 説明文の翻訳（様々なパターンに対応）
-                  'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
-                  'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.');
-                  
-                // より包括的なパターンマッチング
                 if (text.includes('Tokyo') && text.includes('隠れた名所')) {
                   text = 'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.';
                 } else if (text.includes('東京') && text.includes('隠れた名所')) {
                   text = 'I guide you to Tokyo\'s hidden gems. I specialize in gourmet spots and photo locations.';
+                } else if (text.includes('京都') && text.includes('歴史')) {
+                  text = 'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.';
+                } else if (text.includes('大阪') && text.includes('グルメ')) {
+                  text = 'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to famous restaurants known only to locals.';
+                } else if (text.includes('北海道') && text.includes('自然')) {
+                  text = 'Proposing tours to enjoy Hokkaido\'s great nature and gourmet food. I\'ll share the charm of each season.';
+                } else if (text.includes('沖縄') && text.includes('海')) {
+                  text = 'Experience Okinawa\'s beautiful sea and unique culture. From marine sports to historical walks, I offer a wide range of activities.';
+                } else if (text.includes('広島') && text.includes('平和')) {
+                  text = 'Specializing in tours visiting Hiroshima\'s Peace Memorial Park, Miyajima, and other historical and natural sites. I provide memorable experiences.';
                 }
                 
-                  'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.');
-                  'Guiding you through Kyoto\'s charm with its breathing history and tradition. I specialize in temple visits and traditional cultural experiences.');
-                  'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to famous restaurants known only to locals.');
-                  'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to famous restaurants known only to locals.');
-                  'Proposing tours to enjoy Hokkaido\'s great nature and gourmet food. I\'ll share the charm of each season.');
-                  'Experience Okinawa\'s beautiful sea and unique culture. From marine sports to historical walks, I offer a wide range of activities.');
-                  'Specializing in tours visiting Hiroshima\'s Peace Memorial Park, Miyajima, and other historical and natural sites. I provide memorable experiences.');
-                
                 // 動的ガイドの説明文翻訳
-                  'Local guide in Sapporo, Hokkaido. I\'ll share the charm of Shirayuki Park. I can also guide you on trekking.');
-                  'Diving instructor with 15 years of experience in Okinawa. I\'ll guide you through beautiful seas and unique culture.');
-                  'Guide well-versed in Hiroshima history and culture. Specializing in tours visiting Peace Memorial Park, Miyajima, and other historical and natural sites.');
-                
-                // より一般的なパターンマッチング
                 if (text.includes('北海道') && text.includes('ローカルガイド')) {
                   text = 'Local guide in Sapporo, Hokkaido. I\'ll share the charm of Shirayuki Park. I can also guide you on trekking.';
                 } else if (text.includes('沖縄県') && text.includes('ダイビング')) {
