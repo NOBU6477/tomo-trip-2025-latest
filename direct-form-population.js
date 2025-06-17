@@ -139,6 +139,10 @@
    * ページロード時の実行
    */
   function initialize() {
+    // このスクリプトを無効化 - 実際の登録データ表示を妨害するため
+    console.log('direct-form-population.js は無効化されました（実際の登録データ表示のため）');
+    return;
+    
     if (!window.location.pathname.includes('guide-profile.html')) return;
 
     console.log('直接フォーム入力システム開始');
