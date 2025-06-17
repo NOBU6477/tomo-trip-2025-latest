@@ -560,7 +560,8 @@
                 </div>
                 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                  <button type="submit" class="btn btn-primary" data-key="save-changes">保存する</button>
+                  <button type="button" id="save-basic-info" class="btn btn-primary" data-key="save-basic-info">基本情報を保存</button>
+                  <button type="submit" class="btn btn-success" data-key="save-changes">完全保存</button>
                   <button type="button" class="btn btn-outline-success" id="save-and-view-guide-list" data-key="save-and-view-list">保存してガイド一覧を見る</button>
                 </div>
               </form>
@@ -1826,6 +1827,9 @@
   
   <!-- プロフィールログアウトシステム -->
   <script src="profile-logout-system.js"></script>
+  
+  <!-- プロフィールフォーム入力同期システム -->
+  <script src="profile-form-input-sync.js"></script>
   
   <!-- ガイド登録機能修正 -->
   <script src="guide-registration-fix.js"></script>
