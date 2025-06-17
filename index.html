@@ -1096,9 +1096,6 @@
                   alt="海のプロフィール写真"
                   data-guide-photo-id="5"
                 />
-                <button class="profile-edit-overlay" onclick="openPhotoEditor(5)" title="プロフィール写真を編集">
-                  <i class="bi bi-camera"></i>
-                </button>
               </div>
               <div class="card-body">
                 <div
@@ -3998,48 +3995,13 @@
         stopCamera();
       });
 
-      // 編集モードの切り替え
-      let isEditMode = false;
-      
-      function toggleEditMode() {
-        isEditMode = !isEditMode;
-        const editBtn = document.getElementById('editModeBtn');
-        const guideCards = document.querySelectorAll('.guide-card');
-        
-        if (isEditMode) {
-          editBtn.innerHTML = '<i class="bi bi-eye"></i> 表示モード';
-          editBtn.className = 'btn btn-success';
-          guideCards.forEach(card => card.classList.add('guide-edit-mode'));
-          
-          // 成功メッセージ
-          showEditModeMessage('編集モードが有効になりました。ガイドカードの写真にホバーして編集ボタンをクリックしてください。', 'info');
-        } else {
-          editBtn.innerHTML = '<i class="bi bi-pencil"></i> 編集モード';
-          editBtn.className = 'btn btn-warning';
-          guideCards.forEach(card => card.classList.remove('guide-edit-mode'));
-          
-          showEditModeMessage('表示モードに戻りました。', 'secondary');
+      // ガイドプロフィール同期システムの初期化
+      document.addEventListener('DOMContentLoaded', function() {
+        // プロフィール同期システムの初期化
+        if (typeof GuideProfileSync !== 'undefined') {
+          window.profileSync = new GuideProfileSync();
         }
-      }
-      
-      function showEditModeMessage(message, type) {
-        const alertContainer = document.createElement('div');
-        alertContainer.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 500px;';
-        alertContainer.innerHTML = `
-          <div class="alert alert-${type} alert-dismissible fade show" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
-            ${message}
-            <button type="button" class="btn-close" onclick="this.closest('.alert').parentNode.remove()"></button>
-          </div>
-        `;
-        document.body.appendChild(alertContainer);
-        
-        setTimeout(() => {
-          if (alertContainer.parentNode) {
-            alertContainer.remove();
-          }
-        }, 5000);
-      }
+      });
 
       // ページ読み込み時に保存された写真を復元
       document.addEventListener('DOMContentLoaded', function() {
@@ -4088,6 +4050,9 @@
       });
     </script>
 
+    <!-- ガイドプロフィール同期システム -->
+    <script src="guide-profile-sync.js"></script>
+    
     <!-- シンプルフィルター修正版 -->
     <script src="simple-filter-fix.js"></script>
   </body>
