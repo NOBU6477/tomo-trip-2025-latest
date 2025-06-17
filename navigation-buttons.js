@@ -2,6 +2,15 @@
  * ナビゲーションボタン（ホームボタンと戻るボタン）の機能を提供するスクリプト
  */
 document.addEventListener('DOMContentLoaded', function() {
+  // 新規登録モードの場合はナビゲーションボタンを追加しない
+  const urlParams = new URLSearchParams(window.location.search);
+  const isRegistrationMode = urlParams.get('mode') === 'registration' || urlParams.get('step') === '2';
+  
+  if (isRegistrationMode) {
+    console.log('新規登録モードのためナビゲーションボタンをスキップします');
+    return;
+  }
+
   // トップページでない場合にのみナビゲーションボタンを追加
   if (!isTopPage()) {
     addNavigationButtons();

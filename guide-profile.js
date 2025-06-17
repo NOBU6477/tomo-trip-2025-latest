@@ -3,27 +3,48 @@
  * 写真ギャラリー、スケジュール管理などのガイドプロフィール編集機能を提供
  */
 document.addEventListener('DOMContentLoaded', function() {
-  // セッションからユーザー情報を取得
-  const currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || null;
+  // 新規登録モードの場合はアクセス制御をバイパス
+  const urlParams = new URLSearchParams(window.location.search);
+  const isRegistrationMode = urlParams.get('mode') === 'registration' || urlParams.get('step') === '2';
+  const bypassControl = sessionStorage.getItem('bypassAccessControl') === 'true' || 
+                       sessionStorage.getItem('guideRegistrationCompleted') === 'true';
   
-  // ログインしていない場合はホームにリダイレクト
-  if (!currentUser || currentUser.type !== 'guide') {
-    // アラートを表示
-    const alertContainer = document.createElement('div');
-    alertContainer.className = 'alert alert-danger alert-dismissible fade show';
-    alertContainer.setAttribute('role', 'alert');
-    alertContainer.innerHTML = `
-      <strong>アクセスが拒否されました</strong> - ガイドとしてログインしてください。
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    document.body.prepend(alertContainer);
+  if (isRegistrationMode || bypassControl) {
+    console.log('新規登録モード検出 - アクセス制御をバイパスします');
     
-    // 3秒後にホームページにリダイレクト
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 3000);
+    // 新規登録用の仮想ユーザーを作成
+    if (!sessionStorage.getItem('currentUser')) {
+      const tempUser = {
+        id: sessionStorage.getItem('currentGuideId') || Date.now().toString(),
+        name: '新規ガイド',
+        type: 'guide',
+        userType: 'guide'
+      };
+      sessionStorage.setItem('currentUser', JSON.stringify(tempUser));
+    }
+  } else {
+    // セッションからユーザー情報を取得
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser')) || null;
     
-    return;
+    // ログインしていない場合はホームにリダイレクト
+    if (!currentUser || (currentUser.type !== 'guide' && currentUser.userType !== 'guide')) {
+      // アラートを表示
+      const alertContainer = document.createElement('div');
+      alertContainer.className = 'alert alert-danger alert-dismissible fade show';
+      alertContainer.setAttribute('role', 'alert');
+      alertContainer.innerHTML = `
+        <strong>アクセスが拒否されました</strong> - ガイドとしてログインしてください。
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      document.body.prepend(alertContainer);
+      
+      // 3秒後にホームページにリダイレクト
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 3000);
+      
+      return;
+    }
   }
   
   // ユーザー名を表示

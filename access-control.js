@@ -4,6 +4,16 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
+  // 新規登録モードの場合はアクセス制御をスキップ
+  const urlParams = new URLSearchParams(window.location.search);
+  const isRegistrationMode = urlParams.get('mode') === 'registration' || urlParams.get('step') === '2';
+  const bypassControl = sessionStorage.getItem('bypassAccessControl') === 'true';
+  
+  if (isRegistrationMode || bypassControl) {
+    console.log('新規登録モードまたはバイパスモード - アクセス制御をスキップします');
+    return;
+  }
+
   // URLパラメータを確認してアクションを実行
   checkUrlParams();
   
