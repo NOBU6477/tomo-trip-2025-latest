@@ -602,8 +602,11 @@
           
           <!-- フィルター切り替えボタン -->
           <div class="text-center mb-3">
-            <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
+            <button type="button" class="btn btn-outline-primary me-2" id="toggle-filter-button">
               <i class="bi bi-funnel"></i> 詳細検索フィルター
+            </button>
+            <button type="button" class="btn btn-warning" onclick="toggleEditMode()" id="editModeBtn">
+              <i class="bi bi-pencil"></i> 編集モード
             </button>
           </div>
           
@@ -891,6 +894,9 @@
                   alt="花子のプロフィール写真"
                   data-guide-photo-id="2"
                 />
+                <button class="profile-edit-overlay" onclick="openPhotoEditor(2)" title="プロフィール写真を編集">
+                  <i class="bi bi-camera"></i>
+                </button>
               </div>
               <div class="card-body">
                 <div
@@ -950,6 +956,9 @@
                   alt="一郎のプロフィール写真"
                   data-guide-photo-id="3"
                 />
+                <button class="profile-edit-overlay" onclick="openPhotoEditor(3)" title="プロフィール写真を編集">
+                  <i class="bi bi-camera"></i>
+                </button>
               </div>
               <div class="card-body">
                 <div
@@ -1003,6 +1012,9 @@
                   alt="北海道ガイドのプロフィール写真"
                   data-guide-photo-id="4"
                 />
+                <button class="profile-edit-overlay" onclick="openPhotoEditor(4)" title="プロフィール写真を編集">
+                  <i class="bi bi-camera"></i>
+                </button>
               </div>
               <div class="card-body">
                 <div
@@ -1054,6 +1066,9 @@
                   alt="海のプロフィール写真"
                   data-guide-photo-id="5"
                 />
+                <button class="profile-edit-overlay" onclick="openPhotoEditor(5)" title="プロフィール写真を編集">
+                  <i class="bi bi-camera"></i>
+                </button>
               </div>
               <div class="card-body">
                 <div
@@ -3669,6 +3684,380 @@
       });
     </script>
     
+    <!-- プロフィール写真編集モーダル -->
+    <div class="modal fade" id="profilePhotoModal" tabindex="-1" aria-labelledby="profilePhotoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="profilePhotoModalLabel">プロフィール写真を編集</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>現在の写真</h6>
+                <div class="current-photo-container mb-3">
+                  <img id="currentPhotoPreview" src="" class="img-fluid rounded" alt="現在の写真" style="max-height: 300px; width: 100%; object-fit: cover;">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>新しい写真</h6>
+                <div class="upload-area mb-3 p-4 border border-dashed rounded text-center" style="min-height: 200px; border-color: #dee2e6 !important;">
+                  <div id="uploadPrompt">
+                    <i class="bi bi-cloud-upload fs-1 text-muted mb-3"></i>
+                    <p class="text-muted">ファイルをドラッグ＆ドロップ<br>または</p>
+                    <input type="file" id="photoUpload" accept="image/*" class="form-control mb-2">
+                    <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('photoUpload').click()">
+                      <i class="bi bi-folder2-open"></i> ファイルを選択
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary ms-2" onclick="openCamera()">
+                      <i class="bi bi-camera"></i> カメラで撮影
+                    </button>
+                  </div>
+                  <div id="newPhotoPreview" style="display: none;">
+                    <img id="newPhotoImg" src="" class="img-fluid rounded" alt="新しい写真" style="max-height: 250px; width: 100%; object-fit: cover;">
+                    <div class="mt-2">
+                      <button type="button" class="btn btn-sm btn-outline-danger" onclick="clearNewPhoto()">
+                        <i class="bi bi-trash"></i> 削除
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-text">
+                  <small>推奨: 正方形の画像、最大5MB<br>
+                  JPG、PNG、WEBP形式</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+            <button type="button" class="btn btn-primary" id="savePhotoBtn" onclick="saveProfilePhoto()" disabled>
+              <i class="bi bi-check-lg"></i> 保存
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- カメラモーダル -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cameraModalLabel">カメラで撮影</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <div id="cameraContainer">
+              <video id="cameraVideo" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 8px;"></video>
+              <canvas id="cameraCanvas" style="display: none;"></canvas>
+              <div class="mt-3">
+                <button type="button" class="btn btn-primary me-2" onclick="capturePhoto()">
+                  <i class="bi bi-camera"></i> 撮影
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="switchCamera()">
+                  <i class="bi bi-arrow-repeat"></i> カメラ切替
+                </button>
+              </div>
+            </div>
+            <div id="capturedContainer" style="display: none;">
+              <img id="capturedImage" src="" class="img-fluid rounded mb-3" alt="撮影した写真">
+              <div>
+                <button type="button" class="btn btn-success me-2" onclick="useCapturedPhoto()">
+                  <i class="bi bi-check-lg"></i> この写真を使用
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="retakePhoto()">
+                  <i class="bi bi-arrow-counterclockwise"></i> 撮り直し
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- プロフィール写真編集システム -->
+    <script>
+      let currentGuideId = null;
+      let cameraStream = null;
+      let facingMode = 'user'; // 'user' for front camera, 'environment' for back camera
+
+      // プロフィール写真編集を開く
+      function openPhotoEditor(guideId) {
+        currentGuideId = guideId;
+        const guidePhoto = document.querySelector(`[data-guide-photo-id="${guideId}"]`);
+        const currentPhotoSrc = guidePhoto.src;
+        
+        document.getElementById('currentPhotoPreview').src = currentPhotoSrc;
+        clearNewPhoto();
+        
+        const modal = new bootstrap.Modal(document.getElementById('profilePhotoModal'));
+        modal.show();
+      }
+
+      // ファイル選択時の処理
+      document.getElementById('photoUpload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // ファイルサイズチェック (5MB)
+          if (file.size > 5 * 1024 * 1024) {
+            alert('ファイルサイズが大きすぎます。5MB以下のファイルを選択してください。');
+            return;
+          }
+          
+          // 画像ファイルかチェック
+          if (!file.type.startsWith('image/')) {
+            alert('画像ファイルを選択してください。');
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            showNewPhoto(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // 新しい写真を表示
+      function showNewPhoto(imageSrc) {
+        document.getElementById('newPhotoImg').src = imageSrc;
+        document.getElementById('uploadPrompt').style.display = 'none';
+        document.getElementById('newPhotoPreview').style.display = 'block';
+        document.getElementById('savePhotoBtn').disabled = false;
+      }
+
+      // 新しい写真をクリア
+      function clearNewPhoto() {
+        document.getElementById('uploadPrompt').style.display = 'block';
+        document.getElementById('newPhotoPreview').style.display = 'none';
+        document.getElementById('photoUpload').value = '';
+        document.getElementById('savePhotoBtn').disabled = true;
+      }
+
+      // カメラを開く
+      function openCamera() {
+        const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
+        cameraModal.show();
+        startCamera();
+      }
+
+      // カメラを開始
+      async function startCamera() {
+        try {
+          if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+          }
+          
+          const constraints = {
+            video: {
+              facingMode: facingMode,
+              width: { ideal: 400 },
+              height: { ideal: 400 }
+            }
+          };
+          
+          cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+          document.getElementById('cameraVideo').srcObject = cameraStream;
+          
+          document.getElementById('cameraContainer').style.display = 'block';
+          document.getElementById('capturedContainer').style.display = 'none';
+        } catch (error) {
+          console.error('カメラエラー:', error);
+          alert('カメラにアクセスできませんでした。ブラウザの設定を確認してください。');
+        }
+      }
+
+      // カメラ切替
+      function switchCamera() {
+        facingMode = facingMode === 'user' ? 'environment' : 'user';
+        startCamera();
+      }
+
+      // 写真を撮影
+      function capturePhoto() {
+        const video = document.getElementById('cameraVideo');
+        const canvas = document.getElementById('cameraCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0);
+        
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        document.getElementById('capturedImage').src = imageDataUrl;
+        
+        document.getElementById('cameraContainer').style.display = 'none';
+        document.getElementById('capturedContainer').style.display = 'block';
+      }
+
+      // 撮影した写真を使用
+      function useCapturedPhoto() {
+        const imageDataUrl = document.getElementById('capturedImage').src;
+        
+        // カメラモーダルを閉じる
+        bootstrap.Modal.getInstance(document.getElementById('cameraModal')).hide();
+        
+        // 撮影した写真をプロフィール編集モーダルに設定
+        setTimeout(() => {
+          showNewPhoto(imageDataUrl);
+        }, 300);
+        
+        stopCamera();
+      }
+
+      // 撮り直し
+      function retakePhoto() {
+        document.getElementById('cameraContainer').style.display = 'block';
+        document.getElementById('capturedContainer').style.display = 'none';
+      }
+
+      // カメラを停止
+      function stopCamera() {
+        if (cameraStream) {
+          cameraStream.getTracks().forEach(track => track.stop());
+          cameraStream = null;
+        }
+      }
+
+      // プロフィール写真を保存
+      function saveProfilePhoto() {
+        if (!currentGuideId) return;
+        
+        const newPhotoSrc = document.getElementById('newPhotoImg').src;
+        const guidePhoto = document.querySelector(`[data-guide-photo-id="${currentGuideId}"]`);
+        
+        // 画像を更新
+        guidePhoto.src = newPhotoSrc;
+        
+        // ローカルストレージに保存（実際のアプリケーションではサーバーに送信）
+        const savedPhotos = JSON.parse(localStorage.getItem('guidePhotos') || '{}');
+        savedPhotos[currentGuideId] = newPhotoSrc;
+        localStorage.setItem('guidePhotos', JSON.stringify(savedPhotos));
+        
+        // 成功メッセージ
+        const toastContainer = document.createElement('div');
+        toastContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; z-index: 9999;';
+        toastContainer.innerHTML = `
+          <div class="toast show" role="alert">
+            <div class="toast-header">
+              <i class="bi bi-check-circle-fill text-success me-2"></i>
+              <strong class="me-auto">プロフィール写真</strong>
+              <button type="button" class="btn-close" onclick="this.closest('.toast').remove()"></button>
+            </div>
+            <div class="toast-body">
+              プロフィール写真を更新しました！
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toastContainer);
+        
+        setTimeout(() => {
+          if (toastContainer.parentNode) {
+            toastContainer.remove();
+          }
+        }, 3000);
+        
+        // モーダルを閉じる
+        bootstrap.Modal.getInstance(document.getElementById('profilePhotoModal')).hide();
+      }
+
+      // モーダルが閉じられた時の処理
+      document.getElementById('cameraModal').addEventListener('hidden.bs.modal', function() {
+        stopCamera();
+      });
+
+      // 編集モードの切り替え
+      let isEditMode = false;
+      
+      function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const editBtn = document.getElementById('editModeBtn');
+        const guideCards = document.querySelectorAll('.guide-card');
+        
+        if (isEditMode) {
+          editBtn.innerHTML = '<i class="bi bi-eye"></i> 表示モード';
+          editBtn.className = 'btn btn-success';
+          guideCards.forEach(card => card.classList.add('guide-edit-mode'));
+          
+          // 成功メッセージ
+          showEditModeMessage('編集モードが有効になりました。ガイドカードの写真にホバーして編集ボタンをクリックしてください。', 'info');
+        } else {
+          editBtn.innerHTML = '<i class="bi bi-pencil"></i> 編集モード';
+          editBtn.className = 'btn btn-warning';
+          guideCards.forEach(card => card.classList.remove('guide-edit-mode'));
+          
+          showEditModeMessage('表示モードに戻りました。', 'secondary');
+        }
+      }
+      
+      function showEditModeMessage(message, type) {
+        const alertContainer = document.createElement('div');
+        alertContainer.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 500px;';
+        alertContainer.innerHTML = `
+          <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            ${message}
+            <button type="button" class="btn-close" onclick="this.closest('.alert').parentNode.remove()"></button>
+          </div>
+        `;
+        document.body.appendChild(alertContainer);
+        
+        setTimeout(() => {
+          if (alertContainer.parentNode) {
+            alertContainer.remove();
+          }
+        }, 5000);
+      }
+
+      // ページ読み込み時に保存された写真を復元
+      document.addEventListener('DOMContentLoaded', function() {
+        const savedPhotos = JSON.parse(localStorage.getItem('guidePhotos') || '{}');
+        Object.keys(savedPhotos).forEach(guideId => {
+          const guidePhoto = document.querySelector(`[data-guide-photo-id="${guideId}"]`);
+          if (guidePhoto) {
+            guidePhoto.src = savedPhotos[guideId];
+          }
+        });
+      });
+
+      // ドラッグ＆ドロップ機能
+      const uploadArea = document.querySelector('.upload-area');
+      
+      uploadArea.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#0d6efd';
+        this.style.backgroundColor = '#f8f9fa';
+      });
+      
+      uploadArea.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#dee2e6';
+        this.style.backgroundColor = '';
+      });
+      
+      uploadArea.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.borderColor = '#dee2e6';
+        this.style.backgroundColor = '';
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              showNewPhoto(e.target.result);
+            };
+            reader.readAsDataURL(file);
+          } else {
+            alert('画像ファイルをドロップしてください。');
+          }
+        }
+      });
+    </script>
+
     <!-- シンプルフィルター修正版 -->
     <script src="simple-filter-fix.js"></script>
   </body>
