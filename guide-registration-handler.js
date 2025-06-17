@@ -97,9 +97,15 @@ class GuideRegistrationHandler {
    */
   loadRegistrationData() {
     try {
+      // 古いデータをクリーンアップ
+      this.cleanupOldData();
+
       // セッションストレージから登録データを取得
       const registrationData = sessionStorage.getItem('guideRegistrationData');
       const currentUser = sessionStorage.getItem('currentUser');
+
+      console.log('登録データ:', registrationData);
+      console.log('現在ユーザー:', currentUser);
 
       if (registrationData) {
         const data = JSON.parse(registrationData);
@@ -119,46 +125,103 @@ class GuideRegistrationHandler {
   }
 
   /**
+   * 古いデータをクリーンアップ
+   */
+  cleanupOldData() {
+    try {
+      // 古いガイドプロフィールを削除
+      const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
+      const currentUserId = sessionStorage.getItem('currentGuideId');
+      
+      // 現在のユーザー以外のプロフィールを保持し、古いものを削除
+      if (currentUserId) {
+        Object.keys(profiles).forEach(id => {
+          if (id !== currentUserId) {
+            delete profiles[id];
+          }
+        });
+        localStorage.setItem('guideProfiles', JSON.stringify(profiles));
+      }
+
+      // 古いガイドリストデータを削除
+      const savedGuides = JSON.parse(localStorage.getItem('savedGuides') || '[]');
+      const filteredGuides = savedGuides.filter(guide => {
+        // test1400@gmail.com のガイドデータを削除
+        return guide.email !== 'test1400@gmail.com' && guide.name !== 'test1400';
+      });
+      localStorage.setItem('savedGuides', JSON.stringify(filteredGuides));
+
+      console.log('古いデータをクリーンアップしました');
+    } catch (error) {
+      console.error('データクリーンアップエラー:', error);
+    }
+  }
+
+  /**
    * プロフィールフォームにデータを設定
    */
   populateProfileForm(data) {
+    // 最新のユーザーデータを優先使用
+    const currentUser = this.getCurrentUserData();
+    const finalData = { ...data, ...currentUser };
+
+    console.log('フォーム設定データ:', finalData);
+
     // 基本情報の設定
     const fieldMapping = {
-      'guide-name': `${data.firstName} ${data.lastName}`,
-      'guide-username': data.firstName,
-      'guide-email': data.email,
-      'guide-phone': data.phone,
-      'guide-location': data.location
+      'guide-name': finalData.name || `${finalData.firstName || ''} ${finalData.lastName || ''}`.trim(),
+      'guide-username': finalData.username || finalData.firstName || '',
+      'guide-email': finalData.email,
+      'guide-phone': finalData.phone,
+      'guide-location': finalData.location || finalData.city || ''
     };
 
     Object.keys(fieldMapping).forEach(fieldId => {
       const field = document.getElementById(fieldId);
       if (field) {
-        field.value = fieldMapping[fieldId];
+        const value = fieldMapping[fieldId] || '';
+        field.value = value;
+        console.log(`${fieldId}設定: ${value}`);
       }
     });
 
     // 自己紹介の設定
     const bioField = document.getElementById('guide-bio');
     if (bioField) {
-      bioField.value = '新規登録ガイドです。あなたの地域の魅力をお伝えできるよう頑張ります！';
+      bioField.value = finalData.bio || '新規登録ガイドです。あなたの地域の魅力をお伝えできるよう頑張ります！';
     }
 
     // 料金の設定
     const feeField = document.getElementById('guide-fee');
     if (feeField) {
-      feeField.value = '5000';
+      feeField.value = finalData.fee || '5000';
     }
 
     // 言語設定
-    if (data.languages) {
-      const languages = data.languages.split(',');
+    if (finalData.languages) {
+      const languages = Array.isArray(finalData.languages) ? finalData.languages : finalData.languages.split(',');
       this.setLanguageSelection(languages);
     }
 
     // 専門分野設定
-    if (data.specialties && Array.isArray(data.specialties)) {
-      this.setSpecialtySelection(data.specialties);
+    if (finalData.specialties && Array.isArray(finalData.specialties)) {
+      this.setSpecialtySelection(finalData.specialties);
+    }
+  }
+
+  /**
+   * 最新のユーザーデータを取得
+   */
+  getCurrentUserData() {
+    try {
+      const currentUser = sessionStorage.getItem('currentUser');
+      if (currentUser) {
+        return JSON.parse(currentUser);
+      }
+      return {};
+    } catch (error) {
+      console.error('ユーザーデータ取得エラー:', error);
+      return {};
     }
   }
 
