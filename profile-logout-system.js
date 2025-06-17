@@ -125,19 +125,51 @@ class ProfileLogoutSystem {
     // ローディング表示
     this.showLogoutProgress();
 
-    // セッションデータをクリア
-    this.clearSessionData();
-
-    // ローカルストレージから一時データをクリア
-    this.clearTemporaryData();
+    // 完全なログアウト処理
+    this.performCompleteLogout();
 
     // ログアウト完了メッセージ
     this.showLogoutSuccess();
 
     // ホームページにリダイレクト
     setTimeout(() => {
-      window.location.href = 'index.html';
+      window.location.replace('index.html');
     }, 1500);
+  }
+
+  /**
+   * 完全なログアウト処理
+   */
+  performCompleteLogout() {
+    // セッションストレージを完全クリア
+    sessionStorage.clear();
+
+    // ローカルストレージからユーザー関連データをクリア
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('touristData');
+    localStorage.removeItem('guideData');
+    localStorage.removeItem('userPreferences');
+
+    // 一時的なガイドプロフィールもクリア
+    const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
+    Object.keys(profiles).forEach(id => {
+      if (profiles[id].tempChanges) {
+        delete profiles[id].tempChanges;
+      }
+    });
+    localStorage.setItem('guideProfiles', JSON.stringify(profiles));
+
+    // Cookieもクリア（もしあれば）
+    document.cookie.split(";").forEach(function(c) { 
+      document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+    });
+
+    // ページのメモリキャッシュもクリア
+    if (window.performance && window.performance.clearResourceTimings) {
+      window.performance.clearResourceTimings();
+    }
+
+    console.log('完全ログアウト処理完了');
   }
 
   /**
