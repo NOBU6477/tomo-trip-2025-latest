@@ -8,15 +8,44 @@
 
   console.log('シンプルフィルター修正スクリプト開始');
 
+  // 他のスクリプトからの干渉を防ぐ
+  function preventConflicts() {
+    // 定期的に競合するカウンターを削除
+    setInterval(() => {
+      const badCounters = document.querySelectorAll('.search-results-counter, .alert');
+      badCounters.forEach(counter => {
+        if (counter.textContent && counter.textContent.includes('件中') && counter.textContent.includes('件のガイドが表示')) {
+          const match = counter.textContent.match(/(\d+)件中(\d+)件/);
+          if (match && match[1] !== match[2]) {
+            console.log('不正確なカウンターを削除:', counter.textContent);
+            counter.remove();
+          }
+        }
+      });
+    }, 1000);
+  }
+
   // DOMContentLoaded後に実行
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initSimpleFilter);
+    document.addEventListener('DOMContentLoaded', () => {
+      initSimpleFilter();
+      preventConflicts();
+    });
   } else {
     initSimpleFilter();
+    preventConflicts();
   }
 
   function initSimpleFilter() {
     console.log('シンプルフィルター初期化開始');
+    
+    // 既存の競合するカウンターを削除
+    const existingCounters = document.querySelectorAll('.search-results-counter, .alert');
+    existingCounters.forEach(counter => {
+      if (counter.textContent && counter.textContent.includes('件のガイドが表示')) {
+        counter.remove();
+      }
+    });
     
     // 初期化時にhidden-guideクラスを削除
     const hiddenGuides = document.querySelectorAll('.guide-item.hidden-guide');
