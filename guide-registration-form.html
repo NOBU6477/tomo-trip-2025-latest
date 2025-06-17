@@ -735,10 +735,29 @@
                     // 画像データは除外してサイズを削減
                 };
 
+                // ユーザーIDを生成
+                const userId = Date.now().toString();
+                
                 // 登録完了フラグを設定
                 sessionStorage.setItem('guideRegistrationCompleted', 'true');
                 sessionStorage.setItem('isLoggedIn', 'true');
                 sessionStorage.setItem('userType', 'guide');
+                sessionStorage.setItem('currentGuideId', userId);
+                
+                // 現在のユーザー情報を設定
+                const currentUser = {
+                    id: userId,
+                    name: `${formData.firstName} ${formData.lastName}`,
+                    username: formData.firstName,
+                    email: formData.email,
+                    phone: formData.phone,
+                    city: formData.location,
+                    userType: 'guide',
+                    bio: '新規登録ガイドです。よろしくお願いします。',
+                    specialties: formData.specialties
+                };
+                
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
                 
                 // 基本データのみ保存（画像は除外）
                 try {
@@ -753,10 +772,15 @@
                     }));
                 }
                 
+                // 登録成功メッセージを表示
+                submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>登録完了！';
+                submitBtn.className = 'btn btn-success btn-lg px-5';
+                
                 setTimeout(() => {
-                    // ガイド詳細編集ページに遷移
-                    window.location.href = 'guide-profile.html?mode=registration';
-                }, 2000);
+                    // 明示的にガイドプロフィール編集ページに遷移
+                    console.log('プロフィール編集ページに遷移中...');
+                    window.location.replace('guide-profile.html?mode=registration&step=2');
+                }, 1500);
             });
 
             // 専門分野の選択値を取得する関数
