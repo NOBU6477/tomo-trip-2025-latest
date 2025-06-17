@@ -126,6 +126,22 @@
     }
 
     console.log('シンプルフィルター初期化完了');
+    
+    // 初期状態のカウンター表示
+    setTimeout(() => {
+      displayInitialCount();
+    }, 500);
+  }
+
+  function displayInitialCount() {
+    const allGuides = document.querySelectorAll('.guide-item');
+    const visibleGuides = Array.from(allGuides).filter(guide => {
+      const style = window.getComputedStyle(guide);
+      return style.display !== 'none' && style.visibility !== 'hidden';
+    });
+    
+    console.log(`初期表示: 全${allGuides.length}件中${visibleGuides.length}件が表示中`);
+    showSearchResults(visibleGuides.length, allGuides.length);
   }
 
   function performSearch() {
@@ -258,22 +274,52 @@
   }
 
   function showSearchResults(visibleCount, totalCount) {
-    // 既存の結果メッセージを削除
-    const existingMessage = document.querySelector('.search-results-message');
-    if (existingMessage) {
-      existingMessage.remove();
-    }
+    // 既存の結果メッセージをすべて削除
+    const existingMessages = document.querySelectorAll('.search-results-message, .search-results-counter');
+    existingMessages.forEach(msg => msg.remove());
     
     // 新しい結果メッセージを作成
     const message = document.createElement('div');
-    message.className = 'search-results-message alert alert-info mt-3';
-    message.textContent = `${totalCount}件中${visibleCount}件のガイドが表示されています`;
+    message.className = 'search-results-message';
+    message.style.cssText = `
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 10px;
+      margin: 20px 0;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      border: none;
+    `;
+    
+    // アイコンとテキストを追加
+    message.innerHTML = `
+      <i class="bi bi-search me-2"></i>
+      ${totalCount}件中 <span style="color: #FFD700;">${visibleCount}件</span> のガイドが表示されています
+    `;
     
     // フィルターカードの後に挿入
     const filterCard = document.getElementById('filter-card');
     if (filterCard && filterCard.parentNode) {
       filterCard.parentNode.insertBefore(message, filterCard.nextSibling);
+    } else {
+      // フィルターカードがない場合は、ガイドコンテナの前に挿入
+      const guidesContainer = document.querySelector('#guides, .row');
+      if (guidesContainer) {
+        guidesContainer.parentNode.insertBefore(message, guidesContainer);
+      }
     }
+    
+    // アニメーション効果を追加
+    message.style.opacity = '0';
+    message.style.transform = 'translateY(-10px)';
+    setTimeout(() => {
+      message.style.transition = 'all 0.3s ease-out';
+      message.style.opacity = '1';
+      message.style.transform = 'translateY(0)';
+    }, 100);
   }
 
 })();
