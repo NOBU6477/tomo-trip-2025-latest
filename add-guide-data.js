@@ -150,13 +150,17 @@ function getSessionGuides() {
     try {
       const user = JSON.parse(currentUser);
       if (user.userType === 'guide' || user.type === 'guide') {
+        // プロフィール情報をローカルストレージから取得
+        const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
+        const profileData = profiles[user.id] || {};
+        
         // ガイド情報をガイドカード形式に変換
         const guideCard = {
           id: user.id || Date.now(),
           name: user.name || user.username || 'ガイド',
           location: user.city || '東京',
-          description: user.bio || '新規登録ガイドです。よろしくお願いします。',
-          image: user.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=New+Guide',
+          description: profileData.bio || user.bio || '新規登録ガイドです。よろしくお願いします。',
+          image: profileData.profilePhoto || user.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=New+Guide',
           fee: user.price ? user.price.replace(/[^\d]/g, '') : '5000',
           rating: '新規',
           reviews: '0',
