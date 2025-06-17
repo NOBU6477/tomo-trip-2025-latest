@@ -108,6 +108,11 @@ class GuideProfileSync {
     // トップページのガイドカードを更新
     this.updateTopPageGuideCard(guideId, { profilePhoto: photoUrl });
     
+    // ガイドカード更新システムに通知
+    if (window.guideCardUpdater) {
+      window.guideCardUpdater.updateGuideCardPhoto(guideId, photoUrl);
+    }
+    
     console.log(`ガイド${guideId}のプロフィール写真を同期しました`);
   }
 

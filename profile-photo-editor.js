@@ -430,10 +430,8 @@ class ProfilePhotoEditor {
     
     localStorage.setItem('guideProfiles', JSON.stringify(profiles));
 
-    // プロフィール写真変更イベントを発火（同期システム用）
-    if (typeof GuideProfileSync !== 'undefined') {
-      GuideProfileSync.triggerProfilePhotoChange(this.currentGuideId, imageSrc);
-    }
+    // 同期システムに通知
+    this.triggerSyncUpdate(imageSrc);
 
     // モーダルを閉じる
     const previewModal = bootstrap.Modal.getInstance(document.getElementById('photoPreviewModal'));
@@ -443,6 +441,36 @@ class ProfilePhotoEditor {
 
     // 成功メッセージを表示
     this.showSuccessToast('プロフィール写真を更新しました！');
+  }
+
+  /**
+   * 同期システムに更新を通知
+   */
+  triggerSyncUpdate(imageSrc) {
+    // カスタムイベントを発火
+    const event = new CustomEvent('profilePhotoChanged', {
+      detail: {
+        guideId: this.currentGuideId,
+        photoUrl: imageSrc
+      }
+    });
+    document.dispatchEvent(event);
+
+    // ガイドプロフィール同期システムに直接通知
+    if (window.GuideProfileSync && typeof window.GuideProfileSync.prototype.syncProfilePhoto === 'function') {
+      const syncInstance = new window.GuideProfileSync();
+      syncInstance.syncProfilePhoto({
+        guideId: this.currentGuideId,
+        photoUrl: imageSrc
+      });
+    }
+
+    // ガイドカード更新システムに直接通知
+    if (window.guideCardUpdater) {
+      window.guideCardUpdater.updateGuideCardPhoto(this.currentGuideId, imageSrc);
+    }
+
+    console.log('プロフィール写真変更を各システムに通知しました');
   }
 
   /**
