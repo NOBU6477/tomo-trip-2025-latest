@@ -298,6 +298,43 @@
         display: flex !important;
       }
 
+      /* ヒーローセクションロゴ */
+      .hero-logo {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+      }
+
+      .hero-logo-img {
+        height: 120px;
+        width: auto;
+        filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+        transition: transform 0.3s ease;
+      }
+
+      .hero-logo-img:hover {
+        transform: scale(1.05);
+      }
+
+      /* モバイル対応 */
+      @media (max-width: 768px) {
+        .hero-logo {
+          top: 15px;
+          left: 15px;
+        }
+        
+        .hero-logo-img {
+          height: 80px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .hero-logo-img {
+          height: 60px;
+        }
+      }
+
       .guide-filter-fadeIn {
         animation: fadeIn 0.4s ease-out forwards;
       }
@@ -488,6 +525,14 @@
         min-height: 60vh;
       "
     >
+      <!-- TomoTripロゴ -->
+      <div class="hero-logo">
+        <img 
+          src="attached_assets/ChatGPT Image 2025年6月17日 21_34_27_1750163768295.png" 
+          alt="TomoTrip 旅友" 
+          class="hero-logo-img"
+        />
+      </div>
       <!-- オーバーレイ装飾要素 -->
       <div
         style="
@@ -602,11 +647,8 @@
           
           <!-- フィルター切り替えボタン -->
           <div class="text-center mb-3">
-            <button type="button" class="btn btn-outline-primary me-2" id="toggle-filter-button">
+            <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
               <i class="bi bi-funnel"></i> 詳細検索フィルター
-            </button>
-            <button type="button" class="btn btn-warning" onclick="toggleEditMode()" id="editModeBtn">
-              <i class="bi bi-pencil"></i> 編集モード
             </button>
           </div>
           
@@ -832,9 +874,6 @@
                   alt="桃太郎のプロフィール写真"
                   data-guide-photo-id="1"
                 />
-                <button class="profile-edit-overlay" onclick="openPhotoEditor(1)" title="プロフィール写真を編集">
-                  <i class="bi bi-camera"></i>
-                </button>
               </div>
               <div class="card-body">
                 <div
@@ -894,9 +933,6 @@
                   alt="花子のプロフィール写真"
                   data-guide-photo-id="2"
                 />
-                <button class="profile-edit-overlay" onclick="openPhotoEditor(2)" title="プロフィール写真を編集">
-                  <i class="bi bi-camera"></i>
-                </button>
               </div>
               <div class="card-body">
                 <div
@@ -956,9 +992,6 @@
                   alt="一郎のプロフィール写真"
                   data-guide-photo-id="3"
                 />
-                <button class="profile-edit-overlay" onclick="openPhotoEditor(3)" title="プロフィール写真を編集">
-                  <i class="bi bi-camera"></i>
-                </button>
               </div>
               <div class="card-body">
                 <div
@@ -1012,9 +1045,6 @@
                   alt="北海道ガイドのプロフィール写真"
                   data-guide-photo-id="4"
                 />
-                <button class="profile-edit-overlay" onclick="openPhotoEditor(4)" title="プロフィール写真を編集">
-                  <i class="bi bi-camera"></i>
-                </button>
               </div>
               <div class="card-body">
                 <div
