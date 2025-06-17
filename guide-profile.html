@@ -1834,6 +1834,148 @@
   <!-- ホームページログアウト同期システム -->
   <script src="homepage-logout-sync.js"></script>
   
+  <!-- プロフィールページでのユーザーメニュー初期化 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 現在のユーザー情報を取得
+      function getCurrentUser() {
+        try {
+          const userJson = sessionStorage.getItem('currentUser');
+          return userJson ? JSON.parse(userJson) : null;
+        } catch (e) {
+          console.error('ユーザー情報取得エラー:', e);
+          return null;
+        }
+      }
+
+      // プロフィールページ用ユーザーメニューを作成
+      function createProfileUserMenu() {
+        const currentUser = getCurrentUser();
+        if (!currentUser) {
+          console.log('ログインユーザーが見つからないため、ユーザーメニューを表示しません');
+          return;
+        }
+
+        const navbarUserArea = document.getElementById('navbar-user-area');
+        if (!navbarUserArea) {
+          console.error('navbar-user-areaが見つかりません');
+          return;
+        }
+
+        // 既存のメニューをクリア
+        navbarUserArea.innerHTML = '';
+
+        // ユーザーメニューHTML
+        const userMenuHTML = `
+          <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle me-1"></i>
+              ${currentUser.name || 'ユーザー'}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <h6 class="dropdown-header">
+                  <i class="bi bi-person-badge me-2"></i>
+                  ${currentUser.userType === 'guide' ? 'ガイドアカウント' : '観光客アカウント'}
+                </h6>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              ${currentUser.userType === 'guide' ? `
+              <li>
+                <a class="dropdown-item" href="guide-profile.html">
+                  <i class="bi bi-person-gear me-2"></i>
+                  プロフィール編集
+                </a>
+              </li>
+              ` : ''}
+              <li>
+                <a class="dropdown-item" href="index.html">
+                  <i class="bi bi-house me-2"></i>
+                  ホーム
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item text-danger" href="#" id="profile-logout-btn">
+                  <i class="bi bi-box-arrow-right me-2"></i>
+                  ログアウト
+                </a>
+              </li>
+            </ul>
+          </div>
+        `;
+
+        navbarUserArea.innerHTML = userMenuHTML;
+
+        // ログアウトボタンのイベントを設定
+        const logoutBtn = document.getElementById('profile-logout-btn');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            handleProfileLogout();
+          });
+        }
+
+        console.log('プロフィールページ用ユーザーメニューを作成:', currentUser.name);
+      }
+
+      // プロフィールページでのログアウト処理
+      function handleProfileLogout() {
+        console.log('プロフィールページからログアウト処理を開始');
+
+        const confirmLogout = confirm('ログアウトしますか？\n\n注意：保存されていない変更は失われます。');
+        
+        if (!confirmLogout) {
+          console.log('ログアウトがキャンセルされました');
+          return;
+        }
+
+        // セッションストレージを完全クリア
+        sessionStorage.clear();
+
+        // ローカルストレージからユーザー関連データをクリア
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('touristData');
+        localStorage.removeItem('guideData');
+        localStorage.removeItem('userPreferences');
+
+        // 成功メッセージを表示
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background-color: #28a745;
+          color: white;
+          padding: 1rem 1.5rem;
+          border-radius: 0.5rem;
+          z-index: 9999;
+          box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        `;
+        toast.innerHTML = `
+          <i class="bi bi-check-circle me-2"></i>
+          ログアウトしました
+        `;
+        document.body.appendChild(toast);
+
+        // 1.5秒後にホームページにリダイレクト
+        setTimeout(() => {
+          window.location.replace('index.html');
+        }, 1500);
+      }
+
+      // ユーザーメニューを作成
+      createProfileUserMenu();
+
+      // ホームページログアウト同期システムを初期化
+      if (typeof HomepageLogoutSync !== 'undefined') {
+        const logoutSync = new HomepageLogoutSync();
+        logoutSync.init();
+        console.log('プロフィールページでホームページログアウト同期システムを初期化');
+      }
+    });
+  </script>
+  
   <!-- ガイド登録機能修正 -->
   <script src="guide-registration-fix.js"></script>
   
