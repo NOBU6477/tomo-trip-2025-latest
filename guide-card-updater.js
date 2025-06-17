@@ -113,6 +113,11 @@ class GuideCardUpdater {
       this.updateCardLocation(guideCard, profileData.location);
     }
 
+    // 言語を更新
+    if (profileData.languages) {
+      this.updateCardLanguages(guideCard, profileData.languages);
+    }
+
     console.log(`ガイドカード更新完了: ID=${guideId}`);
   }
 
@@ -136,13 +141,32 @@ class GuideCardUpdater {
    */
   updateCardDescription(guideCard, description) {
     // カード本文を探す（複数のパターンに対応）
-    const descriptionElement = guideCard.querySelector('.card-text:not(.text-muted):not(.guide-location)') ||
-                              guideCard.querySelector('p:not(.text-muted):not(.guide-location)') ||
-                              guideCard.querySelector('.guide-description');
+    const descriptionElement = guideCard.querySelector('.guide-description') ||
+                              guideCard.querySelector('.card-text:not(.text-muted):not(.guide-location)') ||
+                              guideCard.querySelector('p:not(.text-muted):not(.guide-location)');
     
     if (descriptionElement) {
       descriptionElement.textContent = description;
       console.log('カード説明文を更新しました:', description);
+    }
+  }
+
+  /**
+   * カード言語バッジを更新
+   */
+  updateCardLanguages(guideCard, languages) {
+    const languagesContainer = guideCard.querySelector('.guide-languages');
+    if (languagesContainer && Array.isArray(languages)) {
+      const languageBadgesHTML = languages.map(lang => 
+        `<span class="badge bg-light text-dark guide-lang me-1">${lang}</span>`
+      ).join('');
+      
+      languagesContainer.innerHTML = languageBadgesHTML;
+      
+      // data属性も更新
+      guideCard.setAttribute('data-languages', encodeURIComponent(languages.join(',')));
+      
+      console.log('カード言語を更新しました:', languages);
     }
   }
 

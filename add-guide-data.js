@@ -85,8 +85,9 @@ function loadUserAddedGuides() {
     console.log(`${allGuides.length}件の新規登録ガイドを読み込み中...`);
     
     allGuides.forEach(guide => {
-      // 言語バッジHTML
-      const languageBadgesHTML = ['日本語', '英語'].map(lang => 
+      // 動的言語バッジHTML
+      const guideLanguages = guide.languages || ['日本語'];
+      const languageBadgesHTML = guideLanguages.map(lang => 
         `<span class="badge bg-light text-dark guide-lang me-1">${lang}</span>`
       ).join('');
       
@@ -100,10 +101,10 @@ function loadUserAddedGuides() {
           <div class="card guide-card shadow-sm" 
                data-guide-id="${guide.id}"
                data-location="${encodeURIComponent(guide.location)}"
-               data-languages="日本語,英語"
+               data-languages="${encodeURIComponent(guideLanguages.join(','))}"
                data-fee="${guide.fee}"
                data-keywords="${encodeURIComponent(guide.specialties ? guide.specialties.join(',') : '')}">
-            <img src="${guide.image}" class="card-img-top guide-image" alt="${guide.name}のガイド写真">
+            <img src="${guide.image}" class="card-img-top guide-image" alt="${guide.name}のガイド写真" onerror="this.src='https://placehold.co/400x300/e3f2fd/1976d2/png?text=Guide'">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">${guide.name}</h5>
@@ -112,7 +113,7 @@ function loadUserAddedGuides() {
               <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>${guide.location}
               </p>
-              <p class="card-text mb-3">${guide.description}</p>
+              <p class="card-text mb-3 guide-description">${guide.description}</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="guide-languages">
                   ${languageBadgesHTML}
@@ -154,17 +155,33 @@ function getSessionGuides() {
         const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
         const profileData = profiles[user.id] || {};
         
+        // 言語情報を取得（セッションストレージまたはローカルストレージから）
+        const registrationData = sessionStorage.getItem('guideRegistrationData');
+        let languages = ['日本語'];
+        
+        if (registrationData) {
+          try {
+            const regData = JSON.parse(registrationData);
+            if (regData.languages) {
+              languages = regData.languages.split(',').filter(lang => lang.trim());
+            }
+          } catch (e) {
+            console.log('言語データの解析エラー:', e);
+          }
+        }
+
         // ガイド情報をガイドカード形式に変換
         const guideCard = {
           id: user.id || Date.now(),
           name: user.name || user.username || 'ガイド',
-          location: user.city || '東京',
+          location: profileData.location || user.city || '東京',
           description: profileData.bio || user.bio || '新規登録ガイドです。よろしくお願いします。',
           image: profileData.profilePhoto || user.profileImage || 'https://placehold.co/400x300/e3f2fd/1976d2/png?text=New+Guide',
-          fee: user.price ? user.price.replace(/[^\d]/g, '') : '5000',
+          fee: profileData.fee || (user.price ? user.price.replace(/[^\d]/g, '') : '5000'),
           rating: '新規',
           reviews: '0',
           specialties: user.specialties || ['観光案内', '文化紹介'],
+          languages: languages,
           phone: user.phone,
           email: user.email,
           isNewGuide: true
