@@ -479,20 +479,20 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label fw-bold" data-key="fullname">氏名</label>
-                    <div class="form-control-plaintext" id="display-name">優</div>
+                    <div class="form-control-plaintext" id="display-name">読み込み中...</div>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label class="form-label fw-bold" data-key="username">ユーザー名</label>
-                    <div class="form-control-plaintext" id="display-username">優</div>
+                    <div class="form-control-plaintext" id="display-username">読み込み中...</div>
                   </div>
                 </div>
               </div>
               
               <div class="mb-3">
                 <label class="form-label fw-bold" data-key="email-address">メールアドレス</label>
-                <div class="form-control-plaintext" id="display-email">test1500@gmail.com</div>
+                <div class="form-control-plaintext" id="display-email">読み込み中...</div>
               </div>
               
               <div class="mb-3">
@@ -2016,38 +2016,47 @@
 
       // 基本情報の表示とフォームにユーザーデータを自動入力する関数
       function fillBasicInfoForm() {
+        // 複数のソースからユーザーデータを取得
         const currentUser = getCurrentUser();
-        if (!currentUser) {
+        const registrationData = getRegistrationData();
+        const guideData = getGuideData();
+        
+        // 最新の登録データを優先して使用
+        const userData = registrationData || guideData || currentUser;
+        
+        if (!userData) {
           console.log('ユーザー情報がないため、データ表示をスキップ');
+          // デフォルト値を設定
+          setDefaultValues();
           return;
         }
 
-        console.log('基本情報にデータを反映:', currentUser);
+        console.log('基本情報にデータを反映:', userData);
 
         // 表示専用エリアの更新
         const displayName = document.getElementById('display-name');
         if (displayName) {
-          displayName.textContent = currentUser.name || '未設定';
+          displayName.textContent = userData.name || userData.fullName || '未設定';
         }
 
         const displayUsername = document.getElementById('display-username');
         if (displayUsername) {
-          displayUsername.textContent = currentUser.username || '未設定';
+          displayUsername.textContent = userData.username || userData.name || '未設定';
         }
 
         const displayEmail = document.getElementById('display-email');
         if (displayEmail) {
-          displayEmail.textContent = currentUser.email || '未設定';
+          displayEmail.textContent = userData.email || '未設定';
         }
 
         const displayLocation = document.getElementById('display-location');
         if (displayLocation) {
-          displayLocation.textContent = currentUser.location || '未設定';
+          displayLocation.textContent = userData.location || userData.region || '未設定';
         }
 
         const displayLanguages = document.getElementById('display-languages');
         if (displayLanguages) {
-          if (currentUser.languages && currentUser.languages.length > 0) {
+          if (userData.languages && userData.languages.length > 0) {
             const languageLabels = {
               'ja': '日本語',
               'en': '英語',
@@ -2061,7 +2070,7 @@
               'other': 'その他'
             };
             
-            const languages = Array.isArray(currentUser.languages) ? currentUser.languages : [currentUser.languages];
+            const languages = Array.isArray(userData.languages) ? userData.languages : [userData.languages];
             displayLanguages.innerHTML = languages.map(lang => 
               `<span class="badge bg-primary me-1">${languageLabels[lang] || lang}</span>`
             ).join('');
@@ -2072,28 +2081,28 @@
 
         // フォーム入力欄の更新
         const nameField = document.getElementById('guide-name');
-        if (nameField && currentUser.name) {
-          nameField.value = currentUser.name;
+        if (nameField && userData.name) {
+          nameField.value = userData.name || userData.fullName;
         }
 
         const usernameField = document.getElementById('guide-username');
-        if (usernameField && currentUser.username) {
-          usernameField.value = currentUser.username;
+        if (usernameField && userData.username) {
+          usernameField.value = userData.username || userData.name;
         }
 
         const emailField = document.getElementById('guide-email');
-        if (emailField && currentUser.email) {
-          emailField.value = currentUser.email;
+        if (emailField && userData.email) {
+          emailField.value = userData.email;
         }
 
         const locationField = document.getElementById('guide-location');
-        if (locationField && currentUser.location) {
-          locationField.value = currentUser.location;
+        if (locationField && userData.location) {
+          locationField.value = userData.location || userData.region;
         }
 
         const languagesField = document.getElementById('guide-languages');
-        if (languagesField && currentUser.languages) {
-          const languages = Array.isArray(currentUser.languages) ? currentUser.languages : [currentUser.languages];
+        if (languagesField && userData.languages) {
+          const languages = Array.isArray(userData.languages) ? userData.languages : [userData.languages];
           Array.from(languagesField.options).forEach(option => {
             if (languages.includes(option.value)) {
               option.selected = true;
@@ -2102,22 +2111,81 @@
         }
 
         const descriptionField = document.getElementById('guide-description');
-        if (descriptionField && currentUser.description) {
-          descriptionField.value = currentUser.description;
+        if (descriptionField && userData.description) {
+          descriptionField.value = userData.description;
         }
 
         const feeField = document.getElementById('guide-session-fee');
-        if (feeField && currentUser.sessionFee) {
-          feeField.value = currentUser.sessionFee;
+        if (feeField && userData.sessionFee) {
+          feeField.value = userData.sessionFee;
         }
 
         // サイドバーの名前も更新
         const sidebarName = document.getElementById('user-name');
-        if (sidebarName && currentUser.name) {
-          sidebarName.textContent = currentUser.name;
+        if (sidebarName && userData.name) {
+          sidebarName.textContent = userData.name || userData.fullName;
         }
 
         console.log('基本情報の表示とフォーム入力を完了');
+      }
+
+      // 登録データを取得する関数
+      function getRegistrationData() {
+        try {
+          const regData = sessionStorage.getItem('guideRegistrationData');
+          if (regData) {
+            return JSON.parse(regData);
+          }
+          
+          // 最新の登録データを確認
+          const latestGuide = sessionStorage.getItem('latestGuideRegistration');
+          if (latestGuide) {
+            return JSON.parse(latestGuide);
+          }
+          
+          return null;
+        } catch (e) {
+          console.error('登録データ取得エラー:', e);
+          return null;
+        }
+      }
+
+      // ガイドデータを取得する関数
+      function getGuideData() {
+        try {
+          const guideProfiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
+          const profiles = Object.values(guideProfiles);
+          
+          // 最新のプロフィールを返す
+          if (profiles.length > 0) {
+            return profiles[profiles.length - 1];
+          }
+          
+          return null;
+        } catch (e) {
+          console.error('ガイドデータ取得エラー:', e);
+          return null;
+        }
+      }
+
+      // デフォルト値を設定する関数
+      function setDefaultValues() {
+        const displayName = document.getElementById('display-name');
+        if (displayName) displayName.textContent = '未設定';
+        
+        const displayUsername = document.getElementById('display-username');
+        if (displayUsername) displayUsername.textContent = '未設定';
+        
+        const displayEmail = document.getElementById('display-email');
+        if (displayEmail) displayEmail.textContent = '未設定';
+        
+        const displayLocation = document.getElementById('display-location');
+        if (displayLocation) displayLocation.textContent = '未設定';
+        
+        const displayLanguages = document.getElementById('display-languages');
+        if (displayLanguages) {
+          displayLanguages.innerHTML = '<span class="badge bg-secondary">未設定</span>';
+        }
       }
     });
   </script>
