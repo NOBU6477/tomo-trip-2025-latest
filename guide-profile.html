@@ -473,6 +473,43 @@
           <div class="tab-pane fade show active" id="profile-basic">
             <div class="profile-card p-4">
               <h3 class="mb-4" data-key="basic-info">基本情報</h3>
+              
+              <!-- 表示専用の基本情報 -->
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold" data-key="fullname">氏名</label>
+                    <div class="form-control-plaintext" id="display-name">優</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label fw-bold" data-key="username">ユーザー名</label>
+                    <div class="form-control-plaintext" id="display-username">優</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label fw-bold" data-key="email-address">メールアドレス</label>
+                <div class="form-control-plaintext" id="display-email">test1500@gmail.com</div>
+              </div>
+              
+              <div class="mb-3">
+                <label class="form-label fw-bold" data-key="activity-area">活動エリア</label>
+                <div class="form-control-plaintext" id="display-location">-</div>
+              </div>
+              
+              <div class="mb-4">
+                <label class="form-label fw-bold" data-key="supported-languages">対応言語</label>
+                <div class="form-control-plaintext" id="display-languages">
+                  <span class="badge bg-primary me-1">日本語</span>
+                </div>
+              </div>
+              
+              <hr class="my-4">
+              <h4 class="mb-3" data-key="edit-profile">プロフィール編集</h4>
+              
               <form id="profile-basic-form">
                 <div class="row mb-3">
                   <div class="col-md-6">
@@ -1967,11 +2004,120 @@
       // ユーザーメニューを作成
       createProfileUserMenu();
 
+      // 基本情報フォームにユーザーデータを自動入力
+      fillBasicInfoForm();
+
       // ホームページログアウト同期システムを初期化
       if (typeof HomepageLogoutSync !== 'undefined') {
         const logoutSync = new HomepageLogoutSync();
         logoutSync.init();
         console.log('プロフィールページでホームページログアウト同期システムを初期化');
+      }
+
+      // 基本情報の表示とフォームにユーザーデータを自動入力する関数
+      function fillBasicInfoForm() {
+        const currentUser = getCurrentUser();
+        if (!currentUser) {
+          console.log('ユーザー情報がないため、データ表示をスキップ');
+          return;
+        }
+
+        console.log('基本情報にデータを反映:', currentUser);
+
+        // 表示専用エリアの更新
+        const displayName = document.getElementById('display-name');
+        if (displayName) {
+          displayName.textContent = currentUser.name || '未設定';
+        }
+
+        const displayUsername = document.getElementById('display-username');
+        if (displayUsername) {
+          displayUsername.textContent = currentUser.username || '未設定';
+        }
+
+        const displayEmail = document.getElementById('display-email');
+        if (displayEmail) {
+          displayEmail.textContent = currentUser.email || '未設定';
+        }
+
+        const displayLocation = document.getElementById('display-location');
+        if (displayLocation) {
+          displayLocation.textContent = currentUser.location || '未設定';
+        }
+
+        const displayLanguages = document.getElementById('display-languages');
+        if (displayLanguages) {
+          if (currentUser.languages && currentUser.languages.length > 0) {
+            const languageLabels = {
+              'ja': '日本語',
+              'en': '英語',
+              'zh': '中国語',
+              'ko': '韓国語',
+              'fr': 'フランス語',
+              'de': 'ドイツ語',
+              'es': 'スペイン語',
+              'it': 'イタリア語',
+              'ru': 'ロシア語',
+              'other': 'その他'
+            };
+            
+            const languages = Array.isArray(currentUser.languages) ? currentUser.languages : [currentUser.languages];
+            displayLanguages.innerHTML = languages.map(lang => 
+              `<span class="badge bg-primary me-1">${languageLabels[lang] || lang}</span>`
+            ).join('');
+          } else {
+            displayLanguages.innerHTML = '<span class="badge bg-primary me-1">日本語</span>';
+          }
+        }
+
+        // フォーム入力欄の更新
+        const nameField = document.getElementById('guide-name');
+        if (nameField && currentUser.name) {
+          nameField.value = currentUser.name;
+        }
+
+        const usernameField = document.getElementById('guide-username');
+        if (usernameField && currentUser.username) {
+          usernameField.value = currentUser.username;
+        }
+
+        const emailField = document.getElementById('guide-email');
+        if (emailField && currentUser.email) {
+          emailField.value = currentUser.email;
+        }
+
+        const locationField = document.getElementById('guide-location');
+        if (locationField && currentUser.location) {
+          locationField.value = currentUser.location;
+        }
+
+        const languagesField = document.getElementById('guide-languages');
+        if (languagesField && currentUser.languages) {
+          const languages = Array.isArray(currentUser.languages) ? currentUser.languages : [currentUser.languages];
+          Array.from(languagesField.options).forEach(option => {
+            if (languages.includes(option.value)) {
+              option.selected = true;
+            }
+          });
+        }
+
+        const descriptionField = document.getElementById('guide-description');
+        if (descriptionField && currentUser.description) {
+          descriptionField.value = currentUser.description;
+        }
+
+        const feeField = document.getElementById('guide-session-fee');
+        if (feeField && currentUser.sessionFee) {
+          feeField.value = currentUser.sessionFee;
+        }
+
+        // サイドバーの名前も更新
+        const sidebarName = document.getElementById('user-name');
+        if (sidebarName && currentUser.name) {
+          sidebarName.textContent = currentUser.name;
+        }
+
+        console.log('基本情報の表示とフォーム入力を完了');
       }
     });
   </script>
