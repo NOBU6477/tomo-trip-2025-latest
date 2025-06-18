@@ -37,10 +37,23 @@
    * プロフィールデータの検証
    */
   function validateProfileData(data) {
-    if (!data) return false;
-    if (!data.name || data.name.trim() === '') return false;
-    if (!data.location || data.location.trim() === '') return false;
-    if (!data.sessionFee || data.sessionFee < 6000) return false;
+    if (!data) {
+      console.error('Validation failed: No data provided');
+      return false;
+    }
+    if (!data.name || data.name.trim() === '') {
+      console.error('Validation failed: Name is required');
+      return false;
+    }
+    if (!data.location || data.location.trim() === '') {
+      console.error('Validation failed: Location is required');
+      return false;
+    }
+    if (!data.sessionFee || parseInt(data.sessionFee) < 6000) {
+      console.error('Validation failed: Session fee must be at least 6000');
+      return false;
+    }
+    console.log('Profile data validation passed');
     return true;
   }
 
@@ -48,20 +61,26 @@
    * ガイドカード用データに変換
    */
   function transformToGuideCard(profileData) {
+    console.log('=== データ変換開始 ===');
+    console.log('入力データ:', profileData);
+    
     // プロフィール写真のURLを取得
     const profileImg = document.getElementById('guide-profile-preview');
     const profilePhotoUrl = profileImg ? profileImg.src : 'https://via.placeholder.com/150x150/007bff/ffffff?text=ガイド';
+    console.log('プロフィール写真URL:', profilePhotoUrl);
     
     // 言語データの正規化
     const languages = normalizeLanguages(profileData.languages);
+    console.log('正規化後言語:', languages);
     
     // 興味・得意分野の正規化
     const interests = normalizeInterests(profileData.interests);
+    console.log('正規化後興味:', interests);
 
-    return {
+    const transformedData = {
       id: generateGuideId(profileData),
-      name: profileData.name.trim(),
-      location: profileData.location,
+      name: profileData.name ? profileData.name.trim() : 'テストガイド',
+      location: profileData.location || '未設定',
       languages: languages,
       description: profileData.description || '新規登録ガイドです。よろしくお願いします。',
       sessionFee: parseInt(profileData.sessionFee) || 6000,
@@ -75,6 +94,11 @@
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
+    
+    console.log('変換後データ:', transformedData);
+    console.log('=== データ変換完了 ===');
+    
+    return transformedData;
   }
 
   /**
