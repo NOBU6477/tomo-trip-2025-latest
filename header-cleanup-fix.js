@@ -7,44 +7,42 @@
   'use strict';
 
   /**
-   * 中央の不要なユーザー表示を完全削除
+   * 中央の不要なユーザー表示を慎重に削除
    */
   function removeUnwantedUserDisplay() {
     console.log('不要なユーザー表示を削除開始');
     
-    // ナビバー内の全ての要素をチェック
+    // ナビバー内で特定のパターンの要素のみを対象とする
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
 
-    // 「undefined さん」「優 さん」などの表示を探して削除
-    const allElements = navbar.querySelectorAll('*');
-    allElements.forEach(element => {
-      const text = element.textContent || '';
+    // より具体的な要素のみを対象とする
+    const suspiciousElements = navbar.querySelectorAll('.dropdown, .nav-item, .navbar-text');
+    
+    suspiciousElements.forEach(element => {
+      const text = element.textContent.trim();
       
-      // 不要なユーザー表示パターンをチェック
-      if (text.includes('undefined') || 
-          text.includes('さん') || 
-          (text.includes('優') && !element.closest('#languageDropdown')) ||
-          text.match(/^\s*[^\s]+\s*さん\s*$/)) {
-        
-        // navbar-user-area内の要素は保護
-        if (!element.closest('#navbar-user-area') && 
-            !element.closest('#languageDropdown') && 
-            !element.closest('#registerDropdown')) {
-          
-          console.log('不要なユーザー表示要素を削除:', text, element);
-          element.remove();
-        }
-      }
-    });
-
-    // 特定の位置にある要素も確認
-    const centerElements = navbar.querySelectorAll('.navbar-nav .dropdown:not(#languageDropdown):not(#registerDropdown)');
-    centerElements.forEach(element => {
-      const text = element.textContent || '';
-      if (text.includes('さん') || text.includes('undefined') || 
-          (text.includes('優') && !text.includes('英語') && !text.includes('English'))) {
-        console.log('中央位置の不要要素を削除:', element);
+      // より厳密な条件で不要なユーザー表示をチェック
+      const isUnwantedUserDisplay = (
+        (text.includes('undefined') && text.includes('さん')) ||
+        (text === 'undefined さん') ||
+        (text === '優 さん') ||
+        (text.match(/^[^\s]*さん$/) && !text.includes('日本語') && !text.includes('English'))
+      );
+      
+      // 必要な要素は保護
+      const isProtectedElement = (
+        element.closest('#navbar-user-area') || 
+        element.closest('#languageDropdown') || 
+        element.closest('#registerDropdown') ||
+        element.querySelector('.navbar-brand') ||
+        element.closest('.navbar-brand') ||
+        element.querySelector('.nav-link') ||
+        element.closest('.navbar-nav')
+      );
+      
+      if (isUnwantedUserDisplay && !isProtectedElement) {
+        console.log('不要なユーザー表示要素を削除:', text, element);
         element.remove();
       }
     });
@@ -78,73 +76,111 @@
   }
 
   /**
-   * navbar-user-areaの内容を適切に管理
+   * ヘッダー構造を確実に復元
    */
-  function manageUserArea() {
-    const userArea = document.getElementById('navbar-user-area');
-    if (!userArea) return;
-
-    // ログイン状態をチェック
-    const currentUser = getCurrentUser();
-    
-    if (!currentUser) {
-      // 未ログイン時：ログインと新規登録ボタンのみ表示
-      userArea.innerHTML = `
-        <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
-          ログイン
-        </button>
-        <div class="dropdown d-inline-block">
-          <button class="btn btn-light dropdown-toggle" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            新規登録
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end register-dropdown" aria-labelledby="registerDropdown">
-            <li>
-              <a class="dropdown-item d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#registerTouristModal" href="#">
-                <div class="register-icon tourist-icon me-2">
-                  <i class="bi bi-person"></i>
-                </div>
-                <div>
-                  <div class="fw-bold">旅行者として登録</div>
-                  <div class="small text-muted">ローカルガイドと一緒に特別な旅を体験</div>
-                </div>
-              </a>
-            </li>
-            <li><hr class="dropdown-divider" /></li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center" href="guide-registration-form.html">
-                <div class="register-icon guide-icon me-2">
-                  <i class="bi bi-map"></i>
-                </div>
-                <div>
-                  <div class="fw-bold">ガイドとして登録</div>
-                  <div class="small text-muted">あなたの知識と経験を共有しましょう</div>
-                </div>
-              </a>
-            </li>
-          </ul>
-        </div>
-      `;
-    } else {
-      // ログイン時：適切なユーザーメニューを表示
-      const userName = currentUser.name || currentUser.firstName || 'ユーザー';
-      const userType = currentUser.userType === 'guide' ? 'ガイド' : '観光客';
-      
-      userArea.innerHTML = `
-        <div class="dropdown">
-          <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-person-circle me-1"></i> ${userName}
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li><h6 class="dropdown-header">${userType}アカウント</h6></li>
-            <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>プロフィール</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-calendar-check me-2"></i>予約一覧</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>設定</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()"><i class="bi bi-box-arrow-right me-2"></i>ログアウト</a></li>
-          </ul>
-        </div>
-      `;
+  function ensureHeaderStructure() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) {
+      console.log('ナビバーが見つからないため復元します');
+      restoreCompleteHeader();
+      return;
     }
+
+    // 必須要素の存在確認
+    const brand = navbar.querySelector('.navbar-brand');
+    const navbarNav = navbar.querySelector('.navbar-nav');
+    const languageDropdown = document.getElementById('languageDropdown');
+    const userArea = document.getElementById('navbar-user-area');
+
+    // 欠けている要素があれば復元
+    if (!brand || !navbarNav || !languageDropdown || !userArea) {
+      console.log('ヘッダー要素が不完全なため復元します');
+      restoreCompleteHeader();
+    }
+  }
+
+  /**
+   * 完全なヘッダー構造を復元
+   */
+  function restoreCompleteHeader() {
+    const existingNavbar = document.querySelector('.navbar');
+    if (existingNavbar) {
+      existingNavbar.remove();
+    }
+
+    const headerHtml = `
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+          <a class="navbar-brand" href="#">Local Guide</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">ホーム</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#guides">ガイドを探す</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#how-it-works">使い方</a>
+              </li>
+            </ul>
+
+            <div class="dropdown me-3">
+              <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown">
+                日本語
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#" data-lang="ja">日本語</a></li>
+                <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+              </ul>
+            </div>
+
+            <div id="navbar-user-area">
+              <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+                ログイン
+              </button>
+              <div class="dropdown d-inline-block">
+                <button class="btn btn-light dropdown-toggle" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                  新規登録
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end register-dropdown" aria-labelledby="registerDropdown">
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#registerTouristModal" href="#">
+                      <div class="register-icon tourist-icon me-2">
+                        <i class="bi bi-person"></i>
+                      </div>
+                      <div>
+                        <div class="fw-bold">旅行者として登録</div>
+                        <div class="small text-muted">ローカルガイドと一緒に特別な旅を体験</div>
+                      </div>
+                    </a>
+                  </li>
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item d-flex align-items-center" href="guide-registration-form.html">
+                      <div class="register-icon guide-icon me-2">
+                        <i class="bi bi-map"></i>
+                      </div>
+                      <div>
+                        <div class="fw-bold">ガイドとして登録</div>
+                        <div class="small text-muted">あなたの知識と経験を共有しましょう</div>
+                      </div>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    `;
+
+    // body要素の最初に挿入
+    document.body.insertAdjacentHTML('afterbegin', headerHtml);
+    console.log('ヘッダー構造を復元しました');
   }
 
   /**
@@ -238,23 +274,20 @@
   function initialize() {
     console.log('ヘッダークリーンアップシステムを開始');
     
-    // 即座に実行
-    removeUnwantedUserDisplay();
-    fixLanguageDisplay();
-    disableUnwantedInitialization();
+    // まずヘッダー構造を確保
+    ensureHeaderStructure();
     
-    // 少し遅延してから再度実行
+    // 少し遅延してから不要な要素のみを削除
     setTimeout(() => {
       removeUnwantedUserDisplay();
       fixLanguageDisplay();
-      manageUserArea();
-    }, 500);
+    }, 300);
     
     // さらに遅延してから最終チェック
     setTimeout(() => {
       removeUnwantedUserDisplay();
       fixLanguageDisplay();
-    }, 1500);
+    }, 1000);
 
     // 継続監視を開始
     setupContinuousMonitoring();
