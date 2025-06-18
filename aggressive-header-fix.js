@@ -49,9 +49,18 @@
         element.textContent.includes('English') ||
         element.textContent.includes('ログイン') ||
         element.textContent.includes('新規登録') ||
+        element.textContent.includes('旅行者として登録') ||
+        element.textContent.includes('ガイドとして登録') ||
         element.id === 'languageDropdown' ||
         element.id === 'registerDropdown' ||
-        element.id === 'navbar-user-area'
+        element.id === 'navbar-user-area' ||
+        element.closest('#languageDropdown') ||
+        element.closest('#registerDropdown') ||
+        element.closest('#navbar-user-area') ||
+        element.closest('[data-bs-toggle="modal"]') ||
+        element.getAttribute('data-bs-toggle') === 'modal' ||
+        element.classList.contains('btn') ||
+        element.closest('.btn')
       );
 
       if (shouldRemove && !isProtected) {
@@ -104,18 +113,94 @@
    */
   function cleanUserArea() {
     const userArea = document.getElementById('navbar-user-area');
-    if (!userArea) return;
+    if (!userArea) {
+      console.log('navbar-user-areaが見つからないため復元');
+      restoreUserArea();
+      return;
+    }
 
-    // 不要な子要素をチェック
+    // ログインと新規登録ボタンの存在確認
+    const loginBtn = userArea.querySelector('[data-bs-target="#loginModal"]');
+    const registerBtn = userArea.querySelector('#registerDropdown');
+    
+    if (!loginBtn || !registerBtn) {
+      console.log('必要なボタンが不足しているため復元');
+      restoreUserArea();
+      return;
+    }
+
+    // 不要な子要素のみをチェック
     const children = userArea.querySelectorAll('*');
     children.forEach(child => {
       const text = child.textContent.trim();
-      if (text.includes('undefined') || text.includes('優') || 
-          (text.includes('さん') && !text.includes('ログイン') && !text.includes('新規登録'))) {
+      if ((text.includes('undefined') || text.includes('優') || 
+          (text.includes('さん') && text !== 'undefined さん' && text !== '優 さん')) &&
+          !text.includes('ログイン') && 
+          !text.includes('新規登録') &&
+          !text.includes('旅行者として登録') &&
+          !text.includes('ガイドとして登録')) {
         console.log('navbar-user-area内の不要要素を削除:', text);
         child.remove();
       }
     });
+  }
+
+  /**
+   * navbar-user-areaを復元
+   */
+  function restoreUserArea() {
+    let userArea = document.getElementById('navbar-user-area');
+    if (!userArea) {
+      // navbar-user-areaが存在しない場合、作成
+      const navbar = document.querySelector('.navbar .container');
+      if (navbar) {
+        const navbarCollapse = navbar.querySelector('.navbar-collapse');
+        if (navbarCollapse) {
+          userArea = document.createElement('div');
+          userArea.id = 'navbar-user-area';
+          navbarCollapse.appendChild(userArea);
+        }
+      }
+    }
+
+    if (userArea) {
+      userArea.innerHTML = `
+        <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">
+          ログイン
+        </button>
+        <div class="dropdown d-inline-block">
+          <button class="btn btn-light dropdown-toggle" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            新規登録
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end register-dropdown" aria-labelledby="registerDropdown">
+            <li>
+              <a class="dropdown-item d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#registerTouristModal" href="#">
+                <div class="register-icon tourist-icon me-2">
+                  <i class="bi bi-person"></i>
+                </div>
+                <div>
+                  <div class="fw-bold">旅行者として登録</div>
+                  <div class="small text-muted">ローカルガイドと一緒に特別な旅を体験</div>
+                </div>
+              </a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="guide-registration-form.html">
+                <div class="register-icon guide-icon me-2">
+                  <i class="bi bi-map"></i>
+                </div>
+                <div>
+                  <div class="fw-bold">ガイドとして登録</div>
+                  <div class="small text-muted">あなたの知識と経験を共有しましょう</div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      `;
+      console.log('navbar-user-areaを復元しました');
+    }
   }
 
   /**
@@ -146,9 +231,13 @@
    * 完全なクリーンアップを実行
    */
   function executeCompleteCleanup() {
+    // まず必要な要素を復元
+    restoreUserArea();
+    forceJapaneseLanguage();
+    
+    // その後で不要な要素を削除
     aggressiveCleanup();
     removeUnwantedDropdowns();
-    forceJapaneseLanguage();
     cleanUserArea();
     cleanCenterNav();
   }
