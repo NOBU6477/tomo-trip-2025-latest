@@ -73,8 +73,13 @@
   function setupLocationSelection() {
     const locationSelect = document.getElementById('guide-location');
     if (locationSelect) {
+      // ドロップダウンの見た目を改善
+      locationSelect.style.color = '#212529';
+      locationSelect.style.backgroundColor = '#ffffff';
+      
       locationSelect.addEventListener('change', function() {
         currentGuideData.location = this.value;
+        this.style.color = '#212529'; // 選択後も文字色を確保
         console.log('Location selected:', this.value);
       });
     }

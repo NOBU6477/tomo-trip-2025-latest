@@ -30,8 +30,11 @@
     // 基本属性を確実に設定
     textarea.removeAttribute('readonly');
     textarea.removeAttribute('disabled');
-    textarea.style.backgroundColor = '';
+    textarea.style.backgroundColor = '#ffffff';
+    textarea.style.color = '#212529';
     textarea.style.cursor = 'text';
+    textarea.style.fontSize = '14px';
+    textarea.style.lineHeight = '1.5';
     
     // 文字カウンター機能
     if (counter) {
@@ -82,8 +85,11 @@
     // 基本属性を確実に設定
     textarea.removeAttribute('readonly');
     textarea.removeAttribute('disabled');
-    textarea.style.backgroundColor = '';
+    textarea.style.backgroundColor = '#ffffff';
+    textarea.style.color = '#212529';
     textarea.style.cursor = 'text';
+    textarea.style.fontSize = '14px';
+    textarea.style.lineHeight = '1.5';
     
     // 文字カウンター機能
     if (counter) {
@@ -131,10 +137,12 @@
       textarea.removeAttribute('disabled');
       
       // スタイルをリセット
-      textarea.style.backgroundColor = '';
-      textarea.style.color = '';
+      textarea.style.backgroundColor = '#ffffff';
+      textarea.style.color = '#212529';
       textarea.style.cursor = 'text';
       textarea.style.pointerEvents = 'auto';
+      textarea.style.fontSize = '14px';
+      textarea.style.lineHeight = '1.5';
       
       // tabindex を設定して確実にフォーカス可能にする
       textarea.setAttribute('tabindex', '0');
