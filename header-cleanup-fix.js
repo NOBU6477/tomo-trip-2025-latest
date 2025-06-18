@@ -7,38 +7,46 @@
   'use strict';
 
   /**
-   * 中央の不要なユーザー表示を慎重に削除
+   * 中央の不要なユーザー表示を的確に削除
    */
   function removeUnwantedUserDisplay() {
     console.log('不要なユーザー表示を削除開始');
     
-    // ナビバー内で特定のパターンの要素のみを対象とする
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
 
-    // より具体的な要素のみを対象とする
-    const suspiciousElements = navbar.querySelectorAll('.dropdown, .nav-item, .navbar-text');
+    // より広範囲で要素をチェック
+    const allElements = navbar.querySelectorAll('*');
     
-    suspiciousElements.forEach(element => {
+    allElements.forEach(element => {
       const text = element.textContent.trim();
       
-      // より厳密な条件で不要なユーザー表示をチェック
+      // 不要なユーザー表示のパターンを拡張
       const isUnwantedUserDisplay = (
+        text === 'undefined さん' ||
+        text === '優 さん' ||
+        text === 'ユーザー' ||
         (text.includes('undefined') && text.includes('さん')) ||
-        (text === 'undefined さん') ||
-        (text === '優 さん') ||
-        (text.match(/^[^\s]*さん$/) && !text.includes('日本語') && !text.includes('English'))
+        (text.includes('さん') && text.length < 10 && !text.includes('日本語') && !text.includes('English'))
       );
       
-      // 必要な要素は保護
+      // 重要な要素は絶対に保護
       const isProtectedElement = (
-        element.closest('#navbar-user-area') || 
-        element.closest('#languageDropdown') || 
+        element.id === 'languageDropdown' ||
+        element.id === 'registerDropdown' ||
+        element.id === 'navbar-user-area' ||
+        element.closest('#languageDropdown') ||
         element.closest('#registerDropdown') ||
-        element.querySelector('.navbar-brand') ||
+        element.closest('#navbar-user-area') ||
+        element.classList.contains('navbar-brand') ||
         element.closest('.navbar-brand') ||
-        element.querySelector('.nav-link') ||
-        element.closest('.navbar-nav')
+        element.classList.contains('nav-link') ||
+        element.closest('.nav-link') ||
+        element.tagName === 'A' && element.textContent.includes('ホーム') ||
+        element.tagName === 'A' && element.textContent.includes('ガイドを探す') ||
+        element.tagName === 'A' && element.textContent.includes('使い方') ||
+        element.textContent.includes('ログイン') ||
+        element.textContent.includes('新規登録')
       );
       
       if (isUnwantedUserDisplay && !isProtectedElement) {
@@ -46,6 +54,21 @@
         element.remove();
       }
     });
+
+    // 特に中央エリアの不要な要素を確認
+    const centerArea = navbar.querySelector('.navbar-nav');
+    if (centerArea) {
+      const centerDropdowns = centerArea.querySelectorAll('.dropdown');
+      centerDropdowns.forEach(dropdown => {
+        const text = dropdown.textContent.trim();
+        if ((text.includes('ユーザー') || text.includes('さん')) && 
+            !dropdown.closest('#languageDropdown') && 
+            !dropdown.closest('#registerDropdown')) {
+          console.log('中央エリアの不要ドロップダウンを削除:', text);
+          dropdown.remove();
+        }
+      });
+    }
   }
 
   /**
@@ -208,6 +231,12 @@
    * DOM変更を監視して継続的に修正
    */
   function setupContinuousMonitoring() {
+    // より頻繁にチェックする監視システム
+    setInterval(() => {
+      removeUnwantedUserDisplay();
+      fixLanguageDisplay();
+    }, 1000);
+
     const observer = new MutationObserver(function(mutations) {
       let needsCleanup = false;
       
@@ -217,7 +246,7 @@
             const text = node.textContent || '';
             
             // 不要なユーザー表示が追加された場合
-            if (text.includes('undefined') || text.includes('さん')) {
+            if (text.includes('undefined') || text.includes('さん') || text.includes('ユーザー')) {
               needsCleanup = true;
             }
             
@@ -233,7 +262,7 @@
         setTimeout(() => {
           removeUnwantedUserDisplay();
           fixLanguageDisplay();
-        }, 100);
+        }, 50);
       }
     });
 
