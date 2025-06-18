@@ -28,6 +28,9 @@
   }
 
   function ensureHeaderButtonsVisible() {
+    // まず不要なユーザー表示を削除
+    removeUnwantedUserDisplays();
+    
     const userArea = document.getElementById('navbar-user-area');
     if (userArea) {
       // 強制的に表示
@@ -47,6 +50,49 @@
     } else {
       console.error('navbar-user-area not found');
     }
+  }
+
+  function removeUnwantedUserDisplays() {
+    // ナビバー内の「undefinedさん」やその他の不要な表示を削除
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+
+    // 不要なパターンを持つ要素を削除
+    const elementsToCheck = navbar.querySelectorAll('*');
+    elementsToCheck.forEach(element => {
+      const text = element.textContent.trim();
+      
+      // 保護すべき要素をチェック
+      const isProtected = (
+        element.id === 'languageDropdown' ||
+        element.id === 'registerDropdown' ||
+        element.id === 'navbar-user-area' ||
+        element.closest('#languageDropdown') ||
+        element.closest('#registerDropdown') ||
+        element.closest('#navbar-user-area') ||
+        element.classList.contains('navbar-brand') ||
+        element.closest('.navbar-brand') ||
+        text.includes('ホーム') ||
+        text.includes('ガイドを探す') ||
+        text.includes('使い方') ||
+        text.includes('ログイン') ||
+        text.includes('新規登録') ||
+        text === '日本語' ||
+        text === 'English'
+      );
+
+      // 削除すべき要素をチェック
+      const shouldRemove = (
+        text.includes('undefined') ||
+        (text.includes('さん') && text.length < 15 && !isProtected) ||
+        (text.includes('ユーザー') && !isProtected)
+      );
+
+      if (shouldRemove && !isProtected) {
+        console.log('Removing unwanted element:', text, element.tagName);
+        element.remove();
+      }
+    });
   }
 
   function fixModalButtons() {
@@ -218,6 +264,12 @@
   } else {
     initializeButtons();
   }
+
+  // 継続的な監視と修正
+  setInterval(() => {
+    removeUnwantedUserDisplays();
+    ensureHeaderButtonsVisible();
+  }, 2000);
 
   // 追加の保険として、少し遅延して実行
   setTimeout(initializeButtons, 1000);
