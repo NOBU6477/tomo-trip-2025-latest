@@ -1678,6 +1678,65 @@
       </div>
     </div>
 
+    <!-- ログインモーダル -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ログイン</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <!-- ユーザータイプ選択 -->
+            <div class="mb-4">
+              <label class="form-label">ログインタイプ</label>
+              <div class="row g-2">
+                <div class="col-6">
+                  <input type="radio" class="btn-check" name="loginType" id="loginTourist" value="tourist" checked>
+                  <label class="btn btn-outline-primary w-100" for="loginTourist">
+                    <i class="bi bi-person me-2"></i>旅行者
+                  </label>
+                </div>
+                <div class="col-6">
+                  <input type="radio" class="btn-check" name="loginType" id="loginGuide" value="guide">
+                  <label class="btn btn-outline-primary w-100" for="loginGuide">
+                    <i class="bi bi-map me-2"></i>ガイド
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <form id="login-form">
+              <div class="mb-3">
+                <label for="login-email" class="form-label">メールアドレス</label>
+                <input type="email" class="form-control" id="login-email" required>
+              </div>
+              <div class="mb-3">
+                <label for="login-password" class="form-label">パスワード</label>
+                <input type="password" class="form-control" id="login-password" required>
+              </div>
+              <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary">ログイン</button>
+              </div>
+            </form>
+
+            <hr>
+            <div class="text-center">
+              <p class="mb-2">アカウントをお持ちでない方</p>
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerTouristModal">
+                  旅行者として登録
+                </button>
+                <a href="guide-registration-form.html" class="btn btn-outline-success">
+                  ガイドとして登録
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- お問い合わせモーダル -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
       <div class="modal-dialog">

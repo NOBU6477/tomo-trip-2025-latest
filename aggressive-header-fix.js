@@ -200,6 +200,68 @@
         </div>
       `;
       console.log('navbar-user-areaを復元しました');
+      
+      // イベントリスナーを設定
+      setupButtonEventListeners();
+    }
+  }
+
+  /**
+   * ボタンのイベントリスナーを設定
+   */
+  function setupButtonEventListeners() {
+    // ログインボタンのイベントリスナー
+    const loginBtn = document.querySelector('[data-bs-target="#loginModal"]');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        try {
+          const loginModal = document.getElementById('loginModal');
+          if (loginModal) {
+            const bsModal = new bootstrap.Modal(loginModal);
+            bsModal.show();
+            console.log('ログインモーダルを表示しました');
+          }
+        } catch (error) {
+          console.error('ログインモーダル表示エラー:', error);
+        }
+      });
+    }
+
+    // 新規登録ドロップダウンの設定
+    const registerDropdown = document.getElementById('registerDropdown');
+    if (registerDropdown) {
+      // Bootstrap 5のドロップダウンを初期化
+      try {
+        new bootstrap.Dropdown(registerDropdown);
+        console.log('新規登録ドロップダウンを初期化しました');
+      } catch (error) {
+        console.error('ドロップダウン初期化エラー:', error);
+      }
+    }
+
+    // 旅行者登録ボタンのイベントリスナー
+    const touristRegisterBtn = document.querySelector('[data-bs-target="#registerTouristModal"]');
+    if (touristRegisterBtn) {
+      touristRegisterBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        try {
+          const touristModal = document.getElementById('registerTouristModal');
+          if (touristModal) {
+            const bsModal = new bootstrap.Modal(touristModal);
+            bsModal.show();
+            console.log('旅行者登録モーダルを表示しました');
+          }
+        } catch (error) {
+          console.error('旅行者登録モーダル表示エラー:', error);
+        }
+      });
+    }
+
+    // ガイド登録リンクの確認
+    const guideRegisterLink = document.querySelector('a[href="guide-registration-form.html"]');
+    if (guideRegisterLink) {
+      console.log('ガイド登録リンクが正常に設定されています');
     }
   }
 
@@ -306,15 +368,28 @@
   function initialize() {
     console.log('強力なヘッダー修正システムを開始');
     
-    preventInterference();
+    // Bootstrapが読み込まれるまで待機
+    function waitForBootstrap() {
+      if (typeof bootstrap === 'undefined') {
+        setTimeout(waitForBootstrap, 100);
+        return;
+      }
+      
+      preventInterference();
+      
+      // 即座に実行
+      executeCompleteCleanup();
+      
+      // 短い間隔で再実行
+      setTimeout(executeCompleteCleanup, 100);
+      setTimeout(executeCompleteCleanup, 500);
+      setTimeout(executeCompleteCleanup, 1000);
+      
+      // 継続的な監視を開始
+      setupAggressiveMonitoring();
+    }
     
-    // 即座に実行
-    executeCompleteCleanup();
-    
-    // 短い間隔で再実行
-    setTimeout(executeCompleteCleanup, 100);
-    setTimeout(executeCompleteCleanup, 500);
-    setTimeout(executeCompleteCleanup, 1000);
+    waitForBootstrap();
     
     // 継続監視を開始
     setupAggressiveMonitoring();
