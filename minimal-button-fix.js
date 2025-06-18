@@ -14,11 +14,39 @@
 
     console.log('Initializing button functionality...');
 
+    // ヘッダーボタンの表示を確保
+    ensureHeaderButtonsVisible();
+    
     // すべてのモーダルボタンを修正
     fixModalButtons();
     
     // 協賛店ボタンを修正
     fixSponsorButtons();
+    
+    // Swiperの再初期化
+    reinitializeSwiper();
+  }
+
+  function ensureHeaderButtonsVisible() {
+    const userArea = document.getElementById('navbar-user-area');
+    if (userArea) {
+      // 強制的に表示
+      userArea.style.display = 'block';
+      userArea.style.visibility = 'visible';
+      userArea.style.opacity = '1';
+      
+      // 子要素も確実に表示
+      const buttons = userArea.querySelectorAll('button, .dropdown');
+      buttons.forEach(button => {
+        button.style.display = '';
+        button.style.visibility = 'visible';
+        button.style.opacity = '1';
+      });
+      
+      console.log('Header buttons visibility ensured');
+    } else {
+      console.error('navbar-user-area not found');
+    }
   }
 
   function fixModalButtons() {
@@ -116,6 +144,74 @@
     }
   }
 
+  function reinitializeSwiper() {
+    // Swiperが存在する場合のみ再初期化
+    if (typeof Swiper !== 'undefined') {
+      const swiperContainer = document.querySelector('.sponsor-swiper');
+      if (swiperContainer && swiperContainer.swiper) {
+        try {
+          swiperContainer.swiper.destroy(true, true);
+          console.log('Existing Swiper destroyed');
+        } catch (error) {
+          console.log('Swiper destroy error:', error);
+        }
+      }
+      
+      // 新しいSwiperを初期化
+      setTimeout(() => {
+        try {
+          new Swiper('.sponsor-swiper', {
+            slidesPerView: 'auto',
+            spaceBetween: 20,
+            centeredSlides: true,
+            allowTouchMove: true,
+            breakpoints: {
+              640: { 
+                slidesPerView: 2,
+                spaceBetween: 20,
+                centeredSlides: false
+              },
+              1024: { 
+                slidesPerView: 3,
+                spaceBetween: 30,
+                centeredSlides: false
+              }
+            },
+            autoplay: { 
+              delay: 4000, 
+              disableOnInteraction: false,
+              pauseOnMouseEnter: false,
+              stopOnLastSlide: false,
+              waitForTransition: false
+            },
+            loop: true,
+            loopedSlides: 2,
+            speed: 800,
+            freeMode: false,
+            navigation: {
+              nextEl: '.sponsor-next',
+              prevEl: '.sponsor-prev',
+              disabledClass: 'swiper-button-disabled',
+              hiddenClass: 'swiper-button-hidden'
+            },
+            pagination: { 
+              el: '.swiper-pagination', 
+              clickable: true 
+            },
+            on: {
+              init: function() {
+                console.log('Swiper reinitialized successfully');
+                this.autoplay.start();
+              }
+            }
+          });
+        } catch (error) {
+          console.error('Swiper reinitialization error:', error);
+        }
+      }, 500);
+    }
+  }
+
   // DOMContentLoaded後に初期化
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeButtons);
@@ -125,5 +221,6 @@
 
   // 追加の保険として、少し遅延して実行
   setTimeout(initializeButtons, 1000);
+  setTimeout(initializeButtons, 2000);
 
 })();
