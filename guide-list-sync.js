@@ -28,10 +28,15 @@
     // 既存のユーザー追加ガイドを削除
     removeExistingUserGuides(guideContainer);
     
-    // 新しいガイドカードを追加
-    userAddedGuides.forEach(guide => {
+    // 新しいガイドカードを追加（新規は先頭に配置）
+    userAddedGuides.forEach((guide, index) => {
       const guideCard = createGuideCard(guide);
-      guideContainer.appendChild(guideCard);
+      if (index === 0) {
+        // 最新のガイドは先頭に挿入（左上に表示）
+        guideContainer.insertBefore(guideCard, guideContainer.firstChild);
+      } else {
+        guideContainer.appendChild(guideCard);
+      }
     });
 
     console.log('Guide list updated successfully');

@@ -11,6 +11,7 @@
     setupCharacterCounters();
     setupLocationSelection();
     setupLanguageSelection();
+    setupSessionFeeValidation();
     setupFormSaving();
     setupDataSynchronization();
     loadExistingData();
@@ -99,6 +100,61 @@
         console.log('Languages selected:', selectedLanguages);
       });
     });
+  }
+
+  /**
+   * セッション料金の検証設定
+   */
+  function setupSessionFeeValidation() {
+    const sessionFeeInput = document.getElementById('guide-session-fee');
+    if (sessionFeeInput) {
+      sessionFeeInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 6000) {
+          this.value = 6000;
+          showValidationMessage('最低料金は¥6,000です。');
+        }
+      });
+
+      sessionFeeInput.addEventListener('blur', function() {
+        const value = parseInt(this.value);
+        if (isNaN(value) || value < 6000) {
+          this.value = 6000;
+        }
+      });
+    }
+  }
+
+  /**
+   * バリデーションメッセージを表示
+   */
+  function showValidationMessage(message) {
+    // 既存のメッセージを削除
+    const existingAlert = document.querySelector('.validation-alert');
+    if (existingAlert) {
+      existingAlert.remove();
+    }
+
+    // 新しいアラートを作成
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-warning alert-dismissible fade show validation-alert';
+    alertDiv.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    // フォームの上に挿入
+    const form = document.getElementById('profile-basic-form');
+    if (form) {
+      form.insertBefore(alertDiv, form.firstChild);
+      
+      // 3秒後に自動削除
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 3000);
+    }
   }
 
   /**
@@ -409,14 +465,16 @@
       createdAt: new Date().toISOString()
     };
     
-    // メインページのガイドリストに追加/更新
+    // メインページのガイドリストに追加/更新（新規は先頭に配置）
     const existingGuides = JSON.parse(localStorage.getItem('userAddedGuides') || '[]');
     const existingIndex = existingGuides.findIndex(guide => guide.id === guideData.id);
     
     if (existingIndex >= 0) {
+      // 既存ガイドの更新
       existingGuides[existingIndex] = guideData;
     } else {
-      existingGuides.push(guideData);
+      // 新規ガイドは配列の先頭に追加（左上に表示）
+      existingGuides.unshift(guideData);
     }
     
     localStorage.setItem('userAddedGuides', JSON.stringify(existingGuides));
