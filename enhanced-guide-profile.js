@@ -238,6 +238,11 @@
     existingProfiles[guideId] = formData;
     localStorage.setItem('guideProfiles', JSON.stringify(existingProfiles));
     
+    // ガイドデータ連携システムを使用してメインページに反映
+    if (typeof window.handleProfileSave === 'function') {
+      window.handleProfileSave(formData);
+    }
+    
     console.log('Basic info saved:', formData);
   }
 
@@ -263,8 +268,13 @@
     existingProfiles[guideId] = completeData;
     localStorage.setItem('guideProfiles', JSON.stringify(existingProfiles));
     
-    // メインページのガイドデータも更新
-    updateMainPageGuideData(completeData);
+    // ガイドデータ連携システムを使用してメインページに反映
+    if (typeof window.handleProfileSave === 'function') {
+      window.handleProfileSave(completeData);
+    } else {
+      // フォールバック: 従来の方法
+      updateMainPageGuideData(completeData);
+    }
     
     console.log('Complete profile saved:', completeData);
   }
