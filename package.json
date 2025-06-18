@@ -18,6 +18,7 @@
   "license": "ISC",
   "description": "A tourism matching app connecting locals with tourists",
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.37.0",
     "@sendgrid/mail": "^8.1.5",
     "@stripe/react-stripe-js": "^3.6.0",
     "@stripe/stripe-js": "^7.1.0",
