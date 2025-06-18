@@ -71,44 +71,13 @@
    * 活動エリア選択機能の設定
    */
   function setupLocationSelection() {
-    // 検索機能の設定
-    const searchInput = document.getElementById('location-search');
-    if (searchInput) {
-      searchInput.addEventListener('input', function() {
-        filterLocationsBySearch(this.value);
+    const locationSelect = document.getElementById('guide-location');
+    if (locationSelect) {
+      locationSelect.addEventListener('change', function() {
+        currentGuideData.location = this.value;
+        console.log('Location selected:', this.value);
       });
     }
-
-    // ラジオボタンの設定
-    const locationInputs = document.querySelectorAll('input[name="location"]');
-    locationInputs.forEach(input => {
-      input.addEventListener('change', function() {
-        if (this.checked) {
-          currentGuideData.location = this.value;
-          updateDisplayLocation(this.value);
-          console.log('Location selected:', this.value);
-        }
-      });
-    });
-  }
-
-  /**
-   * 検索による都道府県フィルタリング
-   */
-  function filterLocationsBySearch(searchTerm) {
-    const locationBtns = document.querySelectorAll('.location-btn');
-    const searchLower = searchTerm.toLowerCase();
-
-    locationBtns.forEach(btn => {
-      const parentCol = btn.closest('.col-6, .col-md-3');
-      const locationText = btn.textContent.toLowerCase();
-      
-      if (searchTerm === '' || locationText.includes(searchLower)) {
-        parentCol.style.display = '';
-      } else {
-        parentCol.style.display = 'none';
-      }
-    });
   }
 
   /**
@@ -249,8 +218,8 @@
       username: document.getElementById('guide-username')?.value || '',
       email: document.getElementById('guide-email')?.value || '',
       
-      // 活動エリア
-      location: document.querySelector('input[name="location"]:checked')?.value || '',
+      // 活動エリア（セレクトボックスから取得）
+      location: document.getElementById('guide-location')?.value || '',
       
       // 対応言語
       languages: getSelectedLanguages(),
@@ -343,12 +312,11 @@
       if (emailField) emailField.value = data.email;
     }
     
-    // 活動エリア
+    // 活動エリア（ドロップダウン）
     if (data.location) {
-      const locationInput = document.querySelector(`input[name="location"][value="${data.location}"]`);
-      if (locationInput) {
-        locationInput.checked = true;
-        updateDisplayLocation(data.location);
+      const locationSelect = document.getElementById('guide-location');
+      if (locationSelect) {
+        locationSelect.value = data.location;
       }
     }
     
@@ -358,7 +326,6 @@
         const langInput = document.getElementById(`lang-${lang.value}`);
         if (langInput) langInput.checked = true;
       });
-      updateDisplayLanguages(data.languages);
     }
     
     // 自己紹介
@@ -406,7 +373,7 @@
     const profileImg = document.getElementById('guide-profile-preview');
     const profilePhotoUrl = profileImg ? profileImg.src : 'https://via.placeholder.com/150x150/007bff/ffffff?text=ガイド';
     
-    // 言語ラベルを日本語で作成
+    // 言語ラベルを日本語で作成（6言語に対応）
     const languageLabels = data.languages.map(lang => {
       const languageMap = {
         'japanese': '日本語',
@@ -414,13 +381,7 @@
         'chinese': '中国語',
         'korean': '韓国語',
         'spanish': 'スペイン語',
-        'french': 'フランス語',
-        'german': 'ドイツ語',
-        'italian': 'イタリア語',
-        'portuguese': 'ポルトガル語',
-        'russian': 'ロシア語',
-        'thai': 'タイ語',
-        'arabic': 'アラビア語'
+        'french': 'フランス語'
       };
       return languageMap[lang.value] || lang.label;
     });
