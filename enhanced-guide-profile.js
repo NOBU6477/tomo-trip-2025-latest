@@ -402,19 +402,45 @@
    * メインページのガイドデータを更新
    */
   function updateMainPageGuideData(data) {
+    // プロフィール写真のURL取得
+    const profileImg = document.getElementById('guide-profile-preview');
+    const profilePhotoUrl = profileImg ? profileImg.src : 'https://via.placeholder.com/150x150/007bff/ffffff?text=ガイド';
+    
+    // 言語ラベルを日本語で作成
+    const languageLabels = data.languages.map(lang => {
+      const languageMap = {
+        'japanese': '日本語',
+        'english': '英語', 
+        'chinese': '中国語',
+        'korean': '韓国語',
+        'spanish': 'スペイン語',
+        'french': 'フランス語',
+        'german': 'ドイツ語',
+        'italian': 'イタリア語',
+        'portuguese': 'ポルトガル語',
+        'russian': 'ロシア語',
+        'thai': 'タイ語',
+        'arabic': 'アラビア語'
+      };
+      return languageMap[lang.value] || lang.label;
+    });
+
     // メインページで使用されるガイドデータ形式に変換
     const guideData = {
       id: getCurrentGuideId(),
-      name: data.name || 'テストガイド',
-      location: data.location || '',
-      languages: data.languages || [],
-      description: data.description || '',
-      fee: parseInt(data.sessionFee) || 6000,
-      interests: data.interests || [],
+      name: data.name || 'ガイド',
+      location: data.location || '東京都',
+      languages: languageLabels,
+      description: data.description || '新規登録ガイドです。',
+      sessionFee: parseInt(data.sessionFee) || 6000,
+      interests: data.interests ? data.interests.map(interest => interest.label || interest.value) : [],
       additionalInfo: data.additionalInfo || '',
-      profilePhoto: data.profilePhoto || 'https://via.placeholder.com/150',
-      rating: 4.8, // デフォルト評価
-      reviewCount: 12 // デフォルトレビュー数
+      profilePhoto: profilePhotoUrl,
+      rating: 4.8,
+      reviewCount: 12,
+      isNew: true,
+      verified: true,
+      createdAt: new Date().toISOString()
     };
     
     // メインページのガイドリストに追加/更新
@@ -428,7 +454,16 @@
     }
     
     localStorage.setItem('userAddedGuides', JSON.stringify(existingGuides));
-    console.log('Updated main page guide data');
+    
+    // セッションストレージにも最新データを保存
+    sessionStorage.setItem('latestGuideData', JSON.stringify(guideData));
+    
+    console.log('Updated main page guide data:', guideData);
+    
+    // メインページのガイド表示を強制更新
+    if (typeof window.updateGuideDisplay === 'function') {
+      window.updateGuideDisplay();
+    }
   }
 
   /**
