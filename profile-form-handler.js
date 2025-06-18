@@ -170,10 +170,17 @@
     const userData = getExistingUserData();
     if (!userData) return;
 
-    // 活動エリア
+    // 活動エリア（セレクトボックス対応）
     const locationField = document.getElementById('guide-location');
     if (locationField && userData.location) {
-      locationField.value = userData.location;
+      // セレクトボックスの場合、optionを選択
+      const options = locationField.querySelectorAll('option');
+      for (let option of options) {
+        if (option.value === userData.location) {
+          option.selected = true;
+          break;
+        }
+      }
     }
 
     // 言語選択
@@ -208,7 +215,7 @@
       });
     }
 
-    // カスタム興味
+    // カスタム興味（テキストエリア対応）
     const customField = document.getElementById('interest-custom');
     if (customField && userData.customInterests) {
       customField.value = userData.customInterests;
