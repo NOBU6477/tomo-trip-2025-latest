@@ -40,6 +40,9 @@
       // フォーム表示時にも自動入力
       this.watchForModalDisplay();
       
+      // 統合ガイドシステムとの連携
+      this.integrateWithUnifiedSystem();
+      
       console.log('プロフィール自動入力システム初期化完了');
     },
 
@@ -224,6 +227,79 @@
       ctx.fillText('👤', 150, 150);
       
       return canvas.toDataURL('image/png');
+    },
+
+    /**
+     * 統合ガイドシステムとの連携
+     */
+    integrateWithUnifiedSystem() {
+      // 統合システムの保存プロセスに自動入力を組み込む
+      if (window.UnifiedGuideSystem && window.UnifiedGuideSystem.ProfileSaveManager) {
+        const originalSave = window.UnifiedGuideSystem.ProfileSaveManager.executeCompleteSave;
+        
+        window.UnifiedGuideSystem.ProfileSaveManager.executeCompleteSave = () => {
+          // 保存前に自動入力を確認
+          this.ensureAutoFilledData();
+          
+          // 元の保存処理を実行
+          const result = originalSave?.call(window.UnifiedGuideSystem.ProfileSaveManager);
+          
+          // 保存後にメインページを即座に更新
+          setTimeout(() => {
+            this.updateMainPageImmediately();
+          }, 500);
+          
+          return result;
+        };
+      }
+    },
+
+    /**
+     * 自動入力データを確保
+     */
+    ensureAutoFilledData() {
+      const nameField = document.getElementById('guide-name');
+      const photoPreview = document.getElementById('guide-profile-preview');
+      const descField = document.getElementById('guide-description');
+      
+      // 名前が空の場合は自動入力
+      if (!nameField || !nameField.value.trim()) {
+        this.autoFillName();
+      }
+      
+      // 写真が空の場合は自動入力
+      if (!photoPreview || !photoPreview.src || photoPreview.src.includes('placeholder')) {
+        this.autoFillPhoto();
+      }
+      
+      // 自己紹介が空の場合は自動入力
+      if (!descField || !descField.value.trim()) {
+        this.autoFillDescription();
+      }
+      
+      console.log('自動入力データを確保しました');
+    },
+
+    /**
+     * メインページを即座に更新
+     */
+    updateMainPageImmediately() {
+      // 統合ガイドシステムの表示更新を強制実行
+      if (window.UnifiedGuideSystem && window.UnifiedGuideSystem.GuideDisplayManager) {
+        window.UnifiedGuideSystem.GuideDisplayManager.forceUpdateGuideList();
+      }
+      
+      // 従来システムの更新も実行
+      if (typeof window.updateGuideList === 'function') {
+        window.updateGuideList();
+      }
+      
+      // ページリロードを実行（確実な反映のため）
+      if (window.location.pathname.includes('guide-profile')) {
+        setTimeout(() => {
+          window.location.href = '/?updated=true';
+        }, 1000);
+      }
     },
 
     /**

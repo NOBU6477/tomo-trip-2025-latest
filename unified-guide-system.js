@@ -216,27 +216,36 @@
       // 既存のユーザー作成ガイドを削除
       this.removeExistingUserGuides(container);
       
-      // ユーザー作成ガイドを追加
+      // ユーザー作成ガイドを追加（左上から順番に配置）
       const userGuides = GuideDataManager.getUserCreatedGuides();
       console.log('表示対象ガイド数:', userGuides.length);
       
+      // 最新のガイドから順番に左上に配置
       userGuides.forEach((guide, index) => {
         const guideCard = this.createGuideCard(guide);
-        if (index === 0) {
-          // 最新ガイドは先頭に
-          container.insertBefore(guideCard, container.firstChild);
-        } else {
-          // その他は順次追加
-          const existingUserCards = container.querySelectorAll('[data-user-created="true"]');
-          if (existingUserCards.length > 0) {
-            container.insertBefore(guideCard, existingUserCards[existingUserCards.length - 1].nextSibling);
-          } else {
-            container.appendChild(guideCard);
-          }
-        }
+        // 常に先頭（左上）に挿入
+        container.insertBefore(guideCard, container.firstChild);
       });
 
       console.log('=== ガイド一覧更新完了 ===');
+    },
+
+    /**
+     * 強制的にガイド一覧を更新
+     */
+    forceUpdateGuideList() {
+      console.log('強制ガイド一覧更新実行');
+      this.updateGuideList();
+      
+      // 従来システムも更新
+      if (typeof window.updateGuideDisplay === 'function') {
+        window.updateGuideDisplay();
+      }
+      
+      // 追加で再レンダリング
+      setTimeout(() => {
+        this.updateGuideList();
+      }, 500);
     },
 
     /**
