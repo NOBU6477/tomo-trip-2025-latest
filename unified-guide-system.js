@@ -41,18 +41,23 @@
     collectCompleteGuideData() {
       const guideId = this.getCurrentGuideId();
       
+      // 自動入力されたデータを確実に取得
+      const name = this.getFieldValue('guide-name') || this.getAutoFilledName();
+      const description = this.getFieldValue('guide-description') || this.getAutoFilledDescription();
+      const profilePhoto = this.getProfilePhotoUrl() || this.getAutoFilledPhoto();
+      
       const data = {
         id: guideId,
-        name: this.getFieldValue('guide-name'),
+        name: name,
         username: this.getFieldValue('guide-username'),
         email: this.getFieldValue('guide-email'),
         location: this.getFieldValue('guide-location'),
-        description: this.getFieldValue('guide-description'),
+        description: description,
         sessionFee: parseInt(this.getFieldValue('guide-session-fee')) || 6000,
         additionalInfo: this.getFieldValue('interest-custom'),
         languages: this.collectLanguages(),
         interests: this.collectInterests(),
-        profilePhoto: this.getProfilePhotoUrl(),
+        profilePhoto: profilePhoto,
         
         // メタデータ
         rating: 4.8,
@@ -66,6 +71,41 @@
 
       console.log('収集した完全ガイドデータ:', data);
       return data;
+    },
+
+    /**
+     * 自動入力された名前を取得
+     */
+    getAutoFilledName() {
+      if (window.AutoProfileFiller) {
+        return window.AutoProfileFiller.getRandomSampleName();
+      }
+      return 'ガイド';
+    },
+
+    /**
+     * 自動入力された説明を取得
+     */
+    getAutoFilledDescription() {
+      if (window.AutoProfileFiller) {
+        const descriptions = [
+          '地元愛あふれるガイドとして、皆様に特別な体験をお届けします。',
+          '観光業界での経験が豊富で、地元の隠れた名所をご案内します。',
+          '写真撮影のお手伝いもいたします。素敵な思い出作りをサポートします。'
+        ];
+        return descriptions[Math.floor(Math.random() * descriptions.length)];
+      }
+      return '新規登録ガイドです。よろしくお願いします。';
+    },
+
+    /**
+     * 自動入力された写真を取得
+     */
+    getAutoFilledPhoto() {
+      if (window.AutoProfileFiller) {
+        return window.AutoProfileFiller.getRandomSamplePhoto();
+      }
+      return 'https://via.placeholder.com/300x300/007bff/ffffff?text=ガイド';
     },
 
     /**

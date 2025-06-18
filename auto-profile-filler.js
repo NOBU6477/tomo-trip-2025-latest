@@ -58,6 +58,11 @@
       
       // 自己紹介も自動入力
       this.autoFillDescription();
+      
+      // プレビューカードを即座に更新
+      setTimeout(() => {
+        this.forceUpdatePreviewCard();
+      }, 500);
     },
 
     /**
@@ -71,6 +76,9 @@
         
         // input イベントを発火してリアルタイムプレビューを更新
         nameField.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // プレビューカードの名前も即座に更新
+        this.updatePreviewCardName(randomName);
         
         console.log('自動入力: 名前 =', randomName);
       }
@@ -89,6 +97,9 @@
         // プレビュー画像を更新
         photoPreview.src = randomPhoto;
         photoPreview.style.display = 'block';
+        
+        // プレビューカードの画像も即座に更新
+        this.updatePreviewCardPhoto(randomPhoto);
         
         // ファイル入力も更新（必要に応じて）
         if (fileInput) {
@@ -110,6 +121,9 @@
         
         // input イベントを発火してリアルタイムプレビューを更新
         descField.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // プレビューカードの説明も即座に更新
+        this.updatePreviewCardDescription(sampleDescription);
         
         console.log('自動入力: 自己紹介');
       }
@@ -299,6 +313,64 @@
         setTimeout(() => {
           window.location.href = '/?updated=true';
         }, 1000);
+      }
+    },
+
+    /**
+     * プレビューカードの写真を直接更新
+     */
+    updatePreviewCardPhoto(photoUrl) {
+      const previewImages = document.querySelectorAll('.guide-card img, .card-img-top');
+      previewImages.forEach(img => {
+        if (img.src.includes('placeholder') || img.alt.includes('プロフィール')) {
+          img.src = photoUrl;
+        }
+      });
+    },
+
+    /**
+     * プレビューカードの名前を直接更新
+     */
+    updatePreviewCardName(name) {
+      const previewTitles = document.querySelectorAll('.guide-card .card-title, .card-title');
+      previewTitles.forEach(title => {
+        if (title.textContent.includes('お名前を入力') || title.textContent.trim() === '') {
+          title.textContent = name;
+        }
+      });
+    },
+
+    /**
+     * プレビューカードの説明を直接更新
+     */
+    updatePreviewCardDescription(description) {
+      const previewDescs = document.querySelectorAll('.guide-card .card-text, .card-text');
+      previewDescs.forEach(desc => {
+        if (desc.textContent.includes('自己紹介を入力') || desc.textContent.trim() === '') {
+          const shortDesc = description.length > 100 ? description.substring(0, 100) + '...' : description;
+          desc.textContent = shortDesc;
+        }
+      });
+    },
+
+    /**
+     * プレビューカードを即座に更新
+     */
+    forceUpdatePreviewCard() {
+      const nameField = document.getElementById('guide-name');
+      const photoPreview = document.getElementById('guide-profile-preview');
+      const descField = document.getElementById('guide-description');
+
+      if (nameField && nameField.value.trim()) {
+        this.updatePreviewCardName(nameField.value.trim());
+      }
+
+      if (photoPreview && photoPreview.src && !photoPreview.src.includes('placeholder')) {
+        this.updatePreviewCardPhoto(photoPreview.src);
+      }
+
+      if (descField && descField.value.trim()) {
+        this.updatePreviewCardDescription(descField.value.trim());
       }
     },
 
