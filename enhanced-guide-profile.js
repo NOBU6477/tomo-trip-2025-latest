@@ -71,8 +71,16 @@
    * 活動エリア選択機能の設定
    */
   function setupLocationSelection() {
+    // 検索機能の設定
+    const searchInput = document.getElementById('location-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        filterLocationsBySearch(this.value);
+      });
+    }
+
+    // ラジオボタンの設定
     const locationInputs = document.querySelectorAll('input[name="location"]');
-    
     locationInputs.forEach(input => {
       input.addEventListener('change', function() {
         if (this.checked) {
@@ -81,6 +89,25 @@
           console.log('Location selected:', this.value);
         }
       });
+    });
+  }
+
+  /**
+   * 検索による都道府県フィルタリング
+   */
+  function filterLocationsBySearch(searchTerm) {
+    const locationBtns = document.querySelectorAll('.location-btn');
+    const searchLower = searchTerm.toLowerCase();
+
+    locationBtns.forEach(btn => {
+      const parentCol = btn.closest('.col-6, .col-md-3');
+      const locationText = btn.textContent.toLowerCase();
+      
+      if (searchTerm === '' || locationText.includes(searchLower)) {
+        parentCol.style.display = '';
+      } else {
+        parentCol.style.display = 'none';
+      }
     });
   }
 

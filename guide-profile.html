@@ -559,153 +559,344 @@
               <form id="profile-basic-form">
                 <div class="mb-3">
                   <label for="guide-location" class="form-label" data-key="activity-area">活動エリア</label>
-                  <div class="row g-2">
-                    <div class="col-12">
-                      <div class="btn-group-vertical d-grid gap-1" style="max-height: 200px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem; padding: 0.5rem;">
-                        <input type="radio" class="btn-check" name="location" id="location-hokkaido" value="北海道">
-                        <label class="btn btn-outline-primary text-start" for="location-hokkaido">北海道</label>
+                  <div class="location-selector-container">
+                    <div class="location-search-box mb-2">
+                      <input type="text" class="form-control" id="location-search" placeholder="都道府県名を入力して検索..." autocomplete="off">
+                      <i class="bi bi-search position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); color: #6c757d;"></i>
+                    </div>
+                    <div class="location-grid">
+                      <div class="row g-2">
+                        <!-- 北海道・東北 -->
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-hokkaido" value="北海道" data-region="hokkaido">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-hokkaido">
+                            <i class="bi bi-geo-alt-fill me-1"></i>北海道
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-aomori" value="青森県" data-region="tohoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-aomori">
+                            <i class="bi bi-geo-alt-fill me-1"></i>青森県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-iwate" value="岩手県" data-region="tohoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-iwate">
+                            <i class="bi bi-geo-alt-fill me-1"></i>岩手県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-miyagi" value="宮城県" data-region="tohoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-miyagi">
+                            <i class="bi bi-geo-alt-fill me-1"></i>宮城県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-akita" value="秋田県" data-region="tohoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-akita">
+                            <i class="bi bi-geo-alt-fill me-1"></i>秋田県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-yamagata" value="山形県" data-region="tohoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-yamagata">
+                            <i class="bi bi-geo-alt-fill me-1"></i>山形県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-fukushima" value="福島県" data-region="tohoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-fukushima">
+                            <i class="bi bi-geo-alt-fill me-1"></i>福島県
+                          </label>
+                        </div>
                         
-                        <input type="radio" class="btn-check" name="location" id="location-aomori" value="青森県">
-                        <label class="btn btn-outline-primary text-start" for="location-aomori">青森県</label>
+                        <!-- 関東 -->
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-ibaraki" value="茨城県" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-ibaraki">
+                            <i class="bi bi-geo-alt-fill me-1"></i>茨城県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-tochigi" value="栃木県" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-tochigi">
+                            <i class="bi bi-geo-alt-fill me-1"></i>栃木県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-gunma" value="群馬県" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-gunma">
+                            <i class="bi bi-geo-alt-fill me-1"></i>群馬県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-saitama" value="埼玉県" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-saitama">
+                            <i class="bi bi-geo-alt-fill me-1"></i>埼玉県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-chiba" value="千葉県" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-chiba">
+                            <i class="bi bi-geo-alt-fill me-1"></i>千葉県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-tokyo" value="東京都" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-tokyo">
+                            <i class="bi bi-geo-alt-fill me-1"></i>東京都
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-kanagawa" value="神奈川県" data-region="kanto">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-kanagawa">
+                            <i class="bi bi-geo-alt-fill me-1"></i>神奈川県
+                          </label>
+                        </div>
                         
-                        <input type="radio" class="btn-check" name="location" id="location-iwate" value="岩手県">
-                        <label class="btn btn-outline-primary text-start" for="location-iwate">岩手県</label>
+                        <!-- 中部 -->
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-niigata" value="新潟県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-niigata">
+                            <i class="bi bi-geo-alt-fill me-1"></i>新潟県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-toyama" value="富山県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-toyama">
+                            <i class="bi bi-geo-alt-fill me-1"></i>富山県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-ishikawa" value="石川県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-ishikawa">
+                            <i class="bi bi-geo-alt-fill me-1"></i>石川県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-fukui" value="福井県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-fukui">
+                            <i class="bi bi-geo-alt-fill me-1"></i>福井県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-yamanashi" value="山梨県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-yamanashi">
+                            <i class="bi bi-geo-alt-fill me-1"></i>山梨県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-nagano" value="長野県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-nagano">
+                            <i class="bi bi-geo-alt-fill me-1"></i>長野県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-gifu" value="岐阜県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-gifu">
+                            <i class="bi bi-geo-alt-fill me-1"></i>岐阜県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-shizuoka" value="静岡県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-shizuoka">
+                            <i class="bi bi-geo-alt-fill me-1"></i>静岡県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-aichi" value="愛知県" data-region="chubu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-aichi">
+                            <i class="bi bi-geo-alt-fill me-1"></i>愛知県
+                          </label>
+                        </div>
                         
-                        <input type="radio" class="btn-check" name="location" id="location-miyagi" value="宮城県">
-                        <label class="btn btn-outline-primary text-start" for="location-miyagi">宮城県</label>
+                        <!-- 関西 -->
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-mie" value="三重県" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-mie">
+                            <i class="bi bi-geo-alt-fill me-1"></i>三重県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-shiga" value="滋賀県" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-shiga">
+                            <i class="bi bi-geo-alt-fill me-1"></i>滋賀県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-kyoto" value="京都府" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-kyoto">
+                            <i class="bi bi-geo-alt-fill me-1"></i>京都府
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-osaka" value="大阪府" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-osaka">
+                            <i class="bi bi-geo-alt-fill me-1"></i>大阪府
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-hyogo" value="兵庫県" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-hyogo">
+                            <i class="bi bi-geo-alt-fill me-1"></i>兵庫県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-nara" value="奈良県" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-nara">
+                            <i class="bi bi-geo-alt-fill me-1"></i>奈良県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-wakayama" value="和歌山県" data-region="kansai">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-wakayama">
+                            <i class="bi bi-geo-alt-fill me-1"></i>和歌山県
+                          </label>
+                        </div>
                         
-                        <input type="radio" class="btn-check" name="location" id="location-akita" value="秋田県">
-                        <label class="btn btn-outline-primary text-start" for="location-akita">秋田県</label>
+                        <!-- 中国・四国 -->
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-tottori" value="鳥取県" data-region="chugoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-tottori">
+                            <i class="bi bi-geo-alt-fill me-1"></i>鳥取県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-shimane" value="島根県" data-region="chugoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-shimane">
+                            <i class="bi bi-geo-alt-fill me-1"></i>島根県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-okayama" value="岡山県" data-region="chugoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-okayama">
+                            <i class="bi bi-geo-alt-fill me-1"></i>岡山県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-hiroshima" value="広島県" data-region="chugoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-hiroshima">
+                            <i class="bi bi-geo-alt-fill me-1"></i>広島県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-yamaguchi" value="山口県" data-region="chugoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-yamaguchi">
+                            <i class="bi bi-geo-alt-fill me-1"></i>山口県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-tokushima" value="徳島県" data-region="shikoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-tokushima">
+                            <i class="bi bi-geo-alt-fill me-1"></i>徳島県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-kagawa" value="香川県" data-region="shikoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-kagawa">
+                            <i class="bi bi-geo-alt-fill me-1"></i>香川県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-ehime" value="愛媛県" data-region="shikoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-ehime">
+                            <i class="bi bi-geo-alt-fill me-1"></i>愛媛県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-kochi" value="高知県" data-region="shikoku">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-kochi">
+                            <i class="bi bi-geo-alt-fill me-1"></i>高知県
+                          </label>
+                        </div>
                         
-                        <input type="radio" class="btn-check" name="location" id="location-yamagata" value="山形県">
-                        <label class="btn btn-outline-primary text-start" for="location-yamagata">山形県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-fukushima" value="福島県">
-                        <label class="btn btn-outline-primary text-start" for="location-fukushima">福島県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-ibaraki" value="茨城県">
-                        <label class="btn btn-outline-primary text-start" for="location-ibaraki">茨城県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-tochigi" value="栃木県">
-                        <label class="btn btn-outline-primary text-start" for="location-tochigi">栃木県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-gunma" value="群馬県">
-                        <label class="btn btn-outline-primary text-start" for="location-gunma">群馬県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-saitama" value="埼玉県">
-                        <label class="btn btn-outline-primary text-start" for="location-saitama">埼玉県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-chiba" value="千葉県">
-                        <label class="btn btn-outline-primary text-start" for="location-chiba">千葉県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-tokyo" value="東京都">
-                        <label class="btn btn-outline-primary text-start" for="location-tokyo">東京都</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-kanagawa" value="神奈川県">
-                        <label class="btn btn-outline-primary text-start" for="location-kanagawa">神奈川県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-niigata" value="新潟県">
-                        <label class="btn btn-outline-primary text-start" for="location-niigata">新潟県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-toyama" value="富山県">
-                        <label class="btn btn-outline-primary text-start" for="location-toyama">富山県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-ishikawa" value="石川県">
-                        <label class="btn btn-outline-primary text-start" for="location-ishikawa">石川県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-fukui" value="福井県">
-                        <label class="btn btn-outline-primary text-start" for="location-fukui">福井県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-yamanashi" value="山梨県">
-                        <label class="btn btn-outline-primary text-start" for="location-yamanashi">山梨県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-nagano" value="長野県">
-                        <label class="btn btn-outline-primary text-start" for="location-nagano">長野県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-gifu" value="岐阜県">
-                        <label class="btn btn-outline-primary text-start" for="location-gifu">岐阜県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-shizuoka" value="静岡県">
-                        <label class="btn btn-outline-primary text-start" for="location-shizuoka">静岡県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-aichi" value="愛知県">
-                        <label class="btn btn-outline-primary text-start" for="location-aichi">愛知県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-mie" value="三重県">
-                        <label class="btn btn-outline-primary text-start" for="location-mie">三重県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-shiga" value="滋賀県">
-                        <label class="btn btn-outline-primary text-start" for="location-shiga">滋賀県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-kyoto" value="京都府">
-                        <label class="btn btn-outline-primary text-start" for="location-kyoto">京都府</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-osaka" value="大阪府">
-                        <label class="btn btn-outline-primary text-start" for="location-osaka">大阪府</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-hyogo" value="兵庫県">
-                        <label class="btn btn-outline-primary text-start" for="location-hyogo">兵庫県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-nara" value="奈良県">
-                        <label class="btn btn-outline-primary text-start" for="location-nara">奈良県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-wakayama" value="和歌山県">
-                        <label class="btn btn-outline-primary text-start" for="location-wakayama">和歌山県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-tottori" value="鳥取県">
-                        <label class="btn btn-outline-primary text-start" for="location-tottori">鳥取県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-shimane" value="島根県">
-                        <label class="btn btn-outline-primary text-start" for="location-shimane">島根県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-okayama" value="岡山県">
-                        <label class="btn btn-outline-primary text-start" for="location-okayama">岡山県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-hiroshima" value="広島県">
-                        <label class="btn btn-outline-primary text-start" for="location-hiroshima">広島県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-yamaguchi" value="山口県">
-                        <label class="btn btn-outline-primary text-start" for="location-yamaguchi">山口県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-tokushima" value="徳島県">
-                        <label class="btn btn-outline-primary text-start" for="location-tokushima">徳島県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-kagawa" value="香川県">
-                        <label class="btn btn-outline-primary text-start" for="location-kagawa">香川県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-ehime" value="愛媛県">
-                        <label class="btn btn-outline-primary text-start" for="location-ehime">愛媛県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-kochi" value="高知県">
-                        <label class="btn btn-outline-primary text-start" for="location-kochi">高知県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-fukuoka" value="福岡県">
-                        <label class="btn btn-outline-primary text-start" for="location-fukuoka">福岡県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-saga" value="佐賀県">
-                        <label class="btn btn-outline-primary text-start" for="location-saga">佐賀県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-nagasaki" value="長崎県">
-                        <label class="btn btn-outline-primary text-start" for="location-nagasaki">長崎県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-kumamoto" value="熊本県">
-                        <label class="btn btn-outline-primary text-start" for="location-kumamoto">熊本県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-oita" value="大分県">
-                        <label class="btn btn-outline-primary text-start" for="location-oita">大分県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-miyazaki" value="宮崎県">
-                        <label class="btn btn-outline-primary text-start" for="location-miyazaki">宮崎県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-kagoshima" value="鹿児島県">
-                        <label class="btn btn-outline-primary text-start" for="location-kagoshima">鹿児島県</label>
-                        
-                        <input type="radio" class="btn-check" name="location" id="location-okinawa" value="沖縄県">
-                        <label class="btn btn-outline-primary text-start" for="location-okinawa">沖縄県</label>
+                        <!-- 九州・沖縄 -->
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-fukuoka" value="福岡県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-fukuoka">
+                            <i class="bi bi-geo-alt-fill me-1"></i>福岡県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-saga" value="佐賀県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-saga">
+                            <i class="bi bi-geo-alt-fill me-1"></i>佐賀県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-nagasaki" value="長崎県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-nagasaki">
+                            <i class="bi bi-geo-alt-fill me-1"></i>長崎県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-kumamoto" value="熊本県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-kumamoto">
+                            <i class="bi bi-geo-alt-fill me-1"></i>熊本県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-oita" value="大分県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-oita">
+                            <i class="bi bi-geo-alt-fill me-1"></i>大分県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-miyazaki" value="宮崎県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-miyazaki">
+                            <i class="bi bi-geo-alt-fill me-1"></i>宮崎県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-kagoshima" value="鹿児島県" data-region="kyushu">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-kagoshima">
+                            <i class="bi bi-geo-alt-fill me-1"></i>鹿児島県
+                          </label>
+                        </div>
+                        <div class="col-6 col-md-3">
+                          <input type="radio" class="btn-check location-radio" name="location" id="location-okinawa" value="沖縄県" data-region="okinawa">
+                          <label class="btn btn-outline-primary w-100 location-btn" for="location-okinawa">
+                            <i class="bi bi-geo-alt-fill me-1"></i>沖縄県
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div class="form-text">クリックして活動エリアを選択してください</div>
+                  <div class="form-text">検索またはクリックして活動エリアを選択してください</div>
+                  <style>
+                    .location-selector-container {
+                      border: 1px solid #dee2e6;
+                      border-radius: 0.5rem;
+                      padding: 1rem;
+                      background: #f8f9fa;
+                    }
+                    .location-search-box {
+                      position: relative;
+                    }
+                    .location-grid {
+                      max-height: 300px;
+                      overflow-y: auto;
+                      padding-right: 0.5rem;
+                    }
+                    .location-btn {
+                      font-size: 0.875rem;
+                      padding: 0.375rem 0.5rem;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      transition: all 0.2s;
+                    }
+                    .location-btn:hover {
+                      transform: translateY(-1px);
+                      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    }
+                    .location-radio:checked + .location-btn {
+                      background-color: #0d6efd;
+                      border-color: #0d6efd;
+                      color: white;
+                      box-shadow: 0 2px 8px rgba(13,110,253,0.3);
+                    }
+                  </style>
                 </div>
                 
                 <div class="mb-3">
@@ -721,67 +912,67 @@
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-english" value="english">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-english">
-                          <i class="bi bi-translate me-2"></i>English
+                          <i class="bi bi-translate me-2"></i>英語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-chinese" value="chinese">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-chinese">
-                          <i class="bi bi-translate me-2"></i>中文
+                          <i class="bi bi-translate me-2"></i>中国語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-korean" value="korean">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-korean">
-                          <i class="bi bi-translate me-2"></i>한국어
+                          <i class="bi bi-translate me-2"></i>韓国語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-spanish" value="spanish">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-spanish">
-                          <i class="bi bi-translate me-2"></i>Español
+                          <i class="bi bi-translate me-2"></i>スペイン語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-french" value="french">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-french">
-                          <i class="bi bi-translate me-2"></i>Français
+                          <i class="bi bi-translate me-2"></i>フランス語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-german" value="german">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-german">
-                          <i class="bi bi-translate me-2"></i>Deutsch
+                          <i class="bi bi-translate me-2"></i>ドイツ語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-italian" value="italian">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-italian">
-                          <i class="bi bi-translate me-2"></i>Italiano
+                          <i class="bi bi-translate me-2"></i>イタリア語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-portuguese" value="portuguese">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-portuguese">
-                          <i class="bi bi-translate me-2"></i>Português
+                          <i class="bi bi-translate me-2"></i>ポルトガル語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-russian" value="russian">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-russian">
-                          <i class="bi bi-translate me-2"></i>Русский
+                          <i class="bi bi-translate me-2"></i>ロシア語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-thai" value="thai">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-thai">
-                          <i class="bi bi-translate me-2"></i>ไทย
+                          <i class="bi bi-translate me-2"></i>タイ語
                         </label>
                       </div>
                       <div class="col-6 col-md-4">
                         <input type="checkbox" class="btn-check language-checkbox" name="languages" id="lang-arabic" value="arabic">
                         <label class="btn btn-outline-primary w-100 text-start" for="lang-arabic">
-                          <i class="bi bi-translate me-2"></i>العربية
+                          <i class="bi bi-translate me-2"></i>アラビア語
                         </label>
                       </div>
                     </div>
