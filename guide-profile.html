@@ -198,6 +198,51 @@
       box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
     
+    .profile-photo-container {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      transition: transform 0.3s ease;
+    }
+    
+    .profile-photo-container:hover {
+      transform: scale(1.05);
+    }
+    
+    .profile-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .profile-photo-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      color: white;
+      font-size: 1.5rem;
+    }
+    
+    .profile-photo-container:hover .profile-photo-overlay {
+      opacity: 1;
+    }
+    
+    .profile-photo-overlay .overlay-text {
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      text-align: center;
+    }
+    
     .profile-sidebar .nav-link {
       padding: 0.75rem 1rem;
       color: #495057;
@@ -446,12 +491,13 @@
       <div class="col-md-3 mb-4">
         <div class="profile-sidebar p-3 mobile-sidebar mobile-card">
           <div class="text-center mb-4">
-            <div class="profile-photo-container mx-auto mb-3">
+            <div class="profile-photo-container mx-auto mb-3" style="cursor: pointer;" onclick="document.getElementById('main-profile-photo').click()">
               <img id="main-profile-preview" src="https://placehold.co/150?text=写真" class="rounded-circle profile-photo" alt="プロフィール写真" loading="lazy">
               <div class="profile-photo-overlay">
                 <i class="bi bi-camera-fill"></i>
+                <div class="overlay-text">写真を変更</div>
               </div>
-              <input type="file" id="main-profile-photo" style="display: none;" accept="image/*">
+              <input type="file" id="main-profile-photo" style="display: none;" accept="image/*" onchange="handleProfilePhotoChange(this)">
             </div>
             <h5 id="user-name">未設定</h5>
           </div>
@@ -511,23 +557,6 @@
               <h4 class="mb-3" data-key="edit-profile">プロフィール編集</h4>
               
               <form id="profile-basic-form">
-                <div class="row mb-3">
-                  <div class="col-md-6">
-                    <label for="guide-name" class="form-label" data-key="fullname">氏名</label>
-                    <input type="text" class="form-control" id="guide-name" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label for="guide-username" class="form-label" data-key="username">ユーザー名</label>
-                    <input type="text" class="form-control" id="guide-username" required>
-                    <div class="form-text" data-key="profile-url-note">プロフィールURLに使用されます</div>
-                  </div>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="guide-email" class="form-label" data-key="email-address">メールアドレス</label>
-                  <input type="email" class="form-control" id="guide-email" required>
-                </div>
-                
                 <div class="mb-3">
                   <label for="guide-location" class="form-label" data-key="activity-area">活動エリア</label>
                   <input type="text" class="form-control" id="guide-location" placeholder="例：東京都新宿区" data-key="activity-area-placeholder" required>
@@ -566,7 +595,7 @@
                 <div class="mb-3">
                   <label for="guide-interests" class="form-label" data-key="specialties">得意分野・興味</label>
                   <div class="row g-2">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="night" id="interest-night">
                         <label class="form-check-label" for="interest-night" data-key="keyword-night">ナイトツアー</label>
@@ -579,8 +608,6 @@
                         <input class="form-check-input" type="checkbox" value="photo" id="interest-photo">
                         <label class="form-check-label" for="interest-photo" data-key="keyword-photo">写真スポット</label>
                       </div>
-                    </div>
-                    <div class="col-md-6">
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="cooking" id="interest-cooking">
                         <label class="form-check-label" for="interest-cooking" data-key="keyword-cooking">料理</label>
@@ -588,6 +615,50 @@
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="activity" id="interest-activity">
                         <label class="form-check-label" for="interest-activity" data-key="keyword-activity">アクティビティ</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="culture" id="interest-culture">
+                        <label class="form-check-label" for="interest-culture">文化・歴史</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="nature" id="interest-nature">
+                        <label class="form-check-label" for="interest-nature">自然・アウトドア</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="shopping" id="interest-shopping">
+                        <label class="form-check-label" for="interest-shopping">ショッピング</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="art" id="interest-art">
+                        <label class="form-check-label" for="interest-art">アート・美術</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="music" id="interest-music">
+                        <label class="form-check-label" for="interest-music">音楽・エンタメ</label>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="family" id="interest-family">
+                        <label class="form-check-label" for="interest-family">ファミリー向け</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="luxury" id="interest-luxury">
+                        <label class="form-check-label" for="interest-luxury">高級・プレミアム</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="budget" id="interest-budget">
+                        <label class="form-check-label" for="interest-budget">リーズナブル</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="local" id="interest-local">
+                        <label class="form-check-label" for="interest-local">地元密着</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="traditional" id="interest-traditional">
+                        <label class="form-check-label" for="interest-traditional">伝統体験</label>
                       </div>
                     </div>
                   </div>
@@ -1916,6 +1987,27 @@
   <!-- 最終解決システム -->
   <script src="ultimate-fix-system.js"></script>
   
+  <!-- プロフィール写真変更機能 -->
+  <script>
+    // プロフィール写真変更機能
+    function handleProfilePhotoChange(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+          const preview = document.getElementById('main-profile-preview');
+          if (preview) {
+            preview.src = e.target.result;
+            console.log('プロフィール写真を更新しました');
+          }
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+
   <!-- プロフィールページでのユーザーメニュー初期化 -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -1927,7 +2019,12 @@
       function getCurrentUserOverride() {
         try {
           const userJson = sessionStorage.getItem('currentUser');
-          return userJson ? JSON.parse(userJson) : null;
+          const parsed = userJson ? JSON.parse(userJson) : null;
+          // 「優」データを除外
+          if (parsed && (parsed.name === '優' || parsed.username === '優')) {
+            return null;
+          }
+          return parsed;
         } catch (e) {
           console.error('ユーザー情報取得エラー:', e);
           return null;
@@ -1936,7 +2033,30 @@
 
       // プロフィールページ用ユーザーメニューを作成
       function createProfileUserMenu() {
-        const currentUser = getCurrentUserOverride();
+        // セッションストレージから実データを取得
+        const currentUser = getValidUserData();
+        
+        function getValidUserData() {
+          const sources = ['currentUser', 'guideRegistrationData', 'latestGuideRegistration'];
+          for (const key of sources) {
+            try {
+              const data = sessionStorage.getItem(key);
+              if (data) {
+                const parsed = JSON.parse(data);
+                if (parsed && parsed.email && (parsed.name || parsed.firstName) && 
+                    parsed.name !== '優' && parsed.username !== '優' && parsed.firstName !== '優') {
+                  return {
+                    name: parsed.name || parsed.firstName,
+                    username: parsed.username || parsed.firstName,
+                    email: parsed.email,
+                    userType: 'guide'
+                  };
+                }
+              }
+            } catch (e) { continue; }
+          }
+          return null;
+        }
         if (!currentUser) {
           console.log('ログインユーザーが見つからないため、ユーザーメニューを表示しません');
           return;
