@@ -1898,11 +1898,18 @@
   <!-- Nuclear Fix システム -->
   <script src="nuclear-fix.js"></script>
   
+  <!-- プロフィール表示完全オーバーライドシステム -->
+  <script src="profile-display-override.js"></script>
+  
   <!-- プロフィールページでのユーザーメニュー初期化 -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // 現在のユーザー情報を取得
-      function getCurrentUser() {
+      // 既存の問題のある関数を無効化
+      window.getCurrentUser = function() { return null; };
+      window.fillBasicInfoForm = function() { return; };
+      
+      // 現在のユーザー情報を取得（オーバーライド版）
+      function getCurrentUserOverride() {
         try {
           const userJson = sessionStorage.getItem('currentUser');
           return userJson ? JSON.parse(userJson) : null;
@@ -1914,7 +1921,7 @@
 
       // プロフィールページ用ユーザーメニューを作成
       function createProfileUserMenu() {
-        const currentUser = getCurrentUser();
+        const currentUser = getCurrentUserOverride();
         if (!currentUser) {
           console.log('ログインユーザーが見つからないため、ユーザーメニューを表示しません');
           return;
@@ -2032,7 +2039,7 @@
       createProfileUserMenu();
 
       // 基本情報フォームにユーザーデータを自動入力
-      fillBasicInfoForm();
+      // fillBasicInfoForm(); // 無効化 - オーバーライドシステムが処理
 
       // ホームページログアウト同期システムを初期化
       if (typeof HomepageLogoutSync !== 'undefined') {
