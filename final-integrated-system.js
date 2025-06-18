@@ -19,11 +19,23 @@
      * システム初期化
      */
     initialize() {
-      this.clearExistingPreviews();
-      this.setupAutoFill();
-      this.createSinglePreview();
-      this.setupFormMonitoring();
-      this.setupSaveSystem();
+      // 段階的に初期化
+      setTimeout(() => {
+        this.clearExistingPreviews();
+      }, 100);
+      
+      setTimeout(() => {
+        this.setupAutoFill();
+      }, 300);
+      
+      setTimeout(() => {
+        this.createSinglePreview();
+      }, 500);
+      
+      setTimeout(() => {
+        this.setupFormMonitoring();
+        this.setupSaveSystem();
+      }, 700);
       
       console.log('最終統合システム初期化完了');
     },
@@ -32,10 +44,30 @@
      * 既存のプレビューを全て削除
      */
     clearExistingPreviews() {
-      const existingPreviews = document.querySelectorAll(
-        '.preview-container, [id*="preview"], [class*="preview"]'
-      );
-      existingPreviews.forEach(elem => elem.remove());
+      // より包括的にプレビュー要素を削除
+      const selectors = [
+        '.preview-container',
+        '.final-preview-container',
+        '[id*="preview"]',
+        '[class*="preview"]',
+        '.guide-card',
+        '.card.guide-card',
+        '[class*="card-preview"]',
+        '.profile-preview',
+        '.guide-preview'
+      ];
+      
+      selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(elem => {
+          // フォーム内のプレビューのみ削除（メインコンテンツは保護）
+          if (elem.closest('form') || elem.closest('.container')) {
+            elem.remove();
+          }
+        });
+      });
+      
+      console.log('既存プレビューを削除しました');
     },
 
     /**
@@ -111,36 +143,52 @@
      * 単一のプレビューを作成
      */
     createSinglePreview() {
+      // プレビュー挿入位置を探す
+      const insertPoint = this.findPreviewInsertPoint();
+      if (!insertPoint) {
+        console.warn('プレビュー挿入位置が見つかりません');
+        return;
+      }
+
       const container = document.createElement('div');
       container.className = 'final-preview-container mt-4 p-3 border rounded bg-light';
+      container.id = 'unified-preview-container';
       container.innerHTML = `
         <h6 class="mb-3">ガイドカードプレビュー</h6>
-        <div class="col-md-6">
-          <div class="card guide-card h-100 shadow-sm">
-            <div class="position-relative">
-              <img id="final-preview-photo" class="card-img-top" 
-                   src="${this.currentData.photo}" 
-                   alt="プロフィール写真" style="height: 200px; object-fit: cover;">
-              <div class="position-absolute top-0 end-0 m-2">
-                <span class="badge bg-success">新規</span>
-              </div>
-            </div>
-            <div class="card-body">
-              <h5 id="final-preview-name" class="card-title">${this.currentData.name}</h5>
-              <p class="text-muted mb-2">
-                <i class="bi bi-geo-alt-fill"></i> <span id="final-preview-location">${this.currentData.location}</span>
-              </p>
-              <p class="text-muted mb-2">
-                <i class="bi bi-translate"></i> <span id="final-preview-languages">日本語</span>
-              </p>
-              <p id="final-preview-description" class="card-text small">${this.currentData.description.substring(0, 100)}...</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="rating">
-                  <span class="text-warning">★★★★★</span>
-                  <small class="text-muted">(新規)</small>
+        <div class="row">
+          <div class="col-md-8 mx-auto">
+            <div class="card guide-card h-100 shadow-sm">
+              <div class="position-relative">
+                <img id="final-preview-photo" class="card-img-top" 
+                     src="${this.currentData.photo}" 
+                     alt="プロフィール写真" 
+                     style="height: 200px; object-fit: cover; background-color: #f8f9fa;">
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span class="badge bg-success">新規</span>
                 </div>
-                <div class="price">
-                  <strong id="final-preview-fee">¥${this.currentData.fee.toLocaleString()}/回</strong>
+                <div class="position-absolute bottom-0 start-0 w-100 p-2" style="background: linear-gradient(transparent, rgba(0,0,0,0.5));">
+                  <button class="btn btn-sm btn-outline-light" onclick="FinalIntegratedSystem.openPhotoSelector()">
+                    <i class="bi bi-camera"></i> 写真を変更
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <h5 id="final-preview-name" class="card-title">${this.currentData.name}</h5>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-geo-alt-fill"></i> <span id="final-preview-location">${this.currentData.location}</span>
+                </p>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-translate"></i> <span id="final-preview-languages">日本語</span>
+                </p>
+                <p id="final-preview-description" class="card-text small">${this.currentData.description.substring(0, 100)}...</p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="rating">
+                    <span class="text-warning">★★★★★</span>
+                    <small class="text-muted">(新規)</small>
+                  </div>
+                  <div class="price">
+                    <strong id="final-preview-fee">¥${this.currentData.fee.toLocaleString()}/回</strong>
+                  </div>
                 </div>
               </div>
             </div>
@@ -148,10 +196,31 @@
         </div>
       `;
 
-      const form = document.getElementById('profile-basic-form') || document.querySelector('form');
-      if (form) {
-        form.parentNode.insertBefore(container, form.nextSibling);
+      insertPoint.appendChild(container);
+      console.log('プレビューを作成しました');
+    },
+
+    /**
+     * プレビュー挿入位置を特定
+     */
+    findPreviewInsertPoint() {
+      // 既存のプレビューコンテナがあるかチェック
+      const existingContainer = document.getElementById('unified-preview-container');
+      if (existingContainer) {
+        return existingContainer.parentNode;
       }
+
+      // フォームの次に挿入
+      const form = document.getElementById('profile-basic-form') || 
+                  document.querySelector('form') ||
+                  document.querySelector('.container');
+
+      if (form) {
+        return form.parentNode || form;
+      }
+
+      // フォールバック
+      return document.body;
     },
 
     /**
@@ -270,6 +339,177 @@
           }
         }
       });
+    },
+
+    /**
+     * 写真選択機能を開く
+     */
+    openPhotoSelector() {
+      this.createPhotoSelectorModal();
+    },
+
+    /**
+     * 写真選択モーダルを作成
+     */
+    createPhotoSelectorModal() {
+      // 既存のモーダルを削除
+      const existingModal = document.getElementById('photoSelectorModal');
+      if (existingModal) {
+        existingModal.remove();
+      }
+
+      const modal = document.createElement('div');
+      modal.className = 'modal fade';
+      modal.id = 'photoSelectorModal';
+      modal.innerHTML = `
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">プロフィール写真を選択</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-6">
+                  <h6>カメラで撮影</h6>
+                  <div class="camera-section">
+                    <video id="cameraVideo" class="w-100" style="max-height: 300px;" autoplay></video>
+                    <canvas id="cameraCanvas" style="display: none;"></canvas>
+                    <div class="mt-2">
+                      <button class="btn btn-primary" onclick="FinalIntegratedSystem.startCamera()">
+                        <i class="bi bi-camera"></i> カメラ開始
+                      </button>
+                      <button class="btn btn-success" onclick="FinalIntegratedSystem.capturePhoto()" id="captureBtn" style="display: none;">
+                        <i class="bi bi-camera-fill"></i> 撮影
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <h6>ファイルから選択</h6>
+                  <div class="file-upload-section">
+                    <input type="file" id="photoFileInput" class="form-control" accept="image/*">
+                    <div class="mt-3">
+                      <img id="filePreview" class="w-100" style="max-height: 300px; object-fit: cover; display: none;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mt-3">
+                <div class="col-12">
+                  <h6>撮影・選択した写真</h6>
+                  <img id="selectedPhotoPreview" class="w-100" style="max-height: 200px; object-fit: cover; display: none;">
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+              <button type="button" class="btn btn-primary" onclick="FinalIntegratedSystem.useSelectedPhoto()" id="usePhotoBtn" disabled>
+                この写真を使用
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(modal);
+
+      // ファイル選択イベント
+      const fileInput = document.getElementById('photoFileInput');
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const preview = document.getElementById('filePreview');
+            const selected = document.getElementById('selectedPhotoPreview');
+            preview.src = e.target.result;
+            selected.src = e.target.result;
+            preview.style.display = 'block';
+            selected.style.display = 'block';
+            document.getElementById('usePhotoBtn').disabled = false;
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      // モーダル表示
+      const bootstrapModal = new bootstrap.Modal(modal);
+      bootstrapModal.show();
+    },
+
+    /**
+     * カメラを開始
+     */
+    async startCamera() {
+      try {
+        const video = document.getElementById('cameraVideo');
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            width: { ideal: 640 }, 
+            height: { ideal: 480 } 
+          } 
+        });
+        video.srcObject = stream;
+        document.getElementById('captureBtn').style.display = 'inline-block';
+      } catch (error) {
+        console.error('カメラエラー:', error);
+        alert('カメラにアクセスできませんでした。ファイル選択をご利用ください。');
+      }
+    },
+
+    /**
+     * 写真を撮影
+     */
+    capturePhoto() {
+      const video = document.getElementById('cameraVideo');
+      const canvas = document.getElementById('cameraCanvas');
+      const ctx = canvas.getContext('2d');
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0);
+
+      const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+      const preview = document.getElementById('selectedPhotoPreview');
+      preview.src = dataURL;
+      preview.style.display = 'block';
+      document.getElementById('usePhotoBtn').disabled = false;
+
+      // カメラを停止
+      const stream = video.srcObject;
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    },
+
+    /**
+     * 選択した写真を使用
+     */
+    useSelectedPhoto() {
+      const preview = document.getElementById('selectedPhotoPreview');
+      if (preview.src) {
+        // プレビューカードの写真を更新
+        const previewPhoto = document.getElementById('final-preview-photo');
+        if (previewPhoto) {
+          previewPhoto.src = preview.src;
+        }
+
+        // データを更新
+        this.currentData.photo = preview.src;
+
+        // フォームのファイル入力も更新
+        const profilePreview = document.getElementById('guide-profile-preview');
+        if (profilePreview) {
+          profilePreview.src = preview.src;
+        }
+
+        // モーダルを閉じる
+        const modal = bootstrap.Modal.getInstance(document.getElementById('photoSelectorModal'));
+        modal.hide();
+
+        console.log('写真を更新しました');
+      }
     },
 
     /**
