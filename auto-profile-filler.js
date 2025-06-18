@@ -50,6 +50,9 @@
      * プロフィールを自動入力
      */
     autoFillProfile() {
+      // 活動エリアを自動入力
+      this.autoFillLocation();
+      
       // 名前を自動入力
       this.autoFillName();
       
@@ -107,6 +110,24 @@
         }
         
         console.log('自動入力: 写真 =', randomPhoto);
+      }
+    },
+
+    /**
+     * 活動エリアを自動入力
+     */
+    autoFillLocation() {
+      const locationField = document.getElementById('guide-location');
+      if (locationField && !locationField.value) {
+        const locations = ['東京都', '大阪府', '京都府', '神奈川県', '北海道', '沖縄県', '愛知県', '福岡県'];
+        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+        
+        locationField.value = randomLocation;
+        
+        // change イベントを発火
+        locationField.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        console.log('自動入力: 活動エリア =', randomLocation);
       }
     },
 

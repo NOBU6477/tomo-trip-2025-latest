@@ -144,12 +144,19 @@
      */
     updatePreviewName() {
       const nameField = document.getElementById('guide-name');
-      const previewName = document.getElementById('preview-card-name');
+      let previewName = document.getElementById('preview-card-name');
+      
+      // プレビュー要素が見つからない場合は代替手段で検索
+      if (!previewName) {
+        previewName = document.querySelector('.guide-card .card-title, .card-title');
+      }
       
       if (nameField && previewName) {
         const name = nameField.value.trim() || 'お名前を入力してください';
         previewName.textContent = name;
         console.log('プレビュー名前更新:', name);
+      } else {
+        console.warn('名前更新要素が見つかりません');
       }
     },
 
@@ -218,11 +225,19 @@
      */
     updatePreviewPhoto() {
       const photoPreview = document.getElementById('guide-profile-preview');
-      const previewImg = document.getElementById('preview-card-photo');
+      let previewImg = document.getElementById('preview-card-photo');
+      
+      // プレビュー画像が見つからない場合は代替手段で検索
+      if (!previewImg) {
+        previewImg = document.querySelector('.guide-card img, .card-img-top');
+      }
       
       if (photoPreview && previewImg && photoPreview.src && !photoPreview.src.includes('placeholder')) {
         previewImg.src = photoPreview.src;
-        console.log('プレビュー写真更新');
+        previewImg.style.display = 'block';
+        console.log('プレビュー写真更新:', photoPreview.src);
+      } else {
+        console.warn('写真更新要素が見つかりません');
       }
     },
 
