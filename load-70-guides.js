@@ -105,18 +105,18 @@
         .replace("{keyword1}", keywords[0])
         .replace("{keyword2}", keywords[1]);
 
-      // 画像URL（実際の風景写真）
+      // 実際のガイド写真を使用
       const imageUrls = [
-        "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400&q=80", // 日本の風景
-        "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&q=80", // 日本の街並み
-        "https://images.unsplash.com/photo-1528164344705-47542687000d?w=400&q=80", // 京都
-        "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=400&q=80", // 富士山
-        "https://images.unsplash.com/photo-1513407030348-c983a97b98d8?w=400&q=80", // 日本庭園
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&q=80", // 海岸線
-        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80", // 自然
-        "https://images.unsplash.com/photo-1480796927426-f609979314bd?w=400&q=80", // 東京
-        "https://images.unsplash.com/photo-1542640244-7e672d6cef4e?w=400&q=80", // 神社
-        "https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=400&q=80"  // 桜
+        "attached_assets/image_1750352664484.png", // ガイド写真1
+        "attached_assets/image_1750352678755.png", // ガイド写真2
+        "attached_assets/image_1750352695123.png", // ガイド写真3
+        "attached_assets/image_1750353184476.png", // ガイド写真4
+        "attached_assets/image_1750353196507.png", // ガイド写真5
+        "attached_assets/image_1750353222815.png", // ガイド写真6
+        "attached_assets/image_1750352664484.png", // ガイド写真7
+        "attached_assets/image_1750352678755.png", // ガイド写真8
+        "attached_assets/image_1750352695123.png", // ガイド写真9
+        "attached_assets/image_1750353184476.png"  // ガイド写真10
       ];
       
       guides.push({
