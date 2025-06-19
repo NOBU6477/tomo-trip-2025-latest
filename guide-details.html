@@ -14,26 +14,84 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   
-  <!-- ページアクセス制御 -->
+  <!-- 強化された認証システム -->
+  <style>
+    /* 認証されるまでページ全体を非表示 */
+    body { display: none !important; }
+    .auth-loading {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: #667eea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-family: sans-serif;
+      z-index: 9999;
+    }
+  </style>
+  
+  <!-- 認証チェック画面 -->
+  <div id="authCheck" class="auth-loading">
+    <div class="text-center">
+      <div class="spinner-border text-light mb-3"></div>
+      <p>認証確認中...</p>
+    </div>
+  </div>
+
   <script>
-    // ページをデフォルトで非表示に設定
-    document.documentElement.style.visibility = 'hidden';
-    
-    // DOM読み込み前に認証チェック
+    // 即座に認証チェックを実行
     (function() {
-      const touristData = localStorage.getItem('touristData');
-      if (!touristData) {
-        const urlParams = new URLSearchParams(window.location.search);
-        const guideId = urlParams.get('id');
-        if (guideId) {
-          sessionStorage.setItem('pendingGuideId', guideId);
+      'use strict';
+      
+      function checkAuthentication() {
+        const touristData = localStorage.getItem('touristData');
+        
+        if (!touristData) {
+          // 未認証の場合は即座にリダイレクト
+          const urlParams = new URLSearchParams(window.location.search);
+          const guideId = urlParams.get('id');
+          
+          if (guideId) {
+            sessionStorage.setItem('pendingGuideId', guideId);
+          }
+          sessionStorage.setItem('showLoginOnLoad', 'true');
+          
+          // 複数の方法でリダイレクト実行
+          window.location.href = '/index.html?requireLogin=true' + (guideId ? '&guide=' + guideId : '');
+          window.location.replace('/index.html?requireLogin=true' + (guideId ? '&guide=' + guideId : ''));
+          
+          // フォールバック: 500ms後にも実行
+          setTimeout(function() {
+            window.location.href = '/index.html';
+          }, 500);
+          
+          return false;
         }
-        sessionStorage.setItem('showLoginOnLoad', 'true');
-        window.location.replace('index.html');
+        
+        // 認証済みの場合はページを表示
+        document.getElementById('authCheck').style.display = 'none';
+        document.body.style.display = 'block';
+        return true;
+      }
+      
+      // 即座に実行
+      if (!checkAuthentication()) {
         return;
       }
-      // 認証済みユーザーの場合のみページを表示
-      document.documentElement.style.visibility = 'visible';
+      
+      // DOM読み込み後にも再チェック
+      document.addEventListener('DOMContentLoaded', function() {
+        if (!checkAuthentication()) {
+          return;
+        }
+      });
+      
+      // ページ表示時にも再チェック
+      window.addEventListener('pageshow', function() {
+        checkAuthentication();
+      });
+      
     })();
   </script>
 
@@ -102,27 +160,7 @@
   </style>
 </head>
 
-<body style="display: none;" id="protected-body">
-  <!-- 認証確認後に表示 -->
-  <script>
-    // 即座に認証チェックを実行
-    (function() {
-      const touristData = localStorage.getItem('touristData');
-      if (!touristData) {
-        // 未認証の場合はリダイレクト
-        const urlParams = new URLSearchParams(window.location.search);
-        const guideId = urlParams.get('id');
-        if (guideId) {
-          sessionStorage.setItem('pendingGuideId', guideId);
-        }
-        sessionStorage.setItem('showLoginOnLoad', 'true');
-        window.location.replace('index.html');
-        return;
-      }
-      // 認証済みの場合はページを表示
-      document.getElementById('protected-body').style.display = 'block';
-    })();
-  </script>
+<body>
 
   <!-- ナビゲーション -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
