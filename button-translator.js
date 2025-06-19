@@ -7,28 +7,36 @@
   'use strict';
 
   /**
-   * すべての「詳細を見る」ボタンを「See Details」に翻訳する
+   * すべてのガイド詳細ボタンを英語に翻訳する
    */
   function translateDetailButtons() {
-    console.log('詳細を見るボタンの翻訳を開始');
+    console.log('ガイド詳細ボタンの翻訳を開始');
     
     // 複数のセレクタでボタンを検索
     const selectors = [
       '.guide-details-link',
       'a.btn',
       'button.btn',
-      '.btn',
-      'a[href="#"]'
+      '.btn'
     ];
     
     let translatedCount = 0;
     
     selectors.forEach(selector => {
       document.querySelectorAll(selector).forEach(element => {
-        if (element.textContent && element.textContent.trim() === '詳細を見る') {
+        const text = element.textContent.trim();
+        
+        // 新しいログイン要求ボタンの翻訳
+        if (text === 'ログインして詳細を見る') {
+          element.innerHTML = '<i class="bi bi-lock me-1"></i>Login to View Details';
+          translatedCount++;
+          console.log(`新ボタンを翻訳: ${selector}`);
+        }
+        // 旧ボタンの翻訳（互換性のため）
+        else if (text === '詳細を見る') {
           element.textContent = 'See Details';
           translatedCount++;
-          console.log(`翻訳しました: ${selector}`);
+          console.log(`旧ボタンを翻訳: ${selector}`);
         }
       });
     });

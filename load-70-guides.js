@@ -180,7 +180,9 @@
             </div>
           </div>
           <div class="card-footer bg-white border-0 pt-0">
-            <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}">詳細を見る</a>
+            <button class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}" onclick="showLoginRequirement(${guide.id})">
+              <i class="bi bi-lock me-1"></i>ログインして詳細を見る
+            </button>
           </div>
         </div>
       </div>

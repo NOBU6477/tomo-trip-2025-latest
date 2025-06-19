@@ -1839,6 +1839,113 @@
         });
       }
       
+      // ガイド詳細閲覧にログインが必要であることを明示
+      function showLoginRequirement(guideId) {
+        // 既にログイン済みの場合は詳細ページに遷移
+        const touristData = localStorage.getItem('touristData');
+        if (touristData) {
+          window.location.href = `guide-details.html?id=${guideId}`;
+          return;
+        }
+        
+        // 未ログインの場合はログイン要求モーダルを表示
+        sessionStorage.setItem('pendingGuideId', guideId);
+        showTouristLoginPrompt(guideId);
+      }
+
+      // 観光客ログイン促進モーダルを表示
+      function showTouristLoginPrompt(guideId) {
+        const modalElement = document.getElementById('touristLoginPromptModal');
+        if (!modalElement) {
+          createTouristLoginPromptModal();
+        }
+        
+        // ガイドIDを設定
+        const modal = new bootstrap.Modal(document.getElementById('touristLoginPromptModal'));
+        const guideInfo = document.getElementById('selectedGuideInfo');
+        if (guideInfo) {
+          guideInfo.textContent = `ガイドID: ${guideId}`;
+        }
+        
+        modal.show();
+      }
+
+      // 観光客ログイン促進モーダルを動的作成
+      function createTouristLoginPromptModal() {
+        const modalHTML = `
+          <div class="modal fade" id="touristLoginPromptModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                  <h5 class="modal-title">
+                    <i class="bi bi-shield-lock me-2"></i>ガイド詳細の閲覧にはログインが必要です
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                  <div class="mb-4">
+                    <i class="bi bi-person-check-fill text-primary" style="font-size: 3rem;"></i>
+                  </div>
+                  <h4 class="mb-3">安全で信頼できるサービスのために</h4>
+                  <p class="lead mb-4">
+                    ガイドの詳細情報や予約機能をご利用いただくには、観光客としてのアカウント登録・ログインが必要です。
+                  </p>
+                  <div class="alert alert-info">
+                    <strong>なぜログインが必要なのか？</strong><br>
+                    • お客様とガイドの安全確保<br>
+                    • 信頼性の高いマッチング<br>
+                    • 予約履歴の管理<br>
+                    • 品質向上のためのフィードバック
+                  </div>
+                  <p id="selectedGuideInfo" class="text-muted small"></p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                  <button type="button" class="btn btn-primary btn-lg me-3" onclick="showTouristRegistration()">
+                    <i class="bi bi-person-plus me-1"></i>新規登録（推奨）
+                  </button>
+                  <button type="button" class="btn btn-outline-primary btn-lg" onclick="showExistingLogin()">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>既存アカウントでログイン
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+      }
+
+      // 新規登録フォームを表示
+      function showTouristRegistration() {
+        // 促進モーダルを閉じる
+        const promptModal = bootstrap.Modal.getInstance(document.getElementById('touristLoginPromptModal'));
+        if (promptModal) {
+          promptModal.hide();
+        }
+        
+        // 観光客登録モーダルを表示
+        setTimeout(() => {
+          const registerModal = new bootstrap.Modal(document.getElementById('registerTouristModal'));
+          registerModal.show();
+        }, 300);
+      }
+
+      // 既存ログインフォームを表示
+      function showExistingLogin() {
+        // 促進モーダルを閉じる
+        const promptModal = bootstrap.Modal.getInstance(document.getElementById('touristLoginPromptModal'));
+        if (promptModal) {
+          promptModal.hide();
+        }
+        
+        // ログインモーダルを表示
+        setTimeout(() => {
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          // 観光客ラジオボタンを選択
+          document.getElementById('login-user-tourist').checked = true;
+          loginModal.show();
+        }, 300);
+      }
+
       // 観光客ログイン処理
       function handleTouristLogin(email, password) {
         // 簡単な認証シミュレーション（実際のアプリではサーバー認証）
