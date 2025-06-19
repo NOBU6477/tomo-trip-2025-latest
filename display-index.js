@@ -133,12 +133,41 @@ function generateBasicHtml() {
   `;
 }
 
-// guide-details.html への認証要求レスポンス
+// guide-details.html への認証チェックとリダイレクト
 app.get('/guide-details.html', (req, res) => {
-  // 認証が必要なことを明示するページを返す
   const guideId = req.query.id || '';
   
-  const authRequiredPage = `
+  // 即座に認証チェックを行うページを返す
+  const authCheckPage = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アクセス中... - TomoTrip</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #667eea;
+      color: white;
+      font-family: 'Noto Sans JP', sans-serif;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // 即座に認証チェックを実行（ページ描画前）
+    (function() {
+      const touristData = localStorage.getItem('touristData');
+      
+      if (touristData) {
+        // ログイン済みの場合は実際のガイド詳細ページにリダイレクト
+        window.location.replace('/guide-details-content.html${guideId ? '?id=' + guideId : ''}');
+      } else {
+        // 未ログインの場合は認証要求ページを表示
+        document.write(\`
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -181,9 +210,9 @@ app.get('/guide-details.html', (req, res) => {
       text-decoration: none;
       display: inline-block;
     }
-    .btn-primary { background-color: #667eea; border-color: #667eea; }
+    .btn-primary { background-color: #667eea; border-color: #667eea; color: white; }
     .btn-outline-primary { color: #667eea; border-color: #667eea; }
-    .btn-outline-primary:hover { background-color: #667eea; border-color: #667eea; }
+    .btn-outline-primary:hover { background-color: #667eea; border-color: #667eea; color: white; }
   </style>
 </head>
 <body>
@@ -217,25 +246,17 @@ app.get('/guide-details.html', (req, res) => {
       </small>
     </div>
   </div>
-  
-  <script>
-    // シンプルな認証チェック
-    setTimeout(function() {
-      const touristData = localStorage.getItem('touristData');
-      if (touristData) {
-        // ログイン済みの場合は実際のガイド詳細ページにリダイレクト
-        window.location.href = '/guide-details-content.html' + ${guideId ? "'?id=" + guideId + "'" : "''"};
-      } else {
-        // 未ログインの場合は認証要求メッセージを表示（既に表示されている）
-        console.log('Authentication required - showing login prompt');
+</body>
+</html>
+        \`);
       }
-    }, 100);
+    })();
   </script>
 </body>
 </html>
   `;
   
-  res.send(authRequiredPage);
+  res.send(authCheckPage);
 });
 
 // 認証済みユーザー向けのガイド詳細コンテンツ
