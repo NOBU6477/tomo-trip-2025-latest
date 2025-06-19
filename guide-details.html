@@ -14,6 +14,36 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   
+  <!-- 認証チェック - ページ表示前に実行 -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const guideId = urlParams.get('id');
+      const touristData = localStorage.getItem('touristData');
+      
+      if (!touristData) {
+        // 未ログインの場合は即座にリダイレクト
+        if (guideId) {
+          sessionStorage.setItem('pendingGuideId', guideId);
+        }
+        sessionStorage.setItem('showLoginOnLoad', 'true');
+        
+        // ページの表示を阻止
+        document.documentElement.style.display = 'none';
+        
+        // 即座にリダイレクト
+        window.location.replace('index.html');
+        
+        // フォールバック: 0.5秒後にも再度リダイレクト
+        setTimeout(function() {
+          window.location.replace('index.html');
+        }, 500);
+        
+        return false;
+      }
+    })();
+  </script>
+
   <style>
     body {
       font-family: 'Noto Sans JP', sans-serif;
@@ -308,22 +338,8 @@
       return;
     }
 
-    // 観光客ログイン状態をチェック
-    const touristData = localStorage.getItem('touristData');
-    if (!touristData) {
-      // 未ログインの場合は即座にホームページにリダイレクトしてログインモーダルを表示
-      // ページをブロックして進行を停止
-      document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f8f9fa;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🔒</div><h3>ログインが必要です</h3><p>ホームページに戻ってログインしてください</p></div></div>';
-      
-      sessionStorage.setItem('pendingGuideId', guideId);
-      sessionStorage.setItem('showLoginOnLoad', 'true');
-      sessionStorage.setItem('accessAttemptMessage', 'ガイドの詳細を見るにはログインが必要です');
-      
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 1500);
-      return;
-    }
+    // 認証チェックは head セクションで既に実行済み
+    // この時点では認証済みユーザーのみが到達
 
     // ガイドデータを読み込み
     function loadGuideDetails() {
@@ -442,6 +458,8 @@
   </script>
   
   <!-- 言語切り替え機能 -->
+
+  
   <script src="minimal-language.js"></script>
   
   <!-- テスト用ログイン機能 -->

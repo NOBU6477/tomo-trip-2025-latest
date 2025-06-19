@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アクセス制御テスト</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+    .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+    .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h1>アクセス制御テスト</h1>
+  
+  <div id="test-results"></div>
+  
+  <h3>テスト用リンク</h3>
+  <p><a href="guide-details.html?id=1" target="_blank">ガイド詳細ページ (ID: 1)</a></p>
+  <p><a href="guide-details.html?id=2" target="_blank">ガイド詳細ページ (ID: 2)</a></p>
+  
+  <h3>ログイン状態管理</h3>
+  <button onclick="clearLoginData()">ログアウト（テストデータクリア）</button>
+  <button onclick="setTestLogin()">テストログイン</button>
+  
+  <script>
+    function showResult(message, isSuccess) {
+      const resultsDiv = document.getElementById('test-results');
+      const div = document.createElement('div');
+      div.className = 'test-result ' + (isSuccess ? 'success' : 'error');
+      div.textContent = message;
+      resultsDiv.appendChild(div);
+    }
+    
+    function clearLoginData() {
+      localStorage.removeItem('touristData');
+      sessionStorage.clear();
+      showResult('ログインデータをクリアしました', true);
+    }
+    
+    function setTestLogin() {
+      const testData = {
+        id: 'test_tourist',
+        name: 'テストユーザー',
+        email: 'test@example.com',
+        loginTime: new Date().toISOString()
+      };
+      localStorage.setItem('touristData', JSON.stringify(testData));
+      showResult('テストログインデータを設定しました', true);
+    }
+    
+    // 現在のログイン状態をチェック
+    document.addEventListener('DOMContentLoaded', function() {
+      const touristData = localStorage.getItem('touristData');
+      if (touristData) {
+        showResult('現在ログイン中です', true);
+      } else {
+        showResult('現在ログアウト状態です', false);
+      }
+    });
+  </script>
+</body>
+</html>
