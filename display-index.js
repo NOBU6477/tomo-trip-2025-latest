@@ -219,21 +219,17 @@ app.get('/guide-details.html', (req, res) => {
   </div>
   
   <script>
-    // ログイン状態をチェックして、ログイン済みの場合は実際のページを表示
-    (function() {
+    // シンプルな認証チェック
+    setTimeout(function() {
       const touristData = localStorage.getItem('touristData');
       if (touristData) {
-        // ログイン済みの場合は実際のガイド詳細ページを読み込み
-        fetch('/guide-details-content.html${guideId ? '?id=' + guideId : ''}')
-          .then(response => response.text())
-          .then(html => {
-            document.documentElement.innerHTML = html;
-          })
-          .catch(error => {
-            console.error('Error loading guide details:', error);
-          });
+        // ログイン済みの場合は実際のガイド詳細ページにリダイレクト
+        window.location.href = '/guide-details-content.html' + ${guideId ? "'?id=" + guideId + "'" : "''"};
+      } else {
+        // 未ログインの場合は認証要求メッセージを表示（既に表示されている）
+        console.log('Authentication required - showing login prompt');
       }
-    })();
+    }, 100);
   </script>
 </body>
 </html>
