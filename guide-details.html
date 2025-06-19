@@ -14,33 +14,26 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   
-  <!-- 認証チェック - ページ表示前に実行 -->
+  <!-- ページアクセス制御 -->
   <script>
+    // ページをデフォルトで非表示に設定
+    document.documentElement.style.visibility = 'hidden';
+    
+    // DOM読み込み前に認証チェック
     (function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const guideId = urlParams.get('id');
       const touristData = localStorage.getItem('touristData');
-      
       if (!touristData) {
-        // 未ログインの場合は即座にリダイレクト
+        const urlParams = new URLSearchParams(window.location.search);
+        const guideId = urlParams.get('id');
         if (guideId) {
           sessionStorage.setItem('pendingGuideId', guideId);
         }
         sessionStorage.setItem('showLoginOnLoad', 'true');
-        
-        // ページの表示を阻止
-        document.documentElement.style.display = 'none';
-        
-        // 即座にリダイレクト
         window.location.replace('index.html');
-        
-        // フォールバック: 0.5秒後にも再度リダイレクト
-        setTimeout(function() {
-          window.location.replace('index.html');
-        }, 500);
-        
-        return false;
+        return;
       }
+      // 認証済みユーザーの場合のみページを表示
+      document.documentElement.style.visibility = 'visible';
     })();
   </script>
 
@@ -109,7 +102,28 @@
   </style>
 </head>
 
-<body>
+<body style="display: none;" id="protected-body">
+  <!-- 認証確認後に表示 -->
+  <script>
+    // 即座に認証チェックを実行
+    (function() {
+      const touristData = localStorage.getItem('touristData');
+      if (!touristData) {
+        // 未認証の場合はリダイレクト
+        const urlParams = new URLSearchParams(window.location.search);
+        const guideId = urlParams.get('id');
+        if (guideId) {
+          sessionStorage.setItem('pendingGuideId', guideId);
+        }
+        sessionStorage.setItem('showLoginOnLoad', 'true');
+        window.location.replace('index.html');
+        return;
+      }
+      // 認証済みの場合はページを表示
+      document.getElementById('protected-body').style.display = 'block';
+    })();
+  </script>
+
   <!-- ナビゲーション -->
   <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">

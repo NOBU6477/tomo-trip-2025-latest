@@ -133,6 +133,19 @@ function generateBasicHtml() {
   `;
 }
 
+// guide-details.html への直接アクセスをブロック
+app.get('/guide-details.html', (req, res) => {
+  console.log('guide-details.html への不正アクセスを検出 - リダイレクト実行');
+  const guideId = req.query.id;
+  let redirectUrl = '/index.html';
+  if (guideId) {
+    redirectUrl += `?requireLogin=true&guide=${guideId}`;
+  } else {
+    redirectUrl += '?requireLogin=true';
+  }
+  res.redirect(302, redirectUrl);
+});
+
 // 静的ファイルを提供
 app.use(express.static(path.join(__dirname)));
 

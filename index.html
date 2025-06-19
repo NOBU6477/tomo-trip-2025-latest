@@ -1484,8 +1484,25 @@
       
       // URLパラメータで直接ガイド詳細アクセスを試みた場合の処理
       const urlParams = new URLSearchParams(window.location.search);
+      const requireLogin = urlParams.get('requireLogin');
       const directGuideId = urlParams.get('guide');
-      if (directGuideId && !localStorage.getItem('touristData')) {
+      
+      if (requireLogin === 'true') {
+        // サーバーサイドからのリダイレクトでログインが必要な場合
+        if (directGuideId) {
+          sessionStorage.setItem('pendingGuideId', directGuideId);
+        }
+        setTimeout(() => {
+          if (directGuideId) {
+            showTouristLoginPrompt(directGuideId);
+          } else {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+          }
+        }, 1000);
+        // URLからパラメータを削除
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (directGuideId && !localStorage.getItem('touristData')) {
         // 未ログインで直接ガイドページアクセスを試みた場合
         sessionStorage.setItem('pendingGuideId', directGuideId);
         setTimeout(() => {
