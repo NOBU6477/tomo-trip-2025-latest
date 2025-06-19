@@ -2008,7 +2008,13 @@
                   </div>
                 </div>
                 <div class="modal-body text-center">
-                  <p class="mb-4">選択されたガイドの詳細情報を見るには、観光客としてログインが必要です。ログイン後、すぐにガイドページに移動します。</p>
+                  <p class="mb-4">選択されたガイドの詳細情報を見るには、観光客アカウントが必要です。</p>
+                  
+                  <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>初回ご利用の方へ：</strong><br>
+                    まだアカウントをお持ちでない場合は、新規登録（無料）をお願いします。登録後、すぐにガイド詳細をご覧いただけます。
+                  </div>
                   
                   <div class="bg-light rounded p-3 mb-4">
                     <h6 class="mb-2">ログイン後にできること</h6>
@@ -2021,19 +2027,25 @@
                   </div>
                   
                   <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-primary btn-lg" onclick="showTouristLogin()">
-                      <i class="bi bi-box-arrow-in-right me-2"></i>観光客としてログイン
+                    <button type="button" class="btn btn-success btn-lg" onclick="showTouristRegistration()">
+                      <i class="bi bi-person-plus me-2"></i>新規登録（無料・1分で完了）
                     </button>
-                    <button type="button" class="btn btn-outline-primary" onclick="showTouristRegistration()">
-                      <i class="bi bi-person-plus me-2"></i>新規登録
+                    <button type="button" class="btn btn-outline-primary" onclick="showTouristLogin()">
+                      <i class="bi bi-box-arrow-in-right me-2"></i>既存アカウントでログイン
                     </button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                      後でログイン
+                      後で利用する
                     </button>
                   </div>
                   
-                  <div class="mt-3">
-                    <small class="text-muted">アカウントをお持ちでない場合は新規登録をお願いします</small>
+                  <div class="mt-3 border-top pt-3">
+                    <div class="d-flex align-items-center justify-content-center">
+                      <i class="bi bi-shield-check text-success me-2"></i>
+                      <small class="text-muted">安全で簡単な登録プロセス</small>
+                    </div>
+                    <div class="small text-muted mt-1">
+                      新規登録は完全無料です。メール認証のみで、すぐにご利用いただけます。
+                    </div>
                   </div>
                 </div>
               </div>

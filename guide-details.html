@@ -312,10 +312,16 @@
     const touristData = localStorage.getItem('touristData');
     if (!touristData) {
       // 未ログインの場合は即座にホームページにリダイレクトしてログインモーダルを表示
+      // ページをブロックして進行を停止
+      document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f8f9fa;"><div style="text-align: center;"><div style="font-size: 2rem; margin-bottom: 1rem;">🔒</div><h3>ログインが必要です</h3><p>ホームページに戻ってログインしてください</p></div></div>';
+      
       sessionStorage.setItem('pendingGuideId', guideId);
       sessionStorage.setItem('showLoginOnLoad', 'true');
       sessionStorage.setItem('accessAttemptMessage', 'ガイドの詳細を見るにはログインが必要です');
-      window.location.href = 'index.html';
+      
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
       return;
     }
 
