@@ -1,235 +1,332 @@
-  <!-- ログインモーダル -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="loginModalLabel" data-i18n="login.title">ログイン</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="login-error" class="alert alert-danger d-none" role="alert"></div>
-          <form id="login-form">
-            <div class="mb-3">
-              <label for="login-username" class="form-label" data-i18n="login.username">ユーザー名</label>
-              <input type="text" class="form-control" id="login-username" required>
-            </div>
-            <div class="mb-3">
-              <label for="login-password" class="form-label" data-i18n="login.password">パスワード</label>
-              <input type="password" class="form-control" id="login-password" required>
-            </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary" data-i18n="login.submit">ログイン</button>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <p class="text-center w-100" data-i18n="login.noAccount">アカウントをお持ちでないですか？</p>
-          <div class="d-grid gap-2 w-100">
-            <button type="button" id="show-register-btn" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#userTypeModal" data-i18n="login.register">新規登録</button>
-          </div>
-        </div>
+<!-- ガイド登録モーダル -->
+<div class="modal fade" id="registerGuideModal" tabindex="-1" aria-labelledby="registerGuideModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerGuideModalLabel">ガイド登録</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-    </div>
-  </div>
-
-  <!-- ユーザータイプ選択モーダル -->
-  <div class="modal fade" id="userTypeModal" tabindex="-1" aria-labelledby="userTypeModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="userTypeModalLabel" data-i18n="register.userTypeTitle">ユーザータイプを選択</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p data-i18n="register.userTypeDescription">登録するアカウントの種類を選択してください。</p>
-          <div class="d-grid gap-3">
-            <button type="button" id="tourist-register-btn" class="btn btn-lg btn-outline-primary" data-i18n="register.tourist">観光客として登録</button>
-            <button type="button" id="guide-register-btn" class="btn btn-lg btn-outline-success" data-i18n="register.guide">ガイドとして登録</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 観光客登録モーダル -->
-  <div class="modal fade" id="touristRegisterModal" tabindex="-1" aria-labelledby="touristRegisterModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="touristRegisterModalLabel" data-i18n="register.touristTitle">観光客アカウント登録</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="tourist-register-error" class="alert alert-danger d-none" role="alert"></div>
-          <form id="tourist-register-form">
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <label for="tourist-first-name" class="form-label" data-i18n="register.firstName">姓</label>
-                <input type="text" class="form-control" id="tourist-first-name" required>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label for="tourist-last-name" class="form-label" data-i18n="register.lastName">名</label>
-                <input type="text" class="form-control" id="tourist-last-name" required>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="tourist-username" class="form-label" data-i18n="register.username">ユーザー名</label>
-              <input type="text" class="form-control" id="tourist-username" required>
-            </div>
-            <div class="mb-3">
-              <label for="tourist-email" class="form-label" data-i18n="register.email">メールアドレス</label>
-              <input type="email" class="form-control" id="tourist-email" required>
-            </div>
-            <div class="mb-3">
-              <label for="tourist-phone" class="form-label" data-i18n="register.phone">電話番号（国際形式: +819012345678）</label>
-              <div class="input-group">
-                <input type="tel" class="form-control" id="tourist-phone" placeholder="+819012345678" required>
-                <button type="button" id="tourist-verify-phone" class="btn btn-outline-secondary" data-i18n="register.verifyPhone">電話番号を認証</button>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="tourist-password" class="form-label" data-i18n="register.password">パスワード</label>
-              <input type="password" class="form-control" id="tourist-password" required>
-            </div>
-            <div class="mb-3">
-              <label for="tourist-password-confirm" class="form-label" data-i18n="register.confirmPassword">パスワード（確認）</label>
-              <input type="password" class="form-control" id="tourist-password-confirm" required>
-            </div>
-            <div class="mb-3">
-              <label for="tourist-languages" class="form-label" data-i18n="register.languages">話せる言語（複数選択可）</label>
-              <select class="form-select" id="tourist-languages" multiple aria-label="Languages selection">
-                <option value="ja">日本語</option>
-                <option value="en">英語</option>
-                <option value="zh">中国語</option>
-                <option value="ko">韓国語</option>
-                <option value="es">スペイン語</option>
-                <option value="fr">フランス語</option>
-              </select>
-              <input type="hidden" id="tourist-languages-input" name="languages">
-            </div>
-            <div class="mb-4">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="tourist-terms" required>
-                <label class="form-check-label" for="tourist-terms" data-i18n="register.terms">
-                  利用規約に同意します
-                </label>
-              </div>
-            </div>
-            <div class="d-grid">
-              <button type="button" id="tourist-upload-id" class="btn btn-warning mb-3" data-i18n="register.uploadId">本人確認書類をアップロード</button>
-              <button type="submit" class="btn btn-primary" data-i18n="register.submit">登録する</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ID書類アップロードモーダル -->
-  <div class="modal fade" id="idDocumentModal" tabindex="-1" aria-labelledby="idDocumentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="idDocumentModalLabel" data-i18n="document.title">身分証明書のアップロード</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="document-error" class="alert alert-danger d-none" role="alert"></div>
-          <div id="document-success" class="alert alert-success d-none" role="alert" data-i18n="document.success">アップロードが完了しました！</div>
-          <p data-i18n="document.description">本人確認のため、有効な身分証明書をアップロードしてください。</p>
-          <form id="document-form">
-            <input type="hidden" name="user-type" value="tourist">
-            <div class="mb-3">
-              <label for="document-type" class="form-label" data-i18n="document.type">書類の種類</label>
-              <select class="form-select" id="document-type" required>
-                <option value="" selected disabled data-i18n="document.selectType">書類の種類を選択</option>
-                <option value="passport" data-i18n="document.passport">パスポート</option>
-                <option value="driverLicense" data-i18n="document.driverLicense">運転免許証</option>
-                <option value="idCard" data-i18n="document.idCard">マイナンバーカード</option>
-              </select>
-            </div>
-            <div id="passport-upload" class="document-upload mb-3 d-none">
-              <label for="passport-file" class="form-label" data-i18n="document.passportFile">パスポート</label>
-              <div class="input-group mb-3">
-                <input type="file" class="form-control" id="passport-file" accept="image/jpeg, image/png, application/pdf">
-                <button type="button" class="btn btn-outline-secondary remove-file" data-input="passport-file" data-i18n="document.remove">削除</button>
-              </div>
-              <div id="passport-preview" class="preview-container d-none mb-2">
-                <img id="passport-image" src="#" alt="プレビュー" class="img-thumbnail">
-              </div>
-              <div id="passport-upload-prompt" class="upload-prompt">
-                <p data-i18n="document.uploadPrompt">クリックしてファイルを選択するか、ここにドラッグ＆ドロップしてください。</p>
-                <p class="text-muted small" data-i18n="document.fileRestriction">JPG, PNG, または PDF形式、最大5MBまで</p>
-              </div>
-            </div>
-            <div id="license-upload" class="document-upload mb-3 d-none">
-              <div>
-                <label for="license-front-file" class="form-label" data-i18n="document.licenseFront">運転免許証（表面）</label>
-                <div class="input-group mb-3">
-                  <input type="file" class="form-control" id="license-front-file" accept="image/jpeg, image/png, application/pdf">
-                  <button type="button" class="btn btn-outline-secondary remove-file" data-input="license-front-file" data-i18n="document.remove">削除</button>
-                </div>
-                <div id="license-front-preview" class="preview-container d-none mb-2">
-                  <img id="license-front-image" src="#" alt="表面プレビュー" class="img-thumbnail">
-                </div>
-                <div id="license-front-upload-prompt" class="upload-prompt">
-                  <p data-i18n="document.uploadPrompt">クリックしてファイルを選択するか、ここにドラッグ＆ドロップしてください。</p>
-                  <p class="text-muted small" data-i18n="document.fileRestriction">JPG, PNG, または PDF形式、最大5MBまで</p>
+      <div class="modal-body">
+        <form id="guideRegistrationForm" enctype="multipart/form-data">
+          <!-- プロフィール写真セクション -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">プロフィール写真</h6>
+            <div class="text-center">
+              <div class="profile-photo-container position-relative d-inline-block">
+                <img id="profilePhotoPreview" src="https://via.placeholder.com/150x150?text=写真" 
+                     class="profile-photo rounded-circle" alt="プロフィール写真" 
+                     style="width: 150px; height: 150px; object-fit: cover; cursor: pointer;">
+                <div class="profile-photo-overlay">
+                  <i class="bi bi-camera-fill"></i>
                 </div>
               </div>
               <div class="mt-3">
-                <label for="license-back-file" class="form-label" data-i18n="document.licenseBack">運転免許証（裏面）</label>
-                <div class="input-group mb-3">
-                  <input type="file" class="form-control" id="license-back-file" accept="image/jpeg, image/png, application/pdf">
-                  <button type="button" class="btn btn-outline-secondary remove-file" data-input="license-back-file" data-i18n="document.remove">削除</button>
+                <input type="file" id="profilePhotoInput" accept="image/*" class="d-none">
+                <button type="button" class="btn btn-outline-primary btn-sm me-2" id="uploadPhotoBtn">
+                  <i class="bi bi-upload me-1"></i>写真をアップロード
+                </button>
+                <button type="button" class="btn btn-primary btn-sm mobile-only" id="cameraPhotoBtn">
+                  <i class="bi bi-camera me-1"></i>カメラで撮影
+                </button>
+              </div>
+              <small class="text-muted d-block mt-2">クリックして写真を変更できます</small>
+            </div>
+          </div>
+
+          <!-- 基本情報 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">基本情報</h6>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="guideName" class="form-label">氏名 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="guideName" name="name" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="guideUsername" class="form-label">ユーザー名 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="guideUsername" name="username" required>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="guideEmail" class="form-label">メールアドレス <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="guideEmail" name="email" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="guideRegion" class="form-label">活動地域 <span class="text-danger">*</span></label>
+                <select class="form-select" id="guideRegion" name="region" required>
+                  <option value="">選択してください</option>
+                  <option value="北海道">北海道</option>
+                  <option value="東北">東北地方</option>
+                  <option value="関東">関東地方</option>
+                  <option value="中部">中部地方</option>
+                  <option value="近畿">近畿地方</option>
+                  <option value="中国">中国地方</option>
+                  <option value="四国">四国地方</option>
+                  <option value="九州・沖縄">九州・沖縄地方</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="guideLanguages" class="form-label">対応言語 <span class="text-danger">*</span></label>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="日本語" id="lang_ja" name="languages">
+                    <label class="form-check-label" for="lang_ja">日本語</label>
+                  </div>
                 </div>
-                <div id="license-back-preview" class="preview-container d-none mb-2">
-                  <img id="license-back-image" src="#" alt="裏面プレビュー" class="img-thumbnail">
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="英語" id="lang_en" name="languages">
+                    <label class="form-check-label" for="lang_en">英語</label>
+                  </div>
                 </div>
-                <div id="license-back-upload-prompt" class="upload-prompt">
-                  <p data-i18n="document.uploadPrompt">クリックしてファイルを選択するか、ここにドラッグ＆ドロップしてください。</p>
-                  <p class="text-muted small" data-i18n="document.fileRestriction">JPG, PNG, または PDF形式、最大5MBまで</p>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="中国語" id="lang_zh" name="languages">
+                    <label class="form-check-label" for="lang_zh">中国語</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="韓国語" id="lang_ko" name="languages">
+                    <label class="form-check-label" for="lang_ko">韓国語</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="フランス語" id="lang_fr" name="languages">
+                    <label class="form-check-label" for="lang_fr">フランス語</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="スペイン語" id="lang_es" name="languages">
+                    <label class="form-check-label" for="lang_es">スペイン語</label>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="d-grid gap-2">
-              <button type="submit" class="btn btn-primary" data-i18n="document.submit">アップロード</button>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="guideSessionFee" class="form-label">セッション料金 <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">¥</span>
+                  <input type="number" class="form-control" id="guideSessionFee" name="sessionFee" min="6000" required>
+                  <span class="input-group-text">/セッション</span>
+                </div>
+                <small class="text-muted">最低料金: ¥6,000</small>
+              </div>
             </div>
-          </form>
-        </div>
+          </div>
+
+          <!-- 電話番号認証 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">電話番号認証</h6>
+            <div class="phone-section">
+              <div class="input-group mb-3">
+                <span class="input-group-text">+81</span>
+                <input type="tel" class="form-control" id="phoneNumber" name="phone" placeholder="9012345678（先頭の0は除く）" required>
+                <button class="btn btn-primary" type="button" id="sendCodeBtn">認証コード送信</button>
+              </div>
+              <div class="d-flex align-items-center mb-3">
+                <small class="form-text text-muted me-2">ハイフンなしで入力してください</small>
+                <span class="badge bg-secondary" id="verifyStatus">未認証</span>
+              </div>
+              
+              <div id="verificationCodeContainer" class="d-none">
+                <div class="mb-3">
+                  <input type="text" class="form-control text-center" id="verificationCode" placeholder="認証コード" maxlength="6">
+                  <small class="form-text text-muted text-center mt-1">SMSで送信された6桁のコードを入力してください</small>
+                  <button type="button" class="btn btn-primary w-100 mt-2" id="verifyCodeBtn">認証する</button>
+                </div>
+                <div id="verificationAlert" class="alert mt-2 d-none"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 身分証明書 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">身分証明書の確認</h6>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="nationality" class="form-label">国籍 <span class="text-danger">*</span></label>
+                <select class="form-select" id="nationality" name="nationality" required>
+                  <option value="">選択してください</option>
+                  <option value="JP">日本</option>
+                  <option value="US">アメリカ合衆国</option>
+                  <option value="GB">イギリス</option>
+                  <option value="FR">フランス</option>
+                  <option value="DE">ドイツ</option>
+                  <option value="CN">中国</option>
+                  <option value="KR">韓国</option>
+                  <option value="OTHER">その他</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="documentType" class="form-label">書類の種類 <span class="text-danger">*</span></label>
+                <select class="form-select" id="documentType" name="documentType" required>
+                  <option value="">選択してください</option>
+                  <option value="passport">パスポート</option>
+                  <option value="driving_license">運転免許証</option>
+                  <option value="id_card">マイナンバーカード</option>
+                </select>
+              </div>
+            </div>
+            
+            <!-- 身分証明書写真アップロード -->
+            <div id="documentPhotoSection" class="mt-3">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">身分証明書（表面）<span class="text-danger">*</span></label>
+                  <div class="document-upload-area text-center border rounded p-3">
+                    <img id="documentFrontPreview" src="https://via.placeholder.com/200x120?text=表面" 
+                         class="img-fluid mb-2" alt="身分証明書表面" style="max-height: 120px; cursor: pointer;">
+                    <div>
+                      <input type="file" id="documentFrontInput" accept="image/*" class="d-none">
+                      <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="document.getElementById('documentFrontInput').click()">
+                        <i class="bi bi-upload me-1"></i>アップロード
+                      </button>
+                      <button type="button" class="btn btn-primary btn-sm mobile-only" id="cameraDocumentFrontBtn">
+                        <i class="bi bi-camera me-1"></i>撮影
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6 mb-3" id="documentBackSection" style="display: none;">
+                  <label class="form-label">身分証明書（裏面）<span class="text-danger">*</span></label>
+                  <div class="document-upload-area text-center border rounded p-3">
+                    <img id="documentBackPreview" src="https://via.placeholder.com/200x120?text=裏面" 
+                         class="img-fluid mb-2" alt="身分証明書裏面" style="max-height: 120px; cursor: pointer;">
+                    <div>
+                      <input type="file" id="documentBackInput" accept="image/*" class="d-none">
+                      <button type="button" class="btn btn-outline-primary btn-sm me-2" onclick="document.getElementById('documentBackInput').click()">
+                        <i class="bi bi-upload me-1"></i>アップロード
+                      </button>
+                      <button type="button" class="btn btn-primary btn-sm mobile-only" id="cameraDocumentBackBtn">
+                        <i class="bi bi-camera me-1"></i>撮影
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 自己紹介 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">自己紹介</h6>
+            <div class="mb-3">
+              <label for="guideDescription" class="form-label">自己紹介文 <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="guideDescription" name="description" rows="4" required 
+                        placeholder="あなたの経験や得意分野、提供できる体験について教えてください..."></textarea>
+            </div>
+          </div>
+
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <button type="button" class="btn btn-primary" id="submitGuideRegistration">登録する</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- フッター -->
-  <footer class="bg-dark text-white py-4 mt-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6">
-          <h5 data-i18n="footer.about">Local Guideについて</h5>
-          <p data-i18n="footer.description">現地ガイドと観光客をつなぐプラットフォーム。特別な旅行体験を。</p>
-        </div>
-        <div class="col-md-3">
-          <h5 data-i18n="footer.links">リンク</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white" data-i18n="footer.terms">利用規約</a></li>
-            <li><a href="#" class="text-white" data-i18n="footer.privacy">プライバシーポリシー</a></li>
-            <li><a href="#" class="text-white" data-i18n="footer.contact">お問い合わせ</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h5 data-i18n="footer.social">ソーシャルメディア</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-white">Twitter</a></li>
-            <li><a href="#" class="text-white">Facebook</a></li>
-            <li><a href="#" class="text-white">Instagram</a></li>
-          </ul>
-        </div>
+<!-- 観光客登録モーダル -->
+<div class="modal fade" id="registerTouristModal" tabindex="-1" aria-labelledby="registerTouristModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="registerTouristModalLabel">観光客登録</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="row mt-3">
-        <div class="col-12 text-center">
-          <p class="mb-0">&copy; 2023 Local Guide. All rights reserved.</p>
-        </div>
+      <div class="modal-body">
+        <form id="touristRegistrationForm">
+          <div class="mb-3">
+            <label for="touristName" class="form-label">氏名 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="touristName" name="name" required>
+          </div>
+          <div class="mb-3">
+            <label for="touristEmail" class="form-label">メールアドレス <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="touristEmail" name="email" required>
+          </div>
+          <div class="mb-3">
+            <label for="touristPassword" class="form-label">パスワード <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="touristPassword" name="password" required>
+          </div>
+          <div class="mb-3">
+            <label for="touristInterests" class="form-label">興味のあるカテゴリ</label>
+            <div class="row">
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="文化・歴史" id="interest_culture">
+                  <label class="form-check-label" for="interest_culture">文化・歴史</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="グルメ" id="interest_food">
+                  <label class="form-check-label" for="interest_food">グルメ</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="自然・アウトドア" id="interest_nature">
+                  <label class="form-check-label" for="interest_nature">自然・アウトドア</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="エンターテイメント" id="interest_entertainment">
+                  <label class="form-check-label" for="interest_entertainment">エンターテイメント</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+        <button type="button" class="btn btn-primary" id="submitTouristRegistration">登録する</button>
       </div>
     </div>
-  </footer>
+  </div>
+</div>
+
+<!-- カメラモーダル -->
+<div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cameraModalLabel">写真を撮影</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div id="cameraContainer">
+          <video id="cameraVideo" autoplay playsinline style="width: 100%; max-width: 500px; border-radius: 10px;"></video>
+          <canvas id="cameraCanvas" style="display: none;"></canvas>
+          <div id="cameraPreview" style="display: none;">
+            <img id="previewImage" style="width: 100%; max-width: 500px; border-radius: 10px;" alt="撮影した写真">
+          </div>
+        </div>
+        <div class="mt-3">
+          <button type="button" class="btn btn-outline-secondary me-2" id="switchCameraBtn">
+            <i class="bi bi-arrow-repeat me-1"></i>カメラ切替
+          </button>
+          <button type="button" class="btn btn-primary" id="captureBtn">
+            <i class="bi bi-camera me-1"></i>撮影
+          </button>
+          <button type="button" class="btn btn-success d-none" id="usePhotoBtn">
+            <i class="bi bi-check me-1"></i>この写真を使用
+          </button>
+          <button type="button" class="btn btn-outline-primary d-none" id="retakeBtn">
+            <i class="bi bi-arrow-clockwise me-1"></i>撮り直し
+          </button>
+        </div>
+        <div id="cameraError" class="alert alert-danger mt-3 d-none"></div>
+      </div>
+    </div>
+  </div>
+</div>
