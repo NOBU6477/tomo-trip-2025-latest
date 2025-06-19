@@ -308,10 +308,13 @@
       return;
     }
 
-    // 観光客登録状態をチェック
+    // 観光客ログイン状態をチェック
     const touristData = localStorage.getItem('touristData');
     if (!touristData) {
-      alert('このページにアクセスするには観光客登録が必要です');
+      // 未ログインの場合は即座にホームページにリダイレクトしてログインモーダルを表示
+      sessionStorage.setItem('pendingGuideId', guideId);
+      sessionStorage.setItem('showLoginOnLoad', 'true');
+      sessionStorage.setItem('accessAttemptMessage', 'ガイドの詳細を見るにはログインが必要です');
       window.location.href = 'index.html';
       return;
     }

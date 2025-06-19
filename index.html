@@ -1463,6 +1463,38 @@
   <!-- ユーザータイプ選択の動作改善 -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // ガイド詳細ページからのリダイレクトでログインモーダルを表示
+      if (sessionStorage.getItem('showLoginOnLoad') === 'true') {
+        sessionStorage.removeItem('showLoginOnLoad');
+        const accessMessage = sessionStorage.getItem('accessAttemptMessage');
+        if (accessMessage) {
+          sessionStorage.removeItem('accessAttemptMessage');
+        }
+        setTimeout(() => {
+          const pendingGuideId = sessionStorage.getItem('pendingGuideId');
+          if (pendingGuideId) {
+            showTouristLoginPrompt(pendingGuideId);
+          } else {
+            // フォールバック：通常のログインモーダルを表示
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+          }
+        }, 800);
+      }
+      
+      // URLパラメータで直接ガイド詳細アクセスを試みた場合の処理
+      const urlParams = new URLSearchParams(window.location.search);
+      const directGuideId = urlParams.get('guide');
+      if (directGuideId && !localStorage.getItem('touristData')) {
+        // 未ログインで直接ガイドページアクセスを試みた場合
+        sessionStorage.setItem('pendingGuideId', directGuideId);
+        setTimeout(() => {
+          showTouristLoginPrompt(directGuideId);
+        }, 1000);
+        // URLからパラメータを削除
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      
       // ログインモーダル内のユーザータイプ切り替え機能
       const touristRadio = document.getElementById('login-user-tourist');
       const guideRadio = document.getElementById('login-user-guide');
@@ -1976,7 +2008,7 @@
                   </div>
                 </div>
                 <div class="modal-body text-center">
-                  <p class="mb-4">ガイドの詳細情報や予約機能をご利用いただくには、観光客としてログインしてください。</p>
+                  <p class="mb-4">選択されたガイドの詳細情報を見るには、観光客としてログインが必要です。ログイン後、すぐにガイドページに移動します。</p>
                   
                   <div class="bg-light rounded p-3 mb-4">
                     <h6 class="mb-2">ログイン後にできること</h6>
