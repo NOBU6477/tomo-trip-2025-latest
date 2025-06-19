@@ -230,7 +230,19 @@
       link.addEventListener('click', function(e) {
         e.preventDefault();
         const guideId = this.getAttribute('data-guide-id');
-        // ガイド詳細ページへの遷移やモーダル表示
+        
+        // ログイン状態を確認
+        const isLoggedIn = localStorage.getItem('touristData') !== null || sessionStorage.getItem('guideData') !== null;
+        
+        if (isLoggedIn) {
+          // ログイン済みならガイドの詳細ページへ移動
+          window.location.href = `guide-details.html?id=${guideId}`;
+        } else {
+          // 未ログインならログインモーダルを表示
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          loginModal.show();
+        }
+        
         console.log(`ガイドID ${guideId} の詳細を表示`);
       });
     });

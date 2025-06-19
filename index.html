@@ -1805,20 +1805,35 @@
       
       // 詳細を見るボタンのイベントハンドラ
       document.addEventListener('click', function(e) {
-        // 詳細を見るボタンがクリックされた場合
-        if (e.target.classList.contains('btn-outline-primary') && 
-            e.target.textContent.includes('詳細を見る')) {
+        // 詳細を見るボタンがクリックされた場合（複数の条件をチェック）
+        const isDetailsButton = e.target.classList.contains('guide-details-link') ||
+                               (e.target.classList.contains('btn-outline-primary') && 
+                                (e.target.textContent.includes('詳細を見る') || e.target.textContent.includes('See Details'))) ||
+                               e.target.hasAttribute('data-guide-id');
+        
+        if (isDetailsButton) {
           e.preventDefault();
+          
+          // ガイドIDを取得
+          let guideId = e.target.getAttribute('data-guide-id');
+          if (!guideId) {
+            const guideCard = e.target.closest('.guide-card');
+            if (guideCard) {
+              guideId = guideCard.getAttribute('data-guide-id');
+            }
+          }
+          
+          if (!guideId) {
+            console.error('ガイドIDが見つかりません');
+            return;
+          }
           
           // ログイン状態を確認
           const isLoggedIn = localStorage.getItem('touristData') !== null || sessionStorage.getItem('guideData') !== null;
           
           if (isLoggedIn) {
             // ログイン済みならガイドの詳細ページへ移動
-            const guideId = e.target.closest('.guide-card').getAttribute('data-guide-id');
-            if (guideId) {
-              window.location.href = `guide-details.html?id=${guideId}`;
-            }
+            window.location.href = `guide-details.html?id=${guideId}`;
           } else {
             // 未ログインならログインモーダルを表示
             const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
@@ -1837,6 +1852,9 @@
   
   <!-- 専用ボタン翻訳機能 -->
   <script src="button-translator.js"></script>
+  
+  <!-- テスト用ログイン機能 -->
+  <script src="test-login.js"></script>
   
   <!-- セクション別の専用翻訳スクリプト -->
   <script src="benefits-translator.js"></script>
