@@ -314,6 +314,7 @@ function setupGuideDetailLinks() {
   guideLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
+      alert('TOURIST-LOGIN.JS: ガイド詳細ボタンがクリックされました');
       console.log('TOURIST-LOGIN.JS: ガイド詳細ボタンがクリックされました');
       
       let guideId = this.getAttribute('data-guide-id');
