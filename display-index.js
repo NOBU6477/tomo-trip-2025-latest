@@ -133,23 +133,130 @@ function generateBasicHtml() {
   `;
 }
 
-// guide-details.html への条件付きアクセス制御
+// guide-details.html への認証要求レスポンス
 app.get('/guide-details.html', (req, res) => {
-  // クライアントサイドでの認証チェックに任せて、ファイルを通常通り提供
-  // 実際の認証チェックはクライアントサイドJavaScriptで行う
+  // 認証が必要なことを明示するページを返す
+  const guideId = req.query.id || '';
+  
+  const authRequiredPage = `
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ログインが必要です - TomoTrip</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Noto Sans JP', sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .auth-container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      max-width: 500px;
+      width: 100%;
+    }
+    .auth-icon {
+      font-size: 4rem;
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+    .btn-custom {
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-weight: 600;
+      margin: 10px;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary { background-color: #667eea; border-color: #667eea; }
+    .btn-outline-primary { color: #667eea; border-color: #667eea; }
+    .btn-outline-primary:hover { background-color: #667eea; border-color: #667eea; }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-icon">
+      <i class="bi bi-shield-lock"></i>
+    </div>
+    <h2 class="mb-3">ログインが必要です</h2>
+    <p class="text-muted mb-4">
+      ガイドの詳細情報をご覧いただくには、<br>
+      観光客としてログインしてください。
+    </p>
+    <div class="alert alert-info">
+      <strong>安全なサービスのために</strong><br>
+      身元確認済みのユーザーのみが<br>
+      ガイド詳細を閲覧できます
+    </div>
+    <div class="mt-4">
+      <a href="/index.html${guideId ? '?requireLogin=true&guide=' + guideId : ''}" class="btn btn-primary btn-custom">
+        <i class="bi bi-box-arrow-in-right me-2"></i>ログインする
+      </a>
+    </div>
+    <div class="mt-2">
+      <a href="/index.html" class="btn btn-outline-primary btn-custom">
+        <i class="bi bi-house-door me-2"></i>ホームページに戻る
+      </a>
+    </div>
+    <div class="mt-3">
+      <small class="text-muted">
+        アカウントをお持ちでない場合は新規登録してください
+      </small>
+    </div>
+  </div>
+  
+  <script>
+    // ログイン状態をチェックして、ログイン済みの場合は実際のページを表示
+    (function() {
+      const touristData = localStorage.getItem('touristData');
+      if (touristData) {
+        // ログイン済みの場合は実際のガイド詳細ページを読み込み
+        fetch('/guide-details-content.html${guideId ? '?id=' + guideId : ''}')
+          .then(response => response.text())
+          .then(html => {
+            document.documentElement.innerHTML = html;
+          })
+          .catch(error => {
+            console.error('Error loading guide details:', error);
+          });
+      }
+    })();
+  </script>
+</body>
+</html>
+  `;
+  
+  res.send(authRequiredPage);
+});
+
+// 認証済みユーザー向けのガイド詳細コンテンツ
+app.get('/guide-details-content.html', (req, res) => {
   try {
     const path = require('path');
     const fs = require('fs');
-    const filePath = path.join(__dirname, 'guide-details.html');
+    const filePath = path.join(__dirname, 'guide-details-content.html');
     
     if (fs.existsSync(filePath)) {
       const content = fs.readFileSync(filePath, 'utf8');
       res.send(content);
     } else {
-      res.status(404).send('Page not found');
+      res.status(404).send('Guide details content not found');
     }
   } catch (error) {
-    console.error('Error serving guide-details.html:', error);
+    console.error('Error serving guide-details-content.html:', error);
     res.status(500).send('Internal server error');
   }
 });
