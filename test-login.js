@@ -22,24 +22,9 @@
   });
 
   function addTestLoginButton() {
-    // テスト用ログインボタンを追加
-    const navbar = document.querySelector('.navbar-nav');
-    if (navbar) {
-      const testLoginHTML = `
-        <li class="nav-item dropdown">
-          <button class="btn btn-sm btn-warning dropdown-toggle me-2" type="button" data-bs-toggle="dropdown">
-            テスト
-          </button>
-          <ul class="dropdown-menu">
-            <li><button class="dropdown-item" onclick="testLogin()">観光客ログイン</button></li>
-            <li><button class="dropdown-item" onclick="testLogout()">ログアウト</button></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><button class="dropdown-item" onclick="checkLoginStatus()">ログイン状態確認</button></li>
-          </ul>
-        </li>
-      `;
-      navbar.insertAdjacentHTML('beforeend', testLoginHTML);
-    }
+    // テスト用ログインボタンを追加（本番では非表示）
+    // 開発者コンソールから window.testLogin() で呼び出し可能
+    return; // 本番では表示しない
   }
 
   function checkExistingLogin() {
@@ -52,21 +37,8 @@
   }
 
   function updateLoginUI(isLoggedIn) {
-    const loginBtn = document.querySelector('[data-bs-target="#loginModal"]');
-    const statusIndicator = document.createElement('span');
-    statusIndicator.className = 'badge bg-success ms-2';
-    statusIndicator.textContent = 'ログイン済み';
-    
-    if (isLoggedIn) {
-      if (loginBtn && !loginBtn.querySelector('.badge')) {
-        loginBtn.appendChild(statusIndicator);
-      }
-    } else {
-      const existingBadge = loginBtn?.querySelector('.badge');
-      if (existingBadge) {
-        existingBadge.remove();
-      }
-    }
+    // UI更新は本番では行わない（ログイン状態は内部で管理）
+    return;
   }
 
   // グローバル関数として公開
