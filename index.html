@@ -1846,13 +1846,13 @@
         
         if (touristData) {
           // ログイン済みの場合は詳細ページに遷移
-          window.location.href = `guide-details.html?id=${guideId}`;
+          window.location.replace(`guide-details.html?id=${guideId}`);
           return;
         }
         
-        // 未ログインの場合はログイン促進モーダルを表示
+        // 未ログインの場合は直接ログインページに遷移（フラッシュ防止）
         sessionStorage.setItem('pendingGuideId', guideId);
-        showTouristLoginPrompt(guideId);
+        window.location.replace(`guide-details.html?id=${guideId}`);
       };
 
       // ガイド詳細閲覧にログインが必要であることを明示（旧関数、互換性のため）
