@@ -316,23 +316,178 @@
     </section>
   </div>
 
+  <!-- モーダルの読み込み -->
+  <div id="modals-container"></div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <script src="auto-fill-system.js"></script>
   
   <script>
-    // フィルター切り替え
-    document.getElementById('toggle-filter-button').addEventListener('click', function() {
-      const filterContainer = document.getElementById('filter-container');
-      filterContainer.classList.toggle('collapsed');
+    // モーダルHTMLを読み込む
+    fetch('modals.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('modals-container').innerHTML = html;
+        initializeModals();
+      })
+      .catch(error => console.error('モーダル読み込みエラー:', error));
+
+    // モーダル初期化
+    function initializeModals() {
+      // 新規登録ドロップダウンからの遷移
+      const guidRegisterLink = document.querySelector('[data-bs-target="#registerGuideModal"]');
+      const touristRegisterLink = document.querySelector('[data-bs-target="#registerTouristModal"]');
       
-      const icon = this.querySelector('i');
-      if (filterContainer.classList.contains('collapsed')) {
-        icon.className = 'bi bi-funnel';
-        this.innerHTML = '<i class="bi bi-funnel"></i> フィルターを開く';
-      } else {
-        icon.className = 'bi bi-funnel-fill';
-        this.innerHTML = '<i class="bi bi-funnel-fill"></i> フィルターを閉じる';
+      if (guidRegisterLink) {
+        guidRegisterLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          const modal = new bootstrap.Modal(document.getElementById('registerGuideModal'));
+          modal.show();
+        });
+      }
+      
+      if (touristRegisterLink) {
+        touristRegisterLink.addEventListener('click', function(e) {
+          e.preventDefault();
+          const modal = new bootstrap.Modal(document.getElementById('registerTouristModal'));
+          modal.show();
+        });
+      }
+
+      // ガイド登録フォーム送信
+      const submitGuideBtn = document.getElementById('submitGuideRegistration');
+      if (submitGuideBtn) {
+        submitGuideBtn.addEventListener('click', function() {
+          handleGuideRegistration();
+        });
+      }
+
+      // 観光客登録フォーム送信
+      const submitTouristBtn = document.getElementById('submitTouristRegistration');
+      if (submitTouristBtn) {
+        submitTouristBtn.addEventListener('click', function() {
+          handleTouristRegistration();
+        });
+      }
+    }
+
+    // ガイド登録処理
+    function handleGuideRegistration() {
+      const form = document.getElementById('guideRegistrationForm');
+      const formData = new FormData(form);
+      
+      // バリデーション
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const sessionFee = formData.get('sessionFee');
+      
+      if (!name || !email) {
+        showNotification('必須項目を入力してください', 'error');
+        return;
+      }
+      
+      if (sessionFee < 6000) {
+        showNotification('セッション料金は最低¥6,000以上に設定してください', 'error');
+        return;
+      }
+
+      // 言語チェック
+      const languages = Array.from(form.querySelectorAll('input[name="languages"]:checked')).map(cb => cb.value);
+      if (languages.length === 0) {
+        showNotification('対応言語を少なくとも1つ選択してください', 'error');
+        return;
+      }
+
+      // 電話認証確認
+      const verifyStatus = document.getElementById('verifyStatus');
+      if (verifyStatus && verifyStatus.textContent !== '認証済み') {
+        showNotification('電話番号認証を完了してください', 'error');
+        return;
+      }
+
+      // 登録処理（デモ）
+      showNotification('ガイド登録を受け付けました。審査完了までお待ちください。', 'success');
+      
+      // モーダルを閉じる
+      setTimeout(() => {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('registerGuideModal'));
+        if (modal) {
+          modal.hide();
+        }
+      }, 2000);
+    }
+
+    // 観光客登録処理
+    function handleTouristRegistration() {
+      const form = document.getElementById('touristRegistrationForm');
+      const formData = new FormData(form);
+      
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const password = formData.get('password');
+      
+      if (!name || !email || !password) {
+        showNotification('必須項目を入力してください', 'error');
+        return;
+      }
+      
+      // 登録処理（デモ）
+      showNotification('観光客登録が完了しました。ガイドを探してみましょう！', 'success');
+      
+      // モーダルを閉じる
+      setTimeout(() => {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('registerTouristModal'));
+        if (modal) {
+          modal.hide();
+        }
+      }, 2000);
+    }
+
+    // 通知表示関数
+    function showNotification(message, type = 'info') {
+      let alertContainer = document.getElementById('alert-container');
+      if (!alertContainer) {
+        alertContainer = document.createElement('div');
+        alertContainer.id = 'alert-container';
+        alertContainer.style.cssText = 'position: fixed; top: 20px; right: 20px; max-width: 400px; z-index: 9999;';
+        document.body.appendChild(alertContainer);
+      }
+      
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+      alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      `;
+      
+      alertContainer.appendChild(alertDiv);
+      
+      setTimeout(() => {
+        if (alertDiv.parentNode) {
+          alertDiv.remove();
+        }
+      }, 5000);
+    }
+
+    // フィルター切り替え
+    document.addEventListener('DOMContentLoaded', function() {
+      const toggleButton = document.getElementById('toggle-filter-button');
+      if (toggleButton) {
+        toggleButton.addEventListener('click', function() {
+          const filterContainer = document.getElementById('filter-container');
+          filterContainer.classList.toggle('collapsed');
+          
+          const icon = this.querySelector('i');
+          if (filterContainer.classList.contains('collapsed')) {
+            icon.className = 'bi bi-funnel';
+            this.innerHTML = '<i class="bi bi-funnel"></i> フィルターを開く';
+          } else {
+            icon.className = 'bi bi-funnel-fill';
+            this.innerHTML = '<i class="bi bi-funnel-fill"></i> フィルターを閉じる';
+          }
+        });
       }
     });
   </script>
