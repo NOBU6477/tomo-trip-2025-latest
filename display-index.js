@@ -133,41 +133,42 @@ function generateBasicHtml() {
   `;
 }
 
-// guide-details.html への認証チェックとリダイレクト
+// guide-details.html への直接リダイレクト処理
 app.get('/guide-details.html', (req, res) => {
   const guideId = req.query.id || '';
   
-  // 即座に認証チェックを行うページを返す
-  const authCheckPage = `
+  // 認証チェック用の最小限HTMLを返す（白画面で処理）
+  const redirectPage = `
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>アクセス中... - TomoTrip</title>
+  <title>TomoTrip</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #667eea;
-      color: white;
-      font-family: 'Noto Sans JP', sans-serif;
-      display: none;
-    }
+    body { margin: 0; padding: 0; background: white; }
   </style>
 </head>
 <body>
-  <script>
-    // 即座に認証チェックを実行（ページ描画前）
-    (function() {
-      const touristData = localStorage.getItem('touristData');
-      
-      if (touristData) {
-        // ログイン済みの場合は実際のガイド詳細ページにリダイレクト
-        window.location.replace('/guide-details-content.html${guideId ? '?id=' + guideId : ''}');
-      } else {
-        // 未ログインの場合は認証要求ページを表示
-        document.write(\`
+<script>
+// 瞬時にリダイレクト判定を実行
+const touristData = localStorage.getItem('touristData');
+if (touristData) {
+  location.replace('/guide-details-content.html${guideId ? '?id=' + guideId : ''}');
+} else {
+  location.replace('/auth-required.html${guideId ? '?guide=' + guideId : ''}');
+}
+</script>
+</body>
+</html>`;
+  
+  res.send(redirectPage);
+});
+
+// 認証要求ページの専用ルート
+app.get('/auth-required.html', (req, res) => {
+  const guideId = req.query.guide || '';
+  
+  const authRequiredPage = `
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -248,15 +249,9 @@ app.get('/guide-details.html', (req, res) => {
   </div>
 </body>
 </html>
-        \`);
-      }
-    })();
-  </script>
-</body>
-</html>
   `;
   
-  res.send(authCheckPage);
+  res.send(authRequiredPage);
 });
 
 // 認証済みユーザー向けのガイド詳細コンテンツ
