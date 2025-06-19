@@ -305,6 +305,15 @@
     if (!guideId) {
       alert('ガイドIDが指定されていません');
       window.location.href = 'index.html';
+      return;
+    }
+
+    // 観光客登録状態をチェック
+    const touristData = localStorage.getItem('touristData');
+    if (!touristData) {
+      alert('このページにアクセスするには観光客登録が必要です');
+      window.location.href = 'index.html';
+      return;
     }
 
     // ガイドデータを読み込み

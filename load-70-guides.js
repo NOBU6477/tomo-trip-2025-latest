@@ -231,16 +231,22 @@
         e.preventDefault();
         const guideId = this.getAttribute('data-guide-id');
         
-        // ログイン状態を確認
-        const isLoggedIn = localStorage.getItem('touristData') !== null || sessionStorage.getItem('guideData') !== null;
+        // 観光客として登録済みかチェック
+        const touristData = localStorage.getItem('touristData');
         
-        if (isLoggedIn) {
-          // ログイン済みならガイドの詳細ページへ移動
+        if (touristData) {
+          // 観光客として登録済みなら詳細ページへ移動
           window.location.href = `guide-details.html?id=${guideId}`;
         } else {
-          // 未ログインならログインモーダルを表示
-          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-          loginModal.show();
+          // 未登録なら観光客登録を促すモーダルを表示
+          if (typeof showTouristRegistrationPrompt === 'function') {
+            showTouristRegistrationPrompt(guideId);
+          } else {
+            // フォールバック: 観光客登録モーダルを直接表示
+            sessionStorage.setItem('pendingGuideId', guideId);
+            const registerModal = new bootstrap.Modal(document.getElementById('registerTouristModal'));
+            registerModal.show();
+          }
         }
         
         console.log(`ガイドID ${guideId} の詳細を表示`);
