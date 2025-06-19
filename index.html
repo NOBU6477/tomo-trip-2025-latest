@@ -2218,6 +2218,18 @@
           registerModal.show();
         }, 300);
       };
+
+      // ログイン必須ページから戻ってきた場合の処理
+      const shouldOpenLogin = sessionStorage.getItem('openLoginAfterReturn');
+      if (shouldOpenLogin === 'true') {
+        sessionStorage.removeItem('openLoginAfterReturn');
+        
+        // 少し遅延してからログインモーダルを開く
+        setTimeout(() => {
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          loginModal.show();
+        }, 500);
+      }
     });
   </script>
   

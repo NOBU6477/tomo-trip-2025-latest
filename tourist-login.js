@@ -154,6 +154,18 @@ function setupTouristLoginForm() {
           loginModal.hide();
         }
         
+        // ペンディング中のガイドIDがあるかチェック
+        const pendingGuideId = sessionStorage.getItem('pendingGuideId');
+        if (pendingGuideId) {
+          // ガイド詳細ページに遷移
+          sessionStorage.removeItem('pendingGuideId');
+          showAlert('ログインが完了しました。ガイドの詳細ページに移動します。', 'success');
+          setTimeout(() => {
+            window.location.href = `guide-details.html?id=${pendingGuideId}`;
+          }, 1000);
+          return;
+        }
+        
         // 成功メッセージを表示 - ガイド詳細ページでなければ表示
         if (!window.location.pathname.includes('guide-details.html')) {
           showAlert('観光客としてログインしました。サイト内のサービスをご利用いただけます。', 'success');
@@ -271,6 +283,18 @@ function setupTouristRegisterForm() {
       const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerTouristModal'));
       if (registerModal) {
         registerModal.hide();
+      }
+      
+      // ペンディング中のガイドIDがあるかチェック
+      const pendingGuideId = sessionStorage.getItem('pendingGuideId');
+      if (pendingGuideId) {
+        // ガイド詳細ページに遷移
+        sessionStorage.removeItem('pendingGuideId');
+        showAlert('登録が完了しました。ガイドの詳細ページに移動します。', 'success');
+        setTimeout(() => {
+          window.location.href = `guide-details.html?id=${pendingGuideId}`;
+        }, 1000);
+        return;
       }
       
       // 成功メッセージを表示（ガイド詳細ページでなければ表示）
