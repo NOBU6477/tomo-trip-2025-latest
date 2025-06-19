@@ -2084,9 +2084,6 @@
         
         if (isDetailsButton) {
           e.preventDefault();
-          alert('INDEX.HTML: ガイド詳細ボタンがクリックされました');
-          console.log('INDEX.HTML: ガイド詳細ボタンがクリックされました');
-          
           // ガイドIDを取得
           let guideId = e.target.getAttribute('data-guide-id');
           if (!guideId) {
@@ -2097,23 +2094,20 @@
           }
           
           if (!guideId) {
-            console.error('INDEX.HTML: ガイドIDが見つかりません');
+            alert('ガイドIDが見つかりません');
             return;
           }
           
-          console.log('INDEX.HTML: ガイドID:', guideId);
-          
           // 観光客としてログイン済みかチェック
           const touristData = localStorage.getItem('touristData');
-          console.log('INDEX.HTML: 観光客データ:', touristData ? 'あり' : 'なし');
           
           if (touristData) {
             // 観光客としてログイン済みなら詳細ページへ移動
-            console.log('INDEX.HTML: ログイン済み - ガイド詳細ページに遷移');
+            alert('ログイン済みです - ガイド詳細ページに遷移します');
             window.location.href = `guide-details.html?id=${guideId}`;
           } else {
             // 未ログインならlogin-requiredページに遷移
-            console.log('INDEX.HTML: 未ログイン - login-requiredページに遷移');
+            alert('未ログインです - login-requiredページに遷移します');
             sessionStorage.setItem('pendingGuideId', guideId);
             window.location.href = 'login-required.html';
           }
