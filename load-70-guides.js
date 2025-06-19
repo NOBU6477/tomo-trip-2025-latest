@@ -105,18 +105,18 @@
         .replace("{keyword1}", keywords[0])
         .replace("{keyword2}", keywords[1]);
 
-      // 実際のガイド写真を使用
+      // 統一された海岸風景写真を使用
       const imageUrls = [
-        "attached_assets/image_1750352664484.png", // ガイド写真1
-        "attached_assets/image_1750352678755.png", // ガイド写真2
-        "attached_assets/image_1750352695123.png", // ガイド写真3
-        "attached_assets/image_1750353184476.png", // ガイド写真4
-        "attached_assets/image_1750353196507.png", // ガイド写真5
-        "attached_assets/image_1750353222815.png", // ガイド写真6
-        "attached_assets/image_1750352664484.png", // ガイド写真7
-        "attached_assets/image_1750352678755.png", // ガイド写真8
-        "attached_assets/image_1750352695123.png", // ガイド写真9
-        "attached_assets/image_1750353184476.png"  // ガイド写真10
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
+        "attached_assets/IMG20221024140826_1750355257888.jpg"  // 海岸風景写真
       ];
       
       guides.push({
