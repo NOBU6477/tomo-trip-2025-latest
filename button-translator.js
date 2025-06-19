@@ -26,17 +26,17 @@
       document.querySelectorAll(selector).forEach(element => {
         const text = element.textContent.trim();
         
-        // 新しいログイン要求ボタンの翻訳
-        if (text === 'ログインして詳細を見る') {
+        // ガイド詳細ボタンの翻訳
+        if (text === '詳細を見る') {
+          element.innerHTML = '<i class="bi bi-eye me-1"></i>See Details';
+          translatedCount++;
+          console.log(`詳細ボタンを翻訳: ${selector}`);
+        }
+        // 旧ログイン要求ボタンの翻訳（互換性のため）
+        else if (text === 'ログインして詳細を見る') {
           element.innerHTML = '<i class="bi bi-lock me-1"></i>Login to View Details';
           translatedCount++;
-          console.log(`新ボタンを翻訳: ${selector}`);
-        }
-        // 旧ボタンの翻訳（互換性のため）
-        else if (text === '詳細を見る') {
-          element.textContent = 'See Details';
-          translatedCount++;
-          console.log(`旧ボタンを翻訳: ${selector}`);
+          console.log(`ログインボタンを翻訳: ${selector}`);
         }
       });
     });

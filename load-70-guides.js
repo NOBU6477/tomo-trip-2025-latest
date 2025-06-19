@@ -180,8 +180,8 @@
             </div>
           </div>
           <div class="card-footer bg-white border-0 pt-0">
-            <button class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}" onclick="handleGuideDetailsClick(${guide.id})">
-              <i class="bi bi-lock me-1"></i>ログインして詳細を見る
+            <button class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}">
+              <i class="bi bi-eye me-1"></i>詳細を見る
             </button>
           </div>
         </div>
@@ -237,18 +237,11 @@
         const touristData = localStorage.getItem('touristData');
         
         if (touristData) {
-          // 観光客として登録済みなら詳細ページへ移動
-          window.location.href = `guide-details.html?id=${guideId}`;
+          // 観光客として登録済みなら直接詳細コンテンツページへ移動（フラッシュなし）
+          window.location.href = `guide-details-content.html?id=${guideId}`;
         } else {
-          // 未ログインなら観光客ログインを促すモーダルを表示
-          if (typeof showTouristLoginPrompt === 'function') {
-            showTouristLoginPrompt(guideId);
-          } else {
-            // フォールバック: 観光客ログインモーダルを直接表示
-            sessionStorage.setItem('pendingGuideId', guideId);
-            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-            loginModal.show();
-          }
+          // 未ログインなら認証要求ページへ直接移動
+          window.location.href = `auth-required.html?guide=${guideId}`;
         }
         
         console.log(`ガイドID ${guideId} の詳細を表示`);
