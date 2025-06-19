@@ -378,10 +378,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       
-      // ボタンテキストの翻訳
-      const cardButtons = card.querySelectorAll('.btn');
+      // ボタンテキストの翻訳 - より包括的なアプローチ
+      const cardButtons = card.querySelectorAll('.btn, a.btn, button.btn, .guide-details-link');
       cardButtons.forEach(function(btn) {
-        if (btn.textContent.includes('詳細を見る')) {
+        if (btn.textContent && btn.textContent.trim() === '詳細を見る') {
           btn.textContent = 'See Details';
         }
       });
@@ -406,15 +406,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       
-      // すべてのボタンの翻訳
-      const allCardButtons = card.querySelectorAll('a.btn, button.btn');
-      allCardButtons.forEach(function(button) {
-        if (button.textContent.includes('詳細を見る')) {
-          button.textContent = 'See Details';
-        } else if (button.textContent.includes('もっと見る')) {
-          button.textContent = 'See More';
-        }
-      });
+      // 重複削除 - 上記でカバー済み
       
       // 認証バッジの翻訳
       const badges = card.querySelectorAll('.badge, .verified-badge');
@@ -577,6 +569,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (guideContainer) {
       observer.observe(guideContainer, { childList: true, subtree: true });
     }
+    
+    // 最終チェック：すべての「詳細を見る」ボタンを確実に翻訳
+    setTimeout(function() {
+      document.querySelectorAll('*').forEach(function(element) {
+        if ((element.tagName === 'A' || element.tagName === 'BUTTON' || element.classList.contains('btn')) &&
+            element.textContent && element.textContent.trim() === '詳細を見る') {
+          element.textContent = 'See Details';
+        }
+      });
+    }, 200);
     
     // タイトル変更
     document.title = 'Local Guide - Experience Special Journeys';
