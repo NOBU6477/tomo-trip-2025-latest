@@ -70,6 +70,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  /**
+   * キーワードを英語に翻訳する関数
+   */
+  function translateKeyword(keyword) {
+    const keywordMap = {
+      'ナイトツアー': 'night tours',
+      'グルメ': 'gourmet',
+      '写真スポット': 'photo spots',
+      '観光': 'sightseeing',
+      '料理': 'cuisine',
+      '文化体験': 'cultural experiences',
+      'アクティビティ': 'activities',
+      '自然': 'nature',
+      '歴史': 'history',
+      '寺院': 'temples',
+      'ショッピング': 'shopping',
+      'ファッション': 'fashion',
+      '温泉': 'hot springs',
+      '祭り': 'festivals',
+      'アート': 'art',
+      '音楽': 'music',
+      'スポーツ': 'sports',
+      '映画': 'movies',
+      '伝統工芸': 'traditional crafts',
+      'ローカル体験': 'local experiences',
+      '季節体験': 'seasonal experiences',
+      '歴史散策': 'historical walks',
+      'アウトドア': 'outdoor activities'
+    };
+    
+    return keywordMap[keyword] || keyword.toLowerCase();
+  }
+
   // 英語への翻訳関数
   function translateToEnglish() {
     // 言語メニューの表示を更新
@@ -188,21 +221,141 @@ document.addEventListener('DOMContentLoaded', function() {
           
           const text = description.textContent.trim();
           
-          // 各県の魅力を知り尽くしたガイドの翻訳パターン
+          // パターン1: {region}の魅力を知り尽くしたローカルガイドです。{keyword1}や{keyword2}のスポットをご案内します。
           if (text.includes('の魅力を知り尽くしたローカルガイドです。')) {
-            const prefecture = text.split('の魅力を知り尽くした')[0];
-            const specialties = text.split('が得意分野です。')[0].split('。')[1];
-            
-            let englishSpecialties = specialties
-              .replace('ナイトツアーとグルメ', 'night tours and gourmet')
-              .replace('写真スポットと観光', 'photo spots and sightseeing')
-              .replace('料理と文化体験', 'cuisine and cultural experiences')
-              .replace('歴史散策とアウトドア', 'historical walks and outdoor activities')
-              .replace('ローカル体験と自然', 'local experiences and nature')
-              .replace('季節体験と温泉', 'seasonal experiences and hot springs')
-              .replace('グルメと写真スポット', 'gourmet and photo spots');
-            
-            description.textContent = `I'm a local guide who knows all about ${prefecture}'s charms. ${englishSpecialties} are my specialties.`;
+            const match = text.match(/(.+)の魅力を知り尽くしたローカルガイドです。(.+)や(.+)のスポットをご案内します。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `I'm a local guide who knows all about ${region}'s charms. I'll guide you to ${englishKeyword1} and ${englishKeyword2} spots.`;
+            }
+          }
+          // パターン2: {region}在住10年以上のガイドが、観光客だけでは見つけられない{keyword1}や{keyword2}の場所にご案内します。
+          else if (text.includes('在住10年以上のガイドが、観光客だけでは見つけられない')) {
+            const match = text.match(/(.+)在住10年以上のガイドが、観光客だけでは見つけられない(.+)や(.+)の場所にご案内します。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `A guide living in ${region} for over 10 years will take you to ${englishKeyword1} and ${englishKeyword2} places that tourists cannot find on their own.`;
+            }
+          }
+          // パターン3: {region}出身のガイドが地元の隠れた名所をご紹介。特に{keyword1}スポットが充実しています。
+          else if (text.includes('出身のガイドが地元の隠れた名所をご紹介。')) {
+            const match = text.match(/(.+)出身のガイドが地元の隠れた名所をご紹介。特に(.+)スポットが充実しています。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              
+              description.textContent = `A guide from ${region} introduces local hidden gems. Especially rich in ${englishKeyword1} spots.`;
+            }
+          }
+          // パターン4: {region}のローカルフードやトレンドスポットを知り尽くしています。{keyword1}好きの方におすすめです。
+          else if (text.includes('のローカルフードやトレンドスポットを知り尽くしています。')) {
+            const match = text.match(/(.+)のローカルフードやトレンドスポットを知り尽くしています。(.+)好きの方におすすめです。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              
+              description.textContent = `I know all about ${region}'s local food and trendy spots. Recommended for ${englishKeyword1} lovers.`;
+            }
+          }
+          // パターン5: {keyword1}と{keyword2}を中心に、{region}の魅力をお伝えします。現地の生活や文化も体験できます。
+          else if (text.includes('を中心に、') && text.includes('の魅力をお伝えします。現地の生活や文化も体験できます。')) {
+            const match = text.match(/(.+)と(.+)を中心に、(.+)の魅力をお伝えします。現地の生活や文化も体験できます。/);
+            if (match) {
+              const keyword1 = match[1];
+              const keyword2 = match[2];
+              const region = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `Focusing on ${englishKeyword1} and ${englishKeyword2}, I'll convey the charm of ${region}. You can also experience local life and culture.`;
+            }
+          }
+          // パターン6: {region}の歴史と文化に精通したガイドです。{keyword1}から{keyword2}まで幅広くご案内します。
+          else if (text.includes('の歴史と文化に精通したガイドです。')) {
+            const match = text.match(/(.+)の歴史と文化に精通したガイドです。(.+)から(.+)まで幅広くご案内します。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `I'm a guide well-versed in ${region}'s history and culture. I'll guide you widely from ${englishKeyword1} to ${englishKeyword2}.`;
+            }
+          }
+          // パターン7: {region}で育った地元民ならではの視点で、{keyword1}の名所や{keyword2}スポットを案内します。
+          else if (text.includes('で育った地元民ならではの視点で、')) {
+            const match = text.match(/(.+)で育った地元民ならではの視点で、(.+)の名所や(.+)スポットを案内します。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `From a local's perspective who grew up in ${region}, I'll guide you to ${englishKeyword1} landmarks and ${englishKeyword2} spots.`;
+            }
+          }
+          // パターン8: {region}の{keyword1}に特化したツアーを提供しています。{keyword2}も併せてお楽しみいただけます。
+          else if (text.includes('に特化したツアーを提供しています。')) {
+            const match = text.match(/(.+)の(.+)に特化したツアーを提供しています。(.+)も併せてお楽しみいただけます。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `I provide tours specialized in ${region}'s ${englishKeyword1}. You can also enjoy ${englishKeyword2}.`;
+            }
+          }
+          // パターン9: 生まれも育ちも{region}の地元っ子。{keyword1}や{keyword2}など、あなたの興味に合わせたプランをご提案します。
+          else if (text.includes('生まれも育ちも') && text.includes('の地元っ子。')) {
+            const match = text.match(/生まれも育ちも(.+)の地元っ子。(.+)や(.+)など、あなたの興味に合わせたプランをご提案します。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `Born and raised in ${region}, I'm a local. I'll propose plans tailored to your interests, including ${englishKeyword1} and ${englishKeyword2}.`;
+            }
+          }
+          // パターン10: {region}の自然や文化を愛する地元ガイド。特に{keyword1}の魅力をお伝えします。{keyword2}にもご案内可能です。
+          else if (text.includes('の自然や文化を愛する地元ガイド。')) {
+            const match = text.match(/(.+)の自然や文化を愛する地元ガイド。特に(.+)の魅力をお伝えします。(.+)にもご案内可能です。/);
+            if (match) {
+              const region = match[1];
+              const keyword1 = match[2];
+              const keyword2 = match[3];
+              
+              const englishKeyword1 = translateKeyword(keyword1);
+              const englishKeyword2 = translateKeyword(keyword2);
+              
+              description.textContent = `A local guide who loves ${region}'s nature and culture. I'll especially convey the charm of ${englishKeyword1}. I can also guide you to ${englishKeyword2}.`;
+            }
           }
           // 固定の初期ガイドの翻訳
           else if (text.includes('東京の隠れた名所を案内します')) {
