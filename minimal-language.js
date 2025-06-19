@@ -512,15 +512,85 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // 追加のボタン翻訳（フィルターボタンなど）
-    document.querySelectorAll('button, .btn, input[type="button"], input[type="submit"]').forEach(function(button) {
+    document.querySelectorAll('button, .btn, input[type="button"], input[type="submit"], a.btn').forEach(function(button) {
       const text = button.textContent || button.value || '';
       if (text.includes('ガイドを絞り込み')) {
         if (button.textContent) button.textContent = 'Filter Guides';
         if (button.value) button.value = 'Filter Guides';
       }
+      else if (text.includes('詳細を見る')) {
+        if (button.textContent) button.textContent = 'See Details';
+        if (button.value) button.value = 'See Details';
+      }
     });
+    
+    // より確実な方法：すべてのボタン要素をチェック
+    document.querySelectorAll('a, button, .btn').forEach(function(element) {
+      if (element.textContent && element.textContent.trim() === '詳細を見る') {
+        element.textContent = 'See Details';
+      }
+    });
+    
+    // 特に guide-details-link クラスのボタンを対象に
+    document.querySelectorAll('.guide-details-link').forEach(function(element) {
+      if (element.textContent && element.textContent.trim() === '詳細を見る') {
+        element.textContent = 'See Details';
+      }
+    });
+    
+    // さらに、動的に生成されるボタンに対応するため少し遅延して実行
+    setTimeout(function() {
+      document.querySelectorAll('a.btn, button.btn, .guide-details-link').forEach(function(element) {
+        if (element.textContent && element.textContent.trim() === '詳細を見る') {
+          element.textContent = 'See Details';
+        }
+      });
+    }, 100);
+    
+    // 動的コンテンツの監視（ガイドカードが後から追加される場合に対応）
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // 新しく追加された要素内の「詳細を見る」ボタンを翻訳
+              const buttons = node.querySelectorAll ? node.querySelectorAll('a.btn, button.btn, .guide-details-link') : [];
+              buttons.forEach(function(button) {
+                if (button.textContent && button.textContent.trim() === '詳細を見る') {
+                  button.textContent = 'See Details';
+                }
+              });
+              
+              // 追加された要素自体が「詳細を見る」ボタンの場合
+              if ((node.tagName === 'A' || node.tagName === 'BUTTON') && 
+                  node.textContent && node.textContent.trim() === '詳細を見る') {
+                node.textContent = 'See Details';
+              }
+            }
+          });
+        }
+      });
+    });
+    
+    // ガイドカードコンテナを監視
+    const guideContainer = document.getElementById('guide-cards-container');
+    if (guideContainer) {
+      observer.observe(guideContainer, { childList: true, subtree: true });
+    }
     
     // タイトル変更
     document.title = 'Local Guide - Experience Special Journeys';
   }
+  
+  // 言語変更時に翻訳を再実行する関数
+  function retranslateButtons() {
+    document.querySelectorAll('a.btn, button.btn, .guide-details-link').forEach(function(element) {
+      if (element.textContent && element.textContent.trim() === '詳細を見る') {
+        element.textContent = 'See Details';
+      }
+    });
+  }
+  
+  // グローバルに翻訳関数を公開（他のスクリプトから呼び出し可能）
+  window.retranslateButtons = retranslateButtons;
 });

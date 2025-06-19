@@ -221,6 +221,12 @@
   function setupGuideDetailLinks() {
     const detailLinks = document.querySelectorAll('.guide-details-link');
     detailLinks.forEach(link => {
+      // 英語モードの場合、ボタンテキストを翻訳
+      const savedLanguage = localStorage.getItem('selectedLanguage');
+      if (savedLanguage === 'en' && link.textContent && link.textContent.trim() === '詳細を見る') {
+        link.textContent = 'See Details';
+      }
+      
       link.addEventListener('click', function(e) {
         e.preventDefault();
         const guideId = this.getAttribute('data-guide-id');
