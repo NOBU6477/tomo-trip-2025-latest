@@ -242,11 +242,11 @@
         if (touristData) {
           console.log('直接リダイレクト開始: guide-details-content.html');
           // 観光客として登録済みなら直接詳細コンテンツページへ移動（フラッシュなし）
-          window.location.href = `guide-details-content.html?id=${guideId}`;
+          window.location.replace(`guide-details-content.html?id=${guideId}`);
         } else {
           console.log('認証要求ページにリダイレクト: auth-required.html');
           // 未ログインなら認証要求ページへ直接移動
-          window.location.href = `auth-required.html?guide=${guideId}`;
+          window.location.replace(`auth-required.html?guide=${guideId}`);
         }
       });
     });
