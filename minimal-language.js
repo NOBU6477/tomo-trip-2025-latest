@@ -176,17 +176,60 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
     
-    // ガイド紹介カードの翻訳（複数のセレクタとパターンを使用してより確実に翻訳）
-    document.querySelectorAll('.card').forEach(function(card) {
+    // ガイド紹介カードの翻訳（すべてのガイドカードに対応）
+    document.querySelectorAll('.card, .guide-card').forEach(function(card) {
       // ガイド名の下の説明文の翻訳
-      const descriptions = card.querySelectorAll('p');
+      const descriptions = card.querySelectorAll('p.card-text');
       descriptions.forEach(function(description) {
-        if (description.textContent.includes('東京在住の食文化')) {
-          description.textContent = 'A detailed guide to Tokyo\'s food culture, taking you to hidden gems known only to locals.';
-        } else if (description.textContent.includes('京都在住10年')) {
-          description.textContent = 'Resident of Kyoto for 10 years, conveying various attractions from historical temples and shrines to modern Kyoto.';
-        } else if (description.textContent.includes('大阪のストリートフード')) {
-          description.textContent = 'Local guide specializing in Osaka\'s street food and nightlife, experience the hospitality and personality of Osaka!';
+        // 場所情報でない説明文のみを翻訳
+        if (!description.querySelector('i.bi-geo-alt-fill') && 
+            !description.classList.contains('guide-location') &&
+            description.textContent.trim().length > 10) {
+          
+          const text = description.textContent.trim();
+          
+          // 各県の魅力を知り尽くしたガイドの翻訳パターン
+          if (text.includes('の魅力を知り尽くしたローカルガイドです。')) {
+            const prefecture = text.split('の魅力を知り尽くした')[0];
+            const specialties = text.split('が得意分野です。')[0].split('。')[1];
+            
+            let englishSpecialties = specialties
+              .replace('ナイトツアーとグルメ', 'night tours and gourmet')
+              .replace('写真スポットと観光', 'photo spots and sightseeing')
+              .replace('料理と文化体験', 'cuisine and cultural experiences')
+              .replace('歴史散策とアウトドア', 'historical walks and outdoor activities')
+              .replace('ローカル体験と自然', 'local experiences and nature')
+              .replace('季節体験と温泉', 'seasonal experiences and hot springs')
+              .replace('グルメと写真スポット', 'gourmet and photo spots');
+            
+            description.textContent = `I'm a local guide who knows all about ${prefecture}'s charms. ${englishSpecialties} are my specialties.`;
+          }
+          // 固定の初期ガイドの翻訳
+          else if (text.includes('東京の隠れた名所を案内します')) {
+            description.textContent = "I'll guide you to Tokyo's hidden gems. I specialize in gourmet spots and photo locations.";
+          }
+          else if (text.includes('京都の伝統文化を体験できるツアーを提供します')) {
+            description.textContent = "I provide tours to experience Kyoto's traditional culture. I excel at explaining temples and gardens.";
+          }
+          else if (text.includes('大阪の美味しい食べ物を知り尽くしたガイドです')) {
+            description.textContent = "I'm a guide who knows all the delicious food in Osaka. I also guide evening city walks.";
+          }
+          // 他の一般的なパターン
+          else if (text.includes('在住') && text.includes('ガイド')) {
+            // 基本的な翻訳パターンを適用
+            description.textContent = description.textContent
+              .replace(/([^の]+)在住/g, 'Resident of $1')
+              .replace('のガイド', ' guide')
+              .replace('が得意', 'specializes in');
+          }
+        }
+      });
+      
+      // ボタンテキストの翻訳
+      const cardButtons = card.querySelectorAll('.btn');
+      cardButtons.forEach(function(btn) {
+        if (btn.textContent.includes('詳細を見る')) {
+          btn.textContent = 'See Details';
         }
       });
       
@@ -211,8 +254,8 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       // すべてのボタンの翻訳
-      const buttons = card.querySelectorAll('a.btn, button.btn');
-      buttons.forEach(function(button) {
+      const allCardButtons = card.querySelectorAll('a.btn, button.btn');
+      allCardButtons.forEach(function(button) {
         if (button.textContent.includes('詳細を見る')) {
           button.textContent = 'See Details';
         } else if (button.textContent.includes('もっと見る')) {
@@ -312,6 +355,15 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('a.btn-primary, button.btn-primary').forEach(function(btn) {
       if (btn.textContent.trim() === 'ガイドとして登録する') {
         btn.textContent = 'Register as Guide';
+      }
+    });
+    
+    // 追加のボタン翻訳（フィルターボタンなど）
+    document.querySelectorAll('button, .btn, input[type="button"], input[type="submit"]').forEach(function(button) {
+      const text = button.textContent || button.value || '';
+      if (text.includes('ガイドを絞り込み')) {
+        if (button.textContent) button.textContent = 'Filter Guides';
+        if (button.value) button.value = 'Filter Guides';
       }
     });
     
