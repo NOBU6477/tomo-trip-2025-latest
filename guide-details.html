@@ -40,57 +40,54 @@
   </div>
 
   <script>
-    // 即座に認証チェックを実行
+    // 最優先認証チェック - ページ描画前に実行
     (function() {
       'use strict';
       
-      function checkAuthentication() {
-        const touristData = localStorage.getItem('touristData');
-        
-        if (!touristData) {
-          // 未認証の場合は即座にリダイレクト
-          const urlParams = new URLSearchParams(window.location.search);
-          const guideId = urlParams.get('id');
-          
-          if (guideId) {
-            sessionStorage.setItem('pendingGuideId', guideId);
-          }
-          sessionStorage.setItem('showLoginOnLoad', 'true');
-          
-          // 複数の方法でリダイレクト実行
-          window.location.href = '/index.html?requireLogin=true' + (guideId ? '&guide=' + guideId : '');
-          window.location.replace('/index.html?requireLogin=true' + (guideId ? '&guide=' + guideId : ''));
-          
-          // フォールバック: 500ms後にも実行
-          setTimeout(function() {
-            window.location.href = '/index.html';
-          }, 500);
-          
-          return false;
-        }
-        
-        // 認証済みの場合はページを表示
-        document.getElementById('authCheck').style.display = 'none';
-        document.body.style.display = 'block';
-        return true;
-      }
+      // 即座に認証状態をチェック
+      const touristData = localStorage.getItem('touristData');
       
-      // 即座に実行
-      if (!checkAuthentication()) {
+      if (!touristData) {
+        // 未認証の場合は即座にリダイレクト
+        const urlParams = new URLSearchParams(window.location.search);
+        const guideId = urlParams.get('id');
+        
+        if (guideId) {
+          sessionStorage.setItem('pendingGuideId', guideId);
+        }
+        sessionStorage.setItem('showLoginOnLoad', 'true');
+        
+        // 即座にリダイレクト実行
+        const redirectUrl = 'index.html?requireLogin=true' + (guideId ? '&guide=' + guideId : '');
+        window.location.replace(redirectUrl);
+        
+        // ページの描画を完全に阻止
+        document.write('<div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#667eea;display:flex;align-items:center;justify-content:center;color:white;font-family:sans-serif;z-index:9999;"><div style="text-align:center;"><div style="width:40px;height:40px;border:4px solid rgba(255,255,255,0.3);border-top:4px solid white;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 20px;"></div><p>認証が必要です</p><p>ログインページに移動中...</p></div></div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>');
+        document.close();
+        
+        // 追加のフォールバック
+        setTimeout(function() {
+          window.location.href = 'index.html';
+        }, 2000);
+        
         return;
       }
       
-      // DOM読み込み後にも再チェック
-      document.addEventListener('DOMContentLoaded', function() {
-        if (!checkAuthentication()) {
-          return;
+      // 認証済みユーザーの場合
+      // DOM読み込み完了後にページを表示
+      function showAuthenticatedPage() {
+        const authCheck = document.getElementById('authCheck');
+        if (authCheck) {
+          authCheck.style.display = 'none';
         }
-      });
+        document.body.style.display = 'block';
+      }
       
-      // ページ表示時にも再チェック
-      window.addEventListener('pageshow', function() {
-        checkAuthentication();
-      });
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', showAuthenticatedPage);
+      } else {
+        showAuthenticatedPage();
+      }
       
     })();
   </script>
