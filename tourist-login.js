@@ -333,8 +333,9 @@ function setupGuideDetailLinks() {
       console.log(`選択されたガイドID: ${guideId}`);
       
       if (!touristLoggedIn) {
-        // 未ログインの場合でも、ガイド詳細ページへ移動し、ログインプロンプトを表示
-        window.location.href = `guide-details.html?id=${guideId}&login=required`;
+        // 未ログインの場合はlogin-requiredページに遷移
+        sessionStorage.setItem('pendingGuideId', guideId);
+        window.location.href = 'login-required.html';
       } else {
         // ログイン済みの場合、ガイド詳細ページへ移動
         window.location.href = `guide-details.html?id=${guideId}`;
