@@ -46,28 +46,64 @@
       transform: translateY(-2px);
     }
     
+    .register-dropdown {
+      min-width: 280px;
+      border: none;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      border-radius: 12px;
+      padding: 0;
+      margin-top: 8px;
+    }
+    
+    .register-dropdown .dropdown-item {
+      padding: 1rem 1.25rem;
+      border: none;
+      transition: all 0.2s ease;
+    }
+    
+    .register-dropdown .dropdown-item:hover {
+      background-color: #f8f9fa;
+      transform: translateX(2px);
+    }
+    
     .register-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      font-size: 1.2rem;
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      flex-shrink: 0;
     }
     
     .tourist-icon {
-      background-color: #e0f2fe;
-      color: #0077b6;
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      color: #1976d2;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
     }
     
     .guide-icon {
-      background-color: #e0fcff;
-      color: #0096c7;
+      background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+      color: #388e3c;
+      box-shadow: 0 2px 8px rgba(56, 142, 60, 0.2);
     }
     
     .dropdown-divider {
-      margin: 0.5rem 0;
+      margin: 0;
+      border-color: #e9ecef;
+    }
+    
+    .register-dropdown .fw-bold {
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 2px;
+    }
+    
+    .register-dropdown .text-muted {
+      font-size: 0.875rem;
+      color: #6c757d !important;
+      line-height: 1.3;
     }
     
     @keyframes fadeInDown {
