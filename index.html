@@ -1850,9 +1850,9 @@
           return;
         }
         
-        // 未ログインの場合は直接ログインページに遷移（フラッシュ防止）
+        // 未ログインの場合はログイン必須ページに遷移
         sessionStorage.setItem('pendingGuideId', guideId);
-        window.location.replace(`guide-details.html?id=${guideId}`);
+        window.location.replace('login-required.html');
       };
 
       // ガイド詳細閲覧にログインが必要であることを明示（旧関数、互換性のため）
