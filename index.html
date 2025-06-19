@@ -1860,21 +1860,11 @@
         handleGuideDetailsClick(guideId);
       }
 
-      // 観光客ログイン促進モーダルを表示
+      // 観光客ログイン促進モーダルを表示（無効化）
       function showTouristLoginPrompt(guideId) {
-        const modalElement = document.getElementById('touristLoginPromptModal');
-        if (!modalElement) {
-          createTouristLoginPromptModal();
-        }
-        
-        // ガイドIDを設定
-        const modal = new bootstrap.Modal(document.getElementById('touristLoginPromptModal'));
-        const guideInfo = document.getElementById('selectedGuideInfo');
-        if (guideInfo) {
-          guideInfo.textContent = `ガイドID: ${guideId}`;
-        }
-        
-        modal.show();
+        // この機能は無効化されています - 新しい認証フローを使用
+        console.log('showTouristLoginPrompt は無効化されています');
+        return;
       }
 
       // 観光客ログイン促進モーダルを動的作成
@@ -2124,8 +2114,9 @@
       
       // 観光客ログインを促すモーダル表示
       function showTouristLoginPrompt(guideId) {
-        // ガイドIDを一時保存
-        sessionStorage.setItem('pendingGuideId', guideId);
+        // この機能は無効化されています - 新しい認証フローを使用
+        console.log('showTouristLoginPrompt (second instance) は無効化されています');
+        return;
         
         // カスタムモーダルを作成
         const modalHTML = `
