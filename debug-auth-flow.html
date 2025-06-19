@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>認証フロー デバッグ</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    .btn { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .status { margin: 20px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h1>認証フロー デバッグ</h1>
+  
+  <div class="status">
+    <p>現在の認証状態: <span id="auth-status">確認中...</span></p>
+    <p>localStorage.touristData: <span id="tourist-data">確認中...</span></p>
+  </div>
+  
+  <button class="btn" onclick="simulateLogin()">観光客としてログイン（シミュレート）</button>
+  <button class="btn" onclick="simulateLogout()">ログアウト（シミュレート）</button>
+  <button class="btn" onclick="testGuideDetailsClick()">ガイド詳細ボタンをテスト</button>
+  
+  <div id="log" style="margin-top: 20px; padding: 10px; background: #000; color: #0f0; font-family: monospace; height: 200px; overflow-y: scroll;"></div>
+
+  <script>
+    function log(message) {
+      const logDiv = document.getElementById('log');
+      const timestamp = new Date().toLocaleTimeString();
+      logDiv.innerHTML += `[${timestamp}] ${message}\n`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+      console.log(message);
+    }
+    
+    function updateStatus() {
+      const touristData = localStorage.getItem('touristData');
+      document.getElementById('auth-status').textContent = touristData ? '認証済み' : '未認証';
+      document.getElementById('tourist-data').textContent = touristData || 'なし';
+      log(`認証状態更新: ${touristData ? '認証済み' : '未認証'}`);
+    }
+    
+    function simulateLogin() {
+      const touristData = {
+        id: 'test-tourist-001',
+        name: 'テスト観光客',
+        email: 'test@example.com',
+        loginTime: new Date().toISOString()
+      };
+      localStorage.setItem('touristData', JSON.stringify(touristData));
+      log('観光客ログインをシミュレートしました');
+      updateStatus();
+    }
+    
+    function simulateLogout() {
+      localStorage.removeItem('touristData');
+      log('ログアウトをシミュレートしました');
+      updateStatus();
+    }
+    
+    function testGuideDetailsClick() {
+      const guideId = 1;
+      log('ガイド詳細ボタンクリックをシミュレート開始');
+      
+      // 実際のコードと同じ認証チェック
+      const touristData = localStorage.getItem('touristData');
+      log(`認証データ確認: ${touristData ? '認証済み' : '未認証'}`);
+      
+      if (touristData) {
+        log('guide-details-content.html にリダイレクト予定');
+        log('実際のリダイレクトを5秒後に実行...');
+        setTimeout(() => {
+          window.location.href = `guide-details-content.html?id=${guideId}`;
+        }, 5000);
+      } else {
+        log('auth-required.html にリダイレクト予定');
+        log('実際のリダイレクトを5秒後に実行...');
+        setTimeout(() => {
+          window.location.href = `auth-required.html?guide=${guideId}`;
+        }, 5000);
+      }
+    }
+    
+    // 初期状態を確認
+    document.addEventListener('DOMContentLoaded', function() {
+      log('デバッグページ読み込み完了');
+      updateStatus();
+    });
+  </script>
+</body>
+</html>
