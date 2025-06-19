@@ -2098,16 +2098,18 @@
             return;
           }
           
+          // テスト用：既存のログインデータをクリア
+          localStorage.removeItem('touristData');
+          sessionStorage.removeItem('currentUser');
+          
           // 観光客としてログイン済みかチェック
           const touristData = localStorage.getItem('touristData');
           
           if (touristData) {
             // 観光客としてログイン済みなら詳細ページへ移動
-            alert('ログイン済みです - ガイド詳細ページに遷移します');
             window.location.href = `guide-details.html?id=${guideId}`;
           } else {
             // 未ログインならlogin-requiredページに遷移
-            alert('未ログインです - login-requiredページに遷移します');
             sessionStorage.setItem('pendingGuideId', guideId);
             window.location.href = 'login-required.html';
           }
