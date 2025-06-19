@@ -133,17 +133,25 @@ function generateBasicHtml() {
   `;
 }
 
-// guide-details.html への直接アクセスをブロック
+// guide-details.html への条件付きアクセス制御
 app.get('/guide-details.html', (req, res) => {
-  console.log('guide-details.html への不正アクセスを検出 - リダイレクト実行');
-  const guideId = req.query.id;
-  let redirectUrl = '/index.html';
-  if (guideId) {
-    redirectUrl += `?requireLogin=true&guide=${guideId}`;
-  } else {
-    redirectUrl += '?requireLogin=true';
+  // クライアントサイドでの認証チェックに任せて、ファイルを通常通り提供
+  // 実際の認証チェックはクライアントサイドJavaScriptで行う
+  try {
+    const path = require('path');
+    const fs = require('fs');
+    const filePath = path.join(__dirname, 'guide-details.html');
+    
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, 'utf8');
+      res.send(content);
+    } else {
+      res.status(404).send('Page not found');
+    }
+  } catch (error) {
+    console.error('Error serving guide-details.html:', error);
+    res.status(500).send('Internal server error');
   }
-  res.redirect(302, redirectUrl);
 });
 
 // 静的ファイルを提供
