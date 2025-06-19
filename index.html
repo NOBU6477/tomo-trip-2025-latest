@@ -2106,8 +2106,9 @@
             // 観光客としてログイン済みなら詳細ページへ移動
             window.location.href = `guide-details.html?id=${guideId}`;
           } else {
-            // 未ログインなら観光客ログインを促すモーダルを表示
-            showTouristLoginPrompt(guideId);
+            // 未ログインならlogin-requiredページに遷移
+            sessionStorage.setItem('pendingGuideId', guideId);
+            window.location.href = 'login-required.html';
           }
         }
       });
