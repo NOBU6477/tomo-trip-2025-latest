@@ -314,30 +314,33 @@ function setupGuideDetailLinks() {
   guideLinks.forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
+      console.log('TOURIST-LOGIN.JS: ガイド詳細ボタンがクリックされました');
       
       let guideId = this.getAttribute('data-guide-id');
+      console.log('TOURIST-LOGIN.JS: ガイドID:', guideId);
+      console.log('TOURIST-LOGIN.JS: touristLoggedIn:', touristLoggedIn);
       
       // ガイドIDのエンコードを確認し、必要であればデコード
       if (guideId && guideId.includes('%')) {
         try {
           guideId = decodeURIComponent(guideId);
-          console.log(`デコードされたガイドID: ${guideId}`);
+          console.log(`TOURIST-LOGIN.JS: デコードされたガイドID: ${guideId}`);
         } catch (e) {
-          console.error('ガイドIDのデコードに失敗しました:', e);
+          console.error('TOURIST-LOGIN.JS: ガイドIDのデコードに失敗しました:', e);
         }
       }
       
       // ローカルストレージをクリアして、ガイド詳細ページが新しいデータを読み込むようにする
       localStorage.removeItem(`guide_${guideId}`);
       
-      console.log(`選択されたガイドID: ${guideId}`);
-      
       if (!touristLoggedIn) {
         // 未ログインの場合はlogin-requiredページに遷移
+        console.log('TOURIST-LOGIN.JS: 未ログイン - login-requiredページに遷移');
         sessionStorage.setItem('pendingGuideId', guideId);
         window.location.href = 'login-required.html';
       } else {
         // ログイン済みの場合、ガイド詳細ページへ移動
+        console.log('TOURIST-LOGIN.JS: ログイン済み - ガイド詳細ページに遷移');
         window.location.href = `guide-details.html?id=${guideId}`;
       }
     });
