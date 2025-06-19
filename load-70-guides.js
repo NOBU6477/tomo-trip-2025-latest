@@ -238,14 +238,14 @@
           // 観光客として登録済みなら詳細ページへ移動
           window.location.href = `guide-details.html?id=${guideId}`;
         } else {
-          // 未登録なら観光客登録を促すモーダルを表示
-          if (typeof showTouristRegistrationPrompt === 'function') {
-            showTouristRegistrationPrompt(guideId);
+          // 未ログインなら観光客ログインを促すモーダルを表示
+          if (typeof showTouristLoginPrompt === 'function') {
+            showTouristLoginPrompt(guideId);
           } else {
-            // フォールバック: 観光客登録モーダルを直接表示
+            // フォールバック: 観光客ログインモーダルを直接表示
             sessionStorage.setItem('pendingGuideId', guideId);
-            const registerModal = new bootstrap.Modal(document.getElementById('registerTouristModal'));
-            registerModal.show();
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
           }
         }
         

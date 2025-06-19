@@ -1421,6 +1421,16 @@
           </form>
           <hr>
           <div class="text-center">
+            <div class="bg-light rounded p-3 mb-3">
+              <h6 class="text-primary mb-2">デモアカウント（テスト用）</h6>
+              <div class="small text-start">
+                <div><strong>メール:</strong> test@example.com</div>
+                <div><strong>パスワード:</strong> password</div>
+                <hr class="my-2">
+                <div><strong>メール:</strong> tourist@test.com</div>
+                <div><strong>パスワード:</strong> test123</div>
+              </div>
+            </div>
             <p class="mb-2">アカウントをお持ちでない方</p>
             <button class="btn btn-outline-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerTouristModal">
               <i class="bi bi-person-plus me-1"></i>新規登録
@@ -1756,16 +1766,95 @@
         });
       }
       
-      // ログインフォームのデフォルト処理はguide-login.jsで行います
-      // ここでの実装は不要なのでコメントアウト
-      /* if (loginForm) {
+      // ログインフォームの処理
+      if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
           e.preventDefault();
-          alert('ログインしました');
+          
+          const userType = document.querySelector('input[name="login-user-type"]:checked').value;
+          const email = document.getElementById('login-email').value;
+          const password = document.getElementById('login-password').value;
+          
+          if (!email || !password) {
+            alert('メールアドレスとパスワードを入力してください');
+            return;
+          }
+          
+          // 観光客としてログイン
+          if (userType === 'tourist') {
+            handleTouristLogin(email, password);
+          } else {
+            // ガイドログインは別途実装
+            alert('ガイドログイン機能は準備中です');
+          }
+        });
+      }
+      
+      // 観光客ログイン処理
+      function handleTouristLogin(email, password) {
+        // 簡単な認証シミュレーション（実際のアプリではサーバー認証）
+        if (isValidTouristCredentials(email, password)) {
+          // ログイン成功
+          const touristData = {
+            id: 'tourist_' + Date.now(),
+            name: extractNameFromEmail(email),
+            email: email,
+            loginTime: new Date().toISOString(),
+            isAuthenticated: true
+          };
+          
+          // ローカルストレージに保存
+          localStorage.setItem('touristData', JSON.stringify(touristData));
+          
+          // ログインモーダルを閉じる
           const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
           modal.hide();
-        });
-      } */
+          
+          // 成功メッセージ
+          alert('観光客としてログインしました！');
+          
+          // 保存されていたガイドIDがあれば詳細ページにリダイレクト
+          const pendingGuideId = sessionStorage.getItem('pendingGuideId');
+          if (pendingGuideId) {
+            sessionStorage.removeItem('pendingGuideId');
+            setTimeout(() => {
+              window.location.href = `guide-details.html?id=${pendingGuideId}`;
+            }, 500);
+          }
+        } else {
+          alert('メールアドレスまたはパスワードが正しくありません');
+        }
+      }
+      
+      // 観光客認証情報の検証（実際のアプリではサーバーで行う）
+      function isValidTouristCredentials(email, password) {
+        // デモ用の簡単な認証
+        // 実際のアプリでは、サーバーにリクエストを送信して認証する
+        
+        // 登録済みのユーザーデータをチェック
+        const existingTouristData = localStorage.getItem('touristData');
+        if (existingTouristData) {
+          const userData = JSON.parse(existingTouristData);
+          return userData.email === email;
+        }
+        
+        // デモ用のテストアカウント
+        const demoAccounts = [
+          { email: 'test@example.com', password: 'password' },
+          { email: 'tourist@test.com', password: 'test123' },
+          { email: 'demo@tourist.com', password: 'demo123' }
+        ];
+        
+        return demoAccounts.some(account => 
+          account.email === email && account.password === password
+        );
+      }
+      
+      // メールアドレスから名前を抽出
+      function extractNameFromEmail(email) {
+        const localPart = email.split('@')[0];
+        return localPart.charAt(0).toUpperCase() + localPart.slice(1);
+      }
       
       // お問い合わせフォームの送信処理
       const contactForm = document.getElementById('contact-form');
@@ -1857,59 +1946,62 @@
             return;
           }
           
-          // 観光客として登録済みかチェック
+          // 観光客としてログイン済みかチェック
           const touristData = localStorage.getItem('touristData');
           
           if (touristData) {
-            // 観光客として登録済みなら詳細ページへ移動
+            // 観光客としてログイン済みなら詳細ページへ移動
             window.location.href = `guide-details.html?id=${guideId}`;
           } else {
-            // 未登録なら観光客登録を促すモーダルを表示
-            showTouristRegistrationPrompt(guideId);
+            // 未ログインなら観光客ログインを促すモーダルを表示
+            showTouristLoginPrompt(guideId);
           }
         }
       });
       
-      // 観光客登録を促すモーダル表示
-      function showTouristRegistrationPrompt(guideId) {
+      // 観光客ログインを促すモーダル表示
+      function showTouristLoginPrompt(guideId) {
         // ガイドIDを一時保存
         sessionStorage.setItem('pendingGuideId', guideId);
         
         // カスタムモーダルを作成
         const modalHTML = `
-          <div class="modal fade" id="registrationPromptModal" tabindex="-1" aria-hidden="true">
+          <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content">
                 <div class="modal-header border-0 text-center pb-0">
                   <div class="w-100">
-                    <i class="bi bi-person-plus-fill text-primary" style="font-size: 3rem;"></i>
-                    <h4 class="modal-title mt-3">ガイドの詳細を見るには</h4>
+                    <i class="bi bi-lock-fill text-warning" style="font-size: 3rem;"></i>
+                    <h4 class="modal-title mt-3">ログインが必要です</h4>
                   </div>
                 </div>
                 <div class="modal-body text-center">
-                  <p class="mb-4">ガイドの詳細情報や予約機能をご利用いただくには、観光客としての登録が必要です。</p>
+                  <p class="mb-4">ガイドの詳細情報や予約機能をご利用いただくには、観光客としてログインしてください。</p>
                   
                   <div class="bg-light rounded p-3 mb-4">
-                    <h6 class="mb-2">登録後にできること</h6>
+                    <h6 class="mb-2">ログイン後にできること</h6>
                     <div class="text-start small">
                       <div class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>ガイドの詳細プロフィール閲覧</div>
-                      <div class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>ガイドとの直接予約</div>
+                      <div class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>ガイドとの直接予約・メッセージ</div>
                       <div class="mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>レビューの閲覧・投稿</div>
                       <div><i class="bi bi-check-circle-fill text-success me-2"></i>お気に入りガイドの保存</div>
                     </div>
                   </div>
                   
                   <div class="d-grid gap-2">
-                    <button type="button" class="btn btn-primary btn-lg" onclick="startTouristRegistration()">
-                      <i class="bi bi-person-plus me-2"></i>観光客として登録する
+                    <button type="button" class="btn btn-primary btn-lg" onclick="showTouristLogin()">
+                      <i class="bi bi-box-arrow-in-right me-2"></i>観光客としてログイン
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" onclick="showTouristRegistration()">
+                      <i class="bi bi-person-plus me-2"></i>新規登録
                     </button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                      後で登録する
+                      後でログイン
                     </button>
                   </div>
                   
                   <div class="mt-3">
-                    <small class="text-muted">登録は無料で、30秒で完了します</small>
+                    <small class="text-muted">アカウントをお持ちでない場合は新規登録をお願いします</small>
                   </div>
                 </div>
               </div>
@@ -1918,7 +2010,7 @@
         `;
         
         // 既存のモーダルを削除
-        const existingModal = document.getElementById('registrationPromptModal');
+        const existingModal = document.getElementById('loginPromptModal');
         if (existingModal) {
           existingModal.remove();
         }
@@ -1927,14 +2019,29 @@
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         
         // モーダルを表示
-        const modal = new bootstrap.Modal(document.getElementById('registrationPromptModal'));
+        const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
         modal.show();
       }
       
-      // 観光客登録を開始
-      window.startTouristRegistration = function() {
-        // 登録促進モーダルを閉じる
-        const promptModal = bootstrap.Modal.getInstance(document.getElementById('registrationPromptModal'));
+      // 観光客ログインを表示
+      window.showTouristLogin = function() {
+        // ログイン促進モーダルを閉じる
+        const promptModal = bootstrap.Modal.getInstance(document.getElementById('loginPromptModal'));
+        if (promptModal) {
+          promptModal.hide();
+        }
+        
+        // 観光客ログインモーダルを表示
+        setTimeout(() => {
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          loginModal.show();
+        }, 300);
+      };
+      
+      // 観光客新規登録を表示
+      window.showTouristRegistration = function() {
+        // ログイン促進モーダルを閉じる
+        const promptModal = bootstrap.Modal.getInstance(document.getElementById('loginPromptModal'));
         if (promptModal) {
           promptModal.hide();
         }
