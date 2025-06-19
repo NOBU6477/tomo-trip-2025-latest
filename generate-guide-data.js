@@ -276,8 +276,8 @@ function generateGuideCardsHTML(guides) {
   return html;
 }
 
-// 30名のガイドデータを生成
-const guides = generateGuideData(30);
+// 70名のガイドデータを生成
+const guides = generateGuideData(70);
 
 // HTMLを生成して出力
 const guideCardsHTML = generateGuideCardsHTML(guides);
