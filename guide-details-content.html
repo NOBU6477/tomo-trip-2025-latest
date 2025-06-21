@@ -28,36 +28,33 @@
   </style>
   
   <script>
-    // セキュアな認証チェック - ページ読み込み前に実行
+    // 統一認証チェック - ページ読み込み前に実行
     (function() {
       'use strict';
       
-      // SecureAuthシステムの読み込みを待つ
-      function waitForSecureAuth() {
-        if (window.SecureAuth) {
+      // UnifiedAuthシステムの読み込みを待つ
+      function waitForUnifiedAuth() {
+        if (window.UnifiedAuth) {
           performAuthCheck();
         } else {
-          setTimeout(waitForSecureAuth, 100);
+          setTimeout(waitForUnifiedAuth, 100);
         }
       }
       
       function performAuthCheck() {
-        // セキュアな認証システムを使用して認証状態を確認
-        if (!window.SecureAuth.isAuthenticated()) {
-          console.log('認証されていません - ログイン要求ページにリダイレクト');
+        // 統一認証システムを使用して認証状態を確認
+        if (!window.UnifiedAuth.requireAuth()) {
+          return; // requireAuthが内部でリダイレクトを処理
+        }
+        
+        const currentUser = window.UnifiedAuth.getCurrentUser();
+        if (!currentUser || currentUser.type !== 'tourist') {
+          console.log('無効なユーザータイプ - ログイン要求ページにリダイレクト');
           const urlParams = new URLSearchParams(window.location.search);
           const guideId = urlParams.get('id');
           if (guideId) {
             sessionStorage.setItem('pendingGuideId', guideId);
           }
-          window.location.replace('login-required.html');
-          return;
-        }
-        
-        const currentUser = window.SecureAuth.getCurrentUser();
-        if (!currentUser || currentUser.type !== 'tourist') {
-          console.log('無効なユーザータイプ - ログイン要求ページにリダイレクト');
-          window.SecureAuth.clearAuthData();
           window.location.replace('login-required.html');
           return;
         }
@@ -75,8 +72,8 @@
         }, 100);
       }
       
-      // SecureAuthシステムの読み込みを待つ
-      waitForSecureAuth();
+      // UnifiedAuthシステムの読み込みを待つ
+      waitForUnifiedAuth();
     })();
   </script>
 
@@ -496,11 +493,8 @@
     });
   </script>
   
-  <!-- セキュアな認証システム -->
-  <script src="secure-auth-system.js"></script>
-  
-  <!-- 統一認証バリデーター -->
-  <script src="auth-validator.js"></script>
+  <!-- 統一認証システム -->
+  <script src="unified-auth-system.js"></script>
   
   <!-- 言語切り替え機能 -->
   <script src="minimal-language.js"></script>
