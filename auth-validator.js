@@ -9,7 +9,9 @@
   // 有効な認証クレデンシャル（本番では外部サービスから取得）
   const VALID_CREDENTIALS = [
     { email: 'test@example.com', password: 'password', name: 'テストユーザー' },
-    { email: 'tourist@test.com', password: 'test123', name: '観光客テスト' }
+    { email: 'test@example.com', password: 'test123', name: 'テストユーザー' },
+    { email: 'tourist@test.com', password: 'test123', name: '観光客テスト' },
+    { email: 'user@test.com', password: 'password', name: 'テストユーザー' }
   ];
 
   /**
