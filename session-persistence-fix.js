@@ -22,12 +22,38 @@
     const touristData = localStorage.getItem('touristData');
     
     if (touristData) {
-      console.log('既存の観光客ログイン状態を確認:', JSON.parse(touristData));
-      
-      // セッションデータも同期
-      if (!sessionStorage.getItem('currentUser')) {
-        sessionStorage.setItem('currentUser', touristData);
+      // 認証データの有効性を検証
+      if (validateAuthenticationData(touristData)) {
+        console.log('既存の観光客ログイン状態を確認:', JSON.parse(touristData));
+        
+        // セッションデータも同期
+        if (!sessionStorage.getItem('currentUser')) {
+          sessionStorage.setItem('currentUser', touristData);
+        }
+      } else {
+        console.log('無効な認証データを削除');
+        localStorage.removeItem('touristData');
+        sessionStorage.removeItem('currentUser');
       }
+    }
+  }
+
+  /**
+   * 認証データの有効性を検証
+   */
+  function validateAuthenticationData(dataString) {
+    try {
+      const parsedData = JSON.parse(dataString);
+      return parsedData && 
+             parsedData.email && 
+             parsedData.type === 'tourist' &&
+             parsedData.id &&
+             parsedData.name &&
+             typeof parsedData.email === 'string' &&
+             parsedData.email.includes('@');
+    } catch (e) {
+      console.error('認証データの解析に失敗:', e);
+      return false;
     }
   }
 
@@ -67,12 +93,21 @@
         // ログイン状態を確認（データ削除は行わない）
         const touristData = localStorage.getItem('touristData');
         
-        if (touristData) {
+        // 認証データの有効性を検証
+        const isValidAuthentication = validateAuthenticationData(touristData);
+        
+        if (!isValidAuthentication && touristData) {
+          // 無効なデータは削除
+          localStorage.removeItem('touristData');
+          sessionStorage.removeItem('currentUser');
+        }
+        
+        if (isValidAuthentication) {
           console.log('観光客ログイン済み - ガイド詳細ページに移動');
           // ログイン済みなら直接詳細ページに移動
           window.location.href = `guide-details.html?id=${guideId}`;
         } else {
-          console.log('未ログイン - ログイン要求ページに移動');
+          console.log('未ログインまたは無効な認証データ - ログイン要求ページに移動');
           // 未ログインならログイン要求ページに移動
           sessionStorage.setItem('pendingGuideId', guideId);
           window.location.href = 'login-required.html';

@@ -125,20 +125,36 @@ function setupTouristLoginForm() {
         // 既存のガイドデータを削除して競合を防止
         sessionStorage.removeItem('currentUser');
         
-        // TODO: 本番環境では Firebase Authentication などを使用します
-        // ここではデモのため簡易的な認証を行います
-        // 仮の認証処理 (実際のアプリではFirebaseなどの認証を使用)
-        const demoTouristData = {
+        // 実際の認証処理 - 正しいクレデンシャルのみ受け入れる
+        const validCredentials = [
+          { email: 'test@example.com', password: 'password', name: 'テストユーザー' },
+          { email: 'tourist@test.com', password: 'test123', name: '観光客テスト' }
+        ];
+        
+        // 認証を検証
+        const authenticatedUser = validCredentials.find(cred => 
+          cred.email === email && cred.password === password
+        );
+        
+        if (!authenticatedUser) {
+          // 認証失敗
+          showAlert('メールアドレスまたはパスワードが正しくありません', 'danger');
+          console.log('認証失敗:', { email, password });
+          return;
+        }
+        
+        // 認証成功時のみログイン処理を実行
+        const authenticatedTouristData = {
           id: 'tourist_' + Date.now(),
-          name: email.split('@')[0], // メールアドレスの@前をユーザー名とする
-          email: email,
+          name: authenticatedUser.name,
+          email: authenticatedUser.email,
           type: 'tourist'
         };
         
         // ログイン状態を保存（localStorage と sessionStorage 両方に保存）
-        localStorage.setItem('touristData', JSON.stringify(demoTouristData));
-        sessionStorage.setItem('currentUser', JSON.stringify(demoTouristData)); // 共通認証のために追加
-        currentTouristData = demoTouristData;
+        localStorage.setItem('touristData', JSON.stringify(authenticatedTouristData));
+        sessionStorage.setItem('currentUser', JSON.stringify(authenticatedTouristData));
+        currentTouristData = authenticatedTouristData;
         touristLoggedIn = true;
         
         // 観光客としてログインしたことをログに記録
@@ -192,41 +208,58 @@ function setupTouristLoginForm() {
       const email = document.getElementById('tourist-login-email').value;
       const password = document.getElementById('tourist-login-password').value;
       
-      // TODO: 本番環境では Firebase Authentication などを使用します
-      // ここではデモのため簡易的な認証を行います
-      if (email && password) {
-        // 仮の認証処理 (実際のアプリではFirebaseなどの認証を使用)
-        const demoTouristData = {
-          id: 'tourist_' + Date.now(),
-          name: email.split('@')[0], // メールアドレスの@前をユーザー名とする
-          email: email,
-          type: 'tourist'
-        };
-        
-        // 既存のガイドデータを削除して競合を防止
-        sessionStorage.removeItem('currentUser');
-        
-        // ログイン状態を保存
-        localStorage.setItem('touristData', JSON.stringify(demoTouristData));
-        sessionStorage.setItem('currentUser', JSON.stringify(demoTouristData)); // 共通認証のために追加
-        currentTouristData = demoTouristData;
-        touristLoggedIn = true;
-        
-        // UIを更新
-        updateTouristUI(true);
-        
-        // モーダルを閉じる
-        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginTouristModal'));
-        if (loginModal) {
-          loginModal.hide();
-        }
-        
-        // 成功メッセージを表示（ガイド詳細ページでなければ表示）
-        if (!window.location.pathname.includes('guide-details.html')) {
-          showAlert('ログインしました。ガイドの詳細情報が閲覧できるようになりました。', 'success');
-        }
-      } else {
+      // 実際の認証処理 - 正しいクレデンシャルのみ受け入れる
+      const validCredentials = [
+        { email: 'test@example.com', password: 'password', name: 'テストユーザー' },
+        { email: 'tourist@test.com', password: 'test123', name: '観光客テスト' }
+      ];
+      
+      if (!email || !password) {
         showAlert('メールアドレスとパスワードを入力してください', 'danger');
+        return;
+      }
+      
+      // 認証を検証
+      const authenticatedUser = validCredentials.find(cred => 
+        cred.email === email && cred.password === password
+      );
+      
+      if (!authenticatedUser) {
+        // 認証失敗
+        showAlert('メールアドレスまたはパスワードが正しくありません', 'danger');
+        console.log('認証失敗:', { email, password });
+        return;
+      }
+      
+      // 認証成功時のみログイン処理を実行
+      const authenticatedTouristData = {
+        id: 'tourist_' + Date.now(),
+        name: authenticatedUser.name,
+        email: authenticatedUser.email,
+        type: 'tourist'
+      };
+      
+      // 既存のガイドデータを削除して競合を防止
+      sessionStorage.removeItem('currentUser');
+      
+      // ログイン状態を保存
+      localStorage.setItem('touristData', JSON.stringify(authenticatedTouristData));
+      sessionStorage.setItem('currentUser', JSON.stringify(authenticatedTouristData));
+      currentTouristData = authenticatedTouristData;
+      touristLoggedIn = true;
+      
+      // UIを更新
+      updateTouristUI(true);
+      
+      // モーダルを閉じる
+      const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginTouristModal'));
+      if (loginModal) {
+        loginModal.hide();
+      }
+      
+      // 成功メッセージを表示（ガイド詳細ページでなければ表示）
+      if (!window.location.pathname.includes('guide-details.html')) {
+        showAlert('ログインしました。ガイドの詳細情報が閲覧できるようになりました。', 'success');
       }
     });
   }
