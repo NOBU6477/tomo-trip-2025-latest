@@ -28,15 +28,80 @@
   </style>
   
   <script>
-    // 即座にbodyにloaded classを追加してフラッシュを防ぐ
-    document.addEventListener('DOMContentLoaded', function() {
-      document.body.classList.add('loaded');
-    });
-    
-    // フォールバック: DOMContentLoadedが発火しない場合
-    setTimeout(function() {
-      document.body.classList.add('loaded');
-    }, 100);
+    // 厳格な認証チェック - ページ読み込み前に実行
+    (function() {
+      'use strict';
+      
+      // 認証データを確認
+      const touristData = localStorage.getItem('touristData');
+      const sessionData = sessionStorage.getItem('currentUser');
+      
+      // 両方のデータが存在するかチェック
+      if (!touristData || !sessionData) {
+        // 認証データがない場合は即座にリダイレクト
+        console.log('認証データがありません - ログイン要求ページにリダイレクト');
+        const urlParams = new URLSearchParams(window.location.search);
+        const guideId = urlParams.get('id');
+        if (guideId) {
+          sessionStorage.setItem('pendingGuideId', guideId);
+        }
+        window.location.replace('login-required.html');
+        return;
+      }
+      
+      // データの有効性を検証
+      try {
+        const parsedTouristData = JSON.parse(touristData);
+        const parsedSessionData = JSON.parse(sessionData);
+        
+        // 必須フィールドの確認
+        const isValidTourist = parsedTouristData && 
+                              parsedTouristData.email && 
+                              parsedTouristData.type === 'tourist' &&
+                              parsedTouristData.id &&
+                              parsedTouristData.name;
+                              
+        const isValidSession = parsedSessionData && 
+                              parsedSessionData.email && 
+                              parsedSessionData.type === 'tourist';
+        
+        // データが一致するかチェック
+        const dataMatches = parsedTouristData.email === parsedSessionData.email;
+        
+        if (!isValidTourist || !isValidSession || !dataMatches) {
+          console.log('無効な認証データ - クリーンアップしてリダイレクト');
+          localStorage.removeItem('touristData');
+          sessionStorage.removeItem('currentUser');
+          
+          const urlParams = new URLSearchParams(window.location.search);
+          const guideId = urlParams.get('id');
+          if (guideId) {
+            sessionStorage.setItem('pendingGuideId', guideId);
+          }
+          window.location.replace('login-required.html');
+          return;
+        }
+        
+        console.log('認証確認完了 - ページ表示を許可');
+        
+      } catch (e) {
+        console.error('認証データの解析に失敗:', e);
+        localStorage.removeItem('touristData');
+        sessionStorage.removeItem('currentUser');
+        window.location.replace('login-required.html');
+        return;
+      }
+      
+      // 認証が成功した場合のみページを表示
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('loaded');
+      });
+      
+      // フォールバック
+      setTimeout(function() {
+        document.body.classList.add('loaded');
+      }, 100);
+    })();
   </script>
 
 

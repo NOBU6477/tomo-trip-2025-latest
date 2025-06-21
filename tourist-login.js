@@ -98,7 +98,7 @@ function setupTouristLoginForm() {
   if (loginForm) {
     console.log('ログインフォームを発見しました (tourist-login.js)');
     
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       
       // ユーザータイプをチェック
@@ -125,37 +125,47 @@ function setupTouristLoginForm() {
         // 既存のガイドデータを削除して競合を防止
         sessionStorage.removeItem('currentUser');
         
-        // 統一認証バリデーターを使用した認証処理
-        const authenticatedUser = window.AuthValidator ? 
-          window.AuthValidator.validateCredentials(email, password) : null;
-        
-        if (!authenticatedUser) {
-          // 認証失敗
-          showAlert('メールアドレスまたはパスワードが正しくありません', 'danger');
-          console.log('認証失敗:', { email, password });
-          
-          // 不正なデータがあれば削除
-          if (window.AuthValidator) {
-            window.AuthValidator.cleanupInvalidAuthData();
-          }
+        // セキュアな認証システムを使用
+        if (!window.SecureAuth) {
+          showAlert('認証システムが利用できません', 'danger');
           return;
         }
-        
-        // 認証成功時のみログイン処理を実行
-        const authenticatedTouristData = window.AuthValidator ? 
-          window.AuthValidator.saveAuthenticationData(authenticatedUser) :
-          {
-            id: 'tourist_' + Date.now(),
-            name: authenticatedUser.name,
-            email: authenticatedUser.email,
-            type: 'tourist'
-          };
-        
-        currentTouristData = authenticatedTouristData;
-        touristLoggedIn = true;
+
+        // ローディング表示
+        const submitButton = document.querySelector('#login-form button[type="submit"]');
+        const originalText = submitButton ? submitButton.textContent : '';
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = '認証中...';
+        }
+
+        try {
+          const result = await window.SecureAuth.login(email, password);
+          
+          if (!result.success) {
+            showAlert(result.error || 'ログインに失敗しました', 'danger');
+            return;
+          }
+          
+          currentTouristData = result.user;
+          touristLoggedIn = true;
+          
+          console.log('セキュア認証成功:', result.user);
+          
+        } catch (error) {
+          console.error('認証エラー:', error);
+          showAlert('認証処理中にエラーが発生しました', 'danger');
+          return;
+        } finally {
+          // ボタンを元に戻す
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+          }
+        }
         
         // 観光客としてログインしたことをログに記録
-        console.log('観光客としてログイン成功:', demoTouristData);
+        console.log('観光客としてログイン成功:', currentTouristData);
         console.log('現在のページ:', window.location.pathname);
         
         // UIを更新
@@ -210,37 +220,33 @@ function setupTouristLoginForm() {
         return;
       }
       
-      // 統一認証バリデーターを使用した認証処理
-      const authenticatedUser = window.AuthValidator ? 
-        window.AuthValidator.validateCredentials(email, password) : null;
-      
-      if (!authenticatedUser) {
-        // 認証失敗
-        showAlert('メールアドレスまたはパスワードが正しくありません', 'danger');
-        console.log('認証失敗:', { email, password });
+      // セキュアな認証システムを使用
+      if (!window.SecureAuth) {
+        showAlert('認証システムが利用できません', 'danger');
+        return;
+      }
+
+      try {
+        const result = await window.SecureAuth.login(email, password);
         
-        // 不正なデータがあれば削除
-        if (window.AuthValidator) {
-          window.AuthValidator.cleanupInvalidAuthData();
+        if (!result.success) {
+          showAlert(result.error || 'ログインに失敗しました', 'danger');
+          return;
         }
+        
+        currentTouristData = result.user;
+        touristLoggedIn = true;
+        
+        console.log('セキュア認証成功:', result.user);
+        
+      } catch (error) {
+        console.error('認証エラー:', error);
+        showAlert('認証処理中にエラーが発生しました', 'danger');
         return;
       }
       
-      // 認証成功時のみログイン処理を実行
-      const authenticatedTouristData = window.AuthValidator ? 
-        window.AuthValidator.saveAuthenticationData(authenticatedUser) :
-        {
-          id: 'tourist_' + Date.now(),
-          name: authenticatedUser.name,
-          email: authenticatedUser.email,
-          type: 'tourist'
-        };
-      
       // 既存のガイドデータを削除して競合を防止
       sessionStorage.removeItem('currentUser');
-      
-      currentTouristData = authenticatedTouristData;
-      touristLoggedIn = true;
       
       // UIを更新
       updateTouristUI(true);
