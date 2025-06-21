@@ -137,31 +137,24 @@ function generateBasicHtml() {
 app.get('/guide-details.html', (req, res) => {
   const guideId = req.query.id || '';
   
-  // 認証チェック用の最小限HTMLを返す（白画面で処理）
-  const redirectPage = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>TomoTrip</title>
-  <style>
-    body { margin: 0; padding: 0; background: white; }
-  </style>
-</head>
-<body>
-<script>
-// 瞬時にリダイレクト判定を実行
-const touristData = localStorage.getItem('touristData');
-if (touristData) {
-  location.replace('/guide-details-content.html${guideId ? '?id=' + guideId : ''}');
-} else {
-  location.replace('/auth-required.html${guideId ? '?guide=' + guideId : ''}');
-}
-</script>
-</body>
-</html>`;
-  
-  res.send(redirectPage);
+  // 直接guide-details-content.htmlを提供（フラッシュ防止）
+  try {
+    const filePath = path.join(__dirname, 'guide-details-content.html');
+    let content = fs.readFileSync(filePath, 'utf8');
+    
+    // ガイドIDをHTMLに埋め込む
+    if (guideId) {
+      content = content.replace(
+        '</head>',
+        `<script>window.GUIDE_ID = '${guideId}';</script></head>`
+      );
+    }
+    
+    res.send(content);
+  } catch (error) {
+    console.error('Error serving guide-details.html:', error);
+    res.status(500).send('Server Error');
+  }
 });
 
 // 認証要求ページの専用ルート
