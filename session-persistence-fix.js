@@ -93,14 +93,21 @@
       if (key === 'touristData') {
         console.warn('touristDataの削除が試行されました - 呼び出し元:', new Error().stack);
         
-        // 明示的なログアウト処理でない限り削除を防止
-        const isExplicitLogout = new Error().stack.includes('touristLogout') || 
-                                new Error().stack.includes('logout');
+        // 明示的なログアウト処理かどうかを判定
+        const stack = new Error().stack;
+        const isExplicitLogout = stack.includes('touristLogout') || 
+                                stack.includes('logout') ||
+                                stack.includes('handleLogout') ||
+                                stack.includes('executeCompleteLogout') ||
+                                stack.includes('executeForceLogout') ||
+                                window.isLoggingOut === true;
         
-        if (!isExplicitLogout) {
+        if (!isExplicitLogout && !window.allowLogout) {
           console.log('不適切なtouristData削除を防止しました');
           return;
         }
+        
+        console.log('正当なログアウト処理としてtouristDataを削除');
       }
       
       // 通常の削除処理を実行
