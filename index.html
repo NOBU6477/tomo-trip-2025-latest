@@ -2103,10 +2103,6 @@
             return;
           }
           
-          // テスト用：既存のログインデータをクリア
-          localStorage.removeItem('touristData');
-          sessionStorage.removeItem('currentUser');
-          
           // 観光客としてログイン済みかチェック
           const touristData = localStorage.getItem('touristData');
           
@@ -2253,6 +2249,9 @@
   
   <!-- テスト用ログイン機能 -->
   <script src="test-login.js"></script>
+  
+  <!-- セッション永続化修正 -->
+  <script src="session-persistence-fix.js"></script>
   
   <!-- セクション別の専用翻訳スクリプト -->
   <script src="benefits-translator.js"></script>

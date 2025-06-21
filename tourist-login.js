@@ -329,7 +329,7 @@ function setupGuideDetailLinks() {
         }
       }
       
-      // ローカルストレージをクリアして、ガイド詳細ページが新しいデータを読み込むようにする
+      // ガイドの詳細データをリフレッシュ（ログイン状態は維持）
       localStorage.removeItem(`guide_${guideId}`);
       
       if (!touristLoggedIn) {
