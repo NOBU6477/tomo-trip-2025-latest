@@ -209,7 +209,7 @@ function setupTouristLoginForm() {
   // 以前のコードを残しておく（観光客専用ログインフォーム用）
   const touristLoginForm = document.getElementById('tourist-login-form');
   if (touristLoginForm) {
-    touristLoginForm.addEventListener('submit', function(e) {
+    touristLoginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const email = document.getElementById('tourist-login-email').value;

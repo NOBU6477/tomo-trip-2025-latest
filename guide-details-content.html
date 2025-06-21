@@ -28,51 +28,23 @@
   </style>
   
   <script>
-    // 厳格な認証チェック - ページ読み込み前に実行
+    // セキュアな認証チェック - ページ読み込み前に実行
     (function() {
       'use strict';
       
-      // 認証データを確認
-      const touristData = localStorage.getItem('touristData');
-      const sessionData = sessionStorage.getItem('currentUser');
-      
-      // 両方のデータが存在するかチェック
-      if (!touristData || !sessionData) {
-        // 認証データがない場合は即座にリダイレクト
-        console.log('認証データがありません - ログイン要求ページにリダイレクト');
-        const urlParams = new URLSearchParams(window.location.search);
-        const guideId = urlParams.get('id');
-        if (guideId) {
-          sessionStorage.setItem('pendingGuideId', guideId);
+      // SecureAuthシステムの読み込みを待つ
+      function waitForSecureAuth() {
+        if (window.SecureAuth) {
+          performAuthCheck();
+        } else {
+          setTimeout(waitForSecureAuth, 100);
         }
-        window.location.replace('login-required.html');
-        return;
       }
       
-      // データの有効性を検証
-      try {
-        const parsedTouristData = JSON.parse(touristData);
-        const parsedSessionData = JSON.parse(sessionData);
-        
-        // 必須フィールドの確認
-        const isValidTourist = parsedTouristData && 
-                              parsedTouristData.email && 
-                              parsedTouristData.type === 'tourist' &&
-                              parsedTouristData.id &&
-                              parsedTouristData.name;
-                              
-        const isValidSession = parsedSessionData && 
-                              parsedSessionData.email && 
-                              parsedSessionData.type === 'tourist';
-        
-        // データが一致するかチェック
-        const dataMatches = parsedTouristData.email === parsedSessionData.email;
-        
-        if (!isValidTourist || !isValidSession || !dataMatches) {
-          console.log('無効な認証データ - クリーンアップしてリダイレクト');
-          localStorage.removeItem('touristData');
-          sessionStorage.removeItem('currentUser');
-          
+      function performAuthCheck() {
+        // セキュアな認証システムを使用して認証状態を確認
+        if (!window.SecureAuth.isAuthenticated()) {
+          console.log('認証されていません - ログイン要求ページにリダイレクト');
           const urlParams = new URLSearchParams(window.location.search);
           const guideId = urlParams.get('id');
           if (guideId) {
@@ -82,25 +54,29 @@
           return;
         }
         
+        const currentUser = window.SecureAuth.getCurrentUser();
+        if (!currentUser || currentUser.type !== 'tourist') {
+          console.log('無効なユーザータイプ - ログイン要求ページにリダイレクト');
+          window.SecureAuth.clearAuthData();
+          window.location.replace('login-required.html');
+          return;
+        }
+        
         console.log('認証確認完了 - ページ表示を許可');
         
-      } catch (e) {
-        console.error('認証データの解析に失敗:', e);
-        localStorage.removeItem('touristData');
-        sessionStorage.removeItem('currentUser');
-        window.location.replace('login-required.html');
-        return;
+        // 認証が成功した場合のみページを表示
+        document.addEventListener('DOMContentLoaded', function() {
+          document.body.classList.add('loaded');
+        });
+        
+        // フォールバック
+        setTimeout(function() {
+          document.body.classList.add('loaded');
+        }, 100);
       }
       
-      // 認証が成功した場合のみページを表示
-      document.addEventListener('DOMContentLoaded', function() {
-        document.body.classList.add('loaded');
-      });
-      
-      // フォールバック
-      setTimeout(function() {
-        document.body.classList.add('loaded');
-      }, 100);
+      // SecureAuthシステムの読み込みを待つ
+      waitForSecureAuth();
     })();
   </script>
 
@@ -520,13 +496,14 @@
     });
   </script>
   
+  <!-- セキュアな認証システム -->
+  <script src="secure-auth-system.js"></script>
+  
+  <!-- 統一認証バリデーター -->
+  <script src="auth-validator.js"></script>
+  
   <!-- 言語切り替え機能 -->
-
-  
   <script src="minimal-language.js"></script>
-  
-  <!-- テスト用ログイン機能 -->
-  <script src="test-login.js"></script>
   
   <!-- ガイドデータ生成（データが見つからない場合のフォールバック） -->
   <script src="generate-guide-data.js"></script>
