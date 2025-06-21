@@ -93,14 +93,10 @@
         // ログイン状態を確認（データ削除は行わない）
         const touristData = localStorage.getItem('touristData');
         
-        // 認証データの有効性を検証
-        const isValidAuthentication = validateAuthenticationData(touristData);
-        
-        if (!isValidAuthentication && touristData) {
-          // 無効なデータは削除
-          localStorage.removeItem('touristData');
-          sessionStorage.removeItem('currentUser');
-        }
+        // 統一認証バリデーターを使用して認証状態を確認
+        const isValidAuthentication = window.AuthValidator ? 
+          window.AuthValidator.getCurrentLoginStatus() : 
+          validateAuthenticationData(touristData);
         
         if (isValidAuthentication) {
           console.log('観光客ログイン済み - ガイド詳細ページに移動');

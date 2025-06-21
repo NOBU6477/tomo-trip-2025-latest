@@ -125,35 +125,32 @@ function setupTouristLoginForm() {
         // 既存のガイドデータを削除して競合を防止
         sessionStorage.removeItem('currentUser');
         
-        // 実際の認証処理 - 正しいクレデンシャルのみ受け入れる
-        const validCredentials = [
-          { email: 'test@example.com', password: 'password', name: 'テストユーザー' },
-          { email: 'tourist@test.com', password: 'test123', name: '観光客テスト' }
-        ];
-        
-        // 認証を検証
-        const authenticatedUser = validCredentials.find(cred => 
-          cred.email === email && cred.password === password
-        );
+        // 統一認証バリデーターを使用した認証処理
+        const authenticatedUser = window.AuthValidator ? 
+          window.AuthValidator.validateCredentials(email, password) : null;
         
         if (!authenticatedUser) {
           // 認証失敗
           showAlert('メールアドレスまたはパスワードが正しくありません', 'danger');
           console.log('認証失敗:', { email, password });
+          
+          // 不正なデータがあれば削除
+          if (window.AuthValidator) {
+            window.AuthValidator.cleanupInvalidAuthData();
+          }
           return;
         }
         
         // 認証成功時のみログイン処理を実行
-        const authenticatedTouristData = {
-          id: 'tourist_' + Date.now(),
-          name: authenticatedUser.name,
-          email: authenticatedUser.email,
-          type: 'tourist'
-        };
+        const authenticatedTouristData = window.AuthValidator ? 
+          window.AuthValidator.saveAuthenticationData(authenticatedUser) :
+          {
+            id: 'tourist_' + Date.now(),
+            name: authenticatedUser.name,
+            email: authenticatedUser.email,
+            type: 'tourist'
+          };
         
-        // ログイン状態を保存（localStorage と sessionStorage 両方に保存）
-        localStorage.setItem('touristData', JSON.stringify(authenticatedTouristData));
-        sessionStorage.setItem('currentUser', JSON.stringify(authenticatedTouristData));
         currentTouristData = authenticatedTouristData;
         touristLoggedIn = true;
         
@@ -208,43 +205,40 @@ function setupTouristLoginForm() {
       const email = document.getElementById('tourist-login-email').value;
       const password = document.getElementById('tourist-login-password').value;
       
-      // 実際の認証処理 - 正しいクレデンシャルのみ受け入れる
-      const validCredentials = [
-        { email: 'test@example.com', password: 'password', name: 'テストユーザー' },
-        { email: 'tourist@test.com', password: 'test123', name: '観光客テスト' }
-      ];
-      
       if (!email || !password) {
         showAlert('メールアドレスとパスワードを入力してください', 'danger');
         return;
       }
       
-      // 認証を検証
-      const authenticatedUser = validCredentials.find(cred => 
-        cred.email === email && cred.password === password
-      );
+      // 統一認証バリデーターを使用した認証処理
+      const authenticatedUser = window.AuthValidator ? 
+        window.AuthValidator.validateCredentials(email, password) : null;
       
       if (!authenticatedUser) {
         // 認証失敗
         showAlert('メールアドレスまたはパスワードが正しくありません', 'danger');
         console.log('認証失敗:', { email, password });
+        
+        // 不正なデータがあれば削除
+        if (window.AuthValidator) {
+          window.AuthValidator.cleanupInvalidAuthData();
+        }
         return;
       }
       
       // 認証成功時のみログイン処理を実行
-      const authenticatedTouristData = {
-        id: 'tourist_' + Date.now(),
-        name: authenticatedUser.name,
-        email: authenticatedUser.email,
-        type: 'tourist'
-      };
+      const authenticatedTouristData = window.AuthValidator ? 
+        window.AuthValidator.saveAuthenticationData(authenticatedUser) :
+        {
+          id: 'tourist_' + Date.now(),
+          name: authenticatedUser.name,
+          email: authenticatedUser.email,
+          type: 'tourist'
+        };
       
       // 既存のガイドデータを削除して競合を防止
       sessionStorage.removeItem('currentUser');
       
-      // ログイン状態を保存
-      localStorage.setItem('touristData', JSON.stringify(authenticatedTouristData));
-      sessionStorage.setItem('currentUser', JSON.stringify(authenticatedTouristData));
       currentTouristData = authenticatedTouristData;
       touristLoggedIn = true;
       

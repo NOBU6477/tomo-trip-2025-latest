@@ -42,18 +42,23 @@
     window.allowLogout = true;
     
     try {
-      // すべてのユーザーデータを削除
-      localStorage.removeItem('touristData');
-      localStorage.removeItem('guideData');
-      sessionStorage.removeItem('currentUser');
-      sessionStorage.removeItem('pendingGuideId');
-      
-      // グローバル変数をリセット
-      if (window.touristLoggedIn !== undefined) {
-        window.touristLoggedIn = false;
-      }
-      if (window.currentTouristData !== undefined) {
-        window.currentTouristData = null;
+      // 統一認証バリデーターを使用してログアウト
+      if (window.AuthValidator) {
+        window.AuthValidator.performCompleteLogout();
+      } else {
+        // フォールバック処理
+        localStorage.removeItem('touristData');
+        localStorage.removeItem('guideData');
+        sessionStorage.removeItem('currentUser');
+        sessionStorage.removeItem('pendingGuideId');
+        
+        // グローバル変数をリセット
+        if (window.touristLoggedIn !== undefined) {
+          window.touristLoggedIn = false;
+        }
+        if (window.currentTouristData !== undefined) {
+          window.currentTouristData = null;
+        }
       }
 
       console.log('ログアウト処理完了');
