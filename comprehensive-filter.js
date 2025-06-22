@@ -119,6 +119,11 @@
     updateLoadMoreButton(matchingGuides);
     
     console.log(`フィルター完了: ${matchingGuides.length}/${totalGuides}件がマッチ`);
+    
+    // チュートリアルシステムにフィルター使用を通知
+    if (typeof window.onFilterApplied === 'function') {
+      window.onFilterApplied();
+    }
   }
   
   function getFilterCriteria(elements) {
