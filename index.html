@@ -3159,35 +3159,27 @@
 
     // 「ガイドを探す」ボタンの処理
     function exploreGuides() {
-      // 成功モーダルを完全に閉じる
-      const successModal = bootstrap.Modal.getInstance(document.getElementById('touristSuccessModal'));
-      if (successModal) {
-        successModal.hide();
-      }
+      console.log('🚀 exploreGuides関数が開始されました');
       
-      // モーダル要素とバックドロップを強制削除
-      setTimeout(() => {
-        const modalElement = document.getElementById('touristSuccessModal');
-        if (modalElement) {
-          modalElement.remove();
-        }
+      // グローバルクリーンアップを即座に実行
+      forceCleanupAllModals();
+      
+      // 追加の即座の強制クリーンアップ
+      document.querySelectorAll('.modal, .modal-backdrop, .fade.show').forEach(el => el.remove());
+      document.body.className = document.body.className.replace(/modal-[^\s]*/g, '');
+      document.body.removeAttribute('style');
+      document.documentElement.removeAttribute('style');
+      
+      // ガイドセクションに即座にスクロール
+      console.log('📍 ガイドセクションにスクロール開始');
+      const guidesSection = document.getElementById('guides');
+      if (guidesSection) {
+        guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         
-        // バックドロップを強制削除
-        const backdrops = document.querySelectorAll('.modal-backdrop');
-        backdrops.forEach(backdrop => backdrop.remove());
-        
-        // body要素からモーダル関連のクラスを削除
-        document.body.classList.remove('modal-open');
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        
-        // ガイドセクションにスクロール
-        const guidesSection = document.getElementById('guides');
-        if (guidesSection) {
-          guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          
-          // ガイドカードを強調表示
+        // ガイドカードを強調表示
+        setTimeout(() => {
           const guideCards = document.querySelectorAll('.guide-card');
+          console.log(`🎨 ${guideCards.length}個のガイドカードを強調表示`);
           guideCards.forEach((card, index) => {
             setTimeout(() => {
               card.style.transform = 'scale(1.02)';
@@ -3199,10 +3191,13 @@
               }, 1000);
             }, index * 200);
           });
-        }
-        
-        showNotification('ガイド一覧をご覧ください。お気に入りのガイドをクリックして詳細を確認できます。', 'success');
-      }, 100);
+        }, 100);
+      } else {
+        console.error('❌ ガイドセクションが見つかりません');
+      }
+      
+      showNotification('ガイド一覧をご覧ください。お気に入りのガイドをクリックして詳細を確認できます。', 'success');
+      console.log('✅ exploreGuides処理完了');
     }
 
     // 「後で見る」ボタンの処理
@@ -3363,6 +3358,63 @@
         showNotification(`ガイド${guideId}への予約リクエスト機能は開発中です。現在はガイド詳細の閲覧のみ可能です。`, 'info');
       }, 300);
     }
+
+    // グローバルモーダルクリーンアップ関数
+    function forceCleanupAllModals() {
+      console.log('🧹 グローバルモーダルクリーンアップ開始');
+      
+      // すべてのBootstrapモーダルインスタンスを閉じる
+      const allModalElements = document.querySelectorAll('.modal');
+      allModalElements.forEach(modalEl => {
+        const modalInstance = bootstrap.Modal.getInstance(modalEl);
+        if (modalInstance) {
+          console.log('🔒 モーダルインスタンスを閉じる:', modalEl.id);
+          modalInstance.hide();
+        }
+      });
+      
+      // 物理的にすべてのモーダル要素を削除
+      setTimeout(() => {
+        // すべてのモーダル要素
+        document.querySelectorAll('.modal').forEach(el => el.remove());
+        
+        // すべてのバックドロップ
+        document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+        
+        // すべてのfade要素（モーダル関連の可能性）
+        document.querySelectorAll('.fade.show').forEach(el => {
+          if (el.classList.contains('modal') || el.getAttribute('id')?.includes('modal')) {
+            el.remove();
+          }
+        });
+        
+        // body要素の完全リセット
+        document.body.classList.remove('modal-open');
+        document.body.style.cssText = '';
+        document.documentElement.style.cssText = '';
+        
+        // イベントリスナーのクリーンアップ
+        const events = ['hidden.bs.modal', 'hide.bs.modal', 'show.bs.modal', 'shown.bs.modal'];
+        events.forEach(eventType => {
+          document.removeEventListener(eventType, arguments.callee);
+        });
+        
+        console.log('✅ グローバルモーダルクリーンアップ完了');
+      }, 100);
+    }
+
+    // ページ読み込み時にクリーンアップ関数を登録
+    document.addEventListener('DOMContentLoaded', function() {
+      // 任意のキーボードショートカットでモーダルクリーンアップ（デバッグ用）
+      document.addEventListener('keydown', function(e) {
+        // Ctrl+Shift+C でモーダルクリーンアップ
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+          e.preventDefault();
+          forceCleanupAllModals();
+          console.log('🔧 手動モーダルクリーンアップが実行されました');
+        }
+      });
+    });
   </script>
 
   <!-- フィルターチュートリアルモーダル -->
