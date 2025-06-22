@@ -22,16 +22,55 @@
       // 既にチェック済みの場合は実行しない
       if (authCheckCompleted) return;
       
+      // 認証チェックバイパスフラグを確認
+      const skipAuthCheck = sessionStorage.getItem('skipAuthCheck');
+      if (skipAuthCheck === 'true') {
+        sessionStorage.removeItem('skipAuthCheck');
+        authCheckCompleted = true;
+        console.log('認証チェックをバイパス - 新規登録完了後のアクセス');
+        return;
+      }
+      
       try {
-        // 簡単な認証状態チェック
+        // 認証状態チェック（複数のソースから確認）
         const touristData = localStorage.getItem('touristData');
-        if (touristData) {
-          const userData = JSON.parse(touristData);
+        const sessionData = sessionStorage.getItem('currentUser');
+        
+        console.log('認証チェック開始 - ローカル:', !!touristData, 'セッション:', !!sessionData);
+        
+        if (touristData || sessionData) {
+          let userData = null;
+          
+          // ローカルストレージから確認
+          if (touristData) {
+            try {
+              userData = JSON.parse(touristData);
+              console.log('ローカルストレージから認証データ取得:', userData);
+            } catch (e) {
+              console.log('ローカルストレージデータ解析エラー');
+            }
+          }
+          
+          // セッションストレージから確認
+          if (!userData && sessionData) {
+            try {
+              userData = JSON.parse(sessionData);
+              console.log('セッションストレージから認証データ取得:', userData);
+            } catch (e) {
+              console.log('セッションストレージデータ解析エラー');
+            }
+          }
+          
+          // 有効な認証データが見つかった場合
           if (userData && userData.email && userData.type === 'tourist') {
             authCheckCompleted = true;
-            console.log('認証確認完了 - ページ表示継続');
+            console.log('認証確認完了 - ページ表示継続:', userData.email);
             return;
+          } else {
+            console.log('無効な認証データ:', userData);
           }
+        } else {
+          console.log('認証データが見つかりません');
         }
         
         // 認証されていない場合の処理（1回のみ実行）

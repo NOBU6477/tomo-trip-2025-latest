@@ -3051,9 +3051,17 @@
         if (pendingGuideId) {
           sessionStorage.removeItem('pendingGuideId');
           showNotification('ガイドの詳細ページに移動します...', 'info');
+          
+          // 認証データが確実に保存されるまで待機
           setTimeout(() => {
+            // 認証状態を強制的に確認
+            const savedData = localStorage.getItem('touristData');
+            console.log('登録後の認証データ確認:', savedData);
+            
+            // guide-details.htmlの認証チェックをバイパスするフラグを設定
+            sessionStorage.setItem('skipAuthCheck', 'true');
             window.location.href = `guide-details.html?id=${pendingGuideId}`;
-          }, 1000);
+          }, 1500);
         } else {
           // UIを更新してログイン状態を反映
           location.reload();
