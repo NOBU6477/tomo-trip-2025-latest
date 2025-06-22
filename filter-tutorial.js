@@ -269,9 +269,84 @@
     }
   }
   
+  /**
+   * リセットボタン使用時にもっと見るボタンについてのヒントを表示
+   */
+  function onFilterReset() {
+    const hasSeenLoadMoreHint = localStorage.getItem('loadMoreHintShown');
+    
+    if (!hasSeenLoadMoreHint) {
+      setTimeout(() => {
+        showLoadMoreHint();
+        localStorage.setItem('loadMoreHintShown', 'true');
+      }, 1000);
+    }
+  }
+  
+  /**
+   * もっと見るボタンについてのヒントを表示
+   */
+  function showLoadMoreHint() {
+    const loadMoreBtn = document.getElementById('load-more-guides');
+    if (!loadMoreBtn || loadMoreBtn.style.display === 'none') return;
+    
+    const hintDiv = document.createElement('div');
+    hintDiv.className = 'load-more-hint';
+    hintDiv.style.cssText = `
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(40,167,69,0.3);
+      z-index: 9998;
+      max-width: 280px;
+      animation: slideInRight 0.5s ease-out;
+    `;
+    
+    hintDiv.innerHTML = `
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <div class="fw-bold mb-1">
+            <i class="bi bi-arrow-down-circle me-1"></i>もっと見る
+          </div>
+          <div class="small">リセット後は3名のみ表示。「もっと見る」で全ガイドを表示できます</div>
+        </div>
+        <button class="btn-close btn-close-white ms-2" onclick="this.parentElement.parentElement.remove()"></button>
+      </div>
+    `;
+    
+    // アニメーション用CSS（右からスライドイン）
+    if (!document.getElementById('load-more-hint-styles')) {
+      const style = document.createElement('style');
+      style.id = 'load-more-hint-styles';
+      style.textContent = `
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(hintDiv);
+    
+    // 8秒後に自動削除
+    setTimeout(() => {
+      if (hintDiv.parentNode) {
+        hintDiv.remove();
+      }
+    }, 8000);
+    
+    trackTutorialEvent('load_more_hint_shown');
+  }
+  
   // グローバル関数として公開
   window.initFilterTutorial = initFilterTutorial;
   window.onFilterApplied = onFilterApplied;
+  window.onFilterReset = onFilterReset;
   
   // DOM読み込み完了後に初期化
   if (document.readyState === 'loading') {

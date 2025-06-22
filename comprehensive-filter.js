@@ -378,6 +378,11 @@
     // 初期状態に戻す
     resetToInitialState();
     
+    // チュートリアルシステムにリセットを通知
+    if (typeof window.onFilterReset === 'function') {
+      window.onFilterReset();
+    }
+    
     console.log('フィルターリセット完了');
   }
   
