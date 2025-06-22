@@ -38,7 +38,9 @@
     setupEventListeners(elements);
     
     // 初期状態の設定
-    resetToInitialState();
+    setTimeout(() => {
+      resetToInitialState();
+    }, 100);
     
     console.log('包括的フィルターシステムの初期化完了');
   }
@@ -307,26 +309,39 @@
   }
   
   function loadMoreGuides() {
+    console.log('もっと見るボタンが押されました');
+    
     const hiddenGuides = document.querySelectorAll('.guide-item.hidden-guide:not(.filtered-out)');
     const showCount = Math.min(3, hiddenGuides.length);
     
+    console.log(`非表示ガイド数: ${hiddenGuides.length}, 今回表示数: ${showCount}`);
+    
     for (let i = 0; i < showCount; i++) {
       hiddenGuides[i].classList.remove('hidden-guide');
+      console.log(`ガイド${i + 1}を表示に変更`);
     }
     
     // カウンター表示を更新
     const allGuides = document.querySelectorAll('.guide-item');
     const visibleGuides = document.querySelectorAll('.guide-item:not(.hidden-guide):not(.filtered-out)');
+    const remainingHidden = document.querySelectorAll('.guide-item.hidden-guide:not(.filtered-out)');
     const searchResultsCounter = document.getElementById('search-results-counter');
     
     if (searchResultsCounter) {
       searchResultsCounter.textContent = `${visibleGuides.length}件のガイドを表示中（全${allGuides.length}件中）`;
     }
     
-    if (hiddenGuides.length <= showCount) {
-      const loadMoreBtn = document.getElementById('load-more-guides');
-      if (loadMoreBtn) {
-        loadMoreBtn.style.display = 'none';
+    // ボタンの状態を更新
+    const loadMoreBtn = document.getElementById('load-more-guides');
+    if (loadMoreBtn) {
+      if (remainingHidden.length === 0) {
+        loadMoreBtn.textContent = 'すべて表示しました';
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.style.opacity = '0.6';
+        console.log('すべて表示完了 - ボタンを無効化');
+      } else {
+        loadMoreBtn.textContent = 'もっと見る';
+        console.log(`残り${remainingHidden.length}件 - ボタンは有効のまま`);
       }
     }
   }
@@ -347,6 +362,14 @@
       });
     }
     
+    // ロードモアボタンをリセット
+    const loadMoreBtn = document.getElementById('load-more-guides');
+    if (loadMoreBtn) {
+      loadMoreBtn.disabled = false;
+      loadMoreBtn.style.opacity = '1';
+      loadMoreBtn.textContent = 'もっと見る';
+    }
+    
     // 初期状態に戻す
     resetToInitialState();
     
@@ -354,8 +377,12 @@
   }
   
   function resetToInitialState() {
+    console.log('初期状態にリセット中...');
+    
     const allGuideItems = document.querySelectorAll('.guide-item');
     const initialVisibleCount = 3;
+    
+    console.log(`総ガイド数: ${allGuideItems.length}, 初期表示数: ${initialVisibleCount}`);
     
     allGuideItems.forEach((item, index) => {
       // フィルタークラスを削除
@@ -365,19 +392,20 @@
       // 初期表示数以外は非表示
       if (index >= initialVisibleCount) {
         item.classList.add('hidden-guide');
+        console.log(`ガイド${index + 1}: 非表示に設定`);
       } else {
         item.classList.remove('hidden-guide');
+        console.log(`ガイド${index + 1}: 表示に設定`);
       }
     });
     
-    // 結果表示の更新 - 実際に表示される件数を正確にカウント
+    // 結果表示の更新
     const elements = {
       searchResultsCounter: document.getElementById('search-results-counter'),
       noResultsMessage: document.getElementById('no-results-message')
     };
     
     if (elements.searchResultsCounter) {
-      // 初期状態では最初の3件のみ表示
       const visibleCount = Math.min(initialVisibleCount, allGuideItems.length);
       elements.searchResultsCounter.textContent = `${visibleCount}件のガイドを表示中（全${allGuideItems.length}件中）`;
     }
@@ -391,10 +419,15 @@
     if (loadMoreBtn) {
       if (allGuideItems.length > initialVisibleCount) {
         loadMoreBtn.style.display = 'inline-block';
+        loadMoreBtn.textContent = 'もっと見る';
+        console.log('「もっと見る」ボタンを表示');
       } else {
         loadMoreBtn.style.display = 'none';
+        console.log('「もっと見る」ボタンを非表示');
       }
     }
+    
+    console.log('初期状態リセット完了');
   }
   
   // 初期化
