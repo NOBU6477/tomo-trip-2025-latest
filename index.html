@@ -2301,9 +2301,9 @@
           return;
         }
         
-        // 未ログインの場合はログイン必須ページに遷移
+        // 未ログインの場合は登録促進モーダルを表示
         sessionStorage.setItem('pendingGuideId', guideId);
-        window.location.replace('login-required.html');
+        showTouristLoginPrompt(guideId);
       };
 
       // ガイド詳細閲覧にログインが必要であることを明示（旧関数、互換性のため）
@@ -2757,20 +2757,18 @@
             }
           }
           
-          // 未ログインまたは無効な認証データの場合
-          console.log('未認証ユーザー - login-requiredページに遷移');
+          // 未ログインまたは無効な認証データの場合 - メインページで登録促進モーダル表示
+          console.log('未認証ユーザー - 登録促進モーダルを表示');
           localStorage.removeItem('touristData');
           sessionStorage.removeItem('currentUser');
           sessionStorage.setItem('pendingGuideId', guideId);
-          window.location.href = 'login-required.html';
+          showTouristLoginPrompt(guideId);
         }
       });
       
       // 観光客ログインを促すモーダル表示
       function showTouristLoginPrompt(guideId) {
-        // この機能は無効化されています - 新しい認証フローを使用
-        console.log('showTouristLoginPrompt (second instance) は無効化されています');
-        return;
+        console.log('観光客登録促進モーダルを表示:', guideId);
         
         // カスタムモーダルを作成
         const modalHTML = `
