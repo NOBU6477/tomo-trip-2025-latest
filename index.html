@@ -2394,65 +2394,16 @@
         }, 300);
       }
 
-      // 観光客ログイン処理
+      // 観光客ログイン処理（統一認証システムに移管済み）
       function handleTouristLogin(email, password) {
-        // 簡単な認証シミュレーション（実際のアプリではサーバー認証）
-        if (isValidTouristCredentials(email, password)) {
-          // ログイン成功
-          const touristData = {
-            id: email === 'demo@tomotrip.com' ? 'tourist_demo' : 'tourist_' + Date.now(),
-            name: email === 'demo@tomotrip.com' ? 'デモユーザー' : extractNameFromEmail(email),
-            email: email,
-            type: 'tourist',
-            loginTime: new Date().toISOString(),
-            isAuthenticated: true
-          };
-          
-          // ローカルストレージとセッションストレージに保存
-          localStorage.setItem('touristData', JSON.stringify(touristData));
-          sessionStorage.setItem('currentUser', JSON.stringify(touristData));
-          
-          // ログインモーダルを閉じる
-          const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-          modal.hide();
-          
-          // 成功メッセージ
-          alert('観光客としてログインしました！');
-          
-          // 保存されていたガイドIDがあれば詳細ページにリダイレクト
-          const pendingGuideId = sessionStorage.getItem('pendingGuideId');
-          if (pendingGuideId) {
-            sessionStorage.removeItem('pendingGuideId');
-            setTimeout(() => {
-              window.location.href = `guide-details.html?id=${pendingGuideId}`;
-            }, 500);
-          }
-        } else {
-          alert('メールアドレスまたはパスワードが正しくありません');
-        }
+        console.log('旧ログイン関数は無効化されています - 統一認証システムを使用');
+        return;
       }
       
-      // 観光客認証情報の検証（実際のアプリではサーバーで行う）
+      // 観光客認証情報の検証（統一認証システムに移管済み）
       function isValidTouristCredentials(email, password) {
-        // デモ用の簡単な認証
-        // 実際のアプリでは、サーバーにリクエストを送信して認証する
-        
-        // 登録済みのユーザーデータをチェック
-        const existingTouristData = localStorage.getItem('touristData');
-        if (existingTouristData) {
-          const userData = JSON.parse(existingTouristData);
-          return userData.email === email;
-        }
-        
-        // デモ用のテストアカウント
-        const demoAccounts = [
-          { email: 'demo@tomotrip.com', password: 'demo2024' },
-          { email: 'tourist@tomotrip.com', password: 'tourist123' }
-        ];
-        
-        return demoAccounts.some(account => 
-          account.email === email && account.password === password
-        );
+        console.log('旧認証関数は無効化されています - 統一認証システムを使用');
+        return false;
       }
       
       // メールアドレスから名前を抽出
