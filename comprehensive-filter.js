@@ -86,12 +86,14 @@
     
     // 全ガイドカードを取得
     const allGuideItems = document.querySelectorAll('.guide-item');
+    console.log(`発見されたガイドアイテム数: ${allGuideItems.length}`);
     
     let matchingGuides = [];
     let totalGuides = allGuideItems.length;
     
     // 各ガイドカードを評価
-    allGuideItems.forEach(guideItem => {
+    allGuideItems.forEach((guideItem, index) => {
+      console.log(`ガイド${index + 1}を評価中...`);
       const matches = evaluateGuideCard(guideItem, filters);
       
       if (matches) {
@@ -99,10 +101,12 @@
         // マッチしたガイドを表示
         guideItem.classList.remove('hidden-guide', 'filtered-out');
         guideItem.style.display = '';
+        console.log(`ガイド${index + 1}: マッチ - 表示`);
       } else {
         // マッチしないガイドを非表示
         guideItem.classList.add('filtered-out');
         guideItem.style.display = 'none';
+        console.log(`ガイド${index + 1}: 非マッチ - 非表示`);
       }
     });
     
@@ -187,15 +191,43 @@
     const dataFee = guideCard.getAttribute('data-fee') || '';
     const dataKeywords = guideCard.getAttribute('data-keywords') || '';
     
-    return {
+    // フィー情報を正確に取得
+    let feeValue = 0;
+    if (dataFee) {
+      feeValue = parseInt(dataFee);
+    } else if (feeElement) {
+      const feeText = feeElement.textContent.replace(/[^0-9]/g, '');
+      feeValue = parseInt(feeText) || 0;
+    }
+    
+    // 言語情報を正確に取得
+    let languageInfo = '';
+    if (dataLanguages) {
+      languageInfo = dataLanguages;
+    } else if (languageElements.length > 0) {
+      languageInfo = Array.from(languageElements).map(el => el.textContent.trim()).join(',');
+    }
+    
+    // 位置情報を正確に取得
+    let locationInfo = '';
+    if (dataLocation) {
+      locationInfo = dataLocation;
+    } else if (locationElement) {
+      locationInfo = locationElement.textContent.replace(/.*?/, '').trim(); // アイコンを除去
+    }
+    
+    const extractedData = {
       name: nameElement ? nameElement.textContent.trim() : '',
-      location: dataLocation || (locationElement ? locationElement.textContent.trim() : ''),
+      location: locationInfo,
       description: descriptionElement ? descriptionElement.textContent.trim() : '',
-      fee: parseInt(dataFee || (feeElement ? feeElement.textContent.replace(/[^0-9]/g, '') : '0')) || 0,
-      languages: dataLanguages || Array.from(languageElements).map(el => el.textContent.trim()).join(','),
+      fee: feeValue,
+      languages: languageInfo,
       keywords: dataKeywords,
       fullText: guideItem.textContent.toLowerCase()
     };
+    
+    console.log('抽出されたガイドデータ:', extractedData);
+    return extractedData;
   }
   
   function checkLocationMatch(guideLocation, filterLocation) {
@@ -204,7 +236,12 @@
     const filterLower = filterLocation.toLowerCase();
     const guideLower = guideLocation.toLowerCase();
     
-    // 完全一致または部分一致
+    // 都道府県での完全一致チェック
+    if (filterLocation.includes('都') || filterLocation.includes('府') || filterLocation.includes('県')) {
+      return guideLower.includes(filterLower);
+    }
+    
+    // 部分一致チェック
     return guideLower.includes(filterLower) || filterLower.includes(guideLower);
   }
   
