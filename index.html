@@ -820,7 +820,15 @@
   <div class="container py-5">
     <!-- 人気のガイド -->
     <section id="guides" class="mb-5">
-      <h2 class="text-center mb-4">人気のガイド</h2>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="position-relative">
+          <button type="button" class="btn btn-sm btn-outline-info me-3" id="filter-tutorial-btn" style="border-radius: 20px;">
+            <i class="bi bi-question-circle me-1"></i>フィルターの使い方
+          </button>
+        </div>
+        <h2 class="mb-0 flex-grow-1 text-center">人気のガイド</h2>
+        <div style="width: 140px;"></div> <!-- スペーサー -->
+      </div>
       <div class="mb-4">
         <div id="search-results-counter"></div>
         <div id="no-results-message" class="alert alert-info text-center my-4 d-none">検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。</div>
@@ -2894,5 +2902,104 @@
       }, 5000);
     }
   </script>
+
+  <!-- フィルターチュートリアルモーダル -->
+  <div class="modal fade" id="filterTutorialModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title">
+            <i class="bi bi-funnel text-primary me-2"></i>フィルター機能の使い方
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="tutorial-content">
+            <!-- ステップ1 -->
+            <div class="tutorial-step mb-4" data-step="1">
+              <div class="d-flex align-items-start">
+                <div class="step-number bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px; font-size: 14px; font-weight: bold;">1</div>
+                <div class="flex-grow-1">
+                  <h6 class="fw-bold mb-2">フィルターを開く</h6>
+                  <p class="text-muted mb-2">「ガイドを絞り込み」ボタンをクリックしてフィルター画面を表示します。</p>
+                  <div class="tutorial-visual p-3 bg-light rounded">
+                    <button class="btn btn-outline-primary" disabled>
+                      <i class="bi bi-funnel"></i> ガイドを絞り込み
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ステップ2 -->
+            <div class="tutorial-step mb-4" data-step="2">
+              <div class="d-flex align-items-start">
+                <div class="step-number bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px; font-size: 14px; font-weight: bold;">2</div>
+                <div class="flex-grow-1">
+                  <h6 class="fw-bold mb-2">条件を選択</h6>
+                  <p class="text-muted mb-2">地域、言語、料金、キーワードなど、お好みの条件を選択できます。</p>
+                  <div class="tutorial-visual p-3 bg-light rounded">
+                    <div class="row g-2">
+                      <div class="col-6">
+                        <select class="form-select form-select-sm" disabled>
+                          <option>地域を選択</option>
+                        </select>
+                      </div>
+                      <div class="col-6">
+                        <select class="form-select form-select-sm" disabled>
+                          <option>言語を選択</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ステップ3 -->
+            <div class="tutorial-step mb-4" data-step="3">
+              <div class="d-flex align-items-start">
+                <div class="step-number bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-3" style="width: 30px; height: 30px; font-size: 14px; font-weight: bold;">3</div>
+                <div class="flex-grow-1">
+                  <h6 class="fw-bold mb-2">フィルターを適用</h6>
+                  <p class="text-muted mb-2">「フィルターを適用」ボタンで検索結果が更新されます。</p>
+                  <div class="tutorial-visual p-3 bg-light rounded">
+                    <button class="btn btn-primary btn-sm" disabled>
+                      <i class="bi bi-search"></i> フィルターを適用
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm ms-2" disabled>
+                      <i class="bi bi-arrow-clockwise"></i> リセット
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ヒント -->
+            <div class="alert alert-info border-0" style="background: linear-gradient(135deg, #e3f2fd, #f0f9ff);">
+              <div class="d-flex">
+                <i class="bi bi-lightbulb text-info me-2 flex-shrink-0" style="font-size: 1.2em;"></i>
+                <div>
+                  <h6 class="fw-bold mb-1 text-info">便利なヒント</h6>
+                  <ul class="mb-0 ps-3">
+                    <li class="text-muted">複数の条件を組み合わせて絞り込みができます</li>
+                    <li class="text-muted">リセットボタンでいつでも初期状態に戻せます</li>
+                    <li class="text-muted">キーワード検索では趣味や得意分野で探せます</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-success" id="try-filter-btn">
+            <i class="bi bi-play-circle me-1"></i>実際に試してみる
+          </button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
