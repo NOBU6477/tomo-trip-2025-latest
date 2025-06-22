@@ -668,7 +668,7 @@
             </button>
             <ul class="dropdown-menu dropdown-menu-end register-dropdown" aria-labelledby="registerDropdown">
               <li>
-                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerTouristModal" href="#">
+                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#registerTouristModal">
                   <div class="register-icon tourist-icon">
                     <i class="bi bi-person"></i>
                   </div>
@@ -676,11 +676,11 @@
                     <div class="fw-bold">旅行者として登録</div>
                     <div class="text-muted">ローカルガイドと一緒に特別な旅を体験</div>
                   </div>
-                </a>
+                </button>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
-                <a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerGuideModal" href="#">
+                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#registerGuideModal">
                   <div class="register-icon guide-icon">
                     <i class="bi bi-map"></i>
                   </div>
@@ -688,7 +688,7 @@
                     <div class="fw-bold">ガイドとして登録</div>
                     <div class="text-muted">あなたの知識と経験を共有しましょう</div>
                   </div>
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -2892,6 +2892,9 @@
   
   <!-- フィルターチュートリアルシステム -->
   <script src="filter-tutorial.js"></script>
+  
+  <!-- 登録ボタン修正システム -->
+  <script src="registration-fix.js"></script>
   
   <!-- 言語切り替え機能 - シンプル実装 -->
   <script src="minimal-language.js"></script>
