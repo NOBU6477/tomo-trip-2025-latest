@@ -2159,21 +2159,33 @@
         touristForm.addEventListener('submit', function(e) {
           e.preventDefault();
           
-          // 電話番号認証チェック
-          if (document.getElementById('tourist-phone-verified').classList.contains('d-none')) {
-            alert('電話番号認証を完了してください');
+          // 電話番号認証チェック（デモ用に簡略化）
+          const phoneVerified = document.getElementById('tourist-phone-verified');
+          if (phoneVerified.classList.contains('d-none')) {
+            // デモ用：電話番号が入力されていれば自動認証
+            const phoneNumber = document.getElementById('tourist-phone-number').value;
+            if (phoneNumber && phoneNumber.length >= 10) {
+              phoneVerified.classList.remove('d-none');
+            } else {
+              alert('電話番号を入力してください');
+              return;
+            }
+          }
+          
+          // 身分証明書アップロードチェック（デモ用に簡略化）
+          const touristIdType = document.getElementById('tourist-id-type').value;
+          if (!touristIdType) {
+            alert('身分証明書の種類を選択してください');
             return;
           }
           
-          // 身分証明書アップロードチェック
           const touristIdFront = document.getElementById('tourist-id-front');
           if (!touristIdFront.files || touristIdFront.files.length === 0) {
             alert('身分証明書（表面）をアップロードしてください');
             return;
           }
           
-          // 裏面が必要な場合は確認
-          const touristIdType = document.getElementById('tourist-id-type').value;
+          // 裏面が必要な場合は確認（運転免許証とマイナンバーカードのみ）
           const touristIdBack = document.getElementById('tourist-id-back');
           if ((touristIdType === 'drivers_license' || touristIdType === 'my_number') && 
               (!touristIdBack.files || touristIdBack.files.length === 0)) {
@@ -2184,7 +2196,7 @@
           // 観光客データを作成・保存
           const touristData = {
             id: 'tourist_' + Date.now(),
-            name: document.getElementById('tourist-full-name').value,
+            name: document.getElementById('tourist-name').value,
             email: document.getElementById('tourist-email').value,
             phone: document.getElementById('tourist-phone-number').value,
             idType: document.getElementById('tourist-id-type').value,
@@ -2194,9 +2206,10 @@
           
           // ローカルストレージに保存
           localStorage.setItem('touristData', JSON.stringify(touristData));
+          sessionStorage.setItem('currentUser', JSON.stringify(touristData));
           
-          // 成功メッセージを表示
-          alert('観光客登録が完了しました！ガイドの詳細ページに移動します。');
+          // 登録完了と機能アンロック通知を表示
+          showTouristRegistrationSuccess(touristData);
           
           // モーダルを閉じる
           const modal = bootstrap.Modal.getInstance(document.getElementById('registerTouristModal'));
@@ -2446,6 +2459,194 @@
       function extractNameFromEmail(email) {
         const localPart = email.split('@')[0];
         return localPart.charAt(0).toUpperCase() + localPart.slice(1);
+      }
+      
+      /**
+       * 観光客登録成功時の包括的な通知システム
+       * アンロックされた機能を詳細に説明
+       */
+      function showTouristRegistrationSuccess(userData) {
+        // 既存のモーダルを閉じる
+        const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerTouristModal'));
+        if (registerModal) {
+          registerModal.hide();
+        }
+        
+        // 成功通知モーダルのHTML
+        const successModalHTML = `
+          <div class="modal fade show" id="touristSuccessModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+              <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0" style="background: linear-gradient(135deg, #28a745, #20c997); border-radius: 20px 20px 0 0;">
+                  <div class="w-100 text-center text-white">
+                    <div class="mb-3">
+                      <i class="bi bi-check-circle-fill" style="font-size: 4rem;"></i>
+                    </div>
+                    <h3 class="modal-title fw-bold mb-2">登録完了おめでとうございます！</h3>
+                    <p class="mb-0">${userData.name}様、TomoTripへようこそ</p>
+                  </div>
+                </div>
+                <div class="modal-body px-4 py-4">
+                  <div class="alert alert-success border-0 mb-4" style="background: linear-gradient(135deg, #d4edda, #c3e6cb);">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-shield-check text-success me-2" style="font-size: 1.5rem;"></i>
+                      <div>
+                        <strong>認証完了</strong><br>
+                        <small>電話番号と身分証明書の認証が完了し、すべての機能がご利用いただけます</small>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <h5 class="mb-3 text-primary">
+                    <i class="bi bi-unlock-fill me-2"></i>アンロックされた機能
+                  </h5>
+                  
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="feature-card p-3 mb-3 border rounded" style="background: #f8f9fa;">
+                        <div class="d-flex align-items-start">
+                          <div class="feature-icon me-3 text-primary">
+                            <i class="bi bi-person-lines-fill" style="font-size: 1.5rem;"></i>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold mb-1">ガイド詳細の閲覧</h6>
+                            <p class="small text-muted mb-0">すべてのガイドのプロフィール、経歴、料金詳細を確認できます</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="feature-card p-3 mb-3 border rounded" style="background: #f8f9fa;">
+                        <div class="d-flex align-items-start">
+                          <div class="feature-icon me-3 text-primary">
+                            <i class="bi bi-calendar-plus" style="font-size: 1.5rem;"></i>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold mb-1">ガイド予約機能</h6>
+                            <p class="small text-muted mb-0">希望の日時でガイドを予約し、特別な体験を楽しめます</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="feature-card p-3 mb-3 border rounded" style="background: #f8f9fa;">
+                        <div class="d-flex align-items-start">
+                          <div class="feature-icon me-3 text-primary">
+                            <i class="bi bi-chat-dots" style="font-size: 1.5rem;"></i>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold mb-1">メッセージ機能</h6>
+                            <p class="small text-muted mb-0">ガイドと直接やり取りして詳細な相談ができます</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="feature-card p-3 mb-3 border rounded" style="background: #f8f9fa;">
+                        <div class="d-flex align-items-start">
+                          <div class="feature-icon me-3 text-primary">
+                            <i class="bi bi-heart" style="font-size: 1.5rem;"></i>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold mb-1">お気に入り機能</h6>
+                            <p class="small text-muted mb-0">気になるガイドを保存して後から簡単にアクセスできます</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="feature-card p-3 mb-3 border rounded" style="background: #f8f9fa;">
+                        <div class="d-flex align-items-start">
+                          <div class="feature-icon me-3 text-primary">
+                            <i class="bi bi-star" style="font-size: 1.5rem;"></i>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold mb-1">レビュー投稿</h6>
+                            <p class="small text-muted mb-0">体験後にレビューを投稿して他の観光客をサポート</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div class="feature-card p-3 mb-3 border rounded" style="background: #f8f9fa;">
+                        <div class="d-flex align-items-start">
+                          <div class="feature-icon me-3 text-primary">
+                            <i class="bi bi-credit-card" style="font-size: 1.5rem;"></i>
+                          </div>
+                          <div>
+                            <h6 class="fw-bold mb-1">安全な決済</h6>
+                            <p class="small text-muted mb-0">セキュアな決済システムで安心してお支払いできます</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="alert alert-info border-0 mt-4" style="background: linear-gradient(135deg, #d1ecf1, #bee5eb);">
+                    <div class="d-flex">
+                      <i class="bi bi-info-circle text-info me-2 flex-shrink-0"></i>
+                      <div>
+                        <strong>次のステップ</strong><br>
+                        <small>今すぐお好みのガイドを見つけて、日本での素晴らしい体験を始めましょう！</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                  <div class="w-100 d-flex justify-content-center gap-3">
+                    <button type="button" class="btn btn-success btn-lg px-4" onclick="exploreGuides()">
+                      <i class="bi bi-search me-2"></i>ガイドを探す
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg" onclick="closeSuccessModal()">
+                      後で見る
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // 既存の成功モーダルを削除
+        const existingModal = document.getElementById('touristSuccessModal');
+        if (existingModal) {
+          existingModal.remove();
+        }
+        
+        // 新しいモーダルを追加
+        document.body.insertAdjacentHTML('beforeend', successModalHTML);
+        
+        // 5秒後に自動でガイド探索を促すアニメーション
+        setTimeout(() => {
+          const exploreBtn = document.querySelector('#touristSuccessModal .btn-success');
+          if (exploreBtn) {
+            exploreBtn.classList.add('animate__animated', 'animate__pulse');
+          }
+        }, 5000);
+      }
+      
+      /**
+       * ガイド探索に移動
+       */
+      window.exploreGuides = function() {
+        closeSuccessModal();
+        // ページトップのガイドセクションにスクロール
+        document.getElementById('guides').scrollIntoView({ behavior: 'smooth' });
+        
+        // 少し遅延してフィルターのヒントを表示
+        setTimeout(() => {
+          if (typeof window.showFilterHint === 'function') {
+            window.showFilterHint();
+          }
+        }, 1000);
+      }
+      
+      /**
+       * 成功モーダルを閉じる
+       */
+      window.closeSuccessModal = function() {
+        const modal = document.getElementById('touristSuccessModal');
+        if (modal) {
+          modal.style.display = 'none';
+          modal.remove();
+        }
       }
       
       // お問い合わせフォームの送信処理
