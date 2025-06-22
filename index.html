@@ -2703,9 +2703,9 @@
               const userData = JSON.parse(touristData);
               console.log('ユーザーデータ:', userData);
               if (userData && userData.type === 'tourist') {
-                // 観光客としてログイン済みなら詳細ページへ移動（無効化）
-                console.log('認証済みユーザー - ガイド詳細表示:', guideId);
-                // window.location.href = `guide-details.html?id=${guideId}`;
+                // 観光客としてログイン済みなら詳細モーダルを表示
+                console.log('認証済みユーザー - ガイド詳細モーダル表示:', guideId);
+                showGuideDetailModal(guideId);
                 return;
               }
             } catch (e) {
@@ -3203,6 +3203,135 @@
       }, 300);
       
       showNotification('いつでもガイド一覧からお選びいただけます。', 'info');
+    }
+
+    // ガイド詳細モーダルを表示（認証済みユーザー向け）
+    function showGuideDetailModal(guideId) {
+      const guideData = getGuideDataById(guideId);
+      if (!guideData) {
+        showNotification('ガイド情報が見つかりません。', 'error');
+        return;
+      }
+
+      const modalHTML = `
+        <div class="modal fade" id="guideDetailModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+              <div class="modal-header border-0 bg-primary text-white">
+                <h5 class="modal-title">
+                  <i class="bi bi-person-circle me-2"></i>${guideData.name}さんのプロフィール
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row">
+                  <div class="col-md-4 text-center">
+                    <img src="${guideData.image}" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;" alt="${guideData.name}">
+                    <div class="mb-3">
+                      <span class="badge bg-primary fs-6">${guideData.fee}/セッション</span>
+                    </div>
+                    <div class="text-warning mb-3">
+                      ${'★'.repeat(Math.floor(guideData.rating))}${'☆'.repeat(5 - Math.floor(guideData.rating))}
+                      <span class="text-dark ms-1">${guideData.rating}</span>
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <h6><i class="bi bi-geo-alt-fill text-primary me-2"></i>活動エリア</h6>
+                    <p class="mb-3">${guideData.location}</p>
+                    
+                    <h6><i class="bi bi-translate text-primary me-2"></i>対応言語</h6>
+                    <p class="mb-3">
+                      ${guideData.languages.map(lang => `<span class="badge bg-light text-dark me-1">${lang}</span>`).join('')}
+                    </p>
+                    
+                    <h6><i class="bi bi-person-lines-fill text-primary me-2"></i>ガイド紹介</h6>
+                    <p class="mb-3">${guideData.description}</p>
+                    
+                    <h6><i class="bi bi-star-fill text-primary me-2"></i>得意な分野</h6>
+                    <p class="mb-3">
+                      ${guideData.keywords.map(keyword => `<span class="badge bg-secondary me-1">${keyword}</span>`).join('')}
+                    </p>
+                  </div>
+                </div>
+                
+                <div class="alert alert-success mt-4">
+                  <i class="bi bi-check-circle-fill me-2"></i>
+                  <strong>認証済み観光客</strong> - このガイドに予約リクエストを送ることができます
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-success btn-lg flex-fill" onclick="requestBooking('${guideId}')">
+                  <i class="bi bi-calendar-plus me-2"></i>予約リクエストを送る
+                </button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">閉じる</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // 既存のモーダルを削除
+      const existingModal = document.getElementById('guideDetailModal');
+      if (existingModal) {
+        existingModal.remove();
+      }
+
+      // 新しいモーダルを追加
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+      // モーダルを表示
+      const modal = new bootstrap.Modal(document.getElementById('guideDetailModal'));
+      modal.show();
+    }
+
+    // ガイドIDからガイドデータを取得
+    function getGuideDataById(guideId) {
+      const guides = {
+        '1': {
+          name: '清水 宏美',
+          image: 'attached_assets/IMG20221024140826_1750355257888.jpg',
+          fee: '¥6,000',
+          rating: 4.5,
+          location: '石川県 金沢市',
+          languages: ['日本語', '英語'],
+          description: '金沢の伝統文化と歴史に精通したガイドです。兼六園、金沢城、ひがし茶屋街などの名所から、地元の人だけが知る隠れた魅力スポットまでご案内します。',
+          keywords: ['歴史', '文化', '伝統工芸', 'グルメ']
+        },
+        '2': {
+          name: '藤井 直美',
+          image: 'attached_assets/IMG20221024140826_1750355257888.jpg',
+          fee: '¥10,000',
+          rating: 4.0,
+          location: '千葉県 千葉市',
+          languages: ['日本語', '英語', '中国語'],
+          description: '千葉県を拠点に活動しているガイドです。成田山新勝寺や九十九里浜などの観光地から、地元グルメまで幅広くご案内できます。',
+          keywords: ['自然', '寺社仏閣', '海', 'グルメ']
+        },
+        '3': {
+          name: '小川 博文',
+          image: 'attached_assets/IMG20221024140826_1750355257888.jpg',
+          fee: '¥20,000',
+          rating: 3.5,
+          location: '奈良県 奈良市',
+          description: '奈良の鹿と歴史的建造物を愛するガイドです。東大寺、春日大社、奈良公園での特別な体験をお約束します。',
+          languages: ['日本語', '英語(基礎)'],
+          keywords: ['歴史', '動物', '寺社仏閣', '写真スポット']
+        }
+      };
+      
+      return guides[guideId] || null;
+    }
+
+    // 予約リクエスト機能
+    function requestBooking(guideId) {
+      const modal = bootstrap.Modal.getInstance(document.getElementById('guideDetailModal'));
+      if (modal) {
+        modal.hide();
+      }
+      
+      setTimeout(() => {
+        showNotification(`ガイド${guideId}への予約リクエスト機能は開発中です。現在はガイド詳細の閲覧のみ可能です。`, 'info');
+      }, 300);
     }
   </script>
 
