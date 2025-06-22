@@ -314,6 +314,15 @@
       hiddenGuides[i].classList.remove('hidden-guide');
     }
     
+    // カウンター表示を更新
+    const allGuides = document.querySelectorAll('.guide-item');
+    const visibleGuides = document.querySelectorAll('.guide-item:not(.hidden-guide):not(.filtered-out)');
+    const searchResultsCounter = document.getElementById('search-results-counter');
+    
+    if (searchResultsCounter) {
+      searchResultsCounter.textContent = `${visibleGuides.length}件のガイドを表示中（全${allGuides.length}件中）`;
+    }
+    
     if (hiddenGuides.length <= showCount) {
       const loadMoreBtn = document.getElementById('load-more-guides');
       if (loadMoreBtn) {
@@ -361,14 +370,16 @@
       }
     });
     
-    // 結果表示の更新
+    // 結果表示の更新 - 実際に表示される件数を正確にカウント
     const elements = {
       searchResultsCounter: document.getElementById('search-results-counter'),
       noResultsMessage: document.getElementById('no-results-message')
     };
     
     if (elements.searchResultsCounter) {
-      elements.searchResultsCounter.textContent = `全${allGuideItems.length}件のガイドを表示中`;
+      // 初期状態では最初の3件のみ表示
+      const visibleCount = Math.min(initialVisibleCount, allGuideItems.length);
+      elements.searchResultsCounter.textContent = `${visibleCount}件のガイドを表示中（全${allGuideItems.length}件中）`;
     }
     
     if (elements.noResultsMessage) {
