@@ -2106,15 +2106,29 @@
           
           // 観光客としてログイン済みかチェック
           const touristData = localStorage.getItem('touristData');
+          console.log('ガイド詳細クリック - 認証データ:', touristData);
           
           if (touristData) {
-            // 観光客としてログイン済みなら詳細ページへ移動
-            window.location.href = `guide-details.html?id=${guideId}`;
-          } else {
-            // 未ログインならlogin-requiredページに遷移
-            sessionStorage.setItem('pendingGuideId', guideId);
-            window.location.href = 'login-required.html';
+            try {
+              const userData = JSON.parse(touristData);
+              console.log('ユーザーデータ:', userData);
+              if (userData && userData.type === 'tourist') {
+                // 観光客としてログイン済みなら詳細ページへ移動
+                console.log('認証済みユーザー - 詳細ページに遷移');
+                window.location.href = `guide-details.html?id=${guideId}`;
+                return;
+              }
+            } catch (e) {
+              console.log('認証データ解析エラー:', e);
+            }
           }
+          
+          // 未ログインまたは無効な認証データの場合
+          console.log('未認証ユーザー - login-requiredページに遷移');
+          localStorage.removeItem('touristData');
+          sessionStorage.removeItem('currentUser');
+          sessionStorage.setItem('pendingGuideId', guideId);
+          window.location.href = 'login-required.html';
         }
       });
       
@@ -2250,6 +2264,9 @@
   
   <!-- 統一認証システム -->
   <script src="unified-auth-system.js"></script>
+  
+  <!-- 認証テストヘルパー -->
+  <script src="auth-test-helper.js"></script>
   
   <!-- セクション別の専用翻訳スクリプト -->
   <script src="benefits-translator.js"></script>

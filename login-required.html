@@ -289,6 +289,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // ページ読み込み時に既存の認証データをクリア
+        document.addEventListener('DOMContentLoaded', function() {
+            // 既存の認証データがある場合はクリア
+            const existingTouristData = localStorage.getItem('touristData');
+            if (existingTouristData) {
+                console.log('既存の認証データを削除しています');
+                localStorage.removeItem('touristData');
+                sessionStorage.removeItem('currentUser');
+            }
+        });
+
         // トップページに戻ってログインモーダルを開く
         function goToMainPageAndOpenLogin() {
             // ペンディング中のガイドIDを保持
