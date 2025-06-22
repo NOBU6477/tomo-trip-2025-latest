@@ -1954,15 +1954,17 @@
         if (isValidTouristCredentials(email, password)) {
           // ログイン成功
           const touristData = {
-            id: 'tourist_' + Date.now(),
-            name: extractNameFromEmail(email),
+            id: email === 'demo@tomotrip.com' ? 'tourist_demo' : 'tourist_' + Date.now(),
+            name: email === 'demo@tomotrip.com' ? 'デモユーザー' : extractNameFromEmail(email),
             email: email,
+            type: 'tourist',
             loginTime: new Date().toISOString(),
             isAuthenticated: true
           };
           
-          // ローカルストレージに保存
+          // ローカルストレージとセッションストレージに保存
           localStorage.setItem('touristData', JSON.stringify(touristData));
+          sessionStorage.setItem('currentUser', JSON.stringify(touristData));
           
           // ログインモーダルを閉じる
           const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
@@ -1998,9 +2000,8 @@
         
         // デモ用のテストアカウント
         const demoAccounts = [
-          { email: 'test@example.com', password: 'password' },
-          { email: 'tourist@test.com', password: 'test123' },
-          { email: 'demo@tourist.com', password: 'demo123' }
+          { email: 'demo@tomotrip.com', password: 'demo2024' },
+          { email: 'tourist@tomotrip.com', password: 'tourist123' }
         ];
         
         return demoAccounts.some(account => 
