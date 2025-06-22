@@ -213,30 +213,32 @@
           return false;
         }
       }
-      // 登録モーダル関数が利用できない場合のみリダイレクト
-      window.location.replace(redirectUrl);
+      // 登録モーダル関数が利用できない場合のみリダイレクト（無効化）
+      console.log('リダイレクト無効化:', redirectUrl);
+      // window.location.replace(redirectUrl);
       return false;
     }
     return true;
   }
 
-  // 定期的な認証状態チェック（5分ごと）
-  setInterval(() => {
-    const authData = validateAuthenticationState();
-    if (!authData) {
-      console.log('認証状態が無効になりました');
-      // 認証が必要なページにいる場合はリダイレクト
-      if (window.location.pathname.includes('guide-details') || 
-          window.location.pathname.includes('profile')) {
-        // 登録促進モーダルを表示（ページ遷移なし）
-        if (typeof showTouristLoginPrompt === 'function') {
-          showTouristLoginPrompt();
-        } else {
-          window.location.replace('login-required.html');
-        }
-      }
-    }
-  }, 5 * 60 * 1000);
+  // 定期的な認証状態チェック（無効化）
+  // setInterval(() => {
+  //   const authData = validateAuthenticationState();
+  //   if (!authData) {
+  //     console.log('認証状態が無効になりました');
+  //     // 認証が必要なページにいる場合はリダイレクト
+  //     if (window.location.pathname.includes('guide-details') || 
+  //         window.location.pathname.includes('profile')) {
+  //       // 登録促進モーダルを表示（ページ遷移なし）
+  //       if (typeof showTouristLoginPrompt === 'function') {
+  //         showTouristLoginPrompt();
+  //       } else {
+  //         console.log('定期認証チェック - リダイレクト無効化');
+  //         // window.location.replace('login-required.html');
+  //       }
+  //     }
+  //   }
+  // }, 5 * 60 * 1000);
 
   // 初期化時の認証状態チェック
   document.addEventListener('DOMContentLoaded', function() {

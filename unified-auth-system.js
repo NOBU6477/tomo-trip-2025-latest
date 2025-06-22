@@ -102,13 +102,12 @@
         
         showAlert('ログインしました', 'success');
         
-        // ペンディング中のガイドIDがあるかチェック
+        // ペンディング中のガイドIDがあるかチェック（リダイレクト無効化）
         const pendingGuideId = sessionStorage.getItem('pendingGuideId');
         if (pendingGuideId) {
-          sessionStorage.removeItem('pendingGuideId');
-          setTimeout(() => {
-            window.location.href = `guide-details.html?id=${pendingGuideId}`;
-          }, 1000);
+          console.log('ペンディングガイドID:', pendingGuideId, 'リダイレクトを無効化');
+          // sessionStorage.removeItem('pendingGuideId'); // 削除せずに保持
+          // window.location.href = `guide-details.html?id=${pendingGuideId}`; // リダイレクト無効化
         }
       } else {
         showAlert(result.error, 'danger');
@@ -404,9 +403,10 @@
         if (typeof showTouristLoginPrompt === 'function') {
           showTouristLoginPrompt();
         } else {
-          setTimeout(() => {
-            window.location.replace('login-required.html');
-          }, 200);
+          console.log('統一認証システム - リダイレクト無効化');
+          // setTimeout(() => {
+          //   window.location.replace('login-required.html');
+          // }, 200);
         }
         return false;
       }
