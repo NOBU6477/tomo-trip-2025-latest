@@ -3156,6 +3156,54 @@
         }, 3000);
       }
     }
+
+    // 「ガイドを探す」ボタンの処理
+    function exploreGuides() {
+      // 成功モーダルを閉じる
+      const successModal = bootstrap.Modal.getInstance(document.getElementById('touristSuccessModal'));
+      if (successModal) {
+        successModal.hide();
+      }
+      
+      // ガイドセクションにスクロール
+      setTimeout(() => {
+        const guidesSection = document.getElementById('guides');
+        if (guidesSection) {
+          guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          
+          // ガイドカードを強調表示
+          const guideCards = document.querySelectorAll('.guide-card');
+          guideCards.forEach((card, index) => {
+            setTimeout(() => {
+              card.style.transform = 'scale(1.02)';
+              card.style.boxShadow = '0 8px 25px rgba(0, 123, 255, 0.15)';
+              
+              setTimeout(() => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+              }, 1000);
+            }, index * 200);
+          });
+        }
+      }, 300);
+      
+      showNotification('ガイド一覧をご覧ください。お気に入りのガイドをクリックして詳細を確認できます。', 'success');
+    }
+
+    // 「後で見る」ボタンの処理
+    function closeSuccessModal() {
+      const successModal = bootstrap.Modal.getInstance(document.getElementById('touristSuccessModal'));
+      if (successModal) {
+        successModal.hide();
+      }
+      
+      // ホームページの上部にスクロール
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 300);
+      
+      showNotification('いつでもガイド一覧からお選びいただけます。', 'info');
+    }
   </script>
 
   <!-- フィルターチュートリアルモーダル -->
