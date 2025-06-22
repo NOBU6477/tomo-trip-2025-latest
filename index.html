@@ -3046,25 +3046,23 @@
           modal.hide();
         }
         
-        // ペンディング中のガイドIDがあれば詳細ページに遷移
+        // ペンディング中のガイドIDがあれば詳細情報を表示
         const pendingGuideId = sessionStorage.getItem('pendingGuideId');
         if (pendingGuideId) {
           sessionStorage.removeItem('pendingGuideId');
-          showNotification('ガイドの詳細ページに移動します...', 'info');
+          showNotification('ガイド詳細を表示します...', 'success');
           
-          // 認証データが確実に保存されるまで待機
+          // 登録完了後はメインページでガイド詳細を表示
           setTimeout(() => {
-            // 認証状態を強制的に確認
-            const savedData = localStorage.getItem('touristData');
-            console.log('登録後の認証データ確認:', savedData);
+            // ナビゲーションを更新してログイン状態を反映
+            updateLoginStateUI();
             
-            // guide-details.htmlの認証チェックをバイパスするフラグを設定
-            sessionStorage.setItem('skipAuthCheck', 'true');
-            window.location.href = `guide-details.html?id=${pendingGuideId}`;
-          }, 1500);
+            // ガイド詳細モーダルまたは情報を表示
+            showGuideDetailsAfterLogin(pendingGuideId);
+          }, 1000);
         } else {
           // UIを更新してログイン状態を反映
-          location.reload();
+          updateLoginStateUI();
         }
       }, 2000);
     }
@@ -3093,6 +3091,65 @@
           alertDiv.remove();
         }
       }, 5000);
+    }
+
+    // ログイン状態UIの更新
+    function updateLoginStateUI() {
+      const touristData = localStorage.getItem('touristData');
+      if (touristData) {
+        try {
+          const userData = JSON.parse(touristData);
+          console.log('ログイン状態UIを更新:', userData.name);
+          
+          // ナビゲーションバーのログインボタンを非表示にしてユーザーメニューを表示
+          const loginBtn = document.querySelector('a[data-bs-target="#loginModal"]');
+          if (loginBtn) {
+            loginBtn.style.display = 'none';
+          }
+          
+          // 新規登録ボタンも非表示
+          const registerDropdown = document.querySelector('.dropdown-toggle');
+          if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
+            registerDropdown.style.display = 'none';
+          }
+          
+          // ユーザー名を表示する簡単なUI要素を追加
+          const navbar = document.querySelector('.navbar-nav');
+          if (navbar && !document.getElementById('user-status')) {
+            const userStatus = document.createElement('li');
+            userStatus.className = 'nav-item';
+            userStatus.id = 'user-status';
+            userStatus.innerHTML = `
+              <span class="nav-link text-success">
+                <i class="bi bi-person-check-fill me-1"></i>${userData.name}さん
+              </span>
+            `;
+            navbar.appendChild(userStatus);
+          }
+        } catch (e) {
+          console.error('ログイン状態UI更新エラー:', e);
+        }
+      }
+    }
+
+    // 登録完了後のガイド詳細表示
+    function showGuideDetailsAfterLogin(guideId) {
+      showNotification(`ガイド詳細が閲覧可能になりました。ガイド${guideId}をクリックしてください。`, 'success');
+      
+      // ガイドカードにスクロール
+      const guideCard = document.querySelector(`[data-guide-id="${guideId}"]`);
+      if (guideCard) {
+        guideCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // カードを一時的にハイライト
+        guideCard.style.boxShadow = '0 0 15px rgba(0, 123, 255, 0.5)';
+        guideCard.style.border = '2px solid #007bff';
+        
+        setTimeout(() => {
+          guideCard.style.boxShadow = '';
+          guideCard.style.border = '';
+        }, 3000);
+      }
     }
   </script>
 
