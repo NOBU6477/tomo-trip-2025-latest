@@ -3022,12 +3022,41 @@
         return;
       }
       
-      showNotification('観光客登録が完了しました。ガイドを探してみましょう！', 'success');
+      // 観光客データを作成してログイン状態にする
+      const touristData = {
+        id: 'tourist_' + Date.now(),
+        name: name,
+        email: email,
+        type: 'tourist',
+        loginTime: new Date().toISOString(),
+        isAuthenticated: true,
+        registrationDate: new Date().toISOString()
+      };
       
+      // ローカルストレージとセッションストレージに保存
+      localStorage.setItem('touristData', JSON.stringify(touristData));
+      sessionStorage.setItem('currentUser', JSON.stringify(touristData));
+      
+      showNotification('観光客登録が完了しました。ログインしました！', 'success');
+      
+      // モーダルを閉じる
       setTimeout(() => {
         const modal = bootstrap.Modal.getInstance(document.getElementById('registerTouristModal'));
         if (modal) {
           modal.hide();
+        }
+        
+        // ペンディング中のガイドIDがあれば詳細ページに遷移
+        const pendingGuideId = sessionStorage.getItem('pendingGuideId');
+        if (pendingGuideId) {
+          sessionStorage.removeItem('pendingGuideId');
+          showNotification('ガイドの詳細ページに移動します...', 'info');
+          setTimeout(() => {
+            window.location.href = `guide-details.html?id=${pendingGuideId}`;
+          }, 1000);
+        } else {
+          // UIを更新してログイン状態を反映
+          location.reload();
         }
       }, 2000);
     }
