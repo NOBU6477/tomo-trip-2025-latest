@@ -213,9 +213,77 @@
     }
     
     /* フィルター関連のスタイル */
+    /* 検索結果カウンターの強化スタイル */
     #search-results-counter {
-      font-size: 0.95rem;
-      padding: 0.25rem 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 700;
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-align: center;
+      margin: 1.5rem auto;
+      max-width: 400px;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+      animation: counterPulse 2s ease-in-out infinite alternate;
+    }
+    
+    #search-results-counter::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: rotate(45deg);
+      animation: shimmer 3s ease-in-out infinite;
+    }
+    
+    #search-results-counter::after {
+      content: '🔍';
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.5rem;
+      opacity: 0.8;
+    }
+    
+    @keyframes counterPulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+      }
+      100% {
+        transform: scale(1.02);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%) translateY(-100%) rotate(45deg);
+      }
+      100% {
+        transform: translateX(100%) translateY(100%) rotate(45deg);
+      }
+    }
+    
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+      #search-results-counter {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+        margin: 1rem auto;
+      }
+      
+      #search-results-counter::after {
+        font-size: 1.2rem;
+        left: 0.8rem;
+      }
     }
     
     /* 強化されたガイドカードデザイン */
@@ -747,7 +815,7 @@
     <section id="guides" class="mb-5">
       <h2 class="text-center mb-4">人気のガイド</h2>
       <div class="mb-4">
-        <div id="search-results-counter" class="text-muted mb-3"></div>
+        <div id="search-results-counter"></div>
         <div id="no-results-message" class="alert alert-info text-center my-4 d-none">検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。</div>
         
         <!-- フィルター切り替えボタン -->
