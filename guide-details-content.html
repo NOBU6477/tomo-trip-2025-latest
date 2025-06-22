@@ -44,10 +44,14 @@
             sessionStorage.setItem('pendingGuideId', guideId);
           }
           
-          // 即座にリダイレクトせず、少し待機
-          setTimeout(() => {
-            window.location.replace('login-required.html');
-          }, 100);
+          // 登録促進モーダルを表示（ページ遷移なし）
+          if (typeof showTouristLoginPrompt === 'function') {
+            showTouristLoginPrompt();
+          } else {
+            setTimeout(() => {
+              window.location.replace('login-required.html');
+            }, 100);
+          }
         }
       } catch (error) {
         console.error('認証チェックエラー:', error);

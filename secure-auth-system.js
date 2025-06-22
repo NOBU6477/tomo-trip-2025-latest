@@ -207,7 +207,13 @@
       const guideId = urlParams.get('id');
       if (guideId) {
         sessionStorage.setItem('pendingGuideId', guideId);
+        // メインページで登録モーダルを表示
+        if (typeof showTouristLoginPrompt === 'function') {
+          showTouristLoginPrompt(guideId);
+          return false;
+        }
       }
+      // 登録モーダル関数が利用できない場合のみリダイレクト
       window.location.replace(redirectUrl);
       return false;
     }
@@ -222,7 +228,12 @@
       // 認証が必要なページにいる場合はリダイレクト
       if (window.location.pathname.includes('guide-details') || 
           window.location.pathname.includes('profile')) {
-        window.location.replace('login-required.html');
+        // 登録促進モーダルを表示（ページ遷移なし）
+        if (typeof showTouristLoginPrompt === 'function') {
+          showTouristLoginPrompt();
+        } else {
+          window.location.replace('login-required.html');
+        }
       }
     }
   }, 5 * 60 * 1000);

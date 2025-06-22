@@ -319,7 +319,9 @@
           window.location.href = `guide-details.html?id=${guideId}`;
         } else {
           sessionStorage.setItem('pendingGuideId', guideId);
-          window.location.href = 'login-required.html';
+          if (typeof showTouristLoginPrompt === 'function') {
+            showTouristLoginPrompt(guideId);
+          }
         }
       }
     });
@@ -398,10 +400,14 @@
           sessionStorage.setItem('pendingGuideId', guideId);
         }
         
-        // 少し遅延してからリダイレクト
-        setTimeout(() => {
-          window.location.replace('login-required.html');
-        }, 200);
+        // 登録促進モーダルを表示（ページ遷移なし）
+        if (typeof showTouristLoginPrompt === 'function') {
+          showTouristLoginPrompt();
+        } else {
+          setTimeout(() => {
+            window.location.replace('login-required.html');
+          }, 200);
+        }
         return false;
       }
       return true;

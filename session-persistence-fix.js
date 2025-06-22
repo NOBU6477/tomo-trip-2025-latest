@@ -103,10 +103,12 @@
           // ログイン済みなら直接詳細ページに移動
           window.location.href = `guide-details.html?id=${guideId}`;
         } else {
-          console.log('未ログインまたは無効な認証データ - ログイン要求ページに移動');
-          // 未ログインならログイン要求ページに移動
+          console.log('未ログインまたは無効な認証データ - 登録促進モーダルを表示');
+          // 未ログインなら登録促進モーダルを表示（ページ遷移なし）
           sessionStorage.setItem('pendingGuideId', guideId);
-          window.location.href = 'login-required.html';
+          if (typeof showTouristLoginPrompt === 'function') {
+            showTouristLoginPrompt(guideId);
+          }
         }
       }
     });

@@ -366,10 +366,12 @@ function setupGuideDetailLinks() {
       localStorage.removeItem(`guide_${guideId}`);
       
       if (!touristLoggedIn) {
-        // 未ログインの場合はlogin-requiredページに遷移
-        console.log('TOURIST-LOGIN.JS: 未ログイン - login-requiredページに遷移');
+        // 未ログインの場合は登録促進モーダルを表示
+        console.log('TOURIST-LOGIN.JS: 未ログイン - 登録促進モーダルを表示');
         sessionStorage.setItem('pendingGuideId', guideId);
-        window.location.href = 'login-required.html';
+        if (typeof showTouristLoginPrompt === 'function') {
+          showTouristLoginPrompt(guideId);
+        }
       } else {
         // ログイン済みの場合、ガイド詳細ページへ移動
         console.log('TOURIST-LOGIN.JS: ログイン済み - ガイド詳細ページに遷移');
