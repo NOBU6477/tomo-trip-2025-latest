@@ -15,33 +15,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
   
   <script>
-    // 認証チェック - フラッシュを防止するため簡略化
-    document.addEventListener('DOMContentLoaded', function() {
-      // UnifiedAuthシステムが利用可能になるまで待機
-      function waitForUnifiedAuth() {
-        if (window.UnifiedAuth) {
-          // 認証状態を確認し、必要に応じてリダイレクト
-          const authenticated = window.UnifiedAuth.isAuthenticated();
-          const currentUser = window.UnifiedAuth.getCurrentUser();
-          
-          if (!authenticated || !currentUser || currentUser.type !== 'tourist') {
-            const urlParams = new URLSearchParams(window.location.search);
-            const guideId = urlParams.get('id');
-            if (guideId) {
-              sessionStorage.setItem('pendingGuideId', guideId);
-            }
-            window.location.replace('login-required.html');
+    // 画面の高速切り替わりを防止する安定版認証チェック
+    let authCheckCompleted = false;
+    
+    function performStableAuthCheck() {
+      // 既にチェック済みの場合は実行しない
+      if (authCheckCompleted) return;
+      
+      try {
+        // 簡単な認証状態チェック
+        const touristData = localStorage.getItem('touristData');
+        if (touristData) {
+          const userData = JSON.parse(touristData);
+          if (userData && userData.email && userData.type === 'tourist') {
+            authCheckCompleted = true;
+            console.log('認証確認完了 - ページ表示継続');
             return;
           }
-          
-          console.log('認証確認完了');
-        } else {
-          setTimeout(waitForUnifiedAuth, 50);
         }
+        
+        // 認証されていない場合の処理（1回のみ実行）
+        if (!authCheckCompleted) {
+          authCheckCompleted = true;
+          const urlParams = new URLSearchParams(window.location.search);
+          const guideId = urlParams.get('id') || window.GUIDE_ID;
+          
+          if (guideId) {
+            sessionStorage.setItem('pendingGuideId', guideId);
+          }
+          
+          // 即座にリダイレクトせず、少し待機
+          setTimeout(() => {
+            window.location.replace('login-required.html');
+          }, 100);
+        }
+      } catch (error) {
+        console.error('認証チェックエラー:', error);
+        // エラーが発生してもページは表示し続ける
+        authCheckCompleted = true;
       }
-      
-      waitForUnifiedAuth();
-    });
+    }
+    
+    // ページ読み込み完了後に1回だけ実行
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', performStableAuthCheck);
+    } else {
+      performStableAuthCheck();
+    }
   </script>
 
 
@@ -459,6 +479,9 @@
       loadGuideDetails();
     });
   </script>
+  
+  <!-- 緊急安定化スクリプト（高速切り替わり防止） -->
+  <script src="emergency-stabilizer.js"></script>
   
   <!-- 統一認証システム -->
   <script src="unified-auth-system.js"></script>

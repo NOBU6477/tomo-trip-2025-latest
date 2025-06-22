@@ -378,6 +378,9 @@
     }, 5000);
   }
 
+  // 高速切り替わり防止のフラグ
+  let redirectInProgress = false;
+
   // グローバルAPIとして公開
   window.UnifiedAuth = {
     isAuthenticated,
@@ -385,12 +388,20 @@
     logout,
     requireAuth: () => {
       if (!isAuthenticated()) {
+        // 既にリダイレクト中の場合は何もしない
+        if (redirectInProgress) return false;
+        
+        redirectInProgress = true;
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
         if (guideId) {
           sessionStorage.setItem('pendingGuideId', guideId);
         }
-        window.location.replace('login-required.html');
+        
+        // 少し遅延してからリダイレクト
+        setTimeout(() => {
+          window.location.replace('login-required.html');
+        }, 200);
         return false;
       }
       return true;
