@@ -1897,6 +1897,7 @@
 
   <!-- スクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="debug-redirect-tracker.js"></script>
   
   <!-- ユーザータイプ選択の動作改善 -->
   <script>
@@ -2218,11 +2219,14 @@
           // 保存されていたガイドIDを取得
           const pendingGuideId = sessionStorage.getItem('pendingGuideId');
           
-          // ガイド詳細ページに自動リダイレクト
+          // 登録完了後はメインページでガイド詳細表示
           setTimeout(() => {
             if (pendingGuideId) {
               sessionStorage.removeItem('pendingGuideId');
-              window.location.href = `guide-details.html?id=${pendingGuideId}`;
+              console.log('観光客登録完了 - ガイド詳細表示:', pendingGuideId);
+              // リダイレクトせずにメインページでガイド情報を表示
+              updateLoginStateUI();
+              showGuideDetailsAfterLogin(pendingGuideId);
             } else {
               // ガイドIDが見つからない場合はホームの人気ガイドセクションにスクロール
               document.getElementById('guides').scrollIntoView({ behavior: 'smooth' });
@@ -2296,8 +2300,9 @@
         const touristData = localStorage.getItem('touristData');
         
         if (touristData) {
-          // ログイン済みの場合は詳細ページに遷移
-          window.location.replace(`guide-details.html?id=${guideId}`);
+          // ログイン済みの場合は詳細ページに遷移（無効化）
+          console.log('ログイン済みユーザー - ガイド詳細表示:', guideId);
+          // window.location.replace(`guide-details.html?id=${guideId}`);
           return;
         }
         
@@ -2698,9 +2703,9 @@
               const userData = JSON.parse(touristData);
               console.log('ユーザーデータ:', userData);
               if (userData && userData.type === 'tourist') {
-                // 観光客としてログイン済みなら詳細ページへ移動
-                console.log('認証済みユーザー - 詳細ページに遷移');
-                window.location.href = `guide-details.html?id=${guideId}`;
+                // 観光客としてログイン済みなら詳細ページへ移動（無効化）
+                console.log('認証済みユーザー - ガイド詳細表示:', guideId);
+                // window.location.href = `guide-details.html?id=${guideId}`;
                 return;
               }
             } catch (e) {

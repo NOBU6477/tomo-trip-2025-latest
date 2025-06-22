@@ -87,9 +87,10 @@
           if (typeof showTouristLoginPrompt === 'function') {
             showTouristLoginPrompt();
           } else {
-            setTimeout(() => {
-              window.location.replace('login-required.html');
-            }, 100);
+            console.log('guide-details認証チェック - リダイレクト無効化');
+            // setTimeout(() => {
+            //   window.location.replace('login-required.html');
+            // }, 100);
           }
         }
       } catch (error) {
