@@ -3159,14 +3159,29 @@
 
     // 「ガイドを探す」ボタンの処理
     function exploreGuides() {
-      // 成功モーダルを閉じる
+      // 成功モーダルを完全に閉じる
       const successModal = bootstrap.Modal.getInstance(document.getElementById('touristSuccessModal'));
       if (successModal) {
         successModal.hide();
       }
       
-      // ガイドセクションにスクロール
+      // モーダル要素とバックドロップを強制削除
       setTimeout(() => {
+        const modalElement = document.getElementById('touristSuccessModal');
+        if (modalElement) {
+          modalElement.remove();
+        }
+        
+        // バックドロップを強制削除
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        
+        // body要素からモーダル関連のクラスを削除
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        // ガイドセクションにスクロール
         const guidesSection = document.getElementById('guides');
         if (guidesSection) {
           guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3185,9 +3200,9 @@
             }, index * 200);
           });
         }
-      }, 300);
-      
-      showNotification('ガイド一覧をご覧ください。お気に入りのガイドをクリックして詳細を確認できます。', 'success');
+        
+        showNotification('ガイド一覧をご覧ください。お気に入りのガイドをクリックして詳細を確認できます。', 'success');
+      }, 100);
     }
 
     // 「後で見る」ボタンの処理
@@ -3197,12 +3212,27 @@
         successModal.hide();
       }
       
-      // ホームページの上部にスクロール
+      // モーダル要素とバックドロップを強制削除
       setTimeout(() => {
+        const modalElement = document.getElementById('touristSuccessModal');
+        if (modalElement) {
+          modalElement.remove();
+        }
+        
+        // バックドロップを強制削除
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+        
+        // body要素からモーダル関連のクラスを削除
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+        
+        // ホームページの上部にスクロール
         window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 300);
-      
-      showNotification('いつでもガイド一覧からお選びいただけます。', 'info');
+        
+        showNotification('いつでもガイド一覧からお選びいただけます。', 'info');
+      }, 100);
     }
 
     // ガイド詳細モーダルを表示（認証済みユーザー向け）
