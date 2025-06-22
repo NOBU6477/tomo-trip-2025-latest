@@ -281,6 +281,101 @@
         display: none !important;
       }
     }
+
+    /* 協賛店広告バナー - 右から左へのスクロール */
+    .sponsor-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 15px 0;
+      overflow: hidden;
+      position: relative;
+      white-space: nowrap;
+      border-bottom: 3px solid #4f46e5;
+    }
+
+    .sponsor-scroll {
+      display: inline-block;
+      animation: scrollRight 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .sponsor-item {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.95);
+      margin: 0 20px;
+      padding: 8px 20px;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      vertical-align: middle;
+    }
+
+    .sponsor-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .sponsor-logo {
+      height: 30px;
+      width: auto;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .sponsor-text {
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .sponsor-offer {
+      background: #ff6b6b;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+
+    @keyframes scrollRight {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+      .sponsor-banner {
+        padding: 10px 0;
+      }
+      
+      .sponsor-item {
+        margin: 0 15px;
+        padding: 6px 15px;
+      }
+      
+      .sponsor-text {
+        font-size: 12px;
+      }
+      
+      .sponsor-logo {
+        height: 25px;
+      }
+      
+      .sponsor-offer {
+        font-size: 10px;
+        padding: 1px 6px;
+      }
+    }
+
+    /* アニメーション一時停止（ホバー時） */
+    .sponsor-banner:hover .sponsor-scroll {
+      animation-play-state: paused;
+    }
   </style>
 </head>
 <body>
@@ -390,6 +485,93 @@
       </div>
     </div>
   </section>
+
+  <!-- 協賛店広告バナー -->
+  <div class="sponsor-banner">
+    <div class="sponsor-scroll">
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">海の家レストラン</span>
+        <span class="sponsor-offer">20%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="山田温泉ホテル" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">山田温泉ホテル</span>
+        <span class="sponsor-offer">特別価格</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="サクラ観光バス" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">サクラ観光バス</span>
+        <span class="sponsor-offer">送迎無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="伝統工芸体験館" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">伝統工芸体験館</span>
+        <span class="sponsor-offer">体験割引</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="地元特産品店" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">地元特産品店</span>
+        <span class="sponsor-offer">お土産10%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&h=60&fit=crop" alt="カフェ桜" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">カフェ桜</span>
+        <span class="sponsor-offer">ドリンク1杯無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=100&h=60&fit=crop" alt="釣り船太郎" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">釣り船太郎</span>
+        <span class="sponsor-offer">初回半額</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=60&fit=crop" alt="レンタル自転車" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">レンタル自転車</span>
+        <span class="sponsor-offer">1日レンタル</span>
+      </div>
+      <!-- 繰り返し表示でシームレスなループを作成 -->
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">海の家レストラン</span>
+        <span class="sponsor-offer">20%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="山田温泉ホテル" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">山田温泉ホテル</span>
+        <span class="sponsor-offer">特別価格</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="サクラ観光バス" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">サクラ観光バス</span>
+        <span class="sponsor-offer">送迎無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="伝統工芸体験館" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">伝統工芸体験館</span>
+        <span class="sponsor-offer">体験割引</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="地元特産品店" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">地元特産品店</span>
+        <span class="sponsor-offer">お土産10%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&h=60&fit=crop" alt="カフェ桜" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">カフェ桜</span>
+        <span class="sponsor-offer">ドリンク1杯無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=100&h=60&fit=crop" alt="釣り船太郎" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">釣り船太郎</span>
+        <span class="sponsor-offer">初回半額</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=60&fit=crop" alt="レンタル自転車" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">レンタル自転車</span>
+        <span class="sponsor-offer">1日レンタル</span>
+      </div>
+    </div>
+  </div>
 
   <!-- メインコンテンツ -->
   <div class="container py-5">

@@ -1,0 +1,97 @@
+/**
+ * 協賛店広告バナー - 右から左へのスクロール
+ */
+
+.sponsor-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 15px 0;
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+  border-bottom: 3px solid #4f46e5;
+}
+
+.sponsor-scroll {
+  display: inline-block;
+  animation: scrollRight 30s linear infinite;
+  white-space: nowrap;
+}
+
+.sponsor-item {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.95);
+  margin: 0 20px;
+  padding: 8px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  vertical-align: middle;
+}
+
+.sponsor-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+.sponsor-logo {
+  height: 30px;
+  width: auto;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.sponsor-text {
+  color: #333;
+  font-weight: 600;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.sponsor-offer {
+  background: #ff6b6b;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  margin-left: 8px;
+  font-weight: bold;
+}
+
+@keyframes scrollRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+/* モバイル対応 */
+@media (max-width: 768px) {
+  .sponsor-banner {
+    padding: 10px 0;
+  }
+  
+  .sponsor-item {
+    margin: 0 15px;
+    padding: 6px 15px;
+  }
+  
+  .sponsor-text {
+    font-size: 12px;
+  }
+  
+  .sponsor-logo {
+    height: 25px;
+  }
+  
+  .sponsor-offer {
+    font-size: 10px;
+    padding: 1px 6px;
+  }
+}
+
+/* アニメーション一時停止（ホバー時） */
+.sponsor-banner:hover .sponsor-scroll {
+  animation-play-state: paused;
+}
