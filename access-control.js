@@ -156,18 +156,25 @@ function setupGuideCardAccess() {
     
     // 観光客専用機能（ガイド詳細など）
     if (e.target.closest('.guide-card, .guide-details-link')) {
-      const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
-      const userType = sessionStorage.getItem('userType');
+      // 統一認証システムを使用して認証状態を確認
+      const touristData = localStorage.getItem('touristData');
       
-      if (isLoggedIn && userType === 'guide') {
-        e.preventDefault();
-        showUserTypeAccessModal(
-          '観光客専用機能です',
-          '現在ガイドアカウントでログインされています。ガイド詳細を見るには観光客アカウントが必要です。',
-          'tourist'
-        );
-        return false;
+      if (touristData) {
+        const userData = JSON.parse(touristData);
+        if (userData.type === 'guide') {
+          e.preventDefault();
+          showUserTypeAccessModal(
+            '観光客専用機能です',
+            '現在ガイドアカウントでログインされています。ガイド詳細を見るには観光客アカウントが必要です。',
+            'tourist'
+          );
+          return false;
+        }
       }
+      
+      // 認証されていない場合は、メインページのイベントハンドラに処理を委ねる
+      // この処理をスキップして、index.htmlの認証フローを実行させる
+      return;
     }
   });
 }
