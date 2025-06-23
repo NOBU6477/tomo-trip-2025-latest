@@ -2703,27 +2703,56 @@
             return;
           }
           
-          // 観光客としてログイン済みかチェック
+          // 観光客としてログイン済みかチェック - 強化版
+          console.log('🔍 ガイド詳細クリック - 認証状態を確認中...', guideId);
+          
           const touristData = localStorage.getItem('touristData');
-          console.log('ガイド詳細クリック - 認証データ:', touristData);
+          const sessionData = sessionStorage.getItem('currentUser');
+          
+          console.log('📋 localStorage touristData:', touristData);
+          console.log('📋 sessionStorage currentUser:', sessionData);
+          
+          // 複数の認証データソースをチェック
+          let isAuthenticated = false;
+          let userData = null;
           
           if (touristData) {
             try {
-              const userData = JSON.parse(touristData);
-              console.log('ユーザーデータ:', userData);
-              if (userData && userData.type === 'tourist') {
-                // 観光客としてログイン済みなら詳細モーダルを表示
-                console.log('認証済みユーザー - ガイド詳細モーダル表示:', guideId);
-                showGuideDetailModal(guideId);
-                return;
+              userData = JSON.parse(touristData);
+              console.log('✅ localStorage解析成功:', userData);
+              if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+                isAuthenticated = true;
+                console.log('✅ localStorage認証確認済み');
               }
             } catch (e) {
-              console.log('認証データ解析エラー:', e);
+              console.warn('⚠️ localStorage解析エラー:', e);
             }
           }
           
+          if (!isAuthenticated && sessionData) {
+            try {
+              userData = JSON.parse(sessionData);
+              console.log('✅ sessionStorage解析成功:', userData);
+              if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+                isAuthenticated = true;
+                console.log('✅ sessionStorage認証確認済み');
+                // sessionStorageのデータをlocalStorageにも保存
+                localStorage.setItem('touristData', sessionData);
+              }
+            } catch (e) {
+              console.warn('⚠️ sessionStorage解析エラー:', e);
+            }
+          }
+          
+          if (isAuthenticated && userData) {
+            console.log('🎉 認証済みユーザー - ガイド詳細モーダル表示:', guideId);
+            showGuideDetailModal(guideId);
+            return;
+          }
+          
           // 未ログインまたは無効な認証データの場合 - メインページで登録促進モーダル表示
-          console.log('未認証ユーザー - 登録促進モーダルを表示');
+          console.log('❌ 未認証ユーザー - 登録促進モーダルを表示');
+          console.log('🗑️ 無効な認証データをクリーンアップ');
           localStorage.removeItem('touristData');
           sessionStorage.removeItem('currentUser');
           sessionStorage.setItem('pendingGuideId', guideId);
@@ -3107,43 +3136,92 @@
       }, 5000);
     }
 
-    // ログイン状態UIの更新
+    // ログイン状態UIの更新 - 強化版
     function updateLoginStateUI() {
-      const touristData = localStorage.getItem('touristData');
-      if (touristData) {
+      console.log('🎨 ログイン状態UIを更新中...');
+      
+      // 認証状態を再確認
+      const isAuth = isUserAuthenticated();
+      const touristData = localStorage.getItem('touristData') || sessionStorage.getItem('currentUser');
+      
+      if (isAuth && touristData) {
         try {
           const userData = JSON.parse(touristData);
-          console.log('ログイン状態UIを更新:', userData.name);
+          console.log('✅ 認証済みユーザーUIを設定:', userData.name);
           
-          // ナビゲーションバーのログインボタンを非表示にしてユーザーメニューを表示
+          // ナビゲーションバーのログインボタンを非表示
           const loginBtn = document.querySelector('a[data-bs-target="#loginModal"]');
           if (loginBtn) {
             loginBtn.style.display = 'none';
           }
           
-          // 新規登録ボタンも非表示
+          // 新規登録ボタンを非表示
           const registerDropdown = document.querySelector('.dropdown-toggle');
           if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
             registerDropdown.style.display = 'none';
           }
           
-          // ユーザー名を表示する簡単なUI要素を追加
+          // 既存のユーザーステータスを削除
+          const existingStatus = document.getElementById('user-status');
+          if (existingStatus) {
+            existingStatus.remove();
+          }
+          
+          // 新しいユーザーステータスを追加
           const navbar = document.querySelector('.navbar-nav');
-          if (navbar && !document.getElementById('user-status')) {
+          if (navbar) {
             const userStatus = document.createElement('li');
             userStatus.className = 'nav-item';
             userStatus.id = 'user-status';
             userStatus.innerHTML = `
-              <span class="nav-link text-success">
-                <i class="bi bi-person-check-fill me-1"></i>${userData.name}さん
-              </span>
+              <div class="nav-link text-success d-flex align-items-center">
+                <i class="bi bi-person-check-fill me-2"></i>
+                <span>${userData.name}さん</span>
+                <small class="ms-2 badge bg-success">観光客</small>
+              </div>
             `;
             navbar.appendChild(userStatus);
           }
+          
+          // ページ全体にログイン状態を反映
+          document.body.setAttribute('data-user-authenticated', 'true');
+          document.body.setAttribute('data-user-type', 'tourist');
+          
         } catch (e) {
-          console.error('ログイン状態UI更新エラー:', e);
+          console.error('❌ ログイン状態UI更新エラー:', e);
+          resetToGuestUI();
         }
+      } else {
+        console.log('❌ 未認証状態 - ゲストUIに設定');
+        resetToGuestUI();
       }
+    }
+
+    // ゲスト状態UIにリセット
+    function resetToGuestUI() {
+      console.log('🔄 ゲストUIにリセット');
+      
+      // ログインボタンを表示
+      const loginBtn = document.querySelector('a[data-bs-target="#loginModal"]');
+      if (loginBtn) {
+        loginBtn.style.display = '';
+      }
+      
+      // 新規登録ボタンを表示
+      const registerDropdown = document.querySelector('.dropdown-toggle');
+      if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
+        registerDropdown.style.display = '';
+      }
+      
+      // ユーザーステータスを削除
+      const userStatus = document.getElementById('user-status');
+      if (userStatus) {
+        userStatus.remove();
+      }
+      
+      // ページ属性をリセット
+      document.body.removeAttribute('data-user-authenticated');
+      document.body.removeAttribute('data-user-type');
     }
 
     // 登録完了後のガイド詳細表示
@@ -3415,8 +3493,94 @@
       }, 100);
     }
 
-    // ページ読み込み時にクリーンアップ関数を登録
+    // 認証状態の永続化と検証
+    function validateAndRestoreAuthState() {
+      console.log('🔐 認証状態の検証と復元を開始');
+      
+      const touristData = localStorage.getItem('touristData');
+      const sessionData = sessionStorage.getItem('currentUser');
+      
+      let validAuthData = null;
+      
+      // localStorage優先でチェック
+      if (touristData) {
+        try {
+          const userData = JSON.parse(touristData);
+          if (userData && userData.type === 'tourist' && userData.isAuthenticated && userData.id) {
+            validAuthData = userData;
+            console.log('✅ localStorage認証データ有効:', userData.name);
+            
+            // sessionStorageにも同期
+            sessionStorage.setItem('currentUser', touristData);
+          }
+        } catch (e) {
+          console.warn('⚠️ localStorage認証データ破損:', e);
+          localStorage.removeItem('touristData');
+        }
+      }
+      
+      // sessionStorageからの復元
+      if (!validAuthData && sessionData) {
+        try {
+          const userData = JSON.parse(sessionData);
+          if (userData && userData.type === 'tourist' && userData.isAuthenticated && userData.id) {
+            validAuthData = userData;
+            console.log('✅ sessionStorage認証データ有効:', userData.name);
+            
+            // localStorageにも保存
+            localStorage.setItem('touristData', sessionData);
+          }
+        } catch (e) {
+          console.warn('⚠️ sessionStorage認証データ破損:', e);
+          sessionStorage.removeItem('currentUser');
+        }
+      }
+      
+      if (validAuthData) {
+        console.log('🎉 認証状態復元完了:', validAuthData.name);
+        updateLoginStateUI();
+        return true;
+      } else {
+        console.log('❌ 有効な認証データなし - ゲスト状態');
+        // 無効なデータをクリーンアップ
+        localStorage.removeItem('touristData');
+        sessionStorage.removeItem('currentUser');
+        return false;
+      }
+    }
+
+    // グローバル認証チェッカー
+    function isUserAuthenticated() {
+      const touristData = localStorage.getItem('touristData');
+      const sessionData = sessionStorage.getItem('currentUser');
+      
+      // 高速チェック
+      if (touristData) {
+        try {
+          const userData = JSON.parse(touristData);
+          return userData && userData.type === 'tourist' && userData.isAuthenticated;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      if (sessionData) {
+        try {
+          const userData = JSON.parse(sessionData);
+          return userData && userData.type === 'tourist' && userData.isAuthenticated;
+        } catch (e) {
+          return false;
+        }
+      }
+      
+      return false;
+    }
+
+    // ページ読み込み時の処理
     document.addEventListener('DOMContentLoaded', function() {
+      // 認証状態を検証・復元
+      validateAndRestoreAuthState();
+      
       // 任意のキーボードショートカットでモーダルクリーンアップ（デバッグ用）
       document.addEventListener('keydown', function(e) {
         // Ctrl+Shift+C でモーダルクリーンアップ
@@ -3424,6 +3588,42 @@
           e.preventDefault();
           forceCleanupAllModals();
           console.log('🔧 手動モーダルクリーンアップが実行されました');
+        }
+        
+        // Ctrl+Shift+A で認証状態デバッグ
+        if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+          e.preventDefault();
+          console.log('🔍 認証状態デバッグ:');
+          console.log('isAuthenticated:', isUserAuthenticated());
+          console.log('localStorage:', localStorage.getItem('touristData'));
+          console.log('sessionStorage:', sessionStorage.getItem('currentUser'));
+        }
+      });
+      
+      // ページ可視性変更時の認証状態チェック
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+          console.log('🔄 ページ再表示 - 認証状態を再確認');
+          validateAndRestoreAuthState();
+        }
+      });
+      
+      // 定期的な認証状態チェック（30秒ごと）
+      setInterval(function() {
+        const currentAuth = isUserAuthenticated();
+        const bodyAuth = document.body.getAttribute('data-user-authenticated') === 'true';
+        
+        if (currentAuth !== bodyAuth) {
+          console.log('🔧 認証状態の不整合を検出 - UI同期');
+          updateLoginStateUI();
+        }
+      }, 30000);
+      
+      // ストレージ変更の監視
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'touristData' || e.key === 'currentUser') {
+          console.log('🔄 ストレージ変更検出 - 認証状態を更新');
+          validateAndRestoreAuthState();
         }
       });
     });
