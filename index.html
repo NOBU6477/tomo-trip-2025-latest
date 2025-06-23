@@ -1901,7 +1901,101 @@
   
   <!-- ユーザータイプ選択の動作改善 -->
   <script>
+    // 観光客認証保護システムの早期初期化
+    (function() {
+      // ページロード時に既存の認証データをチェックして保護
+      const existingTouristData = localStorage.getItem('touristData');
+      if (existingTouristData) {
+        try {
+          const userData = JSON.parse(existingTouristData);
+          if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+            console.log('🛡️ 既存の観光客認証データを保護開始:', userData.name);
+            window.protectTouristAuth = true;
+            window.touristAuthData = userData;
+            
+            // 即座にストレージ保護を開始
+            protectTouristStorageEarly(userData);
+          }
+        } catch (e) {
+          console.warn('認証データパースエラー:', e);
+        }
+      }
+      
+      function protectTouristStorageEarly(touristData) {
+        const originalRemoveItem = localStorage.removeItem;
+        const originalClear = localStorage.clear;
+        const originalSessionRemove = sessionStorage.removeItem;
+        const originalSessionClear = sessionStorage.clear;
+        
+        localStorage.removeItem = function(key) {
+          if (window.protectTouristAuth && (key === 'touristData' || key.startsWith('touristBackup_'))) {
+            console.log('🚫 早期保護: 観光客データ削除を阻止:', key);
+            return;
+          }
+          return originalRemoveItem.call(this, key);
+        };
+        
+        localStorage.clear = function() {
+          if (window.protectTouristAuth) {
+            console.log('🚫 早期保護: localStorage全削除を阻止');
+            const keysToKeep = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i);
+              if (key === 'touristData' || key.startsWith('touristBackup_')) {
+                keysToKeep.push({ key, value: localStorage.getItem(key) });
+              }
+            }
+            originalClear.call(this);
+            keysToKeep.forEach(item => {
+              localStorage.setItem(item.key, item.value);
+            });
+            return;
+          }
+          return originalClear.call(this);
+        };
+        
+        sessionStorage.removeItem = function(key) {
+          if (window.protectTouristAuth && key === 'currentUser') {
+            console.log('🚫 早期保護: セッション認証データ削除を阻止:', key);
+            return;
+          }
+          return originalSessionRemove.call(this, key);
+        };
+        
+        sessionStorage.clear = function() {
+          if (window.protectTouristAuth) {
+            console.log('🚫 早期保護: セッションストレージ全削除を阻止');
+            const userData = sessionStorage.getItem('currentUser');
+            originalClear.call(this);
+            if (userData) {
+              sessionStorage.setItem('currentUser', userData);
+            }
+            return;
+          }
+          return originalSessionClear.call(this);
+        };
+      }
+    })();
+
     document.addEventListener('DOMContentLoaded', function() {
+      // 認証状態の即座検証と復旧
+      setTimeout(() => {
+        console.log('🔍 ページロード時認証状態検証開始');
+        const authState = isUserAuthenticated();
+        console.log('現在の認証状態:', authState);
+        
+        if (!authState && window.touristAuthData) {
+          console.log('🔄 認証データを検出 - 復旧処理開始');
+          localStorage.setItem('touristData', JSON.stringify(window.touristAuthData));
+          sessionStorage.setItem('currentUser', JSON.stringify(window.touristAuthData));
+          
+          // UI更新
+          setTimeout(() => {
+            updateLoginStateUI();
+          }, 100);
+        }
+      }, 50);
+      
       // ガイド詳細ページからのリダイレクトでログインモーダルを表示
       if (sessionStorage.getItem('showLoginOnLoad') === 'true') {
         sessionStorage.removeItem('showLoginOnLoad');
@@ -3063,6 +3157,85 @@
       }, 2000);
     }
 
+    // 観光客認証データ保護システム
+    function protectTouristStorage(touristData) {
+      console.log('🛡️ 観光客認証データ保護を開始');
+      
+      // オリジナルのストレージメソッドを保存
+      const originalRemoveItem = localStorage.removeItem;
+      const originalClear = localStorage.clear;
+      const originalSessionRemove = sessionStorage.removeItem;
+      const originalSessionClear = sessionStorage.clear;
+      
+      // localStorage.removeItem を保護
+      localStorage.removeItem = function(key) {
+        if (window.protectTouristAuth && (key === 'touristData' || key.startsWith('touristBackup_'))) {
+          console.log('🚫 観光客データの削除を阻止:', key);
+          return;
+        }
+        return originalRemoveItem.call(this, key);
+      };
+      
+      // localStorage.clear を保護
+      localStorage.clear = function() {
+        if (window.protectTouristAuth) {
+          console.log('🚫 localStorage全削除を阻止 - 観光客データを保護');
+          // 観光客データ以外のみクリア
+          const keysToKeep = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key === 'touristData' || key.startsWith('touristBackup_')) {
+              keysToKeep.push({ key, value: localStorage.getItem(key) });
+            }
+          }
+          originalClear.call(this);
+          keysToKeep.forEach(item => {
+            localStorage.setItem(item.key, item.value);
+          });
+          return;
+        }
+        return originalClear.call(this);
+      };
+      
+      // sessionStorage.removeItem を保護
+      sessionStorage.removeItem = function(key) {
+        if (window.protectTouristAuth && key === 'currentUser') {
+          console.log('🚫 セッション認証データの削除を阻止:', key);
+          return;
+        }
+        return originalSessionRemove.call(this, key);
+      };
+      
+      // sessionStorage.clear を保護
+      sessionStorage.clear = function() {
+        if (window.protectTouristAuth) {
+          console.log('🚫 セッションストレージ全削除を阻止 - 観光客データを保護');
+          const userData = sessionStorage.getItem('currentUser');
+          originalClear.call(this);
+          if (userData) {
+            sessionStorage.setItem('currentUser', userData);
+          }
+          return;
+        }
+        return originalClear.call(this);
+      };
+      
+      // 定期的なデータ復旧チェック
+      const protectionInterval = setInterval(() => {
+        if (!window.protectTouristAuth) {
+          clearInterval(protectionInterval);
+          return;
+        }
+        
+        const currentData = localStorage.getItem('touristData');
+        if (!currentData && window.touristAuthData) {
+          console.log('🔄 観光客データが消失 - 自動復旧');
+          localStorage.setItem('touristData', JSON.stringify(window.touristAuthData));
+          sessionStorage.setItem('currentUser', JSON.stringify(window.touristAuthData));
+        }
+      }, 2000);
+    }
+
     // 観光客登録処理
     function handleTouristRegistration() {
       const form = document.getElementById('touristRegistrationForm');
@@ -3099,6 +3272,13 @@
       // 複数の方法でデータ永続化を確保
       const backupStorageKey = 'touristBackup_' + touristData.id;
       localStorage.setItem(backupStorageKey, JSON.stringify(touristData));
+      
+      // 認証保護フラグを設定
+      window.protectTouristAuth = true;
+      window.touristAuthData = touristData;
+      
+      // ストレージ操作を保護
+      protectTouristStorage(touristData);
       
       // 即座に認証状態を確認
       setTimeout(() => {
