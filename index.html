@@ -2251,8 +2251,8 @@
       // ページロード時の即座復旧
       forceAuthRecovery();
       
-      // ページロード時のUI状態確認と更新
-      setTimeout(() => {
+      // ページロード時のUI状態確認と更新を複数回実行
+      function performAuthCheckAndUIUpdate() {
         const touristData = localStorage.getItem('touristData');
         if (touristData) {
           try {
@@ -2260,12 +2260,80 @@
             if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
               console.log('ページロード時にログイン状態を検出 - UI更新');
               updateLoginStateUI();
+              return true;
             }
           } catch (e) {
             console.warn('ページロード時認証チェックエラー:', e);
           }
         }
+        return false;
+      }
+      
+      // 即座に実行
+      performAuthCheckAndUIUpdate();
+      
+      // 少し遅延して再実行
+      setTimeout(() => {
+        performAuthCheckAndUIUpdate();
+      }, 100);
+      
+      // さらに遅延して再実行
+      setTimeout(() => {
+        performAuthCheckAndUIUpdate();
       }, 500);
+      
+      // 最終確認
+      setTimeout(() => {
+        performAuthCheckAndUIUpdate();
+      }, 1000);
+
+      // DOMContentLoaded時の確実な実行
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded - 認証UI確認実行');
+        performAuthCheckAndUIUpdate();
+      });
+
+      // UI要素の監視とリアルタイム修正
+      function setupUIMonitoring() {
+        const targetNode = document.querySelector('#registerDropdown');
+        if (!targetNode) {
+          setTimeout(setupUIMonitoring, 100);
+          return;
+        }
+
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' || mutation.type === 'characterData') {
+              const registerBtn = document.getElementById('registerDropdown');
+              if (registerBtn && registerBtn.textContent.includes('新規登録')) {
+                const touristData = localStorage.getItem('touristData');
+                if (touristData) {
+                  try {
+                    const userData = JSON.parse(touristData);
+                    if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+                      console.log('UI変更検出 - 認証状態を復元');
+                      updateLoginStateUI();
+                    }
+                  } catch (e) {
+                    console.warn('UI監視中の認証チェックエラー:', e);
+                  }
+                }
+              }
+            }
+          });
+        });
+
+        observer.observe(targetNode, {
+          childList: true,
+          subtree: true,
+          characterData: true
+        });
+
+        console.log('UI監視システム開始');
+      }
+
+      // UI監視を開始
+      setTimeout(setupUIMonitoring, 200);
       
       // 定期的な認証状態チェックと復旧
       setInterval(() => {
