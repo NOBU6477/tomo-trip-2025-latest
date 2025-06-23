@@ -1901,25 +1901,176 @@
   
   <!-- ユーザータイプ選択の動作改善 -->
   <script>
-    // 観光客認証保護システムの早期初期化
-    (function() {
-      // ページロード時に既存の認証データをチェックして保護
-      const existingTouristData = localStorage.getItem('touristData');
-      if (existingTouristData) {
-        try {
-          const userData = JSON.parse(existingTouristData);
-          if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
-            console.log('🛡️ 既存の観光客認証データを保護開始:', userData.name);
-            window.protectTouristAuth = true;
-            window.touristAuthData = userData;
-            
-            // 即座にストレージ保護を開始
-            protectTouristStorageEarly(userData);
-          }
-        } catch (e) {
-          console.warn('認証データパースエラー:', e);
-        }
+    // グローバル認証状態管理システム
+    window.TouristAuthManager = (function() {
+      let authData = null;
+      let isProtected = false;
+      
+      // 認証データを複数の場所に分散保存
+      function distributeAuthData(data) {
+        if (!data) return;
+        
+        const dataString = JSON.stringify(data);
+        authData = data;
+        
+        // メイン保存場所
+        localStorage.setItem('touristData', dataString);
+        sessionStorage.setItem('currentUser', dataString);
+        
+        // 分散バックアップ
+        localStorage.setItem('auth_backup_1', dataString);
+        localStorage.setItem('auth_backup_2', dataString);
+        sessionStorage.setItem('auth_session_backup', dataString);
+        
+        // メモリバックアップ
+        window.touristAuthData = data;
+        window.protectTouristAuth = true;
+        
+        console.log('🔐 認証データ分散保存完了:', data.name);
       }
+      
+      // 認証データを復元
+      function recoverAuthData() {
+        // メモリから復元
+        if (authData && authData.type === 'tourist' && authData.isAuthenticated) {
+          console.log('🔄 メモリから認証データ復元:', authData.name);
+          distributeAuthData(authData);
+          return authData;
+        }
+        
+        // バックアップから復元
+        const backupKeys = ['touristData', 'currentUser', 'auth_backup_1', 'auth_backup_2', 'auth_session_backup'];
+        
+        for (const key of backupKeys) {
+          try {
+            const storage = key.includes('session') ? sessionStorage : localStorage;
+            const data = storage.getItem(key);
+            if (data) {
+              const userData = JSON.parse(data);
+              if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+                console.log('🔄 バックアップから認証データ復元:', userData.name, '(from:', key, ')');
+                authData = userData;
+                distributeAuthData(userData);
+                return userData;
+              }
+            }
+          } catch (e) {
+            console.warn('バックアップ復元エラー:', key, e);
+          }
+        }
+        
+        return null;
+      }
+      
+      // 認証状態をチェック
+      function checkAuth() {
+        const mainData = localStorage.getItem('touristData');
+        if (mainData) {
+          try {
+            const userData = JSON.parse(mainData);
+            if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+              authData = userData;
+              return userData;
+            }
+          } catch (e) {
+            console.warn('メイン認証データ破損 - 復元を試行');
+          }
+        }
+        
+        // メインデータがない場合は復元を試行
+        return recoverAuthData();
+      }
+      
+      // 初期化
+      function init() {
+        console.log('🚀 認証管理システム初期化');
+        
+        const existingData = checkAuth();
+        if (existingData) {
+          console.log('🛡️ 既存認証データ検出:', existingData.name);
+          distributeAuthData(existingData);
+          setupProtection();
+        }
+        
+        // 定期的な健康チェック
+        setInterval(() => {
+          if (!localStorage.getItem('touristData') && authData) {
+            console.log('🚨 認証データ消失検出 - 自動復旧');
+            distributeAuthData(authData);
+          }
+        }, 1000);
+      }
+      
+      // ストレージ保護
+      function setupProtection() {
+        if (isProtected) return;
+        isProtected = true;
+        
+        const originalMethods = {
+          localRemove: localStorage.removeItem,
+          localClear: localStorage.clear,
+          sessionRemove: sessionStorage.removeItem,
+          sessionClear: sessionStorage.clear
+        };
+        
+        localStorage.removeItem = function(key) {
+          if (key === 'touristData' || key.startsWith('auth_backup') || key.startsWith('touristBackup_')) {
+            console.log('🚫 認証データ削除を阻止:', key);
+            return;
+          }
+          return originalMethods.localRemove.call(this, key);
+        };
+        
+        localStorage.clear = function() {
+          console.log('🚫 localStorage全削除を阻止');
+          const authKeys = ['touristData', 'auth_backup_1', 'auth_backup_2'];
+          const backupData = {};
+          authKeys.forEach(key => {
+            const data = localStorage.getItem(key);
+            if (data) backupData[key] = data;
+          });
+          
+          originalMethods.localClear.call(this);
+          
+          Object.keys(backupData).forEach(key => {
+            localStorage.setItem(key, backupData[key]);
+          });
+        };
+        
+        sessionStorage.removeItem = function(key) {
+          if (key === 'currentUser' || key === 'auth_session_backup') {
+            console.log('🚫 セッション認証データ削除を阻止:', key);
+            return;
+          }
+          return originalMethods.sessionRemove.call(this, key);
+        };
+        
+        sessionStorage.clear = function() {
+          console.log('🚫 sessionStorage全削除を阻止');
+          const authData = sessionStorage.getItem('currentUser');
+          const backupData = sessionStorage.getItem('auth_session_backup');
+          
+          originalMethods.sessionClear.call(this);
+          
+          if (authData) sessionStorage.setItem('currentUser', authData);
+          if (backupData) sessionStorage.setItem('auth_session_backup', backupData);
+        };
+      }
+      
+      return {
+        init: init,
+        save: distributeAuthData,
+        recover: recoverAuthData,
+        check: checkAuth,
+        isAuthenticated: function() {
+          const auth = checkAuth();
+          return auth && auth.type === 'tourist' && auth.isAuthenticated;
+        }
+      };
+    })();
+
+    // 認証管理システム初期化
+    window.TouristAuthManager.init();
       
       function protectTouristStorageEarly(touristData) {
         const originalRemoveItem = localStorage.removeItem;
@@ -2797,46 +2948,15 @@
             return;
           }
           
-          // 観光客としてログイン済みかチェック - 強化版
+          // 新しい認証管理システムを使用してチェック
           console.log('🔍 ガイド詳細クリック - 認証状態を確認中...', guideId);
           
-          const touristData = localStorage.getItem('touristData');
-          const sessionData = sessionStorage.getItem('currentUser');
+          const isAuthenticated = window.TouristAuthManager.isAuthenticated();
+          const userData = window.TouristAuthManager.check();
           
-          console.log('📋 localStorage touristData:', touristData);
-          console.log('📋 sessionStorage currentUser:', sessionData);
-          
-          // 複数の認証データソースをチェック
-          let isAuthenticated = false;
-          let userData = null;
-          
-          if (touristData) {
-            try {
-              userData = JSON.parse(touristData);
-              console.log('✅ localStorage解析成功:', userData);
-              if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
-                isAuthenticated = true;
-                console.log('✅ localStorage認証確認済み');
-              }
-            } catch (e) {
-              console.warn('⚠️ localStorage解析エラー:', e);
-            }
-          }
-          
-          if (!isAuthenticated && sessionData) {
-            try {
-              userData = JSON.parse(sessionData);
-              console.log('✅ sessionStorage解析成功:', userData);
-              if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
-                isAuthenticated = true;
-                console.log('✅ sessionStorage認証確認済み');
-                // sessionStorageのデータをlocalStorageにも保存
-                localStorage.setItem('touristData', sessionData);
-              }
-            } catch (e) {
-              console.warn('⚠️ sessionStorage解析エラー:', e);
-            }
-          }
+          console.log('🔍 認証管理システム結果:');
+          console.log('  - isAuthenticated:', isAuthenticated);
+          console.log('  - userData:', userData);
           
           if (isAuthenticated && userData) {
             console.log('🎉 認証済みユーザー - ガイド詳細モーダル表示:', guideId);
@@ -3261,24 +3381,10 @@
         registrationDate: new Date().toISOString()
       };
       
-      // ローカルストレージとセッションストレージに保存
-      localStorage.setItem('touristData', JSON.stringify(touristData));
-      sessionStorage.setItem('currentUser', JSON.stringify(touristData));
+      // 新しい認証管理システムを使用してデータを保存
+      window.TouristAuthManager.save(touristData);
       
-      console.log('💾 観光客データ保存完了:', touristData);
-      console.log('📋 localStorage確認:', localStorage.getItem('touristData'));
-      console.log('📋 sessionStorage確認:', sessionStorage.getItem('currentUser'));
-      
-      // 複数の方法でデータ永続化を確保
-      const backupStorageKey = 'touristBackup_' + touristData.id;
-      localStorage.setItem(backupStorageKey, JSON.stringify(touristData));
-      
-      // 認証保護フラグを設定
-      window.protectTouristAuth = true;
-      window.touristAuthData = touristData;
-      
-      // ストレージ操作を保護
-      protectTouristStorage(touristData);
+      console.log('💾 観光客データ保存完了 (新システム):', touristData);
       
       // 即座に認証状態を確認
       setTimeout(() => {
