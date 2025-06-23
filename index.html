@@ -2225,6 +2225,29 @@
         return false;
       }
       
+      // 競合スクリプト無効化
+      window.disableAuthCleanup = true;
+      window.preventLogout = true;
+      
+      // 他のスクリプトの認証クリア機能を無効化
+      const originalRemoveItem = localStorage.removeItem;
+      localStorage.removeItem = function(key) {
+        if (key === 'touristData' && window.protectTouristAuth) {
+          console.log('🛡️ touristData削除をブロック:', key);
+          return;
+        }
+        return originalRemoveItem.call(this, key);
+      };
+      
+      const originalSessionRemove = sessionStorage.removeItem;
+      sessionStorage.removeItem = function(key) {
+        if ((key === 'currentUser' || key === 'auth_session_backup') && window.protectTouristAuth) {
+          console.log('🛡️ セッションデータ削除をブロック:', key);
+          return;
+        }
+        return originalSessionRemove.call(this, key);
+      };
+
       // ページロード時の即座復旧
       forceAuthRecovery();
       
@@ -2247,11 +2270,43 @@
       // 定期的な認証状態チェックと復旧
       setInterval(() => {
         const mainData = localStorage.getItem('touristData');
-        if (!mainData) {
+        if (!mainData && window.touristAuthData) {
           console.log('🚨 認証データ消失検出 - 復旧実行');
           forceAuthRecovery();
+          // UI状態も確認して更新
+          setTimeout(() => {
+            const registerBtn = document.getElementById('registerDropdown');
+            if (registerBtn && registerBtn.textContent.includes('新規登録')) {
+              console.log('UI状態が不正 - 強制更新');
+              updateLoginStateUI();
+            }
+          }, 100);
         }
       }, 1000);
+
+      // 他のスクリプトからの干渉をブロック
+      const protectedKeys = ['touristData', 'currentUser', 'auth_backup_1', 'auth_backup_2', 'auth_session_backup'];
+      
+      // グローバル関数の上書きを防止
+      Object.defineProperty(window, 'performCompleteLogout', {
+        value: function() {
+          if (window.protectTouristAuth) {
+            console.log('🛡️ 外部ログアウト試行をブロック');
+            return false;
+          }
+        },
+        writable: false
+      });
+      
+      Object.defineProperty(window, 'clearAuthenticationData', {
+        value: function() {
+          if (window.protectTouristAuth) {
+            console.log('🛡️ 外部認証クリア試行をブロック');
+            return false;
+          }
+        },
+        writable: false
+      });
       
       // ガイド詳細ページからのリダイレクトでログインモーダルを表示
       if (sessionStorage.getItem('showLoginOnLoad') === 'true') {
@@ -3579,6 +3634,10 @@
         window.touristAuthData = touristData;
         window.protectTouristAuth = true;
         
+        // 即座にUI更新を強制実行
+        console.log('登録直後のUI更新を実行');
+        updateLoginStateUI();
+        
       } catch (e) {
         console.error('❌ データ保存エラー:', e);
       }
@@ -3670,21 +3729,28 @@
           console.log('✅ ログイン済みユーザー:', userData.name);
           
           // ログインボタンを隠す
-          const loginBtn = document.querySelector('a[data-bs-target="#loginModal"]');
+          const loginBtn = document.querySelector('button[data-bs-target="#loginModal"]');
           if (loginBtn) {
             loginBtn.style.display = 'none';
+            console.log('ログインボタン非表示');
           }
           
-          // 新規登録ドロップダウンを探す
-          const registerDropdown = document.querySelector('.dropdown-toggle');
-          if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
+          // 新規登録ドロップダウンを正確に特定
+          const registerDropdown = document.getElementById('registerDropdown');
+          console.log('登録ドロップダウン要素:', registerDropdown);
+          
+          if (registerDropdown) {
+            console.log('現在のボタンテキスト:', registerDropdown.textContent);
+            
             // 新規登録ボタンをユーザー名表示に変更
             registerDropdown.innerHTML = `
               <i class="bi bi-person-circle me-1"></i>
-              ${userData.name}
+              ${userData.name}さん
               <i class="bi bi-chevron-down ms-1"></i>
             `;
             registerDropdown.className = 'btn btn-outline-light dropdown-toggle';
+            
+            console.log('ボタンテキストを更新:', userData.name);
             
             // ドロップダウンメニューを更新
             const dropdownMenu = registerDropdown.nextElementSibling;
@@ -3701,7 +3767,10 @@
                   <i class="bi bi-box-arrow-right me-2"></i>ログアウト
                 </a></li>
               `;
+              console.log('ドロップダウンメニュー更新完了');
             }
+          } else {
+            console.warn('登録ドロップダウン要素が見つかりません');
           }
           
           // ページ属性を設定
