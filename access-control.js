@@ -156,24 +156,39 @@ function setupGuideCardAccess() {
     
     // 観光客専用機能（ガイド詳細など）
     if (e.target.closest('.guide-card, .guide-details-link')) {
-      // 統一認証システムを使用して認証状態を確認
+      console.log('ガイドカードクリック検出');
+      
+      // 認証データを確認
       const touristData = localStorage.getItem('touristData');
       
       if (touristData) {
-        const userData = JSON.parse(touristData);
-        if (userData.type === 'guide') {
-          e.preventDefault();
-          showUserTypeAccessModal(
-            '観光客専用機能です',
-            '現在ガイドアカウントでログインされています。ガイド詳細を見るには観光客アカウントが必要です。',
-            'tourist'
-          );
-          return false;
+        try {
+          const userData = JSON.parse(touristData);
+          console.log('認証データ確認:', userData);
+          
+          // 観光客として認証済みの場合はアクセス許可
+          if (userData.type === 'tourist' && userData.isAuthenticated) {
+            console.log('観光客認証済み - アクセス許可');
+            return; // 通常のクリック処理を続行
+          }
+          
+          // ガイドアカウントでログインしている場合は専用メッセージ
+          if (userData.type === 'guide') {
+            e.preventDefault();
+            showUserTypeAccessModal(
+              '観光客専用機能です',
+              '現在ガイドアカウントでログインされています。ガイド詳細を見るには観光客アカウントが必要です。',
+              'tourist'
+            );
+            return false;
+          }
+        } catch (parseError) {
+          console.warn('認証データパースエラー:', parseError);
         }
       }
       
       // 認証されていない場合は、メインページのイベントハンドラに処理を委ねる
-      // この処理をスキップして、index.htmlの認証フローを実行させる
+      console.log('未認証または無効な認証 - メインハンドラに委譲');
       return;
     }
   });
