@@ -2129,23 +2129,59 @@
     })();
 
     document.addEventListener('DOMContentLoaded', function() {
-      // 認証状態の即座検証と復旧
-      setTimeout(() => {
-        console.log('🔍 ページロード時認証状態検証開始');
-        const authState = isUserAuthenticated();
-        console.log('現在の認証状態:', authState);
+      // 強力な認証状態復旧システム
+      function forceAuthRecovery() {
+        console.log('🔧 強制認証復旧システム開始');
         
-        if (!authState && window.touristAuthData) {
-          console.log('🔄 認証データを検出 - 復旧処理開始');
-          localStorage.setItem('touristData', JSON.stringify(window.touristAuthData));
-          sessionStorage.setItem('currentUser', JSON.stringify(window.touristAuthData));
-          
-          // UI更新
-          setTimeout(() => {
-            updateLoginStateUI();
-          }, 100);
+        // 複数のバックアップソースから検索
+        const backupSources = [
+          { key: 'auth_backup_1', storage: localStorage },
+          { key: 'auth_backup_2', storage: localStorage },
+          { key: 'auth_session_backup', storage: sessionStorage },
+          { key: 'currentUser', storage: sessionStorage }
+        ];
+        
+        for (const source of backupSources) {
+          try {
+            const data = source.storage.getItem(source.key);
+            if (data) {
+              const userData = JSON.parse(data);
+              if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+                console.log('✅ 認証データ復旧:', userData.name);
+                
+                // 全ての保存場所に復元
+                localStorage.setItem('touristData', data);
+                sessionStorage.setItem('currentUser', data);
+                localStorage.setItem('auth_backup_1', data);
+                localStorage.setItem('auth_backup_2', data);
+                sessionStorage.setItem('auth_session_backup', data);
+                
+                window.touristAuthData = userData;
+                window.protectTouristAuth = true;
+                
+                updateLoginStateUI();
+                return true;
+              }
+            }
+          } catch (e) {
+            console.warn('復旧試行エラー:', source.key, e);
+          }
         }
-      }, 50);
+        
+        return false;
+      }
+      
+      // ページロード時の即座復旧
+      forceAuthRecovery();
+      
+      // 定期的な認証状態チェックと復旧
+      setInterval(() => {
+        const mainData = localStorage.getItem('touristData');
+        if (!mainData) {
+          console.log('🚨 認証データ消失検出 - 復旧実行');
+          forceAuthRecovery();
+        }
+      }, 1000);
       
       // ガイド詳細ページからのリダイレクトでログインモーダルを表示
       if (sessionStorage.getItem('showLoginOnLoad') === 'true') {
@@ -2948,11 +2984,58 @@
             return;
           }
           
-          // 新しい認証管理システムを使用してチェック
+          // ガイド詳細アクセス時の即座認証復旧
           console.log('🔍 ガイド詳細クリック - 認証状態を確認中...', guideId);
           
-          const isAuthenticated = window.TouristAuthManager.isAuthenticated();
-          const userData = window.TouristAuthManager.check();
+          // まず即座に認証復旧を試行
+          function immediateAuthRecovery() {
+            const backupKeys = [
+              { key: 'touristData', storage: localStorage },
+              { key: 'currentUser', storage: sessionStorage },
+              { key: 'auth_backup_1', storage: localStorage },
+              { key: 'auth_backup_2', storage: localStorage },
+              { key: 'auth_session_backup', storage: sessionStorage }
+            ];
+            
+            for (const backup of backupKeys) {
+              try {
+                const data = backup.storage.getItem(backup.key);
+                if (data) {
+                  const userData = JSON.parse(data);
+                  if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+                    console.log('🔄 即座復旧成功:', userData.name, 'from', backup.key);
+                    
+                    // 全ての保存場所に復元
+                    localStorage.setItem('touristData', data);
+                    sessionStorage.setItem('currentUser', data);
+                    
+                    return userData;
+                  }
+                }
+              } catch (e) {
+                console.warn('即座復旧エラー:', backup.key);
+              }
+            }
+            return null;
+          }
+          
+          let userData = immediateAuthRecovery();
+          let isAuthenticated = userData && userData.type === 'tourist' && userData.isAuthenticated;
+          
+          // 復旧できなかった場合は通常チェック
+          if (!isAuthenticated) {
+            const touristData = localStorage.getItem('touristData');
+            if (touristData) {
+              try {
+                userData = JSON.parse(touristData);
+                isAuthenticated = userData && userData.type === 'tourist' && userData.isAuthenticated;
+              } catch (e) {
+                console.warn('通常チェックエラー:', e);
+              }
+            }
+          }
+          
+
           
           console.log('🔍 認証管理システム結果:');
           console.log('  - isAuthenticated:', isAuthenticated);
