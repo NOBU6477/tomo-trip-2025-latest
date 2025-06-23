@@ -2746,9 +2746,21 @@
           
           if (isAuthenticated && userData) {
             console.log('🎉 認証済みユーザー - ガイド詳細モーダル表示:', guideId);
+            console.log('📊 認証データ詳細:', {
+              name: userData.name,
+              type: userData.type,
+              isAuthenticated: userData.isAuthenticated,
+              id: userData.id
+            });
             showGuideDetailModal(guideId);
             return;
           }
+          
+          console.log('❌ 認証チェック失敗:');
+          console.log('- isAuthenticated:', isAuthenticated);
+          console.log('- userData:', userData);
+          console.log('- userData.type:', userData?.type);
+          console.log('- userData.isAuthenticated:', userData?.isAuthenticated);
           
           // 未ログインまたは無効な認証データの場合 - メインページで登録促進モーダル表示
           console.log('❌ 未認証ユーザー - 登録促進モーダルを表示');
@@ -3080,6 +3092,25 @@
       localStorage.setItem('touristData', JSON.stringify(touristData));
       sessionStorage.setItem('currentUser', JSON.stringify(touristData));
       
+      console.log('💾 観光客データ保存完了:', touristData);
+      console.log('📋 localStorage確認:', localStorage.getItem('touristData'));
+      console.log('📋 sessionStorage確認:', sessionStorage.getItem('currentUser'));
+      
+      // 複数の方法でデータ永続化を確保
+      const backupStorageKey = 'touristBackup_' + touristData.id;
+      localStorage.setItem(backupStorageKey, JSON.stringify(touristData));
+      
+      // 即座に認証状態を確認
+      setTimeout(() => {
+        const immediateCheck = isUserAuthenticated();
+        console.log('🔍 登録直後の認証状態:', immediateCheck);
+        if (!immediateCheck) {
+          console.warn('⚠️ 認証データが失われました - 緊急復旧');
+          localStorage.setItem('touristData', JSON.stringify(touristData));
+          sessionStorage.setItem('currentUser', JSON.stringify(touristData));
+        }
+      }, 100);
+      
       showNotification('観光客登録が完了しました。ログインしました！', 'success');
       
       // モーダルを閉じる
@@ -3106,6 +3137,17 @@
         } else {
           // UIを更新してログイン状態を反映
           updateLoginStateUI();
+          
+          // 認証状態を強制的に再確認
+          setTimeout(() => {
+            console.log('🔍 登録後認証状態検証:');
+            const authCheck = isUserAuthenticated();
+            console.log('認証状態:', authCheck);
+            if (!authCheck) {
+              console.warn('⚠️ 認証状態が無効 - 再設定中');
+              validateAndRestoreAuthState();
+            }
+          }, 500);
         }
       }, 2000);
     }
@@ -3533,6 +3575,32 @@
         } catch (e) {
           console.warn('⚠️ sessionStorage認証データ破損:', e);
           sessionStorage.removeItem('currentUser');
+        }
+      }
+      
+      // バックアップストレージからの復元
+      if (!validAuthData) {
+        console.log('🔍 バックアップストレージから復元を試行');
+        const allKeys = Object.keys(localStorage);
+        const backupKeys = allKeys.filter(key => key.startsWith('touristBackup_'));
+        
+        for (const backupKey of backupKeys) {
+          try {
+            const backupData = localStorage.getItem(backupKey);
+            const userData = JSON.parse(backupData);
+            if (userData && userData.type === 'tourist' && userData.isAuthenticated && userData.id) {
+              validAuthData = userData;
+              console.log('✅ バックアップから認証データ復元:', userData.name);
+              
+              // メインストレージに復元
+              localStorage.setItem('touristData', backupData);
+              sessionStorage.setItem('currentUser', backupData);
+              break;
+            }
+          } catch (e) {
+            console.warn('⚠️ バックアップデータ破損:', backupKey);
+            localStorage.removeItem(backupKey);
+          }
         }
       }
       
