@@ -2579,30 +2579,39 @@
       }
       
       /**
-       * ガイド探索に移動
+       * ガイド探索に移動（削除済み - 下の包括的なexploreGuides関数を使用）
        */
-      window.exploreGuides = function() {
-        closeSuccessModal();
-        // ページトップのガイドセクションにスクロール
-        document.getElementById('guides').scrollIntoView({ behavior: 'smooth' });
-        
-        // 少し遅延してフィルターのヒントを表示
-        setTimeout(() => {
-          if (typeof window.showFilterHint === 'function') {
-            window.showFilterHint();
-          }
-        }, 1000);
-      }
+      // window.exploreGuides = function() {
+      //   closeSuccessModal();
+      //   // ページトップのガイドセクションにスクロール
+      //   document.getElementById('guides').scrollIntoView({ behavior: 'smooth' });
+      //   
+      //   // 少し遅延してフィルターのヒントを表示
+      //   setTimeout(() => {
+      //     if (typeof window.showFilterHint === 'function') {
+      //       window.showFilterHint();
+      //     }
+      //   }, 1000);
+      // }
       
       /**
        * 成功モーダルを閉じる
        */
       window.closeSuccessModal = function() {
-        const modal = document.getElementById('touristSuccessModal');
-        if (modal) {
-          modal.style.display = 'none';
-          modal.remove();
+        console.log('🧹 closeSuccessModal開始');
+        
+        // グローバルクリーンアップを実行
+        if (typeof forceCleanupAllModals === 'function') {
+          forceCleanupAllModals();
         }
+        
+        // 追加の強制クリーンアップ
+        document.querySelectorAll('.modal, .modal-backdrop, .fade.show').forEach(el => el.remove());
+        document.body.className = document.body.className.replace(/modal-[^\s]*/g, '');
+        document.body.removeAttribute('style');
+        document.documentElement.removeAttribute('style');
+        
+        console.log('✅ closeSuccessModal完了');
       }
       
       // お問い合わせフォームの送信処理
@@ -3199,6 +3208,9 @@
       showNotification('ガイド一覧をご覧ください。お気に入りのガイドをクリックして詳細を確認できます。', 'success');
       console.log('✅ exploreGuides処理完了');
     }
+
+    // グローバルにexploreGuides関数を設定
+    window.exploreGuides = exploreGuides;
 
     // 「後で見る」ボタンの処理
     function closeSuccessModal() {
