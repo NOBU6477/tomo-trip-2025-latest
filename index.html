@@ -2251,22 +2251,26 @@
       window.preventLogout = true;
       window.blockAuthReset = true;
       
-      // auth-validator.jsの機能を無効化
-      window.cleanupInvalidAuthData = function() {
-        console.log('🛡️ cleanupInvalidAuthData blocked');
-        return false;
-      };
+      // 有害な関数を無効化
+      const dangerousFunctions = [
+        'cleanupInvalidAuthData',
+        'performCompleteLogout', 
+        'clearAuthenticationData',
+        'updateUIAfterLogout',
+        'executeForceLogout',
+        'handleLogout'
+      ];
       
-      window.performCompleteLogout = function() {
-        console.log('🛡️ performCompleteLogout blocked');
-        return false;
-      };
-      
-      // proper-logout-handler.jsの機能を無効化
-      window.updateUIAfterLogout = function() {
-        console.log('🛡️ updateUIAfterLogout blocked');
-        return false;
-      };
+      dangerousFunctions.forEach(funcName => {
+        Object.defineProperty(window, funcName, {
+          value: function() {
+            console.log(`🛡️ ${funcName} blocked`);
+            return false;
+          },
+          writable: false,
+          configurable: false
+        });
+      });
       
       // 他のスクリプトの認証クリア機能を無効化
       const originalRemoveItem = localStorage.removeItem;
@@ -3797,6 +3801,11 @@
           updateLoginStateUI();
         }, 500);
         
+        // さらに遅延して最終確認
+        setTimeout(() => {
+          updateLoginStateUI();
+        }, 1000);
+        
       } catch (e) {
         console.error('❌ データ保存エラー:', e);
       }
@@ -4633,5 +4642,10 @@
     </div>
   </div>
 
+  <script src="auth-debug-tracer.js"></script>
+  <script src="auth-persistence-fix.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="auth-protection-override.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>

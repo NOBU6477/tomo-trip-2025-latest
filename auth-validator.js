@@ -86,6 +86,12 @@
    * 不正な認証データをクリーンアップ
    */
   function cleanupInvalidAuthData() {
+    // 認証保護モードがアクティブな場合は何もしない
+    if (window.protectTouristAuth || window.blockAuthReset) {
+      console.log('🛡️ cleanupInvalidAuthData: 保護モードによりスキップ');
+      return;
+    }
+    
     const touristData = localStorage.getItem('touristData');
     const sessionData = sessionStorage.getItem('currentUser');
 
