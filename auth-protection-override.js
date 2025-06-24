@@ -8,7 +8,7 @@
   
   console.log('認証保護オーバーライド開始');
   
-  // 認証関連の有害な関数を無効化
+  // 認証関連の有害な関数を無効化（ただし登録中は除外）
   const harmfulFunctions = [
     'cleanupInvalidAuthData',
     'performCompleteLogout', 
@@ -19,8 +19,14 @@
   ];
   
   harmfulFunctions.forEach(funcName => {
+    const originalFunction = window[funcName];
     Object.defineProperty(window, funcName, {
       value: function() {
+        // 現在登録中または認証データが存在しない場合は元の関数を実行
+        if (window.isRegistering || !localStorage.getItem('touristData')) {
+          console.log(`${funcName} を許可（登録中または未認証）`);
+          return originalFunction ? originalFunction.apply(this, arguments) : false;
+        }
         console.log(`認証削除関数 ${funcName} をブロック`);
         return false;
       },
@@ -45,6 +51,10 @@
   const originalSessionClear = sessionStorage.clear;
   
   localStorage.removeItem = function(key) {
+    // 登録中または認証データが存在しない場合は削除を許可
+    if (window.isRegistering || !localStorage.getItem('touristData')) {
+      return originalLocalRemove.call(this, key);
+    }
     if (protectedKeys.includes(key) || key.includes('tourist') || key.includes('auth_')) {
       console.log('認証データ削除をブロック:', key);
       return;

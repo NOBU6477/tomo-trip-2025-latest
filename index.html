@@ -2262,8 +2262,14 @@
       ];
       
       dangerousFunctions.forEach(funcName => {
+        const originalFunction = window[funcName];
         Object.defineProperty(window, funcName, {
           value: function() {
+            // 登録中または認証データが存在しない場合は元の関数を実行
+            if (window.isRegistering || !localStorage.getItem('touristData')) {
+              console.log(`🛡️ ${funcName} allowed (registering or not authenticated)`);
+              return originalFunction ? originalFunction.apply(this, arguments) : false;
+            }
             console.log(`🛡️ ${funcName} blocked`);
             return false;
           },
@@ -3804,6 +3810,8 @@
         // さらに遅延して最終確認
         setTimeout(() => {
           updateLoginStateUI();
+          // 登録完了フラグをクリア
+          window.isRegistering = false;
         }, 1000);
         
       } catch (e) {
