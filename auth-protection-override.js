@@ -63,6 +63,11 @@
   };
   
   localStorage.clear = function() {
+    // 登録中または認証データが存在しない場合は完全削除を許可
+    if (window.isRegistering || !localStorage.getItem('touristData')) {
+      return originalLocalClear.call(this);
+    }
+    
     console.log('localStorage全削除をブロック - 認証データを保護');
     const backupData = {};
     protectedKeys.forEach(key => {
