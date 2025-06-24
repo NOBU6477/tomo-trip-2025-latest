@@ -1999,6 +1999,27 @@
             distributeAuthData(authData);
           }
         }, 1000);
+
+        // ページナビゲーション時の保護
+        window.addEventListener('beforeunload', () => {
+          if (authData) {
+            sessionStorage.setItem('nav_backup', JSON.stringify(authData));
+          }
+        });
+
+        // ページ復帰時の復旧
+        window.addEventListener('pageshow', () => {
+          const navBackup = sessionStorage.getItem('nav_backup');
+          if (navBackup && !localStorage.getItem('touristData')) {
+            try {
+              const backupData = JSON.parse(navBackup);
+              distributeAuthData(backupData);
+              console.log('ナビゲーション復旧完了');
+            } catch (e) {
+              console.warn('ナビゲーション復旧エラー:', e);
+            }
+          }
+        });
       }
       
       // ストレージ保護
@@ -2225,9 +2246,27 @@
         return false;
       }
       
-      // 競合スクリプト無効化
+      // 競合スクリプト完全無効化
       window.disableAuthCleanup = true;
       window.preventLogout = true;
+      window.blockAuthReset = true;
+      
+      // auth-validator.jsの機能を無効化
+      window.cleanupInvalidAuthData = function() {
+        console.log('🛡️ cleanupInvalidAuthData blocked');
+        return false;
+      };
+      
+      window.performCompleteLogout = function() {
+        console.log('🛡️ performCompleteLogout blocked');
+        return false;
+      };
+      
+      // proper-logout-handler.jsの機能を無効化
+      window.updateUIAfterLogout = function() {
+        console.log('🛡️ updateUIAfterLogout blocked');
+        return false;
+      };
       
       // 他のスクリプトの認証クリア機能を無効化
       const originalRemoveItem = localStorage.removeItem;
@@ -2334,6 +2373,48 @@
 
       // UI監視を開始
       setTimeout(setupUIMonitoring, 200);
+
+      // ページナビゲーション時の認証状態保持
+      window.addEventListener('beforeunload', function() {
+        const touristData = localStorage.getItem('touristData');
+        if (touristData) {
+          // 次回ページロード時のために確実に保存
+          sessionStorage.setItem('auth_navigation_backup', touristData);
+          console.log('ページ離脱前に認証状態をバックアップ');
+        }
+      });
+
+      // ページフォーカス時の認証状態復元を強化
+      window.addEventListener('focus', function() {
+        console.log('ページフォーカス取得 - 認証状態確認');
+        const navBackup = sessionStorage.getItem('auth_navigation_backup');
+        if (navBackup && !localStorage.getItem('touristData')) {
+          console.log('ナビゲーションバックアップから復元');
+          localStorage.setItem('touristData', navBackup);
+          updateLoginStateUI();
+        }
+      });
+
+      // 最後の砦 - 定期的なUI状態監視と修正
+      setInterval(() => {
+        const touristData = localStorage.getItem('touristData');
+        const registerBtn = document.getElementById('registerDropdown');
+        
+        if (touristData && registerBtn) {
+          try {
+            const userData = JSON.parse(touristData);
+            if (userData && userData.type === 'tourist' && userData.isAuthenticated) {
+              // 認証済みなのにボタンが「新規登録」のままの場合は修正
+              if (registerBtn.textContent.includes('新規登録')) {
+                console.log('UI不整合検出 - 強制修正実行');
+                updateLoginStateUI();
+              }
+            }
+          } catch (e) {
+            console.warn('定期UI監視エラー:', e);
+          }
+        }
+      }, 3000);
       
       // 定期的な認証状態チェックと復旧
       setInterval(() => {
@@ -3702,9 +3783,19 @@
         window.touristAuthData = touristData;
         window.protectTouristAuth = true;
         
+        // TouristAuthManagerに登録
+        if (window.TouristAuthManager) {
+          window.TouristAuthManager.save(touristData);
+        }
+        
         // 即座にUI更新を強制実行
         console.log('登録直後のUI更新を実行');
         updateLoginStateUI();
+        
+        // 少し遅延してもう一度確実に実行
+        setTimeout(() => {
+          updateLoginStateUI();
+        }, 500);
         
       } catch (e) {
         console.error('❌ データ保存エラー:', e);
