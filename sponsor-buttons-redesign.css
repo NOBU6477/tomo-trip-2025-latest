@@ -1,7 +1,7 @@
 /* 協賛店ミニボタン - 右下小さめデザイン */
 .sponsor-mini-buttons {
   position: absolute;
-  bottom: -60px;
+  bottom: -80px;
   right: 0;
   z-index: 10;
 }
@@ -9,80 +9,181 @@
 .sponsor-mini-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 15px;
   align-items: flex-end;
 }
 
 .sponsor-mini-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 12px;
+  gap: 12px;
+  padding: 16px 24px;
   border: none;
-  border-radius: 20px;
-  font-size: 11px;
+  border-radius: 28px;
+  font-size: 16px;
   font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  min-width: 110px;
+  backdrop-filter: blur(15px);
+  font-family: 'Comic Sans MS', cursive, -apple-system, BlinkMacSystemFont, sans-serif;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    0 4px 10px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  min-width: 180px;
+  position: relative;
+  overflow: hidden;
 }
 
 .sponsor-mini-btn.sponsor-register {
-  background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+  background: linear-gradient(135deg, 
+    #ff6b9d 0%, 
+    #c44569 30%,
+    #f8b500 70%,
+    #ff6b9d 100%);
   color: white;
+  animation: gentlePulse 4s ease-in-out infinite;
 }
 
 .sponsor-mini-btn.sponsor-login {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, 
+    #4facfe 0%, 
+    #00f2fe 30%,
+    #43e97b 70%,
+    #4facfe 100%);
   color: white;
+  animation: gentlePulse 4s ease-in-out infinite 2s;
 }
 
 .sponsor-mini-btn:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  transform: translateY(-6px) scale(1.08);
+  animation: buttonWiggle 0.6s ease-in-out;
 }
 
 .sponsor-mini-btn.sponsor-register:hover {
-  box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+  box-shadow: 
+    0 20px 50px rgba(255, 107, 157, 0.5),
+    0 10px 25px rgba(255, 107, 157, 0.3);
 }
 
 .sponsor-mini-btn.sponsor-login:hover {
-  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+  box-shadow: 
+    0 20px 50px rgba(79, 172, 254, 0.5),
+    0 10px 25px rgba(79, 172, 254, 0.3);
+}
+
+@keyframes buttonWiggle {
+  0%, 100% { transform: translateY(-6px) scale(1.08) rotateZ(0deg); }
+  25% { transform: translateY(-6px) scale(1.08) rotateZ(-1deg); }
+  75% { transform: translateY(-6px) scale(1.08) rotateZ(1deg); }
+}
+
+@keyframes gentlePulse {
+  0%, 100% { 
+    box-shadow: 
+      0 8px 25px rgba(0, 0, 0, 0.15),
+      0 4px 10px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    box-shadow: 
+      0 12px 35px rgba(0, 0, 0, 0.2),
+      0 6px 15px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
 }
 
 .sponsor-mini-btn i {
-  font-size: 14px;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.sponsor-mini-btn:hover i {
+  transform: rotate(15deg) scale(1.15);
+  background: rgba(255, 255, 255, 0.4);
+  animation: iconBounce 0.6s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: rotate(15deg) scale(1.15); }
+  50% { transform: rotate(15deg) scale(1.25); }
 }
 
 .sponsor-mini-btn span {
-  font-size: 10px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: 'Comic Sans MS', cursive, -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.sponsor-mini-btn:hover span {
+  transform: translateX(3px);
+  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* シャイン効果 */
+.sponsor-mini-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.6), 
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.6),
+    transparent);
+  transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: skewX(-25deg);
+}
+
+.sponsor-mini-btn:hover::before {
+  left: 100%;
+}
+
+/* クリック時のフィードバック */
+.sponsor-mini-btn:active {
+  transform: translateY(-3px) scale(1.03);
+  transition: all 0.1s ease;
 }
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
   .sponsor-mini-buttons {
-    bottom: -50px;
+    bottom: -70px;
     right: -10px;
   }
   
   .sponsor-mini-btn {
-    min-width: 90px;
-    padding: 6px 10px;
-    font-size: 10px;
+    min-width: 150px;
+    padding: 14px 20px;
+    font-size: 14px;
+    gap: 10px;
   }
   
   .sponsor-mini-btn i {
-    font-size: 12px;
+    font-size: 20px;
+    width: 35px;
+    height: 35px;
   }
   
   .sponsor-mini-btn span {
-    font-size: 9px;
+    font-size: 12px;
   }
 }
 
