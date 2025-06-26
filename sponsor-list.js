@@ -144,49 +144,6 @@
                 </small>
               </div>
             ` : ''}
-          
-          ${sponsor.description ? `
-            <div class="sponsor-description">
-              ${sponsor.description}
-            </div>
-          ` : ''}
-          
-          ${sponsor.referredBy ? `
-            <div class="referral-info">
-              <small class="text-primary">
-                <i class="bi bi-person-check"></i> 
-                ガイド紹介による登録 (紹介コード: ${sponsor.referredBy.referralCode})
-              </small>
-            </div>
-          ` : ''}
-          
-          ${sponsor.benefits ? `
-            <div class="sponsor-benefits">
-              <h6><i class="bi bi-gift"></i> 観光客向け特典</h6>
-              <div>${sponsor.benefits}</div>
-            </div>
-          ` : ''}
-          
-          <div class="sponsor-contact">
-            <div class="contact-item clickable address-item" onclick="showMap('${sponsor.storeName}', '${sponsor.address}')">
-              <i class="bi bi-geo-alt"></i>
-              <span class="address-link">${sponsor.address}</span>
-              <small class="text-muted ms-2">タップで地図表示</small>
-            </div>
-            ${sponsor.phone ? `
-              <div class="contact-item clickable">
-                <i class="bi bi-telephone"></i>
-                <a href="tel:${sponsor.phone.replace(/[^0-9+]/g, '')}" class="phone-link">${sponsor.phone}</a>
-                <small class="text-muted ms-2">タップで電話</small>
-              </div>
-            ` : ''}
-            ${sponsor.website ? `
-              <div class="contact-item clickable">
-                <i class="bi bi-globe"></i>
-                <a href="${sponsor.website}" target="_blank" class="text-decoration-none">ウェブサイト</a>
-                <small class="text-muted ms-2">タップで開く</small>
-              </div>
-            ` : ''}
           </div>
         </div>
       </div>
@@ -288,6 +245,82 @@
           friday: { open: '15:00', close: '24:00' },
           saturday: { open: '12:00', close: '24:00' },
           sunday: { open: '12:00', close: '22:00' }
+        },
+        registrationDate: new Date().toISOString(),
+        status: 'approved'
+      },
+      // 追加のサンプルデータで豊富さをアピール
+      {
+        id: 'sponsor_sample_3',
+        storeName: '築地寿司',
+        storeType: 'restaurant',
+        contactEmail: 'tsukiji@example.com',
+        phone: '03-5555-0123',
+        website: 'https://tsukiji-sushi.jp',
+        address: '東京都中央区築地1-1-1',
+        description: '新鮮な魚介を使った本格江戸前寿司をお楽しみいただけます。',
+        benefits: 'ガイド同行で握り寿司15%OFF、英語対応可能な職人がサービス',
+        logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InN1c2hpIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmY0NjQ2O3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmNzA3MDtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNzdXNoaSkiIHJ4PSIxNSIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuWvv+WPuDwvdGV4dD48L3N2Zz4=',
+        photos: [
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InN1c2hpYmciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY5ZjU7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmMGUwO3N0b3Atb3BhY2l0eToxIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI3N1c2hpYmcpIi8+PHRleHQgeD0iMjAwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZjQ2NDYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuaWsOm5ruWvv+WPuDwvdGV4dD48L3N2Zz4='
+        ],
+        businessHours: {
+          tuesday: { open: '11:30', close: '14:00' },
+          wednesday: { open: '11:30', close: '14:00' },
+          thursday: { open: '11:30', close: '14:00' },
+          friday: { open: '11:30', close: '14:00' },
+          saturday: { open: '11:30', close: '21:00' },
+          sunday: { open: '11:30', close: '20:00' }
+        },
+        registrationDate: new Date().toISOString(),
+        status: 'approved'
+      },
+      {
+        id: 'sponsor_sample_4',
+        storeName: '京都工芸品店',
+        storeType: 'shop',
+        contactEmail: 'kyoto@example.com',
+        phone: '075-1111-2222',
+        address: '京都府京都市東山区清水1-294',
+        description: '伝統的な京都の工芸品や着物レンタルを取り扱っています。',
+        benefits: '着物レンタル30%OFF、小物購入で記念品プレゼント',
+        logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Imt5b3RvIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojOTkzM2ZmO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2JkNjZmZjtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNreW90bykiIHJ4PSIxNSIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuW3peiKuOWTgzwvdGV4dD48L3N2Zz4=',
+        photos: [
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImtpbW9ubyIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmZjVmNTtzdG9wLW9wYWNpdHk6MSIgLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmNWY1ZjU7c3RvcC1vcGFjaXR5OjEiIC8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3Qgd2lkdGg9IjQwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9InVybCgja2ltb25vKSIvPjx0ZXh0IHg9IjIwMCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjQiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjOTkzM2ZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7nnYDnjpnkuJDniKk8L3RleHQ+PC9zdmc+'
+        ],
+        businessHours: {
+          monday: { open: '09:00', close: '18:00' },
+          tuesday: { open: '09:00', close: '18:00' },
+          wednesday: { open: '09:00', close: '18:00' },
+          thursday: { open: '09:00', close: '18:00' },
+          friday: { open: '09:00', close: '18:00' },
+          saturday: { open: '09:00', close: '19:00' },
+          sunday: { open: '09:00', close: '19:00' }
+        },
+        registrationDate: new Date().toISOString(),
+        status: 'approved'
+      },
+      {
+        id: 'sponsor_sample_5',
+        storeName: '大阪体験工房',
+        storeType: 'activity',
+        contactEmail: 'osaka@example.com',
+        phone: '06-7777-8888',
+        address: '大阪府大阪市中央区道頓堀1-1-1',
+        description: 'たこ焼き作り体験やお好み焼き教室を開催しています。',
+        benefits: '体験料金20%OFF、作ったたこ焼きお持ち帰り可能',
+        logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Im9zYWthIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZhNzI2O3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmYzY0NztzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNvc2FrYSkiIHJ4PSIxNSIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuS9k+mbkDwvdGV4dD48L3N2Zz4=',
+        photos: [
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9InRha295YWtpIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmOGU3O3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmZWNkMDtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCN0YWtveWFraSkiLz48dGV4dCB4PSIyMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2ZmYTcyNiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+44Gf44GT44KE44GN5L2T6bOAPC90ZXh0Pjwvc3ZnPg=='
+        ],
+        businessHours: {
+          monday: { open: '10:00', close: '18:00' },
+          tuesday: { open: '10:00', close: '18:00' },
+          wednesday: { open: '10:00', close: '18:00' },
+          thursday: { open: '10:00', close: '18:00' },
+          friday: { open: '10:00', close: '19:00' },
+          saturday: { open: '10:00', close: '19:00' },
+          sunday: { open: '10:00', close: '18:00' }
         },
         registrationDate: new Date().toISOString(),
         status: 'approved'
