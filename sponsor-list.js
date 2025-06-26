@@ -38,6 +38,28 @@
     return `
       <div class="col-lg-6 col-xl-4">
         <div class="sponsor-card">
+          ${sponsor.photos && sponsor.photos.length > 0 ? `
+            <div class="sponsor-photo-section mb-3">
+              <div id="carousel${sponsor.id}" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                  ${sponsor.photos.map((photo, index) => `
+                    <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                      <img src="${photo}" class="d-block w-100" style="height: 200px; object-fit: cover; border-radius: 10px;">
+                    </div>
+                  `).join('')}
+                </div>
+                ${sponsor.photos.length > 1 ? `
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel${sponsor.id}" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carousel${sponsor.id}" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
+          
           <div class="d-flex align-items-start mb-3">
             <img src="${sponsor.logo}" alt="${sponsor.storeName}" class="sponsor-logo me-3">
             <div class="flex-grow-1">
@@ -46,7 +68,14 @@
                   <div class="sponsor-name">${sponsor.storeName}</div>
                   <div class="sponsor-type">${storeTypeLabels[sponsor.storeType] || sponsor.storeType}</div>
                 </div>
-                <span class="status-badge ${statusClass}">${statusText}</span>
+                <div class="text-end">
+                  <span class="status-badge ${statusClass}">${statusText}</span>
+                  <div class="mt-2">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editSponsor('${sponsor.id}')">
+                      <i class="bi bi-pencil"></i> 編集
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -154,6 +183,10 @@
         description: '季節の桜をモチーフにした美しいカフェです。手作りケーキと香り高いコーヒーをお楽しみいただけます。',
         benefits: '観光客の方には10%割引、英語メニューもご用意しています。',
         logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImEiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZjk5Y2Q7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmY2YmE2O3N0b3Atb3BhY2l0eToxIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ1cmwoI2EpIiByeD0iMTUiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7moYw8L3RleHQ+PC9zdmc+',
+        photos: [
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImNhZmUiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY1ZjU7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZlYmVkO3N0b3Atb3BhY2l0eToxIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2NhZmUpIi8+PHRleHQgeD0iMjAwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZjZiNmIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuahzOOCq+ODleOCpzwvdGV4dD48L3N2Zz4=',
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImNha2UiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiNmZmY4ZTc7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZmMGQ2O3N0b3Atb3BhY2l0eToxIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSI0MDAiIGhlaWdodD0iMzAwIiBmaWxsPSJ1cmwoI2Nha2UpIi8+PHRleHQgeD0iMjAwIiB5PSIxNTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiNmZmE3MjYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuaJi+S9nOOCseODvOOCrewvdGV4dD48L3N2Zz4='
+        ],
         registrationDate: new Date().toISOString(),
         status: 'approved'
       },
@@ -169,6 +202,10 @@
         description: '富士山を一望できる絶景ホテル。温泉と日本料理でおもてなしいたします。',
         benefits: 'TomoTripガイド同行のお客様は宿泊料金20%割引、無料温泉入浴券プレゼント。',
         logo: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImIiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiM2NjdlZWE7c3RvcC1vcGFjaXR5OjEiIC8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojNzY0YmEyO3N0b3Atb3BhY2l0eToxIiAvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJ1cmwoI2IpIiByeD0iMTUiLz48dGV4dCB4PSI1MCIgeT0iNTUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj7lrownPInmoYw8L3RleHQ+PC9zdmc+',
+        photos: [
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Im1vdW50YWluIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojODdjZWVhO3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzMwNjE5MjtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNtb3VudGFpbikiLz48dGV4dCB4PSIyMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuWvjOWjq+WxsTwvdGV4dD48L3N2Zz4=',
+          'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9Im9uc2VuIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojZmZlYmU2O3N0b3Atb3BhY2l0eToxIiAvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I2ZmZDFkMTtzdG9wLW9wYWNpdHk6MSIgLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0idXJsKCNvbnNlbikiLz48dGV4dCB4PSIyMDAiIHk9IjE1MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzMzNiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+5ris5rOJPC90ZXh0Pjwvc3ZnPg=='
+        ],
         registrationDate: new Date().toISOString(),
         status: 'approved'
       }
@@ -208,6 +245,11 @@
   window.closeMapModal = function() {
     const mapModal = document.getElementById('mapModal');
     mapModal.style.display = 'none';
+  };
+  
+  // 協賛店編集ページに移動
+  window.editSponsor = function(sponsorId) {
+    window.location.href = `sponsor-management.html?id=${sponsorId}`;
   };
   
   // ESCキーで地図モーダルを閉じる

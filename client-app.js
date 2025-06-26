@@ -23,7 +23,53 @@
     if (sponsorLoginBtn) {
       sponsorLoginBtn.addEventListener('click', function() {
         console.log('協賛店ログインボタンがクリックされました');
-        window.location.href = 'sponsor-list.html';
+        // 簡単なメニューを表示
+        const menu = document.createElement('div');
+        menu.style.cssText = `
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background: white;
+          border-radius: 15px;
+          padding: 30px;
+          box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+          z-index: 10000;
+          text-align: center;
+          min-width: 300px;
+        `;
+        
+        menu.innerHTML = `
+          <h4 style="margin-bottom: 20px; color: #333;">協賛店メニュー</h4>
+          <button class="btn btn-primary btn-lg mb-3 w-100" onclick="window.location.href='sponsor-list.html'; document.body.removeChild(this.closest('div'));">
+            <i class="bi bi-list"></i> 協賛店一覧
+          </button>
+          <button class="btn btn-success btn-lg mb-3 w-100" onclick="window.location.href='sponsor-management.html'; document.body.removeChild(this.closest('div'));">
+            <i class="bi bi-pencil-square"></i> 店舗管理
+          </button>
+          <button class="btn btn-outline-secondary btn-lg w-100" onclick="document.body.removeChild(this.closest('div'));">
+            <i class="bi bi-x"></i> キャンセル
+          </button>
+        `;
+        
+        // 背景オーバーレイ
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+          z-index: 9999;
+        `;
+        overlay.onclick = () => {
+          document.body.removeChild(overlay);
+          document.body.removeChild(menu);
+        };
+        
+        document.body.appendChild(overlay);
+        document.body.appendChild(menu);
       });
     }
   }
