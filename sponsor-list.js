@@ -85,6 +85,65 @@
           
           <!-- コンテンツセクション -->
           <div class="sponsor-content">
+            <!-- 店舗説明 -->
+            ${sponsor.description ? `
+              <div class="sponsor-description mb-3">
+                <p style="line-height: 1.6; color: #555; margin-bottom: 0;">${sponsor.description}</p>
+              </div>
+            ` : ''}
+            
+            <!-- 観光客向け特典 -->
+            ${sponsor.benefits ? `
+              <div class="benefits-highlight">
+                <h6>
+                  <i class="bi bi-gift"></i> 観光客向け特典
+                </h6>
+                <div style="font-size: 0.9rem; line-height: 1.5;">${sponsor.benefits}</div>
+              </div>
+            ` : ''}
+            
+            <!-- 営業時間 -->
+            ${sponsor.businessHours ? `
+              <div class="sponsor-hours-display">
+                <h6 style="margin-bottom: 8px; font-size: 0.9rem; font-weight: 600;">
+                  <i class="bi bi-clock"></i> 営業時間
+                </h6>
+                ${formatBusinessHours(sponsor.businessHours)}
+              </div>
+            ` : ''}
+            
+            <!-- 連絡先情報 -->
+            <div class="sponsor-contact">
+              <div class="contact-item clickable address-item" onclick="showMap('${sponsor.storeName}', '${sponsor.address}')">
+                <i class="bi bi-geo-alt"></i>
+                <span class="address-link">${sponsor.address}</span>
+                <small class="text-muted ms-2">タップで地図表示</small>
+              </div>
+              ${sponsor.phone ? `
+                <div class="contact-item clickable">
+                  <i class="bi bi-telephone"></i>
+                  <a href="tel:${sponsor.phone.replace(/[^0-9+]/g, '')}" class="phone-link">${sponsor.phone}</a>
+                  <small class="text-muted ms-2">タップで電話</small>
+                </div>
+              ` : ''}
+              ${sponsor.website ? `
+                <div class="contact-item clickable">
+                  <i class="bi bi-globe"></i>
+                  <a href="${sponsor.website}" target="_blank" class="text-decoration-none">ウェブサイト</a>
+                  <small class="text-muted ms-2">タップで開く</small>
+                </div>
+              ` : ''}
+            </div>
+            
+            <!-- 紹介情報 -->
+            ${sponsor.referredBy ? `
+              <div class="referral-info">
+                <small class="text-primary">
+                  <i class="bi bi-person-check"></i> 
+                  ガイド紹介による登録 (紹介コード: ${sponsor.referredBy.referralCode})
+                </small>
+              </div>
+            ` : ''}
           
           ${sponsor.description ? `
             <div class="sponsor-description">
@@ -320,10 +379,38 @@
     }
   });
   
+  // 統計情報を更新
+  function updateStats() {
+    const sponsors = getSponsors();
+    const totalSponsorsElement = document.getElementById('totalSponsors');
+    if (totalSponsorsElement) {
+      // アニメーション付きでカウントアップ
+      animateNumber(totalSponsorsElement, 0, sponsors.length, 1500);
+    }
+  }
+  
+  // 数値アニメーション
+  function animateNumber(element, start, end, duration) {
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= end) {
+        current = end;
+        clearInterval(timer);
+      }
+      element.textContent = Math.floor(current);
+    }, 16);
+  }
+  
   // 初期化
   document.addEventListener('DOMContentLoaded', function() {
     addSampleData(); // サンプルデータ追加
     displaySponsors();
+    updateStats();
+    setupFilters();
   });
   
 })();
