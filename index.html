@@ -722,9 +722,23 @@
     <div class="container position-relative">
       <h1 class="display-4 fw-bold mb-3">あなただけの特別な旅を</h1>
       <p class="lead mb-4">地元ガイドと一緒に、観光では見つけられない隠れた魅力を体験しましょう</p>
-      <div>
+      <div class="position-relative">
         <a href="#guides" class="btn btn-light btn-lg">ガイドを探す</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">お問い合わせ</button>
+        
+        <!-- 協賛店専用ボタンエリア（右下小さめ） -->
+        <div class="sponsor-mini-buttons">
+          <div class="sponsor-mini-wrapper">
+            <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="協賛店登録">
+              <i class="bi bi-shop"></i>
+              <span>協賛店登録</span>
+            </button>
+            <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="協賛店ログイン">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>ログイン</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -816,43 +830,7 @@
     </div>
   </div>
 
-  <!-- 協賛店専用ボタンエリア -->
-  <div class="sponsor-action-section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-auto">
-          <div class="sponsor-buttons-wrapper">
-            <div class="sponsor-buttons-header">
-              <span class="sponsor-label">🎉 協賛店の方へ 🎉</span>
-            </div>
-            <div class="sponsor-buttons-row">
-              <button class="sponsor-action-btn sponsor-register" id="sponsorRegisterBtn">
-                <div class="btn-icon">
-                  <i class="bi bi-shop"></i>
-                </div>
-                <div class="btn-content">
-                  <span class="btn-title">協賛店登録 🚀</span>
-                  <span class="btn-subtitle">楽しく新規参加！</span>
-                </div>
-                <div class="btn-shine"></div>
-              </button>
-              
-              <button class="sponsor-action-btn sponsor-login" id="sponsorLoginBtn">
-                <div class="btn-icon">
-                  <i class="bi bi-box-arrow-in-right"></i>
-                </div>
-                <div class="btn-content">
-                  <span class="btn-title">協賛店ログイン ✨</span>
-                  <span class="btn-subtitle">管理画面へGo！</span>
-                </div>
-                <div class="btn-shine"></div>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <!-- メインコンテンツ -->
   <div class="container py-5">
