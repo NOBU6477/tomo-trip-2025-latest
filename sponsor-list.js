@@ -57,6 +57,15 @@
             </div>
           ` : ''}
           
+          ${sponsor.referredBy ? `
+            <div class="referral-info">
+              <small class="text-primary">
+                <i class="bi bi-person-check"></i> 
+                ガイド紹介による登録 (紹介コード: ${sponsor.referredBy.referralCode})
+              </small>
+            </div>
+          ` : ''}
+          
           ${sponsor.benefits ? `
             <div class="sponsor-benefits">
               <h6><i class="bi bi-gift"></i> 観光客向け特典</h6>

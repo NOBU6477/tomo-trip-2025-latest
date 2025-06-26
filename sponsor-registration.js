@@ -61,8 +61,20 @@
         return;
       }
       
+      // 紹介コードの処理
+      const referralCode = document.getElementById('referralCode');
+      if (referralCode && referralCode.value) {
+        formData.referralCode = referralCode.value;
+        console.log('紹介コード付きで登録:', referralCode.value);
+      }
+      
       // ローカルストレージに保存
       saveSponsorData(formData);
+      
+      // 紹介の場合は紹介記録も保存
+      if (formData.referralCode && window.GuideReferralManager) {
+        window.GuideReferralManager.recordSponsorReferral(formData.referralCode, formData);
+      }
       
       // 成功画面を表示
       showSuccessMessage();
