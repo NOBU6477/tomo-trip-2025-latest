@@ -74,20 +74,23 @@
           ` : ''}
           
           <div class="sponsor-contact">
-            <div class="contact-item">
+            <div class="contact-item clickable address-item" onclick="showMap('${sponsor.storeName}', '${sponsor.address}')">
               <i class="bi bi-geo-alt"></i>
-              <span>${sponsor.address}</span>
+              <span class="address-link">${sponsor.address}</span>
+              <small class="text-muted ms-2">タップで地図表示</small>
             </div>
             ${sponsor.phone ? `
-              <div class="contact-item">
+              <div class="contact-item clickable">
                 <i class="bi bi-telephone"></i>
-                <span>${sponsor.phone}</span>
+                <a href="tel:${sponsor.phone.replace(/[^0-9+]/g, '')}" class="phone-link">${sponsor.phone}</a>
+                <small class="text-muted ms-2">タップで電話</small>
               </div>
             ` : ''}
             ${sponsor.website ? `
-              <div class="contact-item">
+              <div class="contact-item clickable">
                 <i class="bi bi-globe"></i>
                 <a href="${sponsor.website}" target="_blank" class="text-decoration-none">ウェブサイト</a>
+                <small class="text-muted ms-2">タップで開く</small>
               </div>
             ` : ''}
           </div>
@@ -173,6 +176,46 @@
     
     localStorage.setItem('sponsorData', JSON.stringify(sampleSponsors));
   }
+  
+  // 地図表示機能
+  window.showMap = function(storeName, address) {
+    const mapModal = document.getElementById('mapModal');
+    const mapTitle = document.getElementById('mapTitle');
+    const mapAddress = document.getElementById('mapAddress');
+    const openGoogleMaps = document.getElementById('openGoogleMaps');
+    
+    mapTitle.textContent = storeName;
+    mapAddress.textContent = address;
+    
+    // Google マップ用URLを生成
+    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+    
+    openGoogleMaps.onclick = function() {
+      window.open(googleMapsUrl, '_blank');
+    };
+    
+    mapModal.style.display = 'flex';
+    
+    // モーダル外をクリックで閉じる
+    mapModal.onclick = function(e) {
+      if (e.target === mapModal) {
+        closeMapModal();
+      }
+    };
+  };
+  
+  // 地図モーダルを閉じる
+  window.closeMapModal = function() {
+    const mapModal = document.getElementById('mapModal');
+    mapModal.style.display = 'none';
+  };
+  
+  // ESCキーで地図モーダルを閉じる
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closeMapModal();
+    }
+  });
   
   // 初期化
   document.addEventListener('DOMContentLoaded', function() {
