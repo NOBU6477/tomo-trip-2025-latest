@@ -4,9 +4,10 @@
 Tourism-focused matching application where local residents register as guides and tourists select them. Features comprehensive guide registration with phone verification and ID document upload, activity region selection covering all prefectures, simplified 6-language selection system, automatic photo upload with name extraction functionality, strict tourist authentication requirements with minimum ¥6000 session fee, TomoTrip branding with logo integration, coastal landscape theming, and mandatory login for guide details access with proper authentication flow.
 
 ## Recent Changes (December 26, 2025)
-- **NEW FEATURE**: Added stylish sponsor registration and login buttons in bottom-right corner with modern design
-- **DESIGN**: Implemented cool, futuristic sponsor button area with gradient backgrounds, glow effects, and smooth animations
-- **UI/UX**: Added pulse animation and hover effects for sponsor buttons to make them highly visible and engaging
+- **NEW FEATURE**: Added stylish sponsor registration and login buttons with playful, pop design
+- **DESIGN**: Implemented fun, rounded sponsor buttons with bubble animations, bright gradients, and friendly typography
+- **UI/UX**: Added wiggle animations, bounce effects, and clear hover feedback for engaging user interaction
+- **TYPOGRAPHY**: Used Comic Sans MS for labels and friendly emojis to create a welcoming, approachable feel
 - **MAJOR FIX**: Resolved critical authentication persistence issue where tourist registration would complete but auth state would reset on homepage navigation
 - Fixed access-control.js authentication logic that was incorrectly blocking authenticated tourists from accessing guide details  
 - Implemented comprehensive authentication protection system with auth-protection-override.js to prevent competing scripts from clearing auth data
