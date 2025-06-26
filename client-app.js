@@ -16,16 +16,14 @@
     if (sponsorRegisterBtn) {
       sponsorRegisterBtn.addEventListener('click', function() {
         console.log('協賛店登録ボタンがクリックされました');
-        // 将来的に協賛店登録モーダルを開く
-        alert('協賛店登録機能は開発中です');
+        window.location.href = 'sponsor-registration.html';
       });
     }
     
     if (sponsorLoginBtn) {
       sponsorLoginBtn.addEventListener('click', function() {
         console.log('協賛店ログインボタンがクリックされました');
-        // 将来的に協賛店ログインモーダルを開く
-        alert('協賛店ログイン機能は開発中です');
+        window.location.href = 'sponsor-list.html';
       });
     }
   }
@@ -44,6 +42,23 @@
     // 協賛店ボタンの存在確認
     const sponsorButtons = document.querySelectorAll('.sponsor-mini-btn');
     console.log(`協賛店ボタン数: ${sponsorButtons.length}`);
+    
+    // 新しい協賛店が追加された場合の処理
+    updateSponsorLogos();
   });
+  
+  // 協賛店ロゴの更新
+  function updateSponsorLogos() {
+    const newSponsorAdded = localStorage.getItem('newSponsorAdded');
+    if (newSponsorAdded === 'true') {
+      console.log('新しい協賛店が追加されました - ロゴを更新');
+      
+      // トップページの流れるロゴを更新する処理をここに追加
+      // 現在は基本的な実装のため、将来的に拡張可能
+      
+      // フラグをリセット
+      localStorage.removeItem('newSponsorAdded');
+    }
+  }
   
 })();
