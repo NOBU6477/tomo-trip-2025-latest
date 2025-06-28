@@ -144,6 +144,18 @@
                 </small>
               </div>
             ` : ''}
+            
+            <!-- アクションボタン -->
+            <div class="action-buttons mt-3 text-center">
+              <button class="btn btn-primary btn-sm me-2" onclick="viewSponsorDetail('${sponsor.id}')">
+                <i class="bi bi-eye"></i> 詳細を見る
+              </button>
+              ${sponsor.website ? `
+                <a href="${sponsor.website}" target="_blank" class="btn btn-outline-primary btn-sm">
+                  <i class="bi bi-globe"></i> ウェブサイト
+                </a>
+              ` : ''}
+            </div>
           </div>
         </div>
       </div>
@@ -403,6 +415,11 @@
   // 協賛店編集ページに移動
   window.editSponsor = function(sponsorId) {
     window.location.href = `sponsor-management.html?id=${sponsorId}`;
+  };
+  
+  // 協賛店詳細ページに移動
+  window.viewSponsorDetail = function(sponsorId) {
+    window.location.href = `sponsor-detail.html?id=${sponsorId}`;
   };
   
   // ESCキーで地図モーダルを閉じる
