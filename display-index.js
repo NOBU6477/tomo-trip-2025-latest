@@ -157,6 +157,29 @@ app.get('/guide-details.html', (req, res) => {
   }
 });
 
+// sponsor-detail.html への直接リダイレクト処理
+app.get('/sponsor-detail.html', (req, res) => {
+  const sponsorId = req.query.id || '';
+  
+  try {
+    const filePath = path.join(__dirname, 'sponsor-detail.html');
+    let content = fs.readFileSync(filePath, 'utf8');
+    
+    // 協賛店IDをHTMLに埋め込む
+    if (sponsorId) {
+      content = content.replace(
+        '</head>',
+        `<script>window.SPONSOR_ID = '${sponsorId}';</script></head>`
+      );
+    }
+    
+    res.send(content);
+  } catch (error) {
+    console.error('Error serving sponsor-detail.html:', error);
+    res.status(500).send('Server Error');
+  }
+});
+
 // 認証要求ページの専用ルート
 app.get('/auth-required.html', (req, res) => {
   const guideId = req.query.guide || '';
