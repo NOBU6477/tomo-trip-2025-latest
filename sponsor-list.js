@@ -19,11 +19,15 @@
     other: 'その他'
   };
   
-  // 協賛店データを読み込み
+  // 協賛店データを読み込み（デバッグ強化版）
   function loadSponsorData() {
     try {
       const sponsorData = localStorage.getItem('sponsorData');
-      return sponsorData ? JSON.parse(sponsorData) : [];
+      console.log('localStorage sponsorData:', sponsorData ? 'データあり' : 'データなし');
+      const parsed = sponsorData ? JSON.parse(sponsorData) : [];
+      console.log('読み込み協賛店数:', parsed.length);
+      console.log('協賛店一覧:', parsed.map(s => ({ id: s.id, name: s.storeName })));
+      return parsed;
     } catch (error) {
       console.error('協賛店データ読み込みエラー:', error);
       return [];
@@ -180,23 +184,46 @@
     ).join('');
   }
   
-  // 協賛店一覧を表示
+  // 協賛店一覧を表示（デバッグ強化版）
   function displaySponsors() {
+    console.log('=== 協賛店一覧表示開始 ===');
     const sponsors = loadSponsorData();
     const sponsorList = document.getElementById('sponsorList');
     const emptyState = document.getElementById('emptyState');
     
+    console.log('表示対象協賛店数:', sponsors.length);
+    
     if (sponsors.length === 0) {
-      sponsorList.style.display = 'none';
-      emptyState.style.display = 'block';
+      console.log('協賛店データなし - 空状態表示');
+      if (sponsorList) sponsorList.style.display = 'none';
+      if (emptyState) emptyState.style.display = 'block';
       return;
     }
     
-    sponsorList.innerHTML = sponsors.map(createSponsorCard).join('');
+    if (sponsorList) {
+      console.log('協賛店カード生成中...');
+      const cardsHtml = sponsors.map(sponsor => {
+        console.log('カード生成:', sponsor.storeName, 'ID:', sponsor.id);
+        return createSponsorCard(sponsor);
+      }).join('');
+      
+      sponsorList.innerHTML = cardsHtml;
+      console.log('協賛店カード表示完了');
+      
+      // ボタンの動作確認
+      setTimeout(() => {
+        const detailButtons = document.querySelectorAll('[onclick*="viewSponsorDetail"]');
+        console.log('詳細ボタン数:', detailButtons.length);
+        detailButtons.forEach((btn, index) => {
+          console.log(`ボタン${index + 1}:`, btn.onclick);
+        });
+      }, 100);
+    }
+    
     createFloatingLogos(sponsors);
     
-    emptyState.style.display = 'none';
-    sponsorList.style.display = 'flex';
+    if (emptyState) emptyState.style.display = 'none';
+    if (sponsorList) sponsorList.style.display = 'flex';
   }
   
   // サンプルデータを追加（初回のみ）
