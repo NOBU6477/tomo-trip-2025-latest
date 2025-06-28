@@ -397,17 +397,24 @@
         console.log("公開ページ確認: 店舗ID:", sponsorId);
 
         // 1. 全体データから探す（最優先）
-        const allStores = JSON.parse(localStorage.getItem("sponsorData")) || [];
+        const sponsorDataRaw = localStorage.getItem("sponsorData");
+        console.log("localStorage sponsorData raw:", sponsorDataRaw);
+        
+        const allStores = sponsorDataRaw ? JSON.parse(sponsorDataRaw) : [];
+        console.log("全体データ数:", allStores.length);
         console.log(
           "全体データ検索中:",
           allStores.map((s) => ({ id: s.id, name: s.name, status: s.status })),
         );
+        
+        console.log("検索対象ID:", sponsorId, "タイプ:", typeof sponsorId);
 
         // IDを数値と文字列の両方で比較
         sponsor = allStores.find((s) => {
-          const match = s.id == sponsorId || s.id === parseInt(sponsorId);
+          console.log("比較中:", s.id, "タイプ:", typeof s.id, "vs", sponsorId, "タイプ:", typeof sponsorId);
+          const match = s.id == sponsorId || s.id === parseInt(sponsorId) || s.id === sponsorId.toString();
           if (match) {
-            console.log("マッチした店舗データ:", s);
+            console.log("✓ マッチした店舗データ:", s);
           }
           return match;
         });
@@ -433,7 +440,19 @@
           }
         }
 
-        // 3. デフォルトデータは使用しない（登録済みデータ優先）
+        // 3. デフォルトデータから取得（最後の手段）
+        if (!sponsor) {
+          sponsor = sponsorDetails[sponsorId];
+          if (sponsor) {
+            console.log("デフォルトデータから取得:", sponsor);
+          } else {
+            console.error("協賛店データが見つかりません:", sponsorId);
+            // エラー表示
+            document.getElementById("sponsor-name").textContent = "データが見つかりません";
+            document.getElementById("sponsor-benefit").textContent = "指定された協賛店の情報が見つかりませんでした";
+            return;
+          }
+        }
 
         if (sponsor) {
           document.getElementById("sponsor-name").textContent =
