@@ -226,10 +226,18 @@
     if (sponsorList) sponsorList.style.display = 'flex';
   }
   
-  // サンプルデータを追加（初回のみ）
+  // サンプルデータを追加（初回のみ - デバッグ強化版）
   function addSampleData() {
+    console.log('サンプルデータ追加処理開始');
     const existingData = loadSponsorData();
-    if (existingData.length > 0) return;
+    console.log('既存データ数:', existingData.length);
+    
+    if (existingData.length > 0) {
+      console.log('既存データあり - サンプルデータ追加をスキップ');
+      return;
+    }
+    
+    console.log('新規サンプルデータを作成中...');
     
     const sampleSponsors = [
       {
@@ -367,6 +375,7 @@
     ];
     
     localStorage.setItem('sponsorData', JSON.stringify(sampleSponsors));
+    console.log('サンプルデータ保存完了:', sampleSponsors.length, '件');
   }
   
   // 地図表示機能
@@ -444,10 +453,20 @@
     window.location.href = `sponsor-management.html?id=${sponsorId}`;
   };
   
-  // 協賛店詳細ページに移動
+  // 協賛店詳細ページに移動（デバッグ強化版）
   window.viewSponsorDetail = function(sponsorId) {
-    console.log('詳細ページに移動:', sponsorId);
-    window.location.href = `sponsor-detail.html?id=${sponsorId}`;
+    console.log('=== 詳細ページ移動処理 ===');
+    console.log('移動先店舗ID:', sponsorId);
+    const targetUrl = `sponsor-detail.html?id=${sponsorId}`;
+    console.log('移動先URL:', targetUrl);
+    
+    // ページ移動実行
+    try {
+      window.location.href = targetUrl;
+      console.log('ページ移動開始');
+    } catch (error) {
+      console.error('ページ移動エラー:', error);
+    }
   };
   
   // ESCキーで地図モーダルを閉じる
@@ -459,11 +478,14 @@
   
   // 統計情報を更新
   function updateStats() {
-    const sponsors = getSponsors();
+    const sponsors = loadSponsorData(); // getSponsors → loadSponsorData に修正
     const totalSponsorsElement = document.getElementById('totalSponsors');
+    console.log('統計更新:', sponsors.length, '件の協賛店');
     if (totalSponsorsElement) {
       // アニメーション付きでカウントアップ
       animateNumber(totalSponsorsElement, 0, sponsors.length, 1500);
+    } else {
+      console.log('totalSponsors要素が見つかりません');
     }
   }
   
@@ -483,12 +505,38 @@
     }, 16);
   }
   
-  // 初期化
+  // 初期化（強化デバッグ版）
   document.addEventListener('DOMContentLoaded', function() {
-    addSampleData(); // サンプルデータ追加
+    console.log('=== sponsor-list.js 初期化開始 ===');
+    console.log('DOM読み込み完了');
+    
+    // 要素の存在確認
+    const sponsorList = document.getElementById('sponsorList');
+    const emptyState = document.getElementById('emptyState');
+    console.log('sponsorList要素:', sponsorList ? '発見' : '未発見');
+    console.log('emptyState要素:', emptyState ? '発見' : '未発見');
+    
+    // サンプルデータ追加
+    console.log('サンプルデータ追加実行中...');
+    addSampleData();
+    
+    // 協賛店表示
+    console.log('協賛店表示実行中...');
     displaySponsors();
+    
+    // 統計更新
+    console.log('統計更新実行中...');
     updateStats();
-    setupFilters();
+    
+    // フィルター設定
+    console.log('フィルター設定実行中...');
+    if (typeof setupFilters === 'function') {
+      setupFilters();
+    } else {
+      console.log('setupFilters関数が定義されていません - スキップ');
+    }
+    
+    console.log('=== sponsor-list.js 初期化完了 ===');
   });
   
 })();
