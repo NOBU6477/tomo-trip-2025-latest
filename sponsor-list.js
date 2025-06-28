@@ -419,6 +419,7 @@
   
   // 協賛店詳細ページに移動
   window.viewSponsorDetail = function(sponsorId) {
+    console.log('詳細ページに移動:', sponsorId);
     window.location.href = `sponsor-detail.html?id=${sponsorId}`;
   };
   
