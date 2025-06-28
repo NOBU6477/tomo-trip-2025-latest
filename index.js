@@ -63,6 +63,11 @@ const server = http.createServer((req, res) => {
     filePath = './guide-details.html';
   }
   
+  // 協賛店詳細ページのリダイレクト処理
+  if (pathname.startsWith('/sponsor-detail.html')) {
+    filePath = './sponsor-detail.html';
+  }
+  
   // その他の動的ルートを処理
   // 将来的に/find-guidesなどのパスを追加する場合はここで処理
 
