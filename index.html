@@ -637,13 +637,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#" id="btn-home">ホーム</a>
+            <a class="nav-link active" href="#" id="btn-home" onclick="scrollToTop(); return false;">ホーム</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" id="btn-guides">ガイドを探す</a>
+            <a class="nav-link" href="#" id="btn-guides" onclick="scrollToGuides(); return false;">ガイドを探す</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" id="btn-how-it-works">使い方</a>
+            <a class="nav-link" href="#" id="btn-how-it-works" onclick="scrollToHowItWorks(); return false;">使い方</a>
           </li>
         </ul>
         
@@ -652,8 +652,8 @@
             日本語
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#" id="lang-ja">日本語</a></li>
-            <li><a class="dropdown-item" href="#" id="lang-en">English</a></li>
+            <li><a class="dropdown-item" href="#" id="lang-ja" onclick="setLanguage('ja'); return false;">日本語</a></li>
+            <li><a class="dropdown-item" href="#" id="lang-en" onclick="setLanguage('en'); return false;">English</a></li>
           </ul>
         </div>
         
@@ -1914,89 +1914,43 @@
   <!-- スクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- 直接埋め込みボタン修正スクリプト -->
+  <!-- ボタン関数定義 -->
   <script>
-    console.log('🔧 ボタン修正スクリプト開始（直接埋め込み版）');
+    function scrollToTop() {
+      console.log('🏠 ホームボタンが動きました！');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     
-    // ページ読み込み完了後に実行
-    window.addEventListener('load', function() {
-      console.log('ページ読み込み完了');
-      
-      setTimeout(function() {
-        console.log('ボタン修正を開始します');
-        
-        // ホームボタン
-        var homeBtn = document.getElementById('btn-home');
-        console.log('ホームボタン:', homeBtn);
-        if (homeBtn) {
-          homeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🏠 ホームボタンが動きました！');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          });
-          console.log('✅ ホームボタン設定完了');
-        }
-        
-        // ガイドを探すボタン
-        var guidesBtn = document.getElementById('btn-guides');
-        console.log('ガイドボタン:', guidesBtn);
-        if (guidesBtn) {
-          guidesBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🔍 ガイドボタンが動きました！');
-            var guidesSection = document.getElementById('guides');
-            if (guidesSection) {
-              guidesSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-              window.scrollTo({ top: 800, behavior: 'smooth' });
-            }
-          });
-          console.log('✅ ガイドボタン設定完了');
-        }
-        
-        // 使い方ボタン
-        var howBtn = document.getElementById('btn-how-it-works');
-        console.log('使い方ボタン:', howBtn);
-        if (howBtn) {
-          howBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('📖 使い方ボタンが動きました！');
-            var howSection = document.getElementById('how-it-works');
-            if (howSection) {
-              howSection.scrollIntoView({ behavior: 'smooth' });
-            } else {
-              window.scrollTo({ top: 1200, behavior: 'smooth' });
-            }
-          });
-          console.log('✅ 使い方ボタン設定完了');
-        }
-        
-        // 日本語ボタン
-        var jaBtn = document.getElementById('lang-ja');
-        console.log('日本語ボタン:', jaBtn);
-        if (jaBtn) {
-          jaBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🇯🇵 日本語ボタンが動きました！');
-          });
-          console.log('✅ 日本語ボタン設定完了');
-        }
-        
-        // Englishボタン
-        var enBtn = document.getElementById('lang-en');
-        console.log('Englishボタン:', enBtn);
-        if (enBtn) {
-          enBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('🇺🇸 Englishボタンが動きました！');
-          });
-          console.log('✅ Englishボタン設定完了');
-        }
-        
-        console.log('🎉 すべてのボタン設定完了');
-        
-      }, 1000);
-    });
+    function scrollToGuides() {
+      console.log('🔍 ガイドボタンが動きました！');
+      var guidesSection = document.getElementById('guides');
+      if (guidesSection) {
+        guidesSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 800, behavior: 'smooth' });
+      }
+    }
+    
+    function scrollToHowItWorks() {
+      console.log('📖 使い方ボタンが動きました！');
+      var howSection = document.getElementById('how-it-works');
+      if (howSection) {
+        howSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 1200, behavior: 'smooth' });
+      }
+    }
+    
+    function setLanguage(lang) {
+      console.log('🌐 言語を' + lang + 'に設定しました');
+      localStorage.setItem('preferredLanguage', lang);
+      var langButton = document.getElementById('languageDropdown');
+      if (langButton) {
+        langButton.textContent = lang === 'ja' ? '日本語' : 'English';
+      }
+    }
+    
+    console.log('✅ ボタン関数が定義されました');
   </script>
   
   <script src="debug-redirect-tracker.js"></script>
