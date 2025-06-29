@@ -1916,7 +1916,11 @@
   
   <!-- 確実なナビゲーション機能 -->
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    console.log('スクリプト開始');
+    
+    // DOMContentLoadedではなく、即座に実行
+    function initializeButtons() {
+      console.log('ボタン初期化開始');
       // ホームボタン
       const homeBtn = document.getElementById('btn-home');
       if (homeBtn) {
@@ -1982,7 +1986,17 @@
       }
       
       console.log('全てのボタン機能が設定されました');
-    });
+    }
+    
+    // 複数の方法で初期化を試行
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeButtons);
+    } else {
+      initializeButtons();
+    }
+    
+    // さらに安全のため、少し遅延して再実行
+    setTimeout(initializeButtons, 1000);
   </script>
   
   <!-- スムーズスクロール用CSS -->
