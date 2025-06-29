@@ -652,8 +652,8 @@
             日本語
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="javascript:void(0)" id="lang-ja" onclick="this.parentElement.parentElement.parentElement.children[0].textContent='日本語'">日本語</a></li>
-            <li><a class="dropdown-item" href="javascript:void(0)" id="lang-en" onclick="this.parentElement.parentElement.parentElement.children[0].textContent='English'">English</a></li>
+            <li><a class="dropdown-item" href="#" id="lang-ja">日本語</a></li>
+            <li><a class="dropdown-item" href="#" id="lang-en">English</a></li>
           </ul>
         </div>
         
@@ -1944,7 +1944,44 @@
         });
       }
       
-      console.log('ナビゲーション機能が設定されました');
+      // 協賛店登録ボタン
+      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
+      if (sponsorRegisterBtn) {
+        sponsorRegisterBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = 'sponsor-registration.html';
+        });
+      }
+      
+      // 協賛店ログインボタン
+      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+      if (sponsorLoginBtn) {
+        sponsorLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.location.href = 'sponsor-login.html';
+        });
+      }
+      
+      // 言語ボタンの修正
+      const langJaBtn = document.getElementById('lang-ja');
+      const langEnBtn = document.getElementById('lang-en');
+      const languageDropdown = document.getElementById('languageDropdown');
+      
+      if (langJaBtn && languageDropdown) {
+        langJaBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          languageDropdown.textContent = '日本語';
+        });
+      }
+      
+      if (langEnBtn && languageDropdown) {
+        langEnBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          languageDropdown.textContent = 'English';
+        });
+      }
+      
+      console.log('全てのボタン機能が設定されました');
     });
   </script>
   
