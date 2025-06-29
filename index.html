@@ -1916,11 +1916,21 @@
   
   <!-- 確実なナビゲーション機能 -->
   <script>
+    // ページの目立つ場所にステータスを表示
+    function showStatus(message) {
+      const status = document.createElement('div');
+      status.style.cssText = 'position:fixed;top:10px;right:10px;background:green;color:white;padding:10px;z-index:9999;border-radius:5px;';
+      status.textContent = message;
+      document.body.appendChild(status);
+      setTimeout(() => status.remove(), 3000);
+    }
+    
     console.log('スクリプト開始');
     
     // DOMContentLoadedではなく、即座に実行
     function initializeButtons() {
       console.log('ボタン初期化開始');
+      showStatus('ボタン初期化中...');
       // ホームボタン
       const homeBtn = document.getElementById('btn-home');
       if (homeBtn) {
@@ -1986,6 +1996,7 @@
       }
       
       console.log('全てのボタン機能が設定されました');
+      showStatus('全ボタン設定完了！');
     }
     
     // 複数の方法で初期化を試行
