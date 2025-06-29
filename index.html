@@ -999,7 +999,6 @@
         </div>
       </div>
       
-      <div class="row guides-container" id="guides">
       <div class="row guides-container" id="guide-cards-container">
         <!-- 初期表示されるガイド -->
         <!-- ガイド1 -->
@@ -1914,6 +1913,40 @@
 
   <!-- スクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- 確実なナビゲーション機能 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // ホームボタン
+      const homeBtn = document.getElementById('btn-home');
+      if (homeBtn) {
+        homeBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('top').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
+      // ガイドボタン
+      const guidesBtn = document.getElementById('btn-guides');
+      if (guidesBtn) {
+        guidesBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('guides').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
+      // 使い方ボタン
+      const howBtn = document.getElementById('btn-how-it-works');
+      if (howBtn) {
+        howBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' });
+        });
+      }
+      
+      console.log('ナビゲーション機能が設定されました');
+    });
+  </script>
   
   <!-- スムーズスクロール用CSS -->
   <style>
