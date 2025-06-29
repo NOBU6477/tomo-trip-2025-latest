@@ -640,10 +640,10 @@
             <a class="nav-link active" href="#" id="btn-home" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">ホーム</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" id="btn-guides" onclick="scrollToGuides(); return false;">ガイドを探す</a>
+            <a class="nav-link" href="#" id="btn-guides" onclick="var gs=document.getElementById('guides');if(gs){gs.scrollIntoView({behavior:'smooth'})}else{window.scrollTo({top:800,behavior:'smooth'})}; return false;">ガイドを探す</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" id="btn-how-it-works" onclick="scrollToHowItWorks(); return false;">使い方</a>
+            <a class="nav-link" href="#" id="btn-how-it-works" onclick="var hs=document.getElementById('how-it-works');if(hs){hs.scrollIntoView({behavior:'smooth'})}else{window.scrollTo({top:1200,behavior:'smooth'})}; return false;">使い方</a>
           </li>
         </ul>
         
@@ -1914,43 +1914,11 @@
   <!-- スクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- ボタン関数定義 -->
+  <!-- シンプルデバッグ用 -->
   <script>
-    function scrollToTop() {
-      console.log('🏠 ホームボタンが動きました！');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    
-    function scrollToGuides() {
-      console.log('🔍 ガイドボタンが動きました！');
-      var guidesSection = document.getElementById('guides');
-      if (guidesSection) {
-        guidesSection.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 800, behavior: 'smooth' });
-      }
-    }
-    
-    function scrollToHowItWorks() {
-      console.log('📖 使い方ボタンが動きました！');
-      var howSection = document.getElementById('how-it-works');
-      if (howSection) {
-        howSection.scrollIntoView({ behavior: 'smooth' });
-      } else {
-        window.scrollTo({ top: 1200, behavior: 'smooth' });
-      }
-    }
-    
-    function setLanguage(lang) {
-      console.log('🌐 言語を' + lang + 'に設定しました');
-      localStorage.setItem('preferredLanguage', lang);
-      var langButton = document.getElementById('languageDropdown');
-      if (langButton) {
-        langButton.textContent = lang === 'ja' ? '日本語' : 'English';
-      }
-    }
-    
-    console.log('✅ ボタン関数が定義されました');
+    window.addEventListener('load', function() {
+      console.log('ページが読み込まれました - ボタンテスト可能');
+    });
   </script>
   
   <script src="debug-redirect-tracker.js"></script>
