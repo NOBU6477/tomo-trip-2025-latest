@@ -7,6 +7,8 @@
   'use strict';
   
   console.log('🔧 ヘッダーボタンデバッグスクリプト開始');
+  console.log('現在時刻:', new Date().toLocaleTimeString());
+  console.log('document.readyState:', document.readyState);
   
   // グローバル初期化フラグ
   window.headerButtonsInitialized = false;
@@ -149,5 +151,30 @@
   // グローバル関数として公開
   window.initializeHeaderButtons = initializeHeaderButtons;
   window.debugButtonElements = debugButtonElements;
+  
+  // 手動テスト用関数
+  window.testButtonClicks = function() {
+    console.log('=== 手動ボタンテスト開始 ===');
+    const buttons = debugButtonElements();
+    
+    if (buttons.homeBtn) {
+      console.log('ホームボタンテスト...');
+      buttons.homeBtn.click();
+    }
+    
+    setTimeout(() => {
+      if (buttons.guidesBtn) {
+        console.log('ガイドを探すボタンテスト...');
+        buttons.guidesBtn.click();
+      }
+    }, 1000);
+    
+    setTimeout(() => {
+      if (buttons.langJaBtn) {
+        console.log('日本語ボタンテスト...');
+        buttons.langJaBtn.click();
+      }
+    }, 2000);
+  };
   
 })();
