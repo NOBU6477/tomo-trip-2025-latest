@@ -637,13 +637,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#" onclick="scrollToTop(); return false;">ホーム</a>
+            <a class="nav-link active" href="javascript:void(0);">ホーム</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="scrollToSection('guides'); return false;">ガイドを探す</a>
+            <a class="nav-link" href="javascript:void(0);">ガイドを探す</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="scrollToSection('how-it-works'); return false;">使い方</a>
+            <a class="nav-link" href="javascript:void(0);">使い方</a>
           </li>
         </ul>
         
@@ -652,8 +652,8 @@
             日本語
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#" onclick="changeLanguageDirectly('ja'); return false;">日本語</a></li>
-            <li><a class="dropdown-item" href="#" onclick="changeLanguageDirectly('en'); return false;">English</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0);">日本語</a></li>
+            <li><a class="dropdown-item" href="javascript:void(0);">English</a></li>
           </ul>
         </div>
         
@@ -4579,10 +4579,77 @@
       return false;
     }
 
+    // 強制的なボタン初期化
+    function forceInitializeButtons() {
+      console.log('=== 強制ボタン初期化開始 ===');
+      
+      // ナビゲーションボタンの直接設定
+      const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+      navLinks.forEach((link, index) => {
+        link.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          if (index === 0) { // ホーム
+            console.log('ホームボタンクリック');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else if (index === 1) { // ガイドを探す
+            console.log('ガイドを探すボタンクリック');
+            const guidesSection = document.getElementById('guides');
+            if (guidesSection) {
+              guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          } else if (index === 2) { // 使い方
+            console.log('使い方ボタンクリック');
+            const howItWorksSection = document.getElementById('how-it-works');
+            if (howItWorksSection) {
+              howItWorksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+          return false;
+        };
+      });
+      
+      // 言語選択ボタンの直接設定
+      const langDropdown = document.querySelectorAll('#languageDropdown + .dropdown-menu .dropdown-item');
+      langDropdown.forEach(btn => {
+        btn.onclick = function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const lang = btn.textContent.includes('English') ? 'en' : 'ja';
+          const langText = lang === 'ja' ? '日本語' : 'English';
+          
+          console.log('言語変更:', langText);
+          const languageButton = document.getElementById('languageDropdown');
+          if (languageButton) {
+            languageButton.textContent = langText;
+          }
+          
+          showNotification(`言語を${langText}に変更しました`, 'success');
+          
+          // ドロップダウンを閉じる
+          const dropdown = bootstrap.Dropdown.getInstance(languageButton);
+          if (dropdown) {
+            dropdown.hide();
+          }
+          
+          return false;
+        };
+      });
+      
+      console.log('=== 強制ボタン初期化完了 ===');
+    }
+
     // ページ読み込み時の処理
     document.addEventListener('DOMContentLoaded', function() {
       // 認証状態を検証・復元
       validateAndRestoreAuthState();
+      
+      // 強制的なボタン初期化
+      setTimeout(() => {
+        forceInitializeButtons();
+      }, 500);
       
       // 言語選択ボタンのイベントリスナー設定
       setupLanguageDropdown();
