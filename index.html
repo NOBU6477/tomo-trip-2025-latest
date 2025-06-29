@@ -1913,6 +1913,7 @@
 
   <!-- スクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="header-buttons-debug.js"></script>
   <script src="debug-redirect-tracker.js"></script>
   
   <!-- ユーザータイプ選択の動作改善 -->
@@ -4579,100 +4580,15 @@
       return false;
     }
 
-    // 完全に新しいボタン初期化システム
-    function initializeAllButtons() {
-      console.log('=== 新しいボタン初期化システム開始 ===');
-      
-      // ホームボタン
-      const homeBtn = document.getElementById('btn-home');
-      if (homeBtn) {
-        homeBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('✅ ホームボタンクリック');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        console.log('ホームボタン設定完了');
-      }
-      
-      // ガイドを探すボタン
-      const guidesBtn = document.getElementById('btn-guides');
-      if (guidesBtn) {
-        guidesBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('✅ ガイドを探すボタンクリック');
-          const guidesSection = document.getElementById('guides');
-          if (guidesSection) {
-            guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        });
-        console.log('ガイドを探すボタン設定完了');
-      }
-      
-      // 使い方ボタン
-      const howItWorksBtn = document.getElementById('btn-how-it-works');
-      if (howItWorksBtn) {
-        howItWorksBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('✅ 使い方ボタンクリック');
-          const howItWorksSection = document.getElementById('how-it-works');
-          if (howItWorksSection) {
-            howItWorksSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        });
-        console.log('使い方ボタン設定完了');
-      }
-      
-      // 日本語選択ボタン
-      const jaBtn = document.getElementById('lang-ja');
-      if (jaBtn) {
-        jaBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('✅ 日本語選択');
-          const languageButton = document.getElementById('languageDropdown');
-          if (languageButton) {
-            languageButton.textContent = '日本語';
-          }
-          showNotification('言語を日本語に変更しました', 'success');
-        });
-        console.log('日本語ボタン設定完了');
-      }
-      
-      // English選択ボタン
-      const enBtn = document.getElementById('lang-en');
-      if (enBtn) {
-        enBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('✅ English選択');
-          const languageButton = document.getElementById('languageDropdown');
-          if (languageButton) {
-            languageButton.textContent = 'English';
-          }
-          showNotification('言語をEnglishに変更しました', 'success');
-        });
-        console.log('Englishボタン設定完了');
-      }
-      
-      console.log('=== 新しいボタン初期化システム完了 ===');
-    }
+    // 注意：ボタン初期化は header-buttons-debug.js で処理されます
 
     // ページ読み込み時の処理
     document.addEventListener('DOMContentLoaded', function() {
       // 認証状態を検証・復元
       validateAndRestoreAuthState();
       
-      // 新しいボタン初期化システム
-      setTimeout(() => {
-        initializeAllButtons();
-      }, 1000);
-      
-      // 追加の安全な初期化（2秒後）
-      setTimeout(() => {
-        console.log('=== 追加初期化実行 ===');
-        initializeAllButtons();
-      }, 2000);
-      
-      // 言語選択ボタンのイベントリスナー設定
-      setupLanguageDropdown();
+      // 注意：ボタン初期化は header-buttons-debug.js で処理されます
+      console.log('🔧 メインDOMContentLoaded実行 - ボタン初期化はheader-buttons-debug.jsで処理');
       
       // 新規登録ドロップダウンのイベントリスナー設定
       setupRegisterDropdown();
