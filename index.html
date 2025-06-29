@@ -637,13 +637,13 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#" onclick="scrollToTop()">ホーム</a>
+            <a class="nav-link active" href="#" onclick="scrollToTop(); return false;">ホーム</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="scrollToSection('guides')">ガイドを探す</a>
+            <a class="nav-link" href="#" onclick="scrollToSection('guides'); return false;">ガイドを探す</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#" onclick="scrollToSection('how-it-works')">使い方</a>
+            <a class="nav-link" href="#" onclick="scrollToSection('how-it-works'); return false;">使い方</a>
           </li>
         </ul>
         
@@ -652,8 +652,8 @@
             日本語
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#" data-lang="ja">日本語</a></li>
-            <li><a class="dropdown-item" href="#" data-lang="en">English</a></li>
+            <li><a class="dropdown-item" href="#" onclick="changeLanguageDirectly('ja'); return false;">日本語</a></li>
+            <li><a class="dropdown-item" href="#" onclick="changeLanguageDirectly('en'); return false;">English</a></li>
           </ul>
         </div>
         
@@ -4024,6 +4024,68 @@
         console.log('セクションが見つかりません:', sectionId);
       }
     }
+    
+    // 言語選択ドロップダウンの設定
+    function setupLanguageDropdown() {
+      const languageItems = document.querySelectorAll('[data-lang]');
+      const languageButton = document.getElementById('languageDropdown');
+      
+      languageItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          const lang = this.getAttribute('data-lang');
+          const langText = lang === 'ja' ? '日本語' : 'English';
+          
+          if (languageButton) {
+            languageButton.textContent = langText;
+          }
+          
+          // 言語変更処理
+          if (typeof changeLanguage === 'function') {
+            changeLanguage(lang);
+          } else {
+            console.log('言語を変更:', langText);
+            showNotification(`言語を${langText}に変更しました`, 'success');
+          }
+        });
+      });
+    }
+    
+    // 言語変更処理（直接実行版）
+    function changeLanguageDirectly(lang) {
+      const languageButton = document.getElementById('languageDropdown');
+      const langText = lang === 'ja' ? '日本語' : 'English';
+      
+      if (languageButton) {
+        languageButton.textContent = langText;
+      }
+      
+      console.log('言語を変更:', langText);
+      showNotification(`言語を${langText}に変更しました`, 'success');
+      
+      // 実際の翻訳処理があればここで実行
+      if (typeof changeLanguage === 'function') {
+        changeLanguage(lang);
+      }
+    }
+    
+    // 新規登録ドロップダウンの設定
+    function setupRegisterDropdown() {
+      const registerDropdown = document.getElementById('registerDropdown');
+      
+      if (registerDropdown) {
+        console.log('新規登録ドロップダウンを初期化');
+        
+        // ドロップダウンアイテムのクリックイベント
+        const dropdownItems = document.querySelectorAll('.register-dropdown .dropdown-item');
+        dropdownItems.forEach(item => {
+          item.addEventListener('click', function(e) {
+            console.log('新規登録ボタンがクリックされました');
+            // Bootstrapモーダルの処理は既存のdata-bs-toggle属性で処理される
+          });
+        });
+      }
+    }
 
     // 通知表示関数
     function showNotification(message, type = 'info') {
@@ -4521,6 +4583,12 @@
     document.addEventListener('DOMContentLoaded', function() {
       // 認証状態を検証・復元
       validateAndRestoreAuthState();
+      
+      // 言語選択ボタンのイベントリスナー設定
+      setupLanguageDropdown();
+      
+      // 新規登録ドロップダウンのイベントリスナー設定
+      setupRegisterDropdown();
       
       // 任意のキーボードショートカットでモーダルクリーンアップ（デバッグ用）
       document.addEventListener('keydown', function(e) {
