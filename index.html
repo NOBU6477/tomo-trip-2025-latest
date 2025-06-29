@@ -1913,9 +1913,92 @@
 
   <!-- スクリプト -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="super-simple-fix.js"></script>
-  <script src="emergency-button-fix.js"></script>
-  <script src="header-buttons-debug.js"></script>
+  
+  <!-- 直接埋め込みボタン修正スクリプト -->
+  <script>
+    console.log('🔧 ボタン修正スクリプト開始（直接埋め込み版）');
+    
+    // ページ読み込み完了後に実行
+    window.addEventListener('load', function() {
+      console.log('ページ読み込み完了');
+      
+      setTimeout(function() {
+        console.log('ボタン修正を開始します');
+        
+        // ホームボタン
+        var homeBtn = document.getElementById('btn-home');
+        console.log('ホームボタン:', homeBtn);
+        if (homeBtn) {
+          homeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🏠 ホームボタンが動きました！');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
+          console.log('✅ ホームボタン設定完了');
+        }
+        
+        // ガイドを探すボタン
+        var guidesBtn = document.getElementById('btn-guides');
+        console.log('ガイドボタン:', guidesBtn);
+        if (guidesBtn) {
+          guidesBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🔍 ガイドボタンが動きました！');
+            var guidesSection = document.getElementById('guides');
+            if (guidesSection) {
+              guidesSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              window.scrollTo({ top: 800, behavior: 'smooth' });
+            }
+          });
+          console.log('✅ ガイドボタン設定完了');
+        }
+        
+        // 使い方ボタン
+        var howBtn = document.getElementById('btn-how-it-works');
+        console.log('使い方ボタン:', howBtn);
+        if (howBtn) {
+          howBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('📖 使い方ボタンが動きました！');
+            var howSection = document.getElementById('how-it-works');
+            if (howSection) {
+              howSection.scrollIntoView({ behavior: 'smooth' });
+            } else {
+              window.scrollTo({ top: 1200, behavior: 'smooth' });
+            }
+          });
+          console.log('✅ 使い方ボタン設定完了');
+        }
+        
+        // 日本語ボタン
+        var jaBtn = document.getElementById('lang-ja');
+        console.log('日本語ボタン:', jaBtn);
+        if (jaBtn) {
+          jaBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🇯🇵 日本語ボタンが動きました！');
+          });
+          console.log('✅ 日本語ボタン設定完了');
+        }
+        
+        // Englishボタン
+        var enBtn = document.getElementById('lang-en');
+        console.log('Englishボタン:', enBtn);
+        if (enBtn) {
+          enBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('🇺🇸 Englishボタンが動きました！');
+          });
+          console.log('✅ Englishボタン設定完了');
+        }
+        
+        console.log('🎉 すべてのボタン設定完了');
+        
+      }, 1000);
+    });
+  </script>
+  
   <script src="debug-redirect-tracker.js"></script>
   
   <!-- ユーザータイプ選択の動作改善 -->
