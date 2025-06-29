@@ -129,6 +129,7 @@ Local Guide is a multilingual guide matching platform that connects tourists wit
 # Changelog
 - June 24, 2025. Initial setup
 - December 26, 2025. Complete sponsor ecosystem with guide referral system
+- December 29, 2025. Fixed header navigation buttons with direct HTML embedding approach after resolving DOMContentLoaded conflicts
 
 # User Preferences
 
