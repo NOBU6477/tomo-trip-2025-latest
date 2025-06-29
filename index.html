@@ -637,7 +637,7 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#" id="btn-home" onclick="scrollToTop(); return false;">ホーム</a>
+            <a class="nav-link active" href="#" id="btn-home" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">ホーム</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="#" id="btn-guides" onclick="scrollToGuides(); return false;">ガイドを探す</a>
@@ -652,8 +652,8 @@
             日本語
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#" id="lang-ja" onclick="setLanguage('ja'); return false;">日本語</a></li>
-            <li><a class="dropdown-item" href="#" id="lang-en" onclick="setLanguage('en'); return false;">English</a></li>
+            <li><a class="dropdown-item" href="#" id="lang-ja" onclick="document.getElementById('languageDropdown').textContent='日本語'; return false;">日本語</a></li>
+            <li><a class="dropdown-item" href="#" id="lang-en" onclick="document.getElementById('languageDropdown').textContent='English'; return false;">English</a></li>
           </ul>
         </div>
         
