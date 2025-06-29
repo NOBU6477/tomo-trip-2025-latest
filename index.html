@@ -1922,10 +1922,11 @@
     }
   </style>
   
-  <script src="debug-redirect-tracker.js"></script>
+  <!-- 問題のあるスクリプトファイルを無効化 -->
+  <!-- <script src="debug-redirect-tracker.js"></script> -->
   
-  <!-- ユーザータイプ選択の動作改善 -->
-  <script>
+  <!-- 複雑なスクリプトを全て無効化してクリーンな状態にする -->
+  <!--
     // グローバル認証状態管理システム
     window.TouristAuthManager = (function() {
       let authData = null;
@@ -3599,9 +3600,12 @@
   
   <!-- モーダルの読み込み -->
   <div id="modals-container"></div>
+  <!-- 問題のある追加スクリプトも無効化 -->
+  <!--
   <script src="auto-fill-system.js"></script>
   <script src="load-70-guides.js"></script>
   <script src="filter-toggle.js"></script>
+  -->
   
   <script>
     // モーダルHTMLを読み込む
@@ -4647,6 +4651,7 @@
         }
       });
     });
+  -->
   </script>
 
   <!-- フィルターチュートリアルモーダル -->
@@ -4767,11 +4772,16 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="sponsor-buttons-redesign.css">
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 基本的なBootstrapのみ有効にする -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- 問題のあるスクリプトファイルを全て無効化 -->
+  <!-- 
   <script src="auth-debug-tracer.js"></script>
   <script src="auth-persistence-fix.js"></script>
   <script src="auth-protection-override.js"></script>
   <script src="registration-button-fix.js"></script>
   <script src="client-app.js"></script>
+  -->
 </body>
 </html>
