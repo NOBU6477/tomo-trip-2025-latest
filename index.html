@@ -1940,6 +1940,22 @@
     
     console.log('スクリプト開始');
     
+    // 初期状態を日本語に強制設定
+    function forceJapaneseInitialState() {
+      // ローカルストレージの言語設定をクリア
+      localStorage.removeItem('selectedLanguage');
+      localStorage.removeItem('localGuideLanguage');
+      sessionStorage.removeItem('forcedEnglish');
+      
+      // 言語ドロップダウンボタンを日本語に設定
+      const langBtn = document.getElementById('languageDropdown');
+      if (langBtn) {
+        langBtn.textContent = '日本語';
+      }
+      
+      console.log('初期状態を日本語に強制設定しました');
+    }
+    
     // DOMContentLoadedではなく、即座に実行
     function initializeButtons() {
       console.log('ボタン初期化開始');
@@ -2048,13 +2064,69 @@
     
     // 複数の方法で初期化を試行
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initializeButtons);
+      document.addEventListener('DOMContentLoaded', function() {
+        forceJapaneseInitialState(); // 日本語強制設定
+        initializeButtons();
+        forceJapaneseButtonText(); // ガイドカードボタンを強制的に日本語化
+      });
     } else {
+      forceJapaneseInitialState();
       initializeButtons();
+      forceJapaneseButtonText();
     }
     
     // さらに安全のため、少し遅延して再実行
-    setTimeout(initializeButtons, 1000);
+    setTimeout(function() {
+      forceJapaneseInitialState();
+      initializeButtons();
+      forceJapaneseButtonText();
+    }, 1000);
+    
+    // ガイドカードボタンを強制的に日本語化する関数
+    function forceJapaneseButtonText() {
+      console.log('ガイドカードボタンを強制的に日本語化開始');
+      
+      // 複数のセレクターでボタンを取得
+      const buttonSelectors = [
+        '.guide-details-link',
+        '.btn[onclick*="showGuideDetails"]', 
+        '.card-footer .btn',
+        '.guide-card .btn-primary',
+        'a[data-guide-id]',
+        '.btn'
+      ];
+      
+      buttonSelectors.forEach(selector => {
+        const buttons = document.querySelectorAll(selector);
+        buttons.forEach(btn => {
+          if (btn.textContent.includes('See Details') || btn.textContent.includes('Details')) {
+            btn.textContent = '詳細を見る';
+            console.log(`ボタンを日本語化: ${btn.textContent}`);
+          }
+        });
+      });
+      
+      // より包括的な検索
+      document.querySelectorAll('*').forEach(element => {
+        if (element.textContent === 'See Details' && (element.tagName === 'A' || element.tagName === 'BUTTON')) {
+          element.textContent = '詳細を見る';
+          console.log('See Detailsボタンを詳細を見るに変更');
+        }
+        
+        // 「もっと見る」ボタンも確認
+        if (element.textContent === 'Show More' && (element.tagName === 'A' || element.tagName === 'BUTTON')) {
+          element.textContent = 'もっと見る';
+          console.log('Show Moreボタンをもっと見るに変更');
+        }
+      });
+      
+      // 「もっと見る」ボタンも個別にチェック
+      const moreButton = document.querySelector('#load-more-guides');
+      if (moreButton && (moreButton.textContent.includes('Show More') || moreButton.textContent.includes('Load More'))) {
+        moreButton.textContent = 'もっと見る';
+        console.log('もっと見るボタンを強制的に日本語化');
+      }
+    }
   </script>
   
   <!-- Bootstrap JavaScript - 最後に読み込み -->
