@@ -2174,9 +2174,31 @@
             }
           }
         });
+        
+        // 都道府県名を日本語に復元
+        const locationElements = document.querySelectorAll('.guide-card .text-muted, .guide-location');
+        locationElements.forEach(element => {
+          const text = element.textContent;
+          if (text.includes('Tokyo')) {
+            element.textContent = text.replace('Tokyo', '東京都');
+          } else if (text.includes('Kyoto City')) {
+            element.textContent = text.replace('Kyoto City', '京都市');
+          } else if (text.includes('Kyoto') && !text.includes('Kyoto City')) {
+            element.textContent = text.replace('Kyoto', '京都府');
+          } else if (text.includes('Osaka City')) {
+            element.textContent = text.replace('Osaka City', '大阪市');
+          } else if (text.includes('Osaka') && !text.includes('Osaka City')) {
+            element.textContent = text.replace('Osaka', '大阪府');
+          } else if (text.includes('Shibuya')) {
+            element.textContent = text.replace('Shibuya', '渋谷区');
+          }
+        });
       }, 1000);
       
-      // 使い方セクションの説明文
+      // 使い方セクションのタイトルと説明文
+      const howItWorksTitle = document.querySelector('#how-it-works h2');
+      if (howItWorksTitle) howItWorksTitle.textContent = '使い方';
+      
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
       if (howItWorksPs.length >= 3) {
         howItWorksPs[0].textContent = '簡単な情報入力と電話番号認証で登録完了';
@@ -2406,13 +2428,50 @@
         });
       }, 1000);
       
-      // 使い方セクションの説明文
+      // 使い方セクションのタイトルと説明文
+      const howItWorksTitle = document.querySelector('#how-it-works h2');
+      if (howItWorksTitle) howItWorksTitle.textContent = 'How to Use';
+      
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
       if (howItWorksPs.length >= 3) {
         howItWorksPs[0].textContent = 'Complete registration with simple info and phone verification';
         howItWorksPs[1].textContent = 'Search for ideal guides by location, language, and expertise';
         howItWorksPs[2].textContent = 'Book your preferred date and enjoy a special experience';
       }
+      
+      // 都道府県名を英語に翻訳
+      const locationElements = document.querySelectorAll('.guide-card .text-muted, .guide-location');
+      locationElements.forEach(element => {
+        const text = element.textContent;
+        if (text.includes('東京都')) {
+          element.textContent = text.replace('東京都', 'Tokyo');
+        } else if (text.includes('京都府')) {
+          element.textContent = text.replace('京都府', 'Kyoto');
+        } else if (text.includes('大阪府')) {
+          element.textContent = text.replace('大阪府', 'Osaka');
+        } else if (text.includes('渋谷区')) {
+          element.textContent = text.replace('渋谷区', 'Shibuya');
+        } else if (text.includes('京都市')) {
+          element.textContent = text.replace('京都市', 'Kyoto City');
+        } else if (text.includes('大阪市')) {
+          element.textContent = text.replace('大阪市', 'Osaka City');
+        }
+      });
+      
+      // メリットカードのタイトルを強制的にすべて英語に統一（遅延実行で確実に）
+      setTimeout(() => {
+        const allBenefitTitles = document.querySelectorAll('#guide-benefits h5');
+        if (allBenefitTitles.length >= 8) {
+          allBenefitTitles[0].textContent = 'Your daily life becomes a tourism resource';
+          allBenefitTitles[1].textContent = 'Welcome tourists as friends';
+          allBenefitTitles[2].textContent = 'Efficient work using spare time';
+          allBenefitTitles[3].textContent = 'Turn your passion into work';
+          allBenefitTitles[4].textContent = 'Deepen your love and pride for your hometown';
+          allBenefitTitles[5].textContent = 'Reliable support system';
+          allBenefitTitles[6].textContent = 'Work at your own pace';
+          allBenefitTitles[7].textContent = 'Contribute to local revitalization';
+        }
+      }, 1500);
       
       // ガイドとして活躍するメリット（正しいセレクター）
       const benefitsTitle = document.querySelector('#guide-benefits h2');
