@@ -2474,47 +2474,50 @@
         }
       });
       
-      // メリットカードのタイトルを強制的にすべて英語に統一（複数回実行で確実に）
-      setTimeout(() => {
-        const allBenefitTitles = document.querySelectorAll('#guide-benefits h5');
-        console.log('英語翻訳: メリットタイトル数:', allBenefitTitles.length);
-        allBenefitTitles.forEach((title, index) => {
-          const englishTitles = [
-            'Your daily life becomes a tourism resource',
-            'Welcome tourists as friends', 
-            'Efficient work using spare time',
-            'Turn your passion into work',
-            'Deepen your love and pride for your hometown',
-            'Reliable support system',
-            'Work at your own pace',
-            'Contribute to local revitalization'
-          ];
-          if (englishTitles[index]) {
-            title.textContent = englishTitles[index];
-            console.log(`英語翻訳 ${index}: ${englishTitles[index]}`);
-          }
+      // メリットカードのタイトルを強制的にすべて英語に統一（複数のセレクターと複数回実行で確実に）
+      function translateBenefitTitlesToEnglish() {
+        const selectors = [
+          '#guide-benefits h5',
+          '#guide-benefits .guide-benefit-card h5',
+          '.guide-benefit-card h5',
+          'section[id="guide-benefits"] h5'
+        ];
+        
+        const englishTitles = [
+          'Your daily life becomes a tourism resource',
+          'Welcome tourists as friends', 
+          'Efficient work using spare time',
+          'Turn your passion into work',
+          'Deepen your love and pride for your hometown',
+          'Reliable support system',
+          'Work at your own pace',
+          'Contribute to local revitalization'
+        ];
+        
+        selectors.forEach(selector => {
+          const titles = document.querySelectorAll(selector);
+          console.log(`セレクター ${selector}: ${titles.length}個のタイトル見つかりました`);
+          titles.forEach((title, index) => {
+            if (englishTitles[index]) {
+              const oldText = title.textContent;
+              title.textContent = englishTitles[index];
+              console.log(`翻訳 ${index}: ${oldText} → ${englishTitles[index]}`);
+            }
+          });
         });
-      }, 500);
+      }
       
-      // さらに確実にするため2回目の実行
-      setTimeout(() => {
-        const allBenefitTitles = document.querySelectorAll('#guide-benefits h5');
-        allBenefitTitles.forEach((title, index) => {
-          const englishTitles = [
-            'Your daily life becomes a tourism resource',
-            'Welcome tourists as friends', 
-            'Efficient work using spare time',
-            'Turn your passion into work',
-            'Deepen your love and pride for your hometown',
-            'Reliable support system',
-            'Work at your own pace',
-            'Contribute to local revitalization'
-          ];
-          if (englishTitles[index]) {
-            title.textContent = englishTitles[index];
-          }
-        });
-      }, 1500);
+      // 即座に実行
+      translateBenefitTitlesToEnglish();
+      
+      // 500ms後に再実行
+      setTimeout(translateBenefitTitlesToEnglish, 500);
+      
+      // 1500ms後に再実行
+      setTimeout(translateBenefitTitlesToEnglish, 1500);
+      
+      // 3000ms後に最終確認
+      setTimeout(translateBenefitTitlesToEnglish, 3000);
       
       // ガイドとして活躍するメリット（正しいセレクター）
       const benefitsTitle = document.querySelector('#guide-benefits h2');
