@@ -217,16 +217,45 @@
     
     // ガイド詳細リンクのイベントリスナーを設定
     setupGuideDetailLinks();
+    
+    // 日本語モードでは詳細ボタンを強制的に日本語にする
+    setTimeout(() => {
+      const currentLanguage = localStorage.getItem('language') || 'ja';
+      if (currentLanguage === 'ja') {
+        document.querySelectorAll('.guide-details-link').forEach(btn => {
+          if (btn.textContent.includes('See Details')) {
+            btn.textContent = '詳細を見る';
+            console.log('ガイドカード生成後に日本語強制:', btn);
+          }
+        });
+      }
+    }, 100);
+    
+    // さらに確実にするため、1秒後にも実行
+    setTimeout(() => {
+      const currentLanguage = localStorage.getItem('language') || 'ja';
+      if (currentLanguage === 'ja') {
+        document.querySelectorAll('.guide-details-link').forEach(btn => {
+          if (btn.textContent.includes('See Details')) {
+            btn.textContent = '詳細を見る';
+            console.log('1秒後の日本語強制:', btn);
+          }
+        });
+      }
+    }, 1000);
   }
 
   // ガイド詳細リンクのイベントリスナー設定
   function setupGuideDetailLinks() {
     const detailLinks = document.querySelectorAll('.guide-details-link');
     detailLinks.forEach(link => {
-      // 英語モードの場合、ボタンテキストを翻訳
-      const savedLanguage = localStorage.getItem('selectedLanguage');
+      // 言語設定を確認して翻訳（日本語モードでは翻訳しない）
+      const savedLanguage = localStorage.getItem('language') || 'ja';
       if (savedLanguage === 'en' && link.textContent && link.textContent.trim() === '詳細を見る') {
         link.textContent = 'See Details';
+      } else {
+        // 日本語モードでは確実に日本語を維持
+        link.textContent = '詳細を見る';
       }
       
       link.addEventListener('click', function(e) {
