@@ -2079,6 +2079,51 @@
       const popularGuidesTitle = document.querySelector('#guides h2');
       if (popularGuidesTitle) popularGuidesTitle.textContent = '人気のガイド';
       
+      // ガイド一覧の要素（正しいセレクター）
+      const filterButton = document.querySelector('#toggle-filter-button');
+      if (filterButton) filterButton.innerHTML = '<i class="bi bi-funnel"></i> ガイドを絞り込み';
+      
+      const moreButton = document.querySelector('#load-more-guides');
+      if (moreButton) moreButton.textContent = 'もっと見る';
+      
+      // ガイドカードの詳細ボタンを日本語に
+      const guideDetailsButtons = document.querySelectorAll('.guide-details-link');
+      guideDetailsButtons.forEach(btn => {
+        btn.textContent = '詳細を見る';
+      });
+      
+      // 使い方セクションの説明文
+      const howItWorksPs = document.querySelectorAll('#how-it-works p');
+      if (howItWorksPs.length >= 3) {
+        howItWorksPs[0].textContent = '簡単な情報入力と電話番号認証で登録完了';
+        howItWorksPs[1].textContent = '場所、言語、専門性などで理想のガイドを検索';
+        howItWorksPs[2].textContent = '希望の日時で予約し、特別な体験を楽しむ';
+      }
+      
+      // ガイドとして活躍するメリット
+      const benefitsTitle = document.querySelector('#benefits h2');
+      if (benefitsTitle) benefitsTitle.textContent = 'ガイドとして活躍するメリット';
+      
+      const benefitsSubtitle = document.querySelector('#benefits .lead');
+      if (benefitsSubtitle) benefitsSubtitle.textContent = 'あなたの知識と経験を活かして、世界中の旅行者に特別な体験を提供しましょう';
+      
+      // メリット項目のタイトル
+      const benefitTitles = document.querySelectorAll('.benefit-item h4');
+      if (benefitTitles.length >= 8) {
+        benefitTitles[0].textContent = 'あなたの日常が観光資源になる';
+        benefitTitles[1].textContent = '観光客の方を友達としてお迎えするだけです';
+        benefitTitles[2].textContent = '隙間時間を使って効率よくお仕事をする';
+        benefitTitles[3].textContent = '自分の好きなことを仕事にできる';
+        benefitTitles[4].textContent = '地元への愛着と誇りが深まる';
+        benefitTitles[5].textContent = '安心のサポート体制';
+        benefitTitles[6].textContent = '自分のペースで活動可能';
+        benefitTitles[7].textContent = '地域活性化に貢献できる';
+      }
+      
+      // ガイド登録ボタン
+      const guideRegisterBtn = document.querySelector('.btn-register-guide');
+      if (guideRegisterBtn) guideRegisterBtn.textContent = 'ガイドとして登録する';
+      
       showStatus('日本語に切り替えました');
     }
     
@@ -2120,6 +2165,51 @@
       // 人気のガイドセクション
       const popularGuidesTitle = document.querySelector('#guides h2');
       if (popularGuidesTitle) popularGuidesTitle.textContent = 'Popular Guides';
+      
+      // ガイド一覧の要素（正しいセレクター）
+      const filterButton = document.querySelector('#toggle-filter-button');
+      if (filterButton) filterButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
+      
+      const moreButton = document.querySelector('#load-more-guides');
+      if (moreButton) moreButton.textContent = 'Show More';
+      
+      // ガイドカードの詳細ボタンを英語に
+      const guideDetailsButtons = document.querySelectorAll('.guide-details-link');
+      guideDetailsButtons.forEach(btn => {
+        btn.textContent = 'See Details';
+      });
+      
+      // 使い方セクションの説明文
+      const howItWorksPs = document.querySelectorAll('#how-it-works p');
+      if (howItWorksPs.length >= 3) {
+        howItWorksPs[0].textContent = 'Complete registration with simple info and phone verification';
+        howItWorksPs[1].textContent = 'Search for ideal guides by location, language, and expertise';
+        howItWorksPs[2].textContent = 'Book your preferred date and enjoy a special experience';
+      }
+      
+      // ガイドとして活躍するメリット
+      const benefitsTitle = document.querySelector('#benefits h2');
+      if (benefitsTitle) benefitsTitle.textContent = 'Benefits of Being a Guide';
+      
+      const benefitsSubtitle = document.querySelector('#benefits .lead');
+      if (benefitsSubtitle) benefitsSubtitle.textContent = 'Utilize your knowledge and experience to provide special experiences for travelers worldwide';
+      
+      // メリット項目のタイトル
+      const benefitTitles = document.querySelectorAll('.benefit-item h4');
+      if (benefitTitles.length >= 8) {
+        benefitTitles[0].textContent = 'Your daily life becomes a tourism resource';
+        benefitTitles[1].textContent = 'Simply welcome tourists as friends';
+        benefitTitles[2].textContent = 'Work efficiently during your free time';
+        benefitTitles[3].textContent = 'Turn your passion into work';
+        benefitTitles[4].textContent = 'Deepen your love and pride for your hometown';
+        benefitTitles[5].textContent = 'Reliable support system';
+        benefitTitles[6].textContent = 'Work at your own pace';
+        benefitTitles[7].textContent = 'Contribute to local revitalization';
+      }
+      
+      // ガイド登録ボタン
+      const guideRegisterBtn = document.querySelector('.btn-register-guide');
+      if (guideRegisterBtn) guideRegisterBtn.textContent = 'Register as Guide';
       
       showStatus('Switched to English');
     }
