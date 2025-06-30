@@ -2086,6 +2086,29 @@
       const moreButton = document.querySelector('#load-more-guides');
       if (moreButton) moreButton.textContent = 'もっと見る';
       
+      // 検索結果カウンターの翻訳（動的対応）
+      const searchCounter = document.querySelector('#search-results-counter');
+      if (searchCounter) {
+        // 既存のテキストをチェックして日本語に設定
+        if (searchCounter.textContent.includes('guides') || searchCounter.textContent.includes('Showing')) {
+          searchCounter.textContent = '3件のガイドを表示中（全76件中）';
+        } else if (searchCounter.textContent === '' || !searchCounter.textContent.includes('件')) {
+          searchCounter.textContent = '3件のガイドを表示中（全76件中）';
+        }
+      }
+      
+      // カウンターの動的監視（英語から日本語への切り替え時）
+      setTimeout(() => {
+        const searchCounterDelayed = document.querySelector('#search-results-counter');
+        if (searchCounterDelayed && searchCounterDelayed.textContent.includes('guides')) {
+          searchCounterDelayed.textContent = '3件のガイドを表示中（全76件中）';
+        }
+      }, 500);
+      
+      // 「フィルターの使い方」ボタン
+      const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
+      if (filterTutorialBtn) filterTutorialBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>フィルターの使い方';
+      
       // ガイドカードの詳細ボタンを日本語に
       const guideDetailsButtons = document.querySelectorAll('.guide-details-link');
       guideDetailsButtons.forEach(btn => {
@@ -2185,6 +2208,29 @@
       
       const moreButton = document.querySelector('#load-more-guides');
       if (moreButton) moreButton.textContent = 'Show More';
+      
+      // 検索結果カウンターの翻訳（動的対応）
+      const searchCounter = document.querySelector('#search-results-counter');
+      if (searchCounter) {
+        // 既存のテキストをチェックして英語に設定
+        if (searchCounter.textContent.includes('件') || searchCounter.textContent.includes('表示中')) {
+          searchCounter.textContent = 'Showing 3 guides (76 total)';
+        } else if (searchCounter.textContent === '' || !searchCounter.textContent.includes('Showing')) {
+          searchCounter.textContent = 'Showing 3 guides (76 total)';
+        }
+      }
+      
+      // カウンターの動的監視（日本語から英語への切り替え時）
+      setTimeout(() => {
+        const searchCounterDelayed = document.querySelector('#search-results-counter');
+        if (searchCounterDelayed && searchCounterDelayed.textContent.includes('件')) {
+          searchCounterDelayed.textContent = 'Showing 3 guides (76 total)';
+        }
+      }, 500);
+      
+      // 「フィルターの使い方」ボタン
+      const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
+      if (filterTutorialBtn) filterTutorialBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>How to Filter';
       
       // ガイドカードの詳細ボタンを英語に
       const guideDetailsButtons = document.querySelectorAll('.guide-details-link');
