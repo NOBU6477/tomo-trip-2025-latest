@@ -2236,13 +2236,17 @@
         
         // ガイドカード翻訳（すべてのカードを日本語に戻す・強化版）
         function translateAllGuideCardsToJapanese() {
-          // より包括的なセレクターで新しく追加されるカードもキャッチ
+          // より包括的なセレクターで隠しガイドを含む全てのカードをキャッチ
           const guideCardSelectors = [
             '.guide-card', 
             '.guide-item', 
+            '.guide-item.hidden-guide',
+            '.hidden-guide',
             '[data-guide-id]',
             '.col-md-4 .card',
-            '.col-lg-4 .card'
+            '.col-lg-4 .card',
+            '#guide-cards-container .guide-item',
+            '.guides-container .guide-item'
           ];
           
           let allGuideCards = [];
@@ -2318,7 +2322,9 @@
               '.location',
               '.area',
               'small.text-muted',
-              '.card-subtitle'
+              '.card-subtitle',
+              'p.text-muted',
+              '.card-text.text-muted'
             ];
             
             locationSelectors.forEach(selector => {
@@ -2378,23 +2384,37 @@
                 if (node.nodeType === 1 && 
                     (node.classList.contains('guide-card') || 
                      node.classList.contains('guide-item') || 
+                     node.classList.contains('hidden-guide') ||
                      node.querySelector('.guide-card'))) {
                   shouldTranslate = true;
                 }
               });
+            }
+            
+            // クラス変更も監視（hidden-guideクラスの削除など）
+            if (mutation.type === 'attributes' && 
+                mutation.attributeName === 'class' &&
+                mutation.target.classList.contains('guide-item')) {
+              shouldTranslate = true;
             }
           });
           
           if (shouldTranslate) {
             console.log('新しいガイドカードが追加されました - 日本語翻訳適用');
             setTimeout(translateAllGuideCardsToJapanese, 50);
+            setTimeout(translateAllGuideCardsToJapanese, 200);
           }
         });
         
-        // ガイドカードコンテナを監視
+        // ガイドカードコンテナを監視（属性変更も含む）
         const guideContainer = document.getElementById('guide-cards-container');
         if (guideContainer) {
-          observer.observe(guideContainer, { childList: true, subtree: true });
+          observer.observe(guideContainer, { 
+            childList: true, 
+            subtree: true, 
+            attributes: true, 
+            attributeFilter: ['class'] 
+          });
         }
         
         // 都道府県名を日本語に復元
@@ -2746,13 +2766,17 @@
       
       // ガイドカード翻訳（すべてのカードを対象・強化版）
       function translateAllGuideCards() {
-        // より包括的なセレクターで新しく追加されるカードもキャッチ
+        // より包括的なセレクターで隠しガイドを含む全てのカードをキャッチ
         const guideCardSelectors = [
           '.guide-card', 
           '.guide-item', 
+          '.guide-item.hidden-guide',
+          '.hidden-guide',
           '[data-guide-id]',
           '.col-md-4 .card',
-          '.col-lg-4 .card'
+          '.col-lg-4 .card',
+          '#guide-cards-container .guide-item',
+          '.guides-container .guide-item'
         ];
         
         let allGuideCards = [];
@@ -2766,6 +2790,7 @@
         });
         
         console.log(`英語翻訳: ${allGuideCards.length}個のガイドカードを翻訳中`);
+        console.log('対象ガイドカード:', allGuideCards.map(card => card.querySelector('.card-title')?.textContent || 'No Title'));
         
         allGuideCards.forEach((card, index) => {
           console.log(`ガイドカード ${index + 1} を英語翻訳中...`);
@@ -2828,7 +2853,9 @@
             '.location',
             '.area',
             'small.text-muted',
-            '.card-subtitle'
+            '.card-subtitle',
+            'p.text-muted',
+            '.card-text.text-muted'
           ];
           
           locationSelectors.forEach(selector => {
@@ -2888,18 +2915,38 @@
               if (node.nodeType === 1 && 
                   (node.classList.contains('guide-card') || 
                    node.classList.contains('guide-item') || 
+                   node.classList.contains('hidden-guide') ||
                    node.querySelector('.guide-card'))) {
                 shouldTranslate = true;
               }
             });
+          }
+          
+          // クラス変更も監視（hidden-guideクラスの削除など）
+          if (mutation.type === 'attributes' && 
+              mutation.attributeName === 'class' &&
+              mutation.target.classList.contains('guide-item')) {
+            shouldTranslate = true;
           }
         });
         
         if (shouldTranslate) {
           console.log('新しいガイドカードが追加されました - 翻訳適用');
           setTimeout(translateAllGuideCards, 50);
+          setTimeout(translateAllGuideCards, 200);
         }
       });
+      
+      // ガイドカードコンテナを監視（属性変更も含む）
+      const guideContainer = document.getElementById('guide-cards-container');
+      if (guideContainer) {
+        observer.observe(guideContainer, { 
+          childList: true, 
+          subtree: true, 
+          attributes: true, 
+          attributeFilter: ['class'] 
+        });
+      }
       
       // ガイドカードコンテナを監視
       const guideContainer = document.getElementById('guide-cards-container');
