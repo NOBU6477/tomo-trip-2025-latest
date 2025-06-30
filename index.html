@@ -2138,6 +2138,22 @@
             link.textContent = '詳細を見る';
           }
         });
+        
+        // 動的生成されたガイドカードの翻訳も再実行
+        const dynamicGuideCards = document.querySelectorAll('.guide-card');
+        dynamicGuideCards.forEach((card, index) => {
+          const description = card.querySelector('.card-text.mb-3');
+          if (description && description.textContent.includes('guide you to') || description.textContent.includes('Specializing')) {
+            const japaneseDescriptions = [
+              '東京の隠れた名所を案内します。グルメや写真スポットが得意です。',
+              '歴史と伝統が息づく京都の魅力をご案内。寺社巡りや伝統文化体験が得意です。',
+              '大阪ならではの食べ歩きと街歩きが専門。地元の人だけが知る名店にご案内します。'
+            ];
+            if (japaneseDescriptions[index]) {
+              description.textContent = japaneseDescriptions[index];
+            }
+          }
+        });
       }, 1000);
       
       // 使い方セクションの説明文
@@ -2180,6 +2196,34 @@
         benefitDescs[6].textContent = '予約を受け入れるかどうかは完全に自分次第。ライフスタイルに合わせた活動が可能です。';
         benefitDescs[7].textContent = '観光客を地元の店舗や施設に案内することで、地域経済の活性化と地域コミュニティの発展に貢献できます。';
       }
+      
+      // ガイドカードの紹介文を日本語に戻す
+      const guideCards = document.querySelectorAll('.guide-card');
+      guideCards.forEach((card, index) => {
+        const description = card.querySelector('.card-text.mb-3');
+        if (description) {
+          const japaneseDescriptions = [
+            '東京の隠れた名所を案内します。グルメや写真スポットが得意です。',
+            '歴史と伝統が息づく京都の魅力をご案内。寺社巡りや伝統文化体験が得意です。',
+            '大阪ならではの食べ歩きと街歩きが専門。地元の人だけが知る名店にご案内します。'
+          ];
+          if (japaneseDescriptions[index]) {
+            description.textContent = japaneseDescriptions[index];
+          }
+        }
+        
+        // 言語バッジも日本語に
+        const languageBadges = card.querySelectorAll('.badge.bg-light');
+        languageBadges.forEach(badge => {
+          if (badge.textContent.includes('English') || badge.textContent.includes('Basic English')) {
+            badge.textContent = badge.textContent.includes('Basic') ? '英語(基礎)' : '英語';
+          } else if (badge.textContent.includes('Japanese')) {
+            badge.textContent = '日本語';
+          } else if (badge.textContent.includes('Chinese')) {
+            badge.textContent = '中国語';
+          }
+        });
+      });
       
       // ガイド登録ボタン
       const guideRegisterBtn = document.querySelector('.btn-register-guide');
@@ -2286,6 +2330,22 @@
             link.textContent = 'See Details';
           }
         });
+        
+        // 動的生成されたガイドカードの翻訳も再実行
+        const dynamicGuideCards = document.querySelectorAll('.guide-card');
+        dynamicGuideCards.forEach((card, index) => {
+          const description = card.querySelector('.card-text.mb-3');
+          if (description && (description.textContent.includes('案内します') || description.textContent.includes('専門'))) {
+            const englishDescriptions = [
+              'I guide you to hidden gems in Tokyo. Specializing in gourmet food and photo spots.',
+              'Introducing the charm of Kyoto where history and tradition live. Specializing in temple visits and traditional cultural experiences.',
+              'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to local restaurants only locals know about.'
+            ];
+            if (englishDescriptions[index]) {
+              description.textContent = englishDescriptions[index];
+            }
+          }
+        });
       }, 1000);
       
       // 使い方セクションの説明文
@@ -2328,6 +2388,36 @@
         benefitDescs[6].textContent = 'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.';
         benefitDescs[7].textContent = 'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.';
       }
+      
+      // ガイドカードの紹介文を英語に翻訳
+      const guideCards = document.querySelectorAll('.guide-card');
+      guideCards.forEach((card, index) => {
+        const description = card.querySelector('.card-text.mb-3');
+        if (description) {
+          const englishDescriptions = [
+            'I guide you to hidden gems in Tokyo. Specializing in gourmet food and photo spots.',
+            'Introducing the charm of Kyoto where history and tradition live. Specializing in temple visits and traditional cultural experiences.',
+            'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to local restaurants only locals know about.'
+          ];
+          if (englishDescriptions[index]) {
+            description.textContent = englishDescriptions[index];
+          }
+        }
+        
+        // 言語バッジも英語に
+        const languageBadges = card.querySelectorAll('.badge.bg-light');
+        languageBadges.forEach(badge => {
+          if (badge.textContent.includes('日本語')) {
+            badge.textContent = 'Japanese';
+          } else if (badge.textContent.includes('英語(基礎)')) {
+            badge.textContent = 'Basic English';
+          } else if (badge.textContent.includes('英語')) {
+            badge.textContent = 'English';
+          } else if (badge.textContent.includes('中国語')) {
+            badge.textContent = 'Chinese';
+          }
+        });
+      });
       
       // ガイド登録ボタン
       const guideRegisterBtn = document.querySelector('.btn-register-guide');
