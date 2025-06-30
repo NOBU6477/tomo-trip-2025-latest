@@ -2191,13 +2191,14 @@
           }
         });
         
-        // メリットカードのタイトルを強制的にすべて日本語に統一（複数のセレクターと複数回実行で確実に）
+        // メリットカードのタイトルを強制的にすべて日本語に統一（10個すべて対応）
         function translateBenefitTitlesToJapanese() {
           const selectors = [
             '#guide-benefits h5',
             '#guide-benefits .guide-benefit-card h5',
             '.guide-benefit-card h5',
-            'section[id="guide-benefits"] h5'
+            'section[id="guide-benefits"] h5',
+            '.container .guide-benefit-card h5'
           ];
           
           const japaneseTitles = [
@@ -2205,6 +2206,8 @@
             '観光客の方を友達としてお迎えするだけです',
             '隙間時間を使って効率よくお仕事をする',
             '自分の好きなことを仕事にできる',
+            '世界中の人と新しい出会いが生まれる',
+            '語学力を活かし、さらに向上させられる',
             '地元への愛着と誇りが深まる',
             '安心のサポート体制',
             '自分のペースで活動可能',
@@ -2224,17 +2227,97 @@
           });
         }
         
-        // 即座に実行
+        // 段階的実行で確実に翻訳
         translateBenefitTitlesToJapanese();
-        
-        // 500ms後に再実行
-        setTimeout(translateBenefitTitlesToJapanese, 500);
-        
-        // 1500ms後に再実行
+        setTimeout(translateBenefitTitlesToJapanese, 300);
+        setTimeout(translateBenefitTitlesToJapanese, 800);
         setTimeout(translateBenefitTitlesToJapanese, 1500);
-        
-        // 3000ms後に最終確認
         setTimeout(translateBenefitTitlesToJapanese, 3000);
+        
+        // ガイドカード翻訳（すべてのカードを日本語に戻す）
+        function translateAllGuideCardsToJapanese() {
+          const guideCards = document.querySelectorAll('.guide-card, .guide-item');
+          console.log(`日本語翻訳: ${guideCards.length}個のガイドカードを翻訳中`);
+          
+          guideCards.forEach((card, index) => {
+            // 詳細を見るボタン
+            const detailBtn = card.querySelector('.btn, a[href*="guide"], .guide-details-link');
+            if (detailBtn && detailBtn.textContent.includes('See Details')) {
+              detailBtn.textContent = '詳細を見る';
+            }
+            
+            // 言語バッジ
+            const langBadges = card.querySelectorAll('.badge');
+            langBadges.forEach(badge => {
+              if (badge.textContent === 'Japanese') badge.textContent = '日本語';
+              if (badge.textContent === 'English') badge.textContent = '英語';
+              if (badge.textContent === 'French') badge.textContent = 'フランス語';
+              if (badge.textContent === 'Chinese') badge.textContent = '中国語';
+              if (badge.textContent === 'Korean') badge.textContent = '韓国語';
+            });
+            
+            // 場所の翻訳
+            const location = card.querySelector('.guide-location, .text-muted');
+            if (location) {
+              let text = location.textContent;
+              text = text.replace('Tokyo', '東京都').replace('Shibuya', '渋谷区');
+              text = text.replace('Okinawa', '沖縄県').replace('Naha City', '那覇市');
+              text = text.replace('Hiroshima City', '広島市').replace('Hiroshima', '広島県');
+              location.textContent = text;
+            }
+          });
+        }
+        
+        // 即座に翻訳
+        translateAllGuideCardsToJapanese();
+        
+        // 遅延実行で動的に追加されたカードも翻訳
+        setTimeout(translateAllGuideCardsToJapanese, 500);
+        setTimeout(translateAllGuideCardsToJapanese, 1500);
+        setTimeout(translateAllGuideCardsToJapanese, 3000);
+        
+        // 「もっとみる」ボタンのクリック監視と翻訳適用（日本語版）
+        const loadMoreBtn = document.getElementById('load-more-guides');
+        if (loadMoreBtn) {
+          loadMoreBtn.addEventListener('click', function() {
+            // ボタンクリック後に新しく表示されるガイドカードに翻訳を適用
+            setTimeout(() => {
+              console.log('「もっとみる」ボタンクリック後の日本語翻訳適用');
+              translateAllGuideCardsToJapanese();
+            }, 100);
+            
+            setTimeout(translateAllGuideCardsToJapanese, 500);
+            setTimeout(translateAllGuideCardsToJapanese, 1000);
+          });
+        }
+        
+        // MutationObserverでDOMの変更を監視（日本語版）
+        const observer = new MutationObserver(function(mutations) {
+          let shouldTranslate = false;
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList') {
+              mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1 && 
+                    (node.classList.contains('guide-card') || 
+                     node.classList.contains('guide-item') || 
+                     node.querySelector('.guide-card'))) {
+                  shouldTranslate = true;
+                }
+              });
+            }
+          });
+          
+          if (shouldTranslate) {
+            console.log('新しいガイドカードが追加されました - 日本語翻訳適用');
+            setTimeout(translateAllGuideCardsToJapanese, 50);
+          }
+        });
+        
+        // ガイドカードコンテナを監視
+        const guideContainer = document.getElementById('guide-cards-container');
+        if (guideContainer) {
+          observer.observe(guideContainer, { childList: true, subtree: true });
+        }
         
         // 都道府県名を日本語に復元
         const locationElements = document.querySelectorAll('.guide-card .text-muted, .guide-location');
@@ -2519,13 +2602,14 @@
         }
       });
       
-      // メリットカードのタイトルを強制的にすべて英語に統一（複数のセレクターと複数回実行で確実に）
+      // メリットカードのタイトルを強制的にすべて英語に統一（10個すべて対応）
       function translateBenefitTitlesToEnglish() {
         const selectors = [
           '#guide-benefits h5',
           '#guide-benefits .guide-benefit-card h5',
           '.guide-benefit-card h5',
-          'section[id="guide-benefits"] h5'
+          'section[id="guide-benefits"] h5',
+          '.container .guide-benefit-card h5'
         ];
         
         const englishTitles = [
@@ -2533,6 +2617,8 @@
           'Welcome tourists as friends', 
           'Efficient work using spare time',
           'Turn your passion into work',
+          'Meet people from around the world',
+          'Improve and utilize language skills',
           'Deepen your love and pride for your hometown',
           'Reliable support system',
           'Work at your own pace',
@@ -2541,28 +2627,108 @@
         
         selectors.forEach(selector => {
           const titles = document.querySelectorAll(selector);
-          console.log(`セレクター ${selector}: ${titles.length}個のタイトル見つかりました`);
+          console.log(`英語翻訳 セレクター ${selector}: ${titles.length}個のタイトル見つかりました`);
           titles.forEach((title, index) => {
             if (englishTitles[index]) {
               const oldText = title.textContent;
               title.textContent = englishTitles[index];
-              console.log(`翻訳 ${index}: ${oldText} → ${englishTitles[index]}`);
+              console.log(`英語翻訳 ${index}: ${oldText} → ${englishTitles[index]}`);
             }
           });
         });
       }
       
-      // 即座に実行
+      // 段階的実行で確実に翻訳
       translateBenefitTitlesToEnglish();
-      
-      // 500ms後に再実行
-      setTimeout(translateBenefitTitlesToEnglish, 500);
-      
-      // 1500ms後に再実行
+      setTimeout(translateBenefitTitlesToEnglish, 300);
+      setTimeout(translateBenefitTitlesToEnglish, 800);
       setTimeout(translateBenefitTitlesToEnglish, 1500);
-      
-      // 3000ms後に最終確認
       setTimeout(translateBenefitTitlesToEnglish, 3000);
+      
+      // ガイドカード翻訳（すべてのカードを対象）
+      function translateAllGuideCards() {
+        const guideCards = document.querySelectorAll('.guide-card, .guide-item');
+        console.log(`英語翻訳: ${guideCards.length}個のガイドカードを翻訳中`);
+        
+        guideCards.forEach((card, index) => {
+          // 詳細を見るボタン
+          const detailBtn = card.querySelector('.btn, a[href*="guide"], .guide-details-link');
+          if (detailBtn && detailBtn.textContent.includes('詳細')) {
+            detailBtn.textContent = 'See Details';
+          }
+          
+          // 言語バッジ
+          const langBadges = card.querySelectorAll('.badge');
+          langBadges.forEach(badge => {
+            if (badge.textContent === '日本語') badge.textContent = 'Japanese';
+            if (badge.textContent === '英語') badge.textContent = 'English';
+            if (badge.textContent === 'フランス語') badge.textContent = 'French';
+            if (badge.textContent === '中国語') badge.textContent = 'Chinese';
+            if (badge.textContent === '韓国語') badge.textContent = 'Korean';
+          });
+          
+          // 場所の翻訳
+          const location = card.querySelector('.guide-location, .text-muted');
+          if (location) {
+            let text = location.textContent;
+            text = text.replace('東京都', 'Tokyo').replace('渋谷区', 'Shibuya');
+            text = text.replace('沖縄県', 'Okinawa').replace('那覇市', 'Naha City');
+            text = text.replace('広島県', 'Hiroshima').replace('広島市', 'Hiroshima City');
+            location.textContent = text;
+          }
+        });
+      }
+      
+      // 即座に翻訳
+      translateAllGuideCards();
+      
+      // 遅延実行で動的に追加されたカードも翻訳
+      setTimeout(translateAllGuideCards, 500);
+      setTimeout(translateAllGuideCards, 1500);
+      setTimeout(translateAllGuideCards, 3000);
+      
+      // 「もっとみる」ボタンのクリック監視と翻訳適用
+      const loadMoreBtn = document.getElementById('load-more-guides');
+      if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', function() {
+          // ボタンクリック後に新しく表示されるガイドカードに翻訳を適用
+          setTimeout(() => {
+            console.log('「もっとみる」ボタンクリック後の翻訳適用');
+            translateAllGuideCards();
+          }, 100);
+          
+          setTimeout(translateAllGuideCards, 500);
+          setTimeout(translateAllGuideCards, 1000);
+        });
+      }
+      
+      // MutationObserverでDOMの変更を監視して新しいガイドカードに翻訳を適用
+      const observer = new MutationObserver(function(mutations) {
+        let shouldTranslate = false;
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.nodeType === 1 && 
+                  (node.classList.contains('guide-card') || 
+                   node.classList.contains('guide-item') || 
+                   node.querySelector('.guide-card'))) {
+                shouldTranslate = true;
+              }
+            });
+          }
+        });
+        
+        if (shouldTranslate) {
+          console.log('新しいガイドカードが追加されました - 翻訳適用');
+          setTimeout(translateAllGuideCards, 50);
+        }
+      });
+      
+      // ガイドカードコンテナを監視
+      const guideContainer = document.getElementById('guide-cards-container');
+      if (guideContainer) {
+        observer.observe(guideContainer, { childList: true, subtree: true });
+      }
       
       // ガイドとして活躍するメリット（正しいセレクター）
       const benefitsTitle = document.querySelector('#guide-benefits h2');
