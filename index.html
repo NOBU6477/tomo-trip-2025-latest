@@ -2191,6 +2191,51 @@
           }
         });
         
+        // メリットカードのタイトルを強制的にすべて日本語に統一（複数のセレクターと複数回実行で確実に）
+        function translateBenefitTitlesToJapanese() {
+          const selectors = [
+            '#guide-benefits h5',
+            '#guide-benefits .guide-benefit-card h5',
+            '.guide-benefit-card h5',
+            'section[id="guide-benefits"] h5'
+          ];
+          
+          const japaneseTitles = [
+            'あなたの日常が観光資源になる',
+            '観光客の方を友達としてお迎えするだけです',
+            '隙間時間を使って効率よくお仕事をする',
+            '自分の好きなことを仕事にできる',
+            '地元への愛着と誇りが深まる',
+            '安心のサポート体制',
+            '自分のペースで活動可能',
+            '地域活性化に貢献できる'
+          ];
+          
+          selectors.forEach(selector => {
+            const titles = document.querySelectorAll(selector);
+            console.log(`日本語翻訳 セレクター ${selector}: ${titles.length}個のタイトル見つかりました`);
+            titles.forEach((title, index) => {
+              if (japaneseTitles[index]) {
+                const oldText = title.textContent;
+                title.textContent = japaneseTitles[index];
+                console.log(`日本語翻訳 ${index}: ${oldText} → ${japaneseTitles[index]}`);
+              }
+            });
+          });
+        }
+        
+        // 即座に実行
+        translateBenefitTitlesToJapanese();
+        
+        // 500ms後に再実行
+        setTimeout(translateBenefitTitlesToJapanese, 500);
+        
+        // 1500ms後に再実行
+        setTimeout(translateBenefitTitlesToJapanese, 1500);
+        
+        // 3000ms後に最終確認
+        setTimeout(translateBenefitTitlesToJapanese, 3000);
+        
         // 都道府県名を日本語に復元
         const locationElements = document.querySelectorAll('.guide-card .text-muted, .guide-location');
         locationElements.forEach(element => {
