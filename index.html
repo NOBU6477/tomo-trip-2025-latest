@@ -130,6 +130,22 @@
         transform: translateY(0);
       }
     }
+    
+    /* デバッグ情報の黒枠を非表示にする */
+    .debug-info, 
+    [style*="position: fixed"][style*="bottom"],
+    [style*="position: fixed"][style*="right"],
+    [style*="background-color: rgba(0,0,0,0.8)"],
+    [style*="background: rgba(0,0,0,0.8)"],
+    .replit-debug,
+    .debug-overlay,
+    div[style*="position: fixed"][style*="z-index"][style*="background"],
+    .replit-info {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
     .phone-section {
       background-color: #f8f9fa;
       border: 1px solid #dee2e6;
@@ -2458,19 +2474,46 @@
         }
       });
       
-      // メリットカードのタイトルを強制的にすべて英語に統一（遅延実行で確実に）
+      // メリットカードのタイトルを強制的にすべて英語に統一（複数回実行で確実に）
       setTimeout(() => {
         const allBenefitTitles = document.querySelectorAll('#guide-benefits h5');
-        if (allBenefitTitles.length >= 8) {
-          allBenefitTitles[0].textContent = 'Your daily life becomes a tourism resource';
-          allBenefitTitles[1].textContent = 'Welcome tourists as friends';
-          allBenefitTitles[2].textContent = 'Efficient work using spare time';
-          allBenefitTitles[3].textContent = 'Turn your passion into work';
-          allBenefitTitles[4].textContent = 'Deepen your love and pride for your hometown';
-          allBenefitTitles[5].textContent = 'Reliable support system';
-          allBenefitTitles[6].textContent = 'Work at your own pace';
-          allBenefitTitles[7].textContent = 'Contribute to local revitalization';
-        }
+        console.log('英語翻訳: メリットタイトル数:', allBenefitTitles.length);
+        allBenefitTitles.forEach((title, index) => {
+          const englishTitles = [
+            'Your daily life becomes a tourism resource',
+            'Welcome tourists as friends', 
+            'Efficient work using spare time',
+            'Turn your passion into work',
+            'Deepen your love and pride for your hometown',
+            'Reliable support system',
+            'Work at your own pace',
+            'Contribute to local revitalization'
+          ];
+          if (englishTitles[index]) {
+            title.textContent = englishTitles[index];
+            console.log(`英語翻訳 ${index}: ${englishTitles[index]}`);
+          }
+        });
+      }, 500);
+      
+      // さらに確実にするため2回目の実行
+      setTimeout(() => {
+        const allBenefitTitles = document.querySelectorAll('#guide-benefits h5');
+        allBenefitTitles.forEach((title, index) => {
+          const englishTitles = [
+            'Your daily life becomes a tourism resource',
+            'Welcome tourists as friends', 
+            'Efficient work using spare time',
+            'Turn your passion into work',
+            'Deepen your love and pride for your hometown',
+            'Reliable support system',
+            'Work at your own pace',
+            'Contribute to local revitalization'
+          ];
+          if (englishTitles[index]) {
+            title.textContent = englishTitles[index];
+          }
+        });
       }, 1500);
       
       // ガイドとして活躍するメリット（正しいセレクター）
