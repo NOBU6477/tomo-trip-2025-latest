@@ -1982,6 +1982,7 @@
         langJaBtn.addEventListener('click', function(e) {
           e.preventDefault();
           languageDropdown.textContent = '日本語';
+          switchToJapanese();
         });
       }
       
@@ -1989,6 +1990,7 @@
         langEnBtn.addEventListener('click', function(e) {
           e.preventDefault();
           languageDropdown.textContent = 'English';
+          switchToEnglish();
         });
       }
       
@@ -2036,6 +2038,67 @@
       
       showStatus('手動初期化完了');
     }, 2000);
+    
+    // 言語切り替え機能
+    function switchToJapanese() {
+      // ナビゲーション
+      document.querySelector('#btn-home').textContent = 'ホーム';
+      document.querySelector('#btn-guides').textContent = 'ガイドを探す';
+      document.querySelector('#btn-how-it-works').textContent = '使い方';
+      
+      // メインコンテンツ
+      const mainTitle = document.querySelector('h1');
+      if (mainTitle) mainTitle.textContent = 'あなただけの特別な旅を';
+      
+      const subtitle = document.querySelector('.hero-section p');
+      if (subtitle) subtitle.textContent = '地元ガイドと一緒に、観光では見つけられない隠れた魅力を体験しましょう';
+      
+      // ボタン
+      const guideBtn = document.querySelector('.btn-primary');
+      if (guideBtn) guideBtn.textContent = 'ガイドを探す';
+      
+      const contactBtn = document.querySelector('.btn-outline-light');
+      if (contactBtn && contactBtn.textContent !== 'ログイン') contactBtn.textContent = 'お問い合わせ';
+      
+      // 右下のボタン
+      const sponsorRegBtn = document.querySelector('#sponsorRegisterBtn span');
+      if (sponsorRegBtn) sponsorRegBtn.textContent = '協賛店登録 🚀';
+      
+      const sponsorLoginBtn = document.querySelector('#sponsorLoginBtn span');
+      if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'ログイン ✨';
+      
+      showStatus('日本語に切り替えました');
+    }
+    
+    function switchToEnglish() {
+      // ナビゲーション
+      document.querySelector('#btn-home').textContent = 'Home';
+      document.querySelector('#btn-guides').textContent = 'Find Guides';
+      document.querySelector('#btn-how-it-works').textContent = 'How It Works';
+      
+      // メインコンテンツ
+      const mainTitle = document.querySelector('h1');
+      if (mainTitle) mainTitle.textContent = 'Your Special Journey Awaits';
+      
+      const subtitle = document.querySelector('.hero-section p');
+      if (subtitle) subtitle.textContent = 'Discover hidden gems with local guides that tourism can\'t reveal';
+      
+      // ボタン
+      const guideBtn = document.querySelector('.btn-primary');
+      if (guideBtn) guideBtn.textContent = 'Find Guides';
+      
+      const contactBtn = document.querySelector('.btn-outline-light');
+      if (contactBtn && contactBtn.textContent !== 'Login') contactBtn.textContent = 'Contact Us';
+      
+      // 右下のボタン
+      const sponsorRegBtn = document.querySelector('#sponsorRegisterBtn span');
+      if (sponsorRegBtn) sponsorRegBtn.textContent = 'Sponsor Registration 🚀';
+      
+      const sponsorLoginBtn = document.querySelector('#sponsorLoginBtn span');
+      if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'Login ✨';
+      
+      showStatus('Switched to English');
+    }
   </script>
   
   <!-- スムーズスクロール用CSS -->
