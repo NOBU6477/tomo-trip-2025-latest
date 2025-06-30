@@ -15,9 +15,23 @@ document.addEventListener('DOMContentLoaded', function() {
   const keywordCheckboxes = document.querySelectorAll('.keyword-checkbox');
   const keywordCustomInput = document.getElementById('keyword-filter-custom');
   
-  // 初期状態設定
-  const initialVisibleCount = 3;
+  // 初期状態設定 - すべてのガイドを表示
+  const initialVisibleCount = 999;
   let currentlyVisible = initialVisibleCount;
+  
+  // 初期化：全てのガイドカードを表示状態にする
+  function initializeGuideDisplay() {
+    guideItems.forEach(item => {
+      item.classList.remove('hidden-guide');
+      item.classList.remove('filtered-out');
+    });
+    currentlyVisible = guideItems.length;
+    console.log(`初期化完了: ${guideItems.length}件のガイドカードを表示中`);
+    updateLoadMoreButton();
+  }
+  
+  // ページ読み込み時に初期化実行
+  initializeGuideDisplay();
   
   // 「もっと見る」ボタンの表示・非表示を切り替える
   function updateLoadMoreButton() {
@@ -70,15 +84,10 @@ document.addEventListener('DOMContentLoaded', function() {
   function resetFilters() {
     guideItems.forEach(item => {
       item.classList.remove('filtered-out');
-      // 最初の3つだけ表示、それ以外は非表示
-      if (Array.from(guideItems).indexOf(item) < initialVisibleCount) {
-        item.classList.remove('hidden-guide');
-      } else {
-        item.classList.add('hidden-guide');
-      }
+      item.classList.remove('hidden-guide');
     });
     
-    currentlyVisible = initialVisibleCount;
+    currentlyVisible = guideItems.length;
     updateLoadMoreButton();
   }
   
