@@ -1911,9 +1911,6 @@
     </div>
   </div>
 
-  <!-- スクリプト -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  
   <!-- 確実なナビゲーション機能 -->
   <script>
     // ページの目立つ場所にステータスを表示
@@ -2008,6 +2005,37 @@
     
     // さらに安全のため、少し遅延して再実行
     setTimeout(initializeButtons, 1000);
+  </script>
+  
+  <!-- Bootstrap JavaScript - 最後に読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- 追加のBootstrap初期化 -->
+  <script>
+    // Bootstrap要素を手動で初期化
+    setTimeout(function() {
+      // ドロップダウンを手動初期化
+      const dropdowns = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+      dropdowns.forEach(function(dropdown) {
+        dropdown.addEventListener('click', function(e) {
+          e.preventDefault();
+          const menu = this.nextElementSibling;
+          if (menu && menu.classList.contains('dropdown-menu')) {
+            menu.classList.toggle('show');
+          }
+        });
+      });
+      
+      // 協賛店ログインボタンを強制設定
+      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+      if (sponsorLoginBtn) {
+        sponsorLoginBtn.onclick = function() {
+          window.location.href = 'sponsor-login.html';
+        };
+      }
+      
+      showStatus('手動初期化完了');
+    }, 2000);
   </script>
   
   <!-- スムーズスクロール用CSS -->
