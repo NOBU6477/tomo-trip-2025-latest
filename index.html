@@ -2053,12 +2053,12 @@
       const subtitle = document.querySelector('.hero-section p');
       if (subtitle) subtitle.textContent = '地元ガイドと一緒に、観光では見つけられない隠れた魅力を体験しましょう';
       
-      // ボタン
-      const guideBtn = document.querySelector('.btn-primary');
-      if (guideBtn) guideBtn.textContent = 'ガイドを探す';
+      // ヒーローセクションのボタン
+      const heroGuideBtn = document.querySelector('.btn-light.btn-lg');
+      if (heroGuideBtn) heroGuideBtn.textContent = 'ガイドを探す';
       
-      const contactBtn = document.querySelector('.btn-outline-light');
-      if (contactBtn && contactBtn.textContent !== 'ログイン') contactBtn.textContent = 'お問い合わせ';
+      const heroContactBtn = document.querySelector('.btn-outline-light.btn-lg');
+      if (heroContactBtn) heroContactBtn.textContent = 'お問い合わせ';
       
       // 右下のボタン
       const sponsorRegBtn = document.querySelector('#sponsorRegisterBtn span');
@@ -2066,6 +2066,18 @@
       
       const sponsorLoginBtn = document.querySelector('#sponsorLoginBtn span');
       if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'ログイン ✨';
+      
+      // 使い方セクション
+      const howItWorksH4s = document.querySelectorAll('#how-it-works h4');
+      if (howItWorksH4s.length >= 3) {
+        howItWorksH4s[0].textContent = '登録する';
+        howItWorksH4s[1].textContent = 'ガイドを探す';
+        howItWorksH4s[2].textContent = '特別な旅を体験';
+      }
+      
+      // 人気のガイドセクション
+      const popularGuidesTitle = document.querySelector('#guides h2');
+      if (popularGuidesTitle) popularGuidesTitle.textContent = '人気のガイド';
       
       showStatus('日本語に切り替えました');
     }
@@ -2083,12 +2095,12 @@
       const subtitle = document.querySelector('.hero-section p');
       if (subtitle) subtitle.textContent = 'Discover hidden gems with local guides that tourism can\'t reveal';
       
-      // ボタン
-      const guideBtn = document.querySelector('.btn-primary');
-      if (guideBtn) guideBtn.textContent = 'Find Guides';
+      // ヒーローセクションのボタン
+      const heroGuideBtn = document.querySelector('.btn-light.btn-lg');
+      if (heroGuideBtn) heroGuideBtn.textContent = 'Find Guides';
       
-      const contactBtn = document.querySelector('.btn-outline-light');
-      if (contactBtn && contactBtn.textContent !== 'Login') contactBtn.textContent = 'Contact Us';
+      const heroContactBtn = document.querySelector('.btn-outline-light.btn-lg');
+      if (heroContactBtn) heroContactBtn.textContent = 'Contact Us';
       
       // 右下のボタン
       const sponsorRegBtn = document.querySelector('#sponsorRegisterBtn span');
@@ -2096,6 +2108,18 @@
       
       const sponsorLoginBtn = document.querySelector('#sponsorLoginBtn span');
       if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'Login ✨';
+      
+      // 使い方セクション
+      const howItWorksH4s = document.querySelectorAll('#how-it-works h4');
+      if (howItWorksH4s.length >= 3) {
+        howItWorksH4s[0].textContent = 'Register';
+        howItWorksH4s[1].textContent = 'Find Guides';
+        howItWorksH4s[2].textContent = 'Experience Special Journey';
+      }
+      
+      // 人気のガイドセクション
+      const popularGuidesTitle = document.querySelector('#guides h2');
+      if (popularGuidesTitle) popularGuidesTitle.textContent = 'Popular Guides';
       
       showStatus('Switched to English');
     }
