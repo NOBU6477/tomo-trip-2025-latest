@@ -1996,27 +1996,7 @@
         });
       }
       
-      // 言語切り替えボタン
-      const langJaBtn = document.getElementById('lang-ja');
-      const langEnBtn = document.getElementById('lang-en');
-      
-      if (langJaBtn) {
-        langJaBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('日本語に切り替え');
-          document.getElementById('languageDropdown').textContent = '日本語';
-          location.reload(); // 日本語に戻すときはリロード
-        });
-      }
-      
-      if (langEnBtn) {
-        langEnBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('英語に切り替え');
-          document.getElementById('languageDropdown').textContent = 'English';
-          translateToEnglish(); // 英語翻訳関数を実行
-        });
-      }
+      // 言語切り替えボタン - 外部スクリプトに委託
       
       // 新規登録ドロップダウンボタン
       const registerDropdownBtn = document.getElementById('registerDropdown');
@@ -2037,26 +2017,7 @@
         });
       }
       
-      // 言語ボタンの修正
-      const langJaBtn = document.getElementById('lang-ja');
-      const langEnBtn = document.getElementById('lang-en');
-      const languageDropdown = document.getElementById('languageDropdown');
-      
-      if (langJaBtn && languageDropdown) {
-        langJaBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          languageDropdown.textContent = '日本語';
-          switchToJapanese();
-        });
-      }
-      
-      if (langEnBtn && languageDropdown) {
-        langEnBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          languageDropdown.textContent = 'English';
-          switchToEnglish();
-        });
-      }
+      // 言語ボタン - 外部スクリプトで処理
       
       console.log('全てのボタン機能が設定されました');
       showStatus('全ボタン設定完了！');
@@ -4916,8 +4877,8 @@
   <!-- 改良された言語切り替え機能 - 一時無効化 -->
   <!-- <script src="improved-language-switcher.js"></script> -->
   
-  <!-- 言語ボタン診断・修正スクリプト -->
-  <script src="language-button-diagnostics.js"></script>
+  <!-- 言語ボタン根本修正スクリプト -->
+  <script src="deep-button-fix.js"></script>
   
   <!-- 専用ボタン翻訳機能 - 一時無効化 -->
   <!-- <script src="button-translator.js"></script> -->
