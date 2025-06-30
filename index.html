@@ -2100,15 +2100,15 @@
         howItWorksPs[2].textContent = '希望の日時で予約し、特別な体験を楽しむ';
       }
       
-      // ガイドとして活躍するメリット
-      const benefitsTitle = document.querySelector('#benefits h2');
+      // ガイドとして活躍するメリット（正しいセレクター）
+      const benefitsTitle = document.querySelector('#guide-benefits h2');
       if (benefitsTitle) benefitsTitle.textContent = 'ガイドとして活躍するメリット';
       
-      const benefitsSubtitle = document.querySelector('#benefits .lead');
+      const benefitsSubtitle = document.querySelector('#guide-benefits .lead');
       if (benefitsSubtitle) benefitsSubtitle.textContent = 'あなたの知識と経験を活かして、世界中の旅行者に特別な体験を提供しましょう';
       
-      // メリット項目のタイトル
-      const benefitTitles = document.querySelectorAll('.benefit-item h4');
+      // メリット項目のタイトル（正しいセレクター）
+      const benefitTitles = document.querySelectorAll('#guide-benefits h5');
       if (benefitTitles.length >= 8) {
         benefitTitles[0].textContent = 'あなたの日常が観光資源になる';
         benefitTitles[1].textContent = '観光客の方を友達としてお迎えするだけです';
@@ -2118,6 +2118,19 @@
         benefitTitles[5].textContent = '安心のサポート体制';
         benefitTitles[6].textContent = '自分のペースで活動可能';
         benefitTitles[7].textContent = '地域活性化に貢献できる';
+      }
+      
+      // メリット項目の説明文
+      const benefitDescs = document.querySelectorAll('#guide-benefits .text-muted');
+      if (benefitDescs.length >= 8) {
+        benefitDescs[0].textContent = '地元の方だけが知る特別な場所や体験を共有することで、日常がかけがえのない旅の思い出に変わります。';
+        benefitDescs[1].textContent = '形式ばったガイドツアーではなく、友人との交流のように自然な形で地元の魅力を伝えられます。';
+        benefitDescs[2].textContent = '自分の都合の良い時間にスケジュールを設定できるため、本業や学業と両立しながら収入を得られます。';
+        benefitDescs[3].textContent = '趣味や特技、専門知識を活かした独自のガイド体験を提供することで、やりがいを持って取り組めます。';
+        benefitDescs[4].textContent = '地元の魅力を発信することで、改めて故郷への愛着が深まり、誇りを持って紹介できるようになります。';
+        benefitDescs[5].textContent = '予約管理や決済、保険など、ガイド活動に必要なサポートを提供するため、安心して活動に集中できます。';
+        benefitDescs[6].textContent = '予約を受け入れるかどうかは完全に自分次第。ライフスタイルに合わせた活動が可能です。';
+        benefitDescs[7].textContent = '観光客を地元の店舗や施設に案内することで、地域経済の活性化と地域コミュニティの発展に貢献できます。';
       }
       
       // ガイド登録ボタン
@@ -2187,15 +2200,15 @@
         howItWorksPs[2].textContent = 'Book your preferred date and enjoy a special experience';
       }
       
-      // ガイドとして活躍するメリット
-      const benefitsTitle = document.querySelector('#benefits h2');
+      // ガイドとして活躍するメリット（正しいセレクター）
+      const benefitsTitle = document.querySelector('#guide-benefits h2');
       if (benefitsTitle) benefitsTitle.textContent = 'Benefits of Being a Guide';
       
-      const benefitsSubtitle = document.querySelector('#benefits .lead');
+      const benefitsSubtitle = document.querySelector('#guide-benefits .lead');
       if (benefitsSubtitle) benefitsSubtitle.textContent = 'Utilize your knowledge and experience to provide special experiences for travelers worldwide';
       
-      // メリット項目のタイトル
-      const benefitTitles = document.querySelectorAll('.benefit-item h4');
+      // メリット項目のタイトル（正しいセレクター）
+      const benefitTitles = document.querySelectorAll('#guide-benefits h5');
       if (benefitTitles.length >= 8) {
         benefitTitles[0].textContent = 'Your daily life becomes a tourism resource';
         benefitTitles[1].textContent = 'Simply welcome tourists as friends';
@@ -2205,6 +2218,19 @@
         benefitTitles[5].textContent = 'Reliable support system';
         benefitTitles[6].textContent = 'Work at your own pace';
         benefitTitles[7].textContent = 'Contribute to local revitalization';
+      }
+      
+      // メリット項目の説明文
+      const benefitDescs = document.querySelectorAll('#guide-benefits .text-muted');
+      if (benefitDescs.length >= 8) {
+        benefitDescs[0].textContent = 'By sharing special places that only locals know about, your everyday surroundings become valuable tourism resources.';
+        benefitDescs[1].textContent = 'Rather than a formal guided tour, you can naturally convey the charm of your local area as if spending time with friends.';
+        benefitDescs[2].textContent = 'You can set your schedule according to your convenience, allowing you to earn income while balancing with your main job or studies.';
+        benefitDescs[3].textContent = 'By providing unique guided experiences that utilize your hobbies, skills, and specialized knowledge, you can turn your passion into income.';
+        benefitDescs[4].textContent = 'By promoting the attractions of your local area, you will develop a deeper appreciation and attachment to your hometown.';
+        benefitDescs[5].textContent = 'We provide the essential support for guide activities such as reservation management, payment, and insurance, so you can work with peace of mind.';
+        benefitDescs[6].textContent = 'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.';
+        benefitDescs[7].textContent = 'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.';
       }
       
       // ガイド登録ボタン
