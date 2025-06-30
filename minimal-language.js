@@ -6,9 +6,9 @@
 document.addEventListener('DOMContentLoaded', function() {
   console.log('言語切り替え機能を初期化');
 
-  // 言語ボタンの要素を取得
-  const engLink = document.querySelector('.dropdown-item[data-lang="en"]');
-  const jpnLink = document.querySelector('.dropdown-item[data-lang="ja"]');
+  // 言語ボタンの要素を取得（実際のIDに合わせて修正）
+  const engLink = document.getElementById('lang-en');
+  const jpnLink = document.getElementById('lang-ja');
   
   // 言語ボタンが見つかったかログに出力
   console.log('英語ボタン:', engLink ? '見つかりました' : '見つかりません');
