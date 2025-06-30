@@ -2234,38 +2234,116 @@
         setTimeout(translateBenefitTitlesToJapanese, 1500);
         setTimeout(translateBenefitTitlesToJapanese, 3000);
         
-        // ガイドカード翻訳（すべてのカードを日本語に戻す）
+        // ガイドカード翻訳（すべてのカードを日本語に戻す・強化版）
         function translateAllGuideCardsToJapanese() {
-          const guideCards = document.querySelectorAll('.guide-card, .guide-item');
-          console.log(`日本語翻訳: ${guideCards.length}個のガイドカードを翻訳中`);
+          // より包括的なセレクターで新しく追加されるカードもキャッチ
+          const guideCardSelectors = [
+            '.guide-card', 
+            '.guide-item', 
+            '[data-guide-id]',
+            '.col-md-4 .card',
+            '.col-lg-4 .card'
+          ];
           
-          guideCards.forEach((card, index) => {
-            // 詳細を見るボタン
-            const detailBtn = card.querySelector('.btn, a[href*="guide"], .guide-details-link');
-            if (detailBtn && detailBtn.textContent.includes('See Details')) {
-              detailBtn.textContent = '詳細を見る';
-            }
+          let allGuideCards = [];
+          guideCardSelectors.forEach(selector => {
+            const cards = document.querySelectorAll(selector);
+            cards.forEach(card => {
+              if (!allGuideCards.includes(card)) {
+                allGuideCards.push(card);
+              }
+            });
+          });
+          
+          console.log(`日本語翻訳: ${allGuideCards.length}個のガイドカードを翻訳中`);
+          
+          allGuideCards.forEach((card, index) => {
+            console.log(`ガイドカード ${index + 1} を日本語翻訳中...`);
             
-            // 言語バッジ
-            const langBadges = card.querySelectorAll('.badge');
-            langBadges.forEach(badge => {
-              if (badge.textContent === 'Japanese') badge.textContent = '日本語';
-              if (badge.textContent === 'English') badge.textContent = '英語';
-              if (badge.textContent === 'French') badge.textContent = 'フランス語';
-              if (badge.textContent === 'Chinese') badge.textContent = '中国語';
-              if (badge.textContent === 'Korean') badge.textContent = '韓国語';
+            // 詳細を見るボタン（複数のセレクターで確実にキャッチ）
+            const detailSelectors = [
+              '.btn', 
+              'a[href*="guide"]', 
+              '.guide-details-link',
+              'button[onclick*="showGuideDetails"]',
+              '.card-footer a',
+              '.btn-primary'
+            ];
+            
+            detailSelectors.forEach(selector => {
+              const detailBtn = card.querySelector(selector);
+              if (detailBtn && (detailBtn.textContent.includes('See Details') || detailBtn.textContent.includes('詳細'))) {
+                detailBtn.textContent = '詳細を見る';
+                console.log(`詳細ボタン翻訳: 詳細を見る`);
+              }
             });
             
-            // 場所の翻訳
-            const location = card.querySelector('.guide-location, .text-muted');
-            if (location) {
-              let text = location.textContent;
-              text = text.replace('Tokyo', '東京都').replace('Shibuya', '渋谷区');
-              text = text.replace('Okinawa', '沖縄県').replace('Naha City', '那覇市');
-              text = text.replace('Hiroshima City', '広島市').replace('Hiroshima', '広島県');
-              location.textContent = text;
-            }
+            // 言語バッジ（包括的な翻訳）
+            const langBadgeSelectors = [
+              '.badge', 
+              '.language-badge', 
+              '.text-primary',
+              '.badge.bg-light',
+              '.badge.bg-primary',
+              'span[class*="badge"]'
+            ];
+            
+            langBadgeSelectors.forEach(selector => {
+              const langBadges = card.querySelectorAll(selector);
+              langBadges.forEach(badge => {
+                const originalText = badge.textContent.trim();
+                if (originalText === 'Japanese' || originalText === '日本語') {
+                  badge.textContent = '日本語';
+                  console.log(`言語バッジ翻訳: ${originalText} → 日本語`);
+                } else if (originalText === 'English' || originalText === '英語') {
+                  badge.textContent = '英語';
+                  console.log(`言語バッジ翻訳: ${originalText} → 英語`);
+                } else if (originalText === 'French' || originalText === 'フランス語') {
+                  badge.textContent = 'フランス語';
+                  console.log(`言語バッジ翻訳: ${originalText} → フランス語`);
+                } else if (originalText === 'Chinese' || originalText === '中国語') {
+                  badge.textContent = '中国語';
+                  console.log(`言語バッジ翻訳: ${originalText} → 中国語`);
+                } else if (originalText === 'Korean' || originalText === '韓国語') {
+                  badge.textContent = '韓国語';
+                  console.log(`言語バッジ翻訳: ${originalText} → 韓国語`);
+                }
+              });
+            });
+            
+            // 場所の翻訳（英語から日本語に戻す）
+            const locationSelectors = [
+              '.guide-location', 
+              '.text-muted',
+              '.location',
+              '.area',
+              'small.text-muted',
+              '.card-subtitle'
+            ];
+            
+            locationSelectors.forEach(selector => {
+              const location = card.querySelector(selector);
+              if (location) {
+                const originalText = location.textContent;
+                let text = originalText;
+                
+                // 英語から日本語への翻訳
+                text = text.replace('Hokkaido', '北海道').replace('Sapporo City', '札幌市');
+                text = text.replace('Tokyo', '東京都').replace('Shibuya', '渋谷区');
+                text = text.replace('Okinawa', '沖縄県').replace('Naha City', '那覇市');
+                text = text.replace('Hiroshima City', '広島市').replace('Hiroshima', '広島県');
+                text = text.replace('Kyoto City', '京都市').replace('Kyoto', '京都府');
+                text = text.replace('Osaka City', '大阪市').replace('Osaka', '大阪府');
+                
+                if (originalText !== text) {
+                  location.textContent = text;
+                  console.log(`場所翻訳: ${originalText} → ${text}`);
+                }
+              }
+            });
           });
+          
+          console.log(`ガイドカード日本語翻訳完了: 合計 ${allGuideCards.length}件`);
         }
         
         // 即座に翻訳
@@ -2429,9 +2507,30 @@
         });
       });
       
-      // ガイド登録ボタン
-      const guideRegisterBtn = document.querySelector('.btn-register-guide');
-      if (guideRegisterBtn) guideRegisterBtn.textContent = 'ガイドとして登録する';
+      // ガイド登録ボタン（複数のセレクターで確実に対応）
+      const guideRegisterSelectors = [
+        '.btn-register-guide',
+        'a[href="#register-guide"]',
+        'button[onclick*="register"]',
+        'a.btn.btn-primary[href*="register"]',
+        '.btn.btn-primary',
+        'a.btn-primary'
+      ];
+      
+      guideRegisterSelectors.forEach(selector => {
+        const btn = document.querySelector(selector);
+        if (btn && (btn.textContent.includes('Register') || btn.textContent.includes('登録'))) {
+          btn.textContent = 'ガイドとして登録する';
+        }
+      });
+      
+      // より具体的にガイド登録ボタンを探す
+      const allButtons = document.querySelectorAll('a.btn, button.btn');
+      allButtons.forEach(btn => {
+        if (btn.textContent.includes('Register as Guide') || btn.textContent.includes('ガイドとして登録')) {
+          btn.textContent = 'ガイドとして登録する';
+        }
+      });
       
       showStatus('日本語に切り替えました');
     }
@@ -2645,38 +2744,116 @@
       setTimeout(translateBenefitTitlesToEnglish, 1500);
       setTimeout(translateBenefitTitlesToEnglish, 3000);
       
-      // ガイドカード翻訳（すべてのカードを対象）
+      // ガイドカード翻訳（すべてのカードを対象・強化版）
       function translateAllGuideCards() {
-        const guideCards = document.querySelectorAll('.guide-card, .guide-item');
-        console.log(`英語翻訳: ${guideCards.length}個のガイドカードを翻訳中`);
+        // より包括的なセレクターで新しく追加されるカードもキャッチ
+        const guideCardSelectors = [
+          '.guide-card', 
+          '.guide-item', 
+          '[data-guide-id]',
+          '.col-md-4 .card',
+          '.col-lg-4 .card'
+        ];
         
-        guideCards.forEach((card, index) => {
-          // 詳細を見るボタン
-          const detailBtn = card.querySelector('.btn, a[href*="guide"], .guide-details-link');
-          if (detailBtn && detailBtn.textContent.includes('詳細')) {
-            detailBtn.textContent = 'See Details';
-          }
+        let allGuideCards = [];
+        guideCardSelectors.forEach(selector => {
+          const cards = document.querySelectorAll(selector);
+          cards.forEach(card => {
+            if (!allGuideCards.includes(card)) {
+              allGuideCards.push(card);
+            }
+          });
+        });
+        
+        console.log(`英語翻訳: ${allGuideCards.length}個のガイドカードを翻訳中`);
+        
+        allGuideCards.forEach((card, index) => {
+          console.log(`ガイドカード ${index + 1} を英語翻訳中...`);
           
-          // 言語バッジ
-          const langBadges = card.querySelectorAll('.badge');
-          langBadges.forEach(badge => {
-            if (badge.textContent === '日本語') badge.textContent = 'Japanese';
-            if (badge.textContent === '英語') badge.textContent = 'English';
-            if (badge.textContent === 'フランス語') badge.textContent = 'French';
-            if (badge.textContent === '中国語') badge.textContent = 'Chinese';
-            if (badge.textContent === '韓国語') badge.textContent = 'Korean';
+          // 詳細を見るボタン（複数のセレクターで確実にキャッチ）
+          const detailSelectors = [
+            '.btn', 
+            'a[href*="guide"]', 
+            '.guide-details-link',
+            'button[onclick*="showGuideDetails"]',
+            '.card-footer a',
+            '.btn-primary'
+          ];
+          
+          detailSelectors.forEach(selector => {
+            const detailBtn = card.querySelector(selector);
+            if (detailBtn && (detailBtn.textContent.includes('詳細') || detailBtn.textContent.includes('See Details'))) {
+              detailBtn.textContent = 'See Details';
+              console.log(`詳細ボタン翻訳: See Details`);
+            }
           });
           
-          // 場所の翻訳
-          const location = card.querySelector('.guide-location, .text-muted');
-          if (location) {
-            let text = location.textContent;
-            text = text.replace('東京都', 'Tokyo').replace('渋谷区', 'Shibuya');
-            text = text.replace('沖縄県', 'Okinawa').replace('那覇市', 'Naha City');
-            text = text.replace('広島県', 'Hiroshima').replace('広島市', 'Hiroshima City');
-            location.textContent = text;
-          }
+          // 言語バッジ（包括的な翻訳）
+          const langBadgeSelectors = [
+            '.badge', 
+            '.language-badge', 
+            '.text-primary',
+            '.badge.bg-light',
+            '.badge.bg-primary',
+            'span[class*="badge"]'
+          ];
+          
+          langBadgeSelectors.forEach(selector => {
+            const langBadges = card.querySelectorAll(selector);
+            langBadges.forEach(badge => {
+              const originalText = badge.textContent.trim();
+              if (originalText === '日本語' || originalText === 'Japanese') {
+                badge.textContent = 'Japanese';
+                console.log(`言語バッジ翻訳: ${originalText} → Japanese`);
+              } else if (originalText === '英語' || originalText === 'English') {
+                badge.textContent = 'English';
+                console.log(`言語バッジ翻訳: ${originalText} → English`);
+              } else if (originalText === 'フランス語' || originalText === 'French') {
+                badge.textContent = 'French';
+                console.log(`言語バッジ翻訳: ${originalText} → French`);
+              } else if (originalText === '中国語' || originalText === 'Chinese') {
+                badge.textContent = 'Chinese';
+                console.log(`言語バッジ翻訳: ${originalText} → Chinese`);
+              } else if (originalText === '韓国語' || originalText === 'Korean') {
+                badge.textContent = 'Korean';
+                console.log(`言語バッジ翻訳: ${originalText} → Korean`);
+              }
+            });
+          });
+          
+          // 場所の翻訳（都道府県・市区町村完全対応）
+          const locationSelectors = [
+            '.guide-location', 
+            '.text-muted',
+            '.location',
+            '.area',
+            'small.text-muted',
+            '.card-subtitle'
+          ];
+          
+          locationSelectors.forEach(selector => {
+            const location = card.querySelector(selector);
+            if (location) {
+              const originalText = location.textContent;
+              let text = originalText;
+              
+              // 都道府県と市区町村の翻訳
+              text = text.replace('北海道', 'Hokkaido').replace('札幌市', 'Sapporo City');
+              text = text.replace('東京都', 'Tokyo').replace('渋谷区', 'Shibuya');
+              text = text.replace('沖縄県', 'Okinawa').replace('那覇市', 'Naha City');
+              text = text.replace('広島県', 'Hiroshima').replace('広島市', 'Hiroshima City');
+              text = text.replace('京都府', 'Kyoto').replace('京都市', 'Kyoto City');
+              text = text.replace('大阪府', 'Osaka').replace('大阪市', 'Osaka City');
+              
+              if (originalText !== text) {
+                location.textContent = text;
+                console.log(`場所翻訳: ${originalText} → ${text}`);
+              }
+            }
+          });
         });
+        
+        console.log(`ガイドカード英語翻訳完了: 合計 ${allGuideCards.length}件`);
       }
       
       // 即座に翻訳
@@ -2729,6 +2906,41 @@
       if (guideContainer) {
         observer.observe(guideContainer, { childList: true, subtree: true });
       }
+      
+      // ガイド登録ボタンの翻訳（英語版）
+      function translateGuideRegisterButtonToEnglish() {
+        const guideRegisterSelectors = [
+          '.btn-register-guide',
+          'a[href="#register-guide"]',
+          'button[onclick*="register"]',
+          'a.btn.btn-primary[href*="register"]',
+          '.btn.btn-primary',
+          'a.btn-primary'
+        ];
+        
+        guideRegisterSelectors.forEach(selector => {
+          const btn = document.querySelector(selector);
+          if (btn && (btn.textContent.includes('ガイドとして登録') || btn.textContent.includes('Register as Guide'))) {
+            btn.textContent = 'Register as Guide';
+          }
+        });
+        
+        // より具体的にガイド登録ボタンを探す
+        const allButtons = document.querySelectorAll('a.btn, button.btn');
+        allButtons.forEach(btn => {
+          if (btn.textContent.includes('ガイドとして登録') || btn.textContent.includes('Register as Guide')) {
+            btn.textContent = 'Register as Guide';
+          }
+        });
+      }
+      
+      // ガイド登録ボタンの翻訳を実行
+      translateGuideRegisterButtonToEnglish();
+      
+      // 遅延実行でボタン翻訳も確実に
+      setTimeout(translateGuideRegisterButtonToEnglish, 300);
+      setTimeout(translateGuideRegisterButtonToEnglish, 800);
+      setTimeout(translateGuideRegisterButtonToEnglish, 1500);
       
       // ガイドとして活躍するメリット（正しいセレクター）
       const benefitsTitle = document.querySelector('#guide-benefits h2');
