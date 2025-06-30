@@ -2109,11 +2109,27 @@
       const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
       if (filterTutorialBtn) filterTutorialBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>フィルターの使い方';
       
-      // ガイドカードの詳細ボタンを日本語に
+      // ガイドカードの詳細ボタンを日本語に（複数回試行）
       const guideDetailsButtons = document.querySelectorAll('.guide-details-link');
       guideDetailsButtons.forEach(btn => {
         btn.textContent = '詳細を見る';
       });
+      
+      // より広範囲なボタン翻訳（See Detailsを含むすべてのボタン）
+      document.querySelectorAll('a, button').forEach(element => {
+        if (element.textContent.trim() === 'See Details') {
+          element.textContent = '詳細を見る';
+        }
+      });
+      
+      // 遅延実行でボタンを再度チェック
+      setTimeout(() => {
+        document.querySelectorAll('.guide-details-link, .btn').forEach(btn => {
+          if (btn.textContent.includes('See Details')) {
+            btn.textContent = '詳細を見る';
+          }
+        });
+      }, 500);
       
       // 使い方セクションの説明文
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
@@ -2232,11 +2248,27 @@
       const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
       if (filterTutorialBtn) filterTutorialBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>How to Filter';
       
-      // ガイドカードの詳細ボタンを英語に
+      // ガイドカードの詳細ボタンを英語に（複数回試行）
       const guideDetailsButtons = document.querySelectorAll('.guide-details-link');
       guideDetailsButtons.forEach(btn => {
         btn.textContent = 'See Details';
       });
+      
+      // より広範囲なボタン翻訳（詳細を見るを含むすべてのボタン）
+      document.querySelectorAll('a, button').forEach(element => {
+        if (element.textContent.trim() === '詳細を見る') {
+          element.textContent = 'See Details';
+        }
+      });
+      
+      // 遅延実行でボタンを再度チェック
+      setTimeout(() => {
+        document.querySelectorAll('.guide-details-link, .btn').forEach(btn => {
+          if (btn.textContent.includes('詳細を見る')) {
+            btn.textContent = 'See Details';
+          }
+        });
+      }, 500);
       
       // 使い方セクションの説明文
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
