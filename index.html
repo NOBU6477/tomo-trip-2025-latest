@@ -2131,6 +2131,15 @@
         });
       }, 500);
       
+      // 更に確実にするため、1秒後にも再実行
+      setTimeout(() => {
+        document.querySelectorAll('a[data-guide-id], .guide-details-link').forEach(link => {
+          if (link.textContent.trim() === 'See Details') {
+            link.textContent = '詳細を見る';
+          }
+        });
+      }, 1000);
+      
       // 使い方セクションの説明文
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
       if (howItWorksPs.length >= 3) {
@@ -2269,6 +2278,15 @@
           }
         });
       }, 500);
+      
+      // 更に確実にするため、1秒後にも再実行
+      setTimeout(() => {
+        document.querySelectorAll('a[data-guide-id], .guide-details-link').forEach(link => {
+          if (link.textContent.trim() === '詳細を見る') {
+            link.textContent = 'See Details';
+          }
+        });
+      }, 1000);
       
       // 使い方セクションの説明文
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
