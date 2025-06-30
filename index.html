@@ -2154,6 +2154,26 @@
             }
           }
         });
+        
+        // メリットセクションの説明文も再翻訳（英語が残っている場合）
+        const delayedBenefitDescriptions = document.querySelectorAll('#guide-benefits .text-muted, #guide-benefits .guide-benefit-card p');
+        delayedBenefitDescriptions.forEach((desc, index) => {
+          if (desc.textContent.includes('When and how often') || desc.textContent.includes('By introducing')) {
+            const japaneseTexts = [
+              '地元の方だけが知る特別な場所や体験を共有することで、日常がかけがえのない旅の思い出に変わります。',
+              '形式ばったガイドツアーではなく、友人との交流のように自然な形で地元の魅力を伝えられます。',
+              '自分の都合の良い時間にスケジュールを設定できるため、本業や学業と両立しながら収入を得られます。',
+              '趣味や特技、専門知識を活かした独自のガイド体験を提供することで、やりがいを持って取り組めます。',
+              '地元の魅力を発信することで、改めて故郷への愛着が深まり、誇りを持って紹介できるようになります。',
+              '予約管理や決済、保険など、ガイド活動に必要なサポートを提供するため、安心して活動に集中できます。',
+              '予約を受け入れるかどうかは完全に自分次第。ライフスタイルに合わせた活動が可能です。',
+              '観光客を地元の店舗や施設に案内することで、地域経済の活性化と地域コミュニティの発展に貢献できます。'
+            ];
+            if (japaneseTexts[index]) {
+              desc.textContent = japaneseTexts[index];
+            }
+          }
+        });
       }, 1000);
       
       // 使い方セクションの説明文
@@ -2184,7 +2204,7 @@
         benefitTitles[7].textContent = '地域活性化に貢献できる';
       }
       
-      // メリット項目の説明文
+      // メリット項目の説明文（複数のセレクターで確実に翻訳）
       const benefitDescs = document.querySelectorAll('#guide-benefits .text-muted');
       if (benefitDescs.length >= 8) {
         benefitDescs[0].textContent = '地元の方だけが知る特別な場所や体験を共有することで、日常がかけがえのない旅の思い出に変わります。';
@@ -2196,6 +2216,24 @@
         benefitDescs[6].textContent = '予約を受け入れるかどうかは完全に自分次第。ライフスタイルに合わせた活動が可能です。';
         benefitDescs[7].textContent = '観光客を地元の店舗や施設に案内することで、地域経済の活性化と地域コミュニティの発展に貢献できます。';
       }
+      
+      // より具体的なセレクターでメリット説明文を確実に翻訳
+      const benefitCardDescriptions = document.querySelectorAll('#guide-benefits .guide-benefit-card p.text-muted');
+      benefitCardDescriptions.forEach((desc, index) => {
+        const japaneseTexts = [
+          '地元の方だけが知る特別な場所や体験を共有することで、日常がかけがえのない旅の思い出に変わります。',
+          '形式ばったガイドツアーではなく、友人との交流のように自然な形で地元の魅力を伝えられます。',
+          '自分の都合の良い時間にスケジュールを設定できるため、本業や学業と両立しながら収入を得られます。',
+          '趣味や特技、専門知識を活かした独自のガイド体験を提供することで、やりがいを持って取り組めます。',
+          '地元の魅力を発信することで、改めて故郷への愛着が深まり、誇りを持って紹介できるようになります。',
+          '予約管理や決済、保険など、ガイド活動に必要なサポートを提供するため、安心して活動に集中できます。',
+          '予約を受け入れるかどうかは完全に自分次第。ライフスタイルに合わせた活動が可能です。',
+          '観光客を地元の店舗や施設に案内することで、地域経済の活性化と地域コミュニティの発展に貢献できます。'
+        ];
+        if (japaneseTexts[index]) {
+          desc.textContent = japaneseTexts[index];
+        }
+      });
       
       // ガイドカードの紹介文を日本語に戻す
       const guideCards = document.querySelectorAll('.guide-card');
@@ -2346,6 +2384,26 @@
             }
           }
         });
+        
+        // メリットセクションの説明文も再翻訳（日本語が残っている場合）
+        const delayedBenefitDescriptions = document.querySelectorAll('#guide-benefits .text-muted, #guide-benefits .guide-benefit-card p');
+        delayedBenefitDescriptions.forEach((desc, index) => {
+          if (desc.textContent.includes('地元の方だけが') || desc.textContent.includes('予約を受け入れる')) {
+            const englishTexts = [
+              'By sharing special places that only locals know about, your everyday surroundings become valuable tourism resources.',
+              'Rather than a formal guided tour, you can naturally convey the charm of your local area as if spending time with friends.',
+              'You can set your schedule according to your convenience, allowing you to earn income while balancing with your main job or studies.',
+              'By providing unique guided experiences that utilize your hobbies, skills, and specialized knowledge, you can turn your passion into income.',
+              'By promoting the attractions of your local area, you will develop a deeper appreciation and attachment to your hometown.',
+              'We provide the essential support for guide activities such as reservation management, payment, and insurance, so you can work with peace of mind.',
+              'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.',
+              'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.'
+            ];
+            if (englishTexts[index]) {
+              desc.textContent = englishTexts[index];
+            }
+          }
+        });
       }, 1000);
       
       // 使い方セクションの説明文
@@ -2376,7 +2434,7 @@
         benefitTitles[7].textContent = 'Contribute to local revitalization';
       }
       
-      // メリット項目の説明文
+      // メリット項目の説明文（複数のセレクターで確実に翻訳）
       const benefitDescs = document.querySelectorAll('#guide-benefits .text-muted');
       if (benefitDescs.length >= 8) {
         benefitDescs[0].textContent = 'By sharing special places that only locals know about, your everyday surroundings become valuable tourism resources.';
@@ -2388,6 +2446,24 @@
         benefitDescs[6].textContent = 'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.';
         benefitDescs[7].textContent = 'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.';
       }
+      
+      // より具体的なセレクターでメリット説明文を確実に翻訳
+      const benefitCardDescriptions = document.querySelectorAll('#guide-benefits .guide-benefit-card p.text-muted');
+      benefitCardDescriptions.forEach((desc, index) => {
+        const englishTexts = [
+          'By sharing special places that only locals know about, your everyday surroundings become valuable tourism resources.',
+          'Rather than a formal guided tour, you can naturally convey the charm of your local area as if spending time with friends.',
+          'You can set your schedule according to your convenience, allowing you to earn income while balancing with your main job or studies.',
+          'By providing unique guided experiences that utilize your hobbies, skills, and specialized knowledge, you can turn your passion into income.',
+          'By promoting the attractions of your local area, you will develop a deeper appreciation and attachment to your hometown.',
+          'We provide the essential support for guide activities such as reservation management, payment, and insurance, so you can work with peace of mind.',
+          'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.',
+          'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.'
+        ];
+        if (englishTexts[index]) {
+          desc.textContent = englishTexts[index];
+        }
+      });
       
       // ガイドカードの紹介文を英語に翻訳
       const guideCards = document.querySelectorAll('.guide-card');
