@@ -2092,36 +2092,79 @@
     function forceReplaceSeeDetails() {
       console.log('See Detailsボタンの強制置換を開始');
       
-      // すべての要素をチェック
-      document.querySelectorAll('*').forEach(element => {
-        // テキストコンテンツが完全に"See Details"の場合
-        if (element.textContent.trim() === 'See Details') {
-          element.textContent = '詳細を見る';
-          console.log('完全一致で置換:', element);
-        }
-        
-        // ボタンやリンクで"See Details"を含む場合
-        if ((element.tagName === 'A' || element.tagName === 'BUTTON') && 
-            element.textContent.includes('See Details')) {
-          element.textContent = element.textContent.replace('See Details', '詳細を見る');
-          console.log('部分一致で置換:', element);
-        }
-        
-        // innerHTML内のSee Detailsも置換
-        if (element.innerHTML.includes('See Details')) {
-          element.innerHTML = element.innerHTML.replace(/See Details/g, '詳細を見る');
-          console.log('innerHTML内で置換:', element);
+      // すべてのボタンとリンクをチェック
+      document.querySelectorAll('a, button, .btn').forEach(element => {
+        // See Detailsの場合
+        if (element.textContent.includes('See Details')) {
+          // アイコンを保持しつつテキストを置換
+          if (element.innerHTML.includes('<i class="bi bi-eye')) {
+            element.innerHTML = '<i class="bi bi-eye me-1"></i>詳細を見る';
+          } else {
+            element.textContent = '詳細を見る';
+          }
+          console.log('See Detailsボタン置換:', element);
         }
       });
       
-      // ガイドカード内の詳細ボタンを特定して置換
-      document.querySelectorAll('.guide-card .btn, .guide-item .btn, .card-footer .btn').forEach(btn => {
+      // 特にガイドカード内のボタンを強制置換
+      document.querySelectorAll('.guide-card .btn, .guide-item .btn, .card-footer .btn, .btn-outline-primary').forEach(btn => {
         if (btn.textContent.includes('See Details')) {
           btn.textContent = '詳細を見る';
-          console.log('ガイドカードボタン置換:', btn);
+          btn.setAttribute('data-jp-translated', 'true'); // 翻訳済みマーク
+          console.log('ガイドカードボタン強制置換:', btn);
+        }
+      });
+      
+      // 翻訳済みマークのあるボタンが再度翻訳されないよう保護
+      document.querySelectorAll('[data-jp-translated="true"]').forEach(btn => {
+        if (btn.textContent.includes('See Details')) {
+          btn.textContent = '詳細を見る';
+          console.log('翻訳済みボタンの保護:', btn);
         }
       });
     }
+    
+    // MutationObserverで動的なDOMの変更を監視
+    const observer = new MutationObserver(function(mutations) {
+      let shouldReplace = false;
+      
+      mutations.forEach(function(mutation) {
+        // 新しいノードが追加された場合
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // ガイドカードが追加された場合
+              if (node.classList && (node.classList.contains('guide-card') || node.classList.contains('guide-item'))) {
+                shouldReplace = true;
+              }
+              // ボタンが追加された場合
+              if (node.tagName === 'BUTTON' || node.tagName === 'A' || 
+                  (node.classList && node.classList.contains('btn'))) {
+                shouldReplace = true;
+              }
+            }
+          });
+        }
+        
+        // テキストが変更された場合
+        if (mutation.type === 'characterData' || mutation.type === 'childList') {
+          if (mutation.target.textContent && mutation.target.textContent.includes('See Details')) {
+            shouldReplace = true;
+          }
+        }
+      });
+      
+      if (shouldReplace) {
+        setTimeout(forceReplaceSeeDetails, 100); // 少し遅延して実行
+      }
+    });
+    
+    // DOM全体を監視
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
     
     // ガイドカードボタンを強制的に日本語化する関数
     function forceJapaneseButtonText() {

@@ -10,6 +10,15 @@
    * すべてのガイド詳細ボタンを英語に翻訳する
    */
   function translateDetailButtons() {
+    // 現在の言語設定を確認
+    const currentLanguage = localStorage.getItem('language') || 'ja';
+    
+    // 日本語モードの場合は翻訳を実行しない
+    if (currentLanguage === 'ja') {
+      console.log('日本語モードのため詳細ボタンの英語翻訳をスキップ');
+      return 0;
+    }
+    
     console.log('ガイド詳細ボタンの翻訳を開始');
     
     // 複数のセレクタでボタンを検索
@@ -49,7 +58,7 @@
    * 英語モードかどうかを確認
    */
   function isEnglishMode() {
-    return localStorage.getItem('selectedLanguage') === 'en';
+    return localStorage.getItem('language') === 'en';
   }
 
   /**
@@ -120,12 +129,12 @@
       setupMutationObserver();
     }
     
-    // 定期的なチェック（念のため）
-    setInterval(function() {
-      if (isEnglishMode()) {
-        translateDetailButtons();
-      }
-    }, 2000);
+    // 定期的なチェック（念のため）- 日本語モードでは不要
+    // setInterval(function() {
+    //   if (isEnglishMode()) {
+    //     translateDetailButtons();
+    //   }
+    // }, 2000);
   }
 
   // グローバル関数として公開
