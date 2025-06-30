@@ -1980,6 +1980,38 @@
         });
       }
       
+      // 言語切り替えボタン
+      const langJaBtn = document.getElementById('lang-ja');
+      const langEnBtn = document.getElementById('lang-en');
+      
+      if (langJaBtn) {
+        langJaBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('日本語に切り替え');
+          document.getElementById('languageDropdown').textContent = '日本語';
+          location.reload(); // 日本語に戻すときはリロード
+        });
+      }
+      
+      if (langEnBtn) {
+        langEnBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('英語に切り替え');
+          document.getElementById('languageDropdown').textContent = 'English';
+          translateToEnglish(); // 英語翻訳関数を実行
+        });
+      }
+      
+      // 新規登録ドロップダウンボタン
+      const registerDropdownBtn = document.getElementById('registerDropdown');
+      if (registerDropdownBtn) {
+        console.log('新規登録ドロップダウンボタンにイベントリスナーを設定');
+        // Bootstrap のドロップダウン機能が正常に動作するようにdata-bs-toggle属性を確認
+        if (!registerDropdownBtn.hasAttribute('data-bs-toggle')) {
+          registerDropdownBtn.setAttribute('data-bs-toggle', 'dropdown');
+        }
+      }
+      
       // 協賛店ログインボタン
       const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
       if (sponsorLoginBtn) {
