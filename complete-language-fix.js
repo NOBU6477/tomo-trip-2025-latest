@@ -196,6 +196,10 @@
   function performCompleteEnglishTranslation() {
     console.log('包括的英語翻訳を実行中...');
     
+    // スクロール状態を保護
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalDocumentOverflow = document.documentElement.style.overflow;
+    
     // ナビゲーションメニュー
     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
     if (navLinks.length >= 3) {
@@ -428,6 +432,9 @@
     // ベネフィットカードの翻訳
     translateBenefitCards();
     
+    // 翻訳中間でスクロール確認
+    ensureScrollEnabled();
+    
     console.log('✓ 包括的英語翻訳完了');
   }
   
@@ -458,6 +465,54 @@
     });
     
     console.log('✓ ベネフィットカード翻訳完了');
+    
+    // 翻訳完了後にスクロール設定を復元
+    setTimeout(() => {
+      // スクロールを確実に有効化
+      document.body.style.overflow = '';
+      document.body.style.overflowY = '';
+      document.documentElement.style.overflow = '';
+      document.documentElement.style.overflowY = '';
+      
+      // 高さ制限を解除
+      document.body.style.height = '';
+      document.body.style.maxHeight = '';
+      
+      // position問題を解決
+      document.body.style.position = '';
+      
+      console.log('✓ スクロール設定復元完了');
+      
+      // デバッグ関数が利用可能な場合は実行
+      if (typeof window.forceEnableScroll === 'function') {
+        window.forceEnableScroll();
+      }
+    }, 100);
+  }
+  
+  // スクロール確保関数
+  function ensureScrollEnabled() {
+    console.log('スクロール状態を確認・修正中...');
+    
+    // bodyとhtmlのoverflow設定をチェック
+    const bodyOverflow = window.getComputedStyle(document.body).overflow;
+    const bodyOverflowY = window.getComputedStyle(document.body).overflowY;
+    
+    if (bodyOverflow === 'hidden' || bodyOverflowY === 'hidden') {
+      console.log('⚠️ スクロールが無効化されていることを検出 - 修正します');
+      
+      // 強制的にスクロールを有効化
+      document.body.style.overflow = 'visible';
+      document.body.style.overflowY = 'auto';
+      document.documentElement.style.overflow = 'visible';
+      document.documentElement.style.overflowY = 'auto';
+      
+      // 高さ制限も解除
+      document.body.style.height = 'auto';
+      document.body.style.maxHeight = 'none';
+      
+      console.log('✓ スクロール修正完了');
+    }
   }
   
   // グローバル関数として公開（デバッグ用）
