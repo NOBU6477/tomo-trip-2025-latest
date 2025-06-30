@@ -2080,7 +2080,48 @@
       forceJapaneseInitialState();
       initializeButtons();
       forceJapaneseButtonText();
+      forceReplaceSeeDetails(); // See Detailsを強制置換
     }, 1000);
+    
+    // 2秒後にも実行
+    setTimeout(function() {
+      forceReplaceSeeDetails();
+    }, 2000);
+    
+    // 「See Details」を強制的に「詳細を見る」に置換する関数
+    function forceReplaceSeeDetails() {
+      console.log('See Detailsボタンの強制置換を開始');
+      
+      // すべての要素をチェック
+      document.querySelectorAll('*').forEach(element => {
+        // テキストコンテンツが完全に"See Details"の場合
+        if (element.textContent.trim() === 'See Details') {
+          element.textContent = '詳細を見る';
+          console.log('完全一致で置換:', element);
+        }
+        
+        // ボタンやリンクで"See Details"を含む場合
+        if ((element.tagName === 'A' || element.tagName === 'BUTTON') && 
+            element.textContent.includes('See Details')) {
+          element.textContent = element.textContent.replace('See Details', '詳細を見る');
+          console.log('部分一致で置換:', element);
+        }
+        
+        // innerHTML内のSee Detailsも置換
+        if (element.innerHTML.includes('See Details')) {
+          element.innerHTML = element.innerHTML.replace(/See Details/g, '詳細を見る');
+          console.log('innerHTML内で置換:', element);
+        }
+      });
+      
+      // ガイドカード内の詳細ボタンを特定して置換
+      document.querySelectorAll('.guide-card .btn, .guide-item .btn, .card-footer .btn').forEach(btn => {
+        if (btn.textContent.includes('See Details')) {
+          btn.textContent = '詳細を見る';
+          console.log('ガイドカードボタン置換:', btn);
+        }
+      });
+    }
     
     // ガイドカードボタンを強制的に日本語化する関数
     function forceJapaneseButtonText() {
