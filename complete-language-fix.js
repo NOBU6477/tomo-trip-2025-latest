@@ -204,6 +204,31 @@
       navLinks[2].textContent = 'How to Use';
     }
     
+    // ヒーローセクションのボタン
+    document.querySelectorAll('a, button').forEach(element => {
+      if (element.textContent.trim() === 'ガイドを探す') {
+        element.textContent = 'Find Guides';
+      }
+    });
+    
+    // フィルター使い方リンク
+    document.querySelectorAll('a, span, div').forEach(element => {
+      if (element.textContent.trim() === 'フィルターの使い方') {
+        element.textContent = 'How to Use Filters';
+      }
+    });
+    
+    // ガイド表示ステータス
+    document.querySelectorAll('div, span, p').forEach(element => {
+      const text = element.textContent.trim();
+      if (text.includes('件のガイドを表示中') && text.includes('全') && text.includes('件中')) {
+        const matches = text.match(/(\d+)件のガイドを表示中.*全(\d+)件中/);
+        if (matches) {
+          element.textContent = `Showing ${matches[1]} guides (${matches[2]} total)`;
+        }
+      }
+    });
+    
     // メインタイトル・セクション
     document.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
       const text = heading.textContent.trim();
@@ -266,7 +291,41 @@
         case 'ガイドを絞り込む':
           btn.textContent = 'Filter Guides';
           break;
+        case 'ガイドを絞り込み':
+          btn.textContent = 'Filter Guides';
+          break;
+        case '詳情を見る':
+          btn.textContent = 'See Details';
+          break;
       }
+    });
+    
+    // ガイドカード内の都市・場所翻訳
+    document.querySelectorAll('.guide-card, .card').forEach(card => {
+      card.querySelectorAll('p, div, span').forEach(element => {
+        const text = element.textContent.trim();
+        // 地域名の翻訳
+        if (text.includes('東京都 渋谷区')) {
+          element.textContent = text.replace('東京都 渋谷区', 'Shibuya, Tokyo');
+        }
+        if (text.includes('京都府 京都市')) {
+          element.textContent = text.replace('京都府 京都市', 'Kyoto City, Kyoto');
+        }
+        if (text.includes('大阪府 大阪市')) {
+          element.textContent = text.replace('大阪府 大阪市', 'Osaka City, Osaka');
+        }
+        
+        // ガイド説明文の翻訳
+        if (text.includes('東京の隠れた名所を案内します')) {
+          element.textContent = 'I will guide you to hidden spots in Tokyo. Recommended for gourmet and photo spots.';
+        }
+        if (text.includes('歴史と伝統が息づく京都の魅力をご案内')) {
+          element.textContent = 'I will guide you through the charm of Kyoto, where history and tradition live, including temples and traditional culture experiences.';
+        }
+        if (text.includes('大阪ならではの食べ歩きと街歩きが専門')) {
+          element.textContent = 'Specializing in Osaka\'s unique food tours and city walks. Local recommendations from people who know the famous shops.';
+        }
+      });
     });
     
     // フォームラベル・プレースホルダー
@@ -320,6 +379,50 @@
       } else if (text.includes('希望の日時で予約し、特別な体験を楽しむ')) {
         p.textContent = 'Book for your preferred date and time, and enjoy special experiences';
       }
+      
+      // ベネフィットセクションの説明文も翻訳
+      if (text.includes('あなたの知識と経験を活かして、世界中の旅行者に特別な体験を提供しましょう')) {
+        p.textContent = 'Use your knowledge and experience to provide special experiences to travelers from around the world';
+      }
+    });
+    
+    // ベネフィットカードの説明文翻訳
+    document.querySelectorAll('.card-body, .benefit-card').forEach(card => {
+      card.querySelectorAll('p, .text-muted, div').forEach(desc => {
+        const text = desc.textContent.trim();
+        
+        // 個別の説明文を翻訳
+        if (text.includes('地元の方だけが知る特別な場所や体験を共有することで')) {
+          desc.textContent = 'By sharing special places and experiences that only locals know, your daily life becomes a valuable travel resource.';
+        }
+        if (text.includes('形式ばったガイドツアーではなく、友人との交流のように自然な形で地元の魅力を伝えられます')) {
+          desc.textContent = 'Not a formal guided tour, but a natural way to convey local attractions like socializing with friends.';
+        }
+        if (text.includes('自分の都合の良い時間にスケジュールを設定できるため')) {
+          desc.textContent = 'You can set schedules at times that are convenient for you, allowing you to work efficiently while balancing with your main job or studies.';
+        }
+        if (text.includes('趣味や特技、専門知識を活かしたオリジナルのガイド体験を提供することで')) {
+          desc.textContent = 'By providing original guide experiences that leverage your hobbies, special skills, and expertise, your passion can become income.';
+        }
+        if (text.includes('様々な国の文化からきた旅行者との交流を通じて')) {
+          desc.textContent = 'Through interactions with travelers from various countries and cultures, you can expand your international network and deepen cross-cultural understanding.';
+        }
+        if (text.includes('外国語を使う実践的な機会が得られ')) {
+          desc.textContent = 'You gain practical opportunities to use foreign languages, and communication skills naturally improve.';
+        }
+        if (text.includes('地元の魅力を発信することで、自分自身の住む地域への理解や愛着がさらに深くなります')) {
+          desc.textContent = 'By promoting local attractions, your understanding and attachment to your own area deepens further.';
+        }
+        if (text.includes('予約管理、決済、保険など、ガイド活動に必要な基盤をサービスが提供するので')) {
+          desc.textContent = 'The service provides necessary infrastructure for guide activities such as booking management, payments, and insurance, so you can focus on activities with peace of mind.';
+        }
+        if (text.includes('予約を受ける日時や頻度は完全に自分で決められるため')) {
+          desc.textContent = 'You can completely decide the dates, times, and frequency of accepting bookings, allowing you to work at your own pace and lifestyle.';
+        }
+        if (text.includes('観光客を地元のお店や施設に案内することで')) {
+          desc.textContent = 'By guiding tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.';
+        }
+      });
     });
     
     // ベネフィットカードの翻訳
