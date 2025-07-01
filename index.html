@@ -705,37 +705,45 @@
         <div id="navbar-user-area">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
           
-          <!-- 新規登録ドロップダウン -->
-          <div class="dropdown d-inline-block">
-            <button class="btn btn-light dropdown-toggle" id="registerDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
-              新規登録
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end register-dropdown" aria-labelledby="registerDropdown">
-              <li>
-                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#registerTouristModal" style="cursor:pointer;">
-                  <div class="register-icon tourist-icon">
-                    <i class="bi bi-person"></i>
+          <!-- 新規登録ボタン（シンプル版） -->
+          <button class="btn btn-light" onclick="showRegisterOptions()" style="cursor:pointer;">
+            新規登録
+          </button>
+          
+          <!-- 登録オプション選択モーダル -->
+          <div class="modal fade" id="registerOptionsModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">登録方法を選択してください</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
+                        <i class="bi bi-person me-2"></i>旅行者として登録
+                        <br><small class="text-light">ローカルガイドと一緒に特別な旅を体験</small>
+                      </button>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
+                        <i class="bi bi-map me-2"></i>ガイドとして登録
+                        <br><small class="text-light">あなたの知識と経験を共有しましょう</small>
+                      </button>
+                    </div>
                   </div>
-                  <div>
-                    <div class="fw-bold">旅行者として登録</div>
-                    <div class="text-muted">ローカルガイドと一緒に特別な旅を体験</div>
-                  </div>
-                </button>
-              </li>
-              <li><hr class="dropdown-divider"></li>
-              <li>
-                <button class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#registerGuideModal" style="cursor:pointer;">
-                  <div class="register-icon guide-icon">
-                    <i class="bi bi-map"></i>
-                  </div>
-                  <div>
-                    <div class="fw-bold">ガイドとして登録</div>
-                    <div class="text-muted">あなたの知識と経験を共有しましょう</div>
-                  </div>
-                </button>
-              </li>
-            </ul>
+                </div>
+              </div>
+            </div>
           </div>
+          
+          <script>
+          function showRegisterOptions() {
+            const modal = new bootstrap.Modal(document.getElementById('registerOptionsModal'));
+            modal.show();
+          }
+          </script>
         </div>
       </div>
     </div>
@@ -4908,8 +4916,8 @@
   <!-- シンプル動作修正スクリプト - 一時無効化 -->
   <!-- <script src="simple-working-fix.js"></script> -->
   
-  <!-- 統一翻訳システム - 最優先（全ての翻訳問題を解決） -->
-  <script src="unified-translation-system.js"></script>
+  <!-- 即座修正システム - 確実動作 -->
+  <script src="immediate-fix.js"></script>
   
   <!-- 70人ガイド表示システム -->
   <script src="load-70-guides.js"></script>
