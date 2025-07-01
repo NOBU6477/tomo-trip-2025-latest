@@ -122,6 +122,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // 改良版フィルタリング機能
   function enhancedFilterGuides() {
     const guideItems = document.querySelectorAll('.guide-item');
+    console.log(`日本語版: ${guideItems.length}件のガイドアイテムを検出`);
+    
     const initialVisibleCount = 3;
     
     // フィルター値の取得

@@ -165,24 +165,22 @@
 
   // ガイドカード表示
   function displayGuides() {
-    const container = document.getElementById('guide-cards-container');
-    if (!container) {
-      console.log('ガイドカードコンテナが見つかりません');
-      return;
-    }
-
-    console.log('英語版ガイドカード表示開始');
-
-    // 基本ガイド + 追加ガイド
-    const allGuides = [...englishGuides, ...generateAdditionalGuides()];
+    // 英語版では HTML内に既存の70件のガイドがあるため、
+    // JavaScript での追加生成を完全に停止
+    console.log('英語版: HTML内の既存70ガイドのみ使用');
     
-    // 最初の3つは既に表示されているのでスキップ
-    const additionalCards = allGuides.slice(0).map(guide => createGuideCard(guide)).join('');
+    // 既存のHTMLガイドカードを確認
+    const existingCards = document.querySelectorAll('.guide-item, .col-lg-4, .col-md-6');
+    console.log(`既存HTMLガイドカード数: ${existingCards.length}`);
     
-    // 既存のカードの後に追加
-    container.innerHTML += additionalCards;
+    // HTMLガイドカードにdata-guide-id属性を付与
+    existingCards.forEach((card, index) => {
+      if (!card.dataset.guideId) {
+        card.dataset.guideId = `html-${index + 1}`;
+      }
+    });
     
-    console.log(`英語版ガイドカード表示完了: ${allGuides.length}件`);
+    return; // 追加生成を実行しない
   }
 
   // カウンター更新
