@@ -739,10 +739,26 @@
           </div>
           
           <script>
-          function showRegisterOptions() {
-            const modal = new bootstrap.Modal(document.getElementById('registerOptionsModal'));
-            modal.show();
-          }
+          // グローバル関数として定義
+          window.showRegisterOptions = function() {
+            console.log('showRegisterOptions 実行');
+            const modal = document.getElementById('registerOptionsModal');
+            if (modal) {
+              if (typeof bootstrap !== 'undefined') {
+                const modalInstance = new bootstrap.Modal(modal);
+                modalInstance.show();
+                console.log('Bootstrap モーダル表示');
+              } else {
+                // Bootstrap未読み込み時の代替処理
+                modal.style.display = 'block';
+                modal.classList.add('show');
+                modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                console.log('代替モーダル表示');
+              }
+            } else {
+              console.error('registerOptionsModal が見つかりません');
+            }
+          };
           </script>
         </div>
       </div>

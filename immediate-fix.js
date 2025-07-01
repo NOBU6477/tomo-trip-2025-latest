@@ -61,6 +61,30 @@
       }
     });
 
+    // ボタン要素の特別処理
+    document.querySelectorAll('button, a.btn').forEach(button => {
+      const text = button.textContent.trim();
+      if (translations[text]) {
+        button.textContent = translations[text];
+        count++;
+        console.log('ボタン翻訳:', text, '→', translations[text]);
+      }
+    });
+
+    // 動的コンテンツの翻訳（数字パターン）
+    document.querySelectorAll('*').forEach(element => {
+      if (element.children.length === 0) {
+        let text = element.textContent.trim();
+        // 70人のガイドパターン
+        if (text.match(/\d+人のガイドが見つかりました/)) {
+          const newText = text.replace(/(\d+)人のガイドが見つかりました/, 'Found $1 guides');
+          element.textContent = newText;
+          count++;
+          console.log('パターン翻訳:', text, '→', newText);
+        }
+      }
+    });
+
     console.log(`翻訳完了: ${count}件`);
   }
 
@@ -82,10 +106,19 @@
       registerBtn.onclick = function() {
         console.log('新規登録ボタンクリック');
         const modal = document.getElementById('registerOptionsModal');
-        if (modal && typeof bootstrap !== 'undefined') {
-          const modalInstance = new bootstrap.Modal(modal);
-          modalInstance.show();
-          console.log('登録オプションモーダル表示');
+        if (modal) {
+          if (typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+            console.log('登録オプションモーダル表示');
+          } else {
+            // Bootstrapが利用できない場合の代替
+            modal.style.display = 'block';
+            modal.classList.add('show');
+            console.log('モーダル手動表示');
+          }
+        } else {
+          console.error('registerOptionsModal が見つかりません');
         }
       };
     }
@@ -117,14 +150,57 @@
     });
   }
 
+  // 動的コンテンツの監視
+  function setupDynamicTranslation() {
+    const observer = new MutationObserver(function(mutations) {
+      if (getCurrentLang() === 'en') {
+        let shouldTranslate = false;
+        mutations.forEach(mutation => {
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            shouldTranslate = true;
+          }
+        });
+        
+        if (shouldTranslate) {
+          setTimeout(runTranslation, 100);
+        }
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    console.log('動的翻訳監視開始');
+  }
+
+  // デバッグ情報表示
+  function debugInfo() {
+    console.log('=== デバッグ情報 ===');
+    console.log('現在の言語:', getCurrentLang());
+    console.log('Bootstrap利用可能:', typeof bootstrap !== 'undefined');
+    console.log('新規登録ボタン存在:', !!document.querySelector('button[onclick="showRegisterOptions()"]'));
+    console.log('詳細を見るボタン数:', document.querySelectorAll('button, a').filter(btn => btn.textContent.includes('詳細を見る')).length);
+    console.log('ガイドカウンター要素:', document.querySelector('*')?.textContent?.includes('ガイドが見つかりました') ? 'あり' : 'なし');
+  }
+
   // 即座実行
+  debugInfo();
   runTranslation();
   fixRegisterButton();
   setupLanguageSwitch();
+  setupDynamicTranslation();
 
   // 遅延実行（確実性のため）
-  setTimeout(runTranslation, 1000);
-  setTimeout(runTranslation, 3000);
+  setTimeout(() => {
+    debugInfo();
+    runTranslation();
+  }, 1000);
+  setTimeout(() => {
+    debugInfo();
+    runTranslation();
+  }, 3000);
   setTimeout(fixRegisterButton, 2000);
 
 })();
