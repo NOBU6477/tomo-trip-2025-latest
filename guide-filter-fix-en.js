@@ -194,33 +194,32 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update results display
   function updateResultsDisplayEN(count) {
-    // Update result counter
+    // Update main counter badge
     const counter = document.querySelector('.counter-badge');
     if (counter) {
       counter.innerHTML = `<i class="bi bi-people-fill me-2"></i>Found ${count} guides`;
     }
     
-    const textMutedCounter = document.querySelector('.text-muted');
-    if (textMutedCounter && textMutedCounter.textContent.includes('guides')) {
-      textMutedCounter.textContent = `Found ${count} guides`;
+    // Update search results counter
+    const searchCounter = document.getElementById('search-results-counter');
+    if (searchCounter) {
+      searchCounter.textContent = `${count} guides found`;
+      searchCounter.classList.remove('d-none');
     }
     
     // Show/hide no results message
-    let noResultsMessage = document.getElementById('no-results-message');
+    const noResultsMessage = document.getElementById('no-results-message');
     if (count === 0) {
-      if (!noResultsMessage) {
-        noResultsMessage = document.createElement('div');
-        noResultsMessage.id = 'no-results-message';
-        noResultsMessage.className = 'alert alert-info text-center mt-3';
-        noResultsMessage.innerHTML = 'No guides found matching your criteria. Please adjust your search filters.';
-        
-        const container = document.querySelector('.guides-container, .row');
-        if (container) {
-          container.appendChild(noResultsMessage);
-        }
+      if (noResultsMessage) {
+        noResultsMessage.classList.remove('d-none');
       }
-    } else if (noResultsMessage) {
-      noResultsMessage.remove();
+      if (searchCounter) {
+        searchCounter.textContent = '0 guides found';
+      }
+    } else {
+      if (noResultsMessage) {
+        noResultsMessage.classList.add('d-none');
+      }
     }
   }
   
