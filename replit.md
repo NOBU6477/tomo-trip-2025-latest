@@ -135,6 +135,7 @@ Local Guide is a multilingual guide matching platform that connects tourists wit
 - January 1, 2026. Implemented comprehensive dynamic content translation system for guide registration data, cross-site language persistence, and resolved recurring mixed-language display issues with benefit cards and guide descriptions
 - January 1, 2026. Created unified translation system to resolve button flickering, header registration button failures, and incomplete translations. Implemented language persistence across page navigation and dynamic guide data translation support for new/edited guide content.
 - January 1, 2026. Successfully resolved all translation issues with direct HTML embedding approach. Translation now works correctly for guide counter, detail buttons, and registration buttons. User suggested creating separate English site version for better stability and maintenance.
+- January 1, 2026. Created separate English website (index-en.html) for improved stability and maintenance. Implemented language switcher on both sites allowing users to seamlessly switch between Japanese and English versions. Added English-specific guide data system with 70 localized guide profiles.
 
 # User Preferences
 

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TomoTrip - Local Guide Matching Platform</title>
+  <meta name="description" content="Connect with local Japanese guides for authentic travel experiences. Professional guide services with verified local experts.">
+  <meta name="keywords" content="Japan travel, local guides, tourism, cultural experience, travel guide">
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
+                  url('attached_assets/IMG20221024140826_1750355257888.jpg') center/cover;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    
+    /* Language Switcher */
+    .language-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 25px;
+      padding: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #666;
+    }
+    
+    .lang-btn.active {
+      background: #4287f5;
+      color: white;
+    }
+    
+    .lang-btn:hover {
+      background: #f0f7ff;
+      color: #4287f5;
+    }
+    
+    .lang-btn.active:hover {
+      background: #4287f5;
+      color: white;
+    }
+    
+    /* Guide Cards */
+    .guide-card {
+      border: none;
+      border-radius: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    
+    .guide-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .guide-card img {
+      height: 200px;
+      object-fit: cover;
+    }
+    
+    .price-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(66, 135, 245, 0.9);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+    
+    /* Navigation */
+    .navbar-brand {
+      font-weight: bold;
+      color: white !important;
+    }
+    
+    /* Counter Badge */
+    .counter-badge {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin: 2rem auto;
+      display: inline-block;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    /* Benefits Section */
+    .benefit-card {
+      background: white;
+      border-radius: 15px;
+      padding: 2rem;
+      height: 100%;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+    
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+    
+    .benefit-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    /* How to Use Section */
+    .step-number {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 0 auto 1rem;
+    }
+    
+    /* Footer */
+    .footer {
+      background: #2c3e50;
+      color: white;
+      padding: 3rem 0 1rem;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-section {
+        min-height: 50vh;
+      }
+      
+      .language-switcher {
+        position: relative;
+        top: auto;
+        right: auto;
+        margin: 1rem auto;
+        display: flex;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Language Switcher -->
+  <div class="language-switcher">
+    <a href="index.html" class="lang-btn">日本語</a>
+    <a href="index-en.html" class="lang-btn active">English</a>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <img src="attached_assets/TomoTripロゴ_1750951056819.png" alt="TomoTrip" height="40" class="me-2">
+        TomoTrip
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="#top">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#guides">Find Guides</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#benefits">Benefits</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#how-to-use">How to Use</a>
+          </li>
+        </ul>
+        
+        <!-- User Menu Area -->
+        <div id="navbar-user-area">
+          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+          
+          <!-- Registration Button -->
+          <button class="btn btn-light" onclick="showRegisterOptions()">
+            Sign Up
+          </button>
+          
+          <!-- Registration Options Modal -->
+          <div class="modal fade" id="registerOptionsModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Choose Registration Method</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
+                        <i class="bi bi-person me-2"></i>Register as Tourist
+                        <br><small class="text-light">Experience special journeys with local guides</small>
+                      </button>
+                    </div>
+                    <div class="col-12">
+                      <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
+                        <i class="bi bi-map me-2"></i>Register as Guide
+                        <br><small class="text-light">Share your knowledge and experience</small>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <script>
+          window.showRegisterOptions = function() {
+            const modal = document.getElementById('registerOptionsModal');
+            if (modal && window.bootstrap) {
+              new bootstrap.Modal(modal).show();
+            }
+          };
+          </script>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="top" class="hero-section text-center text-white py-5">
+    <div class="container hero-content">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <h1 class="display-4 fw-bold mb-4">Connect with Local Japanese Guides</h1>
+          <p class="lead mb-4">Experience authentic Japan through the eyes of locals. Book verified guides for personalized cultural experiences.</p>
+          <button class="btn btn-primary btn-lg me-3" data-bs-toggle="modal" data-bs-target="#registerTouristModal">Find a Guide</button>
+          <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#registerGuideModal">Become a Guide</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Guides Section -->
+  <section id="guides" class="py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold">Popular Guides</h2>
+        <p class="lead text-muted">Meet our featured local experts</p>
+      </div>
+      
+      <!-- Guide Counter -->
+      <div class="text-center mb-4">
+        <div class="counter-badge">
+          <i class="bi bi-people-fill me-2"></i>
+          Found 70 guides
+        </div>
+      </div>
+      
+      <!-- Filter Button -->
+      <div class="text-center mb-4">
+        <button class="btn btn-outline-primary">Filter Guides</button>
+      </div>
+      
+      <!-- Guide Cards -->
+      <div class="row g-4" id="guide-cards-container">
+        <!-- Guide Card 1 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card guide-card">
+            <div class="position-relative">
+              <img src="attached_assets/ChatGPT Image 2025年6月17日 21_34_27_1750163768295.png" class="card-img-top" alt="Manabu Hashimoto">
+              <div class="price-badge">¥8,000/session</div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Manabu Hashimoto</h5>
+              <p class="text-muted mb-2">
+                <i class="bi bi-geo-alt"></i> Hokkaido, Sapporo
+              </p>
+              <p class="card-text small">Focusing on night markets, I will share the charm of Hokkaido. You can experience photography, videos, local life and culture.</p>
+              <div class="mb-3">
+                <span class="badge bg-primary me-1">Japanese</span>
+                <span class="badge bg-secondary">Chinese</span>
+              </div>
+              <div class="mb-3">
+                <span class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <i class="bi bi-star"></i>
+                </span>
+                <span class="text-muted ms-1">3.5</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary w-100">See Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Guide Card 2 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card guide-card">
+            <div class="position-relative">
+              <img src="attached_assets/ChatGPT Image 2025年6月17日 21_34_27_1750163768295.png" class="card-img-top" alt="Kazuya Yamamoto">
+              <div class="price-badge">¥25,000/session</div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Kazuya Yamamoto</h5>
+              <p class="text-muted mb-2">
+                <i class="bi bi-geo-alt"></i> Kagoshima, Satsumasendai
+              </p>
+              <p class="card-text small">A guide well-versed in the history and culture of Kagoshima Prefecture. I provide comprehensive guidance from history to temples.</p>
+              <div class="mb-3">
+                <span class="badge bg-primary me-1">Japanese</span>
+                <span class="badge bg-secondary">Korean</span>
+              </div>
+              <div class="mb-3">
+                <span class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <i class="bi bi-star"></i>
+                </span>
+                <span class="text-muted ms-1">3.5</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary w-100">See Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Guide Card 3 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="card guide-card">
+            <div class="position-relative">
+              <img src="attached_assets/ChatGPT Image 2025年6月17日 21_34_27_1750163768295.png" class="card-img-top" alt="Yoko Takahashi">
+              <div class="price-badge">¥12,000/session</div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Yoko Takahashi</h5>
+              <p class="text-muted mb-2">
+                <i class="bi bi-geo-alt"></i> Tokyo, Shinjuku
+              </p>
+              <p class="card-text small">I know all about Tokyo's local food and trendy spots. Also recommended for those who love handwriting.</p>
+              <div class="mb-3">
+                <span class="badge bg-primary me-1">Japanese</span>
+                <span class="badge bg-secondary">English</span>
+              </div>
+              <div class="mb-3">
+                <span class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                </span>
+                <span class="text-muted ms-1">4.0</span>
+              </div>
+              <a href="#" class="btn btn-outline-primary w-100">See Details</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Use Section -->
+  <section id="how-to-use" class="py-5 bg-light">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold">How to Use</h2>
+        <p class="lead text-muted">Simple steps to connect with local guides</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-lg-4 text-center">
+          <div class="step-number">1</div>
+          <h4>Account Registration</h4>
+          <p class="text-muted">Complete registration with simple information entry and phone number verification</p>
+        </div>
+        <div class="col-lg-4 text-center">
+          <div class="step-number">2</div>
+          <h4>Find Guides</h4>
+          <p class="text-muted">Search for ideal guides by location, language, and expertise</p>
+        </div>
+        <div class="col-lg-4 text-center">
+          <div class="step-number">3</div>
+          <h4>Book and Enjoy</h4>
+          <p class="text-muted">Book for your preferred date and time, and enjoy special experiences</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section id="benefits" class="py-5">
+    <div class="container">
+      <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold">Benefits of Being a Guide</h2>
+        <p class="lead text-muted">Use your knowledge and experience to provide special experiences to travelers from around the world</p>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5>Your daily life becomes a tourism resource</h5>
+            <p class="text-muted">Share special places and experiences that only locals know, transforming everyday moments into irreplaceable travel memories.</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5>Work efficiently using spare time</h5>
+            <p class="text-muted">Set your schedule at convenient times, earning income while balancing your main job or studies.</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5>Meet new people from around the world</h5>
+            <p class="text-muted">Expand your international network and deepen cross-cultural understanding through interactions with travelers from various countries and cultures.</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5>Utilize and improve language skills</h5>
+            <p class="text-muted">Gain practical opportunities to use foreign languages and naturally improve your communication skills.</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5>Deepen love and pride for your hometown</h5>
+            <p class="text-muted">Promote local attractions to deepen your understanding and attachment to your own region.</p>
+          </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h5>Reliable support system</h5>
+            <p class="text-muted">Reliable support for booking management, payments, insurance, and other infrastructure needed for guide activities.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-5">
+        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#registerGuideModal">Register as Guide</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4">
+          <h5>TomoTrip</h5>
+          <p class="text-muted">Connecting travelers with authentic local experiences in Japan.</p>
+        </div>
+        <div class="col-lg-4">
+          <h5>Quick Links</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted">Find Guides</a></li>
+            <li><a href="#" class="text-muted">Become a Guide</a></li>
+            <li><a href="#" class="text-muted">How it Works</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h5>Support</h5>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-muted">Help Center</a></li>
+            <li><a href="#" class="text-muted">Contact Us</a></li>
+            <li><a href="#" class="text-muted">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="text-center text-muted">
+        <p>&copy; 2026 TomoTrip. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Load Additional Guide Cards - English Version -->
+  <script src="load-70-guides-en.js"></script>
+</body>
+</html>
