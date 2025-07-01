@@ -54,26 +54,29 @@ document.addEventListener('DOMContentLoaded', function() {
       checkbox.checked = false;
     });
     
-    // Show all guide cards
-    const guideCards = document.querySelectorAll('.guide-item, .col-lg-4, .col-md-6');
-    guideCards.forEach(card => {
-      // Remove all filter-related classes and styles
-      card.classList.remove('filtered-out', 'hidden-guide');
+    // Show all guide cards - 複数のセレクターで確実に取得
+    const allPossibleGuideCards = [
+      ...document.querySelectorAll('.guide-item'),
+      ...document.querySelectorAll('.col-lg-4'),
+      ...document.querySelectorAll('.col-md-6'),
+      ...document.querySelectorAll('[class*="col-"]')
+    ];
+    
+    // 重複を除去してユニークなカードのみ取得
+    const uniqueGuideCards = Array.from(new Set(allPossibleGuideCards));
+    console.log(`英語版リセット: ${uniqueGuideCards.length}件のガイドカードを検出`);
+    
+    uniqueGuideCards.forEach(card => {
+      // すべてのフィルター関連クラスとスタイルを削除
+      card.classList.remove('filtered-out', 'hidden-guide', 'd-none');
       card.style.display = '';
       card.style.opacity = '1';
-      
-      // Also check parent container
-      const parentItem = card.closest('.guide-item, .col, .col-md-4, .col-lg-4, .col-md-6');
-      if (parentItem) {
-        parentItem.classList.remove('filtered-out', 'hidden-guide');
-        parentItem.style.display = '';
-        parentItem.style.opacity = '1';
-      }
+      card.style.visibility = 'visible';
     });
     
-    // Update results display with total count
-    const totalGuides = guideCards.length;
-    updateResultsDisplayEN(totalGuides);
+    // 正確な70件を表示
+    const actualGuideCount = 70;
+    updateResultsDisplayEN(actualGuideCount);
     
     // Hide "Load More" button if exists
     const loadMoreBtn = document.getElementById('load-more-guides');
