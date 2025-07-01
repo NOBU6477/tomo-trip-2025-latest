@@ -211,43 +211,126 @@
 
     console.log('動的ガイドカード翻訳開始');
 
-    document.querySelectorAll('.guide-card').forEach(card => {
-      // ガイド名（そのまま保持）
-      const nameElement = card.querySelector('.guide-name, h5');
-      
-      // 地域翻訳
-      const regionElement = card.querySelector('.guide-location, .text-muted');
-      if (regionElement) {
-        const regionText = regionElement.textContent.trim();
-        const englishRegion = translations.regions[regionText];
-        if (englishRegion) {
-          regionElement.textContent = englishRegion;
-        }
-      }
+    // より包括的なガイドカード検索
+    const cardSelectors = [
+      '.guide-card',
+      '.card.guide-card', 
+      '.card.h-100',
+      '.card.shadow-sm',
+      '.guide-item .card',
+      '.col-md-4 .card',
+      '.col-lg-4 .card'
+    ];
 
-      // 説明文翻訳
-      const descriptionElement = card.querySelector('.guide-description, .card-text p');
-      if (descriptionElement) {
-        translateDescription(descriptionElement);
-      }
+    let cardsFound = 0;
 
-      // キーワードバッジ翻訳
-      card.querySelectorAll('.badge').forEach(badge => {
-        const keywordText = badge.textContent.trim();
-        const englishKeyword = translations.keywords[keywordText];
-        if (englishKeyword) {
-          badge.textContent = englishKeyword;
+    cardSelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(card => {
+        const cardText = card.textContent;
+        
+        // ガイドカードかどうかを判定
+        if (!cardText.includes('ガイド') && !cardText.includes('詳細を見る') && !cardText.includes('円')) {
+          return;
         }
+
+        cardsFound++;
+        console.log(`ガイドカード ${cardsFound} を翻訳中:`, card);
+
+        // ガイド名は保持
+        const nameElement = card.querySelector('.card-title, h5, .guide-name');
+        if (nameElement) {
+          console.log('ガイド名:', nameElement.textContent);
+        }
+        
+        // 地域翻訳（複数パターンに対応）
+        const regionElements = card.querySelectorAll('.text-muted');
+        regionElements.forEach(element => {
+          if (element.textContent.includes('🗺️') || element.textContent.includes('geo-alt') || 
+              element.querySelector('i.bi-geo-alt-fill')) {
+            const regionText = element.textContent.replace(/🗺️|\s*geo-alt\s*/g, '').trim();
+            const englishRegion = translations.regions[regionText];
+            if (englishRegion) {
+              element.innerHTML = element.innerHTML.replace(regionText, englishRegion);
+              console.log('地域翻訳:', regionText, '→', englishRegion);
+            }
+          }
+        });
+
+        // 説明文翻訳（最も重要）
+        const descriptionElements = [
+          card.querySelector('.card-text'),
+          card.querySelector('.card-text.small'),
+          card.querySelector('p.small'),
+          card.querySelector('.card-body p:not(.text-muted)')
+        ].filter(el => el);
+
+        descriptionElements.forEach(descElement => {
+          if (descElement && descElement.textContent.length > 10) {
+            console.log('翻訳前の説明文:', descElement.textContent);
+            translateDescription(descElement);
+            console.log('翻訳後の説明文:', descElement.textContent);
+          }
+        });
+
+        // 言語バッジ翻訳
+        card.querySelectorAll('.badge, .text-muted').forEach(element => {
+          if (element.textContent.includes('🌐') || element.textContent.includes('translate') || 
+              element.querySelector('i.bi-translate')) {
+            // 日本語の言語名を英語に翻訳
+            let langText = element.innerHTML;
+            langText = langText.replace('日本語', 'Japanese');
+            langText = langText.replace('英語', 'English');
+            langText = langText.replace('中国語', 'Chinese');
+            langText = langText.replace('韓国語', 'Korean');
+            langText = langText.replace('フランス語', 'French');
+            langText = langText.replace('スペイン語', 'Spanish');
+            langText = langText.replace('ドイツ語', 'German');
+            langText = langText.replace('イタリア語', 'Italian');
+            element.innerHTML = langText;
+          }
+        });
+
+        // キーワードバッジ翻訳
+        card.querySelectorAll('.badge').forEach(badge => {
+          const keywordText = badge.textContent.trim();
+          const englishKeyword = translations.keywords[keywordText];
+          if (englishKeyword) {
+            badge.textContent = englishKeyword;
+            console.log('キーワード翻訳:', keywordText, '→', englishKeyword);
+          }
+        });
+
+        // 詳細ボタンと料金翻訳
+        card.querySelectorAll('button, a, .btn').forEach(btn => {
+          if (btn.textContent.includes('詳細を見る')) {
+            btn.textContent = btn.textContent.replace('詳細を見る', 'See Details');
+          }
+          if (btn.textContent.includes('円/セッション')) {
+            btn.textContent = btn.textContent.replace('円/セッション', ' yen/session');
+          }
+          if (btn.textContent.includes('セッション')) {
+            btn.textContent = btn.textContent.replace('セッション', 'session');
+          }
+        });
+
+        // 得意分野翻訳
+        card.querySelectorAll('small, .small').forEach(small => {
+          if (small.textContent.includes('得意分野:')) {
+            let text = small.textContent;
+            text = text.replace('得意分野:', 'Specialties:');
+            
+            // 各キーワードを翻訳
+            Object.entries(translations.keywords).forEach(([jp, en]) => {
+              text = text.replace(jp, en);
+            });
+            
+            small.textContent = text;
+          }
+        });
       });
-
-      // 料金表示翻訳
-      const feeElement = card.querySelector('.guide-fee, .fee');
-      if (feeElement && feeElement.textContent.includes('時間')) {
-        feeElement.textContent = feeElement.textContent.replace('円/時間', ' yen/hour');
-      }
     });
 
-    console.log('動的ガイドカード翻訳完了');
+    console.log(`動的ガイドカード翻訳完了: ${cardsFound}件のカードを処理`);
   }
 
   // 説明文翻訳処理
@@ -315,43 +398,74 @@
     console.log('ベネフィットセクション翻訳開始');
 
     // セクションタイトル翻訳
-    document.querySelectorAll('h2, h3, .section-title').forEach(title => {
-      if (title.textContent.includes('ガイドになる特典') || title.textContent.includes('ガイドのメリット')) {
+    document.querySelectorAll('h1, h2, h3, .section-title').forEach(title => {
+      if (title.textContent.includes('ガイドになる特典') || 
+          title.textContent.includes('ガイドのメリット') ||
+          title.textContent.includes('Benefits of Being a Guide')) {
         title.textContent = 'Benefits of Becoming a Guide';
       }
     });
 
-    // ベネフィットカード翻訳
-    document.querySelectorAll('.card').forEach(card => {
+    // より包括的なベネフィットカード翻訳
+    const benefitCards = document.querySelectorAll('.card, .benefit-card, [class*="benefit"]');
+    let cardsProcessed = 0;
+
+    benefitCards.forEach(card => {
       const cardText = card.textContent;
       
-      // タイトルと説明文の翻訳
-      for (const [japaneseTitle, englishTitle] of Object.entries(translations.benefits)) {
-        if (cardText.includes(japaneseTitle)) {
-          // タイトル翻訳
-          const titleElement = card.querySelector('.card-title, h5, h4');
-          if (titleElement && titleElement.textContent.includes(japaneseTitle)) {
-            titleElement.textContent = englishTitle;
+      // ベネフィットカードの特定パターンを検索
+      const benefitPatterns = [
+        'Your daily life becomes a tourism resource',
+        'Work efficiently using spare time', 
+        'Meet new people from around the world',
+        'Utilize and improve language skills',
+        'Deepen love and pride for your hometown',
+        'Reliable support system',
+        'Work at your own pace',
+        'Contribute to regional revitalization'
+      ];
+
+      // 英語タイトルが含まれているカードを検索
+      const hasEnglishTitle = benefitPatterns.some(pattern => cardText.includes(pattern));
+      
+      if (hasEnglishTitle || cardText.includes('地元の方だけが') || cardText.includes('自分の都合の') || 
+          cardText.includes('様々な国や文化') || cardText.includes('外国語を使う') ||
+          cardText.includes('地元の魅力を') || cardText.includes('予約管理') ||
+          cardText.includes('予約を受ける') || cardText.includes('観光客を地元の')) {
+        
+        cardsProcessed++;
+        console.log(`ベネフィットカード ${cardsProcessed} を翻訳中`);
+
+        // 説明文を具体的に翻訳（完全な文章マッチング）
+        const descriptionElement = card.querySelector('.card-text, p, .text-muted, .description');
+        if (descriptionElement) {
+          let text = descriptionElement.textContent.trim();
+          
+          // 具体的な文章翻訳
+          if (text.includes('地元の方だけが知っている場所や体験を共有することで、日常がより輝いた旅の思い出に変わります。')) {
+            descriptionElement.textContent = 'Share local secrets and experiences that only locals know, transforming everyday moments into brilliant travel memories.';
+          } else if (text.includes('自分の都合の良い時間にスケジュールを設定できるため、本業や学業と両立しながら収入を得られます。')) {
+            descriptionElement.textContent = 'Set your schedule according to your convenience, earning income while balancing your main job or studies.';
+          } else if (text.includes('様々な国や文化的な背景を持つ旅行者との交流を通じて、国際的な人脈を広げ、異文化理解を深められます。')) {
+            descriptionElement.textContent = 'Expand your international network and deepen cross-cultural understanding through interactions with travelers from various countries and backgrounds.';
+          } else if (text.includes('外国語を使う実践的な機会が得られ、コミュニケーション能力が自然と高まります。')) {
+            descriptionElement.textContent = 'Gain practical opportunities to use foreign languages and naturally improve your communication skills.';
+          } else if (text.includes('地元の魅力を発信することで、自分自身の住む地域の理解や愛着がより深くなります。')) {
+            descriptionElement.textContent = 'Deepen your understanding and attachment to your local area by promoting its attractions to others.';
+          } else if (text.includes('予約管理、決済、保険など、ガイド活動に必要な基盤をサポートするので安心して活動できます。')) {
+            descriptionElement.textContent = 'Reliable support for booking management, payments, insurance, and other essential infrastructure for guide activities.';
+          } else if (text.includes('予約を受ける日時や頻度は完全に自分次第のため、ライフスタイルに合わせた働き方ができます。')) {
+            descriptionElement.textContent = 'Complete control over booking schedule and frequency allows you to work according to your lifestyle.';
+          } else if (text.includes('観光客を地元のお店や施設に案内することで、地域経済の活性化とコミュニティの発展に貢献できます。')) {
+            descriptionElement.textContent = 'Contribute to local economic revitalization and community development by guiding tourists to local shops and facilities.';
           }
           
-          // 説明文翻訳
-          const contentElement = card.querySelector('.card-text, p');
-          if (contentElement) {
-            // 対応する説明文を検索
-            const nextEntry = Object.entries(translations.benefits).find(([key]) => 
-              cardText.includes(key) && key !== japaneseTitle && key.length > 10
-            );
-            
-            if (nextEntry) {
-              contentElement.textContent = nextEntry[1];
-            }
-          }
-          break;
+          console.log('ベネフィット説明文翻訳完了:', text.substring(0, 50) + '...');
         }
       }
     });
 
-    console.log('ベネフィットセクション翻訳完了');
+    console.log(`ベネフィットセクション翻訳完了: ${cardsProcessed}件のカードを処理`);
   }
 
   // 現在の言語設定を取得

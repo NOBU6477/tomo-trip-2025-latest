@@ -145,21 +145,40 @@
       }
     });
     
-    // ガイドカウンター
-    const counter = document.getElementById('search-results-counter');
-    if (counter) {
-      const text = counter.textContent;
-      if (text.includes('人のガイド')) {
+    // ガイドカウンター（より包括的に）
+    const counterSelectors = [
+      '#search-results-counter',
+      '.search-results-counter',
+      '.results-counter',
+      '[class*="counter"]',
+      '[id*="counter"]'
+    ];
+    
+    counterSelectors.forEach(selector => {
+      const counters = document.querySelectorAll(selector);
+      counters.forEach(counter => {
+        const text = counter.textContent;
+        if (text.includes('人のガイド') || text.includes('ガイドが見つかりました')) {
+          const count = text.match(/\d+/);
+          if (count) {
+            counter.textContent = `Found ${count[0]} guides`;
+            console.log('ガイドカウンター翻訳:', text, '→', counter.textContent);
+          }
+        }
+      });
+    });
+    
+    // ページ内の「〇人のガイド」テキストも全て検索
+    document.querySelectorAll('div, span, p').forEach(element => {
+      const text = element.textContent.trim();
+      if ((text.includes('人のガイド') || text.includes('ガイドが見つかりました')) && text.length < 50) {
         const count = text.match(/\d+/);
         if (count) {
-          counter.textContent = `Showing ${count[0]} guides (${count[0]} total)`;
+          element.textContent = `Found ${count[0]} guides`;
+          console.log('追加ガイドカウンター翻訳:', text, '→', element.textContent);
         }
-      } else if (text.includes('Showing') && text.includes('guides')) {
-        // 既に英語の場合はそのまま
-      } else {
-        counter.textContent = 'Showing 70 guides (70 total)';
       }
-    }
+    });
     
     // ベネフィットカード翻訳
     translateBenefitCards();
