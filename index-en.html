@@ -177,6 +177,75 @@
       padding: 3rem 0 1rem;
     }
     
+    /* Modal styles */
+    .section-title {
+      color: #333;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #667eea;
+    }
+    
+    .photo-upload-container {
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      transition: border-color 0.3s ease;
+    }
+    
+    .photo-upload-container:hover {
+      border-color: #667eea;
+    }
+    
+    .photo-preview {
+      min-height: 150px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .preview-image {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+    }
+    
+    .upload-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .form-check-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+    }
+    
+    /* Footer styles */
+    .footer {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 3rem 0 1rem;
+      margin-top: 5rem;
+    }
+    
+    .footer h5 {
+      color: white;
+      margin-bottom: 1rem;
+    }
+    
+    .footer a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer a:hover {
+      color: white;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .hero-section {
@@ -190,6 +259,10 @@
         margin: 1rem auto;
         display: flex;
         justify-content: center;
+      }
+      
+      .form-check-group {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
@@ -556,6 +629,261 @@
       </div>
     </div>
   </footer>
+
+  <!-- Tourist Registration Modal -->
+  <div class="modal fade" id="registerTouristModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Register as Tourist</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="tourist-register-form">
+            <!-- Basic Information Section -->
+            <div class="border-bottom pb-3 mb-3">
+              <h4 class="section-title">Basic Information</h4>
+              <div class="mb-3">
+                <label for="tourist-name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="tourist-name" required>
+              </div>
+              <div class="mb-3">
+                <label for="tourist-email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="tourist-email" required>
+              </div>
+              <div class="mb-3">
+                <label for="tourist-password" class="form-label">Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="tourist-password" required>
+                <div class="form-text">At least 8 characters including letters and numbers</div>
+              </div>
+            </div>
+            
+            <!-- Phone Verification Section -->
+            <div class="border-bottom pb-3 mb-3">
+              <h4 class="section-title">Phone Verification</h4>
+              <div class="mb-3">
+                <label for="tourist-phone-number" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">+81</span>
+                  <input type="tel" class="form-control" id="tourist-phone-number" placeholder="9012345678 (without leading 0)" required>
+                  <button type="button" class="btn btn-primary" id="tourist-send-code-btn">Send Code</button>
+                </div>
+                <div class="form-text">Enter without hyphens</div>
+              </div>
+              
+              <div class="mb-4" id="tourist-verification-code-container">
+                <label for="tourist-verification-code" class="form-label">Verification Code <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="tourist-verification-code" maxlength="6" placeholder="6-digit code sent via SMS">
+              </div>
+              
+              <div id="tourist-recaptcha-container" class="mb-3"></div>
+              <div id="tourist-phone-verified" class="alert alert-success d-none">Phone verification completed ✓</div>
+            </div>
+            
+            <!-- ID Document Section -->
+            <div class="border-bottom pb-3 mb-3">
+              <h4 class="section-title">Identity Verification</h4>
+              <div class="mb-3">
+                <label for="tourist-id-type" class="form-label">ID Document Type <span class="text-danger">*</span></label>
+                <select class="form-select" id="tourist-id-type" required>
+                  <option value="" selected disabled>Please select</option>
+                  <option value="passport">Passport</option>
+                  <option value="drivers_license">Driver's License</option>
+                  <option value="my_number">My Number Card</option>
+                </select>
+              </div>
+              
+              <!-- Document Photo Upload -->
+              <div class="mb-3">
+                <label for="tourist-id-photo" class="form-label">Document Photo <span class="text-danger">*</span></label>
+                <div class="photo-upload-container">
+                  <input type="file" class="form-control d-none" id="tourist-id-photo" accept="image/*">
+                  <div class="photo-preview" id="tourist-id-preview">
+                    <img id="tourist-id-preview-img" class="preview-image d-none" alt="Document preview">
+                    <div class="upload-placeholder">
+                      <i class="bi bi-camera-fill fs-1 text-muted"></i>
+                      <p class="text-muted mt-2">Upload document photo</p>
+                    </div>
+                  </div>
+                  <div class="photo-controls mt-2">
+                    <button type="button" class="btn btn-primary me-2" onclick="document.getElementById('tourist-id-photo').click()">
+                      <i class="bi bi-upload"></i> Upload File
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="tourist-camera-btn">
+                      <i class="bi bi-camera"></i> Take Photo
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Registration Button -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-primary btn-lg">Complete Registration</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guide Registration Modal -->
+  <div class="modal fade" id="registerGuideModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Register as Guide</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="guide-register-form">
+            <!-- Basic Information Section -->
+            <div class="border-bottom pb-3 mb-3">
+              <h4 class="section-title">Basic Information</h4>
+              <div class="mb-3">
+                <label for="guide-name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="guide-name" required>
+              </div>
+              <div class="mb-3">
+                <label for="guide-email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="guide-email" required>
+              </div>
+              <div class="mb-3">
+                <label for="guide-password" class="form-label">Password <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="guide-password" required>
+              </div>
+            </div>
+            
+            <!-- Guide Profile Section -->
+            <div class="border-bottom pb-3 mb-3">
+              <h4 class="section-title">Guide Profile</h4>
+              <div class="mb-3">
+                <label for="guide-location" class="form-label">Activity Area <span class="text-danger">*</span></label>
+                <select class="form-select" id="guide-location" required>
+                  <option value="" selected disabled>Select prefecture</option>
+                  <option value="hokkaido">Hokkaido</option>
+                  <option value="aomori">Aomori</option>
+                  <option value="iwate">Iwate</option>
+                  <option value="miyagi">Miyagi</option>
+                  <option value="akita">Akita</option>
+                  <option value="yamagata">Yamagata</option>
+                  <option value="fukushima">Fukushima</option>
+                  <option value="ibaraki">Ibaraki</option>
+                  <option value="tochigi">Tochigi</option>
+                  <option value="gunma">Gunma</option>
+                  <option value="saitama">Saitama</option>
+                  <option value="chiba">Chiba</option>
+                  <option value="tokyo">Tokyo</option>
+                  <option value="kanagawa">Kanagawa</option>
+                  <option value="niigata">Niigata</option>
+                  <option value="toyama">Toyama</option>
+                  <option value="ishikawa">Ishikawa</option>
+                  <option value="fukui">Fukui</option>
+                  <option value="yamanashi">Yamanashi</option>
+                  <option value="nagano">Nagano</option>
+                  <option value="gifu">Gifu</option>
+                  <option value="shizuoka">Shizuoka</option>
+                  <option value="aichi">Aichi</option>
+                  <option value="mie">Mie</option>
+                  <option value="shiga">Shiga</option>
+                  <option value="kyoto">Kyoto</option>
+                  <option value="osaka">Osaka</option>
+                  <option value="hyogo">Hyogo</option>
+                  <option value="nara">Nara</option>
+                  <option value="wakayama">Wakayama</option>
+                  <option value="tottori">Tottori</option>
+                  <option value="shimane">Shimane</option>
+                  <option value="okayama">Okayama</option>
+                  <option value="hiroshima">Hiroshima</option>
+                  <option value="yamaguchi">Yamaguchi</option>
+                  <option value="tokushima">Tokushima</option>
+                  <option value="kagawa">Kagawa</option>
+                  <option value="ehime">Ehime</option>
+                  <option value="kochi">Kochi</option>
+                  <option value="fukuoka">Fukuoka</option>
+                  <option value="saga">Saga</option>
+                  <option value="nagasaki">Nagasaki</option>
+                  <option value="kumamoto">Kumamoto</option>
+                  <option value="oita">Oita</option>
+                  <option value="miyazaki">Miyazaki</option>
+                  <option value="kagoshima">Kagoshima</option>
+                  <option value="okinawa">Okinawa</option>
+                </select>
+              </div>
+              
+              <div class="mb-3">
+                <label for="guide-languages" class="form-label">Languages <span class="text-danger">*</span></label>
+                <div class="form-check-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="japanese" id="lang-japanese">
+                    <label class="form-check-label" for="lang-japanese">Japanese</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="english" id="lang-english">
+                    <label class="form-check-label" for="lang-english">English</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="chinese" id="lang-chinese">
+                    <label class="form-check-label" for="lang-chinese">Chinese</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="korean" id="lang-korean">
+                    <label class="form-check-label" for="lang-korean">Korean</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="spanish" id="lang-spanish">
+                    <label class="form-check-label" for="lang-spanish">Spanish</label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="french" id="lang-french">
+                    <label class="form-check-label" for="lang-french">French</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="guide-description" class="form-label">Self Introduction <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="guide-description" rows="4" placeholder="Tell visitors about your expertise, local knowledge, and what makes your tours special..." required></textarea>
+              </div>
+            </div>
+            
+            <!-- Registration Button -->
+            <div class="text-center">
+              <button type="submit" class="btn btn-success btn-lg">Complete Registration</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="login-form">
+            <div class="mb-3">
+              <label for="login-email" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="login-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="login-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="login-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+          </form>
+          <div class="text-center mt-3">
+            <p class="mb-0">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerOptionsModal">Sign up here</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
