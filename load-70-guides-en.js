@@ -211,11 +211,92 @@
     }, 2000);
   }
 
+  // Filter functionality
+  function setupFilters() {
+    const locationFilter = document.getElementById('filter-location');
+    const languageFilter = document.getElementById('filter-language');
+    const specialtyFilter = document.getElementById('filter-specialties');
+    const searchInput = document.getElementById('search-guides');
+
+    function applyFilters() {
+      const guidesContainer = document.getElementById('guide-cards-container');
+      if (!guidesContainer) return;
+
+      const cards = guidesContainer.querySelectorAll('.guide-item');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const guideId = parseInt(card.dataset.guideId);
+        const guide = englishGuides.find(g => g.id === guideId);
+        
+        if (!guide) {
+          card.style.display = 'none';
+          return;
+        }
+
+        let shouldShow = true;
+
+        // Location filter
+        if (locationFilter && locationFilter.value) {
+          if (!guide.location.toLowerCase().includes(locationFilter.value.toLowerCase())) {
+            shouldShow = false;
+          }
+        }
+
+        // Language filter
+        if (languageFilter && languageFilter.value) {
+          if (!guide.languages.some(lang => lang.toLowerCase().includes(languageFilter.value.toLowerCase()))) {
+            shouldShow = false;
+          }
+        }
+
+        // Search filter
+        if (searchInput && searchInput.value.trim()) {
+          const searchTerm = searchInput.value.toLowerCase();
+          if (!guide.name.toLowerCase().includes(searchTerm) && 
+              !guide.description.toLowerCase().includes(searchTerm) &&
+              !guide.location.toLowerCase().includes(searchTerm)) {
+            shouldShow = false;
+          }
+        }
+
+        if (shouldShow) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      updateCounter(visibleCount);
+    }
+
+    // Add event listeners to filters
+    if (locationFilter) locationFilter.addEventListener('change', applyFilters);
+    if (languageFilter) languageFilter.addEventListener('change', applyFilters);
+    if (specialtyFilter) specialtyFilter.addEventListener('change', applyFilters);
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+    console.log('English version filters setup complete');
+  }
+
+  function updateCounter(count = null) {
+    const counter = document.querySelector('.text-muted');
+    if (counter) {
+      const totalCount = count !== null ? count : englishGuides.length;
+      counter.textContent = `Found ${totalCount} guides`;
+    }
+  }
+
   // DOM読み込み完了後に実行
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      setTimeout(setupFilters, 1500);
+    });
   } else {
     init();
+    setTimeout(setupFilters, 1500);
   }
 
 })();

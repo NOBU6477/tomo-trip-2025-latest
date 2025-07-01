@@ -289,4 +289,91 @@
     }, 500);
   });
 
+  // Filter functionality for Japanese version
+  function setupFilters() {
+    const locationFilter = document.getElementById('filter-location');
+    const languageFilter = document.getElementById('filter-language');
+    const specialtyFilter = document.getElementById('filter-specialties');
+    const searchInput = document.getElementById('search-guides');
+
+    function applyFilters() {
+      const guidesContainer = document.getElementById('guide-cards-container');
+      if (!guidesContainer) return;
+
+      const cards = guidesContainer.querySelectorAll('.guide-item');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const guideId = parseInt(card.dataset.guideId);
+        const guideData = localStorage.getItem(`guide_${guideId}`);
+        
+        if (!guideData) {
+          card.style.display = 'none';
+          return;
+        }
+
+        const guide = JSON.parse(guideData);
+        let shouldShow = true;
+
+        // Location filter
+        if (locationFilter && locationFilter.value) {
+          if (!guide.location.toLowerCase().includes(locationFilter.value.toLowerCase())) {
+            shouldShow = false;
+          }
+        }
+
+        // Language filter
+        if (languageFilter && languageFilter.value) {
+          if (!guide.languages.some(lang => lang.toLowerCase().includes(languageFilter.value.toLowerCase()))) {
+            shouldShow = false;
+          }
+        }
+
+        // Search filter
+        if (searchInput && searchInput.value.trim()) {
+          const searchTerm = searchInput.value.toLowerCase();
+          if (!guide.name.toLowerCase().includes(searchTerm) && 
+              !guide.description.toLowerCase().includes(searchTerm) &&
+              !guide.location.toLowerCase().includes(searchTerm)) {
+            shouldShow = false;
+          }
+        }
+
+        if (shouldShow) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      updateFilterCounter(visibleCount);
+    }
+
+    // Add event listeners to filters
+    if (locationFilter) locationFilter.addEventListener('change', applyFilters);
+    if (languageFilter) languageFilter.addEventListener('change', applyFilters);
+    if (specialtyFilter) specialtyFilter.addEventListener('change', applyFilters);
+    if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+    console.log('Japanese version filters setup complete');
+  }
+
+  function updateFilterCounter(count) {
+    const counter = document.getElementById('search-results-counter');
+    if (counter) {
+      counter.textContent = `${count}人のガイドが見つかりました`;
+    }
+    
+    const textMutedCounter = document.querySelector('.text-muted');
+    if (textMutedCounter) {
+      textMutedCounter.textContent = `${count}人のガイドが見つかりました`;
+    }
+  }
+
+  // Setup filters after guides are loaded
+  setTimeout(() => {
+    setupFilters();
+  }, 2000);
+
 })();
