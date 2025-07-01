@@ -41,12 +41,18 @@ document.addEventListener('DOMContentLoaded', function() {
     const locationFilter = document.getElementById('location-filter');
     const languageFilter = document.getElementById('language-filter');
     const feeFilter = document.getElementById('fee-filter');
-    const keywordFilter = document.getElementById('keyword-filter');
+    const keywordCustomInput = document.getElementById('keyword-filter-custom');
+    const keywordCheckboxes = document.querySelectorAll('.keyword-checkbox');
     
     if (locationFilter) locationFilter.value = '';
     if (languageFilter) languageFilter.value = '';
     if (feeFilter) feeFilter.value = '';
-    if (keywordFilter) keywordFilter.value = '';
+    if (keywordCustomInput) keywordCustomInput.value = '';
+    
+    // Clear keyword checkboxes
+    keywordCheckboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
     
     // Show all guide cards
     const guideCards = document.querySelectorAll('.guide-item, .col-lg-4, .col-md-6');
@@ -69,13 +75,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const locationValue = document.getElementById('location-filter')?.value?.toLowerCase() || '';
     const languageValue = document.getElementById('language-filter')?.value?.toLowerCase() || '';
     const feeValue = document.getElementById('fee-filter')?.value || '';
-    const keywordValue = document.getElementById('keyword-filter')?.value?.toLowerCase() || '';
+    
+    // Get keyword values from checkboxes and custom input
+    const keywordCheckboxes = document.querySelectorAll('.keyword-checkbox:checked');
+    const selectedKeywords = Array.from(keywordCheckboxes).map(cb => cb.value.toLowerCase());
+    
+    const customKeywords = document.getElementById('keyword-filter-custom')?.value?.toLowerCase() || '';
+    const customKeywordArray = customKeywords ? customKeywords.split(',').map(k => k.trim()).filter(k => k) : [];
+    
+    const allKeywords = [...selectedKeywords, ...customKeywordArray];
     
     console.log('Filter values:', {
       location: locationValue,
       language: languageValue,
       fee: feeValue,
-      keyword: keywordValue
+      keywords: allKeywords
     });
     
     // Get all guide cards
@@ -87,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
         location: locationValue,
         language: languageValue,
         fee: feeValue,
-        keyword: keywordValue
+        keywords: allKeywords
       });
       
       toggleCardVisibilityEN(card, shouldShow);
@@ -105,7 +119,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get guide data from card attributes or text content
     const cardText = card.textContent.toLowerCase();
     const locationText = card.querySelector('.text-muted')?.textContent?.toLowerCase() || '';
-    const languageText = card.querySelector('.badge')?.textContent?.toLowerCase() || '';
+    const languageBadges = card.querySelectorAll('.badge');
+    const languageText = Array.from(languageBadges).map(badge => badge.textContent.toLowerCase()).join(' ');
     const priceText = card.querySelector('.price-badge')?.textContent || '';
     
     // Location filter
@@ -141,9 +156,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
     
-    // Keyword filter
-    if (filters.keyword && !cardText.includes(filters.keyword)) {
-      return false;
+    // Keywords filter - check if ANY keyword matches
+    if (filters.keywords && filters.keywords.length > 0) {
+      const hasKeywordMatch = filters.keywords.some(keyword => 
+        cardText.includes(keyword) || 
+        locationText.includes(keyword) ||
+        languageText.includes(keyword)
+      );
+      if (!hasKeywordMatch) {
+        return false;
+      }
     }
     
     return true;

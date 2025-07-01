@@ -770,8 +770,33 @@
                     </select>
                   </div>
                   <div class="col-12">
-                    <label for="keyword-filter" class="form-label">Keywords</label>
-                    <input type="text" class="form-control" id="keyword-filter" placeholder="e.g., food, temples, nature...">
+                    <label class="form-label">Keywords</label>
+                    <div class="d-flex flex-wrap" id="keyword-filter-group">
+                      <div class="form-check me-3 mb-2">
+                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Night Tour" id="keyword-night">
+                        <label class="form-check-label" for="keyword-night">Night Tour</label>
+                      </div>
+                      <div class="form-check me-3 mb-2">
+                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Gourmet" id="keyword-food">
+                        <label class="form-check-label" for="keyword-food">Gourmet</label>
+                      </div>
+                      <div class="form-check me-3 mb-2">
+                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Photo Spots" id="keyword-photo">
+                        <label class="form-check-label" for="keyword-photo">Photo Spots</label>
+                      </div>
+                      <div class="form-check me-3 mb-2">
+                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Cuisine" id="keyword-cooking">
+                        <label class="form-check-label" for="keyword-cooking">Cuisine</label>
+                      </div>
+                      <div class="form-check me-3 mb-2">
+                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Activities" id="keyword-activity">
+                        <label class="form-check-label" for="keyword-activity">Activities</label>
+                      </div>
+                    </div>
+                    <input type="text" class="form-control mt-2" id="keyword-filter-custom" placeholder="Enter other keywords (comma-separated for multiple keywords)">
+                    <small class="text-muted mt-1 d-block">
+                      <i class="bi bi-info-circle"></i> You can specify keywords using the checkboxes above or this input field. For multiple keywords, separate them with commas. Example: "hot springs, hiking, temples"
+                    </small>
                   </div>
                 </div>
                 
@@ -788,6 +813,12 @@
           </div>
         </div>
       </div>
+      
+      <!-- Search Results Counter -->
+      <div id="search-results-counter" class="alert alert-info text-center mb-3 d-none">0 guides found</div>
+      
+      <!-- No Results Message -->
+      <div id="no-results-message" class="alert alert-warning text-center my-4 d-none">No guides found matching your criteria. Please adjust your search filters.</div>
       
       <!-- Guide Cards -->
       <div class="row g-4" id="guide-cards-container">
