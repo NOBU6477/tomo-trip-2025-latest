@@ -48,18 +48,39 @@
     console.log('ページ読み込み時の言語設定:', savedLanguage);
     
     if (savedLanguage === 'en') {
-      // 英語翻訳を適用（複数回実行で確実性向上）
+      // 動的翻訳システムと連携した英語翻訳を適用
       setTimeout(() => {
         performEnglishTranslation();
+        // 動的コンテンツ翻訳も実行
+        if (window.dynamicTranslation) {
+          window.dynamicTranslation.translateGuideCards();
+          window.dynamicTranslation.translateBenefits();
+        }
       }, 100);
       
       setTimeout(() => {
         performEnglishTranslation();
+        if (window.dynamicTranslation) {
+          window.dynamicTranslation.translateGuideCards();
+          window.dynamicTranslation.translateBenefits();
+        }
       }, 500);
       
       setTimeout(() => {
         performEnglishTranslation();
+        if (window.dynamicTranslation) {
+          window.dynamicTranslation.translateGuideCards();
+          window.dynamicTranslation.translateBenefits();
+        }
       }, 1000);
+      
+      setTimeout(() => {
+        performEnglishTranslation();
+        if (window.dynamicTranslation) {
+          window.dynamicTranslation.translateGuideCards();
+          window.dynamicTranslation.translateBenefits();
+        }
+      }, 2000);
     }
   }
   
