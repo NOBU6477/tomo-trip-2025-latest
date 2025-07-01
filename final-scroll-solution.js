@@ -66,32 +66,13 @@
         }
       }, 500);
       
+      // 新しい統一翻訳システムを使用
       setTimeout(() => {
-        performEnglishTranslation();
-        if (window.dynamicTranslation) {
-          window.dynamicTranslation.translateGuideCards();
-          window.dynamicTranslation.translateBenefits();
+        if (window.translationConflictFix) {
+          window.translationConflictFix.execute();
+          window.translationConflictFix.fixButtons();
         }
-      }, 1000);
-      
-      setTimeout(() => {
-        performEnglishTranslation();
-        if (window.dynamicTranslation) {
-          window.dynamicTranslation.translateGuideCards();
-          window.dynamicTranslation.translateBenefits();
-        }
-        // 強制翻訳システムも実行
-        if (window.forceTranslation) {
-          window.forceTranslation.execute();
-        }
-      }, 2000);
-      
-      // 追加の強制翻訳実行
-      setTimeout(() => {
-        if (window.forceTranslation) {
-          window.forceTranslation.execute();
-        }
-      }, 3000);
+      }, 500);
     }
   }
   

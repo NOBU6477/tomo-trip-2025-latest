@@ -517,30 +517,9 @@
     applyLanguageSettings();
     
     // DOM変更監視（新しいコンテンツの動的翻訳）
-    const observer = new MutationObserver((mutations) => {
-      let shouldTranslate = false;
-      mutations.forEach(mutation => {
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-          mutation.addedNodes.forEach(node => {
-            if (node.nodeType === 1 && (node.classList.contains('guide-card') || node.querySelector('.guide-card'))) {
-              shouldTranslate = true;
-            }
-          });
-        }
-      });
-      
-      if (shouldTranslate && getCurrentLanguage() === 'en') {
-        setTimeout(() => {
-          translateDynamicGuideCards();
-          translateBenefitSection();
-        }, 100);
-      }
-    });
-    
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
+    // MutationObserver無効化（競合防止のため）
+    // 新しい翻訳競合修正システムが統一処理します
+    console.log('MutationObserver無効化: 翻訳競合修正システムが処理します');
   }
 
   // DOM読み込み完了後に実行
