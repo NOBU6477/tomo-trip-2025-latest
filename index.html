@@ -738,7 +738,63 @@
             </div>
           </div>
           
-          <!-- showRegisterOptions関数はsafe-translation.jsで処理 -->
+          <script>
+          // 直接埋め込み翻訳 - 確実な動作保証
+          window.showRegisterOptions = function() {
+            const modal = document.getElementById('registerOptionsModal');
+            if (modal && window.bootstrap) {
+              new bootstrap.Modal(modal).show();
+            }
+          };
+          
+          function doTranslation() {
+            const lang = localStorage.getItem('selectedLanguage') || localStorage.getItem('language');
+            if (lang === 'en') {
+              // 詳細を見るボタン翻訳
+              document.querySelectorAll('a, button').forEach(btn => {
+                if (btn.textContent.trim() === '詳細を見る') {
+                  btn.textContent = 'See Details';
+                }
+              });
+              
+              // ガイドカウンター翻訳
+              document.querySelectorAll('*').forEach(el => {
+                if (el.children.length === 0) {
+                  const text = el.textContent.trim();
+                  if (text === '70人のガイドが見つかりました') {
+                    el.textContent = 'Found 70 guides';
+                  }
+                  if (text.includes('人のガイドが見つかりました')) {
+                    el.textContent = text.replace(/(\d+)人のガイドが見つかりました/, 'Found $1 guides');
+                  }
+                }
+              });
+              
+              // 新規登録ボタン翻訳
+              const regBtn = document.querySelector('button[onclick="showRegisterOptions()"]');
+              if (regBtn && regBtn.textContent.includes('新規登録')) {
+                regBtn.textContent = 'Sign Up';
+              }
+            }
+          }
+          
+          // 言語切り替え
+          document.addEventListener('click', function(e) {
+            if (e.target.id === 'lang-en') {
+              localStorage.setItem('selectedLanguage', 'en');
+              setTimeout(doTranslation, 100);
+              setTimeout(doTranslation, 500);
+            }
+            if (e.target.id === 'lang-ja') {
+              localStorage.setItem('selectedLanguage', 'ja');
+              location.reload();
+            }
+          });
+          
+          // 初期翻訳
+          setTimeout(doTranslation, 1000);
+          setTimeout(doTranslation, 3000);
+          </script>
         </div>
       </div>
     </div>
@@ -4911,20 +4967,16 @@
   <!-- シンプル動作修正スクリプト - 一時無効化 -->
   <!-- <script src="simple-working-fix.js"></script> -->
   
-  <!-- 安全な翻訳システム - CSPエラー回避版 -->
-  <script src="safe-translation.js"></script>
+  <!-- 直接翻訳システム - 最もシンプルで確実 -->
+  <script src="direct-translation.js"></script>
   
   <!-- 70人ガイド表示システム -->
   <script src="load-70-guides.js"></script>
   
-  <!-- Bootstrap無効化修正システム - 最優先 -->
-  <script src="bootstrap-disable-fix.js"></script>
-  
-  <!-- 核心的スクロール修正システム - 最優先 -->
-  <script src="nuclear-scroll-fix.js"></script>
-  
-  <!-- 直接スクロール強制システム - 最優先 -->
-  <script src="direct-scroll-force.js"></script>
+  <!-- 他のスクリプトは一時無効化（競合防止） -->
+  <!-- <script src="bootstrap-disable-fix.js"></script> -->
+  <!-- <script src="nuclear-scroll-fix.js"></script> -->
+  <!-- <script src="direct-scroll-force.js"></script> -->
   
   <!-- コンソールデバッグヘルパー -->
   <script src="console-debug-helper.js"></script>
