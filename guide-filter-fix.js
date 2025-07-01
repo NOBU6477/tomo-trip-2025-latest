@@ -223,27 +223,26 @@ document.addEventListener('DOMContentLoaded', function() {
       
       // すべての条件に一致する場合
       if (matchesLocation && matchesLanguage && matchesFee && matchesKeywords) {
-        item.classList.remove('filtered-out');
-        
-        // 最初の3つだけが表示されるようにする
-        if (visibleCount < initialVisibleCount) {
-          item.classList.remove('hidden-guide');
-        } else {
-          item.classList.add('hidden-guide');
-        }
-        
+        // フィルター条件に一致 - 表示
+        item.classList.remove('filtered-out', 'hidden-guide');
+        item.style.display = '';
+        item.style.opacity = '1';
         visibleCount++;
       } else {
         // 条件に一致しない場合は非表示
         item.classList.add('filtered-out');
+        item.style.display = 'none';
       }
     });
     
     // ガイドカウンターを更新
     updateGuideCounter(visibleCount);
     
-    // 「もっと見る」ボタンの表示状態を更新
-    updateLoadMoreButtonState(Math.min(visibleCount, initialVisibleCount));
+    // フィルター適用時は「もっと見る」ボタンを非表示
+    const loadMoreBtn = document.getElementById('load-more-guides');
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = 'none';
+    }
     
     // 検索結果がない場合のメッセージ
     updateNoResultsMessage(visibleCount);
