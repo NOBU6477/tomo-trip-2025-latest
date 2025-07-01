@@ -58,27 +58,50 @@ document.addEventListener('DOMContentLoaded', function() {
     resetGuideVisibility();
   }
   
-  // ガイド表示状態をリセット
+  // ガイド表示状態をリセット - 全ガイドを表示
   function resetGuideVisibility() {
     const guideItems = document.querySelectorAll('.guide-item');
-    const initialVisibleCount = 3;
-    let count = 0;
     
     guideItems.forEach(item => {
-      // フィルター用クラスを削除
-      item.classList.remove('filtered-out');
-      
-      // 最初の3つだけ表示
-      if (count < initialVisibleCount) {
-        item.classList.remove('hidden-guide');
-        count++;
-      } else {
-        item.classList.add('hidden-guide');
-      }
+      // すべてのフィルター関連クラスを削除
+      item.classList.remove('filtered-out', 'hidden-guide');
+      item.style.display = '';
+      item.style.opacity = '1';
     });
     
-    // 「もっと見る」ボタンの表示を更新
-    updateLoadMoreButtonState(initialVisibleCount);
+    // 結果カウンターを更新（全ガイド数を表示）
+    const totalGuides = guideItems.length;
+    updateGuideCounter(totalGuides);
+    
+    // 「もっと見る」ボタンを非表示
+    const loadMoreBtn = document.getElementById('load-more-guides');
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = 'none';
+    }
+    
+    console.log(`リセット完了: ${totalGuides}件のガイドを表示中`);
+  }
+  
+  // ガイドカウンターを更新
+  function updateGuideCounter(count) {
+    // 検索結果カウンターを更新
+    const searchCounter = document.getElementById('search-results-counter');
+    if (searchCounter) {
+      searchCounter.textContent = `${count}人のガイドが見つかりました`;
+      searchCounter.classList.remove('d-none');
+    }
+    
+    // メインカウンター（上部の青いバッジ）を更新
+    const counterBadge = document.querySelector('.counter-badge');
+    if (counterBadge) {
+      counterBadge.innerHTML = `<i class="bi bi-people-fill me-2"></i>${count}件のガイドを表示中（全70件中）`;
+    }
+    
+    // 表示中ガイド数の更新
+    const displayText = document.querySelector('.text-muted');
+    if (displayText && displayText.textContent.includes('ガイドが見つかりました')) {
+      displayText.textContent = `${count}人のガイドが見つかりました`;
+    }
   }
   
   // 「もっと見る」ボタンの表示状態を更新
@@ -213,6 +236,9 @@ document.addEventListener('DOMContentLoaded', function() {
         item.classList.add('filtered-out');
       }
     });
+    
+    // ガイドカウンターを更新
+    updateGuideCounter(visibleCount);
     
     // 「もっと見る」ボタンの表示状態を更新
     updateLoadMoreButtonState(Math.min(visibleCount, initialVisibleCount));

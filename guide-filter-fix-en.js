@@ -57,14 +57,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show all guide cards
     const guideCards = document.querySelectorAll('.guide-item, .col-lg-4, .col-md-6');
     guideCards.forEach(card => {
-      toggleCardVisibilityEN(card, true);
+      // Remove all filter-related classes and styles
+      card.classList.remove('filtered-out', 'hidden-guide');
+      card.style.display = '';
+      card.style.opacity = '1';
+      
+      // Also check parent container
+      const parentItem = card.closest('.guide-item, .col, .col-md-4, .col-lg-4, .col-md-6');
+      if (parentItem) {
+        parentItem.classList.remove('filtered-out', 'hidden-guide');
+        parentItem.style.display = '';
+        parentItem.style.opacity = '1';
+      }
     });
     
-    // Update results display
+    // Update results display with total count
     const totalGuides = guideCards.length;
     updateResultsDisplayEN(totalGuides);
     
-    console.log(`Reset complete. Showing ${totalGuides} guides.`);
+    // Hide "Load More" button if exists
+    const loadMoreBtn = document.getElementById('load-more-guides');
+    if (loadMoreBtn) {
+      loadMoreBtn.style.display = 'none';
+    }
+    
+    console.log(`Reset complete. Showing all ${totalGuides} guides.`);
   }
   
   // Enhanced filter function
@@ -104,8 +121,33 @@ document.addEventListener('DOMContentLoaded', function() {
         keywords: allKeywords
       });
       
-      toggleCardVisibilityEN(card, shouldShow);
-      if (shouldShow) visibleCount++;
+      if (shouldShow) {
+        // Show the card
+        card.classList.remove('filtered-out', 'hidden-guide');
+        card.style.display = '';
+        card.style.opacity = '1';
+        
+        // Also check parent container
+        const parentItem = card.closest('.guide-item, .col, .col-md-4, .col-lg-4, .col-md-6');
+        if (parentItem) {
+          parentItem.classList.remove('filtered-out', 'hidden-guide');
+          parentItem.style.display = '';
+          parentItem.style.opacity = '1';
+        }
+        
+        visibleCount++;
+      } else {
+        // Hide the card
+        card.classList.add('filtered-out');
+        card.style.display = 'none';
+        
+        // Also hide parent container
+        const parentItem = card.closest('.guide-item, .col, .col-md-4, .col-lg-4, .col-md-6');
+        if (parentItem) {
+          parentItem.classList.add('filtered-out');
+          parentItem.style.display = 'none';
+        }
+      }
     });
     
     // Update results display
@@ -194,10 +236,10 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update results display
   function updateResultsDisplayEN(count) {
-    // Update main counter badge
+    // Update main counter badge (showing current displayed vs total)
     const counter = document.querySelector('.counter-badge');
     if (counter) {
-      counter.innerHTML = `<i class="bi bi-people-fill me-2"></i>Found ${count} guides`;
+      counter.innerHTML = `<i class="bi bi-people-fill me-2"></i>Showing ${count} guides (out of 70 total)`;
     }
     
     // Update search results counter
@@ -221,6 +263,8 @@ document.addEventListener('DOMContentLoaded', function() {
         noResultsMessage.classList.add('d-none');
       }
     }
+    
+    console.log(`Display updated: ${count} guides shown`);
   }
   
   console.log('English guide filter fix applied successfully');
