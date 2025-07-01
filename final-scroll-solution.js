@@ -80,7 +80,18 @@
           window.dynamicTranslation.translateGuideCards();
           window.dynamicTranslation.translateBenefits();
         }
+        // 強制翻訳システムも実行
+        if (window.forceTranslation) {
+          window.forceTranslation.execute();
+        }
       }, 2000);
+      
+      // 追加の強制翻訳実行
+      setTimeout(() => {
+        if (window.forceTranslation) {
+          window.forceTranslation.execute();
+        }
+      }, 3000);
     }
   }
   
