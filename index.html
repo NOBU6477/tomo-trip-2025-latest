@@ -6288,6 +6288,98 @@
   <!-- 基本的なBootstrapのみ有効にする -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
+  <!-- Back to Top Button -->
+  <button id="backToTopBtn" class="btn btn-primary back-to-top-btn" title="トップに戻る">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <style>
+    .back-to-top-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: none;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .back-to-top-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+    
+    .back-to-top-btn.show {
+      display: block;
+      animation: fadeInUp 0.3s ease;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+
+  <!-- Back to Top Script -->
+  <script>
+    // Back to Top functionality
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    
+    window.addEventListener('scroll', function() {
+      if (window.pageYOffset > 300) {
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    });
+    
+    backToTopBtn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // Filter functions for Japanese version
+    function resetFilters() {
+      const locationFilter = document.getElementById('filter-location');
+      const languageFilter = document.getElementById('filter-language');
+      const specialtyFilter = document.getElementById('filter-specialties');
+      const searchInput = document.getElementById('search-guides');
+      
+      if (locationFilter) locationFilter.value = '';
+      if (languageFilter) languageFilter.value = '';
+      if (specialtyFilter) specialtyFilter.value = '';
+      if (searchInput) searchInput.value = '';
+      
+      // Reset all guide cards to visible
+      const cards = document.querySelectorAll('.guide-item');
+      cards.forEach(card => {
+        card.style.display = 'block';
+      });
+      
+      // Update counter
+      const counter = document.getElementById('search-results-counter');
+      if (counter) {
+        counter.textContent = '70人のガイドが見つかりました';
+      }
+    }
+    
+    function applyFiltersManual() {
+      // This will be handled by the automatic filter system in load-70-guides.js
+      console.log('Manual filter apply triggered (Japanese)');
+    }
+  </script>
+
   <!-- 問題のあるスクリプトファイルを全て無効化 -->
   <!-- 
   <script src="auth-debug-tracer.js"></script>
