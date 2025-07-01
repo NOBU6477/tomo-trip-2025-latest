@@ -738,28 +738,7 @@
             </div>
           </div>
           
-          <script>
-          // グローバル関数として定義
-          window.showRegisterOptions = function() {
-            console.log('showRegisterOptions 実行');
-            const modal = document.getElementById('registerOptionsModal');
-            if (modal) {
-              if (typeof bootstrap !== 'undefined') {
-                const modalInstance = new bootstrap.Modal(modal);
-                modalInstance.show();
-                console.log('Bootstrap モーダル表示');
-              } else {
-                // Bootstrap未読み込み時の代替処理
-                modal.style.display = 'block';
-                modal.classList.add('show');
-                modal.style.backgroundColor = 'rgba(0,0,0,0.5)';
-                console.log('代替モーダル表示');
-              }
-            } else {
-              console.error('registerOptionsModal が見つかりません');
-            }
-          };
-          </script>
+          <!-- showRegisterOptions関数はsafe-translation.jsで処理 -->
         </div>
       </div>
     </div>
@@ -4932,8 +4911,8 @@
   <!-- シンプル動作修正スクリプト - 一時無効化 -->
   <!-- <script src="simple-working-fix.js"></script> -->
   
-  <!-- 即座修正システム - 確実動作 -->
-  <script src="immediate-fix.js"></script>
+  <!-- 安全な翻訳システム - CSPエラー回避版 -->
+  <script src="safe-translation.js"></script>
   
   <!-- 70人ガイド表示システム -->
   <script src="load-70-guides.js"></script>

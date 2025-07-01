@@ -181,7 +181,7 @@
     console.log('現在の言語:', getCurrentLang());
     console.log('Bootstrap利用可能:', typeof bootstrap !== 'undefined');
     console.log('新規登録ボタン存在:', !!document.querySelector('button[onclick="showRegisterOptions()"]'));
-    console.log('詳細を見るボタン数:', document.querySelectorAll('button, a').filter(btn => btn.textContent.includes('詳細を見る')).length);
+    console.log('詳細を見るボタン数:', Array.from(document.querySelectorAll('button, a')).filter(btn => btn.textContent.includes('詳細を見る')).length);
     console.log('ガイドカウンター要素:', document.querySelector('*')?.textContent?.includes('ガイドが見つかりました') ? 'あり' : 'なし');
   }
 
