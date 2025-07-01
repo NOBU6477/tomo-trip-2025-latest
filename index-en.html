@@ -1391,56 +1391,72 @@
       });
     });
     
-    // Filter toggle functionality
-    document.addEventListener('DOMContentLoaded', function() {
+    // Filter toggle functionality for English version
+    function initFilterToggleEN() {
+      console.log('Initializing English filter toggle...');
+      
       const toggleButton = document.getElementById('toggle-filter-button');
       const filterCard = document.getElementById('filter-card');
       
-      if (toggleButton && filterCard) {
-        toggleButton.addEventListener('click', function() {
-          if (filterCard.classList.contains('d-none')) {
-            filterCard.classList.remove('d-none');
-            toggleButton.innerHTML = '<i class="bi bi-funnel-fill"></i> Hide Filters';
-          } else {
-            filterCard.classList.add('d-none');
-            toggleButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
-          }
-        });
+      if (!toggleButton || !filterCard) {
+        console.error('Filter toggle elements not found');
+        return;
       }
       
-      // Reset filters functionality
-      const resetButton = document.getElementById('reset-filters');
-      if (resetButton) {
-        resetButton.addEventListener('click', function() {
-          document.getElementById('location-filter').value = '';
-          document.getElementById('language-filter').value = '';
-          document.getElementById('fee-filter').value = '';
-          document.getElementById('keyword-filter').value = '';
-          
-          // Reset all guide cards to visible
-          const cards = document.querySelectorAll('.guide-item');
-          cards.forEach(card => {
-            card.style.display = 'block';
+      toggleButton.addEventListener('click', function() {
+        toggleFilterVisibilityEN();
+      });
+      
+      console.log('English filter toggle initialized successfully');
+    }
+    
+    function toggleFilterVisibilityEN() {
+      const toggleButton = document.getElementById('toggle-filter-button');
+      const filterCard = document.getElementById('filter-card');
+      
+      if (!toggleButton || !filterCard) {
+        console.error('Filter elements not found');
+        return;
+      }
+      
+      const isHidden = filterCard.classList.contains('d-none');
+      
+      if (isHidden) {
+        // Show filter
+        filterCard.classList.remove('d-none');
+        toggleButton.innerHTML = '<i class="bi bi-funnel-fill"></i> Hide Filters';
+        toggleButton.classList.remove('btn-outline-primary');
+        toggleButton.classList.add('btn-primary');
+        
+        console.log('Filter shown');
+        
+        // Smooth scroll to filter
+        setTimeout(() => {
+          filterCard.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
           });
-          
-          // Update counter
-          const counter = document.querySelector('.text-muted');
-          if (counter) {
-            counter.textContent = 'Found 70 guides';
-          }
-        });
+        }, 100);
+        
+      } else {
+        // Hide filter
+        filterCard.classList.add('d-none');
+        toggleButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
+        toggleButton.classList.remove('btn-primary');
+        toggleButton.classList.add('btn-outline-primary');
+        
+        console.log('Filter hidden');
       }
-      
-      // Apply filters functionality
-      const applyButton = document.getElementById('apply-filters');
-      if (applyButton) {
-        applyButton.addEventListener('click', function() {
-          // This will be handled by the filter system in load-70-guides-en.js
-          console.log('Apply filters triggered');
-        });
-      }
+    }
+    
+    // Initialize on DOM ready
+    document.addEventListener('DOMContentLoaded', function() {
+      initFilterToggleEN();
     });
   </script>
+  
+  <!-- Filter functionality for English version -->
+  <script src="guide-filter-fix-en.js"></script>
   
   <!-- Load Additional Guide Cards - English Version -->
   <script src="load-70-guides-en.js"></script>

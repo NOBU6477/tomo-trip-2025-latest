@@ -70,7 +70,7 @@ function toggleFilterVisibility() {
     filterCard.classList.add('d-none');
     
     // ボタンテキストを元に戻す
-    toggleButton.innerHTML = '<i class="bi bi-funnel"></i> 詳細検索フィルター';
+    toggleButton.innerHTML = '<i class="bi bi-funnel"></i> ガイドを絞り込み';
     toggleButton.classList.remove('btn-primary');
     toggleButton.classList.add('btn-outline-primary');
     
