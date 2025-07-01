@@ -600,18 +600,18 @@
           <h1 class="display-4 fw-bold mb-4">Connect with Local Japanese Guides</h1>
           <p class="lead mb-4">Experience authentic Japan through the eyes of locals. Book verified guides for personalized cultural experiences.</p>
           <a href="#guides" class="btn btn-primary btn-lg me-3">Find a Guide</a>
-          <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">お問い合わせ</button>
+          <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
           
           <!-- Sponsor Mini Buttons Area (Small Bottom Right) -->
           <div class="sponsor-mini-buttons">
             <div class="sponsor-mini-wrapper">
               <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
                 <i class="bi bi-shop"></i>
-                <span>協賛店登録 🚀</span>
+                <span>Sponsor Register 🚀</span>
               </button>
               <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
                 <i class="bi bi-box-arrow-in-right"></i>
-                <span>ログイン ✨</span>
+                <span>Login ✨</span>
               </button>
             </div>
           </div>
@@ -624,29 +624,29 @@
   <div class="sponsor-banner">
     <div class="sponsor-scroll">
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">海の家レストラン</span>
-        <span class="sponsor-offer">20%OFF</span>
+        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="Beachside Restaurant" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">Beachside Restaurant</span>
+        <span class="sponsor-offer">20% OFF</span>
       </div>
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="山田温泉ホテル" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">山田温泉ホテル</span>
-        <span class="sponsor-offer">特別価格</span>
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="Yamada Hot Springs Hotel" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">Yamada Hot Springs Hotel</span>
+        <span class="sponsor-offer">Special Price</span>
       </div>
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="サクラ観光バス" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">サクラ観光バス</span>
-        <span class="sponsor-offer">送迎無料</span>
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="Sakura Tour Bus" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">Sakura Tour Bus</span>
+        <span class="sponsor-offer">Free Pickup</span>
       </div>
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="伝統工芸体験館" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">伝統工芸体験館</span>
-        <span class="sponsor-offer">体験割引</span>
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="Traditional Craft Center" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">Traditional Craft Center</span>
+        <span class="sponsor-offer">Experience Discount</span>
       </div>
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="地元特産品店" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">地元特産品店</span>
-        <span class="sponsor-offer">お土産10%OFF</span>
+        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="Local Specialty Store" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">Local Specialty Store</span>
+        <span class="sponsor-offer">Souvenir 10% OFF</span>
       </div>
       <div class="sponsor-item">
         <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&h=60&fit=crop" alt="カフェ桜" class="sponsor-logo" onerror="this.style.display='none'">
@@ -672,9 +672,67 @@
         </div>
       </div>
       
-      <!-- Filter Button -->
-      <div class="text-center mb-4">
-        <button class="btn btn-outline-primary">Filter Guides</button>
+      <!-- Filter Section -->
+      <div class="card mb-4" id="filter-section">
+        <div class="card-header">
+          <h5 class="mb-0">Filter Guides</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="filter-location" class="form-label">Location</label>
+              <select id="filter-location" class="form-select">
+                <option value="">All Locations</option>
+                <option value="tokyo">Tokyo</option>
+                <option value="osaka">Osaka</option>
+                <option value="kyoto">Kyoto</option>
+                <option value="hokkaido">Hokkaido</option>
+                <option value="hiroshima">Hiroshima</option>
+                <option value="okinawa">Okinawa</option>
+                <option value="kanagawa">Kanagawa</option>
+                <option value="chiba">Chiba</option>
+                <option value="saitama">Saitama</option>
+                <option value="aichi">Aichi</option>
+                <option value="fukuoka">Fukuoka</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="filter-language" class="form-label">Language</label>
+              <select id="filter-language" class="form-select">
+                <option value="">All Languages</option>
+                <option value="english">English</option>
+                <option value="chinese">Chinese</option>
+                <option value="korean">Korean</option>
+                <option value="french">French</option>
+                <option value="spanish">Spanish</option>
+                <option value="portuguese">Portuguese</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="filter-specialties" class="form-label">Specialty</label>
+              <select id="filter-specialties" class="form-select">
+                <option value="">All Specialties</option>
+                <option value="culture">Culture</option>
+                <option value="history">History</option>
+                <option value="food">Food & Cuisine</option>
+                <option value="nature">Nature</option>
+                <option value="shopping">Shopping</option>
+                <option value="temples">Temples</option>
+                <option value="photography">Photography</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="search-guides" class="form-label">Search</label>
+              <input type="text" id="search-guides" class="form-control" placeholder="Search guides...">
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12 text-end">
+              <button type="button" class="btn btn-outline-secondary me-2" onclick="resetFilters()">Reset</button>
+              <button type="button" class="btn btn-primary" onclick="applyFiltersManual()">Apply Filters</button>
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Guide Cards -->
@@ -1180,34 +1238,34 @@
         <div class="modal-body">
           <form id="contact-form">
             <div class="mb-3">
-              <label for="contact-name" class="form-label">お名前 <span class="text-danger">*</span></label>
+              <label for="contact-name" class="form-label">Name <span class="text-danger">*</span></label>
               <input type="text" class="form-control" id="contact-name" required>
             </div>
             
             <div class="mb-3">
-              <label for="contact-email" class="form-label">メールアドレス <span class="text-danger">*</span></label>
+              <label for="contact-email" class="form-label">Email Address <span class="text-danger">*</span></label>
               <input type="email" class="form-control" id="contact-email" required>
             </div>
             
             <div class="mb-3">
-              <label for="contact-subject" class="form-label">件名 <span class="text-danger">*</span></label>
+              <label for="contact-subject" class="form-label">Subject <span class="text-danger">*</span></label>
               <select class="form-select" id="contact-subject" required>
-                <option value="" selected disabled>選択してください</option>
-                <option value="general">一般的なお問い合わせ</option>
-                <option value="service">サービスについて</option>
-                <option value="support">サポートが必要</option>
-                <option value="feedback">フィードバック・提案</option>
-                <option value="other">その他</option>
+                <option value="" selected disabled>Please select</option>
+                <option value="general">General Inquiry</option>
+                <option value="service">About Services</option>
+                <option value="support">Need Support</option>
+                <option value="feedback">Feedback & Suggestions</option>
+                <option value="other">Other</option>
               </select>
             </div>
             
             <div class="mb-3">
-              <label for="contact-message" class="form-label">メッセージ <span class="text-danger">*</span></label>
+              <label for="contact-message" class="form-label">Message <span class="text-danger">*</span></label>
               <textarea class="form-control" id="contact-message" rows="5" required></textarea>
             </div>
             
             <div class="d-grid">
-              <button type="submit" class="btn btn-primary">送信する</button>
+              <button type="submit" class="btn btn-primary">Send Message</button>
             </div>
           </form>
         </div>
