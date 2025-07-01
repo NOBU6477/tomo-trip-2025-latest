@@ -165,22 +165,37 @@
 
   // ガイドカード表示
   function displayGuides() {
-    // 英語版では HTML内に既存の70件のガイドがあるため、
-    // JavaScript での追加生成を完全に停止
-    console.log('英語版: HTML内の既存70ガイドのみ使用');
+    console.log('英語版: 70人分のガイドカードを生成表示');
     
-    // 既存のHTMLガイドカードを確認
-    const existingCards = document.querySelectorAll('.guide-item, .col-lg-4, .col-md-6');
+    const guidesContainer = document.getElementById('guide-cards-container');
+    if (!guidesContainer) {
+      console.error('guide-cards-containerが見つかりません');
+      return;
+    }
+    
+    // 既存の3枚のカードを保持
+    const existingCards = document.querySelectorAll('#guide-cards-container .col-lg-4');
     console.log(`既存HTMLガイドカード数: ${existingCards.length}`);
     
-    // HTMLガイドカードにdata-guide-id属性を付与
-    existingCards.forEach((card, index) => {
+    // 追加ガイドを生成（67枚追加して合計70枚に）
+    const additionalGuides = generateAdditionalGuides();
+    console.log(`追加生成ガイド数: ${additionalGuides.length}`);
+    
+    // 追加ガイドカードを生成してDOMに追加
+    additionalGuides.forEach(guide => {
+      const cardHTML = createGuideCard(guide);
+      guidesContainer.insertAdjacentHTML('beforeend', cardHTML);
+    });
+    
+    // 全ガイドカードにdata-guide-id属性を付与
+    const allCards = document.querySelectorAll('#guide-cards-container .col-lg-4');
+    allCards.forEach((card, index) => {
       if (!card.dataset.guideId) {
-        card.dataset.guideId = `html-${index + 1}`;
+        card.dataset.guideId = `guide-${index + 1}`;
       }
     });
     
-    return; // 追加生成を実行しない
+    console.log(`英語版: 合計${allCards.length}枚のガイドカードを表示`);
   }
 
   // カウンター更新
