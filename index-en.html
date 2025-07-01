@@ -246,6 +246,240 @@
       color: white;
     }
 
+    /* Sponsor Advertisement Banner - Right to Left Scroll */
+    .sponsor-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 15px 0;
+      overflow: hidden;
+      position: relative;
+      white-space: nowrap;
+      border-bottom: 3px solid #4f46e5;
+    }
+
+    .sponsor-scroll {
+      display: inline-block;
+      animation: scrollRight 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    .sponsor-item {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.95);
+      margin: 0 20px;
+      padding: 8px 20px;
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      vertical-align: middle;
+    }
+
+    .sponsor-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .sponsor-logo {
+      height: 30px;
+      width: auto;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .sponsor-text {
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .sponsor-offer {
+      background: #ff6b6b;
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-left: 8px;
+      font-weight: bold;
+    }
+
+    @keyframes scrollRight {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    /* Sponsor Mini Buttons - Small Right Bottom Design */
+    .sponsor-mini-buttons {
+      position: absolute;
+      bottom: -80px;
+      right: 0;
+      z-index: 10;
+    }
+
+    .sponsor-mini-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-end;
+    }
+
+    .sponsor-mini-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 24px;
+      border: none;
+      border-radius: 35px;
+      font-size: 16px;
+      font-weight: 700;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+      backdrop-filter: blur(15px);
+      font-family: 'Nunito', 'Quicksand', 'Comic Sans MS', cursive, -apple-system, BlinkMacSystemFont, sans-serif;
+      box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.15),
+        0 4px 10px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      min-width: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sponsor-mini-btn.sponsor-register {
+      background: linear-gradient(135deg, 
+        #ff6b9d 0%, 
+        #c44569 30%,
+        #f8b500 70%,
+        #ff6b9d 100%);
+      color: white;
+      animation: gentlePulse 4s ease-in-out infinite;
+    }
+
+    .sponsor-mini-btn.sponsor-login {
+      background: linear-gradient(135deg, 
+        #4facfe 0%, 
+        #00f2fe 30%,
+        #43e97b 70%,
+        #4facfe 100%);
+      color: white;
+      animation: gentlePulse 4s ease-in-out infinite 2s;
+    }
+
+    .sponsor-mini-btn:hover {
+      transform: translateY(-6px) scale(1.08);
+      animation: buttonWiggle 0.6s ease-in-out;
+    }
+
+    .sponsor-mini-btn.sponsor-register:hover {
+      box-shadow: 
+        0 20px 50px rgba(255, 107, 157, 0.5),
+        0 10px 25px rgba(255, 107, 157, 0.3);
+    }
+
+    .sponsor-mini-btn.sponsor-login:hover {
+      box-shadow: 
+        0 20px 50px rgba(79, 172, 254, 0.5),
+        0 10px 25px rgba(79, 172, 254, 0.3);
+    }
+
+    @keyframes buttonWiggle {
+      0%, 100% { transform: translateY(-6px) scale(1.08) rotateZ(0deg); }
+      25% { transform: translateY(-6px) scale(1.08) rotateZ(-1deg); }
+      75% { transform: translateY(-6px) scale(1.08) rotateZ(1deg); }
+    }
+
+    @keyframes gentlePulse {
+      0%, 100% { 
+        box-shadow: 
+          0 8px 25px rgba(0, 0, 0, 0.15),
+          0 4px 10px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+      50% { 
+        box-shadow: 
+          0 12px 35px rgba(0, 0, 0, 0.2),
+          0 6px 15px rgba(0, 0, 0, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      }
+    }
+
+    .sponsor-mini-btn i {
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 45px;
+      height: 45px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    .sponsor-mini-btn:hover i {
+      transform: rotate(15deg) scale(1.15);
+      background: rgba(255, 255, 255, 0.4);
+      animation: iconBounce 0.6s ease-in-out infinite;
+    }
+
+    @keyframes iconBounce {
+      0%, 100% { transform: rotate(15deg) scale(1.15); }
+      50% { transform: rotate(15deg) scale(1.25); }
+    }
+
+    .sponsor-mini-btn span {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      font-family: 'Nunito', 'Quicksand', 'Comic Sans MS', cursive, -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .sponsor-mini-btn:hover span {
+      transform: translateX(3px);
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Shine Effect */
+    .sponsor-mini-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.6), 
+        rgba(255, 255, 255, 0.8),
+        rgba(255, 255, 255, 0.6),
+        transparent);
+      transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: skewX(-25deg);
+    }
+
+    .sponsor-mini-btn:hover::before {
+      left: 100%;
+    }
+
+    /* Click Feedback */
+    .sponsor-mini-btn:active {
+      transform: translateY(-3px) scale(1.03);
+      transition: all 0.1s ease;
+    }
+
+    /* Animation Pause on Hover */
+    .sponsor-banner:hover .sponsor-scroll {
+      animation-play-state: paused;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .hero-section {
@@ -365,12 +599,62 @@
         <div class="col-lg-8">
           <h1 class="display-4 fw-bold mb-4">Connect with Local Japanese Guides</h1>
           <p class="lead mb-4">Experience authentic Japan through the eyes of locals. Book verified guides for personalized cultural experiences.</p>
-          <button class="btn btn-primary btn-lg me-3" data-bs-toggle="modal" data-bs-target="#registerTouristModal">Find a Guide</button>
-          <button class="btn btn-outline-light btn-lg" data-bs-toggle="modal" data-bs-target="#registerGuideModal">Become a Guide</button>
+          <a href="#guides" class="btn btn-primary btn-lg me-3">Find a Guide</a>
+          <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">お問い合わせ</button>
+          
+          <!-- Sponsor Mini Buttons Area (Small Bottom Right) -->
+          <div class="sponsor-mini-buttons">
+            <div class="sponsor-mini-wrapper">
+              <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
+                <i class="bi bi-shop"></i>
+                <span>協賛店登録 🚀</span>
+              </button>
+              <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
+                <i class="bi bi-box-arrow-in-right"></i>
+                <span>ログイン ✨</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Sponsor Advertisement Banner -->
+  <div class="sponsor-banner">
+    <div class="sponsor-scroll">
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">海の家レストラン</span>
+        <span class="sponsor-offer">20%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="山田温泉ホテル" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">山田温泉ホテル</span>
+        <span class="sponsor-offer">特別価格</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="サクラ観光バス" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">サクラ観光バス</span>
+        <span class="sponsor-offer">送迎無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="伝統工芸体験館" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">伝統工芸体験館</span>
+        <span class="sponsor-offer">体験割引</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="地元特産品店" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">地元特産品店</span>
+        <span class="sponsor-offer">お土産10%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&h=60&fit=crop" alt="カフェ桜" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">カフェ桜</span>
+        <span class="sponsor-offer">ドリンク無料</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Popular Guides Section -->
   <section id="guides" class="py-5">
