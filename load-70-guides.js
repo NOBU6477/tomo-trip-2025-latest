@@ -291,10 +291,10 @@
 
   // Filter functionality for Japanese version
   function setupFilters() {
-    const locationFilter = document.getElementById('filter-location');
-    const languageFilter = document.getElementById('filter-language');
-    const specialtyFilter = document.getElementById('filter-specialties');
-    const searchInput = document.getElementById('search-guides');
+    const locationFilter = document.getElementById('location-filter');
+    const languageFilter = document.getElementById('language-filter');
+    const feeFilter = document.getElementById('fee-filter');
+    const keywordFilter = document.getElementById('keyword-filter');
 
     function applyFilters() {
       const guidesContainer = document.getElementById('guide-cards-container');
@@ -329,12 +329,24 @@
           }
         }
 
-        // Search filter
-        if (searchInput && searchInput.value.trim()) {
-          const searchTerm = searchInput.value.toLowerCase();
+        // Fee filter
+        if (feeFilter && feeFilter.value) {
+          const fee = guide.fee || 6000;
+          const feeRange = feeFilter.value;
+          
+          if (feeRange === '6000-10000' && (fee < 6000 || fee > 10000)) shouldShow = false;
+          if (feeRange === '10000-15000' && (fee < 10000 || fee > 15000)) shouldShow = false;
+          if (feeRange === '15000-20000' && (fee < 15000 || fee > 20000)) shouldShow = false;
+          if (feeRange === '20000+' && fee < 20000) shouldShow = false;
+        }
+
+        // Keyword filter
+        if (keywordFilter && keywordFilter.value.trim()) {
+          const searchTerm = keywordFilter.value.toLowerCase();
           if (!guide.name.toLowerCase().includes(searchTerm) && 
               !guide.description.toLowerCase().includes(searchTerm) &&
-              !guide.location.toLowerCase().includes(searchTerm)) {
+              !guide.location.toLowerCase().includes(searchTerm) &&
+              !guide.keywords.some(keyword => keyword.toLowerCase().includes(searchTerm))) {
             shouldShow = false;
           }
         }
@@ -353,8 +365,14 @@
     // Add event listeners to filters
     if (locationFilter) locationFilter.addEventListener('change', applyFilters);
     if (languageFilter) languageFilter.addEventListener('change', applyFilters);
-    if (specialtyFilter) specialtyFilter.addEventListener('change', applyFilters);
-    if (searchInput) searchInput.addEventListener('input', applyFilters);
+    if (feeFilter) feeFilter.addEventListener('change', applyFilters);
+    if (keywordFilter) keywordFilter.addEventListener('input', applyFilters);
+
+    // Apply filters button
+    const applyButton = document.getElementById('apply-filters');
+    if (applyButton) {
+      applyButton.addEventListener('click', applyFilters);
+    }
 
     console.log('Japanese version filters setup complete');
   }
