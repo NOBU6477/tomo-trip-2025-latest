@@ -195,11 +195,7 @@
   </style>
 </head>
 <body>
-  <!-- Language Switcher -->
-  <div class="language-switcher">
-    <a href="index.html" class="lang-btn">日本語</a>
-    <a href="index-en.html" class="lang-btn active">English</a>
-  </div>
+
 
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
@@ -228,6 +224,16 @@
             <a class="nav-link" href="#how-to-use">How to Use</a>
           </li>
         </ul>
+        
+        <div class="dropdown me-3">
+          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            English
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+            <li><a class="dropdown-item" href="index.html" style="cursor:pointer;">日本語</a></li>
+            <li><a class="dropdown-item" href="index-en.html" style="cursor:pointer;">English</a></li>
+          </ul>
+        </div>
         
         <!-- User Menu Area -->
         <div id="navbar-user-area">
