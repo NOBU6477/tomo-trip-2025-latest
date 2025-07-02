@@ -58,25 +58,40 @@
     }
   </style>
   <link href="login-modal-styles.css" rel="stylesheet">
-  <!-- 最終的なスクロール修復CSS -->
-  <style id="ultimate-scroll-css">
+  <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
+  <style id="force-scroll-css">
+    /* 全要素のoverflow:hiddenを強制的に無効化 */
+    * {
+      overflow: visible !important;
+    }
+    
     html, body {
       overflow: auto !important;
       overflow-y: auto !important;
+      overflow-x: hidden !important;
       height: auto !important;
       max-height: none !important;
       position: static !important;
       padding: 0 !important;
-      margin: 0 !important;
-    }
-    
-    body {
+      margin: 0 auto !important;
       min-height: 100vh !important;
     }
     
+    /* Bootstrapのモーダル関連クラスもスクロール有効化 */
     .modal-open {
       overflow: auto !important;
       padding-right: 0 !important;
+    }
+    
+    /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
+    .hero-section,
+    .guide-card,
+    .card,
+    .container,
+    .container-fluid,
+    section,
+    div {
+      overflow: visible !important;
     }
     
     .modal-backdrop {
@@ -6404,10 +6419,7 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- シンプルなスクロール修復システム -->
-  <script src="simple-scroll-fix.js"></script>
-  
-  <!-- ガイドカウンター修正 -->
-  <script src="fix-guide-counter.js"></script>
+  <!-- 完全修復システム - 全問題を根本解決 -->
+  <script src="complete-fix-system.js"></script>
 </body>
 </html>
