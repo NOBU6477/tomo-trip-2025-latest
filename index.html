@@ -2307,8 +2307,8 @@
       showStatus('手動初期化完了');
     }, 2000);
     
-    // 言語切り替え機能
-    function switchToJapanese() {
+    // 言語切り替え機能（この関数は ultimate-fix-all-issues.js で上書きされます）
+    function switchToJapanese_OLD() {
       // ナビゲーション
       document.querySelector('#btn-home').textContent = 'ホーム';
       document.querySelector('#btn-guides').textContent = 'ガイドを探す';
@@ -2822,7 +2822,7 @@
       showStatus('日本語に切り替えました');
     }
     
-    function switchToEnglish() {
+    function switchToEnglish_OLD() {
       // ナビゲーション
       document.querySelector('#btn-home').textContent = 'Home';
       document.querySelector('#btn-guides').textContent = 'Find Guides';
@@ -6380,10 +6380,7 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 核爆級スクロール解決システム - 全問題を根本解決 -->
-  <script src="nuclear-scroll-solution.js"></script>
-  
-  <!-- ガイド人数表示の位置修正 -->
-  <script src="guide-counter-position-fix.js"></script>
+  <!-- 全問題の最終解決システム -->
+  <script src="ultimate-fix-all-issues.js"></script>
 </body>
 </html>
