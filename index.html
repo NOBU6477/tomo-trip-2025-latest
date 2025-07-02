@@ -724,128 +724,40 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">
+        <img src="https://img.icons8.com/color/48/000000/palm-tree.png" alt="TomoTrip" style="height: 30px; width: 30px;" class="me-2">
         TomoTrip
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse show" id="navbarNav">
+      <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#top" id="btn-home">ホーム</a>
+            <a class="nav-link active" href="#top">ホーム</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#guides" id="btn-guides">ガイドを探す</a>
+            <a class="nav-link" href="#guides">ガイドを探す</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#how-it-works" id="btn-how-it-works">使い方</a>
+            <a class="nav-link" href="#how-it-works">使い方</a>
           </li>
         </ul>
         
+        <!-- 言語切り替えボタン -->
         <div class="dropdown me-3">
           <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             日本語
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item" href="index.html" style="cursor:pointer;">日本語</a></li>
-            <li><a class="dropdown-item" href="index-en.html" style="cursor:pointer;">English</a></li>
+            <li><a class="dropdown-item" href="index.html">日本語</a></li>
+            <li><a class="dropdown-item" href="index-en.html">English</a></li>
           </ul>
         </div>
         
-        <!-- ユーザーメニューエリア - 未ログイン時のみ表示 -->
+        <!-- ログイン・新規登録ボタン -->
         <div id="navbar-user-area">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-          
-          <!-- 新規登録ボタン（シンプル版） -->
-          <button class="btn btn-light" onclick="showRegisterOptions()" style="cursor:pointer;">
-            新規登録
-          </button>
-          
-          <!-- 登録オプション選択モーダル -->
-          <div class="modal fade" id="registerOptionsModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">登録方法を選択してください</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row g-3">
-                    <div class="col-12">
-                      <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
-                        <i class="bi bi-person me-2"></i>旅行者として登録
-                        <br><small class="text-light">ローカルガイドと一緒に特別な旅を体験</small>
-                      </button>
-                    </div>
-                    <div class="col-12">
-                      <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
-                        <i class="bi bi-map me-2"></i>ガイドとして登録
-                        <br><small class="text-light">あなたの知識と経験を共有しましょう</small>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <script>
-          // 直接埋め込み翻訳 - 確実な動作保証
-          window.showRegisterOptions = function() {
-            const modal = document.getElementById('registerOptionsModal');
-            if (modal && window.bootstrap) {
-              new bootstrap.Modal(modal).show();
-            }
-          };
-          
-          function doTranslation() {
-            const lang = localStorage.getItem('selectedLanguage') || localStorage.getItem('language');
-            if (lang === 'en') {
-              // 詳細を見るボタン翻訳
-              document.querySelectorAll('a, button').forEach(btn => {
-                if (btn.textContent.trim() === '詳細を見る') {
-                  btn.textContent = 'See Details';
-                }
-              });
-              
-              // ガイドカウンター翻訳
-              document.querySelectorAll('*').forEach(el => {
-                if (el.children.length === 0) {
-                  const text = el.textContent.trim();
-                  if (text === '70人のガイドが見つかりました') {
-                    el.textContent = 'Found 70 guides';
-                  }
-                  if (text.includes('人のガイドが見つかりました')) {
-                    el.textContent = text.replace(/(\d+)人のガイドが見つかりました/, 'Found $1 guides');
-                  }
-                }
-              });
-              
-              // 新規登録ボタン翻訳
-              const regBtn = document.querySelector('button[onclick="showRegisterOptions()"]');
-              if (regBtn && regBtn.textContent.includes('新規登録')) {
-                regBtn.textContent = 'Sign Up';
-              }
-            }
-          }
-          
-          // 言語切り替え
-          document.addEventListener('click', function(e) {
-            if (e.target.id === 'lang-en') {
-              localStorage.setItem('selectedLanguage', 'en');
-              setTimeout(doTranslation, 100);
-              setTimeout(doTranslation, 500);
-            }
-            if (e.target.id === 'lang-ja') {
-              localStorage.setItem('selectedLanguage', 'ja');
-              location.reload();
-            }
-          });
-          
-          // 初期翻訳
-          setTimeout(doTranslation, 1000);
-          setTimeout(doTranslation, 3000);
-          </script>
+          <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
         </div>
       </div>
     </div>
@@ -6392,6 +6304,44 @@
 
   <!-- Fix Benefit Cards Display -->
   <script src="benefit-card-fix.js"></script>
+  
+  <!-- 新規登録ボタン機能 -->
+  <script>
+    function showRegisterOptions() {
+      const modal = document.getElementById('registerOptionsModal');
+      if (modal && window.bootstrap) {
+        new bootstrap.Modal(modal).show();
+      }
+    }
+  </script>
+  
+  <!-- 登録オプション選択モーダル -->
+  <div class="modal fade" id="registerOptionsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">登録方法を選択してください</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
+                <i class="bi bi-person me-2"></i>旅行者として登録
+                <br><small class="text-light">ローカルガイドと一緒に特別な旅を体験</small>
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
+                <i class="bi bi-map me-2"></i>ガイドとして登録
+                <br><small class="text-light">あなたの知識と経験を共有しましょう</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   
   <!-- 問題のあるスクリプトファイルを全て無効化 -->
   <!-- 

@@ -505,10 +505,10 @@
 
 
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="attached_assets/TomoTripロゴ_1750951056819.png" alt="TomoTrip" height="40" class="me-2">
+        <img src="https://img.icons8.com/color/48/000000/palm-tree.png" alt="TomoTrip" style="height: 30px; width: 30px;" class="me-2">
         TomoTrip
       </a>
       
@@ -532,52 +532,25 @@
           </li>
         </ul>
         
+        <!-- Language Switcher -->
         <div class="dropdown me-3">
           <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
             English
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item" href="index.html" id="lang-ja" data-lang="ja" style="cursor:pointer;">日本語</a></li>
-            <li><a class="dropdown-item" href="index-en.html" id="lang-en" data-lang="en" style="cursor:pointer;">English</a></li>
+            <li><a class="dropdown-item" href="index.html">日本語</a></li>
+            <li><a class="dropdown-item" href="index-en.html">English</a></li>
           </ul>
         </div>
         
-        <!-- User Menu Area -->
+        <!-- Login and Sign Up Buttons -->
         <div id="navbar-user-area">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-          
-          <!-- Registration Button -->
-          <button class="btn btn-light" onclick="showRegisterOptions()">
-            Sign Up
-          </button>
-          
-          <!-- Registration Options Modal -->
-          <div class="modal fade" id="registerOptionsModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title">Choose Registration Method</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row g-3">
-                    <div class="col-12">
-                      <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
-                        <i class="bi bi-person me-2"></i>Register as Tourist
-                        <br><small class="text-light">Experience special journeys with local guides</small>
-                      </button>
-                    </div>
-                    <div class="col-12">
-                      <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
-                        <i class="bi bi-map me-2"></i>Register as Guide
-                        <br><small class="text-light">Share your knowledge and experience</small>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <button class="btn btn-light" onclick="showRegisterOptions()">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </nav>
           
           <script>
           window.showRegisterOptions = function() {
@@ -1523,5 +1496,43 @@
   
   <!-- New Tab Language Fix - Button Enhancement -->
   <script src="new-tab-language-fix.js"></script>
+  
+  <!-- Registration Button Function -->
+  <script>
+    function showRegisterOptions() {
+      const modal = document.getElementById('registerOptionsModal');
+      if (modal && window.bootstrap) {
+        new bootstrap.Modal(modal).show();
+      }
+    }
+  </script>
+  
+  <!-- Registration Options Modal -->
+  <div class="modal fade" id="registerOptionsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Choose Registration Method</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
+                <i class="bi bi-person me-2"></i>Register as Tourist
+                <br><small class="text-light">Experience special journeys with local guides</small>
+              </button>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
+                <i class="bi bi-map me-2"></i>Register as Guide
+                <br><small class="text-light">Share your knowledge and experience</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
