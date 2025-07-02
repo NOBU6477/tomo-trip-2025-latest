@@ -58,31 +58,29 @@
     }
   </style>
   <link href="login-modal-styles.css" rel="stylesheet">
-  <!-- 最優先スクロール強制CSS -->
-  <style id="critical-scroll-fix">
-    /* 最高優先度でスクロールを強制有効化 */
-    body, html {
-      overflow: visible !important;
-      overflow-y: scroll !important;
-      overflow-x: visible !important;
+  <!-- 最終的なスクロール修復CSS -->
+  <style id="ultimate-scroll-css">
+    html, body {
+      overflow: auto !important;
+      overflow-y: auto !important;
       height: auto !important;
       max-height: none !important;
-      min-height: 100vh !important;
       position: static !important;
-      padding-right: 0 !important;
-      touch-action: auto !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
     
-    /* Bootstrap Modal完全無効化 */
-    body.modal-open {
-      overflow: visible !important;
-      overflow-y: scroll !important;
+    body {
+      min-height: 100vh !important;
+    }
+    
+    .modal-open {
+      overflow: auto !important;
       padding-right: 0 !important;
     }
     
     .modal-backdrop {
       display: none !important;
-      visibility: hidden !important;
     }
   </style>
 
@@ -6357,5 +6355,11 @@
   
   <!-- 緊急スクロール修復システム - 最高優先度で実行 -->
   <script src="emergency-scroll-fix.js"></script>
+  
+  <!-- スクロール問題診断ツール -->
+  <script src="scroll-diagnostic.js"></script>
+  
+  <!-- 最終的なスクロール修復システム -->
+  <script src="ultimate-scroll-fix.js"></script>
 </body>
 </html>
