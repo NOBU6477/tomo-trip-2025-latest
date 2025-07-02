@@ -84,13 +84,21 @@
     }
     
     /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
-    .hero-section,
     .guide-card,
     .card,
     .container,
     .container-fluid,
-    section,
-    div {
+    section {
+      overflow: visible !important;
+    }
+    
+    /* ヒーローセクションのみ例外的にhiddenを維持（デザインのため） */
+    .hero-section {
+      overflow: hidden !important;
+    }
+    
+    /* その他全てのdiv要素は強制的にvisible */
+    div:not(.hero-section) {
       overflow: visible !important;
     }
     
@@ -2322,31 +2330,9 @@
       showStatus('手動初期化完了');
     }, 2000);
     
-    // 言語切り替え機能
-    function switchToJapanese() {
-      // ナビゲーション（実際のHTML構造に合わせて修正）
-      document.querySelectorAll('.nav-link').forEach((link, index) => {
-        if (index === 0) link.textContent = 'ホーム';
-        if (index === 1) link.textContent = 'ガイドを探す';
-        if (index === 2) link.textContent = '使い方';
-      });
-      
-      // ヘッダーボタンの言語切り替え（実際のHTML構造に合わせて修正）
-      document.querySelectorAll('button[data-bs-target="#loginModal"]').forEach(btn => {
-        btn.textContent = 'ログイン';
-        console.log('ログインボタンを日本語に変更');
-      });
-      
-      document.querySelectorAll('button[onclick="showRegisterOptions()"]').forEach(btn => {
-        btn.textContent = '新規登録';
-        console.log('新規登録ボタンを日本語に変更');
-      });
-      
-      document.querySelectorAll('.btn-light').forEach(btn => {
-        if (btn.textContent.includes('Sign Up') || btn.textContent.includes('新規登録')) {
-          btn.textContent = '新規登録';
-        }
-      });
+    // 旧言語切り替え機能（無効化）
+    function switchToJapanese_DISABLED() {
+      console.log('旧 switchToJapanese 関数は無効化されました');
       
       // メインコンテンツ
       const mainTitle = document.querySelector('h1');
@@ -2388,24 +2374,8 @@
       const moreButton = document.querySelector('#load-more-guides');
       if (moreButton) moreButton.textContent = 'もっと見る';
       
-      // 検索結果カウンターの翻訳（動的対応）
-      const searchCounter = document.querySelector('#search-results-counter');
-      if (searchCounter) {
-        // 既存のテキストをチェックして日本語に設定
-        if (searchCounter.textContent.includes('guides') || searchCounter.textContent.includes('Showing')) {
-          searchCounter.textContent = '3件のガイドを表示中（全76件中）';
-        } else if (searchCounter.textContent === '' || !searchCounter.textContent.includes('件')) {
-          searchCounter.textContent = '3件のガイドを表示中（全76件中）';
-        }
-      }
-      
-      // カウンターの動的監視（英語から日本語への切り替え時）
-      setTimeout(() => {
-        const searchCounterDelayed = document.querySelector('#search-results-counter');
-        if (searchCounterDelayed && searchCounterDelayed.textContent.includes('guides')) {
-          searchCounterDelayed.textContent = '3件のガイドを表示中（全76件中）';
-        }
-      }, 500);
+      // 旧検索結果カウンター機能（無効化）
+      console.log('旧カウンター更新機能は無効化されました');
       
       // 「フィルターの使い方」ボタン
       const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
@@ -2849,30 +2819,8 @@
       showStatus('日本語に切り替えました');
     }
     
-    function switchToEnglish() {
-      // ナビゲーション（実際のHTML構造に合わせて修正）
-      document.querySelectorAll('.nav-link').forEach((link, index) => {
-        if (index === 0) link.textContent = 'Home';
-        if (index === 1) link.textContent = 'Find Guides';
-        if (index === 2) link.textContent = 'How It Works';
-      });
-      
-      // ヘッダーボタンの言語切り替え（実際のHTML構造に合わせて修正）
-      document.querySelectorAll('button[data-bs-target="#loginModal"]').forEach(btn => {
-        btn.textContent = 'Login';
-        console.log('ログインボタンを英語に変更');
-      });
-      
-      document.querySelectorAll('button[onclick="showRegisterOptions()"]').forEach(btn => {
-        btn.textContent = 'Sign Up';
-        console.log('新規登録ボタンを英語に変更');
-      });
-      
-      document.querySelectorAll('.btn-light').forEach(btn => {
-        if (btn.textContent.includes('新規登録') || btn.textContent.includes('Sign Up')) {
-          btn.textContent = 'Sign Up';
-        }
-      });
+    function switchToEnglish_DISABLED() {
+      console.log('旧 switchToEnglish 関数は無効化されました');
       
       // メインコンテンツ
       const mainTitle = document.querySelector('h1');

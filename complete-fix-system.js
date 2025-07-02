@@ -188,7 +188,11 @@
   // 4. 即座に実行
   enforceScrolling();
   
-  // 5. DOMContentLoaded後に全修復実行
+  // 5. 既存の言語関数を完全上書き
+  window.switchToJapanese = null;
+  window.switchToEnglish = null;
+  
+  // 6. DOMContentLoaded後に全修復実行
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(() => {
@@ -196,7 +200,7 @@
         fixGuideDisplay();
         fixLanguageSwitching();
         console.log('🎉 DOMContentLoaded後の完全修復完了');
-      }, 500);
+      }, 100);
     });
   } else {
     setTimeout(() => {
@@ -204,8 +208,14 @@
       fixGuideDisplay();
       fixLanguageSwitching();
       console.log('🎉 即時完全修復完了');
-    }, 500);
+    }, 100);
   }
+  
+  // 7. より頻繁な強制修復
+  setInterval(() => {
+    enforceScrolling();
+    fixGuideDisplay();
+  }, 1000);
   
   // 6. 継続的監視システム
   setInterval(() => {
