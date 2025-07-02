@@ -2309,23 +2309,29 @@
     
     // 言語切り替え機能
     function switchToJapanese() {
-      // ナビゲーション
-      document.querySelector('#btn-home').textContent = 'ホーム';
-      document.querySelector('#btn-guides').textContent = 'ガイドを探す';
-      document.querySelector('#btn-how-it-works').textContent = '使い方';
+      // ナビゲーション（実際のHTML構造に合わせて修正）
+      document.querySelectorAll('.nav-link').forEach((link, index) => {
+        if (index === 0) link.textContent = 'ホーム';
+        if (index === 1) link.textContent = 'ガイドを探す';
+        if (index === 2) link.textContent = '使い方';
+      });
       
-      // ヘッダーボタンの言語切り替え
-      const loginBtn = document.querySelector('button[data-bs-target="#loginModal"]');
-      if (loginBtn) {
-        loginBtn.textContent = 'ログイン';
-        console.log('ログインボタンを日本語に変更:', loginBtn.textContent);
-      }
+      // ヘッダーボタンの言語切り替え（実際のHTML構造に合わせて修正）
+      document.querySelectorAll('button[data-bs-target="#loginModal"]').forEach(btn => {
+        btn.textContent = 'ログイン';
+        console.log('ログインボタンを日本語に変更');
+      });
       
-      const signupBtn = document.querySelector('button[onclick="showRegisterOptions()"]');
-      if (signupBtn) {
-        signupBtn.textContent = '新規登録';
-        console.log('新規登録ボタンを日本語に変更:', signupBtn.textContent);
-      }
+      document.querySelectorAll('button[onclick="showRegisterOptions()"]').forEach(btn => {
+        btn.textContent = '新規登録';
+        console.log('新規登録ボタンを日本語に変更');
+      });
+      
+      document.querySelectorAll('.btn-light').forEach(btn => {
+        if (btn.textContent.includes('Sign Up') || btn.textContent.includes('新規登録')) {
+          btn.textContent = '新規登録';
+        }
+      });
       
       // メインコンテンツ
       const mainTitle = document.querySelector('h1');
@@ -2829,23 +2835,29 @@
     }
     
     function switchToEnglish() {
-      // ナビゲーション
-      document.querySelector('#btn-home').textContent = 'Home';
-      document.querySelector('#btn-guides').textContent = 'Find Guides';
-      document.querySelector('#btn-how-it-works').textContent = 'How It Works';
+      // ナビゲーション（実際のHTML構造に合わせて修正）
+      document.querySelectorAll('.nav-link').forEach((link, index) => {
+        if (index === 0) link.textContent = 'Home';
+        if (index === 1) link.textContent = 'Find Guides';
+        if (index === 2) link.textContent = 'How It Works';
+      });
       
-      // ヘッダーボタンの言語切り替え
-      const loginBtn = document.querySelector('button[data-bs-target="#loginModal"]');
-      if (loginBtn) {
-        loginBtn.textContent = 'Login';
-        console.log('ログインボタンを英語に変更:', loginBtn.textContent);
-      }
+      // ヘッダーボタンの言語切り替え（実際のHTML構造に合わせて修正）
+      document.querySelectorAll('button[data-bs-target="#loginModal"]').forEach(btn => {
+        btn.textContent = 'Login';
+        console.log('ログインボタンを英語に変更');
+      });
       
-      const signupBtn = document.querySelector('button[onclick="showRegisterOptions()"]');
-      if (signupBtn) {
-        signupBtn.textContent = 'Sign Up';
-        console.log('新規登録ボタンを英語に変更:', signupBtn.textContent);
-      }
+      document.querySelectorAll('button[onclick="showRegisterOptions()"]').forEach(btn => {
+        btn.textContent = 'Sign Up';
+        console.log('新規登録ボタンを英語に変更');
+      });
+      
+      document.querySelectorAll('.btn-light').forEach(btn => {
+        if (btn.textContent.includes('新規登録') || btn.textContent.includes('Sign Up')) {
+          btn.textContent = 'Sign Up';
+        }
+      });
       
       // メインコンテンツ
       const mainTitle = document.querySelector('h1');
