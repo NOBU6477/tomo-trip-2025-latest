@@ -2314,6 +2314,13 @@
       document.querySelector('#btn-guides').textContent = 'ガイドを探す';
       document.querySelector('#btn-how-it-works').textContent = '使い方';
       
+      // ヘッダーボタン
+      const loginBtn = document.querySelector('button[data-bs-target="#loginModal"]');
+      if (loginBtn) loginBtn.textContent = 'ログイン';
+      
+      const signupBtn = document.querySelector('button[onclick="showRegisterOptions()"]');
+      if (signupBtn) signupBtn.textContent = '新規登録';
+      
       // メインコンテンツ
       const mainTitle = document.querySelector('h1');
       if (mainTitle) mainTitle.textContent = 'あなただけの特別な旅を';
@@ -2398,6 +2405,14 @@
           }
         });
       }, 500);
+      
+      // スクロール修復実行
+      if (window.nuclearScrollFix) {
+        setTimeout(() => {
+          window.nuclearScrollFix();
+          console.log('日本語切り替え後のスクロール修復実行');
+        }, 100);
+      }
       
       // 更に確実にするため、1秒後にも再実行
       setTimeout(() => {
@@ -2812,6 +2827,13 @@
       document.querySelector('#btn-home').textContent = 'Home';
       document.querySelector('#btn-guides').textContent = 'Find Guides';
       document.querySelector('#btn-how-it-works').textContent = 'How It Works';
+      
+      // ヘッダーボタン
+      const loginBtn = document.querySelector('button[data-bs-target="#loginModal"]');
+      if (loginBtn) loginBtn.textContent = 'Login';
+      
+      const signupBtn = document.querySelector('button[onclick="showRegisterOptions()"]');
+      if (signupBtn) signupBtn.textContent = 'Sign Up';
       
       // メインコンテンツ
       const mainTitle = document.querySelector('h1');
@@ -3298,6 +3320,14 @@
       // ガイド登録ボタン
       const guideRegisterBtn = document.querySelector('.btn-register-guide');
       if (guideRegisterBtn) guideRegisterBtn.textContent = 'Register as Guide';
+      
+      // スクロール修復実行
+      if (window.nuclearScrollFix) {
+        setTimeout(() => {
+          window.nuclearScrollFix();
+          console.log('英語切り替え後のスクロール修復実行');
+        }, 100);
+      }
       
       showStatus('Switched to English');
     }
@@ -6352,5 +6382,8 @@
   
   <!-- 核爆級スクロール解決システム - 全問題を根本解決 -->
   <script src="nuclear-scroll-solution.js"></script>
+  
+  <!-- ガイド人数表示の位置修正 -->
+  <script src="guide-counter-position-fix.js"></script>
 </body>
 </html>
