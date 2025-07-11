@@ -803,10 +803,8 @@
       </svg>
     </div>
     <!-- TomoTrip Logo -->
-    <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
-      <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 12px 24px; border-radius: 50px; font-weight: bold; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        🌴 TomoTrip
-      </div>
+    <div style="position: absolute; top: 20px; left: 20px; z-index: 1000; background: rgba(255,255,255,0.95); padding: 15px 25px; border-radius: 50px; font-weight: bold; color: #2c3e50; font-size: 28px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.3);">
+      🌴 TomoTrip
     </div>
     
     <div class="container position-relative">
@@ -3330,70 +3328,122 @@
     }
   </style>
   
-  <!-- 協賛店ボタン機能とスクロール修正 -->
+  <!-- スクロール完全修正システム -->
   <script>
-    // スクロール修正システム
-    function enableScrolling() {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-      document.body.style.position = 'static';
-      document.body.style.height = 'auto';
-      document.documentElement.style.height = 'auto';
+    // 最強のスクロール修正システム
+    (function() {
+      'use strict';
       
-      // modal-openクラスによるスクロール無効化を防止
-      const modalObserver = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.attributeName === 'class') {
-            if (document.body.classList.contains('modal-open')) {
-              document.body.style.overflow = 'auto';
-              document.body.style.paddingRight = '0';
-            }
+      // 必要なCSSスタイルを強制注入
+      function injectScrollFixCSS() {
+        const style = document.createElement('style');
+        style.id = 'scroll-fix-styles';
+        style.textContent = `
+          html, body {
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            height: auto !important;
+            position: static !important;
+            padding-right: 0 !important;
+            margin-right: 0 !important;
           }
+          
+          body.modal-open {
+            overflow-y: auto !important;
+            padding-right: 0 !important;
+          }
+          
+          .modal-backdrop {
+            backdrop-filter: blur(5px);
+          }
+          
+          * {
+            box-sizing: border-box;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+      
+      // スクロール修正を実行
+      function forceScrollFix() {
+        // 直接スタイル修正
+        document.documentElement.style.cssText = 'overflow-x: hidden !important; overflow-y: auto !important; height: auto !important; position: static !important;';
+        document.body.style.cssText = 'overflow-x: hidden !important; overflow-y: auto !important; height: auto !important; position: static !important; padding-right: 0 !important; margin-right: 0 !important;';
+        
+        // 問題のあるクラスを削除
+        document.body.classList.remove('modal-open');
+        
+        // コンソールでの確認
+        console.log('✅ スクロール修正実行完了');
+      }
+      
+      // 継続的監視システム
+      function setupContinuousMonitoring() {
+        // MutationObserver でDOM変更を監視
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'attributes' && 
+                (mutation.attributeName === 'class' || mutation.attributeName === 'style')) {
+              forceScrollFix();
+            }
+          });
         });
+        
+        observer.observe(document.body, {
+          attributes: true,
+          attributeFilter: ['class', 'style']
+        });
+        
+        observer.observe(document.documentElement, {
+          attributes: true,
+          attributeFilter: ['class', 'style']
+        });
+        
+        // 定期的なチェック（100ms間隔）
+        setInterval(forceScrollFix, 100);
+      }
+      
+      // 初期化
+      function initialize() {
+        injectScrollFixCSS();
+        forceScrollFix();
+        setupContinuousMonitoring();
+        
+        // 協賛店ボタンの設定
+        setTimeout(function() {
+          // 協賛店登録ボタン
+          const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
+          if (sponsorRegisterBtn) {
+            sponsorRegisterBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              alert('協賛店登録システムに移動します\n\n実装時にsponsor-registration.htmlに移動します');
+            });
+          }
+
+          // 協賛店ログインボタン
+          const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+          if (sponsorLoginBtn) {
+            sponsorLoginBtn.addEventListener('click', function(e) {
+              e.preventDefault();
+              alert('協賛店ダッシュボードに移動します\n\n実装時にsponsor-dashboard.htmlに移動します');
+            });
+          }
+        }, 500);
+      }
+      
+      // 即座に実行
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initialize);
+      } else {
+        initialize();
+      }
+      
+      // ページ表示時にも実行
+      window.addEventListener('pageshow', function() {
+        setTimeout(initialize, 100);
       });
       
-      modalObserver.observe(document.body, {
-        attributes: true,
-        attributeFilter: ['class']
-      });
-      
-      // 定期的にスクロールを確認・修正
-      setInterval(function() {
-        if (document.body.style.overflow === 'hidden' || 
-            document.documentElement.style.overflow === 'hidden') {
-          document.body.style.overflow = 'auto';
-          document.documentElement.style.overflow = 'auto';
-        }
-      }, 100);
-    }
-
-    // 協賛店ボタンのイベントリスナー設定
-    document.addEventListener('DOMContentLoaded', function() {
-      enableScrolling();
-      
-      // 協賛店登録ボタン
-      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
-      if (sponsorRegisterBtn) {
-        sponsorRegisterBtn.addEventListener('click', function() {
-          alert('協賛店登録システムに移動します');
-          // 実際の実装では sponsor-registration.html に移動
-          // window.location.href = 'sponsor-registration.html';
-        });
-      }
-
-      // 協賛店ログインボタン
-      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
-      if (sponsorLoginBtn) {
-        sponsorLoginBtn.addEventListener('click', function() {
-          alert('協賛店ダッシュボードに移動します');
-          // 実際の実装では sponsor-dashboard.html に移動
-          // window.location.href = 'sponsor-dashboard.html';
-        });
-      }
-    });
-
-    // 即座にスクロール修正を実行
-    enableScrolling();
+    })();
   </script>
   
   <!-- 問題のあるスクリプトファイルを無効化 -->
@@ -6437,6 +6487,7 @@
   -->
   
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
+  <script src="ultimate-scroll-fix.js"></script>
   <script src="emergency-fix.js"></script>
 </body>
 </html>
