@@ -5017,7 +5017,7 @@
   <!-- <script src="simple-working-fix.js"></script> -->
   
   <!-- 直接翻訳システム - 最もシンプルで確実 -->
-  <script src="direct-translation.js"></script>
+  <!-- <script src="direct-translation.js"></script> -->
   
   <!-- 70人ガイド表示システム -->
   <script src="load-70-guides.js"></script>
@@ -5043,7 +5043,7 @@
   <script src="ultimate-scroll-restoration.js"></script>
   
   <!-- 完全独立言語システム -->
-  <script src="complete-language-fix.js"></script>
+  <!-- <script src="complete-language-fix.js"></script> -->
   
   <!-- 専用ボタン翻訳機能 - 一時無効化 -->
   <!-- <script src="button-translator.js"></script> -->
@@ -6441,6 +6441,9 @@
   <!-- 緊急修復システム - 無効化 -->
   <!-- <script src="emergency-fix.js"></script> -->
   
+  <!-- 日本語ロックシステム - 英語翻訳を完全阻止 -->
+  <script src="japanese-lock.js"></script>
+  
   <!-- 包括修正システム - スクロール＋日本語表記強制 -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -6452,24 +6455,31 @@
         document.documentElement.style.overflow = 'auto';
         document.documentElement.style.overflowY = 'auto';
         
-        // 日本語ボタン表記の強制
-        const signUpButtons = document.querySelectorAll('button');
-        signUpButtons.forEach(btn => {
-          if (btn.textContent.includes('Sign Up')) {
+        // 日本語ボタン表記の完全強制
+        const allButtons = document.querySelectorAll('button, .btn');
+        allButtons.forEach(btn => {
+          const text = btn.textContent.trim();
+          if (text === 'Sign Up' || text.includes('Sign Up')) {
+            btn.textContent = '新規登録';
+          }
+          if (text === 'Login' || text.includes('Login')) {
+            btn.textContent = 'ログイン';
+          }
+          if (text === 'Register' && !text.includes('新規')) {
             btn.textContent = '新規登録';
           }
         });
         
-        // ナビゲーションバーのボタンも確認
-        const navbarArea = document.getElementById('navbar-user-area');
-        if (navbarArea) {
-          const buttons = navbarArea.querySelectorAll('button');
-          buttons.forEach(btn => {
-            if (btn.textContent.trim() === 'Sign Up') {
-              btn.textContent = '新規登録';
-            }
-          });
-        }
+        // 全言語切り替え機能を無効化
+        window.switchToEnglish = function() {
+          console.log('英語切り替えは無効化されています');
+          return false;
+        };
+        
+        window.switchToJapanese = function() {
+          console.log('日本語は既に適用済みです');
+          return false;
+        };
       }
       
       // 初回修正
