@@ -30,12 +30,12 @@
       pointer-events: auto !important;
     `;
 
-    // 投資店登録ボタン
+    // 協賛店登録ボタン
     const sponsorButton = document.createElement('button');
     sponsorButton.innerHTML = `
       <div style="display: flex; align-items: center; gap: 10px;">
         <i class="bi bi-shop" style="font-size: 18px;"></i>
-        <span>投資店登録</span>
+        <span>協賛店登録</span>
         <span style="font-size: 12px;">✨</span>
       </div>
     `;
@@ -65,7 +65,7 @@
     });
     
     sponsorButton.addEventListener('click', function() {
-      alert('投資店登録機能は準備中です');
+      alert('協賛店登録機能は準備中です');
     });
 
     // ログインボタン
