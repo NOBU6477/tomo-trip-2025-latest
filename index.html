@@ -6812,5 +6812,69 @@
       };
     }
   </script>
+  
+  <!-- ヘッダーボタン機能修正スクリプト -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('ヘッダーボタン機能設定開始');
+      
+      // すべてのヘッダーボタンの機能を修復
+      setTimeout(() => {
+        // ログインボタンクリック処理
+        document.querySelectorAll('[data-bs-target="#loginModal"], .btn[href*="login"]').forEach(btn => {
+          if (!btn.hasAttribute('data-header-fixed')) {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('ログインボタンクリック');
+              alert('ログイン機能は準備中です');
+            });
+            btn.setAttribute('data-header-fixed', 'true');
+          }
+        });
+        
+        // 新規登録ボタンクリック処理
+        document.querySelectorAll('[onclick*="showRegister"], .btn[href*="register"]').forEach(btn => {
+          if (!btn.hasAttribute('data-register-fixed')) {
+            btn.addEventListener('click', function(e) {
+              e.preventDefault();
+              console.log('新規登録ボタンクリック');
+              alert('新規登録機能は準備中です');
+            });
+            btn.setAttribute('data-register-fixed', 'true');
+          }
+        });
+        
+        // 言語ドロップダウンの処理
+        const langDropdown = document.getElementById('languageDropdown');
+        if (langDropdown && !langDropdown.hasAttribute('data-lang-fixed')) {
+          langDropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const menu = langDropdown.nextElementSibling;
+            if (menu && menu.classList.contains('dropdown-menu')) {
+              // 他のドロップダウンを閉じる
+              document.querySelectorAll('.dropdown-menu.show').forEach(m => {
+                if (m !== menu) m.classList.remove('show');
+              });
+              // 現在のドロップダウンをトグル
+              menu.classList.toggle('show');
+              console.log('言語ドロップダウン切り替え');
+            }
+          });
+          langDropdown.setAttribute('data-lang-fixed', 'true');
+        }
+        
+        // ドロップダウン外クリックで閉じる
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+              menu.classList.remove('show');
+            });
+          }
+        });
+        
+        console.log('ヘッダーボタン機能設定完了');
+      }, 500);
+    });
+  </script>
 </body>
 </html>
