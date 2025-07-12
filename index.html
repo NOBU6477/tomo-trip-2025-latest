@@ -990,12 +990,12 @@
     </div>
   </section>
 
-  <!-- 協賛店広告バナー - 完全制限版 -->
-  <div class="sponsor-banner" style="background: none; padding: 10px 0; overflow: hidden; height: 80px; max-height: 80px; z-index: 1; position: relative;">
-    <div class="container">
-      <h3 class="text-dark text-center mb-2" style="font-size: 1.1rem;">協賛店からの特別オファー</h3>
+  <!-- 協賛店広告バナー - 完全無効化 -->
+  <div class="sponsor-banner" style="display: none; visibility: hidden; height: 0px; max-height: 0px; overflow: hidden; z-index: 1; position: relative;">
+    <div class="container" style="display: none;">
+      <h3 class="text-dark text-center mb-2" style="font-size: 1.1rem; display: none;">協賛店からの特別オファー</h3>
     </div>
-    <div class="sponsor-scroll" style="height: 60px;">
+    <div class="sponsor-scroll" style="height: 0px; display: none;">
       <div class="sponsor-item">
         <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
         <span class="sponsor-text">海の家レストラン</span>
@@ -1094,7 +1094,7 @@
         <div style="width: 140px;"></div> <!-- スペーサー -->
       </div>
       <div class="mb-4">
-        <div id="search-results-counter"></div>
+        <div id="search-results-counter" style="display: block !important; visibility: visible !important; color: #28a745 !important; font-weight: bold !important; font-size: 1.1rem !important; padding: 10px 0 !important;">70人のガイドが見つかりました</div>
         <div id="no-results-message" class="alert alert-info text-center my-4 d-none">検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。</div>
         
         <!-- フィルター切り替えボタン -->
@@ -1247,7 +1247,7 @@
         </div>
       </div>
       
-      <div class="row guides-container" id="guide-cards-container">
+      <div class="row guides-container" id="guide-cards-container" style="display: flex !important; flex-wrap: wrap !important; visibility: visible !important; opacity: 1 !important; z-index: 10000 !important; position: relative !important; background-color: white !important; min-height: 800px !important;"
         <!-- 初期表示されるガイド -->
         <!-- ガイド1 -->
         <div class="col-md-4 guide-item">
@@ -6539,7 +6539,10 @@
   <!-- 動的ガイドシステム（スケーラブル対応） -->
   <script src="dynamic-guide-system.js"></script>
   
-  <!-- NUCLEAR LAYOUT FIX - 最終手段（最優先実行） -->
+  <!-- 即座修正スクリプト（最優先実行） -->
+  <script src="immediate-fix.js"></script>
+  
+  <!-- NUCLEAR LAYOUT FIX - 最終手段（補助） -->
   <script src="nuclear-layout-fix.js"></script>
   
   <!-- Bootstrap JavaScript Bundle -->
