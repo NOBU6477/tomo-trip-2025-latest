@@ -1080,10 +1080,10 @@
     </div>
   </div>
 
-  <!-- メインコンテンツ -->
-  <div class="container py-5">
+  <!-- メインコンテンツ - 強制表示 -->
+  <div class="container py-5" style="display: block !important; visibility: visible !important; z-index: 1000 !important; position: relative !important; background-color: white !important; margin-top: 0 !important; padding-top: 50px !important;">
     <!-- 人気のガイド -->
-    <section id="guides" class="mb-5">
+    <section id="guides" class="mb-5" style="display: block !important; visibility: visible !important; background-color: white !important; z-index: 1001 !important; position: relative !important;">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="position-relative">
           <button type="button" class="btn btn-sm btn-outline-info me-3" id="filter-tutorial-btn" style="border-radius: 20px;">
@@ -6539,7 +6539,10 @@
   <!-- 動的ガイドシステム（スケーラブル対応） -->
   <script src="dynamic-guide-system.js"></script>
   
-  <!-- 完全表示修正システム（最優先実行） -->
+  <!-- 緊急表示修正システム（最優先実行） -->
+  <script src="emergency-display-fix.js"></script>
+  
+  <!-- 完全表示修正システム（補助） -->
   <script src="complete-display-fix.js"></script>
   
   <!-- Bootstrap JavaScript Bundle -->
