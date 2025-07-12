@@ -183,6 +183,19 @@
       position: relative !important;
       z-index: 1 !important;
       overflow: hidden !important;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+    
+    /* 最重要: メインコンテンツエリアを確実に表示 */
+    .container.py-5 {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 20 !important;
+      position: relative !important;
+      background-color: white !important;
+      margin-top: 0 !important;
+      padding-top: 50px !important;
     }
     
     /* 完全な高さ制限システム */
@@ -977,9 +990,12 @@
     </div>
   </section>
 
-  <!-- 協賛店広告バナー -->
-  <div class="sponsor-banner">
-    <div class="sponsor-scroll">
+  <!-- 協賛店広告バナー - 高さ制限版 -->
+  <div class="sponsor-banner" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px 0; overflow: hidden; height: 100px; max-height: 100px;">
+    <div class="container">
+      <h3 class="text-white text-center mb-2" style="font-size: 1.2rem;">協賛店からの特別オファー</h3>
+    </div>
+    <div class="sponsor-scroll" style="height: 60px;">
       <div class="sponsor-item">
         <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
         <span class="sponsor-text">海の家レストラン</span>
@@ -1063,8 +1079,6 @@
       </div>
     </div>
   </div>
-
-
 
   <!-- メインコンテンツ -->
   <div class="container py-5">

@@ -24,7 +24,8 @@
     purpleElements.forEach((element, index) => {
       // スポンサーバナーは100px、ヒーローセクションは350px
       const isHero = element.classList.contains('hero-section') || 
-                     element.style.height === '350px';
+                     element.style.height === '350px' ||
+                     element.querySelector('h1, .hero-title');
       const maxHeight = isHero ? '350px' : '100px';
       
       element.style.height = maxHeight;
@@ -33,7 +34,25 @@
       element.style.position = 'relative';
       element.style.zIndex = isHero ? '2' : '1';
       
+      // 最重要: スポンサーバナーの完全な高さ制限
+      if (!isHero) {
+        element.style.minHeight = '100px';
+        element.style.boxSizing = 'border-box';
+      }
+      
       console.log(`紫色要素 ${index + 1} 高さ制限: ${maxHeight}`);
+    });
+    
+    // 特に問題のあるスポンサーバナーを直接指定
+    const sponsorBanners = document.querySelectorAll('.sponsor-banner');
+    sponsorBanners.forEach(banner => {
+      banner.style.height = '100px';
+      banner.style.maxHeight = '100px';
+      banner.style.minHeight = '100px';
+      banner.style.overflow = 'hidden';
+      banner.style.position = 'relative';
+      banner.style.zIndex = '1';
+      banner.style.padding = '15px 0';
     });
     
     // 2. メインコンテンツエリアの強制表示
@@ -41,15 +60,30 @@
     if (guidesSection) {
       guidesSection.style.display = 'block';
       guidesSection.style.visibility = 'visible';
-      guidesSection.style.zIndex = '10';
+      guidesSection.style.zIndex = '20';
       guidesSection.style.position = 'relative';
       guidesSection.style.backgroundColor = '#f8f9fa';
       guidesSection.style.minHeight = '800px';
       guidesSection.style.padding = '30px 0';
       guidesSection.style.margin = '0';
       guidesSection.style.clear = 'both';
+      guidesSection.style.top = '0';
       console.log('ガイドセクション表示強制完了');
     }
+    
+    // 2.1. メインコンテナの強制表示
+    const mainContainers = document.querySelectorAll('.container.py-5');
+    mainContainers.forEach(container => {
+      container.style.display = 'block';
+      container.style.visibility = 'visible';
+      container.style.opacity = '1';
+      container.style.zIndex = '25';
+      container.style.position = 'relative';
+      container.style.backgroundColor = 'white';
+      container.style.marginTop = '0';
+      container.style.paddingTop = '50px';
+      container.style.clear = 'both';
+    });
     
     // 3. ガイドカードコンテナの完全修正
     const container = document.getElementById('guide-cards-container');
