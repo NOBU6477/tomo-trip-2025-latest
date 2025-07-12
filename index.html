@@ -182,6 +182,33 @@
       height: 100px !important;
       position: relative !important;
       z-index: 1 !important;
+      overflow: hidden !important;
+    }
+    
+    /* 完全な高さ制限システム */
+    .hero-section {
+      max-height: 350px !important;
+      height: 350px !important;
+      overflow: hidden !important;
+    }
+    
+    /* 全ページレイアウト強制修正 */
+    body {
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+    }
+    
+    html {
+      overflow-y: auto !important;
+      height: auto !important;
+    }
+    
+    /* コンテナ全体の表示強制 */
+    .container {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
     
     /* ガイドカードコンテナの強制表示 */
@@ -6498,6 +6525,9 @@
   <!-- 動的ガイドシステム（スケーラブル対応） -->
   <script src="dynamic-guide-system.js"></script>
   
+  <!-- 完全表示修正システム（最優先実行） -->
+  <script src="complete-display-fix.js"></script>
+  
   <!-- Bootstrap JavaScript Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
@@ -6916,13 +6946,20 @@
       
       // 即座に実行する緊急修正
       const emergencyFix = () => {
-        // 1. スポンサーバナーの高さを強制制限
-        document.querySelectorAll('.sponsor-banner').forEach(banner => {
+        // 1. 全ての紫色背景セクションの高さを強制制限
+        document.querySelectorAll('.sponsor-banner, [style*="linear-gradient"], [style*="purple"], [style*="#667eea"]').forEach(banner => {
           banner.style.height = '100px';
           banner.style.maxHeight = '100px';
           banner.style.overflow = 'hidden';
           banner.style.position = 'relative';
           banner.style.zIndex = '1';
+        });
+        
+        // ヒーローセクションの高さ制限
+        document.querySelectorAll('.hero-section, [style*="height: 350px"]').forEach(hero => {
+          hero.style.height = '350px';
+          hero.style.maxHeight = '350px';
+          hero.style.overflow = 'hidden';
         });
         
         // 2. メインコンテンツエリアの強制表示
@@ -6968,9 +7005,21 @@
           counter.style.fontSize = '1.1rem';
         }
         
-        // 5. スクロール機能の確保
+        // 5. スクロール機能の確保と全ページ表示修正
         document.body.style.overflow = 'auto';
+        document.body.style.overflowY = 'auto';
+        document.body.style.height = 'auto';
+        document.body.style.minHeight = '100vh';
         document.documentElement.style.overflow = 'auto';
+        document.documentElement.style.overflowY = 'auto';
+        document.documentElement.style.height = 'auto';
+        
+        // 全てのコンテナの表示確保
+        document.querySelectorAll('.container').forEach(container => {
+          container.style.display = 'block';
+          container.style.visibility = 'visible';
+          container.style.opacity = '1';
+        });
         
         console.log('緊急修正適用完了');
       };
@@ -6984,7 +7033,7 @@
       // 1秒後にも再実行
       setTimeout(emergencyFix, 1000);
       
-      // 2秒後に最終確認
+      // 2秒後に最終確認と強制表示
       setTimeout(() => {
         emergencyFix();
         
@@ -6996,10 +7045,32 @@
           
           if (cardCount < 70) {
             console.log('まだ不足 - 追加生成実行');
-            loadAllGuides();
+            if (typeof loadAllGuides === 'function') {
+              loadAllGuides();
+            }
           }
         }
+        
+        // 強制スクロール有効化
+        window.scrollTo(0, 100);
+        setTimeout(() => window.scrollTo(0, 0), 100);
+        
+        console.log('=== 最終修正完了 ===');
       }, 2000);
+      
+      // 5秒後に追加確認
+      setTimeout(() => {
+        const guidesSection = document.getElementById('guides');
+        if (guidesSection && !guidesSection.offsetHeight) {
+          console.log('ガイドセクション非表示 - 強制表示実行');
+          guidesSection.style.display = 'block';
+          guidesSection.style.visibility = 'visible';
+          guidesSection.style.position = 'relative';
+          guidesSection.style.zIndex = '100';
+          guidesSection.style.backgroundColor = 'white';
+          guidesSection.style.minHeight = '500px';
+        }
+      }, 5000);
     });
   </script>
 </body>
