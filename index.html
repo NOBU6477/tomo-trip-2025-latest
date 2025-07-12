@@ -62,7 +62,7 @@
   <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
   <style id="force-scroll-css">
     /* 全要素のoverflow:hiddenを強制的に無効化（スポンサーバナー除く） */
-    *:not(.sponsor-banner) {
+    *:not(.sponsor-banner):not(.sponsor-scroll) {
       overflow: visible !important;
     }
     
@@ -705,6 +705,15 @@
       100% {
         transform: translateX(-100%);
       }
+    }
+    
+    /* スポンサーバナーの強制表示 */
+    .sponsor-banner {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      height: auto !important;
+      min-height: 60px !important;
     }
 
     /* モバイル対応 */
@@ -6439,6 +6448,7 @@
   
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
   <script src="emergency-fix.js"></script>
+  <script src="force-sponsor-display.js"></script>
   <script src="final-fix.js"></script>
 </body>
 </html>
