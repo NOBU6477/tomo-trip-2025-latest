@@ -642,31 +642,31 @@
       }
     }
 
-    /* 協賛店広告バナー - 静的表示（スクロールなし） */
+    /* 協賛店広告バナー - 右から左へのスクロール */
     .sponsor-banner {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 15px 0;
+      overflow: hidden;
       position: relative;
+      white-space: nowrap;
       border-bottom: 3px solid #4f46e5;
     }
 
     .sponsor-scroll {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
+      display: inline-block;
+      animation: scrollRight 30s linear infinite;
+      white-space: nowrap;
     }
 
     .sponsor-item {
-      display: flex;
-      align-items: center;
+      display: inline-block;
       background: rgba(255, 255, 255, 0.95);
-      margin: 5px;
+      margin: 0 20px;
       padding: 8px 20px;
       border-radius: 25px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease;
-      white-space: nowrap;
+      vertical-align: middle;
     }
 
     .sponsor-item:hover {
@@ -698,7 +698,14 @@
       font-weight: bold;
     }
 
-    /* スクロールアニメーション削除済み */
+    @keyframes scrollRight {
+      0% {
+        transform: translateX(100%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
 
     /* モバイル対応 */
     @media (max-width: 768px) {
@@ -725,7 +732,10 @@
       }
     }
 
-    /* アニメーション削除により不要 */
+    /* アニメーション一時停止（ホバー時） */
+    .sponsor-banner:hover .sponsor-scroll {
+      animation-play-state: paused;
+    }
   </style>
 </head>
 <body>
@@ -867,7 +877,47 @@
         <span class="sponsor-text">レンタル自転車</span>
         <span class="sponsor-offer">1日レンタル</span>
       </div>
-      <!-- 重複削除済み -->
+      <!-- 繰り返し表示でシームレスなループを作成 -->
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">海の家レストラン</span>
+        <span class="sponsor-offer">20%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="山田温泉ホテル" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">山田温泉ホテル</span>
+        <span class="sponsor-offer">特別価格</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="サクラ観光バス" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">サクラ観光バス</span>
+        <span class="sponsor-offer">送迎無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="伝統工芸体験館" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">伝統工芸体験館</span>
+        <span class="sponsor-offer">体験割引</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="地元特産品店" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">地元特産品店</span>
+        <span class="sponsor-offer">お土産10%OFF</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&h=60&fit=crop" alt="カフェ桜" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">カフェ桜</span>
+        <span class="sponsor-offer">ドリンク1杯無料</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=100&h=60&fit=crop" alt="釣り船太郎" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">釣り船太郎</span>
+        <span class="sponsor-offer">初回半額</span>
+      </div>
+      <div class="sponsor-item">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=60&fit=crop" alt="レンタル自転車" class="sponsor-logo" onerror="this.style.display='none'">
+        <span class="sponsor-text">レンタル自転車</span>
+        <span class="sponsor-offer">1日レンタル</span>
+      </div>
     </div>
   </div>
 
@@ -6389,5 +6439,6 @@
   
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
   <script src="emergency-fix.js"></script>
+  <script src="fix-sign-up-button.js"></script>
 </body>
 </html>
