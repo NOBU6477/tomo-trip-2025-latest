@@ -8,6 +8,116 @@
       </div>
       <div class="modal-body">
         <form id="guideRegistrationForm" enctype="multipart/form-data">
+          
+          <!-- 基本情報セクション -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">基本情報</h6>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="guide-name" class="form-label">氏名 *</label>
+                <input type="text" class="form-control" name="guide-name" id="guide-name" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="guide-location" class="form-label">活動地域 *</label>
+                <select class="form-select" name="guide-location" id="guide-location" required>
+                  <option value="">地域を選択</option>
+                  <option value="北海道">北海道</option>
+                  <option value="東京都">東京都</option>
+                  <option value="神奈川県">神奈川県</option>
+                  <option value="大阪府">大阪府</option>
+                  <option value="京都府">京都府</option>
+                  <option value="愛知県">愛知県</option>
+                  <option value="福岡県">福岡県</option>
+                  <option value="その他">その他</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="guide-specialty" class="form-label">専門分野 *</label>
+                <select class="form-select" name="guide-specialty" id="guide-specialty" required>
+                  <option value="">専門分野を選択</option>
+                  <option value="歴史ガイド">歴史ガイド</option>
+                  <option value="食べ歩き">食べ歩き</option>
+                  <option value="自然散策">自然散策</option>
+                  <option value="文化体験">文化体験</option>
+                  <option value="街歩き">街歩き</option>
+                  <option value="温泉案内">温泉案内</option>
+                  <option value="寺社巡り">寺社巡り</option>
+                  <option value="アニメ聖地">アニメ聖地</option>
+                  <option value="写真撮影">写真撮影</option>
+                  <option value="総合ガイド">総合ガイド</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="guide-fee" class="form-label">料金（円/セッション） *</label>
+                <input type="number" class="form-control" name="guide-fee" id="guide-fee" min="6000" value="6000" required>
+                <div class="form-text">最低料金: ¥6,000</div>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="guide-description" class="form-label">自己紹介・サービス内容 *</label>
+              <textarea class="form-control" name="guide-description" id="guide-description" rows="4" required 
+                        placeholder="あなたのガイドサービスについて詳しく説明してください（経験、得意分野、提供できる価値など）"></textarea>
+            </div>
+          </div>
+          
+          <!-- 言語設定 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">対応言語</h6>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="guide-languages" value="日本語" id="lang-japanese" checked>
+                  <label class="form-check-label" for="lang-japanese">日本語</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="guide-languages" value="英語" id="lang-english">
+                  <label class="form-check-label" for="lang-english">英語</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="guide-languages" value="中国語" id="lang-chinese">
+                  <label class="form-check-label" for="lang-chinese">中国語</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="guide-languages" value="韓国語" id="lang-korean">
+                  <label class="form-check-label" for="lang-korean">韓国語</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="guide-languages" value="フランス語" id="lang-french">
+                  <label class="form-check-label" for="lang-french">フランス語</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="guide-languages" value="スペイン語" id="lang-spanish">
+                  <label class="form-check-label" for="lang-spanish">スペイン語</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- キーワード設定 -->
+          <div class="mb-4">
+            <h6 class="fw-bold mb-3">キーワード・特徴</h6>
+            <input type="text" class="form-control" name="guide-keywords" id="guide-keywords" 
+                   placeholder="例: 歴史, 街歩き, 写真撮影, グルメ（カンマ区切り）">
+            <div class="form-text">検索で見つけやすくなるキーワードを入力してください</div>
+          </div>
+          
+          <!-- 送信ボタン -->
+          <div class="mb-3 text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-5">
+              <i class="bi bi-person-plus me-2"></i>ガイドとして登録
+            </button>
+            <div class="form-text mt-2">
+              登録後、すぐにガイド一覧に表示されます
+            </div>
+          </div>
+          
+        </form>
           <!-- プロフィール写真セクション -->
           <div class="mb-4">
             <h6 class="fw-bold mb-3">プロフィール写真</h6>
