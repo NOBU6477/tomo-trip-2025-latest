@@ -781,7 +781,7 @@
         <!-- ログイン・新規登録ボタン -->
         <div id="navbar-user-area">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-          <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
+          <button class="btn btn-light" onclick="showRegisterOptions()" id="signup-button-fixed">新規登録</button>
         </div>
       </div>
     </div>
@@ -6443,6 +6443,46 @@
   
   <!-- 日本語ロックシステム - 英語翻訳を完全阻止 -->
   <script src="japanese-lock.js"></script>
+  
+  <!-- 最強日本語ボタン修正 - 直接DOM操作 -->
+  <script>
+    // 超高頻度での直接DOM修正
+    (function nuclearJapaneseFix() {
+      // 特定IDボタンの直接修正
+      const signupBtn = document.getElementById('signup-button-fixed');
+      if (signupBtn && signupBtn.textContent !== '新規登録') {
+        signupBtn.textContent = '新規登録';
+        signupBtn.innerHTML = '新規登録';
+        console.log('🚨 核心修正: ボタンテキスト強制変更');
+      }
+      
+      // 全ボタンの緊急修正
+      document.querySelectorAll('button, .btn').forEach(btn => {
+        if (btn.textContent.includes('Sign Up') || btn.textContent.trim() === 'Sign Up') {
+          btn.textContent = '新規登録';
+          btn.innerHTML = '新規登録';
+        }
+        if (btn.textContent.includes('Login') && !btn.textContent.includes('ログイン')) {
+          btn.textContent = 'ログイン';
+          btn.innerHTML = 'ログイン';
+        }
+      });
+      
+      // 1ms後に再実行
+      setTimeout(nuclearJapaneseFix, 1);
+    })();
+    
+    // 全イベントでの修正
+    ['load', 'DOMContentLoaded', 'readystatechange'].forEach(event => {
+      document.addEventListener(event, function() {
+        const btn = document.getElementById('signup-button-fixed');
+        if (btn) {
+          btn.textContent = '新規登録';
+          btn.innerHTML = '新規登録';
+        }
+      });
+    });
+  </script>
   
   <!-- 包括修正システム - スクロール＋日本語表記強制 -->
   <script>

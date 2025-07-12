@@ -9,11 +9,24 @@
   // 全ての翻訳機能を無効化
   window.switchToEnglish = function() {
     console.log('❌ 英語切り替えは無効化されています');
+    enforceJapanese(); // 即座に日本語に戻す
     return false;
   };
   
   window.translateToEnglish = function() {
     console.log('❌ 英語翻訳は無効化されています');
+    enforceJapanese(); // 即座に日本語に戻す
+    return false;
+  };
+  
+  // さらに強力な無効化
+  window.switchLanguage = function() {
+    enforceJapanese();
+    return false;
+  };
+  
+  window.directTranslation = function() {
+    enforceJapanese();
     return false;
   };
   
@@ -45,8 +58,8 @@
     });
   }
   
-  // 継続監視（10ms間隔）
-  setInterval(enforceJapanese, 10);
+  // 超高頻度監視（5ms間隔）
+  setInterval(enforceJapanese, 5);
   
   // 初回実行
   enforceJapanese();
