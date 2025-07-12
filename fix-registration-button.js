@@ -182,11 +182,19 @@
     });
   }
 
-  // 継続的な監視
+  // 制御された監視
+  let mutationCount = 0;
   const observer = new MutationObserver(function(mutations) {
+    mutationCount++;
+    if (mutationCount > 30) { // 30回実行後に停止
+      observer.disconnect();
+      console.log('Mutation監視を停止（パフォーマンス改善）');
+      return;
+    }
+    
     mutations.forEach(function(mutation) {
       if (mutation.type === 'childList' || mutation.type === 'characterData') {
-        setTimeout(fixRegistrationButton, 100);
+        setTimeout(fixRegistrationButton, 500); // 500msに変更
       }
     });
   });
@@ -197,8 +205,16 @@
     characterData: true
   });
 
-  // 定期的な修正
-  setInterval(fixRegistrationButton, 2000);
+  // 制御された定期修正
+  let periodicFixCount = 0;
+  const periodicInterval = setInterval(function() {
+    periodicFixCount++;
+    fixRegistrationButton();
+    if (periodicFixCount > 10) { // 10回実行後に停止
+      clearInterval(periodicInterval);
+      console.log('定期的なボタン修正を停止');
+    }
+  }, 3000); // 3秒間隔に変更
 
   console.log('新規登録ボタン修正システム完了');
 })();

@@ -129,8 +129,16 @@
     document.addEventListener('DOMContentLoaded', nuclearButtonFix);
   }
 
-  // 超高頻度監視
-  setInterval(nuclearButtonFix, 100);
+  // 制御された監視（無限ループ防止）
+  let fixCount = 0;
+  const controlledInterval = setInterval(function() {
+    fixCount++;
+    nuclearButtonFix();
+    if (fixCount > 20) { // 20回実行後に停止
+      clearInterval(controlledInterval);
+      console.log('核レベルボタン修正を停止（無限ループ防止）');
+    }
+  }, 1000); // 1秒間隔に変更
 
   // ウィンドウフォーカス時
   window.addEventListener('focus', nuclearButtonFix);

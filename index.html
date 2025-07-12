@@ -6354,10 +6354,20 @@
       }
       
       ultimateButtonFix();
-      setInterval(ultimateButtonFix, 200);
+      // setInterval(ultimateButtonFix, 200); // 無限ループ防止のため無効化
       
-      // DOM変更監視
-      new MutationObserver(ultimateButtonFix).observe(document.body, {
+      // DOM変更監視（制御版）
+      let observerCount = 0;
+      const observer = new MutationObserver(function(mutations) {
+        observerCount++;
+        if (observerCount > 50) { // 50回実行後に停止
+          observer.disconnect();
+          console.log('DOM監視を停止（無限ループ防止）');
+          return;
+        }
+        ultimateButtonFix();
+      });
+      observer.observe(document.body, {
         childList: true, subtree: true, characterData: true
       });
     });
@@ -6417,5 +6427,8 @@
   
   <!-- 核レベル新規登録ボタン修正 -->
   <script src="nuclear-button-fix.js"></script>
+  
+  <!-- ローディング問題修正 -->
+  <script src="loading-fix.js"></script>
 </body>
 </html>
