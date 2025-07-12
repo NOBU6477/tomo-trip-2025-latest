@@ -156,9 +156,12 @@
       max-width: 100% !important;
     }
     
-    /* ヒーローセクションは現状維持 */
+    /* ヒーローセクション修正 - 高さ制限追加 */
     .hero-section {
       overflow: hidden !important;
+      min-height: 400px !important;
+      max-height: 450px !important;
+      height: 400px !important;
     }
     
     /* モーダルbackdropの非表示 */
@@ -6558,10 +6561,14 @@
             }
           });
           
-          // ナビゲーションエリアを直接更新
+          // ナビゲーションエリアを直接更新（完全書き換え）
           const navArea = document.getElementById('navbar-user-area');
-          if (navArea && navArea.innerHTML.includes('Sign Up')) {
-            navArea.innerHTML = navArea.innerHTML.replace(/Sign Up/g, '新規登録');
+          if (navArea) {
+            navArea.innerHTML = `
+              <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+              <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
+            `;
+            console.log('ナビゲーションエリア完全書き換え完了');
           }
           
           // 右固定ボタンテキスト確保
@@ -6576,6 +6583,36 @@
           }
           
         }, 2000);
+        
+        // ヒーローセクションの高さ制限を強制
+        const heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+          heroSection.style.height = '400px';
+          heroSection.style.maxHeight = '450px';
+          heroSection.style.minHeight = '400px';
+          heroSection.style.overflow = 'hidden';
+          console.log('ヒーローセクション高さ制限適用');
+        }
+        
+        // スポンサーバナーの高さ制限
+        const sponsorBanner = document.querySelector('.sponsor-banner');
+        if (sponsorBanner) {
+          sponsorBanner.style.height = '100px';
+          sponsorBanner.style.maxHeight = '100px';
+          sponsorBanner.style.overflow = 'hidden';
+          console.log('スポンサーバナー高さ制限適用');
+        }
+        
+        // メインコンテンツエリアの表示強制
+        const mainContainer = document.querySelector('#guides');
+        if (mainContainer) {
+          mainContainer.style.display = 'block';
+          mainContainer.style.visibility = 'visible';
+          mainContainer.style.zIndex = '10';
+          mainContainer.style.backgroundColor = '#f8f9fa';
+          mainContainer.style.position = 'relative';
+          console.log('メインコンテンツエリア表示強制');
+        }
         
         // 強制的に70人のガイドを表示（即座に実行）
         setTimeout(() => {
@@ -6612,6 +6649,19 @@
       for (let i = 1; i <= 70; i++) {
         const newCard = createGuideCard(i);
         container.appendChild(newCard);
+      }
+      
+      // コンテナの表示を強制
+      container.style.display = 'flex';
+      container.style.flexWrap = 'wrap';
+      container.style.visibility = 'visible';
+      
+      // 親セクションの表示も確保
+      const guidesSection = document.getElementById('guides');
+      if (guidesSection) {
+        guidesSection.style.display = 'block';
+        guidesSection.style.visibility = 'visible';
+        guidesSection.style.zIndex = '10';
       }
       
       // カウンター更新
