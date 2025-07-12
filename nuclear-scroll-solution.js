@@ -1,217 +1,203 @@
 /**
- * 核爆級スクロール解決システム
- * 全てのスクロール阻害要素を強制的に除去・修正
+ * 核レベルのスクロール解決策
+ * 横スクロール完全阻止、上下スクロール完全有効化
+ * 協賛店の右から左へのアニメーション完全維持
  */
+
 (function() {
   'use strict';
-  
-  console.log('💥 核爆級スクロール解決開始');
-  
-  // 即座に実行する核攻撃レベルの修復
-  function nuclearScrollFix() {
-    console.log('🚀 核攻撃レベル修復実行');
-    
-    // 1. 全てのCSS設定をリセット
-    document.body.style.cssText = '';
-    document.documentElement.style.cssText = '';
-    
-    // 2. 問題のあるクラスを削除
-    document.body.classList.remove('modal-open');
-    document.body.className = document.body.className.replace(/modal-\w+/g, '');
-    
-    // 3. 核レベルのCSS強制適用
-    const nuclearStyle = document.createElement('style');
-    nuclearStyle.id = 'nuclear-scroll-fix';
-    nuclearStyle.innerHTML = `
-      html {
-        overflow: auto !important;
+
+  console.log('核レベルスクロール解決システム開始');
+
+  // 核レベルCSS注入
+  function injectNuclearCSS() {
+    const style = document.createElement('style');
+    style.id = 'nuclear-scroll-fix';
+    style.textContent = `
+      /* 核レベル横スクロール完全阻止 */
+      html, body {
+        overflow-x: hidden !important;
         overflow-y: auto !important;
-        height: auto !important;
-        position: static !important;
-        margin: 0 !important;
-        padding: 0 !important;
+        max-width: 100vw !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
       
-      body {
-        overflow: auto !important;
-        overflow-y: auto !important;
-        height: auto !important;
-        min-height: 100vh !important;
-        max-height: none !important;
-        position: static !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        padding-right: 0 !important;
-        transform: none !important;
+      /* 全要素の横幅制限 */
+      * {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
       }
       
-      /* 全てのモーダル関連設定を無力化 */
+      /* 協賛店バナーのみ例外 */
+      .sponsor-banner {
+        overflow: hidden !important;
+        position: relative !important;
+        white-space: nowrap !important;
+      }
+      
+      .sponsor-scroll {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        animation: scrollRight 30s linear infinite !important;
+      }
+      
+      .sponsor-item {
+        display: inline-block !important;
+        white-space: nowrap !important;
+      }
+      
+      /* その他要素は横スクロール完全阻止 */
+      .container, .container-fluid, .row, [class*="col-"] {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+      }
+      
+      /* モーダル時も横スクロール阻止 */
       .modal-open {
-        overflow: auto !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
         padding-right: 0 !important;
       }
       
+      /* Bootstrap関連 */
       .modal-backdrop {
         display: none !important;
-        visibility: hidden !important;
       }
       
-      /* 問題のある固定要素を修正 */
-      [style*="overflow: hidden"] {
-        overflow: auto !important;
-      }
-      
-      [style*="height: 100vh"] {
-        height: auto !important;
-      }
-      
-      /* ページ全体のコンテナを修正 */
-      .container, .container-fluid, main, #app {
-        position: static !important;
-        overflow: visible !important;
+      /* 画像要素の制限 */
+      img, video, iframe {
+        max-width: 100% !important;
         height: auto !important;
       }
     `;
     
-    // 既存の同IDスタイルを削除
+    // 既存のstyleがあれば削除
     const existingStyle = document.getElementById('nuclear-scroll-fix');
     if (existingStyle) {
       existingStyle.remove();
     }
     
-    // head要素の最初に挿入して最高優先度を確保
-    document.head.insertBefore(nuclearStyle, document.head.firstChild);
-    
-    // 4. 直接的なスタイル適用
-    setTimeout(() => {
-      document.body.style.overflow = 'auto';
-      document.body.style.overflowY = 'auto';
-      document.body.style.height = 'auto';
-      document.body.style.position = 'static';
-      document.body.style.paddingRight = '0px';
-      
-      document.documentElement.style.overflow = 'auto';
-      document.documentElement.style.overflowY = 'auto';
-      document.documentElement.style.height = 'auto';
-    }, 10);
-    
-    console.log('✅ 核攻撃レベル修復完了');
+    document.head.appendChild(style);
+    console.log('核レベルCSS注入完了');
   }
-  
-  // 連続監視・修復システム
-  function startNuclearMonitoring() {
-    // 高頻度監視
-    setInterval(() => {
-      const bodyStyle = window.getComputedStyle(document.body);
-      const htmlStyle = window.getComputedStyle(document.documentElement);
-      
-      // overflow:hiddenの強制修復
-      if (bodyStyle.overflow === 'hidden' || bodyStyle.overflowY === 'hidden') {
-        document.body.style.overflow = 'auto';
-        document.body.style.overflowY = 'auto';
-        console.log('🔧 body overflow修復');
+
+  // 核レベルDOM修正
+  function nuclearDOMFix() {
+    // HTML要素の直接修正
+    document.documentElement.style.overflowX = 'hidden';
+    document.documentElement.style.overflowY = 'auto';
+    document.documentElement.style.maxWidth = '100vw';
+    document.documentElement.style.width = '100%';
+    
+    // Body要素の直接修正
+    document.body.style.overflowX = 'hidden';
+    document.body.style.overflowY = 'auto';
+    document.body.style.maxWidth = '100%';
+    document.body.style.width = '100%';
+    document.body.style.minHeight = '100vh';
+    
+    // 全要素の強制修正
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(element => {
+      // 協賛店関連要素は除外
+      if (element.classList.contains('sponsor-banner') || 
+          element.classList.contains('sponsor-scroll') ||
+          element.classList.contains('sponsor-item') ||
+          element.closest('.sponsor-banner')) {
+        return;
       }
       
-      if (htmlStyle.overflow === 'hidden' || htmlStyle.overflowY === 'hidden') {
-        document.documentElement.style.overflow = 'auto';
-        document.documentElement.style.overflowY = 'auto';
-        console.log('🔧 html overflow修復');
+      // 横幅制限を強制適用
+      if (element.getBoundingClientRect().width > window.innerWidth) {
+        element.style.maxWidth = '100%';
+        element.style.overflowX = 'hidden';
+        element.style.boxSizing = 'border-box';
       }
-      
-      // height:100vhの強制修復
-      if (bodyStyle.height === '100vh' || document.body.style.height === '100vh') {
-        document.body.style.height = 'auto';
-        console.log('🔧 height修復');
-      }
-      
-      // position:fixedの問題修復
-      if (bodyStyle.position === 'fixed') {
-        document.body.style.position = 'static';
-        console.log('🔧 position修復');
-      }
-      
-      // modal-openクラスの自動除去
-      if (document.body.classList.contains('modal-open')) {
-        document.body.classList.remove('modal-open');
-        document.body.style.paddingRight = '0px';
-        console.log('🔧 modal-open除去');
-      }
-      
-    }, 50); // 50ms間隔の超高頻度監視
+    });
+    
+    console.log('核レベルDOM修正完了');
   }
-  
-  // DOM変更監視
-  function startDOMMonitoring() {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && 
-            (mutation.attributeName === 'style' || mutation.attributeName === 'class')) {
-          
-          if (mutation.target === document.body || mutation.target === document.documentElement) {
-            // 重要な要素の変更時は即座に修復
-            setTimeout(nuclearScrollFix, 10);
-          }
+
+  // 核レベルイベント除去
+  function removeScrollEvents() {
+    // 横スクロールイベントを無効化
+    document.addEventListener('wheel', function(e) {
+      if (e.deltaX !== 0 && !e.target.closest('.sponsor-banner')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+    
+    // タッチスクロールの横方向を無効化
+    document.addEventListener('touchmove', function(e) {
+      if (!e.target.closest('.sponsor-banner')) {
+        // 横スクロールを防ぐ
+        const touch = e.touches[0];
+        if (touch && Math.abs(touch.clientX - (touch.startX || 0)) > Math.abs(touch.clientY - (touch.startY || 0))) {
+          e.preventDefault();
+        }
+      }
+    }, { passive: false });
+    
+    console.log('核レベルイベント制御完了');
+  }
+
+  // 核レベル継続監視
+  function nuclearMonitoring() {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+          setTimeout(() => {
+            nuclearDOMFix();
+          }, 50);
         }
       });
     });
-    
+
     observer.observe(document.body, {
+      childList: true,
+      subtree: true,
       attributes: true,
       attributeFilter: ['style', 'class']
     });
-    
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['style', 'class']
-    });
-    
-    console.log('✅ DOM監視開始');
+
+    // 高頻度監視
+    setInterval(() => {
+      nuclearDOMFix();
+    }, 50);
+
+    console.log('核レベル監視システム開始');
   }
-  
-  // 初期化
-  function initialize() {
-    // 即座に修復
-    nuclearScrollFix();
+
+  // 核レベル初期化
+  function nuclearInit() {
+    injectNuclearCSS();
+    nuclearDOMFix();
+    removeScrollEvents();
+    nuclearMonitoring();
     
-    // 複数回修復実行
-    setTimeout(nuclearScrollFix, 100);
-    setTimeout(nuclearScrollFix, 300);
-    setTimeout(nuclearScrollFix, 500);
-    setTimeout(nuclearScrollFix, 1000);
-    
-    // 監視システム開始
-    startNuclearMonitoring();
-    startDOMMonitoring();
-    
-    console.log('✅ 核爆級スクロール解決システム完全起動');
+    console.log('核レベルスクロール解決システム完了');
   }
-  
+
   // 即座に実行
-  initialize();
-  
-  // 各種イベントでも実行
-  document.addEventListener('DOMContentLoaded', initialize);
-  window.addEventListener('load', initialize);
-  
-  // グローバル関数として公開
-  window.nuclearScrollFix = nuclearScrollFix;
-  window.forceScrollRepair = function() {
-    console.log('🚨 緊急スクロール修復実行');
-    nuclearScrollFix();
-    
-    // スクロール可能性をテスト
-    setTimeout(() => {
-      const canScroll = document.body.scrollHeight > window.innerHeight;
-      console.log('スクロール可能:', canScroll);
-      console.log('body.scrollHeight:', document.body.scrollHeight);
-      console.log('window.innerHeight:', window.innerHeight);
-      
-      if (canScroll) {
-        console.log('✅ スクロール修復成功');
-      } else {
-        console.log('⚠️ コンテンツが不足している可能性');
-      }
-    }, 100);
-  };
-  
+  nuclearInit();
+
+  // DOM読み込み後にも実行
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', nuclearInit);
+  }
+
+  // ウィンドウリサイズ時
+  window.addEventListener('resize', nuclearDOMFix);
+
+  // モーダルイベント
+  document.addEventListener('show.bs.modal', function() {
+    setTimeout(nuclearDOMFix, 100);
+  });
+
+  document.addEventListener('hidden.bs.modal', function() {
+    setTimeout(nuclearDOMFix, 100);
+  });
+
 })();

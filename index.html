@@ -59,52 +59,74 @@
     }
   </style>
   <link href="login-modal-styles.css" rel="stylesheet">
-  <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
-  <style id="force-scroll-css">
-    /* 全要素のoverflow:hiddenを強制的に無効化 */
-    * {
-      overflow: visible !important;
-    }
-    
+  <!-- 修正版スクロール制御CSS - 横スクロール防止 + 上下スクロール有効化 -->
+  <style id="scroll-fix-css">
+    /* 基本的な横スクロール防止 */
     html, body {
-      overflow: auto !important;
-      overflow-y: auto !important;
       overflow-x: hidden !important;
+      overflow-y: auto !important;
+      width: 100% !important;
+      max-width: 100vw !important;
       height: auto !important;
-      max-height: none !important;
+      min-height: 100vh !important;
       position: static !important;
       padding: 0 !important;
-      margin: 0 auto !important;
-      min-height: 100vh !important;
+      margin: 0 !important;
+    }
+    
+    /* 全体のコンテナの横幅制限 */
+    .container, .container-fluid {
+      max-width: 100% !important;
+      overflow-x: hidden !important;
     }
     
     /* Bootstrapのモーダル関連クラスもスクロール有効化 */
     .modal-open {
-      overflow: auto !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
       padding-right: 0 !important;
     }
     
-    /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
-    .guide-card,
-    .card,
-    .container,
-    .container-fluid,
-    section {
+    /* 協賛店バナーのスクロール機能維持 */
+    .sponsor-banner {
+      overflow-x: hidden !important;
+      overflow-y: hidden !important;
+    }
+    
+    .sponsor-scroll {
       overflow: visible !important;
     }
     
-    /* ヒーローセクションのみ例外的にhiddenを維持（デザインのため） */
+    /* その他の要素は横スクロール防止 */
+    .guide-card,
+    .card,
+    section:not(.sponsor-section),
+    .row,
+    .col-md-4,
+    .guide-item {
+      overflow-x: hidden !important;
+      max-width: 100% !important;
+    }
+    
+    /* ヒーローセクションは現状維持 */
     .hero-section {
       overflow: hidden !important;
     }
     
-    /* その他全てのdiv要素は強制的にvisible */
-    div:not(.hero-section) {
-      overflow: visible !important;
-    }
-    
+    /* モーダルbackdropの非表示 */
     .modal-backdrop {
       display: none !important;
+    }
+    
+    /* 全体の幅制限 */
+    * {
+      box-sizing: border-box !important;
+    }
+    
+    /* 特定の要素が画面幅を超えないように */
+    img, video, iframe, object, embed {
+      max-width: 100% !important;
+      height: auto !important;
     }
   </style>
 
@@ -6340,5 +6362,11 @@
   
   <!-- 動的ガイドシステム（スケーラブル対応） -->
   <script src="dynamic-guide-system.js"></script>
+  
+  <!-- 究極のスクロール修正システム -->
+  <script src="scroll-fix-ultimate.js"></script>
+  
+  <!-- 核レベルスクロール解決システム -->
+  <script src="nuclear-scroll-solution.js"></script>
 </body>
 </html>
