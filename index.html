@@ -8,57 +8,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   
-
-  
   <style>
-    /* 右上ボタンエリア - 日本語ボタンを強制表示 */
-    .top-right-buttons {
-      position: fixed;
-      top: 10px;
-      right: 20px;
-      z-index: 99999 !important;
-      display: flex !important;
-      gap: 10px;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.1);
-      padding: 5px;
-      border-radius: 25px;
-      backdrop-filter: blur(10px);
-    }
-    
-    .top-login-btn {
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      font-size: 14px;
-    }
-    
-    .top-signup-btn {
-      background: #4287f5 !important;
-      border: none !important;
-      color: white !important;
-      padding: 8px 16px !important;
-      border-radius: 20px !important;
-      text-decoration: none !important;
-      transition: all 0.3s ease;
-      font-size: 14px !important;
-      cursor: pointer !important;
-      font-weight: 500;
-    }
-    
-    .top-signup-btn:hover {
-      background: #3d7bd9;
-      color: white;
-    }
-    
     /* Language Switcher */
     .language-switcher {
       position: fixed;
-      top: 60px;
+      top: 20px;
       right: 20px;
       z-index: 1000;
       background: rgba(255, 255, 255, 0.95);
@@ -105,168 +59,52 @@
     }
   </style>
   <link href="login-modal-styles.css" rel="stylesheet">
-  <!-- 修正版スクロール制御CSS - 横スクロール防止 + 上下スクロール有効化 -->
-  <style id="scroll-fix-css">
-    /* 基本的なスクロール設定 */
-    html, body {
-      overflow-x: hidden !important;
-      overflow-y: auto !important;
-      width: 100% !important;
-      max-width: 100vw !important;
-      height: auto !important;
-      min-height: 100vh !important;
-      position: static !important;
-      padding: 0 !important;
-      margin: 0 !important;
+  <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
+  <style id="force-scroll-css">
+    /* 全要素のoverflow:hiddenを強制的に無効化 */
+    * {
+      overflow: visible !important;
     }
     
-    /* 全体のコンテナの横幅制限 */
-    .container, .container-fluid {
-      max-width: 100% !important;
+    html, body {
+      overflow: auto !important;
+      overflow-y: auto !important;
       overflow-x: hidden !important;
+      height: auto !important;
+      max-height: none !important;
+      position: static !important;
+      padding: 0 !important;
+      margin: 0 auto !important;
+      min-height: 100vh !important;
     }
     
     /* Bootstrapのモーダル関連クラスもスクロール有効化 */
     .modal-open {
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
+      overflow: auto !important;
       padding-right: 0 !important;
     }
     
-    /* 協賛店バナーのスクロール機能は横アニメーションのみ */
-    .sponsor-banner {
-      overflow-x: hidden !important;
-      overflow-y: hidden !important;
-      /* 全体ページスクロールは影響しない */
-    }
-    
-    .sponsor-scroll {
-      overflow: visible !important;
-      /* 横アニメーションのみ有効 */
-    }
-    
-    /* その他の要素は横スクロール防止 */
+    /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
     .guide-card,
     .card,
-    section:not(.sponsor-section),
-    .row,
-    .col-md-4,
-    .guide-item {
-      overflow-x: hidden !important;
-      max-width: 100% !important;
+    .container,
+    .container-fluid,
+    section {
+      overflow: visible !important;
     }
     
-    /* ヒーローセクション修正 - 高さ制限追加 */
+    /* ヒーローセクションのみ例外的にhiddenを維持（デザインのため） */
     .hero-section {
       overflow: hidden !important;
-      min-height: 350px !important;
-      max-height: 400px !important;
-      height: 350px !important;
-      position: relative !important;
     }
     
-    /* メインコンテンツエリアの表示確保 */
-    #guides {
-      background-color: #f8f9fa !important;
-      padding: 30px 0 !important;
-      min-height: 800px !important;
-      z-index: 10 !important;
-      position: relative !important;
-      display: block !important;
-      visibility: visible !important;
+    /* その他全てのdiv要素は強制的にvisible */
+    div:not(.hero-section) {
+      overflow: visible !important;
     }
     
-    /* 緊急修正: 紫色背景による隠蔽問題解決 */
-    .sponsor-banner {
-      max-height: 100px !important;
-      height: 100px !important;
-      position: relative !important;
-      z-index: 1 !important;
-      overflow: hidden !important;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    }
-    
-    /* 最重要: メインコンテンツエリアを確実に表示 */
-    .container.py-5 {
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      z-index: 20 !important;
-      position: relative !important;
-      background-color: white !important;
-      margin-top: 0 !important;
-      padding-top: 50px !important;
-    }
-    
-    /* 完全な高さ制限システム */
-    .hero-section {
-      max-height: 350px !important;
-      height: 350px !important;
-      overflow: hidden !important;
-    }
-    
-    /* 全ページレイアウト強制修正 */
-    body {
-      overflow-y: auto !important;
-      height: auto !important;
-      min-height: 100vh !important;
-    }
-    
-    html {
-      overflow-y: auto !important;
-      height: auto !important;
-    }
-    
-    /* コンテナ全体の表示強制 */
-    .container {
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-    
-    /* ガイドカードコンテナの強制表示 */
-    #guide-cards-container {
-      display: flex !important;
-      flex-wrap: wrap !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      z-index: 10 !important;
-      position: relative !important;
-      background-color: #ffffff !important;
-      padding: 20px !important;
-      margin-top: 20px !important;
-    }
-    
-    /* ガイドカード個別の表示強制 */
-    .guide-item, .guide-card {
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      position: relative !important;
-      z-index: 5 !important;
-    }
-    
-    /* スポンサーバナーエリアの高さ制限 */
-    .sponsor-banner, .sponsor-section {
-      max-height: 120px !important;
-      height: 120px !important;
-      overflow: hidden !important;
-    }
-    
-    /* モーダルbackdropの非表示 */
     .modal-backdrop {
       display: none !important;
-    }
-    
-    /* 全体の幅制限 */
-    * {
-      box-sizing: border-box !important;
-    }
-    
-    /* 特定の要素が画面幅を超えないように */
-    img, video, iframe, object, embed {
-      max-width: 100% !important;
-      height: auto !important;
     }
   </style>
 
@@ -901,20 +739,14 @@
   </style>
 </head>
 <body>
-  <!-- 右上ボタンエリア（強制表示） -->
-  <div class="top-right-buttons">
-    <a href="#" class="top-login-btn" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</a>
-    <button class="top-signup-btn" onclick="showRegisterOptions()">新規登録</button>
-  </div>
-  
   <!-- アラートコンテナ -->
-  <div id="alert-container" style="position: fixed; top: 100px; right: 20px; max-width: 400px; z-index: 9999;"></div>
+  <div id="alert-container" style="position: fixed; top: 20px; right: 20px; max-width: 400px; z-index: 9999;"></div>
   
   <!-- ナビゲーションバー -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="attached_assets/TomoTripロゴ_1752334775240.png" alt="TomoTrip" style="height: 40px; width: 40px; border-radius: 50%; object-fit: cover;" class="me-2">
+        <img src="https://img.icons8.com/color/48/000000/palm-tree.png" alt="TomoTrip" style="height: 30px; width: 30px;" class="me-2">
         TomoTrip
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -947,7 +779,7 @@
         <!-- ログイン・新規登録ボタン -->
         <div id="navbar-user-area">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-          <button class="btn btn-light" onclick="showRegisterOptions()" id="main-register-btn">新規登録</button>
+          <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
         </div>
       </div>
     </div>
@@ -972,9 +804,8 @@
     </div>
     <!-- TomoTrip Logo -->
     <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
-      <div style="background: rgba(255, 255, 255, 0.95); padding: 12px 24px; border-radius: 50px; font-weight: bold; color: #2c3e50; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 10px;">
-        <img src="attached_assets/TomoTripロゴ_1752334775240.png" alt="TomoTrip" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;">
-        TomoTrip
+      <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 12px 24px; border-radius: 50px; font-weight: bold; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        🌴 TomoTrip
       </div>
     </div>
     
@@ -985,17 +816,26 @@
         <a href="#guides" class="btn btn-light btn-lg">ガイドを探す</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">お問い合わせ</button>
         
-        <!-- 協賛店専用ボタンエリア（右固定位置に移動） -->
+        <!-- 協賛店専用ボタンエリア（右下小さめ） -->
+        <div class="sponsor-mini-buttons">
+          <div class="sponsor-mini-wrapper">
+            <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="協賛店登録">
+              <i class="bi bi-shop"></i>
+              <span>協賛店登録 🚀</span>
+            </button>
+            <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="協賛店ログイン">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>ログイン ✨</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 協賛店広告バナー - 完全無効化 -->
-  <div class="sponsor-banner" style="display: none; visibility: hidden; height: 0px; max-height: 0px; overflow: hidden; z-index: 1; position: relative;">
-    <div class="container" style="display: none;">
-      <h3 class="text-dark text-center mb-2" style="font-size: 1.1rem; display: none;">協賛店からの特別オファー</h3>
-    </div>
-    <div class="sponsor-scroll" style="height: 0px; display: none;">
+  <!-- 協賛店広告バナー -->
+  <div class="sponsor-banner">
+    <div class="sponsor-scroll">
       <div class="sponsor-item">
         <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
         <span class="sponsor-text">海の家レストラン</span>
@@ -1080,10 +920,12 @@
     </div>
   </div>
 
-  <!-- メインコンテンツ - 強制表示 -->
-  <div class="container py-5" style="display: block !important; visibility: visible !important; z-index: 1000 !important; position: relative !important; background-color: white !important; margin-top: 0 !important; padding-top: 50px !important;">
+
+
+  <!-- メインコンテンツ -->
+  <div class="container py-5">
     <!-- 人気のガイド -->
-    <section id="guides" class="mb-5" style="display: block !important; visibility: visible !important; background-color: white !important; z-index: 1001 !important; position: relative !important;">
+    <section id="guides" class="mb-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="position-relative">
           <button type="button" class="btn btn-sm btn-outline-info me-3" id="filter-tutorial-btn" style="border-radius: 20px;">
@@ -1094,7 +936,7 @@
         <div style="width: 140px;"></div> <!-- スペーサー -->
       </div>
       <div class="mb-4">
-        <div id="search-results-counter" style="display: block !important; visibility: visible !important; color: #28a745 !important; font-weight: bold !important; font-size: 1.1rem !important; padding: 10px 0 !important;">70人のガイドが見つかりました</div>
+        <div id="search-results-counter"></div>
         <div id="no-results-message" class="alert alert-info text-center my-4 d-none">検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。</div>
         
         <!-- フィルター切り替えボタン -->
@@ -1247,7 +1089,7 @@
         </div>
       </div>
       
-      <div class="row guides-container" id="guide-cards-container" style="display: flex !important; flex-wrap: wrap !important; visibility: visible !important; opacity: 1 !important; z-index: 10000 !important; position: relative !important; background-color: white !important; min-height: 800px !important;"
+      <div class="row guides-container" id="guide-cards-container">
         <!-- 初期表示されるガイド -->
         <!-- ガイド1 -->
         <div class="col-md-4 guide-item">
@@ -1351,11 +1193,114 @@
           </div>
         </div>
         
-        <!-- 70人のガイドがload-70-guides.jsによって動的に追加されます -->
+        <!-- 追加のガイド（初期状態では非表示） -->
+        <!-- ガイド4 -->
+        <div class="col-md-4 guide-item hidden-guide">
+          <div class="card guide-card shadow-sm" data-guide-id="4">
+            <img src="https://placehold.co/400x300?text=北海道ガイド" class="card-img-top guide-image" alt="ガイド写真">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">雪</h5>
+                <span class="badge bg-primary">¥8,000/セッション</span>
+              </div>
+              <p class="card-text text-muted mb-2">
+                <i class="bi bi-geo-alt-fill me-1"></i>北海道 札幌市
+              </p>
+              <p class="card-text mb-3">北海道・札幌のローカルガイド。四季折々の自然と新鮮な海の幸、絶景スポットをご案内します。</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark me-1">英語</span>
+                  <span class="badge bg-light text-dark">ロシア語</span>
+                </div>
+                <div class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-dark ms-1">4.0</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="4">詳細を見る</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ガイド5 -->
+        <div class="col-md-4 guide-item hidden-guide">
+          <div class="card guide-card shadow-sm" data-guide-id="5">
+            <img src="https://placehold.co/400x300?text=沖縄ガイド" class="card-img-top guide-image" alt="ガイド写真">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">海</h5>
+                <span class="badge bg-primary">¥12,000/セッション</span>
+              </div>
+              <p class="card-text text-muted mb-2">
+                <i class="bi bi-geo-alt-fill me-1"></i>沖縄県 那覇市
+              </p>
+              <p class="card-text mb-3">沖縄在住15年のダイビングインストラクター。美しい海と独自の文化が残る島々を案内します。</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark">英語</span>
+                </div>
+                <div class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i>
+                  <span class="text-dark ms-1">4.5</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="5">詳細を見る</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ガイド6 -->
+        <div class="col-md-4 guide-item hidden-guide">
+          <div class="card guide-card shadow-sm" data-guide-id="6">
+            <img src="https://placehold.co/400x300?text=広島ガイド" class="card-img-top guide-image" alt="ガイド写真">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">平和</h5>
+                <span class="badge bg-primary">¥6,500/セッション</span>
+              </div>
+              <p class="card-text text-muted mb-2">
+                <i class="bi bi-geo-alt-fill me-1"></i>広島県 広島市
+              </p>
+              <p class="card-text mb-3">広島の歴史と文化に精通したガイド。平和記念公園から宮島まで、心に残る旅をご提供します。</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark me-1">英語</span>
+                  <span class="badge bg-light text-dark">フランス語</span>
+                </div>
+                <div class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star"></i>
+                  <span class="text-dark ms-1">4.0</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer bg-white border-0 pt-0">
+              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="6">詳細を見る</a>
+            </div>
+          </div>
+        </div>
       </div>
       
       <div class="text-center mt-4">
-        <button class="btn btn-primary" id="load-more-guides" onclick="loadAllGuides()">70人のガイドを全て表示</button>
+        <button class="btn btn-primary" id="load-more-guides">もっと見る</button>
       </div>
     </section>
     
@@ -5073,7 +5018,7 @@
   <script src="direct-translation.js"></script>
   
   <!-- 70人ガイド表示システム -->
-  <!-- <script src="load-70-guides.js"></script> -->
+  <script src="load-70-guides.js"></script>
   
   <!-- 他のスクリプトは一時無効化（競合防止） -->
   <!-- <script src="bootstrap-disable-fix.js"></script> -->
@@ -6432,7 +6377,6 @@
       const counter = document.getElementById('search-results-counter');
       if (counter) {
         counter.textContent = '70人のガイドが見つかりました';
-        console.log('ガイドカウンター更新: 70人のガイドが見つかりました');
       }
     }
     
@@ -6445,58 +6389,14 @@
   <!-- Fix Benefit Cards Display -->
   <script src="benefit-card-fix.js"></script>
   
-  <!-- 新規登録ボタン機能強化版 -->
+  <!-- 新規登録ボタン機能 -->
   <script>
     function showRegisterOptions() {
-      console.log('新規登録オプション表示');
       const modal = document.getElementById('registerOptionsModal');
       if (modal && window.bootstrap) {
         new bootstrap.Modal(modal).show();
       }
     }
-
-    // 究極のボタンテキスト強制修正
-    document.addEventListener('DOMContentLoaded', function() {
-      function ultimateButtonFix() {
-        // HTMLを完全に書き換え
-        const navbarUserArea = document.getElementById('navbar-user-area');
-        if (navbarUserArea) {
-          navbarUserArea.innerHTML = `
-            <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-            <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
-          `;
-        }
-        
-        // 全てのボタンを確認・修正（協賛店ボタンは除外）
-        document.querySelectorAll('button, .btn').forEach(btn => {
-          const text = btn.textContent.trim();
-          // 協賛店関連ボタンは除外
-          if (text.includes('協賛店') || text.includes('ログイン') || btn.id === 'sponsor-fixed-buttons') {
-            return;
-          }
-          if (text === '投資営業' || text.includes('投資営業') || 
-              text === 'Sign Up' || text.includes('Sign Up')) {
-            btn.textContent = '新規登録';
-            btn.innerHTML = '新規登録';
-            btn.onclick = showRegisterOptions;
-          }
-        });
-        
-        // テキストノードも直接変更
-        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-        let node;
-        while (node = walker.nextNode()) {
-          if (node.textContent.includes('投資営業')) {
-            node.textContent = node.textContent.replace(/投資営業/g, '新規登録');
-          }
-        }
-      }
-      
-      ultimateButtonFix();
-      // DOM監視を完全に無効化（パフォーマンス改善）
-      // setInterval(ultimateButtonFix, 200); // 無効化
-      // MutationObserver も無効化
-    });
   </script>
   
   <!-- 登録オプション選択モーダル -->
@@ -6536,559 +6436,7 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 動的ガイドシステム（スケーラブル対応） -->
-  <script src="dynamic-guide-system.js"></script>
-  
-  <!-- 即座修正スクリプト（最優先実行） -->
-  <script src="immediate-fix.js"></script>
-  
-  <!-- NUCLEAR LAYOUT FIX - 最終手段（補助） -->
-  <script src="nuclear-layout-fix.js"></script>
-  
-  <!-- Bootstrap JavaScript Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- 協賛店専用右固定ボタン（単一スクリプト版） -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // 1秒待ってから実行（ページ完全読み込み後）
-      setTimeout(function() {
-        // 既存のボタンを全て削除
-        document.querySelectorAll('.sponsor-mini-buttons, .fixed-right-buttons, .top-right-buttons, #fixed-buttons-container').forEach(el => el.remove());
-        
-        // 右固定ボタンコンテナ作成
-        const container = document.createElement('div');
-        container.id = 'sponsor-fixed-buttons';
-        container.style.cssText = `
-          position: fixed !important;
-          top: 50% !important;
-          right: 20px !important;
-          transform: translateY(-50%) !important;
-          z-index: 999999 !important;
-          display: block !important;
-          visibility: visible !important;
-          opacity: 1 !important;
-        `;
-        
-        // 協賛店登録ボタン
-        const sponsorBtn = document.createElement('button');
-        sponsorBtn.textContent = '協賛店登録';
-        sponsorBtn.style.cssText = `
-          display: block !important;
-          width: 140px !important;
-          padding: 12px 20px !important;
-          margin-bottom: 15px !important;
-          background: linear-gradient(135deg, #ff6b6b, #feca57) !important;
-          border: none !important;
-          border-radius: 25px !important;
-          color: white !important;
-          font-size: 14px !important;
-          font-weight: bold !important;
-          cursor: pointer !important;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-          transition: transform 0.3s ease !important;
-        `;
-        sponsorBtn.onmouseenter = () => sponsorBtn.style.transform = 'scale(1.05)';
-        sponsorBtn.onmouseleave = () => sponsorBtn.style.transform = 'scale(1)';
-        sponsorBtn.onclick = () => alert('協賛店登録機能は準備中です');
-        
-        // ログインボタン
-        const loginBtn = document.createElement('button');
-        loginBtn.textContent = 'ログイン';
-        loginBtn.style.cssText = `
-          display: block !important;
-          width: 140px !important;
-          padding: 12px 20px !important;
-          background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
-          border: none !important;
-          border-radius: 25px !important;
-          color: white !important;
-          font-size: 14px !important;
-          font-weight: bold !important;
-          cursor: pointer !important;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-          transition: transform 0.3s ease !important;
-        `;
-        loginBtn.onmouseenter = () => loginBtn.style.transform = 'scale(1.05)';
-        loginBtn.onmouseleave = () => loginBtn.style.transform = 'scale(1)';
-        loginBtn.onclick = () => alert('ログイン機能は準備中です');
-        
-        // ボタンをコンテナに追加
-        container.appendChild(sponsorBtn);
-        container.appendChild(loginBtn);
-        
-        // bodyに追加
-        document.body.appendChild(container);
-        
-        console.log('協賛店右固定ボタン作成完了');
-        
-        // 継続的な表示確認と文字修正
-        setInterval(() => {
-          // ボタンの存在確認
-          if (!document.getElementById('sponsor-fixed-buttons')) {
-            document.body.appendChild(container);
-            console.log('ボタン再作成完了');
-          }
-          
-          // ガイドカウンター完全修正 - 12人表示を70人に強制変更
-          const updateCounter = () => {
-            const counters = document.querySelectorAll('[id*="counter"], [class*="counter"], .guide-count, #search-results-counter');
-            counters.forEach(counter => {
-              if (counter.textContent.includes('12人') || counter.textContent.includes('12人のガイド')) {
-                counter.textContent = '70人のガイドが見つかりました';
-                counter.innerHTML = '70人のガイドが見つかりました';
-                counter.style.color = '#28a745';
-                counter.style.fontWeight = 'bold';
-              }
-            });
-            
-            // 直接IDで指定して強制更新
-            const specificCounter = document.getElementById('search-results-counter');
-            if (specificCounter) {
-              specificCounter.textContent = '70人のガイドが見つかりました';
-              specificCounter.innerHTML = '70人のガイドが見つかりました';
-              specificCounter.style.display = 'block';
-              specificCounter.style.visibility = 'visible';
-            }
-          };
-          
-          updateCounter();
-          // 継続的に監視してカウンター修正
-          setInterval(updateCounter, 1000);
-          
-          // 新規登録ボタンの点滅完全停止システム
-          const stopButtonFlickering = () => {
-            const navArea = document.getElementById('navbar-user-area');
-            if (navArea) {
-              // 他のスクリプトによる変更を監視・阻止
-              const observer = new MutationObserver((mutations) => {
-                mutations.forEach(() => {
-                  if (!navArea.innerHTML.includes('新規登録') || navArea.innerHTML.includes('Sign Up')) {
-                    navArea.innerHTML = `
-                      <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-                      <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
-                    `;
-                    console.log('ボタン点滅阻止 - 強制修正実行');
-                  }
-                });
-              });
-              observer.observe(navArea, { childList: true, subtree: true });
-              
-              // 即座に修正
-              navArea.innerHTML = `
-                <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-                <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
-              `;
-              navArea.setAttribute('data-fixed', 'true');
-              console.log('ナビゲーションボタン点滅完全停止');
-            }
-          };
-          
-          stopButtonFlickering();
-          
-          // 右固定ボタンテキスト確保
-          const rightButtons = document.querySelectorAll('#sponsor-fixed-buttons button');
-          if (rightButtons.length >= 2) {
-            if (rightButtons[0].textContent !== '協賛店登録') {
-              rightButtons[0].textContent = '協賛店登録';
-            }
-            if (rightButtons[1].textContent !== 'ログイン') {
-              rightButtons[1].textContent = 'ログイン';
-            }
-          }
-          
-        }, 2000);
-        
-        // レイアウト修正と表示領域確保
-        const applyLayoutFixes = () => {
-          // ヒーローセクションの高さ制限
-          const heroSection = document.querySelector('.hero-section');
-          if (heroSection) {
-            heroSection.style.height = '350px';
-            heroSection.style.maxHeight = '400px';
-            heroSection.style.overflow = 'hidden';
-            heroSection.style.position = 'relative';
-            console.log('ヒーローセクション高さ制限適用');
-          }
-          
-          // スポンサーバナーの高さ制限
-          document.querySelectorAll('.sponsor-banner, .sponsor-section').forEach(element => {
-            element.style.height = '120px';
-            element.style.maxHeight = '120px';
-            element.style.overflow = 'hidden';
-          });
-          
-          // メインコンテンツエリアの強制表示
-          const mainContainer = document.querySelector('#guides');
-          if (mainContainer) {
-            mainContainer.style.display = 'block';
-            mainContainer.style.visibility = 'visible';
-            mainContainer.style.zIndex = '10';
-            mainContainer.style.backgroundColor = '#f8f9fa';
-            mainContainer.style.position = 'relative';
-            mainContainer.style.padding = '30px 0';
-            mainContainer.style.minHeight = '800px';
-            console.log('メインコンテンツエリア表示強制');
-          }
-          
-          // スクロール機能確保
-          document.body.style.overflow = 'auto';
-          document.documentElement.style.overflow = 'auto';
-          console.log('スクロール機能確保完了');
-        };
-        
-        applyLayoutFixes();
-        
-        // 70人のガイドを確実に表示
-        const ensureGuideDisplay = () => {
-          const container = document.getElementById('guide-cards-container');
-          if (container) {
-            const currentCount = container.querySelectorAll('.guide-item').length;
-            console.log(`現在のガイドカード数: ${currentCount}`);
-            
-            if (currentCount < 70) {
-              loadAllGuides();
-            }
-          }
-        };
-        
-        // 複数回実行で確実に70人表示
-        setTimeout(ensureGuideDisplay, 300);
-        setTimeout(ensureGuideDisplay, 1000);
-        setTimeout(ensureGuideDisplay, 2000);
-        
-      }, 1000);
-    });
-    
-    // 70人のガイドを強制表示する関数
-    function loadAllGuides() {
-      console.log('70人のガイドを強制表示開始');
-      
-      // ガイドカードコンテナを取得
-      const container = document.getElementById('guide-cards-container');
-      if (!container) {
-        console.error('ガイドカードコンテナが見つかりません');
-        return;
-      }
-      
-      // コンテナを一度空にして再構築
-      container.innerHTML = '';
-      
-      // 70枚のガイドカードを作成
-      for (let i = 1; i <= 70; i++) {
-        const newCard = createGuideCard(i);
-        container.appendChild(newCard);
-      }
-      
-      // コンテナの表示を強制
-      container.style.display = 'flex';
-      container.style.flexWrap = 'wrap';
-      container.style.visibility = 'visible';
-      
-      // 親セクションの表示も確保
-      const guidesSection = document.getElementById('guides');
-      if (guidesSection) {
-        guidesSection.style.display = 'block';
-        guidesSection.style.visibility = 'visible';
-        guidesSection.style.zIndex = '10';
-      }
-      
-      // カウンター更新
-      updateGuideCounter();
-      
-      // ボタンテキスト更新
-      const loadMoreBtn = document.getElementById('load-more-guides');
-      if (loadMoreBtn) {
-        loadMoreBtn.textContent = '表示中: 70人のガイド';
-        loadMoreBtn.disabled = true;
-        loadMoreBtn.style.backgroundColor = '#28a745';
-        loadMoreBtn.style.borderColor = '#28a745';
-      }
-      
-      console.log('70人のガイドカード表示完了');
-    }
-    
-    // ガイドカウンター更新専用関数
-    function updateGuideCounter() {
-      const counter = document.getElementById('search-results-counter');
-      if (counter) {
-        counter.textContent = '70人のガイドが見つかりました';
-        counter.innerHTML = '70人のガイドが見つかりました';
-        counter.style.display = 'block';
-        counter.style.visibility = 'visible';
-      }
-      
-      // 他の可能なカウンター要素も更新
-      document.querySelectorAll('[class*="counter"], [id*="counter"]').forEach(el => {
-        if (el.textContent.includes('ガイド') && el.textContent.includes('見つかりました')) {
-          el.textContent = '70人のガイドが見つかりました';
-        }
-      });
-    }
-    
-    // ガイドカードを動的に作成する関数
-    function createGuideCard(index) {
-      const guideData = generateGuideData(index);
-      
-      const cardHtml = `
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="${index}" data-location="${guideData.location}" data-languages="${guideData.languages}" data-fee="${guideData.fee}" data-keywords="${guideData.keywords}">
-            <img src="${guideData.image}" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">${guideData.name}</h5>
-                <span class="badge bg-primary">¥${guideData.fee}/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>${guideData.location}
-              </p>
-              <p class="card-text mb-3">${guideData.description}</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  ${guideData.languageBadges}
-                </div>
-                <div class="text-warning">
-                  ${guideData.stars}
-                  <span class="text-dark ms-1">${guideData.rating}</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${index}">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = cardHtml;
-      return tempDiv.firstElementChild;
-    }
-    
-    // ガイドデータを生成する関数
-    function generateGuideData(index) {
-      const names = ['田中さん', '佐藤さん', '山田さん', '中村さん', '小林さん', '加藤さん', '吉田さん', '山本さん', '松本さん', '井上さん'];
-      const locations = ['東京都', '大阪府', '京都府', '神奈川県', '埼玉県', '千葉県', '北海道', '福岡県', '愛知県', '広島県'];
-      const keywords = ['グルメ', '歴史', '文化', '自然', '写真スポット', 'ナイトツアー', '料理', 'アクティビティ'];
-      const languages = [['日本語', '英語'], ['日本語', '中国語'], ['日本語', '英語', '韓国語'], ['日本語', 'フランス語']];
-      
-      const name = names[index % names.length] || `ガイド${index}`;
-      const location = locations[index % locations.length] || '東京都';
-      const langArray = languages[index % languages.length] || ['日本語'];
-      const keywordArray = [keywords[index % keywords.length], keywords[(index + 1) % keywords.length]];
-      
-      return {
-        name: name,
-        location: location,
-        languages: langArray.join(','),
-        languageBadges: langArray.map(lang => `<span class="badge bg-light text-dark me-1">${lang}</span>`).join(''),
-        fee: 6000 + (index % 5) * 500,
-        keywords: keywordArray.join(','),
-        description: `${location}の魅力をご案内します。${keywordArray.join('や')}が得意です。`,
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=200&fit=crop',
-        rating: (4.0 + (index % 10) * 0.1).toFixed(1),
-        stars: '★★★★☆'
-      };
-    }
-  </script>
-  
-  <!-- ヘッダーボタン機能修正スクリプト -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('ヘッダーボタン機能設定開始');
-      
-      // すべてのヘッダーボタンの機能を修復
-      setTimeout(() => {
-        // ログインボタンクリック処理
-        document.querySelectorAll('[data-bs-target="#loginModal"], .btn[href*="login"]').forEach(btn => {
-          if (!btn.hasAttribute('data-header-fixed')) {
-            btn.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('ログインボタンクリック');
-              alert('ログイン機能は準備中です');
-            });
-            btn.setAttribute('data-header-fixed', 'true');
-          }
-        });
-        
-        // 新規登録ボタンクリック処理
-        document.querySelectorAll('[onclick*="showRegister"], .btn[href*="register"]').forEach(btn => {
-          if (!btn.hasAttribute('data-register-fixed')) {
-            btn.addEventListener('click', function(e) {
-              e.preventDefault();
-              console.log('新規登録ボタンクリック');
-              alert('新規登録機能は準備中です');
-            });
-            btn.setAttribute('data-register-fixed', 'true');
-          }
-        });
-        
-        // 言語ドロップダウンの処理
-        const langDropdown = document.getElementById('languageDropdown');
-        if (langDropdown && !langDropdown.hasAttribute('data-lang-fixed')) {
-          langDropdown.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const menu = langDropdown.nextElementSibling;
-            if (menu && menu.classList.contains('dropdown-menu')) {
-              // 他のドロップダウンを閉じる
-              document.querySelectorAll('.dropdown-menu.show').forEach(m => {
-                if (m !== menu) m.classList.remove('show');
-              });
-              // 現在のドロップダウンをトグル
-              menu.classList.toggle('show');
-              console.log('言語ドロップダウン切り替え');
-            }
-          });
-          langDropdown.setAttribute('data-lang-fixed', 'true');
-        }
-        
-        // ドロップダウン外クリックで閉じる
-        document.addEventListener('click', function(e) {
-          if (!e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
-              menu.classList.remove('show');
-            });
-          }
-        });
-        
-        console.log('ヘッダーボタン機能設定完了');
-      }, 500);
-    });
-  </script>
-  
-  <!-- 緊急表示修正システム -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('=== 緊急表示修正システム開始 ===');
-      
-      // 即座に実行する緊急修正
-      const emergencyFix = () => {
-        // 1. 全ての紫色背景セクションの高さを強制制限
-        document.querySelectorAll('.sponsor-banner, [style*="linear-gradient"], [style*="purple"], [style*="#667eea"]').forEach(banner => {
-          banner.style.height = '100px';
-          banner.style.maxHeight = '100px';
-          banner.style.overflow = 'hidden';
-          banner.style.position = 'relative';
-          banner.style.zIndex = '1';
-        });
-        
-        // ヒーローセクションの高さ制限
-        document.querySelectorAll('.hero-section, [style*="height: 350px"]').forEach(hero => {
-          hero.style.height = '350px';
-          hero.style.maxHeight = '350px';
-          hero.style.overflow = 'hidden';
-        });
-        
-        // 2. メインコンテンツエリアの強制表示
-        const guidesSection = document.getElementById('guides');
-        if (guidesSection) {
-          guidesSection.style.display = 'block';
-          guidesSection.style.visibility = 'visible';
-          guidesSection.style.zIndex = '10';
-          guidesSection.style.position = 'relative';
-          guidesSection.style.backgroundColor = '#f8f9fa';
-          guidesSection.style.minHeight = '800px';
-          guidesSection.style.padding = '30px 0';
-        }
-        
-        // 3. ガイドカードコンテナの強制表示
-        const container = document.getElementById('guide-cards-container');
-        if (container) {
-          container.style.display = 'flex';
-          container.style.flexWrap = 'wrap';
-          container.style.visibility = 'visible';
-          container.style.opacity = '1';
-          container.style.zIndex = '10';
-          container.style.position = 'relative';
-          container.style.backgroundColor = '#ffffff';
-          container.style.padding = '20px';
-          container.style.marginTop = '20px';
-          
-          // コンテナが空の場合、ガイドカードを即座に生成
-          if (container.children.length < 10) {
-            console.log('ガイドカードが不足 - 即座に70枚生成');
-            loadAllGuides();
-          }
-        }
-        
-        // 4. ガイドカウンターの強制更新
-        const counter = document.getElementById('search-results-counter');
-        if (counter) {
-          counter.textContent = '70人のガイドが見つかりました';
-          counter.style.display = 'block';
-          counter.style.visibility = 'visible';
-          counter.style.color = '#28a745';
-          counter.style.fontWeight = 'bold';
-          counter.style.fontSize = '1.1rem';
-        }
-        
-        // 5. スクロール機能の確保と全ページ表示修正
-        document.body.style.overflow = 'auto';
-        document.body.style.overflowY = 'auto';
-        document.body.style.height = 'auto';
-        document.body.style.minHeight = '100vh';
-        document.documentElement.style.overflow = 'auto';
-        document.documentElement.style.overflowY = 'auto';
-        document.documentElement.style.height = 'auto';
-        
-        // 全てのコンテナの表示確保
-        document.querySelectorAll('.container').forEach(container => {
-          container.style.display = 'block';
-          container.style.visibility = 'visible';
-          container.style.opacity = '1';
-        });
-        
-        console.log('緊急修正適用完了');
-      };
-      
-      // 即座に実行
-      emergencyFix();
-      
-      // 500ms後に再実行
-      setTimeout(emergencyFix, 500);
-      
-      // 1秒後にも再実行
-      setTimeout(emergencyFix, 1000);
-      
-      // 2秒後に最終確認と強制表示
-      setTimeout(() => {
-        emergencyFix();
-        
-        // ガイドカード数を確認
-        const container = document.getElementById('guide-cards-container');
-        if (container) {
-          const cardCount = container.querySelectorAll('.guide-item').length;
-          console.log(`最終ガイドカード数: ${cardCount}`);
-          
-          if (cardCount < 70) {
-            console.log('まだ不足 - 追加生成実行');
-            if (typeof loadAllGuides === 'function') {
-              loadAllGuides();
-            }
-          }
-        }
-        
-        // 強制スクロール有効化
-        window.scrollTo(0, 100);
-        setTimeout(() => window.scrollTo(0, 0), 100);
-        
-        console.log('=== 最終修正完了 ===');
-      }, 2000);
-      
-      // 5秒後に追加確認
-      setTimeout(() => {
-        const guidesSection = document.getElementById('guides');
-        if (guidesSection && !guidesSection.offsetHeight) {
-          console.log('ガイドセクション非表示 - 強制表示実行');
-          guidesSection.style.display = 'block';
-          guidesSection.style.visibility = 'visible';
-          guidesSection.style.position = 'relative';
-          guidesSection.style.zIndex = '100';
-          guidesSection.style.backgroundColor = 'white';
-          guidesSection.style.minHeight = '500px';
-        }
-      }, 5000);
-    });
-  </script>
+  <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
+  <script src="emergency-fix.js"></script>
 </body>
 </html>
