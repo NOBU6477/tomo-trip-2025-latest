@@ -6451,6 +6451,9 @@
   <!-- 究極の修正システム - すべての問題を一括解決 -->
   <script src="ultimate-fix.js"></script>
   
+  <!-- 核爆弾級修正システム - 最終手段 -->
+  <script src="nuclear-button-fix.js"></script>
+  
   <!-- 最強日本語ボタン修正 - 直接DOM操作 -->
   <script>
     // 超高頻度での直接DOM修正
@@ -6477,6 +6480,15 @@
       
       // 即座に再実行（遅延なし）
       requestAnimationFrame(nuclearJapaneseFix);
+      
+      // 強制的に新規登録ボタンを修正
+      const signupBtn = document.getElementById('signup-button-fixed');
+      if (signupBtn && signupBtn.textContent !== '新規登録') {
+        signupBtn.textContent = '新規登録';
+        signupBtn.innerHTML = '新規登録';
+        signupBtn.innerText = '新規登録';
+        console.log('🔥 強制ボタン修正実行');
+      }
     })();
     
     // 全イベントでの修正
