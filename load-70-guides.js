@@ -190,7 +190,7 @@
   }
 
   // ページにガイドを表示
-  function displayGuides() {
+  window.displayGuides = function displayGuides() {
     const container = document.getElementById('guide-cards-container');
     if (!container) {
       console.error('ガイドコンテナが見つかりません');
@@ -209,6 +209,9 @@
     const counter = document.getElementById('search-results-counter');
     if (counter) {
       counter.textContent = `${guides.length}人のガイドが見つかりました`;
+      console.log('検索結果カウンター更新:', counter.textContent);
+    } else {
+      console.error('検索結果カウンターが見つかりません');
     }
 
     console.log(`${guides.length}人のガイドを表示しました`);
@@ -304,6 +307,16 @@
     console.log('load-70-guides.js: 即座実行（DOMは既に読み込み済み）');
     setTimeout(displayGuides, 100);
   }
+
+  // 強制実行（3秒後）
+  setTimeout(() => {
+    console.log('load-70-guides.js: 強制実行（3秒後）');
+    const container = document.getElementById('guide-cards-container');
+    if (container && container.children.length <= 3) {
+      console.log('ガイドカードが3つ以下なので強制実行');
+      displayGuides();
+    }
+  }, 3000);
 
   // Filter functionality for Japanese version
   function setupFilters() {
