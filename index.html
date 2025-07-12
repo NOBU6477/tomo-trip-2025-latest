@@ -10,16 +10,33 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   <style>
+    /* スクロール問題修正 - 強制設定 */
     html, body {
-      height: auto !important;
-      min-height: 100vh !important;
-      overflow-y: auto !important;
+      /* height: 100% !important; ← 問題の原因なので削除 */
+      min-height: 100vh !important; /* 必要に応じて指定 */
+      overflow-y: auto !important;  /* スクロールを許可 */
+      height: auto !important;      /* 自動高さ設定 */
     }
+    
+    /* 追加のスクロール強制設定 */
+    * {
+      box-sizing: border-box;
+    }
+    
+    html {
+      overflow-y: scroll !important;
+      height: auto !important;
+    }
+    
     body {
       background-color: #f8f9fa;
       margin: 0;
       padding: 0;
+      overflow-y: auto !important;
+      height: auto !important;
+      max-height: none !important;
     }
+    
     .navbar-brand img {
       height: 30px;
       width: 30px;
@@ -29,6 +46,11 @@
       height: 35px;
       width: 35px;
       border-radius: 50%;
+    }
+    
+    /* モーダルや他の要素がスクロールを阻害しないよう保証 */
+    .modal-open {
+      overflow-y: auto !important;
     }
   </style>
 </head>
