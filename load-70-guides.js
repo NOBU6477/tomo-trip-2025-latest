@@ -198,8 +198,11 @@
     }
 
     const guides = generateGuides();
-    const guidesHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
     
+    // 既存のガイドカード（最初の3つ）をクリアして、全ての70人のガイドを表示
+    container.innerHTML = ''; // 既存のコンテンツをクリア
+    
+    const guidesHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
     container.innerHTML = guidesHTML;
     
     // 検索結果カウンターを更新
@@ -283,11 +286,24 @@
 
   // ページ読み込み時に実行
   document.addEventListener('DOMContentLoaded', function() {
+    console.log('load-70-guides.js: DOMContentLoaded - スクリプト開始');
     // 少し遅延してから実行（他のスクリプトの読み込み完了を待つ）
     setTimeout(() => {
+      console.log('load-70-guides.js: displayGuides()を実行開始');
       displayGuides();
     }, 500);
   });
+
+  // 即座に実行もする（バックアップ）
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('load-70-guides.js: backup DOMContentLoaded実行');
+      setTimeout(displayGuides, 100);
+    });
+  } else {
+    console.log('load-70-guides.js: 即座実行（DOMは既に読み込み済み）');
+    setTimeout(displayGuides, 100);
+  }
 
   // Filter functionality for Japanese version
   function setupFilters() {

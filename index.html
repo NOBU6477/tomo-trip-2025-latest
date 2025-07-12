@@ -1194,110 +1194,7 @@
           </div>
         </div>
         
-        <!-- 追加のガイド（初期状態では非表示） -->
-        <!-- ガイド4 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="4">
-            <img src="https://placehold.co/400x300?text=北海道ガイド" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">雪</h5>
-                <span class="badge bg-primary">¥8,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2">
-                <i class="bi bi-geo-alt-fill me-1"></i>北海道 札幌市
-              </p>
-              <p class="card-text mb-3">北海道・札幌のローカルガイド。四季折々の自然と新鮮な海の幸、絶景スポットをご案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
-                  <span class="badge bg-light text-dark me-1">英語</span>
-                  <span class="badge bg-light text-dark">ロシア語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.0</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="4">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド5 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="5">
-            <img src="https://placehold.co/400x300?text=沖縄ガイド" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">海</h5>
-                <span class="badge bg-primary">¥12,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2">
-                <i class="bi bi-geo-alt-fill me-1"></i>沖縄県 那覇市
-              </p>
-              <p class="card-text mb-3">沖縄在住15年のダイビングインストラクター。美しい海と独自の文化が残る島々を案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="text-dark ms-1">4.5</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="5">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド6 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="6">
-            <img src="https://placehold.co/400x300?text=広島ガイド" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">平和</h5>
-                <span class="badge bg-primary">¥6,500/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2">
-                <i class="bi bi-geo-alt-fill me-1"></i>広島県 広島市
-              </p>
-              <p class="card-text mb-3">広島の歴史と文化に精通したガイド。平和記念公園から宮島まで、心に残る旅をご提供します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
-                  <span class="badge bg-light text-dark me-1">英語</span>
-                  <span class="badge bg-light text-dark">フランス語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.0</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="6">詳細を見る</a>
-            </div>
-          </div>
-        </div>
+        <!-- 70人のガイドがload-70-guides.jsによって動的に追加されます -->
       </div>
       
       <div class="text-center mt-4">
@@ -6378,6 +6275,7 @@
       const counter = document.getElementById('search-results-counter');
       if (counter) {
         counter.textContent = '70人のガイドが見つかりました';
+        console.log('ガイドカウンター更新: 70人のガイドが見つかりました');
       }
     }
     
@@ -6439,5 +6337,8 @@
   
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
   <script src="emergency-fix.js"></script>
+  
+  <!-- 70人のガイドデータ生成 -->
+  <script src="load-70-guides.js"></script>
 </body>
 </html>
