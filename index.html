@@ -61,18 +61,29 @@
   <link href="login-modal-styles.css" rel="stylesheet">
   <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
   <style id="force-scroll-css">
-    /* シンプルスクロール修正システム */
+    /* 強力スクロール修正システム */
     html, body {
+      overflow: auto !important;
       overflow-x: hidden !important;
       overflow-y: auto !important;
       height: auto !important;
-      position: relative !important;
+      min-height: 100vh !important;
+      position: static !important;
+      padding: 0 !important;
+      margin: 0 !important;
     }
     
     /* Bootstrapのモーダル問題を修正 */
     .modal-open {
       overflow: auto !important;
+      overflow-y: auto !important;
       padding-right: 0 !important;
+      position: static !important;
+    }
+    
+    /* セクション要素のoverflow制限を解除 */
+    section, .container, .row, .col {
+      overflow: visible !important;
     }
     
     /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
@@ -6427,28 +6438,59 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
-  <script src="emergency-fix.js"></script>
+  <!-- 緊急修復システム - 無効化 -->
+  <!-- <script src="emergency-fix.js"></script> -->
   
-  <!-- シンプルスクロール修正システム -->
+  <!-- 包括修正システム - スクロール＋日本語表記強制 -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      function fixScroll() {
+      function comprehensiveFix() {
+        // スクロール修正
         document.body.style.overflow = 'auto';
         document.body.style.overflowY = 'auto';
         document.body.classList.remove('modal-open');
         document.documentElement.style.overflow = 'auto';
+        document.documentElement.style.overflowY = 'auto';
+        
+        // 日本語ボタン表記の強制
+        const signUpButtons = document.querySelectorAll('button');
+        signUpButtons.forEach(btn => {
+          if (btn.textContent.includes('Sign Up')) {
+            btn.textContent = '新規登録';
+          }
+        });
+        
+        // ナビゲーションバーのボタンも確認
+        const navbarArea = document.getElementById('navbar-user-area');
+        if (navbarArea) {
+          const buttons = navbarArea.querySelectorAll('button');
+          buttons.forEach(btn => {
+            if (btn.textContent.trim() === 'Sign Up') {
+              btn.textContent = '新規登録';
+            }
+          });
+        }
       }
       
       // 初回修正
-      fixScroll();
+      comprehensiveFix();
       
-      // イベント時に修正
-      document.addEventListener('click', fixScroll);
-      document.addEventListener('scroll', fixScroll);
+      // 継続的な監視（25ms間隔で高頻度）
+      setInterval(comprehensiveFix, 25);
       
-      // 100ms間隔で監視
-      setInterval(fixScroll, 100);
+      // MutationObserverでDOM変更を監視
+      const observer = new MutationObserver(comprehensiveFix);
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        characterData: true
+      });
+      
+      // イベント時の修正
+      ['click', 'scroll', 'resize', 'focus', 'load', 'DOMContentLoaded'].forEach(event => {
+        document.addEventListener(event, comprehensiveFix);
+      });
     });
   </script>
 
