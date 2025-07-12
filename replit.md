@@ -164,6 +164,7 @@ Local Guide is a multilingual guide matching platform that connects tourists wit
 - July 12, 2026. Updated navigation logo implementation: Replaced navbar logo with user-specified code structure featuring "TomoTripロゴ.png" with enhanced styling including border-radius, auto-width, and improved Bootstrap flex alignment. Updated href to "/" and added fw-bold text-white styling for brand text.
 - July 12, 2026. Enhanced logo design with prominent display: Increased navigation logo to 60px height, removed text for image-only display, and upgraded hero section logo to 140px×140px size. Changed logo frame from circular (border-radius: 50%) to square design (border-radius: 15px) while maintaining size and visual effects including shadows and backdrop blur.
 - July 12, 2026. Updated TomoTrip logo to new design: Replaced logo with TomoTripロゴ_1752361577827.png featuring tropical design with palm trees, person with raised arms, ocean waves, and "TOMOTRIP" text. Maintained 140px×140px square frame design with enhanced visual appeal.
+- July 12, 2026. Applied latest TomoTrip logo design: Updated to TomoTripロゴ_1752361744654.png with refined tropical theme featuring palm trees, cheerful character with raised arms, ocean waves, and "TOMOTRIP" branding. Maintained existing square frame positioning and styling.
 
 # User Preferences
 
