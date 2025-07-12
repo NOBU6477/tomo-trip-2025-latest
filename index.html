@@ -6445,210 +6445,90 @@
   <!-- Bootstrap JavaScript Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- 右固定協賛店ボタン（即座に実行） -->
+  <!-- 協賛店専用右固定ボタン（単一スクリプト版） -->
   <script>
-    // 既存のボタンエリアを削除
-    const existingButtons = document.querySelectorAll('.sponsor-mini-buttons, .fixed-right-buttons, .top-right-buttons');
-    existingButtons.forEach(btn => btn.remove());
-    
-    // 新しい右固定ボタンコンテナ作成
-    const rightButtons = document.createElement('div');
-    rightButtons.style.cssText = `
-      position: fixed;
-      top: 50%;
-      right: 20px;
-      transform: translateY(-50%);
-      z-index: 999999;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    `;
-    
-    // 協賛店登録ボタン
-    const sponsorBtn = document.createElement('button');
-    sponsorBtn.textContent = '協賛店登録';
-    sponsorBtn.style.cssText = `
-      background: linear-gradient(135deg, #ff6b6b, #feca57);
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      min-width: 140px;
-      transition: transform 0.3s ease;
-    `;
-    sponsorBtn.onclick = () => alert('協賛店登録機能は準備中です');
-    
-    // ログインボタン
-    const loginBtn = document.createElement('button');
-    loginBtn.textContent = 'ログイン';
-    loginBtn.style.cssText = `
-      background: linear-gradient(135deg, #4ecdc4, #44a08d);
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 25px;
-      font-size: 14px;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      min-width: 140px;
-      transition: transform 0.3s ease;
-    `;
-    loginBtn.onclick = () => alert('ログイン機能は準備中です');
-    
-    // ホバーエフェクト
-    [sponsorBtn, loginBtn].forEach(btn => {
-      btn.onmouseenter = () => btn.style.transform = 'scale(1.05)';
-      btn.onmouseleave = () => btn.style.transform = 'scale(1)';
-    });
-    
-    // ボタン追加
-    rightButtons.appendChild(sponsorBtn);
-    rightButtons.appendChild(loginBtn);
-    document.body.appendChild(rightButtons);
-    
-    console.log('右固定ボタン強制作成完了');
-  </script>
-  
-  <!-- 右固定ボタン専用システム（最後に読み込み） -->
-  <script>
-    (function() {
-      'use strict';
-      
-      console.log('右固定ボタン強制実行開始');
-
-      function createFixedButtons() {
+    document.addEventListener('DOMContentLoaded', function() {
+      // 1秒待ってから実行（ページ完全読み込み後）
+      setTimeout(function() {
         // 既存のボタンを全て削除
-        const existingButtons = document.querySelectorAll('.fixed-right-buttons, .top-right-buttons');
-        existingButtons.forEach(btn => btn.remove());
-
-        // 新しい右固定ボタンエリアを作成
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'fixed-right-buttons';
-        buttonContainer.id = 'fixed-buttons-container';
-        buttonContainer.style.cssText = `
+        document.querySelectorAll('.sponsor-mini-buttons, .fixed-right-buttons, .top-right-buttons, #fixed-buttons-container').forEach(el => el.remove());
+        
+        // 右固定ボタンコンテナ作成
+        const container = document.createElement('div');
+        container.id = 'sponsor-fixed-buttons';
+        container.style.cssText = `
           position: fixed !important;
           top: 50% !important;
           right: 20px !important;
           transform: translateY(-50%) !important;
-          z-index: 99999 !important;
-          display: flex !important;
-          flex-direction: column !important;
-          gap: 15px !important;
-          pointer-events: auto !important;
+          z-index: 999999 !important;
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         `;
-
+        
         // 協賛店登録ボタン
-        const sponsorButton = document.createElement('button');
-        sponsorButton.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="bi bi-shop" style="font-size: 18px;"></i>
-            <span>協賛店登録</span>
-            <span style="font-size: 12px;">✨</span>
-          </div>
-        `;
-        sponsorButton.style.cssText = `
+        const sponsorBtn = document.createElement('button');
+        sponsorBtn.textContent = '協賛店登録';
+        sponsorBtn.style.cssText = `
+          display: block !important;
+          width: 140px !important;
+          padding: 12px 20px !important;
+          margin-bottom: 15px !important;
           background: linear-gradient(135deg, #ff6b6b, #feca57) !important;
           border: none !important;
-          color: white !important;
-          padding: 12px 20px !important;
           border-radius: 25px !important;
+          color: white !important;
           font-size: 14px !important;
-          font-weight: 500 !important;
+          font-weight: bold !important;
           cursor: pointer !important;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-          transition: all 0.3s ease !important;
-          min-width: 140px !important;
-          white-space: nowrap !important;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+          transition: transform 0.3s ease !important;
         `;
+        sponsorBtn.onmouseenter = () => sponsorBtn.style.transform = 'scale(1.05)';
+        sponsorBtn.onmouseleave = () => sponsorBtn.style.transform = 'scale(1)';
+        sponsorBtn.onclick = () => alert('協賛店登録機能は準備中です');
         
-        sponsorButton.addEventListener('mouseenter', function() {
-          this.style.transform = 'scale(1.05)';
-          this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
-        });
-        
-        sponsorButton.addEventListener('mouseleave', function() {
-          this.style.transform = 'scale(1)';
-          this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-        });
-        
-        sponsorButton.addEventListener('click', function() {
-          alert('協賛店登録機能は準備中です');
-        });
-
         // ログインボタン
-        const loginButton = document.createElement('button');
-        loginButton.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <i class="bi bi-box-arrow-in-right" style="font-size: 18px;"></i>
-            <span>ログイン</span>
-            <span style="font-size: 12px;">✨</span>
-          </div>
-        `;
-        loginButton.style.cssText = `
+        const loginBtn = document.createElement('button');
+        loginBtn.textContent = 'ログイン';
+        loginBtn.style.cssText = `
+          display: block !important;
+          width: 140px !important;
+          padding: 12px 20px !important;
           background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
           border: none !important;
-          color: white !important;
-          padding: 12px 20px !important;
           border-radius: 25px !important;
+          color: white !important;
           font-size: 14px !important;
-          font-weight: 500 !important;
+          font-weight: bold !important;
           cursor: pointer !important;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
-          transition: all 0.3s ease !important;
-          min-width: 140px !important;
-          white-space: nowrap !important;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
+          transition: transform 0.3s ease !important;
         `;
+        loginBtn.onmouseenter = () => loginBtn.style.transform = 'scale(1.05)';
+        loginBtn.onmouseleave = () => loginBtn.style.transform = 'scale(1)';
+        loginBtn.onclick = () => alert('ログイン機能は準備中です');
         
-        loginButton.addEventListener('mouseenter', function() {
-          this.style.transform = 'scale(1.05)';
-          this.style.boxShadow = '0 6px 20px rgba(0,0,0,0.3)';
-        });
-        
-        loginButton.addEventListener('mouseleave', function() {
-          this.style.transform = 'scale(1)';
-          this.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-        });
-        
-        loginButton.addEventListener('click', function() {
-          // ログインモーダルを開く
-          const loginModal = document.getElementById('loginModal');
-          if (loginModal) {
-            if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-              const modal = new bootstrap.Modal(loginModal);
-              modal.show();
-            } else {
-              loginModal.style.display = 'block';
-              loginModal.classList.add('show');
-              document.body.classList.add('modal-open');
-            }
-          } else {
-            alert('ログイン機能は準備中です');
-          }
-        });
-
         // ボタンをコンテナに追加
-        buttonContainer.appendChild(sponsorButton);
-        buttonContainer.appendChild(loginButton);
-
-        // ページに追加
-        document.body.appendChild(buttonContainer);
-
-        console.log('右固定ボタン強制作成完了');
-      }
-
-      // 即座に実行
-      createFixedButtons();
-
-      // 1秒後にも実行（確実性のため）
-      setTimeout(createFixedButtons, 1000);
-
-      console.log('右固定ボタンシステム強制完了');
-    })();
+        container.appendChild(sponsorBtn);
+        container.appendChild(loginBtn);
+        
+        // bodyに追加
+        document.body.appendChild(container);
+        
+        console.log('協賛店右固定ボタン作成完了');
+        
+        // 5秒後に再確認（消えていたら再作成）
+        setTimeout(() => {
+          if (!document.getElementById('sponsor-fixed-buttons')) {
+            document.body.appendChild(container);
+            console.log('ボタン再作成完了');
+          }
+        }, 5000);
+        
+      }, 1000);
+    });
   </script>
 </body>
 </html>
