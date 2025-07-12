@@ -1,105 +1,142 @@
 /**
- * 核爆弾級ボタン修正システム - 最終手段
- * 他のすべてのシステムが失敗した場合の最後の手段
+ * 核レベル新規登録ボタン修正システム
+ * 「投資営業」表示を完全に阻止し「新規登録」を強制表示
  */
 
-// 即座に実行する関数
-(function nuclearButtonFix() {
-  console.log('☢️ 核爆弾級ボタン修正システム起動');
-  
-  // 新規登録ボタンの完全置換
-  function replaceSignUpButton() {
-    const currentButton = document.getElementById('signup-button-fixed');
-    if (currentButton) {
-      // 新しいボタンを作成
-      const newButton = document.createElement('button');
-      newButton.className = 'btn btn-light';
-      newButton.id = 'signup-button-fixed';
-      newButton.setAttribute('onclick', 'showRegisterOptions()');
-      newButton.textContent = '新規登録';
-      
-      // 完全に置き換え
-      currentButton.parentNode.replaceChild(newButton, currentButton);
-      console.log('☢️ ボタン核爆弾置換完了');
+(function() {
+  'use strict';
+
+  console.log('核レベル新規登録ボタン修正開始');
+
+  // 核レベルボタン修正
+  function nuclearButtonFix() {
+    // 1. HTMLを直接書き換え
+    const navbarUserArea = document.getElementById('navbar-user-area');
+    if (navbarUserArea) {
+      navbarUserArea.innerHTML = `
+        <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+        <button class="btn btn-light" onclick="showRegisterOptions()" id="main-register-btn">新規登録</button>
+      `;
     }
-  }
-  
-  // 全ての Sign Up テキストを破壊
-  function destroyAllSignUpText() {
-    // 全てのテキストノードを検索
+
+    // 2. 全てのボタンの文字列を強制変更
+    const allButtons = document.querySelectorAll('button, .btn');
+    allButtons.forEach(button => {
+      const text = button.textContent.trim();
+      
+      // 問題のあるテキストを全て修正
+      if (text === '投資営業' || 
+          text.includes('投資営業') ||
+          text === 'Sign Up' ||
+          text.includes('Sign Up') ||
+          text === 'Register' ||
+          text.includes('Register')) {
+        
+        console.log('ボタンテキスト強制修正:', text, '→ 新規登録');
+        button.textContent = '新規登録';
+        button.innerHTML = '新規登録';
+        
+        // イベントも再設定
+        button.onclick = function(e) {
+          e.preventDefault();
+          showRegisterOptions();
+        };
+      }
+
+      // ナビゲーションエリアの2番目のボタンを特別処理
+      if (button.closest('#navbar-user-area') && 
+          button.classList.contains('btn-light') &&
+          !button.textContent.includes('新規登録')) {
+        
+        console.log('ナビゲーション新規登録ボタン強制修正');
+        button.textContent = '新規登録';
+        button.innerHTML = '新規登録';
+        button.onclick = function(e) {
+          e.preventDefault();
+          showRegisterOptions();
+        };
+      }
+    });
+
+    // 3. テキストノードも直接変更
     const walker = document.createTreeWalker(
       document.body,
       NodeFilter.SHOW_TEXT,
       null,
       false
     );
-    
-    const textNodes = [];
+
     let node;
+    const textNodesToChange = [];
     while (node = walker.nextNode()) {
-      if (node.nodeValue.includes('Sign Up')) {
-        textNodes.push(node);
+      if (node.textContent.includes('投資営業')) {
+        textNodesToChange.push(node);
       }
     }
-    
-    // Sign Up を 新規登録 に置換
-    textNodes.forEach(textNode => {
-      textNode.nodeValue = textNode.nodeValue.replace(/Sign Up/g, '新規登録');
-      console.log('☢️ テキストノード破壊: Sign Up → 新規登録');
+
+    textNodesToChange.forEach(textNode => {
+      textNode.textContent = textNode.textContent.replace(/投資営業/g, '新規登録');
     });
-  }
-  
-  // 全ての要素のテキストコンテンツを強制変更
-  function forceChangeAllElements() {
-    document.querySelectorAll('*').forEach(element => {
-      if (element.textContent && element.textContent.includes('Sign Up')) {
-        element.textContent = element.textContent.replace(/Sign Up/g, '新規登録');
-        console.log('☢️ 要素破壊:', element.tagName);
+
+    // 4. 属性値も変更
+    const elementsWithBadValues = document.querySelectorAll('[value*="投資営業"], [data-*="投資営業"], [title*="投資営業"]');
+    elementsWithBadValues.forEach(element => {
+      if (element.value && element.value.includes('投資営業')) {
+        element.value = element.value.replace(/投資営業/g, '新規登録');
+      }
+      if (element.title && element.title.includes('投資営業')) {
+        element.title = element.title.replace(/投資営業/g, '新規登録');
       }
     });
+
+    console.log('核レベルボタン修正完了');
   }
-  
-  // スクロール問題の核爆弾解決
-  function nuclearScrollFix() {
-    // 全ての要素から overflow:hidden を削除
-    document.querySelectorAll('*').forEach(el => {
-      el.style.overflow = '';
-      el.style.overflowY = '';
-      el.style.overflowX = '';
+
+  // DOM変更を強制監視
+  function nuclearObserver() {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              setTimeout(nuclearButtonFix, 10);
+            }
+          });
+        } else if (mutation.type === 'characterData') {
+          if (mutation.target.textContent.includes('投資営業')) {
+            mutation.target.textContent = mutation.target.textContent.replace(/投資営業/g, '新規登録');
+          }
+        }
+      });
     });
-    
-    // body と html を強制設定
-    document.body.style.cssText = '';
-    document.documentElement.style.cssText = '';
-    document.body.style.overflow = 'visible';
-    document.documentElement.style.overflow = 'visible';
-    
-    console.log('☢️ スクロール核爆弾修正完了');
-  }
-  
-  // 継続的な破壊活動
-  function continuousDestruction() {
-    replaceSignUpButton();
-    destroyAllSignUpText();
-    forceChangeAllElements();
-    nuclearScrollFix();
-    
-    // 10ms後に再実行
-    setTimeout(continuousDestruction, 10);
-  }
-  
-  // 即座に開始
-  continuousDestruction();
-  
-  // 全イベントで破壊活動
-  ['DOMContentLoaded', 'load', 'click', 'scroll', 'resize'].forEach(event => {
-    document.addEventListener(event, () => {
-      replaceSignUpButton();
-      destroyAllSignUpText();
-      forceChangeAllElements();
-      nuclearScrollFix();
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeOldValue: true,
+      characterDataOldValue: true
     });
-  });
-  
-  console.log('☢️ 核爆弾システム完全起動 - 破壊活動開始');
+  }
+
+  // 即座に実行
+  nuclearButtonFix();
+  nuclearObserver();
+
+  // DOM読み込み後
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', nuclearButtonFix);
+  }
+
+  // 超高頻度監視
+  setInterval(nuclearButtonFix, 100);
+
+  // ウィンドウフォーカス時
+  window.addEventListener('focus', nuclearButtonFix);
+
+  // ページ表示時
+  window.addEventListener('pageshow', nuclearButtonFix);
+
+  console.log('核レベル新規登録ボタン修正システム完了');
 })();

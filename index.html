@@ -6320,31 +6320,46 @@
       }
     }
 
-    // ボタンテキスト強制修正
+    // 究極のボタンテキスト強制修正
     document.addEventListener('DOMContentLoaded', function() {
-      function forceFixButton() {
-        const registerBtn = document.getElementById('main-register-btn');
-        if (registerBtn) {
-          registerBtn.textContent = '新規登録';
-          registerBtn.onclick = showRegisterOptions;
+      function ultimateButtonFix() {
+        // HTMLを完全に書き換え
+        const navbarUserArea = document.getElementById('navbar-user-area');
+        if (navbarUserArea) {
+          navbarUserArea.innerHTML = `
+            <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+            <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
+          `;
         }
         
-        // 全ての新規登録関連ボタンを修正
-        const allButtons = document.querySelectorAll('button');
-        allButtons.forEach(btn => {
-          if (btn.textContent.includes('投資営業') || 
-              btn.textContent.includes('Sign Up') ||
-              (btn.classList.contains('btn-light') && 
-               btn.closest('#navbar-user-area') && 
-               !btn.textContent.includes('新規登録'))) {
+        // 全てのボタンを確認・修正
+        document.querySelectorAll('button, .btn').forEach(btn => {
+          const text = btn.textContent.trim();
+          if (text === '投資営業' || text.includes('投資営業') || 
+              text === 'Sign Up' || text.includes('Sign Up')) {
             btn.textContent = '新規登録';
+            btn.innerHTML = '新規登録';
             btn.onclick = showRegisterOptions;
           }
         });
+        
+        // テキストノードも直接変更
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+        let node;
+        while (node = walker.nextNode()) {
+          if (node.textContent.includes('投資営業')) {
+            node.textContent = node.textContent.replace(/投資営業/g, '新規登録');
+          }
+        }
       }
       
-      forceFixButton();
-      setInterval(forceFixButton, 1000);
+      ultimateButtonFix();
+      setInterval(ultimateButtonFix, 200);
+      
+      // DOM変更監視
+      new MutationObserver(ultimateButtonFix).observe(document.body, {
+        childList: true, subtree: true, characterData: true
+      });
     });
   </script>
   
@@ -6399,5 +6414,8 @@
   
   <!-- 新規登録ボタン修正システム -->
   <script src="fix-registration-button.js"></script>
+  
+  <!-- 核レベル新規登録ボタン修正 -->
+  <script src="nuclear-button-fix.js"></script>
 </body>
 </html>
