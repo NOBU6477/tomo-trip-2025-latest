@@ -172,6 +172,38 @@
       min-height: 800px !important;
       z-index: 10 !important;
       position: relative !important;
+      display: block !important;
+      visibility: visible !important;
+    }
+    
+    /* 緊急修正: 紫色背景による隠蔽問題解決 */
+    .sponsor-banner {
+      max-height: 100px !important;
+      height: 100px !important;
+      position: relative !important;
+      z-index: 1 !important;
+    }
+    
+    /* ガイドカードコンテナの強制表示 */
+    #guide-cards-container {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 10 !important;
+      position: relative !important;
+      background-color: #ffffff !important;
+      padding: 20px !important;
+      margin-top: 20px !important;
+    }
+    
+    /* ガイドカード個別の表示強制 */
+    .guide-item, .guide-card {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
+      z-index: 5 !important;
     }
     
     /* スポンサーバナーエリアの高さ制限 */
@@ -6874,6 +6906,100 @@
         
         console.log('ヘッダーボタン機能設定完了');
       }, 500);
+    });
+  </script>
+  
+  <!-- 緊急表示修正システム -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('=== 緊急表示修正システム開始 ===');
+      
+      // 即座に実行する緊急修正
+      const emergencyFix = () => {
+        // 1. スポンサーバナーの高さを強制制限
+        document.querySelectorAll('.sponsor-banner').forEach(banner => {
+          banner.style.height = '100px';
+          banner.style.maxHeight = '100px';
+          banner.style.overflow = 'hidden';
+          banner.style.position = 'relative';
+          banner.style.zIndex = '1';
+        });
+        
+        // 2. メインコンテンツエリアの強制表示
+        const guidesSection = document.getElementById('guides');
+        if (guidesSection) {
+          guidesSection.style.display = 'block';
+          guidesSection.style.visibility = 'visible';
+          guidesSection.style.zIndex = '10';
+          guidesSection.style.position = 'relative';
+          guidesSection.style.backgroundColor = '#f8f9fa';
+          guidesSection.style.minHeight = '800px';
+          guidesSection.style.padding = '30px 0';
+        }
+        
+        // 3. ガイドカードコンテナの強制表示
+        const container = document.getElementById('guide-cards-container');
+        if (container) {
+          container.style.display = 'flex';
+          container.style.flexWrap = 'wrap';
+          container.style.visibility = 'visible';
+          container.style.opacity = '1';
+          container.style.zIndex = '10';
+          container.style.position = 'relative';
+          container.style.backgroundColor = '#ffffff';
+          container.style.padding = '20px';
+          container.style.marginTop = '20px';
+          
+          // コンテナが空の場合、ガイドカードを即座に生成
+          if (container.children.length < 10) {
+            console.log('ガイドカードが不足 - 即座に70枚生成');
+            loadAllGuides();
+          }
+        }
+        
+        // 4. ガイドカウンターの強制更新
+        const counter = document.getElementById('search-results-counter');
+        if (counter) {
+          counter.textContent = '70人のガイドが見つかりました';
+          counter.style.display = 'block';
+          counter.style.visibility = 'visible';
+          counter.style.color = '#28a745';
+          counter.style.fontWeight = 'bold';
+          counter.style.fontSize = '1.1rem';
+        }
+        
+        // 5. スクロール機能の確保
+        document.body.style.overflow = 'auto';
+        document.documentElement.style.overflow = 'auto';
+        
+        console.log('緊急修正適用完了');
+      };
+      
+      // 即座に実行
+      emergencyFix();
+      
+      // 500ms後に再実行
+      setTimeout(emergencyFix, 500);
+      
+      // 1秒後にも再実行
+      setTimeout(emergencyFix, 1000);
+      
+      // 2秒後に最終確認
+      setTimeout(() => {
+        emergencyFix();
+        
+        // ガイドカード数を確認
+        const container = document.getElementById('guide-cards-container');
+        if (container) {
+          const cardCount = container.querySelectorAll('.guide-item').length;
+          console.log(`最終ガイドカード数: ${cardCount}`);
+          
+          if (cardCount < 70) {
+            console.log('まだ不足 - 追加生成実行');
+            loadAllGuides();
+          }
+        }
+      }, 2000);
     });
   </script>
 </body>
