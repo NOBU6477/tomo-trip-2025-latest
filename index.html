@@ -6531,21 +6531,38 @@
             console.log('ボタン再作成完了');
           }
           
-          // ガイドカウンター強制更新
-          const counters = document.querySelectorAll('[id*="counter"], [class*="counter"], .guide-count');
+          // ガイドカウンター強制更新（すべてのパターンに対応）
+          const counters = document.querySelectorAll('[id*="counter"], [class*="counter"], .guide-count, #search-results-counter');
           counters.forEach(counter => {
-            if (counter.textContent.includes('12人') || counter.textContent.includes('12人のガイド')) {
+            if (counter.textContent.includes('12人') || counter.textContent.includes('12人のガイド') || counter.textContent.includes('見つかりました')) {
               counter.textContent = '70人のガイドが見つかりました';
+              counter.innerHTML = '70人のガイドが見つかりました';
             }
           });
           
-          // 右上ボタンテキスト強制修正
-          const signUpBtns = document.querySelectorAll('button');
+          // 直接IDで指定
+          const specificCounter = document.getElementById('search-results-counter');
+          if (specificCounter) {
+            specificCounter.textContent = '70人のガイドが見つかりました';
+            specificCounter.innerHTML = '70人のガイドが見つかりました';
+          }
+          
+          // 右上ボタンテキスト強制修正（より包括的）
+          const signUpBtns = document.querySelectorAll('button, .btn');
           signUpBtns.forEach(btn => {
-            if (btn.textContent.trim() === 'Sign Up') {
+            const text = btn.textContent.trim();
+            if (text === 'Sign Up' || text.includes('Sign Up')) {
               btn.textContent = '新規登録';
+              btn.innerHTML = '新規登録';
+              console.log('Sign Upボタンを新規登録に変更:', btn);
             }
           });
+          
+          // ナビゲーションエリアを直接更新
+          const navArea = document.getElementById('navbar-user-area');
+          if (navArea && navArea.innerHTML.includes('Sign Up')) {
+            navArea.innerHTML = navArea.innerHTML.replace(/Sign Up/g, '新規登録');
+          }
           
           // 右固定ボタンテキスト確保
           const rightButtons = document.querySelectorAll('#sponsor-fixed-buttons button');
@@ -6560,7 +6577,16 @@
           
         }, 2000);
         
-        // 強制的に70人のガイドを表示
+        // 強制的に70人のガイドを表示（即座に実行）
+        setTimeout(() => {
+          loadAllGuides();
+        }, 500);
+        
+        // さらに確実にするため複数回実行
+        setTimeout(() => {
+          loadAllGuides();
+        }, 1500);
+        
         setTimeout(() => {
           loadAllGuides();
         }, 3000);
@@ -6579,39 +6605,46 @@
         return;
       }
       
-      // 既存のガイドカード数を確認
-      const existingCards = container.querySelectorAll('.guide-item');
-      console.log(`現在のガイドカード数: ${existingCards.length}`);
+      // コンテナを一度空にして再構築
+      container.innerHTML = '';
       
-      // 70枚まで不足している分を追加
-      const targetCount = 70;
-      const currentCount = existingCards.length;
-      
-      if (currentCount < targetCount) {
-        const additionalCards = targetCount - currentCount;
-        console.log(`${additionalCards}枚のガイドカードを追加します`);
-        
-        for (let i = 0; i < additionalCards; i++) {
-          const cardIndex = currentCount + i + 1;
-          const newCard = createGuideCard(cardIndex);
-          container.appendChild(newCard);
-        }
-        
-        // カウンター更新
-        const counter = document.getElementById('search-results-counter');
-        if (counter) {
-          counter.textContent = '70人のガイドが見つかりました';
-        }
-        
-        // ボタンテキスト更新
-        const loadMoreBtn = document.getElementById('load-more-guides');
-        if (loadMoreBtn) {
-          loadMoreBtn.textContent = '表示中: 70人のガイド';
-          loadMoreBtn.disabled = true;
-        }
-        
-        console.log('70人のガイドカード表示完了');
+      // 70枚のガイドカードを作成
+      for (let i = 1; i <= 70; i++) {
+        const newCard = createGuideCard(i);
+        container.appendChild(newCard);
       }
+      
+      // カウンター更新
+      updateGuideCounter();
+      
+      // ボタンテキスト更新
+      const loadMoreBtn = document.getElementById('load-more-guides');
+      if (loadMoreBtn) {
+        loadMoreBtn.textContent = '表示中: 70人のガイド';
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.style.backgroundColor = '#28a745';
+        loadMoreBtn.style.borderColor = '#28a745';
+      }
+      
+      console.log('70人のガイドカード表示完了');
+    }
+    
+    // ガイドカウンター更新専用関数
+    function updateGuideCounter() {
+      const counter = document.getElementById('search-results-counter');
+      if (counter) {
+        counter.textContent = '70人のガイドが見つかりました';
+        counter.innerHTML = '70人のガイドが見つかりました';
+        counter.style.display = 'block';
+        counter.style.visibility = 'visible';
+      }
+      
+      // 他の可能なカウンター要素も更新
+      document.querySelectorAll('[class*="counter"], [id*="counter"]').forEach(el => {
+        if (el.textContent.includes('ガイド') && el.textContent.includes('見つかりました')) {
+          el.textContent = '70人のガイドが見つかりました';
+        }
+      });
     }
     
     // ガイドカードを動的に作成する関数
