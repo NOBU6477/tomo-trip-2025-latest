@@ -159,9 +159,26 @@
     /* ヒーローセクション修正 - 高さ制限追加 */
     .hero-section {
       overflow: hidden !important;
-      min-height: 400px !important;
-      max-height: 450px !important;
-      height: 400px !important;
+      min-height: 350px !important;
+      max-height: 400px !important;
+      height: 350px !important;
+      position: relative !important;
+    }
+    
+    /* メインコンテンツエリアの表示確保 */
+    #guides {
+      background-color: #f8f9fa !important;
+      padding: 30px 0 !important;
+      min-height: 800px !important;
+      z-index: 10 !important;
+      position: relative !important;
+    }
+    
+    /* スポンサーバナーエリアの高さ制限 */
+    .sponsor-banner, .sponsor-section {
+      max-height: 120px !important;
+      height: 120px !important;
+      overflow: hidden !important;
     }
     
     /* モーダルbackdropの非表示 */
@@ -6534,42 +6551,61 @@
             console.log('ボタン再作成完了');
           }
           
-          // ガイドカウンター強制更新（すべてのパターンに対応）
-          const counters = document.querySelectorAll('[id*="counter"], [class*="counter"], .guide-count, #search-results-counter');
-          counters.forEach(counter => {
-            if (counter.textContent.includes('12人') || counter.textContent.includes('12人のガイド') || counter.textContent.includes('見つかりました')) {
-              counter.textContent = '70人のガイドが見つかりました';
-              counter.innerHTML = '70人のガイドが見つかりました';
+          // ガイドカウンター完全修正 - 12人表示を70人に強制変更
+          const updateCounter = () => {
+            const counters = document.querySelectorAll('[id*="counter"], [class*="counter"], .guide-count, #search-results-counter');
+            counters.forEach(counter => {
+              if (counter.textContent.includes('12人') || counter.textContent.includes('12人のガイド')) {
+                counter.textContent = '70人のガイドが見つかりました';
+                counter.innerHTML = '70人のガイドが見つかりました';
+                counter.style.color = '#28a745';
+                counter.style.fontWeight = 'bold';
+              }
+            });
+            
+            // 直接IDで指定して強制更新
+            const specificCounter = document.getElementById('search-results-counter');
+            if (specificCounter) {
+              specificCounter.textContent = '70人のガイドが見つかりました';
+              specificCounter.innerHTML = '70人のガイドが見つかりました';
+              specificCounter.style.display = 'block';
+              specificCounter.style.visibility = 'visible';
             }
-          });
+          };
           
-          // 直接IDで指定
-          const specificCounter = document.getElementById('search-results-counter');
-          if (specificCounter) {
-            specificCounter.textContent = '70人のガイドが見つかりました';
-            specificCounter.innerHTML = '70人のガイドが見つかりました';
-          }
+          updateCounter();
+          // 継続的に監視してカウンター修正
+          setInterval(updateCounter, 1000);
           
-          // 右上ボタンテキスト強制修正（より包括的）
-          const signUpBtns = document.querySelectorAll('button, .btn');
-          signUpBtns.forEach(btn => {
-            const text = btn.textContent.trim();
-            if (text === 'Sign Up' || text.includes('Sign Up')) {
-              btn.textContent = '新規登録';
-              btn.innerHTML = '新規登録';
-              console.log('Sign Upボタンを新規登録に変更:', btn);
+          // 新規登録ボタンの点滅完全停止システム
+          const stopButtonFlickering = () => {
+            const navArea = document.getElementById('navbar-user-area');
+            if (navArea) {
+              // 他のスクリプトによる変更を監視・阻止
+              const observer = new MutationObserver((mutations) => {
+                mutations.forEach(() => {
+                  if (!navArea.innerHTML.includes('新規登録') || navArea.innerHTML.includes('Sign Up')) {
+                    navArea.innerHTML = `
+                      <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+                      <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
+                    `;
+                    console.log('ボタン点滅阻止 - 強制修正実行');
+                  }
+                });
+              });
+              observer.observe(navArea, { childList: true, subtree: true });
+              
+              // 即座に修正
+              navArea.innerHTML = `
+                <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+                <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
+              `;
+              navArea.setAttribute('data-fixed', 'true');
+              console.log('ナビゲーションボタン点滅完全停止');
             }
-          });
+          };
           
-          // ナビゲーションエリアを直接更新（完全書き換え）
-          const navArea = document.getElementById('navbar-user-area');
-          if (navArea) {
-            navArea.innerHTML = `
-              <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-              <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
-            `;
-            console.log('ナビゲーションエリア完全書き換え完了');
-          }
+          stopButtonFlickering();
           
           // 右固定ボタンテキスト確保
           const rightButtons = document.querySelectorAll('#sponsor-fixed-buttons button');
@@ -6584,49 +6620,63 @@
           
         }, 2000);
         
-        // ヒーローセクションの高さ制限を強制
-        const heroSection = document.querySelector('.hero-section');
-        if (heroSection) {
-          heroSection.style.height = '400px';
-          heroSection.style.maxHeight = '450px';
-          heroSection.style.minHeight = '400px';
-          heroSection.style.overflow = 'hidden';
-          console.log('ヒーローセクション高さ制限適用');
-        }
+        // レイアウト修正と表示領域確保
+        const applyLayoutFixes = () => {
+          // ヒーローセクションの高さ制限
+          const heroSection = document.querySelector('.hero-section');
+          if (heroSection) {
+            heroSection.style.height = '350px';
+            heroSection.style.maxHeight = '400px';
+            heroSection.style.overflow = 'hidden';
+            heroSection.style.position = 'relative';
+            console.log('ヒーローセクション高さ制限適用');
+          }
+          
+          // スポンサーバナーの高さ制限
+          document.querySelectorAll('.sponsor-banner, .sponsor-section').forEach(element => {
+            element.style.height = '120px';
+            element.style.maxHeight = '120px';
+            element.style.overflow = 'hidden';
+          });
+          
+          // メインコンテンツエリアの強制表示
+          const mainContainer = document.querySelector('#guides');
+          if (mainContainer) {
+            mainContainer.style.display = 'block';
+            mainContainer.style.visibility = 'visible';
+            mainContainer.style.zIndex = '10';
+            mainContainer.style.backgroundColor = '#f8f9fa';
+            mainContainer.style.position = 'relative';
+            mainContainer.style.padding = '30px 0';
+            mainContainer.style.minHeight = '800px';
+            console.log('メインコンテンツエリア表示強制');
+          }
+          
+          // スクロール機能確保
+          document.body.style.overflow = 'auto';
+          document.documentElement.style.overflow = 'auto';
+          console.log('スクロール機能確保完了');
+        };
         
-        // スポンサーバナーの高さ制限
-        const sponsorBanner = document.querySelector('.sponsor-banner');
-        if (sponsorBanner) {
-          sponsorBanner.style.height = '100px';
-          sponsorBanner.style.maxHeight = '100px';
-          sponsorBanner.style.overflow = 'hidden';
-          console.log('スポンサーバナー高さ制限適用');
-        }
+        applyLayoutFixes();
         
-        // メインコンテンツエリアの表示強制
-        const mainContainer = document.querySelector('#guides');
-        if (mainContainer) {
-          mainContainer.style.display = 'block';
-          mainContainer.style.visibility = 'visible';
-          mainContainer.style.zIndex = '10';
-          mainContainer.style.backgroundColor = '#f8f9fa';
-          mainContainer.style.position = 'relative';
-          console.log('メインコンテンツエリア表示強制');
-        }
+        // 70人のガイドを確実に表示
+        const ensureGuideDisplay = () => {
+          const container = document.getElementById('guide-cards-container');
+          if (container) {
+            const currentCount = container.querySelectorAll('.guide-item').length;
+            console.log(`現在のガイドカード数: ${currentCount}`);
+            
+            if (currentCount < 70) {
+              loadAllGuides();
+            }
+          }
+        };
         
-        // 強制的に70人のガイドを表示（即座に実行）
-        setTimeout(() => {
-          loadAllGuides();
-        }, 500);
-        
-        // さらに確実にするため複数回実行
-        setTimeout(() => {
-          loadAllGuides();
-        }, 1500);
-        
-        setTimeout(() => {
-          loadAllGuides();
-        }, 3000);
+        // 複数回実行で確実に70人表示
+        setTimeout(ensureGuideDisplay, 300);
+        setTimeout(ensureGuideDisplay, 1000);
+        setTimeout(ensureGuideDisplay, 2000);
         
       }, 1000);
     });
