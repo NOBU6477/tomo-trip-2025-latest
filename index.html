@@ -5087,10 +5087,10 @@
   <script src="desktop-fixes.js"></script>
   
   <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
-  <script src="shared-language-utils.js"></script>
+  <!-- <script src="shared-language-utils.js"></script> -->
   
   <!-- ナビゲーションボタン -->
-  <script src="navigation-buttons.js"></script>
+  <!-- <script src="navigation-buttons.js"></script> -->
   
   <!-- ガイドタグ表示 -->
   <script src="guide-tags-display.js"></script>
@@ -6444,6 +6444,9 @@
   <!-- 日本語ロックシステム - 英語翻訳を完全阻止 -->
   <script src="japanese-lock.js"></script>
   
+  <!-- 絶対確実ボタン修正システム -->
+  <script src="absolute-button-fix.js"></script>
+  
   <!-- 最強日本語ボタン修正 - 直接DOM操作 -->
   <script>
     // 超高頻度での直接DOM修正
@@ -6468,8 +6471,8 @@
         }
       });
       
-      // 1ms後に再実行
-      setTimeout(nuclearJapaneseFix, 1);
+      // 即座に再実行（遅延なし）
+      requestAnimationFrame(nuclearJapaneseFix);
     })();
     
     // 全イベントでの修正
@@ -6495,30 +6498,53 @@
         document.documentElement.style.overflow = 'auto';
         document.documentElement.style.overflowY = 'auto';
         
-        // 日本語ボタン表記の完全強制
+        // 最強日本語ボタン表記の完全強制
         const allButtons = document.querySelectorAll('button, .btn');
         allButtons.forEach(btn => {
           const text = btn.textContent.trim();
           if (text === 'Sign Up' || text.includes('Sign Up')) {
             btn.textContent = '新規登録';
+            btn.innerHTML = '新規登録';
+            btn.innerText = '新規登録';
           }
           if (text === 'Login' || text.includes('Login')) {
             btn.textContent = 'ログイン';
+            btn.innerHTML = 'ログイン';
+            btn.innerText = 'ログイン';
           }
           if (text === 'Register' && !text.includes('新規')) {
             btn.textContent = '新規登録';
+            btn.innerHTML = '新規登録';
+            btn.innerText = '新規登録';
           }
         });
         
-        // 全言語切り替え機能を無効化
+        // 全言語切り替え機能を完全無効化
         window.switchToEnglish = function() {
-          console.log('英語切り替えは無効化されています');
+          console.log('🚫 英語切り替えは無効化されています');
+          comprehensiveFix(); // 即座に日本語に戻す
           return false;
         };
         
-        window.switchToJapanese = function() {
-          console.log('日本語は既に適用済みです');
+        window.translateToEnglish = function() {
+          console.log('🚫 英語翻訳は無効化されています');
+          comprehensiveFix(); // 即座に日本語に戻す
           return false;
+        };
+        
+        window.applyLanguage = function(lang) {
+          if (lang === 'en') {
+            console.log('🚫 英語適用は無効化されています');
+            comprehensiveFix(); // 即座に日本語に戻す
+            return false;
+          }
+          return true;
+        };
+        
+        window.switchToJapanese = function() {
+          console.log('✅ 日本語は既に適用済みです');
+          comprehensiveFix(); // 確実に日本語にする
+          return true;
         };
       }
       
