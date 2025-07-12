@@ -61,40 +61,18 @@
   <link href="login-modal-styles.css" rel="stylesheet">
   <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
   <style id="force-scroll-css">
-    /* 超強力スクロール修正システム */
-    html {
-      overflow: visible !important;
+    /* シンプルスクロール修正システム */
+    html, body {
       overflow-x: hidden !important;
-      overflow-y: scroll !important;
-      height: 100% !important;
-      position: static !important;
-      scroll-behavior: smooth !important;
-    }
-    
-    body {
-      overflow: visible !important;
       overflow-y: auto !important;
-      overflow-x: hidden !important;
       height: auto !important;
-      max-height: none !important;
-      position: static !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      min-height: 100vh !important;
-      width: 100% !important;
+      position: relative !important;
     }
     
-    /* Bootstrapのモーダル関連クラスもスクロール有効化 */
+    /* Bootstrapのモーダル問題を修正 */
     .modal-open {
-      overflow: visible !important;
-      overflow-y: auto !important;
+      overflow: auto !important;
       padding-right: 0 !important;
-      position: static !important;
-    }
-    
-    /* 全要素のoverflow制限を解除 */
-    * {
-      overflow: visible !important;
     }
     
     /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
@@ -759,7 +737,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 35px; width: 35px; border-radius: 50%; object-fit: cover;" class="me-2" onload="console.log('Navbar logo loaded')" onerror="console.log('Navbar logo failed'); this.src='https://img.icons8.com/color/48/000000/palm-tree.png'">
+        <img src="https://img.icons8.com/color/48/000000/palm-tree.png" alt="TomoTrip" style="height: 30px; width: 30px;" class="me-2">
         TomoTrip
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -815,10 +793,10 @@
         <path fill="#FFFFFF" d="M34.6,-59.1C43.5,-53.8,48.7,-41.8,55.8,-30.2C62.8,-18.6,71.7,-7.3,73,5.1C74.4,17.6,68.3,31.2,58.5,40.1C48.7,48.9,35.3,52.9,22.7,56.7C10.2,60.5,-1.5,63.9,-14.6,63.8C-27.8,63.7,-42.4,60,-50.9,50.7C-59.4,41.3,-61.7,26.3,-65.6,11.3C-69.4,-3.7,-74.7,-18.6,-71.1,-31C-67.5,-43.3,-55,-53,-41.7,-57.8C-28.4,-62.5,-14.2,-62.3,-0.6,-61.3C13,-60.3,25.9,-58.3,34.6,-59.1Z" transform="translate(100 100)" />
       </svg>
     </div>
-    <!-- TomoTrip Logo with Custom Image -->
+    <!-- TomoTrip Logo -->
     <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
-      <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; background: white; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;">
-        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="width: 100%; height: 100%; object-fit: cover;" onload="console.log('Logo loaded successfully')" onerror="console.log('Logo failed to load'); this.parentElement.innerHTML='<div style=\\'background: linear-gradient(45deg, #ff6b6b, #4ecdc4); width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 16px;\\'>🌴 TomoTrip</div>';">
+      <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 12px 24px; border-radius: 50px; font-weight: bold; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        🌴 TomoTrip
       </div>
     </div>
     
@@ -6452,68 +6430,26 @@
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
   <script src="emergency-fix.js"></script>
   
-  <!-- 核兵器級スクロール修正システム -->
+  <!-- シンプルスクロール修正システム -->
   <script>
-    // 即座に実行
-    (function() {
-      function nuclearScrollFix() {
-        // DOM要素の基本設定
-        const html = document.documentElement;
-        const body = document.body;
-        
-        // HTMLレベルの修正
-        html.style.cssText = 'overflow: visible !important; overflow-y: scroll !important; height: 100% !important; position: static !important;';
-        
-        // BODYレベルの修正
-        body.style.cssText = 'overflow: visible !important; overflow-y: auto !important; height: auto !important; position: static !important; min-height: 100vh !important; padding: 0 !important; margin: 0 !important;';
-        
-        // 全ての問題クラスを削除
-        body.classList.remove('modal-open');
-        html.classList.remove('modal-open');
-        
-        // 問題のあるスタイル属性を削除
-        body.removeAttribute('data-bs-overflow');
-        body.removeAttribute('data-bs-padding-right');
-        
-        // 全要素のoverflow制限を解除
-        document.querySelectorAll('*').forEach(el => {
-          if (el.style.overflow === 'hidden') {
-            el.style.overflow = 'visible';
-          }
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+      function fixScroll() {
+        document.body.style.overflow = 'auto';
+        document.body.style.overflowY = 'auto';
+        document.body.classList.remove('modal-open');
+        document.documentElement.style.overflow = 'auto';
       }
       
-      // 即座に実行
-      nuclearScrollFix();
+      // 初回修正
+      fixScroll();
       
-      // DOMContentLoaded後も実行
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', nuclearScrollFix);
-      }
+      // イベント時に修正
+      document.addEventListener('click', fixScroll);
+      document.addEventListener('scroll', fixScroll);
       
-      // 継続的な監視（10ms間隔）
-      setInterval(nuclearScrollFix, 10);
-      
-      // 全イベントでの修正
-      ['click', 'scroll', 'resize', 'touchstart', 'touchmove', 'touchend', 'mousemove', 'keydown'].forEach(event => {
-        document.addEventListener(event, nuclearScrollFix, { passive: true, capture: true });
-      });
-      
-      // MutationObserver による監視
-      const observer = new MutationObserver(nuclearScrollFix);
-      observer.observe(document.documentElement, {
-        attributes: true,
-        childList: true,
-        subtree: true,
-        attributeOldValue: true
-      });
-      
-      // Window イベントでの修正
-      window.addEventListener('load', nuclearScrollFix);
-      window.addEventListener('beforeunload', nuclearScrollFix);
-      window.addEventListener('focus', nuclearScrollFix);
-      
-    })();
+      // 100ms間隔で監視
+      setInterval(fixScroll, 100);
+    });
   </script>
 
 </body>
