@@ -61,18 +61,21 @@
   <link href="login-modal-styles.css" rel="stylesheet">
   <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
   <style id="force-scroll-css">
-    /* 全要素のoverflow:hiddenを強制的に無効化 */
-    * {
-      overflow: visible !important;
+    /* 最強スクロール修正システム */
+    html {
+      overflow-x: hidden !important;
+      overflow-y: scroll !important;
+      height: 100% !important;
+      position: relative !important;
     }
     
-    html, body {
+    body {
       overflow: auto !important;
       overflow-y: auto !important;
       overflow-x: hidden !important;
       height: auto !important;
       max-height: none !important;
-      position: static !important;
+      position: relative !important;
       padding: 0 !important;
       margin: 0 auto !important;
       min-height: 100vh !important;
@@ -746,7 +749,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 30px; width: 30px; border-radius: 50%;" class="me-2">
+        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 30px; width: 30px; border-radius: 50%; object-fit: cover;" class="me-2" onerror="this.src='https://img.icons8.com/color/48/000000/palm-tree.png'">
         TomoTrip
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -804,7 +807,9 @@
     </div>
     <!-- TomoTrip Logo -->
     <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
-      <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 80px; width: auto; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+      <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 8px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.3); width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;">
+        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 70px; width: 70px; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'color: white; font-weight: bold; font-size: 14px; text-align: center;\\'>TomoTrip</div>';">
+      </div>
     </div>
     
     <div class="container position-relative">
@@ -6436,5 +6441,53 @@
   
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
   <script src="emergency-fix.js"></script>
+  
+  <!-- 最終的なスクロール修正システム -->
+  <script>
+    // ページ読み込み完了後の強制スクロール修正
+    document.addEventListener('DOMContentLoaded', function() {
+      function forceScrollFix() {
+        // 基本的なスクロール設定
+        document.body.style.overflow = 'auto';
+        document.body.style.overflowY = 'auto';
+        document.body.style.position = 'relative';
+        document.documentElement.style.overflow = 'auto';
+        document.documentElement.style.overflowY = 'scroll';
+        
+        // Bootstrap modal問題の修正
+        document.body.classList.remove('modal-open');
+        document.documentElement.classList.remove('modal-open');
+        
+        // 高さの強制設定
+        document.body.style.minHeight = '100vh';
+        document.body.style.height = 'auto';
+        
+        // パディングとマージンのリセット
+        document.body.style.paddingRight = '0';
+        document.body.style.marginRight = '0';
+      }
+      
+      // 初回実行
+      forceScrollFix();
+      
+      // 定期的な修正（50ms間隔）
+      setInterval(forceScrollFix, 50);
+      
+      // イベントリスナーでの修正
+      ['click', 'scroll', 'resize', 'touchstart'].forEach(event => {
+        document.addEventListener(event, forceScrollFix, true);
+      });
+      
+      // MutationObserverによる監視
+      const observer = new MutationObserver(forceScrollFix);
+      observer.observe(document.body, {
+        attributes: true,
+        attributeFilter: ['class', 'style'],
+        childList: true,
+        subtree: true
+      });
+    });
+  </script>
+
 </body>
 </html>
