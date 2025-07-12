@@ -58,7 +58,7 @@
       }
     }
   </style>
-  <link href="login-modal-styles.css" rel="stylesheet">
+
   <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
   <style id="force-scroll-css">
     /* 強力スクロール修正システム */
@@ -623,6 +623,21 @@
       transition: opacity 0.3s ease;
       border-radius: 50%;
     }
+
+    /* 隠しガイド（初期状態） */
+    .hidden-guide {
+      display: none;
+    }
+
+    /* JavaScript無効時の代替表示 */
+    .js-disabled-warning {
+      display: block;
+    }
+
+    /* JavaScript有効時は警告を非表示 */
+    .js-enabled .js-disabled-warning {
+      display: none;
+    }
     
     .profile-photo-overlay i {
       color: white;
@@ -748,7 +763,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
       <a class="navbar-brand" href="#">
-        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 30px; width: 30px; border-radius: 50%;" class="me-2">
+        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=100&h=100&fit=crop&crop=center" alt="TomoTrip" style="height: 30px; width: 30px; border-radius: 50%;" class="me-2">
         TomoTrip
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -807,7 +822,7 @@
     <!-- TomoTrip Logo -->
     <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
       <div style="background: rgba(255, 255, 255, 0.9); padding: 8px 16px; border-radius: 50px; font-weight: bold; color: #2c3e50; font-size: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 8px;">
-        <img src="attached_assets/TomoTripロゴ_1752317517176.png" alt="TomoTrip" style="height: 35px; width: 35px; border-radius: 50%;">
+        <img src="https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=100&h=100&fit=crop&crop=center" alt="TomoTrip" style="height: 35px; width: 35px; border-radius: 50%;">
         TomoTrip
       </div>
     </div>
@@ -1097,7 +1112,7 @@
         <!-- ガイド1 -->
         <div class="col-md-4 guide-item">
           <div class="card guide-card shadow-sm" data-guide-id="1" data-location="東京都 渋谷区" data-languages="日本語,英語" data-fee="6000" data-keywords="グルメ,写真スポット">
-            <img src="attached_assets/IMG20221024140826_1750355257888.jpg" class="card-img-top guide-image" alt="ガイド写真">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">桃太郎</h5>
@@ -1131,11 +1146,11 @@
         <!-- ガイド2 -->
         <div class="col-md-4 guide-item">
           <div class="card guide-card shadow-sm" data-guide-id="2" data-location="京都府 京都市" data-languages="日本語,英語,中国語" data-fee="8000" data-keywords="歴史,文化,寺院,写真スポット">
-            <img src="attached_assets/IMG20221024140826_1750355257888.jpg" class="card-img-top guide-image" alt="ガイド写真">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616c056036d?w=300&h=200&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">花子</h5>
-                <span class="badge bg-primary">¥5,500/セッション</span>
+                <span class="badge bg-primary">¥8,000/セッション</span>
               </div>
               <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>京都府 京都市
@@ -1165,11 +1180,11 @@
         <!-- ガイド3 -->
         <div class="col-md-4 guide-item">
           <div class="card guide-card shadow-sm" data-guide-id="3" data-location="大阪府 大阪市" data-languages="日本語,英語" data-fee="7000" data-keywords="グルメ,ナイトツアー,ローカル">
-            <img src="attached_assets/IMG20221024140826_1750355257888.jpg" class="card-img-top guide-image" alt="ガイド写真">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=200&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">一郎</h5>
-                <span class="badge bg-primary">¥5,000/セッション</span>
+                <span class="badge bg-primary">¥7,000/セッション</span>
               </div>
               <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>大阪府 大阪市
@@ -1304,6 +1319,10 @@
       
       <div class="text-center mt-4">
         <button class="btn btn-primary" id="load-more-guides">もっと見る</button>
+        <div class="js-disabled-warning alert alert-warning mt-3" style="display: none;">
+          <i class="bi bi-exclamation-triangle"></i>
+          全ての機能をご利用いただくには、ブラウザでJavaScriptを有効にしてください。
+        </div>
       </div>
     </section>
     
@@ -5084,7 +5103,7 @@
 
   
   <!-- デバイス別の最適化スクリプト - 各環境でのみ実行 -->
-  <script src="smartphones.js"></script>
+
   <script src="desktop-fixes.js"></script>
   
   <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
@@ -5106,7 +5125,7 @@
   <script src="guide-card-extractor.js"></script>
   
   <!-- ガイド詳細データ管理 -->
-  <script src="guide-details-data.js"></script>
+
   <script src="data-reset.js"></script>
   <script src="password-toggle.js"></script>
   
@@ -6590,6 +6609,61 @@
         document.addEventListener(event, comprehensiveFix);
       });
     });
+  </script>
+
+  <!-- 基本機能のJavaScript -->
+  <script>
+    // DOM読み込み完了後に実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // フィルター表示切り替え
+      const toggleFilterButton = document.getElementById('toggle-filter-button');
+      const filterCard = document.getElementById('filter-card');
+      
+      if (toggleFilterButton && filterCard) {
+        toggleFilterButton.addEventListener('click', function () {
+          filterCard.classList.toggle('d-none');
+          // ボタンテキストの切り替え
+          const isHidden = filterCard.classList.contains('d-none');
+          this.innerHTML = isHidden ? 
+            '<i class="bi bi-funnel"></i> フィルター' : 
+            '<i class="bi bi-funnel-fill"></i> フィルターを閉じる';
+        });
+      }
+
+      // 「もっと見る」ボタン機能
+      const loadMoreButton = document.getElementById('load-more-guides');
+      if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', function () {
+          const hiddenGuides = document.querySelectorAll('.hidden-guide');
+          hiddenGuides.forEach(el => el.classList.remove('hidden-guide'));
+          this.style.display = 'none';
+          
+          // ガイド数カウンターの更新
+          updateGuideCounter();
+        });
+      }
+
+      // ガイド数カウンターを更新
+      function updateGuideCounter() {
+        const visibleGuides = document.querySelectorAll('.guide-item:not(.hidden-guide)');
+        const counterElement = document.querySelector('.guide-counter, .guides-count');
+        if (counterElement) {
+          counterElement.textContent = `${visibleGuides.length}人のガイドが見つかりました`;
+        }
+      }
+
+      // JavaScript無効時の代替表示
+      const jsWarning = document.querySelector('.js-disabled-warning');
+      if (jsWarning) {
+        jsWarning.style.display = 'none';
+      }
+
+      // 初期カウンター更新
+      updateGuideCounter();
+    });
+
+    // bodyにjs-enabledクラスを追加してJavaScript有効状態を表示
+    document.body.classList.add('js-enabled');
   </script>
 
 </body>
