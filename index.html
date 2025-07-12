@@ -801,7 +801,7 @@
         <!-- ログイン・新規登録ボタン -->
         <div id="navbar-user-area">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
-          <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
+          <button class="btn btn-light" onclick="showRegisterOptions()" id="main-register-btn">新規登録</button>
         </div>
       </div>
     </div>
@@ -6310,14 +6310,42 @@
   <!-- Fix Benefit Cards Display -->
   <script src="benefit-card-fix.js"></script>
   
-  <!-- 新規登録ボタン機能 -->
+  <!-- 新規登録ボタン機能強化版 -->
   <script>
     function showRegisterOptions() {
+      console.log('新規登録オプション表示');
       const modal = document.getElementById('registerOptionsModal');
       if (modal && window.bootstrap) {
         new bootstrap.Modal(modal).show();
       }
     }
+
+    // ボタンテキスト強制修正
+    document.addEventListener('DOMContentLoaded', function() {
+      function forceFixButton() {
+        const registerBtn = document.getElementById('main-register-btn');
+        if (registerBtn) {
+          registerBtn.textContent = '新規登録';
+          registerBtn.onclick = showRegisterOptions;
+        }
+        
+        // 全ての新規登録関連ボタンを修正
+        const allButtons = document.querySelectorAll('button');
+        allButtons.forEach(btn => {
+          if (btn.textContent.includes('投資営業') || 
+              btn.textContent.includes('Sign Up') ||
+              (btn.classList.contains('btn-light') && 
+               btn.closest('#navbar-user-area') && 
+               !btn.textContent.includes('新規登録'))) {
+            btn.textContent = '新規登録';
+            btn.onclick = showRegisterOptions;
+          }
+        });
+      }
+      
+      forceFixButton();
+      setInterval(forceFixButton, 1000);
+    });
   </script>
   
   <!-- 登録オプション選択モーダル -->
@@ -6368,5 +6396,8 @@
   
   <!-- 核レベルスクロール解決システム -->
   <script src="nuclear-scroll-solution.js"></script>
+  
+  <!-- 新規登録ボタン修正システム -->
+  <script src="fix-registration-button.js"></script>
 </body>
 </html>
