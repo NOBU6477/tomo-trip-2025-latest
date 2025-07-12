@@ -1,7 +1,7 @@
 /**
  * Sign Upボタンを新規登録に修正し、右側ボタンのスタイルを改善
  */
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     console.log('Sign Up修正スクリプト開始');
     
     function fixSignUpButton() {
@@ -126,4 +126,4 @@
     setInterval(fixSignUpButton, 2000);
     
     console.log('Sign Up修正スクリプト完了');
-})();
+});

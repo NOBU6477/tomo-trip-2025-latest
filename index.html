@@ -61,8 +61,8 @@
   <link href="login-modal-styles.css" rel="stylesheet">
   <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
   <style id="force-scroll-css">
-    /* 全要素のoverflow:hiddenを強制的に無効化 */
-    * {
+    /* 全要素のoverflow:hiddenを強制的に無効化（スポンサーバナー除く） */
+    *:not(.sponsor-banner) {
       overflow: visible !important;
     }
     
@@ -93,13 +93,13 @@
       overflow: visible !important;
     }
     
-    /* ヒーローセクションのみ例外的にhiddenを維持（デザインのため） */
-    .hero-section {
+    /* ヒーローセクションとスポンサーバナーは例外的にhiddenを維持（デザインのため） */
+    .hero-section, .sponsor-banner {
       overflow: hidden !important;
     }
     
     /* その他全てのdiv要素は強制的にvisible */
-    div:not(.hero-section) {
+    div:not(.hero-section):not(.sponsor-banner) {
       overflow: visible !important;
     }
     
@@ -835,8 +835,8 @@
   </section>
 
   <!-- 協賛店広告バナー -->
-  <div class="sponsor-banner">
-    <div class="sponsor-scroll">
+  <div class="sponsor-banner" style="overflow: hidden !important; white-space: nowrap !important;">
+    <div class="sponsor-scroll" style="display: inline-block !important; animation: scrollRight 30s linear infinite !important; white-space: nowrap !important;">
       <div class="sponsor-item">
         <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
         <span class="sponsor-text">海の家レストラン</span>
@@ -6439,6 +6439,7 @@
   
   <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
   <script src="emergency-fix.js"></script>
+  <script src="sponsor-animation-fix.js"></script>
   <script src="fix-sign-up-button.js"></script>
 </body>
 </html>
