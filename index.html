@@ -9,10 +9,49 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   
   <style>
+    /* 右上ボタンエリア - Sign Upボタンを強制的に新規登録に変更 */
+    .top-right-buttons {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    
+    .top-login-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .top-signup-btn {
+      background: #4287f5;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .top-signup-btn:hover {
+      background: #3d7bd9;
+      color: white;
+    }
+    
     /* Language Switcher */
     .language-switcher {
       position: fixed;
-      top: 20px;
+      top: 60px;
       right: 20px;
       z-index: 1000;
       background: rgba(255, 255, 255, 0.95);
@@ -761,8 +800,14 @@
   </style>
 </head>
 <body>
+  <!-- 右上ボタンエリア（強制表示） -->
+  <div class="top-right-buttons">
+    <a href="#" class="top-login-btn" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</a>
+    <button class="top-signup-btn" onclick="showRegisterOptions()">新規登録</button>
+  </div>
+  
   <!-- アラートコンテナ -->
-  <div id="alert-container" style="position: fixed; top: 20px; right: 20px; max-width: 400px; z-index: 9999;"></div>
+  <div id="alert-container" style="position: fixed; top: 100px; right: 20px; max-width: 400px; z-index: 9999;"></div>
   
   <!-- ナビゲーションバー -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -6430,5 +6475,8 @@
   
   <!-- ローディング問題修正 -->
   <script src="loading-fix.js"></script>
+  
+  <!-- 緊急ボタン修正システム -->
+  <script src="emergency-button-fix.js"></script>
 </body>
 </html>
