@@ -879,7 +879,7 @@ function applyPersonalizedStyles() {
     
     .city-card {
       transition: all 0.3s ease;
-      overflow: hidden;
+      overflow: visible;
     }
     
     .city-card:hover {

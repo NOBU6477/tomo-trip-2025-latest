@@ -33,7 +33,7 @@
       margin-bottom: 6px;
       transition: all 0.2s ease;
       position: relative;
-      overflow: hidden;
+      overflow: visible;
     }
     
     /* タグのホバー効果 */

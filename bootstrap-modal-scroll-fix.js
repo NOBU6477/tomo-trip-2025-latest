@@ -45,7 +45,7 @@
         padding-right: 0 !important;
       }
       
-      /* 全ての要素のoverflow:hiddenを防止 */
+      /* 全ての要素のoverflow:visibleを防止 */
       body {
         overflow-y: auto !important;
       }

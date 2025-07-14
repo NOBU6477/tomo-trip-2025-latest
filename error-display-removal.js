@@ -153,7 +153,7 @@
           opacity: 0 !important;
           height: 0 !important;
           max-height: 0 !important;
-          overflow: hidden !important;
+          overflow: visible !important;
           position: absolute !important;
           left: -9999px !important;
           top: -9999px !important;

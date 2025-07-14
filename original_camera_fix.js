@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', function() {
         background-color: #000;
         max-height: calc(100vh - 200px);
         min-height: 300px;
-        overflow: hidden;
+        overflow: visible;
       }
       
       #camera-video {

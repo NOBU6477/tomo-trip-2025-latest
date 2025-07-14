@@ -26,7 +26,7 @@ document.head.insertAdjacentHTML('beforeend', `
       display: flex;
       margin-bottom: 20px;
       border-radius: 12px;
-      overflow: hidden;
+      overflow: visible;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       background: #fff;
       position: relative;

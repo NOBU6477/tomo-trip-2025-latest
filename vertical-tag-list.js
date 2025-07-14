@@ -15,7 +15,7 @@
       background-color: #f8f9fa;
       border: 1px solid #e9ecef;
       border-radius: 8px;
-      overflow: hidden;
+      overflow: visible;
     }
     
     /* タグリストのタイトル */

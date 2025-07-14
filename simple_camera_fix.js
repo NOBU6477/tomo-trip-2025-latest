@@ -673,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function() {
     style.textContent = `
       .camera-container {
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         min-height: 300px;
         max-height: 70vh;
       }

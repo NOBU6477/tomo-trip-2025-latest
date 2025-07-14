@@ -227,7 +227,7 @@
           height: 0 !important;
           max-height: 0 !important;
           min-height: 0 !important;
-          overflow: hidden !important;
+          overflow: visible !important;
           position: absolute !important;
           left: -9999px !important;
           bottom: -9999px !important;

@@ -1371,7 +1371,7 @@
     style.textContent = `
       .camera-container {
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         background-color: #000;
         min-height: 300px;
         max-height: 70vh;

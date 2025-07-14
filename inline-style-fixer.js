@@ -43,7 +43,7 @@
             height: 0 !important;
             position: absolute !important;
             pointer-events: none !important;
-            overflow: hidden !important;
+            overflow: visible !important;
           `;
         }
       } catch (e) {
@@ -107,7 +107,7 @@
               height: 0 !important;
               position: absolute !important;
               pointer-events: none !important;
-              overflow: hidden !important;
+              overflow: visible !important;
             `;
           }
         } catch (e) {

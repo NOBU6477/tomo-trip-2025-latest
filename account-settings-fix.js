@@ -39,7 +39,7 @@ function addModernStyles() {
       display: flex;
       position: relative;
       border-radius: 8px;
-      overflow: hidden;
+      overflow: visible;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }

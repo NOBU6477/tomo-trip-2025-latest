@@ -329,7 +329,7 @@ function setupProfilePreview() {
   previewContainer.className = 'profile-preview-container card mt-4';
   previewContainer.style.cssText = `
     border-radius: 8px;
-    overflow: hidden;
+    overflow: visible;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     position: sticky;
     top: 20px;

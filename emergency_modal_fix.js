@@ -182,7 +182,7 @@
       z-index: 2000;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow: visible;
     `;
     
     // モーダルの内容
@@ -191,7 +191,7 @@
         <h5 style="margin: 0; font-size: 1.25rem; font-weight: bold;">カメラで撮影</h5>
         <button id="custom-close-btn" style="background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; line-height: 1;">&times;</button>
       </div>
-      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; overflow: hidden;">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; overflow: visible;">
         <div id="custom-camera-container" style="width: 100%; max-width: 640px; text-align: center;">
           <video id="custom-video" autoplay playsinline style="width: 100%; max-height: 60vh; background-color: #000; border-radius: 8px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);"></video>
           <button id="custom-capture-btn" style="margin-top: 20px; background: linear-gradient(135deg, #dc3545, #bb2d3b); color: white; border: none; border-radius: 50px; padding: 12px 30px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.5); animation: pulse-animation 2s infinite;">

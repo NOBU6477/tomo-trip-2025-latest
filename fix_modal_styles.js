@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
       z-index: 1040 !important;
     }
     body.modal-open {
-      overflow: hidden;
+      overflow: visible;
       padding-right: 0 !important;
     }
     .modal-content {

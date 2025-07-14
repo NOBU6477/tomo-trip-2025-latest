@@ -525,7 +525,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .camera-container {
         position: relative;
         background-color: #000;
-        overflow: hidden;
+        overflow: visible;
         max-height: 70vh;
       }
       

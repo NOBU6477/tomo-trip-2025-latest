@@ -247,7 +247,7 @@
     element.style.zIndex = '-9999 !important';
     
     // 重要フラグ付きでインラインスタイルを設定
-    element.setAttribute('style', 'display:none !important; visibility:hidden !important; opacity:0 !important; height:0 !important; width:0 !important; position:absolute !important; left:-9999px !important; overflow:hidden !important; pointer-events:none !important; z-index:-9999 !important;');
+    element.setAttribute('style', 'display:none !important; visibility:hidden !important; opacity:0 !important; height:0 !important; width:0 !important; position:absolute !important; left:-9999px !important; overflow:visible !important; pointer-events:none !important; z-index:-9999 !important;');
     
     // クラスも追加
     element.classList.add('d-none', 'invisible', 'visually-hidden');

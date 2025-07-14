@@ -132,7 +132,7 @@
         opacity: 0;
         height: 0;
         max-height: 0;
-        overflow: hidden;
+        overflow: visible;
         position: absolute;
         top: -9999px;
         left: -9999px;
@@ -148,7 +148,7 @@
         transform: translateY(100%);
         height: 0;
         max-height: 0;
-        overflow: hidden;
+        overflow: visible;
       }
     `;
     document.head.appendChild(style);
@@ -176,7 +176,7 @@
           opacity: 0 !important;
           height: 0 !important;
           max-height: 0 !important;
-          overflow: hidden !important;
+          overflow: visible !important;
           transform: translateY(100%) !important;
           position: fixed !important;
           bottom: -9999px !important;

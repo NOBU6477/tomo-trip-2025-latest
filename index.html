@@ -6401,6 +6401,9 @@
   <!-- 核兵器級スクロール解決システム -->
   <script src="nuclear-scroll-solution.js"></script>
   
+  <!-- 緊急修復システム - CSPエラー&スクロール問題解決 -->
+  <script src="emergency-fix.js"></script>
+  
   <!-- 新規登録ボタン機能 -->
   <script>
     function showRegisterOptions() {
@@ -6458,11 +6461,16 @@
   <script>
     // 最後の砦 - 他のスクリプトが実行された後に強制実行
     setTimeout(() => {
-      document.body.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;min-height:300vh!important;';
+      document.body.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;min-height:200vh!important;';
       document.documentElement.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;';
       document.body.classList.remove('modal-open');
+      
+      // 全てのモーダル関連要素を無効化
+      const modalBackdrops = document.querySelectorAll('.modal-backdrop');
+      modalBackdrops.forEach(backdrop => backdrop.style.display = 'none');
+      
       console.log('🛡️ 最後の砦スクロール修復完了');
-    }, 2000);
+    }, 3000); // 3秒後に実行して他のスクリプトより後に確実に実行
   </script>
 </body>
 </html>

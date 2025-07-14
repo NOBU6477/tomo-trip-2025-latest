@@ -183,7 +183,7 @@
           '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>' +
         '</div>' +
         '<div class="modal-body text-center p-0">' +
-          '<div style="position: relative; max-height: 80vh; overflow: hidden;">' +
+          '<div style="position: relative; max-height: 80vh; overflow: visible;">' +
             '<video id="simple-camera-video" autoplay playsinline style="width: 100%; max-height: 70vh; background: #000;"></video>' +
             '<canvas id="simple-camera-canvas" style="display: none;"></canvas>' +
             '<div class="p-3 mt-3 mb-3">' +
@@ -214,7 +214,8 @@
       document.body.appendChild(modalBackdrop);
       
       // body要素にモーダルオープンクラスを追加
-      document.body.classList.add('modal-open');
+      // modal-open クラス追加を無効化 - スクロール阻害防止
+      // document.body.classList.add('modal-open');
     }
     
     // 撮影ボタンのイベントリスナーを設定
