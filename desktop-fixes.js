@@ -41,7 +41,7 @@
   function loadDesktopStylesheet() {
     const desktopStyles = document.createElement('link');
     desktopStyles.rel = 'stylesheet';
-    desktopStyles.href = 'desktop-fixes.css';
+    // desktopStyles.href = 'desktop-fixes.css'; // 無効化 - ファイル存在しない
     document.head.appendChild(desktopStyles);
   }
   
