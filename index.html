@@ -59,21 +59,33 @@
     }
   </style>
 
-  <!-- シンプルスクロール修正 -->
-  <style id="simple-scroll-css">
-    html, body {
+  <!-- 新しいスクロール実装CSS -->
+  <style id="new-scroll-css">
+    html {
+      overflow: visible !important;
       overflow-y: auto !important;
       height: auto !important;
+      min-height: 100vh !important;
     }
     
     body {
-      min-height: 400vh;
+      overflow: visible !important;
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 500vh !important;
+      position: static !important;
       padding-bottom: 100px;
     }
     
     body.modal-open {
+      overflow: visible !important;
       overflow-y: auto !important;
       padding-right: 0 !important;
+      position: static !important;
+    }
+    
+    .modal-backdrop {
+      display: none !important;
     }
   </style>
 
@@ -6370,8 +6382,8 @@
     }
   </script>
 
-  <!-- シンプルスクロール修正 -->
-  <script src="simple-scroll-fix.js"></script>
+  <!-- 新しいスクロール実装 -->
+  <script src="new-scroll-implementation.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>
