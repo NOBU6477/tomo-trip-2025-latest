@@ -70,7 +70,7 @@
     body {
       overflow-y: auto !important;
       height: auto !important;
-      min-height: 100vh !important;
+      min-height: 200vh !important;
     }
     
     /* modal-openクラスのスクロール阻害のみ無効化 */
@@ -778,11 +778,10 @@
     background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
                 url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop') center/cover;
     position: relative; 
-    overflow: hidden;
     min-height: 60vh;
   ">
     <!-- 装飾要素 -->
-    <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; overflow: hidden; opacity: 0.3;">
+    <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.3;">
       <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="position: absolute; width: 300px; height: 300px; top: -50px; left: -50px;">
         <path fill="#FFFFFF" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.5C87.4,-31.9,90.2,-15.9,88.1,-1.2C86,13.5,79.1,27,70.8,39.4C62.5,51.8,52.7,63.1,40.4,70.4C28.1,77.8,14.1,81.1,-0.3,81.6C-14.7,82.1,-29.3,79.9,-41,72.5C-52.6,65.2,-61.3,52.8,-68.9,39.7C-76.6,26.6,-83.3,13.3,-84.7,-0.8C-86,-14.9,-82,-29.9,-73.6,-41.5C-65.2,-53.1,-52.5,-61.4,-39.3,-68.7C-26.1,-76,-13.1,-82.3,1.1,-84.1C15.2,-85.8,30.5,-83.7,44.7,-76.4Z" transform="translate(100 100)" />
       </svg>
@@ -6441,8 +6440,22 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 最終的なスクロール修正システム - UIを崩さない修正 -->
-  <script src="ultimate-scroll-fix.js"></script>
+  <!-- シンプルなスクロール確保 -->
+  <script>
+    // 最小限のスクロール確保
+    document.body.style.minHeight = '200vh';
+    document.body.style.overflow = 'auto';
+    document.documentElement.style.overflow = 'auto';
+    
+    // modal-open クラスの干渉を防止
+    const observer = new MutationObserver(() => {
+      if (document.body.classList.contains('modal-open')) {
+        document.body.style.overflow = 'auto';
+        document.body.style.paddingRight = '0px';
+      }
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  </script>
   
   <!-- 安定版修復システム - 点滅問題解決 -->
   <script src="stable-header-fix.js"></script>
