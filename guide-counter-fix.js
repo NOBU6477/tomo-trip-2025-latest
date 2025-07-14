@@ -16,31 +16,43 @@
       const visibleGuideCards = document.querySelectorAll('.guide-item:not(.d-none), .guide-card:not(.d-none)');
       const totalGuides = visibleGuideCards.length;
       
-      // 日本語サイトのカウンター更新
-      const japaneseCounter = document.querySelector('#search-results-counter');
-      if (japaneseCounter) {
-        japaneseCounter.textContent = `${totalGuides}人のガイドが見つかりました`;
-        japaneseCounter.style.display = totalGuides > 0 ? 'block' : 'none';
-      }
+      // サイト言語を確認
+      const isEnglishSite = window.location.href.includes('index-en.html');
       
-      // 英語サイトのカウンター更新
-      const englishCounter = document.querySelector('.guide-counter, [class*="found"]');
-      if (englishCounter) {
-        englishCounter.textContent = `Found ${totalGuides} guides`;
-        englishCounter.style.display = totalGuides > 0 ? 'block' : 'none';
-      }
-      
-      // フィルター結果表示も更新
-      const filterResults = document.querySelectorAll('[class*="result"], [class*="count"]');
-      filterResults.forEach(element => {
-        if (element.textContent.includes('Found') || element.textContent.includes('ガイド')) {
-          if (window.location.href.includes('index-en.html')) {
-            element.textContent = `Found ${totalGuides} guides`;
-          } else {
-            element.textContent = `${totalGuides}人のガイドが見つかりました`;
-          }
+      if (isEnglishSite) {
+        // 英語サイトのカウンター更新
+        const englishCounter = document.querySelector('#guide-counter, .guide-counter, [class*="found"]');
+        if (englishCounter) {
+          englishCounter.textContent = `Found ${totalGuides} guides`;
+          englishCounter.style.display = totalGuides > 0 ? 'block' : 'none';
         }
-      });
+      } else {
+        // 日本語サイトのカウンター更新
+        const japaneseCounter = document.querySelector('#search-results-counter');
+        if (japaneseCounter) {
+          japaneseCounter.textContent = `${totalGuides}人のガイドが見つかりました`;
+          japaneseCounter.style.display = totalGuides > 0 ? 'block' : 'none';
+        }
+      }
+      
+      // 言語固有の他の要素も更新（混合を防ぐ）
+      if (isEnglishSite) {
+        // 英語サイト：日本語テキストを英語に修正
+        const mixedElements = document.querySelectorAll('*');
+        mixedElements.forEach(element => {
+          if (element.textContent && element.textContent.includes('人のガイドが見つかりました')) {
+            element.textContent = element.textContent.replace(/\d+人のガイドが見つかりました/, `Found ${totalGuides} guides`);
+          }
+        });
+      } else {
+        // 日本語サイト：英語テキストを日本語に修正
+        const mixedElements = document.querySelectorAll('*');
+        mixedElements.forEach(element => {
+          if (element.textContent && element.textContent.includes('Found') && element.textContent.includes('guides')) {
+            element.textContent = element.textContent.replace(/Found \d+ guides/, `${totalGuides}人のガイドが見つかりました`);
+          }
+        });
+      }
       
       console.log(`✅ ガイド数更新: ${totalGuides}人`);
       
