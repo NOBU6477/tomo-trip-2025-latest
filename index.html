@@ -59,52 +59,31 @@
     }
   </style>
   <link href="login-modal-styles.css" rel="stylesheet">
-  <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
-  <style id="force-scroll-css">
-    /* 全要素のoverflow:hiddenを強制的に無効化（スポンサーバナー除く） */
-    *:not(.sponsor-banner):not(.sponsor-scroll) {
-      overflow: visible !important;
+  <!-- 軽量スクロール修正CSS - UIを維持しながら最小限の修正 -->
+  <style id="lightweight-scroll-css">
+    /* 最小限のスクロール修正 - 既存デザインに影響しない */
+    html {
+      overflow-y: auto !important;
+      scroll-behavior: smooth !important;
     }
     
-    html, body {
-      overflow: auto !important;
+    body {
       overflow-y: auto !important;
-      overflow-x: hidden !important;
       height: auto !important;
-      max-height: none !important;
-      position: static !important;
-      padding: 0 !important;
-      margin: 0 auto !important;
       min-height: 100vh !important;
     }
     
-    /* Bootstrapのモーダル関連クラスもスクロール有効化 */
-    .modal-open {
-      overflow: auto !important;
+    /* modal-openクラスのスクロール阻害のみ無効化 */
+    body.modal-open {
+      overflow-y: auto !important;
       padding-right: 0 !important;
     }
     
-    /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
-    .guide-card,
-    .card,
-    .container,
-    .container-fluid,
-    section {
-      overflow: visible !important;
-    }
-    
-    /* ヒーローセクションとスポンサーバナーは例外的にhiddenを維持（デザインのため） */
-    .hero-section, .sponsor-banner {
-      overflow: hidden !important;
-    }
-    
-    /* その他全てのdiv要素は強制的にvisible */
-    div:not(.hero-section):not(.sponsor-banner) {
-      overflow: visible !important;
-    }
-    
-    .modal-backdrop {
-      display: none !important;
+    /* スポンサーバナー以外の主要コンテナのスクロール確保 */
+    .container:not(.sponsor-banner), 
+    .container-fluid:not(.sponsor-banner), 
+    main {
+      overflow-y: visible !important;
     }
   </style>
 
@@ -6462,12 +6441,10 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 緊急修正システム - CSPエラー対応 -->
-  <script src="emergency-fix.js"></script>
+  <!-- 最終的なスクロール修正システム - UIを崩さない修正 -->
+  <script src="ultimate-scroll-fix.js"></script>
   
   <!-- 安定版修復システム - 点滅問題解決 -->
-  <script src="scroll-diagnostic.js"></script>
-  <script src="nuclear-scroll-solution.js"></script>
   <script src="stable-header-fix.js"></script>
   <script src="minimal-sponsor-fix.js"></script>
 </body>

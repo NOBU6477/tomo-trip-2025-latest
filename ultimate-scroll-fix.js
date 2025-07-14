@@ -1,165 +1,233 @@
 /**
- * 究極のスクロール修正システム
- * あらゆるスクロール阻害要因を完全に除去
+ * 最終的なスクロール修正 - UIを崩さず、既存システムと干渉しない修正
+ * 50ms間隔の監視システムで確実にスクロールを有効化
  */
-
 (function() {
-  'use strict';
-  
-  console.log('🚀 究極のスクロール修正システム開始');
-  
-  // CSSリセット用スタイル
-  function injectUltimateScrollCSS() {
-    const existingStyle = document.getElementById('ultimate-scroll-fix');
-    if (existingStyle) existingStyle.remove();
+    'use strict';
     
-    const style = document.createElement('style');
-    style.id = 'ultimate-scroll-fix';
-    style.textContent = `
-      /* 究極のスクロール修正 */
-      html, body {
-        overflow-x: hidden !important;
-        overflow-y: auto !important;
-        height: auto !important;
-        min-height: 100vh !important;
-        position: static !important;
-        padding-right: 0 !important;
-        margin-right: 0 !important;
-        box-sizing: border-box !important;
-      }
-      
-      body.modal-open {
-        overflow-y: auto !important;
-        padding-right: 0 !important;
-        position: static !important;
-      }
-      
-      /* Bootstrap modal による overflow hidden を無効化 */
-      .modal-open {
-        overflow: auto !important;
-        padding-right: 0 !important;
-      }
-      
-      /* 全体的なスクロール確保 */
-      #root, .container, .container-fluid, main, .main-content {
-        overflow: visible !important;
-      }
-      
-      /* ヘッダーロゴの視認性向上 */
-      .hero-section div[style*="position: absolute"]:first-child {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px) !important;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-        z-index: 1000 !important;
-      }
-    `;
+    console.log('🔧 最終スクロール修正システム開始');
     
-    document.head.appendChild(style);
-    console.log('✅ 究極スクロールCSS注入完了');
-  }
-  
-  // スクロール状態を強制修正
-  function forceScrollState() {
-    // HTMLとBODYの直接修正
-    document.documentElement.style.cssText = `
-      overflow-x: hidden !important; 
-      overflow-y: auto !important; 
-      height: auto !important; 
-      position: static !important;
-    `;
+    let monitoringActive = false;
+    let fixAttempts = 0;
+    const maxAttempts = 600; // 30秒間の監視
     
-    document.body.style.cssText = `
-      overflow-x: hidden !important; 
-      overflow-y: auto !important; 
-      height: auto !important; 
-      position: static !important; 
-      padding-right: 0 !important; 
-      margin-right: 0 !important;
-    `;
-    
-    // 問題のあるクラスを削除
-    document.body.classList.remove('modal-open');
-    document.documentElement.classList.remove('modal-open');
-  }
-  
-  // 継続的な監視と修正
-  function setupUltimateMonitoring() {
-    // MutationObserver でのリアルタイム監視
-    const observer = new MutationObserver(function(mutations) {
-      let needsFix = false;
-      
-      mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes') {
-          const target = mutation.target;
-          if ((target === document.body || target === document.documentElement) &&
-              (mutation.attributeName === 'class' || mutation.attributeName === 'style')) {
-            needsFix = true;
-          }
+    // 1. 最小限のCSS修正（UIを崩さない）
+    function applyMinimalScrollFix() {
+        // 既存のスタイルを上書きしない範囲で修正
+        const style = document.createElement('style');
+        style.id = 'ultimate-scroll-fix';
+        style.textContent = `
+            /* 最小限のスクロール修正 - 既存デザイン維持 */
+            html {
+                overflow-y: auto !important;
+                scroll-behavior: smooth !important;
+            }
+            
+            body {
+                overflow-y: auto !important;
+                height: auto !important;
+                min-height: 100vh !important;
+                position: relative !important;
+            }
+            
+            /* modal-openクラスのスクロール阻害を無効化 */
+            body.modal-open {
+                overflow-y: auto !important;
+                position: relative !important;
+                padding-right: 0 !important;
+            }
+            
+            /* 主要コンテナのスクロール確保 */
+            .container, .container-fluid, main {
+                overflow-y: visible !important;
+                height: auto !important;
+                min-height: auto !important;
+            }
+            
+            /* 全体の高さを確保してスクロール可能にする */
+            body::after {
+                content: '';
+                display: block;
+                height: 100px;
+                clear: both;
+            }
+        `;
+        
+        // 既存の同じIDの要素は削除
+        const existing = document.getElementById('ultimate-scroll-fix');
+        if (existing) {
+            existing.remove();
         }
-      });
-      
-      if (needsFix) {
-        forceScrollState();
-      }
-    });
+        
+        document.head.appendChild(style);
+    }
     
-    // BODY と HTML を監視
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ['class', 'style']
-    });
+    // 2. 直接的なスクロール有効化
+    function enableScrollDirectly() {
+        // HTML要素のスクロール有効化
+        const html = document.documentElement;
+        const body = document.body;
+        
+        // スタイル属性を直接設定
+        html.style.overflow = 'auto';
+        html.style.overflowY = 'auto';
+        html.style.height = 'auto';
+        
+        body.style.overflow = 'auto';
+        body.style.overflowY = 'auto';
+        body.style.height = 'auto';
+        body.style.position = 'relative';
+        
+        // modal-openクラスを削除
+        body.classList.remove('modal-open');
+        
+        // 計算されたスタイルをチェック
+        const htmlComputed = window.getComputedStyle(html);
+        const bodyComputed = window.getComputedStyle(body);
+        
+        if (htmlComputed.overflowY === 'hidden' || bodyComputed.overflowY === 'hidden') {
+            console.log('⚠️ スクロール阻害検出 - 強制修正実行');
+            
+            // より強力な修正
+            html.style.setProperty('overflow-y', 'auto', 'important');
+            body.style.setProperty('overflow-y', 'auto', 'important');
+            html.style.setProperty('height', 'auto', 'important');
+            body.style.setProperty('height', 'auto', 'important');
+            
+            return false; // 修正が必要だった
+        }
+        
+        return true; // スクロール正常
+    }
     
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class', 'style']
-    });
+    // 3. スクロール可能性をテスト
+    function testScrollability() {
+        const initialY = window.pageYOffset;
+        const bodyHeight = document.body.scrollHeight;
+        const windowHeight = window.innerHeight;
+        
+        // コンテンツが十分にあるかチェック
+        if (bodyHeight <= windowHeight) {
+            console.log('📏 コンテンツ高さ不足 - 高さ追加');
+            // 一時的に高さを追加してテスト
+            const testDiv = document.createElement('div');
+            testDiv.style.height = '200px';
+            testDiv.style.width = '1px';
+            testDiv.style.position = 'absolute';
+            testDiv.style.top = '-200px';
+            testDiv.style.left = '-1px';
+            testDiv.id = 'scroll-test-div';
+            document.body.appendChild(testDiv);
+        }
+        
+        // スクロールテスト実行
+        window.scrollTo(0, 50);
+        
+        setTimeout(() => {
+            const newY = window.pageYOffset;
+            const canScroll = newY > initialY;
+            
+            // テスト用要素を削除
+            const testDiv = document.getElementById('scroll-test-div');
+            if (testDiv) {
+                testDiv.remove();
+            }
+            
+            // 元の位置に戻す
+            window.scrollTo(0, initialY);
+            
+            if (!canScroll) {
+                console.log('❌ スクロールテスト失敗 - 追加修正実行');
+                return false;
+            }
+            
+            console.log('✅ スクロールテスト成功');
+            return true;
+        }, 100);
+    }
     
-    // 50ms間隔での強制チェック
-    setInterval(function() {
-      const bodyOverflow = window.getComputedStyle(document.body).overflow;
-      const htmlOverflow = window.getComputedStyle(document.documentElement).overflow;
-      
-      if (bodyOverflow === 'hidden' || htmlOverflow === 'hidden' || 
-          document.body.classList.contains('modal-open')) {
-        forceScrollState();
-        console.log('🔧 スクロール状態を修正しました');
-      }
-    }, 50);
-  }
-  
-  // 初期化関数
-  function initialize() {
-    injectUltimateScrollCSS();
-    forceScrollState();
-    setupUltimateMonitoring();
+    // 4. 監視システム開始
+    function startUltimateMonitoring() {
+        if (monitoringActive) {
+            console.log('⚠️ 監視システムは既に実行中です');
+            return;
+        }
+        
+        monitoringActive = true;
+        console.log('👁️ 最終監視システム開始');
+        
+        const monitorInterval = setInterval(() => {
+            if (!monitoringActive || fixAttempts >= maxAttempts) {
+                clearInterval(monitorInterval);
+                console.log('🛑 最終監視システム停止');
+                return;
+            }
+            
+            fixAttempts++;
+            
+            // スクロール状態をチェック
+            const scrollOK = enableScrollDirectly();
+            
+            if (!scrollOK) {
+                console.log(`🔧 修正実行 ${fixAttempts}/${maxAttempts}`);
+                applyMinimalScrollFix();
+                
+                // 5秒ごとにスクロールテスト
+                if (fixAttempts % 100 === 0) {
+                    testScrollability();
+                }
+            }
+            
+        }, 50); // 50ms間隔で高速監視
+        
+        // 成功通知を30秒後に表示
+        setTimeout(() => {
+            monitoringActive = false;
+            console.log('✅ 最終スクロール修正完了');
+            
+            // 最終テスト
+            setTimeout(() => {
+                testScrollability();
+            }, 1000);
+            
+        }, 30000);
+    }
     
-    console.log('🎯 究極のスクロール修正システム初期化完了');
+    // 5. 即座に実行
+    function executeUltimateFix() {
+        console.log('🚀 最終修正実行開始');
+        
+        // 即座にCSS修正を適用
+        applyMinimalScrollFix();
+        
+        // 100ms後にスクロール有効化
+        setTimeout(() => {
+            enableScrollDirectly();
+        }, 100);
+        
+        // 200ms後に監視開始
+        setTimeout(() => {
+            startUltimateMonitoring();
+        }, 200);
+        
+        // 1秒後に初回テスト
+        setTimeout(() => {
+            testScrollability();
+        }, 1000);
+    }
     
-    // スクロール状態のテスト
-    setTimeout(function() {
-      const canScroll = window.innerHeight < document.body.scrollHeight;
-      console.log('📊 スクロール可能:', canScroll);
-      console.log('📊 ページ高さ:', document.body.scrollHeight);
-      console.log('📊 ビューポート高さ:', window.innerHeight);
-    }, 1000);
-  }
-  
-  // 即座に実行
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
-  } else {
-    initialize();
-  }
-  
-  // ページ表示時にも実行
-  window.addEventListener('pageshow', initialize);
-  
-  // グローバル関数として公開
-  window.ultimateScrollFix = {
-    fix: forceScrollState,
-    init: initialize,
-    inject: injectUltimateScrollCSS
-  };
-  
+    // DOMの準備完了後に実行
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', executeUltimateFix);
+    } else {
+        executeUltimateFix();
+    }
+    
+    // グローバルアクセス用
+    window.ultimateScrollFix = {
+        execute: executeUltimateFix,
+        stopMonitoring: () => { monitoringActive = false; },
+        testScroll: testScrollability
+    };
+    
 })();
