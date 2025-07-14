@@ -39,10 +39,8 @@
    * デスクトップ専用スタイルシートの読み込み
    */
   function loadDesktopStylesheet() {
-    const desktopStyles = document.createElement('link');
-    desktopStyles.rel = 'stylesheet';
-    // desktopStyles.href = 'desktop-fixes.css'; // 無効化 - ファイル存在しない
-    document.head.appendChild(desktopStyles);
+    // デスクトップ専用CSSを無効化 - 404エラー防止
+    console.log('デスクトップ専用CSS読み込みをスキップ（404エラー防止）');
   }
   
   /**

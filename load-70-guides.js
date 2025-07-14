@@ -107,16 +107,16 @@
 
       // 統一された海岸風景写真を使用
       const imageUrls = [
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg", // 海岸風景写真
-        "attached_assets/IMG20221024140826_1750355257888.jpg"  // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face", // 海岸風景写真
+        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face"  // 海岸風景写真
       ];
       
       guides.push({
