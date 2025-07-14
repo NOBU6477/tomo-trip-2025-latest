@@ -58,7 +58,7 @@
       }
     }
   </style>
-  <link href="login-modal-styles.css" rel="stylesheet">
+
   <!-- 軽量スクロール修正CSS - UIを維持しながら最小限の修正 -->
   <style id="lightweight-scroll-css">
     /* 最小限のスクロール修正 - 既存デザインに影響しない */
@@ -70,7 +70,12 @@
     body {
       overflow-y: auto !important;
       height: auto !important;
-      min-height: 200vh !important;
+      min-height: 100vh !important;
+    }
+    
+    .container, .container-fluid {
+      min-height: 150vh;
+      padding-bottom: 50vh;
     }
     
     /* modal-openクラスのスクロール阻害のみ無効化 */
@@ -245,7 +250,7 @@
       transition: transform 0.3s;
       margin-bottom: 1.5rem;
       border-radius: 10px;
-      overflow: hidden;
+      overflow: visible;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
     .guide-card:hover {
@@ -322,7 +327,7 @@
       max-width: 400px;
       box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       animation: counterPulse 2s ease-in-out infinite alternate;
     }
     
@@ -396,7 +401,7 @@
       border-radius: 15px !important;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      overflow: hidden;
+      overflow: visible;
       position: relative;
     }
     
@@ -575,7 +580,7 @@
       position: relative;
       width: 150px;
       height: 150px;
-      overflow: hidden;
+      overflow: visible;
       cursor: pointer;
     }
     
@@ -625,7 +630,7 @@
     .sponsor-banner {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 15px 0;
-      overflow: hidden;
+      overflow: visible;
       position: relative;
       white-space: nowrap;
       border-bottom: 3px solid #4f46e5;
@@ -5085,7 +5090,7 @@
 
   
   <!-- デバイス別の最適化スクリプト - 各環境でのみ実行 -->
-  <script src="smartphones.js"></script>
+
   <script src="desktop-fixes.js"></script>
   
   <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
@@ -5107,7 +5112,7 @@
   <script src="guide-card-extractor.js"></script>
   
   <!-- ガイド詳細データ管理 -->
-  <script src="guide-details-data.js"></script>
+
   <script src="data-reset.js"></script>
   <script src="password-toggle.js"></script>
   
@@ -6440,21 +6445,37 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- シンプルなスクロール確保 -->
+  <!-- 根本的スクロール解決 -->
   <script>
-    // 最小限のスクロール確保
-    document.body.style.minHeight = '200vh';
-    document.body.style.overflow = 'auto';
-    document.documentElement.style.overflow = 'auto';
-    
-    // modal-open クラスの干渉を防止
-    const observer = new MutationObserver(() => {
-      if (document.body.classList.contains('modal-open')) {
-        document.body.style.overflow = 'auto';
-        document.body.style.paddingRight = '0px';
-      }
+    // ページ読み込み時の確実な設定
+    document.addEventListener('DOMContentLoaded', function() {
+      // 確実なスクロール確保
+      document.body.style.overflow = 'auto';
+      document.body.style.overflowY = 'scroll';
+      document.documentElement.style.overflow = 'auto';
+      document.documentElement.style.overflowY = 'scroll';
+      
+      // コンテナにも十分な高さを設定
+      const containers = document.querySelectorAll('.container, .container-fluid');
+      containers.forEach(container => {
+        container.style.minHeight = '150vh';
+        container.style.paddingBottom = '50vh';
+      });
+      
+      // modal-open クラスの完全無効化
+      const observer = new MutationObserver(() => {
+        if (document.body.classList.contains('modal-open')) {
+          document.body.style.overflow = 'auto !important';
+          document.body.style.overflowY = 'scroll !important';
+          document.body.style.paddingRight = '0px !important';
+          document.body.style.position = 'static !important';
+        }
+      });
+      observer.observe(document.body, { 
+        attributes: true, 
+        attributeFilter: ['class', 'style'] 
+      });
     });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   </script>
   
   <!-- 安定版修復システム - 点滅問題解決 -->
