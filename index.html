@@ -59,38 +59,21 @@
     }
   </style>
 
-  <!-- 軽量スクロール修正CSS - UIを維持しながら最小限の修正 -->
-  <style id="lightweight-scroll-css">
-    /* 最小限のスクロール修正 - 既存デザインに影響しない */
-    html {
-      overflow: auto !important;
+  <!-- シンプルスクロール修正 -->
+  <style id="simple-scroll-css">
+    html, body {
       overflow-y: auto !important;
-      scroll-behavior: smooth !important;
+      height: auto !important;
     }
     
     body {
-      overflow: auto !important;
-      overflow-y: auto !important;
-      height: auto !important;
-      min-height: 200vh !important;
+      min-height: 400vh;
+      padding-bottom: 100px;
     }
     
-    .container, .container-fluid {
-      min-height: auto;
-      padding-bottom: 20px;
-    }
-    
-    /* modal-openクラスのスクロール阻害のみ無効化 */
     body.modal-open {
       overflow-y: auto !important;
       padding-right: 0 !important;
-    }
-    
-    /* スポンサーバナー以外の主要コンテナのスクロール確保 */
-    .container:not(.sponsor-banner), 
-    .container-fluid:not(.sponsor-banner), 
-    main {
-      overflow-y: visible !important;
     }
   </style>
 
@@ -6449,9 +6432,7 @@
   
   <!-- 根本的スクロール解決 - 核兵器級システムが処理 -->
   
-  <!-- 安定版修復システム - 点滅問題解決 -->
-  <script src="stable-header-fix.js"></script>
-  <script src="minimal-sponsor-fix.js"></script>
+  <!-- タイマー干渉ファイル削除済み -->
   
   <!-- スクロール問題は simple-scroll-fix.js で解決済み -->
 </body>
