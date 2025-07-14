@@ -1,140 +1,236 @@
 /**
- * 完全スクロール診断システム - 根本原因特定
+ * 完全スクロール診断システム - 多角的問題分析
+ * あらゆる角度からスクロール阻害要因を特定
  */
 
 (function() {
   'use strict';
   
-  console.log('🔍 完全スクロール診断システム開始');
+  console.log('🔍 完全スクロール診断開始');
   
-  function diagnoseCSSBlocking() {
-    console.log('\n📋 CSS診断結果:');
+  // 1. CSS overflow 検出
+  function detectCSSOverflowIssues() {
+    console.log('📊 CSS overflow 分析中...');
     
-    // CSSプロパティをチェック
-    const bodyStyle = window.getComputedStyle(document.body);
-    const htmlStyle = window.getComputedStyle(document.documentElement);
+    const problematicElements = [];
+    const allElements = document.querySelectorAll('*');
     
-    console.log('Body overflow:', bodyStyle.overflow);
-    console.log('Body overflow-y:', bodyStyle.overflowY);
-    console.log('Body height:', bodyStyle.height);
-    console.log('Body position:', bodyStyle.position);
+    allElements.forEach(el => {
+      const computedStyle = window.getComputedStyle(el);
+      const overflow = computedStyle.overflow;
+      const overflowY = computedStyle.overflowY;
+      
+      if (overflow === 'hidden' || overflowY === 'hidden') {
+        problematicElements.push({
+          element: el,
+          tagName: el.tagName,
+          className: el.className,
+          id: el.id,
+          overflow: overflow,
+          overflowY: overflowY
+        });
+      }
+    });
     
-    console.log('HTML overflow:', htmlStyle.overflow);
-    console.log('HTML overflow-y:', htmlStyle.overflowY);
-    console.log('HTML height:', htmlStyle.height);
+    console.log('⚠️ overflow:hidden 要素検出:', problematicElements.length);
+    problematicElements.forEach(item => {
+      console.log(`  - ${item.tagName}${item.id ? '#' + item.id : ''}${item.className ? '.' + item.className : ''}: overflow=${item.overflow}, overflowY=${item.overflowY}`);
+    });
     
-    // modal-openクラスの有無をチェック
-    console.log('Body has modal-open class:', document.body.classList.contains('modal-open'));
-    
-    // ページ全体のスクロール可能高さ
-    console.log('Document height:', document.documentElement.scrollHeight);
-    console.log('Window height:', window.innerHeight);
-    console.log('Can scroll:', document.documentElement.scrollHeight > window.innerHeight);
+    return problematicElements;
   }
   
-  function diagnoseJavaScriptInterference() {
-    console.log('\n🔧 JavaScript干渉診断:');
+  // 2. JavaScript干渉検出
+  function detectJavaScriptInterference() {
+    console.log('🔧 JavaScript干渉分析中...');
     
-    // スクロールイベントリスナーの数
-    const scrollListeners = getEventListeners(window)?.scroll?.length || 0;
-    console.log('Scroll listeners count:', scrollListeners);
+    // setInterval/setTimeout の検出
+    const originalSetInterval = window.setInterval;
+    const originalSetTimeout = window.setTimeout;
     
-    // overflow を変更するスクリプトを検出
-    const originalStyle = Element.prototype.style;
-    let overflowChanges = 0;
+    let intervalCount = 0;
+    let timeoutCount = 0;
     
-    Object.defineProperty(Element.prototype, 'style', {
-      get: function() {
-        return originalStyle;
-      },
-      set: function(value) {
-        if (typeof value === 'string' && value.includes('overflow')) {
-          overflowChanges++;
-          console.log('⚠️ Overflow style change detected:', value);
+    window.setInterval = function(...args) {
+      intervalCount++;
+      console.log(`🔄 setInterval #${intervalCount} 検出:`, args[0].toString().substring(0, 100));
+      return originalSetInterval.apply(this, args);
+    };
+    
+    window.setTimeout = function(...args) {
+      timeoutCount++;
+      console.log(`⏰ setTimeout #${timeoutCount} 検出:`, args[0].toString().substring(0, 100));
+      return originalSetTimeout.apply(this, args);
+    };
+    
+    // modal-open クラス監視
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          if (document.body.classList.contains('modal-open')) {
+            console.log('🚨 modal-open クラス検出! 追加された場所を調査中...');
+            console.trace('modal-open クラス追加スタックトレース');
+          }
         }
-        originalStyle = value;
-      }
+        
+        if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+          const newStyle = document.body.style.cssText;
+          if (newStyle.includes('overflow') && newStyle.includes('hidden')) {
+            console.log('🚨 body に overflow:hidden スタイル検出!', newStyle);
+            console.trace('overflow:hidden 設定スタックトレース');
+          }
+        }
+      });
     });
     
-    console.log('Overflow changes detected:', overflowChanges);
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
+    
+    console.log(`📊 Timer統計: setInterval=${intervalCount}, setTimeout=${timeoutCount}`);
   }
   
-  function checkElementBlocking() {
-    console.log('\n🎯 要素別ブロッキング診断:');
+  // 3. 要素レベル阻害検出
+  function detectElementLevelBlocking() {
+    console.log('🎯 要素レベル阻害分析中...');
     
-    // フルスクリーン要素をチェック
-    const fullScreenElements = Array.from(document.querySelectorAll('*')).filter(el => {
-      const style = window.getComputedStyle(el);
-      return style.position === 'fixed' && 
-             parseInt(style.width) >= window.innerWidth * 0.9 &&
-             parseInt(style.height) >= window.innerHeight * 0.9;
+    // スクロール可能性チェック
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+    const bodyScrollHeight = document.body.scrollHeight;
+    const bodyClientHeight = document.body.clientHeight;
+    
+    console.log('📏 スクロール寸法分析:');
+    console.log(`  - document.scrollHeight: ${scrollHeight}`);
+    console.log(`  - document.clientHeight: ${clientHeight}`);
+    console.log(`  - body.scrollHeight: ${bodyScrollHeight}`);
+    console.log(`  - body.clientHeight: ${bodyClientHeight}`);
+    console.log(`  - window.innerHeight: ${window.innerHeight}`);
+    
+    const canScrollDocument = scrollHeight > clientHeight;
+    const canScrollBody = bodyScrollHeight > bodyClientHeight;
+    
+    console.log(`📊 スクロール可能性: document=${canScrollDocument}, body=${canScrollBody}`);
+    
+    // 固定位置要素検出
+    const fixedElements = [];
+    document.querySelectorAll('*').forEach(el => {
+      const computedStyle = window.getComputedStyle(el);
+      if (computedStyle.position === 'fixed' || computedStyle.position === 'absolute') {
+        fixedElements.push({
+          element: el,
+          position: computedStyle.position,
+          zIndex: computedStyle.zIndex,
+          top: computedStyle.top,
+          left: computedStyle.left,
+          width: computedStyle.width,
+          height: computedStyle.height
+        });
+      }
     });
     
-    console.log('Full screen elements:', fullScreenElements.length);
-    fullScreenElements.forEach(el => {
-      console.log('- Element:', el.tagName, el.className);
-    });
-    
-    // オーバーレイ要素をチェック
-    const overlayElements = Array.from(document.querySelectorAll('.modal, .overlay, [style*="z-index"]')).filter(el => {
-      return window.getComputedStyle(el).display !== 'none';
-    });
-    
-    console.log('Visible overlay elements:', overlayElements.length);
-    overlayElements.forEach(el => {
-      console.log('- Overlay:', el.tagName, el.className);
+    console.log('📌 固定位置要素検出:', fixedElements.length);
+    fixedElements.forEach(item => {
+      console.log(`  - ${item.element.tagName}: position=${item.position}, z-index=${item.zIndex}`);
     });
   }
   
-  function forceScrollEnable() {
-    console.log('\n🚀 緊急スクロール有効化実行:');
+  // 4. リアルタイム監視
+  function setupRealTimeMonitoring() {
+    console.log('👀 リアルタイム監視開始');
     
-    // すべてのoverflow:hiddenを無効化
-    const style = document.createElement('style');
-    style.innerHTML = `
-      * {
-        overflow: visible !important;
-      }
-      html, body {
-        overflow-y: auto !important;
-        height: auto !important;
-        position: static !important;
-      }
-      .modal-open {
-        overflow-y: auto !important;
-        padding-right: 0 !important;
-      }
-    `;
-    document.head.appendChild(style);
+    let lastScrollY = window.scrollY;
+    let scrollAttempts = 0;
     
-    // modal-openクラスを強制削除
+    const monitoringInterval = setInterval(() => {
+      // スクロール試行テスト
+      const currentScrollY = window.scrollY;
+      if (currentScrollY === lastScrollY && scrollAttempts < 3) {
+        window.scrollTo(0, currentScrollY + 1);
+        scrollAttempts++;
+        
+        setTimeout(() => {
+          if (window.scrollY === currentScrollY) {
+            console.log('🚨 スクロール阻害検出! 詳細分析実行中...');
+            
+            // 即座に詳細分析実行
+            detectCSSOverflowIssues();
+            detectElementLevelBlocking();
+            
+            // 強制修復試行
+            attemptEmergencyFix();
+          }
+        }, 50);
+      } else {
+        scrollAttempts = 0;
+      }
+      
+      lastScrollY = currentScrollY;
+    }, 200);
+    
+    // 5秒後に一度停止
+    setTimeout(() => {
+      clearInterval(monitoringInterval);
+      console.log('✅ リアルタイム監視完了');
+    }, 5000);
+  }
+  
+  // 5. 緊急修復試行
+  function attemptEmergencyFix() {
+    console.log('🛠️ 緊急修復試行中...');
+    
+    // 全てのoverflow:hiddenを強制解除
+    document.querySelectorAll('*').forEach(el => {
+      const computedStyle = window.getComputedStyle(el);
+      if (computedStyle.overflow === 'hidden' || computedStyle.overflowY === 'hidden') {
+        el.style.overflow = 'visible !important';
+        el.style.overflowY = 'auto !important';
+        console.log(`🔧 修復: ${el.tagName}${el.id ? '#' + el.id : ''} overflow を visible に変更`);
+      }
+    });
+    
+    // body と html の強制設定
+    document.body.style.cssText = 'overflow: auto !important; overflow-y: scroll !important; height: auto !important; min-height: 200vh !important;';
+    document.documentElement.style.cssText = 'overflow: auto !important; overflow-y: scroll !important;';
+    
+    // modal-open クラス削除
     document.body.classList.remove('modal-open');
     
-    // ページ高さを強制確保
-    if (document.body.scrollHeight <= window.innerHeight) {
-      const spacer = document.createElement('div');
-      spacer.style.height = '200vh';
-      spacer.style.width = '1px';
-      spacer.style.opacity = '0';
-      document.body.appendChild(spacer);
-      console.log('✅ スペーサー要素を追加しました');
-    }
+    // バックドロップ削除
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.style.display = 'none';
+    });
     
-    console.log('✅ 緊急スクロール有効化完了');
+    console.log('✅ 緊急修復完了');
   }
   
-  // 診断実行
-  setTimeout(() => {
-    diagnoseCSSBlocking();
-    diagnoseJavaScriptInterference();
-    checkElementBlocking();
-    forceScrollEnable();
+  // 初期化と実行
+  function initialize() {
+    console.log('🚀 完全スクロール診断システム初期化');
     
-    // 5秒後に再チェック
-    setTimeout(() => {
-      console.log('\n🔄 5秒後の再診断:');
-      diagnoseCSSBlocking();
-    }, 5000);
-  }, 1000);
+    // DOM読み込み完了後に実行
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(runDiagnostics, 100);
+      });
+    } else {
+      setTimeout(runDiagnostics, 100);
+    }
+  }
+  
+  function runDiagnostics() {
+    console.log('📋 診断開始');
+    
+    detectCSSOverflowIssues();
+    detectJavaScriptInterference();
+    detectElementLevelBlocking();
+    setupRealTimeMonitoring();
+    
+    console.log('📋 初期診断完了');
+  }
+  
+  // 即座に開始
+  initialize();
   
 })();

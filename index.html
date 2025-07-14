@@ -63,14 +63,16 @@
   <style id="lightweight-scroll-css">
     /* 最小限のスクロール修正 - 既存デザインに影響しない */
     html {
+      overflow: auto !important;
       overflow-y: auto !important;
       scroll-behavior: smooth !important;
     }
     
     body {
+      overflow: auto !important;
       overflow-y: auto !important;
       height: auto !important;
-      min-height: 100vh !important;
+      min-height: 600vh !important;
     }
     
     .container, .container-fluid {
@@ -6404,6 +6406,9 @@
   <!-- 緊急修復システム - CSPエラー&スクロール問題解決 -->
   <script src="emergency-fix.js"></script>
   
+  <!-- 究極のスクロール修正システム - シンプルアプローチ -->
+  <script src="ultimate-scroll-fix.js"></script>
+  
   <!-- 新規登録ボタン機能 -->
   <script>
     function showRegisterOptions() {
@@ -6461,16 +6466,21 @@
   <script>
     // 最後の砦 - 他のスクリプトが実行された後に強制実行
     setTimeout(() => {
-      document.body.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;min-height:200vh!important;';
-      document.documentElement.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;';
+      document.body.style.cssText = 'overflow:auto!important;overflow-y:auto!important;min-height:500vh!important;height:auto!important;';
+      document.documentElement.style.cssText = 'overflow:auto!important;overflow-y:auto!important;';
       document.body.classList.remove('modal-open');
       
       // 全てのモーダル関連要素を無効化
       const modalBackdrops = document.querySelectorAll('.modal-backdrop');
       modalBackdrops.forEach(backdrop => backdrop.style.display = 'none');
       
-      console.log('🛡️ 最後の砦スクロール修復完了');
-    }, 3000); // 3秒後に実行して他のスクリプトより後に確実に実行
+      // スクロール可能性を物理的に確保
+      if (document.body.scrollHeight <= window.innerHeight) {
+        document.body.style.minHeight = '600vh';
+      }
+      
+      console.log('🛡️ 最後の砦スクロール修復完了 - 物理的高さ確保');
+    }, 1000); // 1秒後に実行
   </script>
 </body>
 </html>
