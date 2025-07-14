@@ -762,7 +762,7 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
             <li><a class="dropdown-item" href="index.html">日本語</a></li>
-            <li><a class="dropdown-item" href="#" onclick="switchToEnglish()">English</a></li>
+            <li><a class="dropdown-item" href="index-en.html">English</a></li>
           </ul>
         </div>
         
@@ -6371,8 +6371,9 @@
       
       // Update counter
       const counter = document.getElementById('search-results-counter');
+      const visibleCards = document.querySelectorAll('.guide-item:not(.d-none)');
       if (counter) {
-        counter.textContent = '70人のガイドが見つかりました';
+        counter.textContent = `${visibleCards.length}人のガイドが見つかりました`;
       }
     }
     
@@ -6387,6 +6388,12 @@
   
   <!-- 言語切り替え修正 -->
   <script src="language-switch-fix.js"></script>
+  
+  <!-- ガイド数カウンター修正 -->
+  <script src="guide-counter-fix.js"></script>
+  
+  <!-- 自動ガイド追加システム -->
+  <script src="auto-guide-system.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>
