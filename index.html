@@ -6455,11 +6455,14 @@
       document.documentElement.style.overflow = 'auto';
       document.documentElement.style.overflowY = 'scroll';
       
-      // コンテナにも十分な高さを設定
+      // 適切なページ高さを設定（スクロール可能にする）
+      document.body.style.minHeight = '200vh';
+      
+      // コンテナの高さを正常化
       const containers = document.querySelectorAll('.container, .container-fluid');
       containers.forEach(container => {
-        container.style.minHeight = '150vh';
-        container.style.paddingBottom = '50vh';
+        container.style.minHeight = 'auto';
+        container.style.paddingBottom = '20px';
       });
       
       // modal-open クラスの完全無効化
