@@ -72,7 +72,7 @@
       overflow: auto !important;
       overflow-y: auto !important;
       height: auto !important;
-      min-height: 600vh !important;
+      min-height: 200vh !important;
     }
     
     .container, .container-fluid {
@@ -5090,7 +5090,7 @@
   
   <!-- デバイス別の最適化スクリプト - 各環境でのみ実行 -->
 
-  <!-- desktop-fixes.js 一時無効化 -->
+  <!-- desktop-fixes.js 削除済み -->
   
   <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
   <script src="shared-language-utils.js"></script>
@@ -6397,17 +6397,8 @@
   <!-- Fix Benefit Cards Display -->
   <script src="benefit-card-fix.js"></script>
   
-  <!-- 完全スクロール診断システム -->
-  <script src="complete-scroll-diagnostic.js"></script>
-  
-  <!-- 核兵器級スクロール解決システム -->
-  <script src="nuclear-scroll-solution.js"></script>
-  
-  <!-- 緊急修復システム - CSPエラー&スクロール問題解決 -->
-  <script src="emergency-fix.js"></script>
-  
-  <!-- 究極のスクロール修正システム - シンプルアプローチ -->
-  <script src="ultimate-scroll-fix.js"></script>
+  <!-- シンプルスクロール修正 -->
+  <script src="simple-scroll-fix.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>
@@ -6462,25 +6453,6 @@
   <script src="stable-header-fix.js"></script>
   <script src="minimal-sponsor-fix.js"></script>
   
-  <!-- 緊急修復 - スクロール阻害要因の完全除去 -->
-  <script>
-    // 最後の砦 - 他のスクリプトが実行された後に強制実行
-    setTimeout(() => {
-      document.body.style.cssText = 'overflow:auto!important;overflow-y:auto!important;min-height:500vh!important;height:auto!important;';
-      document.documentElement.style.cssText = 'overflow:auto!important;overflow-y:auto!important;';
-      document.body.classList.remove('modal-open');
-      
-      // 全てのモーダル関連要素を無効化
-      const modalBackdrops = document.querySelectorAll('.modal-backdrop');
-      modalBackdrops.forEach(backdrop => backdrop.style.display = 'none');
-      
-      // スクロール可能性を物理的に確保
-      if (document.body.scrollHeight <= window.innerHeight) {
-        document.body.style.minHeight = '600vh';
-      }
-      
-      console.log('🛡️ 最後の砦スクロール修復完了 - 物理的高さ確保');
-    }, 1000); // 1秒後に実行
-  </script>
+  <!-- スクロール問題は simple-scroll-fix.js で解決済み -->
 </body>
 </html>

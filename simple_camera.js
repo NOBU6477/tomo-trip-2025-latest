@@ -430,9 +430,10 @@
       backdrop.parentNode.removeChild(backdrop);
     }
     
-    // bodyのスタイルをリセット
+    // bodyのスタイルをリセット - スクロール確保
     document.body.classList.remove('modal-open');
-    document.body.style.overflow = '';
+    document.body.style.overflow = 'auto';
+    document.body.style.overflowY = 'auto';
     
     // ストリームを停止
     if (window.simpleCameraStream) {
