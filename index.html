@@ -6398,6 +6398,9 @@
   <!-- 完全スクロール診断システム -->
   <script src="complete-scroll-diagnostic.js"></script>
   
+  <!-- 核兵器級スクロール解決システム -->
+  <script src="nuclear-scroll-solution.js"></script>
+  
   <!-- 新規登録ボタン機能 -->
   <script>
     function showRegisterOptions() {
@@ -6445,44 +6448,21 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 根本的スクロール解決 -->
-  <script>
-    // ページ読み込み時の確実な設定
-    document.addEventListener('DOMContentLoaded', function() {
-      // 確実なスクロール確保
-      document.body.style.overflow = 'auto';
-      document.body.style.overflowY = 'scroll';
-      document.documentElement.style.overflow = 'auto';
-      document.documentElement.style.overflowY = 'scroll';
-      
-      // 適切なページ高さを設定（スクロール可能にする）
-      document.body.style.minHeight = '200vh';
-      
-      // コンテナの高さを正常化
-      const containers = document.querySelectorAll('.container, .container-fluid');
-      containers.forEach(container => {
-        container.style.minHeight = 'auto';
-        container.style.paddingBottom = '20px';
-      });
-      
-      // modal-open クラスの完全無効化
-      const observer = new MutationObserver(() => {
-        if (document.body.classList.contains('modal-open')) {
-          document.body.style.overflow = 'auto !important';
-          document.body.style.overflowY = 'scroll !important';
-          document.body.style.paddingRight = '0px !important';
-          document.body.style.position = 'static !important';
-        }
-      });
-      observer.observe(document.body, { 
-        attributes: true, 
-        attributeFilter: ['class', 'style'] 
-      });
-    });
-  </script>
+  <!-- 根本的スクロール解決 - 核兵器級システムが処理 -->
   
   <!-- 安定版修復システム - 点滅問題解決 -->
   <script src="stable-header-fix.js"></script>
   <script src="minimal-sponsor-fix.js"></script>
+  
+  <!-- 緊急修復 - スクロール阻害要因の完全除去 -->
+  <script>
+    // 最後の砦 - 他のスクリプトが実行された後に強制実行
+    setTimeout(() => {
+      document.body.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;min-height:300vh!important;';
+      document.documentElement.style.cssText = 'overflow:auto!important;overflow-y:scroll!important;';
+      document.body.classList.remove('modal-open');
+      console.log('🛡️ 最後の砦スクロール修復完了');
+    }, 2000);
+  </script>
 </body>
 </html>
