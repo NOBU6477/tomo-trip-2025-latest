@@ -155,20 +155,28 @@
       return false;
     }
     
-    // 身分証明書確認
+    // 身分証明書確認（より柔軟な判定）
+    const idFrontInput = document.getElementById('guide-id-front');
     const idFrontPreview = document.getElementById('guide-id-front-preview');
-    if (!idFrontPreview || idFrontPreview.classList.contains('d-none')) {
-      showAlert('身分証明書（表面）をアップロードしてください', 'danger');
-      return false;
+    
+    if (!idFrontInput || !idFrontInput.files || idFrontInput.files.length === 0) {
+      if (!idFrontPreview || !idFrontPreview.src || idFrontPreview.src.includes('placehold')) {
+        showAlert('身分証明書（表面）をアップロードしてください', 'danger');
+        return false;
+      }
     }
     
     // 運転免許証の場合は裏面も必要
     const idType = document.getElementById('guide-id-type').value;
     if (idType === 'drivers_license') {
+      const idBackInput = document.getElementById('guide-id-back');
       const idBackPreview = document.getElementById('guide-id-back-preview');
-      if (!idBackPreview || idBackPreview.classList.contains('d-none')) {
-        showAlert('運転免許証の裏面もアップロードしてください', 'danger');
-        return false;
+      
+      if (!idBackInput || !idBackInput.files || idBackInput.files.length === 0) {
+        if (!idBackPreview || !idBackPreview.src || idBackPreview.src.includes('placehold')) {
+          showAlert('運転免許証の裏面もアップロードしてください', 'danger');
+          return false;
+        }
       }
     }
     
@@ -207,11 +215,15 @@
       return false;
     }
     
-    // 身分証明書確認
+    // 身分証明書確認（より柔軟な判定）
+    const idFrontInput = document.getElementById('tourist-id-front');
     const idFrontPreview = document.getElementById('tourist-id-front-preview');
-    if (!idFrontPreview || idFrontPreview.classList.contains('d-none')) {
-      showAlert('身分証明書（表面）をアップロードしてください', 'danger');
-      return false;
+    
+    if (!idFrontInput || !idFrontInput.files || idFrontInput.files.length === 0) {
+      if (!idFrontPreview || !idFrontPreview.src || idFrontPreview.src.includes('placehold')) {
+        showAlert('身分証明書（表面）をアップロードしてください', 'danger');
+        return false;
+      }
     }
     
     // 利用規約同意確認
