@@ -755,14 +755,13 @@
         </ul>
         
         <!-- 言語切り替えボタン -->
-        <div class="dropdown me-3">
-          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            日本語
+        <div class="language-switcher me-3">
+          <button class="btn btn-outline-light btn-sm lang-btn active" onclick="switchToJapanese()">
+            🇯🇵 日本語
           </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item" href="index.html">日本語</a></li>
-            <li><a class="dropdown-item" href="index-en.html">English</a></li>
-          </ul>
+          <button class="btn btn-outline-light btn-sm lang-btn" onclick="window.location.href='index-en.html'">
+            🇺🇸 English
+          </button>
         </div>
         
         <!-- ログイン・新規登録ボタン -->
@@ -6285,6 +6284,8 @@
   
   <!-- 日本語サイト専用スクリプト -->
   <script src="japanese-site-only.js"></script>
+  <script src="japanese-header-fix.js"></script>
+  <script src="unified-filter-fix.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>
