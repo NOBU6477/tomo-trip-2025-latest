@@ -157,17 +157,20 @@
         };
       }
       
-      // 6. フィルター入力値リセット
-      const filterInputs = document.querySelectorAll('#filter-card input, #filter-card select');
-      filterInputs.forEach(input => {
-        if (input.type === 'checkbox') {
-          input.checked = false;
-        } else if (input.type === 'text') {
-          input.value = '';
-        } else if (input.tagName === 'SELECT') {
-          input.selectedIndex = 0;
-        }
-      });
+      // 6. フィルター入力値リセット（初回のみ）
+      if (!window.filtersInitialized) {
+        const filterInputs = document.querySelectorAll('#filter-card input, #filter-card select');
+        filterInputs.forEach(input => {
+          if (input.type === 'checkbox') {
+            input.checked = false;
+          } else if (input.type === 'text') {
+            input.value = '';
+          } else if (input.tagName === 'SELECT') {
+            input.selectedIndex = 0;
+          }
+        });
+        window.filtersInitialized = true;
+      }
       
       console.log(`✅ 統合修正完了: ${visibleCount}ガイド表示 (${isEnglishSite ? '英語' : '日本語'})`);
       
@@ -181,6 +184,7 @@
   function setupFilterFunctionality() {
     // フィルター機能を有効化
     const applyFilters = () => {
+      window.filteringInProgress = true;
       const locationFilter = document.getElementById('location-filter');
       const languageFilter = document.getElementById('language-filter');
       const feeFilter = document.getElementById('fee-filter');
@@ -252,6 +256,8 @@
           counter.textContent = `${visibleCount}人のガイドが見つかりました`;
         }
       });
+      
+      window.filteringInProgress = false;
     };
     
     // フィルター変更時に実行
@@ -280,14 +286,19 @@
   }
   
   function initialize() {
+    // フィルター機能設定（最初に実行）
+    setupFilterFunctionality();
+    
     // 即座に実行
     unifiedSiteFix();
     
-    // フィルター機能設定
-    setupFilterFunctionality();
-    
-    // 継続監視（3秒間隔）
-    setInterval(unifiedSiteFix, 3000);
+    // 継続監視（5秒間隔に延長）
+    setInterval(() => {
+      // フィルター状態を保持して修正実行
+      if (!window.filteringInProgress) {
+        unifiedSiteFix();
+      }
+    }, 5000);
     
     // DOM変更監視
     const observer = new MutationObserver(() => {
