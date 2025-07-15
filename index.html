@@ -2024,7 +2024,7 @@
       // ローカルストレージの言語設定をクリア
       localStorage.removeItem('selectedLanguage');
       localStorage.removeItem('localGuideLanguage');
-      sessionStorage.removeItem('forcedEnglish');
+
       
       // 言語ドロップダウンボタンを日本語に設定
       const langBtn = document.getElementById('languageDropdown');
@@ -2827,115 +2827,10 @@
       showStatus('日本語に切り替えました');
     }
     
-    function switchToEnglish_DISABLED() {
-      console.log('旧 switchToEnglish 関数は無効化されました');
-      
-      // メインコンテンツ
-      const mainTitle = document.querySelector('h1');
-      if (mainTitle) mainTitle.textContent = 'Your Special Journey Awaits';
-      
-      const subtitle = document.querySelector('.hero-section p');
-      if (subtitle) subtitle.textContent = 'Discover hidden gems with local guides that tourism can\'t reveal';
-      
-      // ヒーローセクションのボタン
-      const heroGuideBtn = document.querySelector('.btn-light.btn-lg');
-      if (heroGuideBtn) heroGuideBtn.textContent = 'Find Guides';
-      
-      const heroContactBtn = document.querySelector('.btn-outline-light.btn-lg');
-      if (heroContactBtn) heroContactBtn.textContent = 'Contact Us';
-      
-      // 右下のボタン
-      const sponsorRegBtn = document.querySelector('#sponsorRegisterBtn span');
-      if (sponsorRegBtn) sponsorRegBtn.textContent = 'Sponsor Registration 🚀';
-      
-      const sponsorLoginBtn = document.querySelector('#sponsorLoginBtn span');
-      if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'Login ✨';
-      
-      // 使い方セクション
-      const howItWorksH4s = document.querySelectorAll('#how-it-works h4');
-      if (howItWorksH4s.length >= 3) {
-        howItWorksH4s[0].textContent = 'Register';
-        howItWorksH4s[1].textContent = 'Find Guides';
-        howItWorksH4s[2].textContent = 'Experience Special Journey';
-      }
-      
-      // 人気のガイドセクション
-      const popularGuidesTitle = document.querySelector('#guides h2');
-      if (popularGuidesTitle) popularGuidesTitle.textContent = 'Popular Guides';
-      
-      // ガイド一覧の要素（正しいセレクター）
-      const filterButton = document.querySelector('#toggle-filter-button');
-      if (filterButton) filterButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
-      
-      const moreButton = document.querySelector('#load-more-guides');
-      if (moreButton) moreButton.textContent = 'Show More';
-      
-      // 検索結果カウンターの翻訳（動的対応）
-      const searchCounter = document.querySelector('#search-results-counter');
-      if (searchCounter) {
-        // 既存のテキストをチェックして英語に設定
-        if (searchCounter.textContent.includes('件') || searchCounter.textContent.includes('表示中')) {
-          searchCounter.textContent = 'Showing 3 guides (76 total)';
-        } else if (searchCounter.textContent === '' || !searchCounter.textContent.includes('Showing')) {
-          searchCounter.textContent = 'Showing 3 guides (76 total)';
-        }
-      }
-      
-      // カウンターの動的監視（日本語から英語への切り替え時）
-      setTimeout(() => {
-        const searchCounterDelayed = document.querySelector('#search-results-counter');
-        if (searchCounterDelayed && searchCounterDelayed.textContent.includes('件')) {
-          searchCounterDelayed.textContent = 'Showing 3 guides (76 total)';
-        }
-      }, 500);
-      
-      // 「フィルターの使い方」ボタン
-      const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
-      if (filterTutorialBtn) filterTutorialBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>How to Filter';
-      
-      // 日本語モードでは詳細ボタンを日本語のまま保持
-      console.log('日本語モード - 詳細ボタンの英語翻訳をスキップ');
-        
-        // 動的生成されたガイドカードの翻訳も再実行
-        const dynamicGuideCards = document.querySelectorAll('.guide-card');
-        dynamicGuideCards.forEach((card, index) => {
-          const description = card.querySelector('.card-text.mb-3');
-          if (description && (description.textContent.includes('案内します') || description.textContent.includes('専門'))) {
-            const englishDescriptions = [
-              'I guide you to hidden gems in Tokyo. Specializing in gourmet food and photo spots.',
-              'Introducing the charm of Kyoto where history and tradition live. Specializing in temple visits and traditional cultural experiences.',
-              'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to local restaurants only locals know about.'
-            ];
-            if (englishDescriptions[index]) {
-              description.textContent = englishDescriptions[index];
-            }
-          }
-        });
-        
-        // メリットセクションの説明文も再翻訳（日本語が残っている場合）
-        const delayedBenefitDescriptions = document.querySelectorAll('#guide-benefits .text-muted, #guide-benefits .guide-benefit-card p');
-        delayedBenefitDescriptions.forEach((desc, index) => {
-          if (desc.textContent.includes('地元の方だけが') || desc.textContent.includes('予約を受け入れる')) {
-            const englishTexts = [
-              'By sharing special places that only locals know about, your everyday surroundings become valuable tourism resources.',
-              'Rather than a formal guided tour, you can naturally convey the charm of your local area as if spending time with friends.',
-              'You can set your schedule according to your convenience, allowing you to earn income while balancing with your main job or studies.',
-              'By providing unique guided experiences that utilize your hobbies, skills, and specialized knowledge, you can turn your passion into income.',
-              'By promoting the attractions of your local area, you will develop a deeper appreciation and attachment to your hometown.',
-              'We provide the essential support for guide activities such as reservation management, payment, and insurance, so you can work with peace of mind.',
-              'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.',
-              'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.'
-            ];
-            if (englishTexts[index]) {
-              desc.textContent = englishTexts[index];
-            }
-          }
-        });
-      }, 1000);
-      
-      // 使い方セクションのタイトルと説明文
-      const howItWorksTitle = document.querySelector('#how-it-works h2');
-      if (howItWorksTitle) howItWorksTitle.textContent = 'How to Use';
+
+
+
+
       
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
       if (howItWorksPs.length >= 3) {
@@ -3320,7 +3215,7 @@
       if (window.nuclearScrollFix) {
         setTimeout(() => {
           window.nuclearScrollFix();
-          console.log('英語切り替え後のスクロール修復実行');
+
         }, 100);
       }
       
@@ -3535,7 +3430,7 @@
         const originalMethods = {
           localRemove: localStorage.removeItem,
           localClear: localStorage.clear,
-          sessionRemove: sessionStorage.removeItem,
+
           sessionClear: sessionStorage.clear
         };
         
@@ -6388,11 +6283,8 @@
   <!-- 静的サイト切り替えシステム -->
   <script src="static-site-system.js"></script>
   
-  <!-- 日本語サイト完全修正システム -->
-  <script src="complete-japanese-site-fix.js"></script>
-  
-  <!-- 日本語サイト状態監視システム -->
-  <script src="japanese-site-status-monitor.js"></script>
+  <!-- 日本語サイト専用スクリプト -->
+  <script src="japanese-site-only.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>

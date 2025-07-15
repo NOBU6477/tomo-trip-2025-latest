@@ -53,7 +53,9 @@ self.addEventListener('fetch', event => {
     'session-debugger.js'
   ];
   
+  // 404エラーファイルを空レスポンスで処理
   if (skip404Files.some(file => request.url.includes(file))) {
+    event.respondWith(new Response('', { status: 200 }));
     return;
   }
   
