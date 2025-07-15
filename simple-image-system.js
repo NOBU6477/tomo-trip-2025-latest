@@ -8,10 +8,14 @@
   
   console.log('📸 シンプル画像システム開始');
   
-  // 初期化を遅延実行
-  setTimeout(function() {
-    initializeImageSystem();
-  }, 500);
+  // DOMContentLoadedで確実に初期化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(initializeImageSystem, 100);
+    });
+  } else {
+    setTimeout(initializeImageSystem, 100);
+  }
   
   function initializeImageSystem() {
     console.log('🔧 画像システム初期化開始');
@@ -38,35 +42,60 @@
       return;
     }
     
+    // 既存のイベントハンドラをクリア
+    const newInput = fileInput.cloneNode(true);
+    fileInput.parentNode.replaceChild(newInput, fileInput);
+    const newPreview = preview.cloneNode(true);
+    preview.parentNode.replaceChild(newPreview, preview);
+    
+    // 新しい要素を取得
+    const cleanInput = document.getElementById(inputId);
+    const cleanPreview = document.getElementById(previewId);
+    
     // プレビュー画像をクリック可能にする
-    preview.style.cursor = 'pointer';
-    preview.title = 'クリックして写真を選択';
+    cleanPreview.style.cursor = 'pointer';
+    cleanPreview.title = 'クリックして写真を選択';
     
     // プレビュー画像のクリックイベント
-    preview.onclick = function() {
+    cleanPreview.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       console.log(`📸 プロフィール写真クリック: ${inputId}`);
-      fileInput.click();
-    };
+      cleanInput.click();
+    });
     
     // コンテナもクリック可能にする
-    const container = preview.closest('.profile-photo-container');
+    const container = cleanPreview.closest('.profile-photo-container');
     if (container) {
       container.style.cursor = 'pointer';
-      container.onclick = function(e) {
-        if (e.target !== fileInput) {
-          fileInput.click();
+      container.addEventListener('click', function(e) {
+        if (e.target !== cleanInput && !cleanInput.contains(e.target)) {
+          e.preventDefault();
+          e.stopPropagation();
+          cleanInput.click();
         }
-      };
+      });
+    }
+    
+    // オーバーレイもクリック可能にする
+    const overlay = container ? container.querySelector('.profile-photo-overlay') : null;
+    if (overlay) {
+      overlay.style.cursor = 'pointer';
+      overlay.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        cleanInput.click();
+      });
     }
     
     // ファイル変更イベント
-    fileInput.onchange = function(e) {
+    cleanInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
         console.log(`📄 ファイル選択: ${file.name}`);
-        displayProfileImage(file, preview);
+        displayProfileImage(file, cleanPreview);
       }
-    };
+    });
     
     console.log(`✅ プロフィール写真設定完了: ${inputId}`);
   }
@@ -80,14 +109,21 @@
       return;
     }
     
+    // 既存のイベントハンドラをクリア
+    const newInput = fileInput.cloneNode(true);
+    fileInput.parentNode.replaceChild(newInput, fileInput);
+    
+    // 新しい要素を取得
+    const cleanInput = document.getElementById(inputId);
+    
     // ファイル変更イベント
-    fileInput.onchange = function(e) {
+    cleanInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (file) {
         console.log(`📄 ファイル選択: ${file.name}`);
         displayDocumentImage(file, preview);
       }
-    };
+    });
     
     console.log(`✅ 身分証明書設定完了: ${inputId}`);
   }
