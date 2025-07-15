@@ -756,7 +756,7 @@
         
         <!-- 言語切り替えボタン -->
         <div class="language-switcher me-3">
-          <button class="btn btn-outline-light btn-sm lang-btn active" onclick="switchToJapanese()">
+          <button class="btn btn-outline-light btn-sm lang-btn active">
             🇯🇵 日本語
           </button>
           <button class="btn btn-outline-light btn-sm lang-btn" onclick="window.location.href='index-en.html'">
@@ -2025,11 +2025,7 @@
       localStorage.removeItem('localGuideLanguage');
 
       
-      // 言語ドロップダウンボタンを日本語に設定
-      const langBtn = document.getElementById('languageDropdown');
-      if (langBtn) {
-        langBtn.textContent = '日本語';
-      }
+      // 言語ボタンシステムに置換済み - ドロップダウン削除
       
       console.log('初期状態を日本語に強制設定しました');
     }
@@ -5435,17 +5431,7 @@
     // 言語選択ドロップダウンの設定
     function setupLanguageDropdown() {
       const languageItems = document.querySelectorAll('[data-lang]');
-      const languageButton = document.getElementById('languageDropdown');
-      
-      languageItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-          e.preventDefault();
-          const lang = this.getAttribute('data-lang');
-          const langText = lang === 'ja' ? '日本語' : 'English';
-          
-          if (languageButton) {
-            languageButton.textContent = langText;
-          }
+      // 言語ドロップダウンは削除済み - 直接ボタンシステムに移行
           
           // 言語変更処理
           if (typeof changeLanguage === 'function') {
@@ -5460,12 +5446,7 @@
     
     // 言語変更処理（直接実行版）
     function changeLanguageDirectly(lang) {
-      const languageButton = document.getElementById('languageDropdown');
-      const langText = lang === 'ja' ? '日本語' : 'English';
-      
-      if (languageButton) {
-        languageButton.textContent = langText;
-      }
+      // 言語ドロップダウンは削除済み - 直接ボタンシステムに移行
       
       console.log('言語を変更:', langText);
       showNotification(`言語を${langText}に変更しました`, 'success');
@@ -6281,6 +6262,12 @@
   
   <!-- 静的サイト切り替えシステム -->
   <script src="static-site-system.js"></script>
+  
+  <!-- 最優先: 究極のヘッダーオーバーライドシステム -->
+  <script src="ultimate-header-override.js"></script>
+  
+  <!-- 核兵器級ヘッダー修正システム -->
+  <script src="nuclear-header-fix.js"></script>
   
   <!-- 日本語サイト専用スクリプト -->
   <script src="japanese-site-only.js"></script>
