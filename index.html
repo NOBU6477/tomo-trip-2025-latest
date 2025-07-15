@@ -5343,7 +5343,7 @@
               ${userData.name}さん
               <i class="bi bi-chevron-down ms-1"></i>
             `;
-            registerDropdown.className = 'btn btn-outline-light dropdown-toggle';
+            // ドロップダウン無効化 - 直接ボタンシステムを維持
             
             console.log('ボタンテキストを更新:', userData.name);
             
@@ -5521,10 +5521,7 @@
           }
           
           // 新規登録ボタンを非表示
-          const registerDropdown = document.querySelector('.dropdown-toggle');
-          if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
-            registerDropdown.style.display = 'none';
-          }
+          // ドロップダウン要素は削除済み - 直接ボタンシステムを維持
           
           // 既存のユーザーステータスを削除
           const existingStatus = document.getElementById('user-status');
@@ -5573,10 +5570,7 @@
       }
       
       // 新規登録ボタンを表示
-      const registerDropdown = document.querySelector('.dropdown-toggle');
-      if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
-        registerDropdown.style.display = '';
-      }
+      // ドロップダウン要素は削除済み - 直接ボタンシステムを維持
       
       // ユーザーステータスを削除
       const userStatus = document.getElementById('user-status');
@@ -6263,7 +6257,13 @@
   <!-- 静的サイト切り替えシステム -->
   <script src="static-site-system.js"></script>
   
-  <!-- 最優先: 究極のヘッダーオーバーライドシステム -->
+  <!-- 最優先: 最終ヘッダー修正システム -->
+  <script src="final-header-fix.js"></script>
+  
+  <!-- 翻訳ブロッカーシステム -->
+  <script src="translation-blocker.js"></script>
+  
+  <!-- 究極のヘッダーオーバーライドシステム -->
   <script src="ultimate-header-override.js"></script>
   
   <!-- 核兵器級ヘッダー修正システム -->
