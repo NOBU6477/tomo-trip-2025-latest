@@ -93,6 +93,37 @@
         padding: 6px 15px !important;
       }
     }
+    
+    /* 画像プレビュー強制表示 */
+    .document-preview img:not(.d-none) {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      max-width: 300px;
+      max-height: 200px;
+      object-fit: cover;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    .profile-photo:not(.d-none) {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border: 3px solid #dee2e6;
+    }
+    
+    .document-preview-container {
+      min-height: 50px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
   </style>
 
   <!-- 新しいスクロール実装CSS -->
@@ -1626,7 +1657,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="tourist-id-front-preview-container">
                   <div class="document-preview">
-                    <img id="tourist-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー">
+                    <img id="tourist-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="tourist-id-front-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -1645,7 +1676,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="tourist-id-back-preview-container">
                   <div class="document-preview">
-                    <img id="tourist-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー">
+                    <img id="tourist-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="tourist-id-back-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -1815,7 +1846,7 @@
               <div class="mb-4 text-center">
                 <label for="guide-profile-photo" class="form-label d-block">プロフィール写真 <span class="text-danger">*</span></label>
                 <div class="profile-photo-container mx-auto mb-3">
-                  <img id="guide-profile-preview" src="https://placehold.co/150?text=写真" class="img-thumbnail rounded-circle profile-photo" alt="プロフィール写真">
+                  <img id="guide-profile-preview" src="https://placehold.co/150?text=写真" class="img-thumbnail rounded-circle profile-photo" alt="プロフィール写真" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #dee2e6;">
                   <div class="profile-photo-overlay">
                     <i class="bi bi-camera-fill"></i>
                   </div>
@@ -1916,7 +1947,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="guide-id-front-preview-container">
                   <div class="document-preview">
-                    <img id="guide-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー">
+                    <img id="guide-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="guide-id-front-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -1935,7 +1966,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="guide-id-back-preview-container">
                   <div class="document-preview">
-                    <img id="guide-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー">
+                    <img id="guide-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="guide-id-back-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -6338,6 +6369,9 @@
   
   <!-- 身分証明書アップロードシステム -->
   <script src="document-upload-system.js"></script>
+  
+  <!-- 画像プレビュー強制修正システム -->
+  <script src="image-preview-fix.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>

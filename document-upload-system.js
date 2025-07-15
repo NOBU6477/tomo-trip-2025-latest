@@ -83,9 +83,15 @@
       preview.src = dataURL;
       preview.classList.remove('d-none');
       
+      // プレビュー表示を強制的に確実にする
+      preview.style.display = 'block';
+      preview.style.visibility = 'visible';
+      preview.style.opacity = '1';
+      
       // 削除ボタンを表示
       if (deleteBtn) {
         deleteBtn.classList.remove('d-none');
+        deleteBtn.style.display = 'inline-block';
         setupDeleteButton(deleteBtn, inputId, previewId);
       }
       
@@ -94,6 +100,8 @@
       if (fileInput) {
         fileInput.classList.add('is-valid');
       }
+      
+      console.log(`📸 プレビュー表示完了: ${previewId}`);
     }
   }
   
@@ -112,10 +120,12 @@
       if (preview) {
         preview.src = '';
         preview.classList.add('d-none');
+        preview.style.display = 'none';
       }
       
       // 削除ボタンを非表示
       deleteBtn.classList.add('d-none');
+      deleteBtn.style.display = 'none';
     };
   }
   
