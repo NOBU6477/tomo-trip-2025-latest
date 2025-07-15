@@ -5330,9 +5330,7 @@
             console.log('ログインボタン非表示');
           }
           
-          // 新規登録ドロップダウンを正確に特定
-          const registerDropdown = document.getElementById('registerDropdown');
-          console.log('登録ドロップダウン要素:', registerDropdown);
+          // ドロップダウンシステム完全削除 - 直接ボタンシステムのみ維持
           
           if (registerDropdown) {
             console.log('現在のボタンテキスト:', registerDropdown.textContent);
@@ -6257,7 +6255,10 @@
   <!-- 静的サイト切り替えシステム -->
   <script src="static-site-system.js"></script>
   
-  <!-- 最優先: 最終ヘッダー修正システム -->
+  <!-- 最優先: DOM ハイジャック防止システム -->
+  <script src="dom-hijack-prevention.js"></script>
+  
+  <!-- 最終ヘッダー修正システム -->
   <script src="final-header-fix.js"></script>
   
   <!-- 翻訳ブロッカーシステム -->
