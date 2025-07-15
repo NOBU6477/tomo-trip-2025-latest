@@ -30,6 +30,9 @@
     setupDocumentPhoto('tourist-id-front', 'tourist-id-front-preview');
     setupDocumentPhoto('tourist-id-back', 'tourist-id-back-preview');
     
+    // 身分証明書種類選択の処理
+    setupIdTypeSelector();
+    
     console.log('✅ 画像システム初期化完了');
   }
   
@@ -282,6 +285,42 @@
         messageDiv.remove();
       }
     }, 3000);
+  }
+  
+  // 身分証明書種類選択の処理
+  function setupIdTypeSelector() {
+    const guideIdType = document.getElementById('guide-id-type');
+    const touristIdType = document.getElementById('tourist-id-type');
+    
+    if (guideIdType) {
+      guideIdType.addEventListener('change', function() {
+        toggleIdBackContainer(this.value, 'guide');
+      });
+    }
+    
+    if (touristIdType) {
+      touristIdType.addEventListener('change', function() {
+        toggleIdBackContainer(this.value, 'tourist');
+      });
+    }
+  }
+  
+  // 身分証明書の裏面アップロード欄の表示/非表示
+  function toggleIdBackContainer(idType, userType) {
+    const backContainer = document.getElementById(`${userType}-id-back-container`);
+    const backInput = document.getElementById(`${userType}-id-back`);
+    
+    if (backContainer) {
+      if (idType === 'drivers_license') {
+        backContainer.classList.remove('d-none');
+        if (backInput) backInput.required = true;
+        console.log(`${userType}の運転免許証裏面アップロード欄を表示`);
+      } else {
+        backContainer.classList.add('d-none');
+        if (backInput) backInput.required = false;
+        console.log(`${userType}の裏面アップロード欄を非表示`);
+      }
+    }
   }
   
 })();
