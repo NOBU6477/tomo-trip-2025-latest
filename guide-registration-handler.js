@@ -1,342 +1,282 @@
 /**
- * ガイド登録完了後のプロフィール編集ページ処理
- * 新規登録ユーザーのデータを確実に読み込み、プロフィール編集機能を有効化
+ * ガイド登録処理システム
+ * 基本情報登録後の編集画面遷移を実装
  */
 
-class GuideRegistrationHandler {
-  constructor() {
-    this.init();
+(function() {
+  'use strict';
+  
+  console.log('📝 ガイド登録処理システム開始');
+  
+  // 初期化
+  function initialize() {
+    setupGuideRegistrationForm();
+    setupTouristRegistrationForm();
   }
-
-  /**
-   * システム初期化
-   */
-  init() {
-    // URLパラメータを確認
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode');
-    const step = urlParams.get('step');
-
-    // 新規登録モードの場合、登録データを処理
-    if (mode === 'registration' || step === '2') {
-      this.handleNewRegistration();
-    }
-
-    // 登録データの自動読み込み
-    this.loadRegistrationData();
-  }
-
-  /**
-   * 新規登録処理
-   */
-  handleNewRegistration() {
-    console.log('新規登録モード検出 - プロフィール編集ページを初期化中...');
-
-    // アクセス制御をバイパス
-    this.bypassAccessControl();
-
-    // 登録完了状態を設定
-    sessionStorage.setItem('guideRegistrationCompleted', 'true');
-    sessionStorage.setItem('isLoggedIn', 'true');
-    sessionStorage.setItem('userType', 'guide');
-    sessionStorage.setItem('bypassAccessControl', 'true');
-
-    // ページタイトルを更新
-    document.title = 'プロフィール編集 - ガイド登録完了';
-
-    // 成功メッセージを表示
-    this.showWelcomeMessage();
-  }
-
-  /**
-   * アクセス制御をバイパス
-   */
-  bypassAccessControl() {
-    // アクセス拒否メッセージを削除
-    const removeAccessDeniedMessages = () => {
-      const alerts = document.querySelectorAll('.alert, .alert-danger, .alert-warning');
-      alerts.forEach(alert => {
-        if (alert.textContent && (
-          alert.textContent.includes('アクセスが拒否') || 
-          alert.textContent.includes('ログインして') ||
-          alert.textContent.includes('Access denied') ||
-          alert.textContent.includes('Please login')
-        )) {
-          alert.remove();
-        }
-      });
-
-      // リダイレクト防止
-      const scripts = document.querySelectorAll('script');
-      scripts.forEach(script => {
-        if (script.textContent && script.textContent.includes('window.location')) {
-          script.remove();
-        }
-      });
-    };
-
-    // 即座に実行
-    removeAccessDeniedMessages();
-
-    // DOM変更を監視して継続的に削除
-    const observer = new MutationObserver(() => {
-      removeAccessDeniedMessages();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true
-    });
-
-    // 5秒後に監視を停止
-    setTimeout(() => observer.disconnect(), 5000);
-  }
-
-  /**
-   * 登録データを読み込み
-   */
-  loadRegistrationData() {
-    try {
-      // 古いデータをクリーンアップ
-      this.cleanupOldData();
-
-      // セッションストレージから登録データを取得
-      const registrationData = sessionStorage.getItem('guideRegistrationData');
-      const currentUser = sessionStorage.getItem('currentUser');
-
-      console.log('登録データ:', registrationData);
-      console.log('現在ユーザー:', currentUser);
-
-      if (registrationData) {
-        const data = JSON.parse(registrationData);
-        this.populateProfileForm(data);
-        console.log('登録データをプロフィールフォームに反映しました');
-      }
-
-      if (currentUser) {
-        const user = JSON.parse(currentUser);
-        this.setupUserProfile(user);
-        console.log('ユーザープロフィールをセットアップしました');
-      }
-
-    } catch (error) {
-      console.error('登録データの読み込みエラー:', error);
-    }
-  }
-
-  /**
-   * 古いデータをクリーンアップ
-   */
-  cleanupOldData() {
-    try {
-      // 古いガイドプロフィールを削除
-      const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
-      const currentUserId = sessionStorage.getItem('currentGuideId');
-      
-      // 現在のユーザー以外のプロフィールを保持し、古いものを削除
-      if (currentUserId) {
-        Object.keys(profiles).forEach(id => {
-          if (id !== currentUserId) {
-            delete profiles[id];
-          }
-        });
-        localStorage.setItem('guideProfiles', JSON.stringify(profiles));
-      }
-
-      // 古いガイドリストデータを削除
-      const savedGuides = JSON.parse(localStorage.getItem('savedGuides') || '[]');
-      const filteredGuides = savedGuides.filter(guide => {
-        // test1400@gmail.com のガイドデータを削除
-        return guide.email !== 'test1400@gmail.com' && guide.name !== 'test1400';
-      });
-      localStorage.setItem('savedGuides', JSON.stringify(filteredGuides));
-
-      console.log('古いデータをクリーンアップしました');
-    } catch (error) {
-      console.error('データクリーンアップエラー:', error);
-    }
-  }
-
-  /**
-   * プロフィールフォームにデータを設定
-   */
-  populateProfileForm(data) {
-    // 最新のユーザーデータを優先使用
-    const currentUser = this.getCurrentUserData();
-    const finalData = { ...data, ...currentUser };
-
-    console.log('フォーム設定データ:', finalData);
-
-    // 基本情報の設定
-    const fieldMapping = {
-      'guide-name': finalData.name || `${finalData.firstName || ''} ${finalData.lastName || ''}`.trim(),
-      'guide-username': finalData.username || finalData.firstName || '',
-      'guide-email': finalData.email,
-      'guide-phone': finalData.phone,
-      'guide-location': finalData.location || finalData.city || ''
-    };
-
-    Object.keys(fieldMapping).forEach(fieldId => {
-      const field = document.getElementById(fieldId);
-      if (field) {
-        const value = fieldMapping[fieldId] || '';
-        field.value = value;
-        console.log(`${fieldId}設定: ${value}`);
-      }
-    });
-
-    // 自己紹介の設定
-    const bioField = document.getElementById('guide-bio');
-    if (bioField) {
-      bioField.value = finalData.bio || '新規登録ガイドです。あなたの地域の魅力をお伝えできるよう頑張ります！';
-    }
-
-    // 料金の設定
-    const feeField = document.getElementById('guide-fee');
-    if (feeField) {
-      feeField.value = finalData.fee || '5000';
-    }
-
-    // 言語設定
-    if (finalData.languages) {
-      const languages = Array.isArray(finalData.languages) ? finalData.languages : finalData.languages.split(',');
-      this.setLanguageSelection(languages);
-    }
-
-    // 専門分野設定
-    if (finalData.specialties && Array.isArray(finalData.specialties)) {
-      this.setSpecialtySelection(finalData.specialties);
-    }
-  }
-
-  /**
-   * 最新のユーザーデータを取得
-   */
-  getCurrentUserData() {
-    try {
-      const currentUser = sessionStorage.getItem('currentUser');
-      if (currentUser) {
-        return JSON.parse(currentUser);
-      }
-      return {};
-    } catch (error) {
-      console.error('ユーザーデータ取得エラー:', error);
-      return {};
-    }
-  }
-
-  /**
-   * ユーザープロフィールをセットアップ
-   */
-  setupUserProfile(user) {
-    // ローカルストレージにプロフィール情報を保存
-    const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
+  
+  // ガイド登録フォーム設定
+  function setupGuideRegistrationForm() {
+    const form = document.getElementById('guide-register-form');
+    if (!form) return;
     
-    if (!profiles[user.id]) {
-      profiles[user.id] = {
-        name: user.name,
-        bio: user.bio,
-        location: user.city,
-        email: user.email,
-        phone: user.phone,
-        specialties: user.specialties,
-        createdAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString()
-      };
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      console.log('📝 ガイド登録フォーム送信');
       
-      localStorage.setItem('guideProfiles', JSON.stringify(profiles));
-      console.log('新規ガイドプロフィールを作成しました:', user.id);
+      // バリデーション
+      if (!validateGuideForm()) {
+        return;
+      }
+      
+      // 基本情報を取得
+      const basicGuideData = collectGuideBasicInfo();
+      
+      // sessionStorageに保存
+      sessionStorage.setItem('newGuideData', JSON.stringify(basicGuideData));
+      
+      // 登録完了メッセージ
+      showAlert('基本情報の登録が完了しました。詳細編集画面に移動します...', 'success');
+      
+      // 編集画面に遷移
+      setTimeout(() => {
+        window.location.href = 'guide-edit-page.html';
+      }, 1500);
+    });
+  }
+  
+  // 観光客登録フォーム設定
+  function setupTouristRegistrationForm() {
+    const form = document.getElementById('tourist-register-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      console.log('📝 観光客登録フォーム送信');
+      
+      // バリデーション
+      if (!validateTouristForm()) {
+        return;
+      }
+      
+      // 観光客情報を取得
+      const touristData = collectTouristInfo();
+      
+      // localStorageに保存
+      localStorage.setItem(`tourist_${touristData.id}`, JSON.stringify(touristData));
+      
+      // 登録完了メッセージ
+      showAlert('観光客登録が完了しました！', 'success');
+      
+      // モーダルを閉じる
+      const modal = document.getElementById('registerTouristModal');
+      if (modal) {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      }
+      
+      // フォームリセット
+      form.reset();
+    });
+  }
+  
+  // ガイド基本情報収集
+  function collectGuideBasicInfo() {
+    const profilePreview = document.getElementById('guide-profile-preview');
+    
+    return {
+      id: Date.now().toString(),
+      name: document.getElementById('guide-name').value,
+      username: document.getElementById('guide-username').value,
+      email: document.getElementById('guide-email').value,
+      password: document.getElementById('guide-password').value,
+      location: document.getElementById('guide-location').value,
+      languages: Array.from(document.getElementById('guide-languages').selectedOptions).map(opt => opt.text).join(', '),
+      phoneNumber: document.getElementById('guide-phone-number').value,
+      profilePhoto: profilePreview && profilePreview.src !== 'https://placehold.co/150?text=写真' ? profilePreview.src : null,
+      idType: document.getElementById('guide-id-type').value,
+      idFrontPhoto: getImageSrc('guide-id-front-preview'),
+      idBackPhoto: getImageSrc('guide-id-back-preview'),
+      registeredAt: new Date().toISOString(),
+      status: 'draft' // 下書き状態
+    };
+  }
+  
+  // 観光客情報収集
+  function collectTouristInfo() {
+    const profilePreview = document.getElementById('tourist-profile-preview');
+    
+    return {
+      id: Date.now().toString(),
+      name: document.getElementById('tourist-name').value,
+      email: document.getElementById('tourist-email').value,
+      password: document.getElementById('tourist-password').value,
+      nationality: document.getElementById('tourist-nationality').value,
+      phoneNumber: document.getElementById('tourist-phone-number').value,
+      profilePhoto: profilePreview && profilePreview.src !== 'https://placehold.co/150?text=写真' ? profilePreview.src : null,
+      idType: document.getElementById('tourist-id-type').value,
+      idFrontPhoto: getImageSrc('tourist-id-front-preview'),
+      idBackPhoto: getImageSrc('tourist-id-back-preview'),
+      registeredAt: new Date().toISOString(),
+      userType: 'tourist'
+    };
+  }
+  
+  // 画像のsrc取得
+  function getImageSrc(elementId) {
+    const img = document.getElementById(elementId);
+    return img && img.src && !img.src.includes('placehold') ? img.src : null;
+  }
+  
+  // ガイドフォームバリデーション
+  function validateGuideForm() {
+    const requiredFields = [
+      'guide-name',
+      'guide-email',
+      'guide-password',
+      'guide-location',
+      'guide-languages',
+      'guide-phone-number'
+    ];
+    
+    for (const fieldId of requiredFields) {
+      const field = document.getElementById(fieldId);
+      if (!field || !field.value.trim()) {
+        showAlert(`${getFieldLabel(fieldId)}は必須項目です`, 'danger');
+        return false;
+      }
     }
-  }
-
-  /**
-   * 言語選択を設定
-   */
-  setLanguageSelection(languages) {
-    languages.forEach(lang => {
-      const checkbox = document.querySelector(`input[value="${lang}"]`);
-      if (checkbox) {
-        checkbox.checked = true;
+    
+    // 電話番号認証確認
+    const phoneVerified = document.getElementById('guide-phone-verified');
+    if (!phoneVerified || phoneVerified.classList.contains('d-none')) {
+      showAlert('電話番号認証を完了してください', 'danger');
+      return false;
+    }
+    
+    // 身分証明書確認
+    const idFrontPreview = document.getElementById('guide-id-front-preview');
+    if (!idFrontPreview || idFrontPreview.classList.contains('d-none')) {
+      showAlert('身分証明書（表面）をアップロードしてください', 'danger');
+      return false;
+    }
+    
+    // 運転免許証の場合は裏面も必要
+    const idType = document.getElementById('guide-id-type').value;
+    if (idType === 'drivers_license') {
+      const idBackPreview = document.getElementById('guide-id-back-preview');
+      if (!idBackPreview || idBackPreview.classList.contains('d-none')) {
+        showAlert('運転免許証の裏面もアップロードしてください', 'danger');
+        return false;
       }
-    });
+    }
+    
+    // 利用規約同意確認
+    const termsCheckbox = document.getElementById('guide-terms');
+    if (!termsCheckbox || !termsCheckbox.checked) {
+      showAlert('利用規約に同意してください', 'danger');
+      return false;
+    }
+    
+    return true;
   }
-
-  /**
-   * 専門分野選択を設定
-   */
-  setSpecialtySelection(specialties) {
-    specialties.forEach(specialty => {
-      const checkbox = document.querySelector(`input[value="${specialty}"]`);
-      if (checkbox) {
-        checkbox.checked = true;
+  
+  // 観光客フォームバリデーション
+  function validateTouristForm() {
+    const requiredFields = [
+      'tourist-name',
+      'tourist-email',
+      'tourist-password',
+      'tourist-nationality',
+      'tourist-phone-number'
+    ];
+    
+    for (const fieldId of requiredFields) {
+      const field = document.getElementById(fieldId);
+      if (!field || !field.value.trim()) {
+        showAlert(`${getFieldLabel(fieldId)}は必須項目です`, 'danger');
+        return false;
       }
-    });
+    }
+    
+    // 電話番号認証確認
+    const phoneVerified = document.getElementById('tourist-phone-verified');
+    if (!phoneVerified || phoneVerified.classList.contains('d-none')) {
+      showAlert('電話番号認証を完了してください', 'danger');
+      return false;
+    }
+    
+    // 身分証明書確認
+    const idFrontPreview = document.getElementById('tourist-id-front-preview');
+    if (!idFrontPreview || idFrontPreview.classList.contains('d-none')) {
+      showAlert('身分証明書（表面）をアップロードしてください', 'danger');
+      return false;
+    }
+    
+    // 利用規約同意確認
+    const termsCheckbox = document.getElementById('tourist-terms');
+    if (!termsCheckbox || !termsCheckbox.checked) {
+      showAlert('利用規約に同意してください', 'danger');
+      return false;
+    }
+    
+    return true;
   }
-
-  /**
-   * ウェルカムメッセージを表示
-   */
-  showWelcomeMessage() {
-    const messageHtml = `
-      <div class="alert alert-success alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; max-width: 500px;">
-        <h6 class="alert-heading">
-          <i class="bi bi-check-circle me-2"></i>ガイド登録が完了しました！
-        </h6>
-        <p class="mb-0">プロフィール情報を編集して、より魅力的なガイドページを作成しましょう。</p>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-      </div>
+  
+  // フィールドラベル取得
+  function getFieldLabel(fieldId) {
+    const labelMap = {
+      'guide-name': '氏名',
+      'guide-email': 'メールアドレス',
+      'guide-password': 'パスワード',
+      'guide-location': '活動エリア',
+      'guide-languages': '対応言語',
+      'guide-phone-number': '電話番号',
+      'tourist-name': '氏名',
+      'tourist-email': 'メールアドレス',
+      'tourist-password': 'パスワード',
+      'tourist-nationality': '国籍',
+      'tourist-phone-number': '電話番号'
+    };
+    
+    return labelMap[fieldId] || fieldId;
+  }
+  
+  // アラート表示
+  function showAlert(message, type = 'info') {
+    const alertContainer = document.getElementById('alert-container') || createAlertContainer();
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+      ${message}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-
-    document.body.insertAdjacentHTML('afterbegin', messageHtml);
-
-    // 5秒後に自動削除
+    
+    alertContainer.appendChild(alert);
+    
     setTimeout(() => {
-      const alert = document.querySelector('.alert-success');
-      if (alert) {
+      if (alert.parentNode) {
         alert.remove();
       }
     }, 5000);
   }
-
-  /**
-   * プロフィール更新処理
-   */
-  saveProfileUpdates() {
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
-    const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '{}');
-
-    // フォームデータを取得
-    const profileData = {
-      name: document.getElementById('guide-name')?.value,
-      bio: document.getElementById('guide-bio')?.value,
-      location: document.getElementById('guide-location')?.value,
-      fee: document.getElementById('guide-fee')?.value,
-      lastUpdated: new Date().toISOString()
-    };
-
-    // プロフィールを更新
-    if (profiles[currentUser.id]) {
-      Object.assign(profiles[currentUser.id], profileData);
-      localStorage.setItem('guideProfiles', JSON.stringify(profiles));
-
-      // 同期システムに通知
-      if (window.guideCardUpdater) {
-        window.guideCardUpdater.updateGuideCard(currentUser.id, profileData);
-      }
-
-      console.log('プロフィール更新完了:', currentUser.id);
-    }
+  
+  // アラートコンテナ作成
+  function createAlertContainer() {
+    const container = document.createElement('div');
+    container.id = 'alert-container';
+    container.style.cssText = 'position: fixed; top: 20px; right: 20px; max-width: 400px; z-index: 9999;';
+    document.body.appendChild(container);
+    return container;
   }
-}
-
-// グローバルに公開
-window.GuideRegistrationHandler = GuideRegistrationHandler;
-
-// 自動初期化
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    window.guideRegistrationHandler = new GuideRegistrationHandler();
-  });
-} else {
-  window.guideRegistrationHandler = new GuideRegistrationHandler();
-}
+  
+  // DOM読み込み完了後に初期化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize);
+  } else {
+    initialize();
+  }
+  
+})();

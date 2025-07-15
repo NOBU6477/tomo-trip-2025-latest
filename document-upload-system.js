@@ -80,13 +80,30 @@
     const deleteBtn = document.getElementById(previewId.replace('preview', 'delete'));
     
     if (preview) {
+      // 強制的にプレビュー表示
       preview.src = dataURL;
       preview.classList.remove('d-none');
+      preview.style.cssText = `
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        max-width: 300px !important;
+        max-height: 200px !important;
+        object-fit: cover !important;
+        border: 2px solid #dee2e6 !important;
+        border-radius: 8px !important;
+        margin: 10px 0 !important;
+      `;
       
-      // プレビュー表示を強制的に確実にする
-      preview.style.display = 'block';
-      preview.style.visibility = 'visible';
-      preview.style.opacity = '1';
+      // プロフィール写真の場合は円形に
+      if (previewId.includes('profile')) {
+        preview.style.cssText += `
+          width: 150px !important;
+          height: 150px !important;
+          border-radius: 50% !important;
+          border: 3px solid #dee2e6 !important;
+        `;
+      }
       
       // 削除ボタンを表示
       if (deleteBtn) {
@@ -102,6 +119,11 @@
       }
       
       console.log(`📸 プレビュー表示完了: ${previewId}`);
+      
+      // 強制的にプレビューを可視化
+      setTimeout(() => {
+        preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
     }
   }
   
