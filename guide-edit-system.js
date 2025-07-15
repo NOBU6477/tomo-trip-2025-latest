@@ -1,292 +1,164 @@
 /**
- * ガイド編集システム
- * 基本情報登録後の詳細編集機能を実装
+ * ガイド編集ページの機能システム
+ * 写真アップロード、データ保存、フォーム処理を統合
  */
 
 (function() {
   'use strict';
   
-  console.log('✏️ ガイド編集システム開始');
-  
   let selectedSpecialties = [];
-  let currentGuideData = null;
   
-  // 初期化
-  function initialize() {
-    loadBasicInfo();
-    setupProfilePhotoUpload();
-    setupFormSubmission();
-    setupSpecialtySystem();
-  }
-  
-  // 基本情報を読み込み
-  function loadBasicInfo() {
-    // URLパラメータまたはlocalStorageから基本情報を取得
-    const urlParams = new URLSearchParams(window.location.search);
-    const guideId = urlParams.get('id');
-    
-    if (guideId) {
-      currentGuideData = JSON.parse(localStorage.getItem(`guide_${guideId}`) || '{}');
-    } else {
-      // 新規登録の場合はsessionStorageから取得
-      currentGuideData = JSON.parse(sessionStorage.getItem('newGuideData') || '{}');
-    }
-    
-    if (currentGuideData) {
-      // フォームに基本情報を設定
-      document.getElementById('guide-name').value = currentGuideData.name || '';
-      document.getElementById('guide-username').value = currentGuideData.username || '';
-      document.getElementById('guide-email').value = currentGuideData.email || '';
-      document.getElementById('guide-location').value = currentGuideData.location || '';
-      document.getElementById('guide-languages').value = currentGuideData.languages || '';
-      
-      // プロフィール写真があれば表示
-      if (currentGuideData.profilePhoto) {
-        document.getElementById('profile-preview').src = currentGuideData.profilePhoto;
-      }
-      
-      // 既存の詳細情報があれば設定
-      if (currentGuideData.bio) {
-        document.getElementById('guide-bio').value = currentGuideData.bio;
-      }
-      if (currentGuideData.experience) {
-        document.getElementById('guide-experience').value = currentGuideData.experience;
-      }
-      if (currentGuideData.hourlyRate) {
-        document.getElementById('guide-hourly-rate').value = currentGuideData.hourlyRate;
-      }
-      if (currentGuideData.groupRate) {
-        document.getElementById('guide-group-rate').value = currentGuideData.groupRate;
-      }
-      if (currentGuideData.availableStart) {
-        document.getElementById('available-start').value = currentGuideData.availableStart;
-      }
-      if (currentGuideData.availableEnd) {
-        document.getElementById('available-end').value = currentGuideData.availableEnd;
-      }
-      
-      // 得意分野があれば設定
-      if (currentGuideData.specialties) {
-        selectedSpecialties = currentGuideData.specialties;
-        updateSpecialtyDisplay();
-      }
-    }
-  }
-  
-  // プロフィール写真アップロード設定
-  function setupProfilePhotoUpload() {
-    const fileInput = document.getElementById('profile-photo');
-    const preview = document.getElementById('profile-preview');
-    
-    fileInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
+  // 写真アップロード処理
+  function handlePhotoUpload(input, previewId) {
+    const file = input.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById(previewId);
+        if (preview) {
           preview.src = e.target.result;
-          
-          // データを保存
-          if (currentGuideData) {
-            currentGuideData.profilePhoto = e.target.result;
-            saveCurrentData();
-          }
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-  
-  // 得意分野システム設定
-  function setupSpecialtySystem() {
-    const customInput = document.getElementById('custom-specialty');
-    
-    customInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        addSpecialty(this.value.trim());
-        this.value = '';
-      }
-    });
-  }
-  
-  // 得意分野を追加
-  function addSpecialty(specialty) {
-    if (specialty && !selectedSpecialties.includes(specialty)) {
-      selectedSpecialties.push(specialty);
-      updateSpecialtyDisplay();
-      saveCurrentData();
+          preview.style.opacity = '1';
+          console.log('写真プレビュー更新完了:', previewId);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   }
-  
-  // 得意分野表示更新
-  function updateSpecialtyDisplay() {
-    const container = document.getElementById('selected-specialties');
-    container.innerHTML = '';
-    
-    selectedSpecialties.forEach(specialty => {
-      const tag = document.createElement('span');
-      tag.className = 'tag';
-      tag.innerHTML = `
-        ${specialty}
-        <i class="bi bi-x-circle ms-1" onclick="removeSpecialty('${specialty}')" style="cursor: pointer;"></i>
-      `;
-      container.appendChild(tag);
-    });
+
+  // データ読み込み
+  function loadGuideData() {
+    const registrationData = localStorage.getItem('guideRegistrationData');
+    if (registrationData) {
+      const data = JSON.parse(registrationData);
+      
+      // 基本情報を表示
+      const guideNameField = document.getElementById('guide-name');
+      const guideUsernameField = document.getElementById('guide-username');
+      const guideEmailField = document.getElementById('guide-email');
+      const guideLocationField = document.getElementById('guide-location');
+      const guideLanguagesField = document.getElementById('guide-languages');
+      
+      if (guideNameField) guideNameField.value = data.name || '';
+      if (guideUsernameField) guideUsernameField.value = data.username || '';
+      if (guideEmailField) guideEmailField.value = data.email || '';
+      if (guideLocationField) guideLocationField.value = data.location || '';
+      if (guideLanguagesField) guideLanguagesField.value = data.languages || '';
+    }
   }
-  
-  // 得意分野を削除
+
+  // 得意分野追加
+  function addSpecialty(specialty) {
+    if (!selectedSpecialties.includes(specialty)) {
+      selectedSpecialties.push(specialty);
+      updateSpecialtiesDisplay();
+    }
+  }
+
+  // 得意分野表示更新
+  function updateSpecialtiesDisplay() {
+    const container = document.getElementById('selected-specialties');
+    if (container) {
+      container.innerHTML = selectedSpecialties.map(specialty => 
+        `<span class="tag" onclick="removeSpecialty('${specialty}')">${specialty} <i class="bi bi-x"></i></span>`
+      ).join('');
+    }
+  }
+
+  // 得意分野削除
   function removeSpecialty(specialty) {
     selectedSpecialties = selectedSpecialties.filter(s => s !== specialty);
-    updateSpecialtyDisplay();
-    saveCurrentData();
+    updateSpecialtiesDisplay();
   }
-  
-  // キー入力処理
+
+  // カスタム得意分野追加
   function handleSpecialtyKeyPress(event) {
     if (event.key === 'Enter') {
-      event.preventDefault();
-      addSpecialty(event.target.value.trim());
-      event.target.value = '';
+      const input = event.target;
+      const specialty = input.value.trim();
+      if (specialty) {
+        addSpecialty(specialty);
+        input.value = '';
+      }
     }
   }
-  
-  // フォーム送信設定
-  function setupFormSubmission() {
-    const form = document.getElementById('guide-edit-form');
-    
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-      publishGuide();
-    });
-  }
-  
-  // 現在のデータを保存
-  function saveCurrentData() {
-    if (!currentGuideData) return;
-    
-    // フォームデータを更新
-    currentGuideData.bio = document.getElementById('guide-bio').value;
-    currentGuideData.experience = document.getElementById('guide-experience').value;
-    currentGuideData.hourlyRate = document.getElementById('guide-hourly-rate').value;
-    currentGuideData.groupRate = document.getElementById('guide-group-rate').value;
-    currentGuideData.availableStart = document.getElementById('available-start').value;
-    currentGuideData.availableEnd = document.getElementById('available-end').value;
-    currentGuideData.specialties = selectedSpecialties;
-    
-    // sessionStorageに保存
-    sessionStorage.setItem('newGuideData', JSON.stringify(currentGuideData));
-  }
-  
+
   // 下書き保存
   function saveDraft() {
-    saveCurrentData();
-    showAlert('下書きを保存しました', 'success');
+    const formData = {
+      bio: document.getElementById('guide-bio')?.value || '',
+      experience: document.getElementById('guide-experience')?.value || '',
+      specialties: selectedSpecialties,
+      hourlyRate: document.getElementById('hourly-rate')?.value || '',
+      minDuration: document.getElementById('min-duration')?.value || '',
+      maxGroupSize: document.getElementById('max-group-size')?.value || ''
+    };
+
+    // 既存データと統合
+    const existingData = JSON.parse(localStorage.getItem('guideRegistrationData') || '{}');
+    const updatedData = { ...existingData, ...formData };
+    
+    localStorage.setItem('guideRegistrationData', JSON.stringify(updatedData));
+    
+    alert('下書きが保存されました！');
   }
-  
-  // 公開して完了
-  function publishGuide() {
-    saveCurrentData();
-    
-    if (!validateForm()) {
-      return;
-    }
-    
-    // ガイドデータを公開状態にして保存
-    currentGuideData.status = 'published';
-    currentGuideData.publishedAt = new Date().toISOString();
-    currentGuideData.id = currentGuideData.id || Date.now().toString();
-    
-    // localStorageに保存
-    localStorage.setItem(`guide_${currentGuideData.id}`, JSON.stringify(currentGuideData));
-    
-    // 既存のガイドリストに追加
-    const existingGuides = JSON.parse(localStorage.getItem('publishedGuides') || '[]');
-    const existingIndex = existingGuides.findIndex(g => g.id === currentGuideData.id);
-    
-    if (existingIndex >= 0) {
-      existingGuides[existingIndex] = currentGuideData;
-    } else {
-      existingGuides.push(currentGuideData);
-    }
-    
-    localStorage.setItem('publishedGuides', JSON.stringify(existingGuides));
-    
-    // sessionStorageをクリア
-    sessionStorage.removeItem('newGuideData');
-    
-    showAlert('ガイド登録が完了しました！', 'success');
-    
-    // 2秒後にメインページに戻る
-    setTimeout(() => {
-      window.location.href = '/?guide_registered=true';
-    }, 2000);
-  }
-  
-  // フォームバリデーション
-  function validateForm() {
-    const bio = document.getElementById('guide-bio').value.trim();
-    const hourlyRate = document.getElementById('guide-hourly-rate').value;
-    
-    if (!bio) {
-      showAlert('自己紹介を入力してください', 'danger');
-      return false;
-    }
-    
-    if (parseInt(hourlyRate) < 6000) {
-      showAlert('時給料金は6,000円以上に設定してください', 'danger');
-      return false;
-    }
-    
-    return true;
-  }
-  
+
   // 保存して終了
   function saveAndExit() {
-    saveCurrentData();
+    const formData = {
+      bio: document.getElementById('guide-bio')?.value || '',
+      experience: document.getElementById('guide-experience')?.value || '',
+      specialties: selectedSpecialties,
+      hourlyRate: document.getElementById('hourly-rate')?.value || '',
+      minDuration: document.getElementById('min-duration')?.value || '',
+      maxGroupSize: document.getElementById('max-group-size')?.value || ''
+    };
+
+    // 既存データと統合
+    const existingData = JSON.parse(localStorage.getItem('guideRegistrationData') || '{}');
+    const updatedData = { ...existingData, ...formData };
+    
+    localStorage.setItem('guideRegistrationData', JSON.stringify(updatedData));
+    
+    alert('ガイド情報が保存されました！');
     window.location.href = '/';
   }
-  
-  // アラート表示
-  function showAlert(message, type = 'info') {
-    const alertContainer = document.getElementById('alert-container') || createAlertContainer();
-    
-    const alert = document.createElement('div');
-    alert.className = `alert alert-${type} alert-dismissible fade show`;
-    alert.innerHTML = `
-      ${message}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    
-    alertContainer.appendChild(alert);
-    
-    setTimeout(() => {
-      if (alert.parentNode) {
-        alert.remove();
-      }
-    }, 5000);
+
+  // 初期化
+  function initialize() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        loadGuideData();
+        setupEventListeners();
+      });
+    } else {
+      loadGuideData();
+      setupEventListeners();
+    }
   }
-  
-  // アラートコンテナ作成
-  function createAlertContainer() {
-    const container = document.createElement('div');
-    container.id = 'alert-container';
-    container.style.cssText = 'position: fixed; top: 20px; right: 20px; max-width: 400px; z-index: 9999;';
-    document.body.appendChild(container);
-    return container;
+
+  // イベントリスナー設定
+  function setupEventListeners() {
+    // フォーム送信イベント
+    const form = document.getElementById('guide-edit-form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        saveAndExit();
+      });
+    }
   }
-  
+
   // グローバル関数として公開
+  window.handlePhotoUpload = handlePhotoUpload;
   window.addSpecialty = addSpecialty;
   window.removeSpecialty = removeSpecialty;
   window.handleSpecialtyKeyPress = handleSpecialtyKeyPress;
   window.saveDraft = saveDraft;
   window.saveAndExit = saveAndExit;
+
+  // 初期化実行
+  initialize();
   
-  // DOM読み込み完了後に初期化
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
-  } else {
-    initialize();
-  }
-  
+  console.log('✅ ガイド編集システム初期化完了');
+
 })();

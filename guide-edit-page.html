@@ -87,6 +87,13 @@
       border: 3px solid #dee2e6;
       margin: 0 auto 1rem;
       display: block;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .profile-preview:hover {
+      opacity: 0.8;
+      transform: scale(1.05);
     }
     
     .progress-steps {
@@ -160,7 +167,7 @@
       <div class="text-center mb-4">
         <h3 class="section-title">プロフィール写真</h3>
         <img id="profile-preview" class="profile-preview" src="https://placehold.co/150?text=写真" alt="プロフィール写真">
-        <input type="file" id="profile-photo" accept="image/*" style="display: none;">
+        <input type="file" id="profile-photo" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'profile-preview')">
         <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('profile-photo').click()">
           <i class="bi bi-camera"></i> 写真を変更
         </button>
