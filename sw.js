@@ -45,6 +45,19 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const { request } = event;
   
+  // 404エラーファイルのリクエストをスキップ
+  const skip404Files = [
+    'console-debug-helper.js',
+    'bootstrap-modal-scroll-fix.js', 
+    'complete-language-fix.js',
+    'guide-login-debug.js',
+    'session-debugger.js'
+  ];
+  
+  if (skip404Files.some(file => request.url.includes(file))) {
+    return;
+  }
+  
   // ナビゲーションリクエスト: Network First
   if (request.mode === 'navigate') {
     event.respondWith(
