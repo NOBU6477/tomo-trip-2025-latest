@@ -155,12 +155,12 @@
       return false;
     }
     
-    // 身分証明書確認（より柔軟な判定）
+    // 身分証明書確認（シンプル判定）
     const idFrontInput = document.getElementById('guide-id-front');
     const idFrontPreview = document.getElementById('guide-id-front-preview');
     
     if (!idFrontInput || !idFrontInput.files || idFrontInput.files.length === 0) {
-      if (!idFrontPreview || !idFrontPreview.src || idFrontPreview.src.includes('placehold')) {
+      if (!idFrontPreview || !idFrontPreview.classList.contains('document-image-loaded')) {
         showAlert('身分証明書（表面）をアップロードしてください', 'danger');
         return false;
       }
@@ -173,7 +173,7 @@
       const idBackPreview = document.getElementById('guide-id-back-preview');
       
       if (!idBackInput || !idBackInput.files || idBackInput.files.length === 0) {
-        if (!idBackPreview || !idBackPreview.src || idBackPreview.src.includes('placehold')) {
+        if (!idBackPreview || !idBackPreview.classList.contains('document-image-loaded')) {
           showAlert('運転免許証の裏面もアップロードしてください', 'danger');
           return false;
         }
@@ -215,12 +215,12 @@
       return false;
     }
     
-    // 身分証明書確認（より柔軟な判定）
+    // 身分証明書確認（シンプル判定）
     const idFrontInput = document.getElementById('tourist-id-front');
     const idFrontPreview = document.getElementById('tourist-id-front-preview');
     
     if (!idFrontInput || !idFrontInput.files || idFrontInput.files.length === 0) {
-      if (!idFrontPreview || !idFrontPreview.src || idFrontPreview.src.includes('placehold')) {
+      if (!idFrontPreview || !idFrontPreview.classList.contains('document-image-loaded')) {
         showAlert('身分証明書（表面）をアップロードしてください', 'danger');
         return false;
       }
