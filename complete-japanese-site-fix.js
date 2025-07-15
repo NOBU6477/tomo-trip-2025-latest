@@ -37,72 +37,150 @@
   }
   
   function fixRegistrationButtons() {
-    const fixes = [
-      { selector: 'a[href="#registerModal"]', text: '新規登録' },
-      { selector: '.nav-link[data-bs-toggle="dropdown"]:contains("Sign Up")', text: '新規登録' },
-      { selector: 'button:contains("Sign Up")', text: '新規登録' },
-      { selector: '.btn:contains("Register")', text: '新規登録' },
-      { selector: '.dropdown-item[href="#registerModal"]', text: '新規登録' }
-    ];
+    // 全てのSign Up系テキストを検索して修正
+    const allElements = document.querySelectorAll('*');
+    let fixCount = 0;
     
-    fixes.forEach(fix => {
-      const elements = document.querySelectorAll(fix.selector);
-      elements.forEach(element => {
-        if (element.textContent.includes('Sign Up') || 
-            element.textContent.includes('Register') ||
-            element.textContent.trim() === 'Sign Up' ||
-            element.textContent.trim() === 'Register') {
-          element.textContent = fix.text;
-          console.log(`🔄 ボタン修正: ${element.textContent} → ${fix.text}`);
+    allElements.forEach(element => {
+      if (element.nodeType === Node.ELEMENT_NODE) {
+        // テキストノードを直接チェック
+        const walker = document.createTreeWalker(
+          element,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
+        
+        let textNode;
+        while (textNode = walker.nextNode()) {
+          if (textNode.nodeValue.includes('Sign Up') || 
+              textNode.nodeValue.includes('Register') ||
+              textNode.nodeValue.trim() === 'Sign Up' ||
+              textNode.nodeValue.trim() === 'Register') {
+            textNode.nodeValue = textNode.nodeValue
+              .replace(/Sign Up/g, '新規登録')
+              .replace(/Register/g, '新規登録');
+            fixCount++;
+            console.log(`🔄 テキスト修正: ${textNode.nodeValue}`);
+          }
         }
-      });
-    });
-    
-    // 特定の問題のあるボタンを直接修正
-    const problematicButtons = document.querySelectorAll('a.nav-link[data-bs-toggle="dropdown"]');
-    problematicButtons.forEach(button => {
-      if (button.textContent.includes('Sign Up') || button.textContent.trim() === 'Sign Up') {
-        button.textContent = '新規登録';
-        console.log('🎯 問題ボタン直接修正完了');
+        
+        // 要素のtextContentもチェック
+        if (element.tagName === 'BUTTON' || element.tagName === 'A') {
+          const originalText = element.textContent.trim();
+          if (originalText === 'Sign Up' || originalText === 'Register') {
+            element.textContent = '新規登録';
+            fixCount++;
+            console.log(`🎯 ボタン直接修正: ${originalText} → 新規登録`);
+          }
+        }
       }
     });
+    
+    console.log(`✅ 新規登録ボタン修正完了: ${fixCount}箇所`);
   }
   
   function setupFilterSystem() {
-    // フィルター要素の取得
-    const locationFilter = document.getElementById('location-filter');
-    const languageFilter = document.getElementById('language-filter');
-    const feeFilter = document.getElementById('fee-filter');
-    const keywordCheckboxes = document.querySelectorAll('input[name="keywords"]');
+    // より広範囲でフィルター要素を検索
+    const filterSelectors = [
+      '#location-filter', '#filter-location', '[name="location"]',
+      '#language-filter', '#filter-language', '[name="language"]', 
+      '#fee-filter', '#filter-fee', '[name="fee"]',
+      '#specialties-filter', '#filter-specialties', '[name="specialties"]'
+    ];
     
-    if (!locationFilter || !languageFilter || !feeFilter) {
-      console.warn('⚠️ フィルター要素が見つかりません');
-      return;
-    }
+    let foundFilters = {};
     
-    // フィルターイベントリスナーの設定
-    locationFilter.addEventListener('change', handleFilterChange);
-    languageFilter.addEventListener('change', handleFilterChange);
-    feeFilter.addEventListener('change', handleFilterChange);
+    filterSelectors.forEach(selector => {
+      const element = document.querySelector(selector);
+      if (element) {
+        const type = element.id.includes('location') || element.name === 'location' ? 'location' :
+                    element.id.includes('language') || element.name === 'language' ? 'language' :
+                    element.id.includes('fee') || element.name === 'fee' ? 'fee' :
+                    element.id.includes('special') || element.name === 'specialties' ? 'specialties' : 'unknown';
+        
+        if (type !== 'unknown') {
+          foundFilters[type] = element;
+          console.log(`🔍 フィルター発見: ${type} - ${selector}`);
+        }
+      }
+    });
     
+    // イベントリスナーの設定
+    Object.keys(foundFilters).forEach(type => {
+      const element = foundFilters[type];
+      
+      // 既存のイベントリスナーを削除
+      element.removeEventListener('change', handleFilterChange);
+      
+      // 新しいイベントリスナーを設定（防御的）
+      element.addEventListener('change', function(event) {
+        event.stopPropagation();
+        handleFilterChange(event);
+        
+        // フィルター値の強制保持
+        setTimeout(() => {
+          if (element.value !== currentFilters[type]) {
+            console.log(`🔒 フィルター値復元: ${type} = ${currentFilters[type]}`);
+            element.value = currentFilters[type];
+          }
+        }, 100);
+      });
+      
+      console.log(`✅ ${type}フィルターにイベントリスナー設定完了`);
+    });
+    
+    // キーワードチェックボックスの設定
+    const keywordCheckboxes = document.querySelectorAll('input[type="checkbox"][name*="keyword"], input[type="checkbox"][value*="keyword"]');
     keywordCheckboxes.forEach(checkbox => {
+      checkbox.removeEventListener('change', handleKeywordChange);
       checkbox.addEventListener('change', handleKeywordChange);
     });
     
-    console.log('🔧 フィルターシステム設定完了');
+    console.log(`🔧 フィルターシステム設定完了: ${Object.keys(foundFilters).length}個のフィルター`);
   }
   
   function handleFilterChange(event) {
-    const filterType = event.target.id.replace('-filter', '');
-    currentFilters[filterType] = event.target.value;
+    event.preventDefault();
+    event.stopPropagation();
     
-    console.log(`🔄 フィルター変更: ${filterType} = ${event.target.value}`);
+    // フィルタータイプを特定
+    const element = event.target;
+    const filterType = element.id.includes('location') || element.name === 'location' ? 'location' :
+                     element.id.includes('language') || element.name === 'language' ? 'language' :
+                     element.id.includes('fee') || element.name === 'fee' ? 'fee' :
+                     element.id.includes('special') || element.name === 'specialties' ? 'specialties' : 'unknown';
+    
+    if (filterType === 'unknown') {
+      console.warn('⚠️ 不明なフィルタータイプ:', element);
+      return;
+    }
+    
+    const newValue = element.value;
+    console.log(`🔄 フィルター変更: ${filterType} = ${newValue}`);
+    
+    // currentFiltersを更新
+    currentFilters[filterType] = newValue;
+    
+    // 他のスクリプトからの干渉を防ぐ
+    setTimeout(() => {
+      if (element.value !== newValue) {
+        console.log(`🔒 フィルター値が変更されたため復元: ${filterType}`);
+        element.value = newValue;
+        currentFilters[filterType] = newValue;
+      }
+    }, 50);
     
     // フィルター状態の保存
     saveFilterState();
     
     // ガイド表示の更新
     applyFiltersAndUpdateDisplay();
+    
+    // さらなる保護のため再度保存
+    setTimeout(() => {
+      saveFilterState();
+    }, 200);
   }
   
   function handleKeywordChange(event) {
@@ -273,15 +351,45 @@
   
   function updateGuideDisplay(guidesToShow = null) {
     const guides = guidesToShow || guideDatabase;
-    const container = document.querySelector('#guides-section .row, .guides-container, .guide-cards-container');
+    
+    // より広範囲でコンテナを検索
+    const containerSelectors = [
+      '#guides-section .row',
+      '.guides-container', 
+      '.guide-cards-container',
+      '[id*="guide"] .row',
+      '.container .row',
+      '#guides .row',
+      '.guide-grid'
+    ];
+    
+    let container = null;
+    for (const selector of containerSelectors) {
+      container = document.querySelector(selector);
+      if (container) {
+        console.log(`📦 コンテナ発見: ${selector}`);
+        break;
+      }
+    }
     
     if (!container) {
-      console.warn('⚠️ ガイド表示コンテナが見つかりません');
+      console.warn('⚠️ ガイド表示コンテナが見つかりません - 既存要素を検索');
+      // 既存のガイドカードから親コンテナを推測
+      const existingCard = document.querySelector('.guide-card, .guide-item, [class*="guide"]');
+      if (existingCard) {
+        container = existingCard.parentElement;
+        console.log('📦 既存カードから推測したコンテナ:', container);
+      }
+    }
+    
+    if (!container) {
+      console.error('❌ ガイド表示コンテナが見つかりません');
       return;
     }
     
-    // コンテナをクリア
-    container.innerHTML = '';
+    // 既存のガイドカードのみ削除（他の要素は保持）
+    const existingCards = container.querySelectorAll('.guide-card, .guide-item, [data-guide-id], .col-md-4');
+    existingCards.forEach(card => card.remove());
     
     // ガイドカードを生成
     guides.forEach(guide => {
@@ -290,6 +398,16 @@
     });
     
     console.log(`📊 ガイド表示更新: ${guides.length}件`);
+    
+    // 表示確認のための追加ログ
+    setTimeout(() => {
+      const visibleCards = container.querySelectorAll('.guide-card, .guide-item');
+      console.log(`🔍 実際の表示カード数: ${visibleCards.length}`);
+      
+      if (visibleCards.length !== guides.length) {
+        console.warn(`⚠️ カード数不一致: 期待 ${guides.length}, 実際 ${visibleCards.length}`);
+      }
+    }, 100);
   }
   
   function createGuideCard(guide) {
@@ -335,19 +453,55 @@
   }
   
   function updateGuideCounter(count) {
-    const counters = document.querySelectorAll('#search-results-counter, #guide-counter, .guide-counter, .results-counter');
+    const counterSelectors = [
+      '#search-results-counter', 
+      '#guide-counter', 
+      '.guide-counter', 
+      '.results-counter',
+      '[id*="counter"]',
+      '[class*="counter"]',
+      '[id*="result"]'
+    ];
+    
+    let foundCounters = [];
+    counterSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        if (!foundCounters.includes(el)) {
+          foundCounters.push(el);
+        }
+      });
+    });
+    
     const counterText = `${count}人のガイドが見つかりました`;
     
-    counters.forEach(counter => {
+    foundCounters.forEach(counter => {
       counter.textContent = counterText;
+      console.log(`📊 カウンター更新: ${counter.id || counter.className}`);
     });
     
     // カウンター要素が見つからない場合は作成
-    if (counters.length === 0) {
+    if (foundCounters.length === 0) {
       createGuideCounter(count);
     }
     
-    console.log(`📊 ガイドカウンター更新: ${counterText}`);
+    // 実際の表示カード数と照合
+    setTimeout(() => {
+      const visibleCards = document.querySelectorAll('.guide-card:not(.d-none), .guide-item:not(.d-none), [data-guide-id]:not(.d-none)');
+      const actualCount = visibleCards.length;
+      
+      if (actualCount !== count) {
+        console.warn(`⚠️ カウンター不一致検出: 表示=${actualCount}, カウンター=${count}`);
+        // 実際の表示数に合わせて修正
+        const correctedText = `${actualCount}人のガイドが見つかりました`;
+        foundCounters.forEach(counter => {
+          counter.textContent = correctedText;
+        });
+        console.log(`🔧 カウンター修正: ${correctedText}`);
+      }
+    }, 200);
+    
+    console.log(`📊 ガイドカウンター更新: ${counterText} (${foundCounters.length}箇所)`);
   }
   
   function createGuideCounter(count) {

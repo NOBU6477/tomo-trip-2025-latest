@@ -6,13 +6,12 @@ const CACHE_NAME = 'local-guide-v1.2';
 const STATIC_CACHE = 'static-v1.2';
 const DYNAMIC_CACHE = 'dynamic-v1.2';
 
-// キャッシュするリソース
+// キャッシュするリソース（404エラーファイルを除外）
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/guide-registration-form.html',
   '/guide-profile.html',
-  '/optimized-styles.css',
   '/performance-optimization.js',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css',
   'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js',
