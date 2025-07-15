@@ -1279,23 +1279,22 @@
           </div>
         </div>
         
-        <!-- 追加のガイド（初期状態では非表示） -->
         <!-- ガイド4 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="4">
-            <img src="https://placehold.co/400x300?text=北海道ガイド" class="card-img-top guide-image" alt="ガイド写真">
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" data-guide-id="4" data-location="北海道 札幌市" data-languages="日本語,英語,ロシア語" data-fee="8000" data-keywords="自然体験,アクティビティ,絶景">
+            <img src="https://images.unsplash.com/photo-1519638831568-d9897f54ed69?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">雪</h5>
                 <span class="badge bg-primary">¥8,000/セッション</span>
               </div>
-              <p class="card-text text-muted mb-2">
+              <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>北海道 札幌市
               </p>
               <p class="card-text mb-3">北海道・札幌のローカルガイド。四季折々の自然と新鮮な海の幸、絶景スポットをご案内します。</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
                   <span class="badge bg-light text-dark me-1">英語</span>
                   <span class="badge bg-light text-dark">ロシア語</span>
                 </div>
@@ -1316,21 +1315,21 @@
         </div>
         
         <!-- ガイド5 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="5">
-            <img src="https://placehold.co/400x300?text=沖縄ガイド" class="card-img-top guide-image" alt="ガイド写真">
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" data-guide-id="5" data-location="沖縄県 那覇市" data-languages="日本語,英語" data-fee="12000" data-keywords="マリンスポーツ,自然体験,ダイビング">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">海</h5>
                 <span class="badge bg-primary">¥12,000/セッション</span>
               </div>
-              <p class="card-text text-muted mb-2">
+              <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>沖縄県 那覇市
               </p>
               <p class="card-text mb-3">沖縄在住15年のダイビングインストラクター。美しい海と独自の文化が残る島々を案内します。</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
                   <span class="badge bg-light text-dark">英語</span>
                 </div>
                 <div class="text-warning">
@@ -1350,21 +1349,21 @@
         </div>
         
         <!-- ガイド6 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="6">
-            <img src="https://placehold.co/400x300?text=広島ガイド" class="card-img-top guide-image" alt="ガイド写真">
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" data-guide-id="6" data-location="広島県 広島市" data-languages="日本語,英語,フランス語" data-fee="6500" data-keywords="歴史ツアー,文化体験,平和記念公園">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">平和</h5>
                 <span class="badge bg-primary">¥6,500/セッション</span>
               </div>
-              <p class="card-text text-muted mb-2">
+              <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>広島県 広島市
               </p>
               <p class="card-text mb-3">広島の歴史と文化に精通したガイド。平和記念公園から宮島まで、心に残る旅をご提供します。</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
                   <span class="badge bg-light text-dark me-1">英語</span>
                   <span class="badge bg-light text-dark">フランス語</span>
                 </div>
@@ -6370,7 +6369,7 @@
   <script src="simple-image-system.js"></script>
   
   <!-- 修正済み検索システム -->
-  <script src="fixed-search-system.js"></script>
+  <script src="enhanced-search-fix.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>

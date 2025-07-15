@@ -166,11 +166,14 @@
       <!-- プロフィール写真セクション -->
       <div class="text-center mb-4">
         <h3 class="section-title">プロフィール写真</h3>
-        <img id="profile-preview" class="profile-preview" src="https://placehold.co/150?text=写真" alt="プロフィール写真">
-        <input type="file" id="profile-photo" accept="image/*" style="display: none;" onchange="handlePhotoUpload(this, 'profile-preview')">
+        <img id="profile-preview" class="profile-preview" src="https://via.placeholder.com/150x150?text=写真をアップロード" alt="プロフィール写真">
+        <input type="file" id="profile-photo" accept="image/*" style="display: none;">
         <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('profile-photo').click()">
           <i class="bi bi-camera"></i> 写真を変更
         </button>
+        <div class="mt-2">
+          <small class="text-muted">クリックして写真をアップロードしてください</small>
+        </div>
       </div>
 
       <!-- 基本情報セクション -->
@@ -284,5 +287,6 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="guide-edit-system.js"></script>
+  <script src="fixed-photo-upload-system.js"></script>
 </body>
 </html>
