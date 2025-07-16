@@ -1584,6 +1584,40 @@
   <!-- 英語サイト修正スクリプト -->
   <script src="english-site-fix.js"></script>
   
+  <style>
+    /* 英語サイト専用: 古いドロップダウンを強制削除 */
+    .dropdown[aria-labelledby="languageDropdown"],
+    #languageDropdown,
+    .nav-item.dropdown,
+    .dropdown-toggle,
+    .btn.btn-outline-light.dropdown-toggle {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      position: absolute !important;
+      left: -9999px !important;
+    }
+    
+    /* 協賛店ボタンのハレーション除去 */
+    .sponsor-mini-btn {
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+      animation: none !important;
+    }
+    
+    .sponsor-mini-btn:hover {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+      animation: none !important;
+    }
+    
+    .sponsor-mini-btn.sponsor-register:hover {
+      box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3) !important;
+    }
+    
+    .sponsor-mini-btn.sponsor-login:hover {
+      box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3) !important;
+    }
+  </style>
+  
   <script>
     // 英語版専用の初期化
     document.addEventListener('DOMContentLoaded', function() {
@@ -1592,6 +1626,26 @@
       // スクロール確保
       document.body.style.overflow = 'auto';
       document.body.style.overflowY = 'auto';
+      
+      // 古いドロップダウンを即座に削除
+      setTimeout(() => {
+        const oldDropdowns = document.querySelectorAll('.dropdown[aria-labelledby="languageDropdown"], #languageDropdown, .nav-item.dropdown');
+        oldDropdowns.forEach(el => {
+          if (el.textContent.includes('English') || el.textContent.includes('日本語')) {
+            el.remove();
+            console.log('古いドロップダウンを削除しました');
+          }
+        });
+        
+        // 言語ボタンを強制表示
+        const langSwitcher = document.querySelector('.language-switcher-center');
+        if (langSwitcher) {
+          langSwitcher.style.display = 'flex';
+          langSwitcher.style.visibility = 'visible';
+          langSwitcher.style.opacity = '1';
+          console.log('言語切り替えボタンを表示しました');
+        }
+      }, 100);
       
       // 基本的な機能を設定
       function showRegisterOptions() {
