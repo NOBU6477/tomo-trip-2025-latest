@@ -57,20 +57,15 @@
   function removeOverlappingLogo() {
     if (!isMobile()) return;
     
-    // ヒーローセクション内の大きなロゴコンテナを全て削除
+    // 左上の特定ロゴコンテナのみを削除（140x140px白背景）
     const heroSection = document.querySelector('#top.hero-section');
     if (heroSection) {
-      // 140x140pxの大きなロゴコンテナを探して削除
-      const logoContainers = heroSection.querySelectorAll(
-        'div[style*="width: 140px"], div[style*="height: 140px"], ' +
-        'div[style*="position: absolute"][style*="top: 2%"], ' +
-        'div[style*="background: rgba(255, 255, 255, 0.95)"]'
-      );
-      
-      logoContainers.forEach(container => {
-        container.style.display = 'none';
-        console.log('モバイルで大きなロゴコンテナを非表示にしました');
-      });
+      // より特定的なセレクターで左上ロゴのみをターゲット
+      const logoContainer = heroSection.querySelector('div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"][style*="z-index: 20"]');
+      if (logoContainer) {
+        logoContainer.style.display = 'none';
+        console.log('モバイルで左上ロゴコンテナを非表示にしました');
+      }
     }
     
     // ヒーローセクション全体の表示を確保
@@ -120,10 +115,8 @@
           opacity: 0 !important;
         }
         
-        /* 左上と中央の大きなTomoTripロゴを非表示（140x140px） */
-        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"],
-        #top.hero-section div[style*="width: 140px"][style*="height: 140px"],
-        .hero-section div[style*="background: rgba(255, 255, 255, 0.95)"] {
+        /* 左上の大きなTomoTripロゴのみを非表示（140x140px） */
+        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"][style*="z-index: 20"] {
           display: none !important;
         }
         
@@ -141,30 +134,43 @@
           display: block !important;
         }
         
-        /* ヒーローセクション全体の表示を確保 */
-        .hero-section {
-          display: block !important;
-          visibility: visible !important;
-          background-image: inherit !important;
-          background-size: cover !important;
-          background-position: center !important;
-        }
-        
-        /* タイトル、説明文、ボタンは全て表示 */
-        .hero-section .container,
-        .hero-section h1,
-        .hero-section .display-4,
-        .hero-section p.lead,
-        .hero-section .btn {
+        /* ヒーローセクション全体の表示を強制確保 */
+        .hero-section,
+        #top.hero-section {
           display: block !important;
           visibility: visible !important;
           opacity: 1 !important;
+          min-height: 60vh !important;
         }
         
-        /* 背景装飾要素も表示 */
-        .hero-section div[style*="opacity: 0.3"] {
+        /* コンテナとタイトル要素を強制表示 */
+        .hero-section .container {
           display: block !important;
           visibility: visible !important;
+          opacity: 1 !important;
+          position: relative !important;
+        }
+        
+        /* タイトル、説明文、ボタンを個別に強制表示 */
+        .hero-section h1,
+        .hero-section .display-4 {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          color: white !important;
+        }
+        
+        .hero-section p.lead {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          color: white !important;
+        }
+        
+        .hero-section .btn {
+          display: inline-block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
       }
       
