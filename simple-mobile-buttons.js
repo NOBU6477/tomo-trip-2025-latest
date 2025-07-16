@@ -117,9 +117,20 @@ document.addEventListener('DOMContentLoaded', function() {
     alert('ログイン機能は開発中です');
   };
   
+  // 継続的配置システム（mobile-cleanup-fix.jsとの競合回避）
+  function continuouslyPlaceButtons() {
+    if (!isMobile()) return;
+    
+    placeButtons();
+    
+    // 7秒ごとに再配置（競合回避のため頻度を下げる）
+    setTimeout(continuouslyPlaceButtons, 7000);
+  }
+  
   // 初期化
   addCSS();
   placeButtons();
+  continuouslyPlaceButtons(); // 継続的配置開始
   
   // リサイズ監視
   window.addEventListener('resize', function() {

@@ -116,8 +116,12 @@
         }
         
         /* 左上の大きなTomoTripロゴのみを非表示（140x140px） */
-        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"][style*="z-index: 20"] {
+        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"][style*="z-index: 20"],
+        #top.hero-section div[style*="width: 140px"],
+        #top.hero-section div[style*="height: 140px"] {
           display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
         }
         
         /* 協賛店の小さなボタンも非表示 */
@@ -184,33 +188,49 @@
     document.head.appendChild(style);
   }
   
-  // MutationObserverで動的に追加される要素を監視
+  // 継続的監視システム - 他のスクリプトによる復元を防止
   function setupObserver() {
     if (!isMobile()) return;
     
+    // DOM変更監視
     const observer = new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
+        // 新しく追加されたノードをチェック
         mutation.addedNodes.forEach(function(node) {
-          if (node.nodeType === 1) { // 要素ノード
-            // 新しく追加されたグラデーションボタンをチェック
-            const style = window.getComputedStyle(node);
-            if (style.position === 'fixed' && 
-                style.backgroundImage.includes('gradient')) {
+          if (node.nodeType === 1) {
+            // 協賛店ボタンの復元を防止
+            if (node.matches && (
+                node.matches('[style*="position: fixed"]') ||
+                node.matches('.sponsor-mini-buttons') ||
+                node.matches('.sponsor-mini-btn')
+            )) {
               node.remove();
-              console.log('動的に追加されたグラデーションボタンを削除');
+              console.log('復元された協賛店ボタンを再削除');
             }
           }
         });
+        
+        // 属性変更による復元を防止
+        if (mutation.type === 'attributes') {
+          const target = mutation.target;
+          // 左上ロゴの復元を防止
+          if (target.matches && target.matches('div[style*="position: absolute"][style*="top: 2%"]')) {
+            target.style.display = 'none';
+            console.log('復元されたロゴを再非表示');
+          }
+        }
       });
     });
     
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
     });
     
-    // 5秒後に監視停止
-    setTimeout(() => observer.disconnect(), 5000);
+    // 継続的監視（30秒間）
+    setTimeout(() => observer.disconnect(), 30000);
   }
   
   // レスポンシブ対応
@@ -230,6 +250,17 @@
     mediaQuery.addListener(handleResize);
   }
   
+  // 継続的適用システム
+  function continuouslyApplyFixes() {
+    if (!isMobile()) return;
+    
+    removeGradientButtons();
+    removeOverlappingLogo();
+    
+    // 2秒ごとに再適用（他のスクリプトの復元を防止）
+    setTimeout(continuouslyApplyFixes, 2000);
+  }
+  
   // 初期化
   function initialize() {
     try {
@@ -241,12 +272,14 @@
           removeOverlappingLogo();
           setupObserver();
           setupResponsive();
+          continuouslyApplyFixes(); // 継続的適用開始
         });
       } else {
         removeGradientButtons();
         removeOverlappingLogo();
         setupObserver();
         setupResponsive();
+        continuouslyApplyFixes(); // 継続的適用開始
       }
       
       console.log('✅ モバイルクリーンアップ完了');
