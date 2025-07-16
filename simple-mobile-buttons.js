@@ -95,16 +95,27 @@ document.addEventListener('DOMContentLoaded', function() {
     return buttonContainer;
   }
   
-  // ボタンを配置
+  // ボタンを配置（人気ガイド一覧の上部）
   function placeButtons() {
     removeOldButtons();
     
-    const guidesSection = document.getElementById('guides');
+    // 人気ガイドセクションを探す
+    const guidesSection = document.getElementById('guides') || 
+                         document.querySelector('.container h2') ||
+                         document.querySelector('h2');
+    
     if (guidesSection && isMobile()) {
       const buttons = createButtons();
       if (buttons) {
-        guidesSection.insertBefore(buttons, guidesSection.firstElementChild);
-        console.log('✅ モバイルボタンを配置完了');
+        // h2タイトルの直後に配置
+        const guideTitle = document.querySelector('h2');
+        if (guideTitle && guideTitle.textContent.includes('人気のガイド')) {
+          guideTitle.parentNode.insertBefore(buttons, guideTitle.nextSibling);
+        } else {
+          // フォールバック：guidesセクションの最初に配置
+          guidesSection.insertBefore(buttons, guidesSection.firstElementChild);
+        }
+        console.log('✅ モバイルボタンを人気ガイド上部に配置完了');
       }
     }
   }

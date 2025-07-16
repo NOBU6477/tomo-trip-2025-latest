@@ -17,13 +17,29 @@
   function removeOnlyLogo() {
     if (!isMobile()) return;
     
-    const logoSelector = '#top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"]';
-    const logoElement = document.querySelector(logoSelector);
+    // より具体的なロゴセレクターで確実に削除
+    const logoSelectors = [
+      '#top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"]',
+      '.hero-section div[style*="width: 140px"][style*="height: 140px"]',
+      '.hero-section div[style*="z-index: 20"]',
+      '.hero-section img[alt="TomoTrip"]'
+    ];
     
-    if (logoElement) {
-      logoElement.style.display = 'none';
-      console.log('🧹 左上ロゴを削除しました');
-    }
+    logoSelectors.forEach(selector => {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach(el => {
+        // TomoTripロゴかどうか確認
+        if (el.querySelector('img[alt="TomoTrip"]') || 
+            el.style.width === '140px' || 
+            el.style.height === '140px' ||
+            (el.tagName === 'IMG' && el.alt === 'TomoTrip')) {
+          el.style.display = 'none';
+          el.style.visibility = 'hidden';
+          el.style.opacity = '0';
+          console.log('🧹 左上TomoTripロゴを削除しました');
+        }
+      });
+    });
   }
   
   // ヒーローセクションの内容を保護・復元
