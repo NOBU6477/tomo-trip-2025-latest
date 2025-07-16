@@ -83,7 +83,7 @@ const generateExtendedGuides = () => {
       fee: Math.floor(Math.random() * 10000) + 6000,
       description: `${prefecture}の魅力を知り尽くしたローカルガイド。地元ならではの特別な体験をご提供します。`,
       rating: Math.floor(Math.random() * 5 * 10) / 10 + 4.0,
-      profileImage: `https://images.unsplash.com/photo-${Math.floor(Math.random() * 10000000000000)}?w=150&h=150&fit=crop&crop=face`
+      profileImage: `https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face`
     });
   }
   
@@ -110,6 +110,11 @@ class UnifiedGuideSystem {
 
   init() {
     console.log(`🌐 統一ガイドシステム初期化 - ${this.isEnglishSite ? '英語' : '日本語'}サイト`);
+    
+    // ローカルストレージをクリア（完全リセット）
+    localStorage.removeItem('allGuides');
+    console.log('🗑️ ローカルストレージをクリアしました');
+    
     this.loadGuides();
     this.setupEventListeners();
     this.displayGuides();
@@ -117,15 +122,9 @@ class UnifiedGuideSystem {
   }
 
   loadGuides() {
-    // ローカルストレージから既存ガイドを読み込み
-    const savedGuides = localStorage.getItem('allGuides');
-    if (savedGuides) {
-      this.guides = JSON.parse(savedGuides);
-    } else {
-      // 初期70人ガイドを生成
-      this.guides = generateExtendedGuides();
-      this.saveGuides();
-    }
+    // 強制的に初期70人ガイドを生成（ローカルストレージをクリア）
+    this.guides = generateExtendedGuides();
+    this.saveGuides();
     
     // 新規登録されたガイドも追加
     const newGuides = localStorage.getItem('newRegisteredGuides');
@@ -139,7 +138,7 @@ class UnifiedGuideSystem {
     }
     
     this.filteredGuides = [...this.guides];
-    console.log(`📊 ${this.guides.length}人のガイドを読み込みました`);
+    console.log(`📊 ${this.guides.length}人のガイドを読み込みました (強制再生成)`);
   }
 
   saveGuides() {
@@ -164,22 +163,44 @@ class UnifiedGuideSystem {
   }
 
   displayGuides() {
-    const container = document.getElementById('guide-cards-container');
+    let container = document.getElementById('guide-cards-container');
     
+    // コンテナが見つからない場合、動的に作成
     if (!container) {
-      console.error('⚠️ ガイドカードコンテナが見つかりません');
-      return;
+      console.warn('⚠️ ガイドカードコンテナが見つかりません。動的に作成します');
+      
+      // 既存のガイドセクションを探す
+      const guidesSection = document.getElementById('guides') || document.querySelector('[id*="guides"]');
+      if (guidesSection) {
+        // コンテナを動的作成
+        container = document.createElement('div');
+        container.id = 'guide-cards-container';
+        container.className = 'row';
+        guidesSection.appendChild(container);
+        console.log('📦 ガイドカードコンテナを動的作成しました');
+      } else {
+        console.error('❌ ガイドセクションが見つかりません');
+        return;
+      }
     }
 
     container.innerHTML = '';
     
+    console.log(`📋 表示予定ガイド数: ${this.filteredGuides.length}`);
+    console.log(`📍 コンテナID: ${container.id}`);
+    
     this.filteredGuides.forEach((guide, index) => {
-      const guideCard = this.createGuideCard(guide, index);
-      container.appendChild(guideCard);
+      console.log(`🎯 ガイド${index + 1}: ${guide.name} (ID: ${guide.id})`);
+      try {
+        const guideCard = this.createGuideCard(guide, index);
+        container.appendChild(guideCard);
+      } catch (error) {
+        console.error(`❌ ガイドカード作成エラー (${guide.name}):`, error);
+      }
     });
 
     this.updateCounter();
-    console.log(`🎨 ${this.filteredGuides.length}人のガイドカードを表示しました (${this.isEnglishSite ? '英語' : '日本語'}サイト)`);
+    console.log(`🎨 ${container.children.length}/${this.filteredGuides.length}人のガイドカードを表示しました (${this.isEnglishSite ? '英語' : '日本語'}サイト)`);
   }
 
   createGuideCard(guide, index) {
