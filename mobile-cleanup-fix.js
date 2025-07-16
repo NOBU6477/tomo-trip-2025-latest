@@ -53,29 +53,52 @@
     });
   }
   
-  // タイトルにかかっているロゴを削除（モバイルのみ）
+  // 中央と左上の大きなロゴを削除（モバイル専用）
   function removeOverlappingLogo() {
     if (!isMobile()) return;
     
-    // 左上のTomoTripロゴコンテナのみを非表示
+    // ヒーローセクション内の大きなロゴコンテナを全て削除
     const heroSection = document.querySelector('#top.hero-section');
     if (heroSection) {
-      const logoContainer = heroSection.querySelector('div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"]');
-      if (logoContainer) {
-        logoContainer.style.display = 'none';
-        console.log('モバイルで左上ロゴコンテナを非表示にしました');
-      }
+      // 140x140pxの大きなロゴコンテナを探して削除
+      const logoContainers = heroSection.querySelectorAll(
+        'div[style*="width: 140px"], div[style*="height: 140px"], ' +
+        'div[style*="position: absolute"][style*="top: 2%"], ' +
+        'div[style*="background: rgba(255, 255, 255, 0.95)"]'
+      );
+      
+      logoContainers.forEach(container => {
+        container.style.display = 'none';
+        console.log('モバイルで大きなロゴコンテナを非表示にしました');
+      });
     }
     
-    // タイトルとボタンが確実に表示されるようにする
-    const titleElements = document.querySelectorAll('.hero-section h1, .hero-section .display-4, .hero-section p.lead, .hero-section .btn');
-    titleElements.forEach(el => {
+    // ヒーローセクション全体の表示を確保
+    const heroSectionEl = document.querySelector('.hero-section');
+    if (heroSectionEl) {
+      heroSectionEl.style.display = 'block';
+      heroSectionEl.style.visibility = 'visible';
+    }
+    
+    // タイトル、説明文、ボタンを確実に表示
+    const contentElements = document.querySelectorAll(
+      '.hero-section .container, .hero-section h1, .hero-section .display-4, ' +
+      '.hero-section p.lead, .hero-section .btn'
+    );
+    contentElements.forEach(el => {
       el.style.display = 'block';
       el.style.visibility = 'visible';
       el.style.opacity = '1';
     });
     
-    console.log('モバイルでタイトル要素の表示を確保しました');
+    // ヘッダーの小さなロゴは維持
+    const navLogo = document.querySelector('.navbar-brand img');
+    if (navLogo) {
+      navLogo.style.display = 'block';
+      navLogo.style.visibility = 'visible';
+    }
+    
+    console.log('モバイルで背景・タイトル・説明文の表示を確保、左上ロゴのみ削除しました');
   }
   
   // CSS追加でモバイル専用の修正
@@ -97,8 +120,10 @@
           opacity: 0 !important;
         }
         
-        /* ヒーローセクション左上のTomoTripロゴのみを非表示 */
-        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"] {
+        /* 左上と中央の大きなTomoTripロゴを非表示（140x140px） */
+        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"],
+        #top.hero-section div[style*="width: 140px"][style*="height: 140px"],
+        .hero-section div[style*="background: rgba(255, 255, 255, 0.95)"] {
           display: none !important;
         }
         
@@ -109,29 +134,35 @@
           display: none !important;
         }
         
-        /* ナビゲーションロゴサイズ調整 */
+        /* ナビゲーションの小さなロゴは維持（40px） */
         .navbar-brand img {
           height: 40px !important;
           width: auto !important;
+          display: block !important;
         }
         
-        /* ヒーローセクションのタイトル表示を改善 */
-        .hero-section .container {
-          padding-top: 1rem !important;
-        }
-        
-        .hero-section h1,
-        .hero-section .display-4 {
+        /* ヒーローセクション全体の表示を確保 */
+        .hero-section {
           display: block !important;
           visibility: visible !important;
-          margin-top: 0 !important;
-          z-index: 100 !important;
-          position: relative !important;
+          background-image: inherit !important;
+          background-size: cover !important;
+          background-position: center !important;
         }
         
-        /* タイトルとボタンは必ず表示 */
+        /* タイトル、説明文、ボタンは全て表示 */
+        .hero-section .container,
+        .hero-section h1,
+        .hero-section .display-4,
         .hero-section p.lead,
         .hero-section .btn {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+        }
+        
+        /* 背景装飾要素も表示 */
+        .hero-section div[style*="opacity: 0.3"] {
           display: block !important;
           visibility: visible !important;
         }
