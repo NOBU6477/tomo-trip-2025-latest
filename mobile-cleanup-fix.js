@@ -57,37 +57,25 @@
   function removeOverlappingLogo() {
     if (!isMobile()) return;
     
-    // ヒーローセクション内の特定のロゴを非表示
-    const heroSection = document.querySelector('#top.hero-section, .hero-section');
+    // 左上のTomoTripロゴコンテナのみを非表示
+    const heroSection = document.querySelector('#top.hero-section');
     if (heroSection) {
-      // ヒーローセクション内のTomoTripロゴを探す
-      const heroLogos = heroSection.querySelectorAll('img[src*="TomoTrip"], img[src*="logo"]');
-      heroLogos.forEach(logo => {
-        logo.style.display = 'none';
-        console.log('モバイルでヒーローロゴを非表示にしました');
-      });
-      
-      // ヒーローセクション内の大きな画像要素も非表示
-      const largeImages = heroSection.querySelectorAll('img');
-      largeImages.forEach(img => {
-        const rect = img.getBoundingClientRect();
-        if (rect.width > 80 || rect.height > 80) {
-          img.style.display = 'none';
-          console.log('モバイルで大きな画像を非表示にしました');
-        }
-      });
+      const logoContainer = heroSection.querySelector('div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"]');
+      if (logoContainer) {
+        logoContainer.style.display = 'none';
+        console.log('モバイルで左上ロゴコンテナを非表示にしました');
+      }
     }
     
-    // TomoTripロゴファイル名を直接指定して非表示
-    const logoImages = document.querySelectorAll('img[src*="TomoTrip"]');
-    logoImages.forEach(logo => {
-      // 親要素がヒーローセクションの場合のみ非表示
-      const isInHero = logo.closest('.hero-section, #top');
-      if (isInHero) {
-        logo.style.display = 'none';
-        console.log('TomoTripロゴを非表示にしました');
-      }
+    // タイトルとボタンが確実に表示されるようにする
+    const titleElements = document.querySelectorAll('.hero-section h1, .hero-section .display-4, .hero-section p.lead, .hero-section .btn');
+    titleElements.forEach(el => {
+      el.style.display = 'block';
+      el.style.visibility = 'visible';
+      el.style.opacity = '1';
     });
+    
+    console.log('モバイルでタイトル要素の表示を確保しました');
   }
   
   // CSS追加でモバイル専用の修正
@@ -109,15 +97,8 @@
           opacity: 0 !important;
         }
         
-        /* ヒーローセクション左上のTomoTripロゴを非表示 */
-        #top.hero-section div[style*="position: absolute"][style*="top: 2%"],
-        .hero-section img[src*="TomoTrip"],
-        .hero-section img[alt="TomoTrip"] {
-          display: none !important;
-        }
-        
-        /* ヒーローセクション内の絶対配置要素を非表示 */
-        .hero-section div[style*="position: absolute"]:first-child {
+        /* ヒーローセクション左上のTomoTripロゴのみを非表示 */
+        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"] {
           display: none !important;
         }
         
@@ -136,14 +117,23 @@
         
         /* ヒーローセクションのタイトル表示を改善 */
         .hero-section .container {
-          padding-top: 2rem !important;
+          padding-top: 1rem !important;
         }
         
         .hero-section h1,
         .hero-section .display-4 {
+          display: block !important;
+          visibility: visible !important;
           margin-top: 0 !important;
           z-index: 100 !important;
           position: relative !important;
+        }
+        
+        /* タイトルとボタンは必ず表示 */
+        .hero-section p.lead,
+        .hero-section .btn {
+          display: block !important;
+          visibility: visible !important;
         }
       }
       
