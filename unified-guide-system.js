@@ -378,48 +378,91 @@ class UnifiedGuideSystem {
     console.log('🔧 フィルターイベントリスナーを設定しました');
   }
 
-  applyFilters() {
-    const locationFilter = document.getElementById('location-filter');
-    const languageFilter = document.getElementById('language-filter');
-    const feeFilter = document.getElementById('fee-filter');
-    const keywordFilter = document.getElementById('keyword-filter');
+  applyFilters(filterCriteria = null) {
+    console.log('🔄 統一ガイドシステム: フィルター適用開始');
+    
+    let criteria;
+    
+    if (filterCriteria) {
+      // 統一フィルターシステムからの呼び出し
+      criteria = filterCriteria;
+      console.log('📊 フィルター条件 (統一システム経由):', criteria);
+    } else {
+      // 直接フィルター
+      const locationFilter = document.getElementById('location-filter');
+      const languageFilter = document.getElementById('language-filter');
+      const priceFilter = document.getElementById('price-filter');
+      const keywordFilter = document.getElementById('keyword-filter');
 
-    const criteria = {
-      location: locationFilter?.value || '',
-      language: languageFilter?.value || '',
-      fee: feeFilter?.value || '',
-      keyword: keywordFilter?.value?.toLowerCase() || ''
-    };
+      criteria = {
+        location: locationFilter?.value || '',
+        language: languageFilter?.value || '',
+        minFee: 0,
+        maxFee: Infinity,
+        keywords: keywordFilter?.value ? keywordFilter.value.split(',').map(k => k.trim()) : []
+      };
+      
+      // 価格フィルター処理
+      if (priceFilter && priceFilter.value) {
+        const priceValue = priceFilter.value;
+        if (priceValue === '6000円以下') {
+          criteria.maxFee = 6000;
+        } else if (priceValue === '6000-10000円') {
+          criteria.minFee = 6000;
+          criteria.maxFee = 10000;
+        } else if (priceValue === '10000円以上') {
+          criteria.minFee = 10000;
+        }
+      }
+      
+      console.log('📊 フィルター条件 (直接):', criteria);
+    }
 
     this.filteredGuides = this.guides.filter(guide => {
+      console.log(`🎯 ガイドチェック: ${guide.name} (料金: ¥${guide.fee})`);
+      
       // 地域フィルター
-      if (criteria.location && !guide.location.toLowerCase().includes(criteria.location.toLowerCase()) && 
-          !guide.prefecture.toLowerCase().includes(criteria.location.toLowerCase())) {
-        return false;
+      if (criteria.location && criteria.location !== '' && criteria.location !== 'すべて') {
+        const locationMatches = guide.location.toLowerCase().includes(criteria.location.toLowerCase()) || 
+                               guide.prefecture.toLowerCase().includes(criteria.location.toLowerCase());
+        if (!locationMatches) {
+          console.log(`❌ 地域フィルターで除外: ${guide.name}`);
+          return false;
+        }
       }
 
       // 言語フィルター
-      if (criteria.language && !guide.languages.some(lang => 
-          lang.toLowerCase().includes(criteria.language.toLowerCase()))) {
+      if (criteria.language && criteria.language !== '' && criteria.language !== 'すべて') {
+        const languageMatches = guide.languages.some(lang => 
+          lang.toLowerCase().includes(criteria.language.toLowerCase()));
+        if (!languageMatches) {
+          console.log(`❌ 言語フィルターで除外: ${guide.name}`);
+          return false;
+        }
+      }
+
+      // 料金フィルター（新しい形式）
+      if (criteria.minFee !== undefined && guide.fee < criteria.minFee) {
+        console.log(`❌ 最小料金フィルターで除外: ${guide.name} (¥${guide.fee} < ¥${criteria.minFee})`);
+        return false;
+      }
+      
+      if (criteria.maxFee !== undefined && criteria.maxFee !== Infinity && guide.fee > criteria.maxFee) {
+        console.log(`❌ 最大料金フィルターで除外: ${guide.name} (¥${guide.fee} > ¥${criteria.maxFee})`);
         return false;
       }
 
-      // 料金フィルター
-      if (criteria.fee) {
-        const fee = guide.fee;
-        switch (criteria.fee) {
-          case '6000-10000':
-            if (fee < 6000 || fee > 10000) return false;
-            break;
-          case '10000-15000':
-            if (fee < 10000 || fee > 15000) return false;
-            break;
-          case '15000-20000':
-            if (fee < 15000 || fee > 20000) return false;
-            break;
-          case '20000+':
-            if (fee < 20000) return false;
-            break;
+      // キーワードフィルター
+      if (criteria.keywords && criteria.keywords.length > 0) {
+        const keywordMatches = criteria.keywords.some(keyword => 
+          guide.specialties.some(specialty => 
+            specialty.toLowerCase().includes(keyword.toLowerCase())) ||
+          guide.description.toLowerCase().includes(keyword.toLowerCase()) ||
+          guide.name.toLowerCase().includes(keyword.toLowerCase())
+        );
+        if (!keywordMatches) {
+          console.log(`❌ キーワードフィルターで除外: ${guide.name}`);
+          return false;
         }
       }
 

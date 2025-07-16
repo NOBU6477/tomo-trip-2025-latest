@@ -38,14 +38,25 @@ class UnifiedFilterSystem {
   }
 
   setupFilterToggle() {
-    if (!this.filterElements.toggleButton || !this.filterElements.filterCard) {
+    // 複数のIDを試行してフィルターボタンを取得
+    const toggleButton = document.getElementById('filterToggleBtn') || 
+                        document.getElementById('toggle-filter-button') ||
+                        document.querySelector('[id*="filter"]');
+    
+    if (!toggleButton || !this.filterElements.filterCard) {
       console.error('フィルタートグル要素が見つかりません');
       return;
     }
 
-    this.filterElements.toggleButton.addEventListener('click', () => {
+    this.filterElements.toggleButton = toggleButton;
+    
+    toggleButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       this.toggleFilter();
     });
+    
+    console.log('✅ フィルタートグル設定完了');
   }
 
   toggleFilter() {
@@ -89,6 +100,17 @@ class UnifiedFilterSystem {
   }
 
   setupFilterHandlers() {
+    console.log('🔧 フィルターハンドラー設定開始');
+    
+    // 価格フィルターを正しく取得
+    const priceFilter = document.getElementById('price-filter');
+    if (priceFilter) {
+      priceFilter.addEventListener('change', () => {
+        console.log('💰 価格フィルター変更:', priceFilter.value);
+        this.applyFilters();
+      });
+    }
+    
     // 各フィルター要素にイベントリスナーを追加
     const elements = [
       this.filterElements.locationFilter,
@@ -98,16 +120,23 @@ class UnifiedFilterSystem {
       this.filterElements.customKeywords
     ];
 
-    elements.forEach(element => {
+    elements.forEach((element, index) => {
       if (element) {
-        element.addEventListener('change', () => this.applyFilters());
+        const filterNames = ['地域', '言語', '最小料金', '最大料金', 'カスタムキーワード'];
+        element.addEventListener('change', () => {
+          console.log(`🔄 ${filterNames[index]}フィルター変更:`, element.value);
+          this.applyFilters();
+        });
         element.addEventListener('input', () => this.applyFilters());
       }
     });
 
     // キーワードチェックボックス
     this.filterElements.keywordCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => this.applyFilters());
+      checkbox.addEventListener('change', () => {
+        console.log('🏷️ キーワードチェックボックス変更:', checkbox.value, checkbox.checked);
+        this.applyFilters();
+      });
     });
 
     // リセットボタン
@@ -119,6 +148,8 @@ class UnifiedFilterSystem {
     if (this.filterElements.applyButton) {
       this.filterElements.applyButton.addEventListener('click', () => this.applyFilters());
     }
+    
+    console.log('✅ フィルターハンドラー設定完了');
   }
 
   applyFilters() {
@@ -157,11 +188,30 @@ class UnifiedFilterSystem {
       selectedKeywords.push(...customKeywords);
     }
 
+    // 価格フィルター処理の強化
+    const priceFilter = document.getElementById('price-filter');
+    let minFee = 0;
+    let maxFee = Infinity;
+    
+    if (priceFilter && priceFilter.value) {
+      const priceValue = priceFilter.value;
+      console.log('💰 価格フィルター値:', priceValue);
+      
+      if (priceValue === '6000円以下') {
+        maxFee = 6000;
+      } else if (priceValue === '6000-10000円') {
+        minFee = 6000;
+        maxFee = 10000;
+      } else if (priceValue === '10000円以上') {
+        minFee = 10000;
+      }
+    }
+
     return {
       location: this.filterElements.locationFilter ? this.filterElements.locationFilter.value : '',
       language: this.filterElements.languageFilter ? this.filterElements.languageFilter.value : '',
-      minFee: this.filterElements.minFeeFilter ? parseInt(this.filterElements.minFeeFilter.value) || 0 : 0,
-      maxFee: this.filterElements.maxFeeFilter ? parseInt(this.filterElements.maxFeeFilter.value) || Infinity : Infinity,
+      minFee: minFee,
+      maxFee: maxFee,
       keywords: selectedKeywords
     };
   }
