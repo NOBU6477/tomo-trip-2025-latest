@@ -94,11 +94,22 @@ class UnifiedGuideSystem {
   constructor() {
     this.guides = [];
     this.filteredGuides = [];
-    this.currentLanguage = 'ja';
+    this.currentLanguage = this.detectLanguage();
+    this.isEnglishSite = this.currentLanguage === 'en';
     this.init();
   }
 
+  detectLanguage() {
+    // 英語サイトかどうかを判定
+    const isEnglishSite = window.location.pathname.includes('index-en') || 
+                         document.documentElement.lang === 'en' ||
+                         document.querySelector('#guide-counter') ||
+                         document.title.includes('English');
+    return isEnglishSite ? 'en' : 'ja';
+  }
+
   init() {
+    console.log(`🌐 統一ガイドシステム初期化 - ${this.isEnglishSite ? '英語' : '日本語'}サイト`);
     this.loadGuides();
     this.setupEventListeners();
     this.displayGuides();
@@ -153,12 +164,10 @@ class UnifiedGuideSystem {
   }
 
   displayGuides() {
-    const container = document.getElementById('guide-cards-container') || 
-                     document.querySelector('.guide-cards-container') ||
-                     document.querySelector('#guides .row');
+    const container = document.getElementById('guide-cards-container');
     
     if (!container) {
-      console.warn('⚠️ ガイドカードコンテナが見つかりません');
+      console.error('⚠️ ガイドカードコンテナが見つかりません');
       return;
     }
 
@@ -170,52 +179,87 @@ class UnifiedGuideSystem {
     });
 
     this.updateCounter();
-    console.log(`🎨 ${this.filteredGuides.length}人のガイドカードを表示しました`);
+    console.log(`🎨 ${this.filteredGuides.length}人のガイドカードを表示しました (${this.isEnglishSite ? '英語' : '日本語'}サイト)`);
   }
 
   createGuideCard(guide, index) {
     const colDiv = document.createElement('div');
-    colDiv.className = 'col-lg-4 col-md-6 mb-4 guide-item';
+    colDiv.className = this.isEnglishSite ? 'col-lg-4 col-md-6 mb-4' : 'col-md-4 mb-4 guide-item';
     colDiv.setAttribute('data-guide-id', guide.id);
 
-    const isJapanese = this.currentLanguage === 'ja';
-    const detailButtonText = isJapanese ? '詳細を見る' : 'See Details';
-    const sessionText = isJapanese ? '/セッション' : '/session';
+    const detailButtonText = this.isEnglishSite ? 'See Details' : '詳細を見る';
+    const sessionText = this.isEnglishSite ? '/session' : '/セッション';
+    
+    // 英語サイト用の翻訳データ
+    const translatedGuide = this.isEnglishSite ? this.translateGuideToEnglish(guide) : guide;
 
-    colDiv.innerHTML = `
-      <div class="card guide-card h-100 shadow-sm">
-        <div class="position-relative">
-          <img src="${guide.profileImage}" class="card-img-top guide-image" alt="${guide.name}" 
-               style="height: 200px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop&crop=face'">
-          <div class="position-absolute top-0 end-0 m-2">
-            <span class="badge bg-primary">¥${guide.fee.toLocaleString()}${sessionText}</span>
+    if (this.isEnglishSite) {
+      // 英語サイト用のカードレイアウト
+      colDiv.innerHTML = `
+        <div class="card guide-card h-100">
+          <div class="position-relative">
+            <img src="${translatedGuide.profileImage}" class="card-img-top" alt="${translatedGuide.name}" 
+                 style="height: 250px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop&crop=face'">
+            <div class="price-badge">¥${translatedGuide.fee.toLocaleString()}${sessionText}</div>
           </div>
-        </div>
-        <div class="card-body d-flex flex-column">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <h5 class="card-title mb-0">${guide.name}</h5>
-          </div>
-          <p class="card-text text-muted mb-2 guide-location">
-            <i class="bi bi-geo-alt-fill me-1"></i>${guide.location}
-          </p>
-          <p class="card-text mb-3 guide-description">${guide.description}</p>
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="guide-languages">
-              ${guide.languages.map(lang => `<span class="badge bg-light text-dark guide-lang me-1">${lang}</span>`).join('')}
+          <div class="card-body">
+            <h5 class="card-title">${translatedGuide.name}</h5>
+            <p class="text-muted mb-2">
+              <i class="bi bi-geo-alt"></i> ${translatedGuide.location}
+            </p>
+            <p class="card-text small">${translatedGuide.description}</p>
+            <div class="mb-3">
+              ${translatedGuide.languages.map(lang => `<span class="badge bg-primary me-1">${lang}</span>`).join('')}
             </div>
-            <div class="text-warning guide-rating">
-              ${this.renderStars(guide.rating)}
-              <span class="text-dark ms-1">${guide.rating}</span>
+            <div class="mb-3">
+              <span class="text-warning">
+                ${this.renderStarsEnglish(translatedGuide.rating)}
+              </span>
+              <span class="text-muted ms-1">${translatedGuide.rating}</span>
             </div>
-          </div>
-          <div class="mt-auto">
             <button class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}">
               ${detailButtonText}
             </button>
           </div>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      // 日本語サイト用のカードレイアウト
+      colDiv.innerHTML = `
+        <div class="card guide-card h-100 shadow-sm">
+          <div class="position-relative">
+            <img src="${guide.profileImage}" class="card-img-top guide-image" alt="${guide.name}" 
+                 style="height: 200px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop&crop=face'">
+            <div class="position-absolute top-0 end-0 m-2">
+              <span class="badge bg-primary">¥${guide.fee.toLocaleString()}${sessionText}</span>
+            </div>
+          </div>
+          <div class="card-body d-flex flex-column">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <h5 class="card-title mb-0">${guide.name}</h5>
+            </div>
+            <p class="card-text text-muted mb-2 guide-location">
+              <i class="bi bi-geo-alt-fill me-1"></i>${guide.location}
+            </p>
+            <p class="card-text mb-3 guide-description">${guide.description}</p>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="guide-languages">
+                ${guide.languages.map(lang => `<span class="badge bg-light text-dark guide-lang me-1">${lang}</span>`).join('')}
+              </div>
+              <div class="text-warning guide-rating">
+                ${this.renderStars(guide.rating)}
+                <span class="text-dark ms-1">${guide.rating}</span>
+              </div>
+            </div>
+            <div class="mt-auto">
+              <button class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}">
+                ${detailButtonText}
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     return colDiv;
   }
@@ -228,6 +272,66 @@ class UnifiedGuideSystem {
     return '★'.repeat(fullStars) + 
            (hasHalfStar ? '☆' : '') + 
            '☆'.repeat(emptyStars);
+  }
+
+  renderStarsEnglish(rating) {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return '<i class="bi bi-star-fill"></i>'.repeat(fullStars) + 
+           (hasHalfStar ? '<i class="bi bi-star-half"></i>' : '') + 
+           '<i class="bi bi-star"></i>'.repeat(emptyStars);
+  }
+
+  translateGuideToEnglish(guide) {
+    // 英語サイト用の翻訳マッピング
+    const nameTranslations = {
+      '田中 太郎': 'Taro Tanaka',
+      '佐藤 花子': 'Hanako Sato',
+      '山田 次郎': 'Jiro Yamada',
+      '鈴木 美咲': 'Misaki Suzuki',
+      '高橋 健': 'Ken Takahashi',
+      '伊藤 平和': 'Heiwa Ito'
+    };
+
+    const locationTranslations = {
+      '東京都 渋谷区': 'Tokyo, Shibuya',
+      '大阪府 大阪市': 'Osaka, Osaka City',
+      '京都府 京都市': 'Kyoto, Kyoto City',
+      '北海道 札幌市': 'Hokkaido, Sapporo',
+      '沖縄県 那覇市': 'Okinawa, Naha',
+      '広島県 広島市': 'Hiroshima, Hiroshima City'
+    };
+
+    const languageTranslations = {
+      '日本語': 'Japanese',
+      '英語': 'English',
+      '中国語': 'Chinese',
+      'ロシア語': 'Russian',
+      'フランス語': 'French'
+    };
+
+    return {
+      ...guide,
+      name: nameTranslations[guide.name] || guide.name,
+      location: locationTranslations[guide.location] || guide.location,
+      languages: guide.languages.map(lang => languageTranslations[lang] || lang),
+      description: this.translateDescription(guide.description)
+    };
+  }
+
+  translateDescription(description) {
+    const translations = {
+      '東京生まれ東京育ちのローカルガイド。隠れた名店や文化スポットをご案内します。': 'A local guide born and raised in Tokyo. I will guide you to hidden famous stores and cultural spots.',
+      '大阪の食文化と歴史に詳しいガイド。本場のたこ焼きから古い神社まで案内します。': 'A guide well-versed in Osaka\'s food culture and history. I guide from authentic takoyaki to old shrines.',
+      '京都在住20年の歴史研究家。古都の隠された歴史と美しい庭園をご紹介します。': 'A history researcher who has lived in Kyoto for 20 years. I introduce the hidden history and beautiful gardens of the ancient capital.',
+      '北海道・札幌のローカルガイド。四季折々の自然と新鮮な海の幸、絶景スポットをご案内します。': 'Local guide from Hokkaido and Sapporo. I guide you through nature in all four seasons, fresh seafood, and scenic spots.',
+      '沖縄在住15年のダイビングインストラクター。美しい海と独自の文化が残る島々を案内します。': 'Diving instructor living in Okinawa for 15 years. I guide you through the beautiful seas and islands where unique culture remains.',
+      '広島の歴史と文化に精通したガイド。平和記念公園から宮島まで、心に残る旅をご提供します。': 'A guide well-versed in the history and culture of Hiroshima. I provide memorable trips from Peace Memorial Park to Miyajima.'
+    };
+
+    return translations[description] || 'A knowledgeable local guide who knows all the charms of the area. I provide special experiences unique to the local area.';
   }
 
   setupFilters() {
@@ -307,17 +411,32 @@ class UnifiedGuideSystem {
   }
 
   updateCounter() {
-    const counter = document.querySelector('.guide-counter') || 
-                   document.querySelector('[class*="counter"]') ||
-                   document.getElementById('guide-count');
-                   
-    if (counter) {
-      const isJapanese = this.currentLanguage === 'ja';
-      const text = isJapanese ? 
-        `${this.filteredGuides.length}人のガイドが見つかりました` :
-        `Found ${this.filteredGuides.length} guides`;
-      counter.innerHTML = `<i class="bi bi-people-fill me-2"></i>${text}`;
+    const count = this.filteredGuides.length;
+    
+    // 日本語サイトのカウンター更新
+    const japaneseCounter = document.querySelector('#guides-count');
+    if (japaneseCounter && !this.isEnglishSite) {
+      japaneseCounter.innerHTML = `<i class="bi bi-people-fill me-2"></i>${count}人のガイドが見つかりました`;
     }
+    
+    // 英語サイトのカウンター更新
+    const englishCounter = document.querySelector('#guide-counter');
+    if (englishCounter && this.isEnglishSite) {
+      englishCounter.textContent = `Found ${count} guides`;
+    }
+    
+    // 検索結果カウンターも更新
+    const searchCounter = document.querySelector('#search-results-counter');
+    if (searchCounter) {
+      if (this.isEnglishSite) {
+        searchCounter.textContent = `Found ${count} guides`;
+      } else {
+        searchCounter.innerHTML = `<i class="bi bi-people-fill me-2"></i>${count}人のガイドが見つかりました`;
+      }
+      searchCounter.classList.remove('d-none');
+    }
+    
+    console.log(`📊 カウンター更新: ${count}人 (${this.isEnglishSite ? '英語' : '日本語'}サイト)`);
   }
 
   setupEventListeners() {
