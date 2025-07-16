@@ -1,175 +1,288 @@
 /**
- * 英語サイト専用修正スクリプト
- * 日本語サイトと同じ言語切り替えデザインを強制適用
+ * 英語サイト修正スクリプト
+ * ガイドカード表示とフィルターボタン機能の修正
  */
 
-(function() {
-  'use strict';
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🔧 英語サイト修正開始');
   
-  console.log('🇺🇸 英語サイト修正開始');
+  // 英語サイトかどうかの判定
+  const isEnglishSite = window.location.pathname.includes('index-en.html') || 
+                       document.documentElement.lang === 'en';
   
-  // 古いドロップダウンを完全削除
-  function removeOldDropdown() {
-    const selectors = [
-      '.dropdown[aria-labelledby="languageDropdown"]',
-      '#languageDropdown',
-      '.nav-item.dropdown',
-      '.dropdown-toggle'
-    ];
+  if (!isEnglishSite) {
+    console.log('日本語サイトなので英語サイト修正をスキップ');
+    return;
+  }
+  
+  // 1秒後に修正を実行（他のスクリプトロード後）
+  setTimeout(() => {
+    fixGuideCards();
+    fixFilterButton();
+    fixCounterDisplay();
     
-    selectors.forEach(selector => {
-      const elements = document.querySelectorAll(selector);
-      elements.forEach(el => {
-        if (el.textContent.includes('English') || el.textContent.includes('日本語')) {
-          el.remove();
-          console.log('🗑️ 古いドロップダウンを削除:', selector);
-        }
-      });
+    // 定期的な監視と修正
+    setInterval(() => {
+      fixCounterDisplay();
+      ensureGuideCardsVisible();
+    }, 3000);
+  }, 1000);
+});
+
+function fixGuideCards() {
+  console.log('📋 ガイドカード修正開始');
+  
+  const container = document.getElementById('guide-cards-container');
+  if (!container) {
+    console.error('ガイドカードコンテナが見つかりません');
+    return;
+  }
+  
+  // 統一ガイドシステムからガイドデータを取得
+  if (window.unifiedGuideSystem && window.unifiedGuideSystem.guides) {
+    const guides = window.unifiedGuideSystem.guides;
+    console.log(`📊 ${guides.length}件のガイドデータを取得`);
+    
+    // コンテナをクリアして再生成
+    container.innerHTML = '';
+    
+    guides.forEach(guide => {
+      const guideCard = createEnglishGuideCard(guide);
+      container.appendChild(guideCard);
     });
-  }
-  
-  // CSS強制適用
-  function applyCSSFix() {
-    const style = document.createElement('style');
-    style.id = 'english-site-fix-css';
-    style.textContent = `
-      /* 古いドロップダウンを完全に隠す - より強力なセレクター */
-      .dropdown[aria-labelledby="languageDropdown"],
-      #languageDropdown,
-      .nav-item.dropdown,
-      .dropdown-toggle,
-      .btn.btn-outline-light.dropdown-toggle,
-      nav .dropdown {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        position: absolute !important;
-        left: -9999px !important;
-        width: 0 !important;
-        height: 0 !important;
-        overflow: hidden !important;
-      }
-      
-      /* 中央言語ボタンを強制表示 */
-      .language-switcher-center {
-        display: flex !important;
-        align-items: center !important;
-        gap: 0 !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        position: relative !important;
-        z-index: 1000 !important;
-      }
-      
-      .lang-btn-jp, .lang-btn-en {
-        display: inline-block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        font-size: 13px !important;
-        min-width: 100px !important;
-        transition: all 0.3s ease !important;
-        position: relative !important;
-        z-index: 1001 !important;
-      }
-      
-      .lang-btn-jp:hover {
-        background: linear-gradient(135deg, #ff5252, #ff7979) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 15px rgba(255,107,107,0.4) !important;
-      }
-      
-      .lang-btn-en:hover {
-        background: linear-gradient(135deg, #2196f3, #4fc3f7) !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 4px 15px rgba(66,135,245,0.4) !important;
-      }
-      
-      /* ナビゲーション中央配置を確保 */
-      .d-flex.justify-content-center.flex-grow-1 {
-        display: flex !important;
-        justify-content: center !important;
-        flex-grow: 1 !important;
-        position: relative !important;
-      }
-      
-      /* ナビゲーションバー内で古いボタンを隠す */
-      .navbar-nav .dropdown,
-      .navbar .dropdown {
-        display: none !important;
-      }
-      
-      @media (max-width: 768px) {
-        .language-switcher-center {
-          margin: 0.5rem 0 !important;
-        }
-        .lang-btn-jp, .lang-btn-en {
-          min-width: 80px !important;
-          font-size: 12px !important;
-          padding: 6px 15px !important;
-        }
-      }
-    `;
     
-    const existingStyle = document.getElementById('english-site-fix-css');
-    if (existingStyle) existingStyle.remove();
-    document.head.appendChild(style);
+    console.log(`✅ ${guides.length}枚のガイドカードを生成`);
+  } else {
+    console.warn('統一ガイドシステムのデータが利用できません');
+    // フォールバック: 基本的なガイドカードを生成
+    generateFallbackGuideCards(container);
   }
+}
+
+function createEnglishGuideCard(guide) {
+  const colDiv = document.createElement('div');
+  colDiv.className = 'col-lg-4 col-md-6';
   
-  // 継続的監視と修正
-  function continuousMonitoring() {
-    let attempts = 0;
-    const maxAttempts = 10;
-    
-    const monitor = setInterval(() => {
-      attempts++;
-      
-      // 古いドロップダウンが再表示されていないかチェック
-      const oldElements = document.querySelectorAll('.dropdown[aria-labelledby="languageDropdown"], #languageDropdown');
-      if (oldElements.length > 0) {
-        console.log('🔄 古いドロップダウンを再削除');
-        removeOldDropdown();
-      }
-      
-      // 新しいボタンが見えているかチェック
-      const newButtons = document.querySelector('.language-switcher-center');
-      if (!newButtons || getComputedStyle(newButtons).display === 'none') {
-        console.log('🔄 言語ボタンを再表示');
-        applyCSSFix();
-      }
-      
-      if (attempts >= maxAttempts) {
-        clearInterval(monitor);
-        console.log('✅ 英語サイト監視完了');
-      }
-    }, 200);
-  }
+  const cardHTML = `
+    <div class="card guide-card h-100" data-fee="${guide.fee}" data-location="${guide.prefecture || guide.location}" data-languages="${guide.languages.join(',')}" data-keywords="${guide.specialties.join(',')}">
+      <div class="position-relative">
+        <img src="${guide.profileImage || guide.avatar || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop'}" 
+             class="card-img-top" alt="${guide.name}" 
+             style="height: 250px; object-fit: cover;" 
+             onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop'">
+        <div class="price-badge">¥${guide.fee.toLocaleString()}/session</div>
+      </div>
+      <div class="card-body">
+        <h5 class="card-title">${guide.name}</h5>
+        <p class="text-muted mb-2">
+          <i class="bi bi-geo-alt"></i> ${guide.location}
+        </p>
+        <p class="card-text small">${getEnglishDescription(guide.description)}</p>
+        <div class="mb-3">
+          ${guide.languages.map(lang => `<span class="badge bg-primary me-1">${lang}</span>`).join('')}
+        </div>
+        <div class="mb-3">
+          ${guide.specialties.map(specialty => `<span class="badge bg-secondary me-1">${specialty}</span>`).join('')}
+        </div>
+        <div class="mb-3">
+          <span class="text-warning">
+            ${'★'.repeat(Math.floor(guide.rating || 4.5))}${'☆'.repeat(5 - Math.floor(guide.rating || 4.5))}
+          </span>
+          <span class="text-muted ms-1">${(guide.rating || 4.5).toFixed(1)}</span>
+        </div>
+        <button class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="${guide.id}">
+          View Details
+        </button>
+      </div>
+    </div>
+  `;
   
-  // 実行
-  function execute() {
-    // 即座に実行
-    removeOldDropdown();
-    applyCSSFix();
-    
-    // DOMContentLoaded後にも実行
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', function() {
-        setTimeout(() => {
-          removeOldDropdown();
-          applyCSSFix();
-          continuousMonitoring();
-          console.log('✅ 英語サイト修正完了');
-        }, 100);
-      });
-    } else {
-      setTimeout(() => {
-        removeOldDropdown();
-        applyCSSFix();
-        continuousMonitoring();
-        console.log('✅ 英語サイト修正完了');
-      }, 100);
+  colDiv.innerHTML = cardHTML;
+  return colDiv;
+}
+
+function getEnglishDescription(japaneseDescription) {
+  const translations = {
+    '東京の隠れた名所と美食スポットを案内します。': 'I guide you to Tokyo\'s hidden gems and gourmet spots.',
+    '京都の伝統文化と美しい庭園をご紹介します。': 'I introduce Kyoto\'s traditional culture and beautiful gardens.',
+    '大阪のグルメと歴史的名所を案内します。': 'I guide you through Osaka\'s gourmet food and historical sites.',
+    '沖縄の美しい海と独特の文化を体験できます。': 'Experience Okinawa\'s beautiful seas and unique culture.',
+    '北海道の大自然と新鮮な海の幸を楽しめます。': 'Enjoy Hokkaido\'s great nature and fresh seafood.',
+    '福岡の食文化と歴史を深く知ることができます。': 'Learn deeply about Fukuoka\'s food culture and history.'
+  };
+  
+  return translations[japaneseDescription] || 'A knowledgeable local guide who knows all the charms of the area.';
+}
+
+function generateFallbackGuideCards(container) {
+  console.log('📦 フォールバック: 基本ガイドカードを生成');
+  
+  const fallbackGuides = [
+    {
+      id: 1,
+      name: 'Takeshi Yamada',
+      location: 'Shibuya, Tokyo',
+      prefecture: 'Tokyo',
+      languages: ['Japanese', 'English'],
+      description: 'I guide you to Tokyo\'s hidden gems and gourmet spots.',
+      specialties: ['Gourmet', 'Photo Spots'],
+      fee: 8000,
+      rating: 4.8,
+      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop'
+    },
+    {
+      id: 2,
+      name: 'Hanako Sato',
+      location: 'Kyoto City, Kyoto',
+      prefecture: 'Kyoto',
+      languages: ['Japanese', 'English', 'Chinese'],
+      description: 'I introduce Kyoto\'s traditional culture and beautiful gardens.',
+      specialties: ['Cultural Sites', 'Traditional Crafts'],
+      fee: 7500,
+      rating: 4.9,
+      profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=250&fit=crop'
+    },
+    {
+      id: 3,
+      name: 'Hiroshi Tanaka',
+      location: 'Namba, Osaka',
+      prefecture: 'Osaka',
+      languages: ['Japanese', 'English'],
+      description: 'I guide you through Osaka\'s gourmet food and historical sites.',
+      specialties: ['Gourmet', 'Night Tour'],
+      fee: 9000,
+      rating: 4.7,
+      profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=250&fit=crop'
+    },
+    {
+      id: 4,
+      name: 'Yuki Nakamura',
+      location: 'Naha, Okinawa',
+      prefecture: 'Okinawa',
+      languages: ['Japanese', 'English'],
+      description: 'Experience Okinawa\'s beautiful seas and unique culture.',
+      specialties: ['Marine Activities', 'Cultural Exchange'],
+      fee: 12000,
+      rating: 4.6,
+      profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=250&fit=crop'
+    },
+    {
+      id: 5,
+      name: 'Kenji Suzuki',
+      location: 'Sapporo, Hokkaido',
+      prefecture: 'Hokkaido',
+      languages: ['Japanese', 'English'],
+      description: 'Enjoy Hokkaido\'s great nature and fresh seafood.',
+      specialties: ['Nature', 'Gourmet'],
+      fee: 10000,
+      rating: 4.8,
+      profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=250&fit=crop'
+    },
+    {
+      id: 6,
+      name: 'Akiko Watanabe',
+      location: 'Hakata, Fukuoka',
+      prefecture: 'Fukuoka',
+      languages: ['Japanese', 'English', 'Korean'],
+      description: 'Learn deeply about Fukuoka\'s food culture and history.',
+      specialties: ['Gourmet', 'History'],
+      fee: 8500,
+      rating: 4.5,
+      profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=250&fit=crop'
     }
+  ];
+  
+  fallbackGuides.forEach(guide => {
+    const guideCard = createEnglishGuideCard(guide);
+    container.appendChild(guideCard);
+  });
+  
+  console.log(`✅ ${fallbackGuides.length}枚のフォールバックガイドカードを生成`);
+}
+
+function fixFilterButton() {
+  console.log('🔘 フィルターボタン修正開始');
+  
+  const filterButton = document.getElementById('filterToggleBtn');
+  const filterCard = document.getElementById('filter-card');
+  
+  if (!filterButton || !filterCard) {
+    console.error('フィルター要素が見つかりません');
+    return;
   }
   
-  execute();
+  // 既存のイベントリスナーを削除
+  const newButton = filterButton.cloneNode(true);
+  filterButton.parentNode.replaceChild(newButton, filterButton);
   
-})();
+  // 新しいイベントリスナーを追加
+  newButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    console.log('フィルターボタンがクリックされました');
+    
+    if (filterCard.classList.contains('d-none')) {
+      // フィルターを表示
+      filterCard.classList.remove('d-none');
+      newButton.innerHTML = '<i class="bi bi-funnel-fill"></i> Hide Filters';
+      newButton.classList.remove('btn-outline-primary');
+      newButton.classList.add('btn-primary');
+      console.log('フィルター表示');
+    } else {
+      // フィルターを隠す
+      filterCard.classList.add('d-none');
+      newButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
+      newButton.classList.remove('btn-primary');
+      newButton.classList.add('btn-outline-primary');
+      console.log('フィルター非表示');
+    }
+  });
+  
+  console.log('✅ フィルターボタン修正完了');
+}
+
+function fixCounterDisplay() {
+  const container = document.getElementById('guide-cards-container');
+  if (!container) return;
+  
+  const visibleCards = container.querySelectorAll('.guide-card');
+  const actualCount = visibleCards.length;
+  
+  // カウンター要素を更新
+  const counters = [
+    document.querySelector('#guide-counter'),
+    document.querySelector('#guide-count-number-en'),
+    document.querySelector('#search-results-counter')
+  ];
+  
+  counters.forEach(counter => {
+    if (counter) {
+      if (counter.id === 'guide-count-number-en') {
+        counter.textContent = actualCount;
+      } else if (counter.id === 'guide-counter') {
+        counter.innerHTML = `Found <span id="guide-count-number-en">${actualCount}</span> guides`;
+      } else {
+        counter.textContent = `Found ${actualCount} guides`;
+      }
+    }
+  });
+  
+  console.log(`📊 カウンター更新: ${actualCount} guides`);
+}
+
+function ensureGuideCardsVisible() {
+  const container = document.getElementById('guide-cards-container');
+  if (!container) return;
+  
+  const cards = container.querySelectorAll('.guide-card');
+  if (cards.length === 0) {
+    console.warn('ガイドカードが見つからないため再生成します');
+    fixGuideCards();
+  }
+}
+
+// グローバル関数として公開
+window.fixEnglishSite = {
+  fixGuideCards,
+  fixFilterButton,
+  fixCounterDisplay
+};
