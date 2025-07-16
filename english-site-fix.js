@@ -38,25 +38,10 @@ function fixGuideCards() {
     return;
   }
   
-  // 統一ガイドシステムからガイドデータを取得
-  if (window.unifiedGuideSystem && window.unifiedGuideSystem.guides) {
-    const guides = window.unifiedGuideSystem.guides;
-    console.log(`📊 ${guides.length}件のガイドデータを取得`);
-    
-    // コンテナをクリアして再生成
-    container.innerHTML = '';
-    
-    guides.forEach(guide => {
-      const guideCard = createEnglishGuideCard(guide);
-      container.appendChild(guideCard);
-    });
-    
-    console.log(`✅ ${guides.length}枚のガイドカードを生成`);
-  } else {
-    console.warn('統一ガイドシステムのデータが利用できません');
-    // フォールバック: 基本的なガイドカードを生成
-    generateFallbackGuideCards(container);
-  }
+  // 常にフォールバックガイドカードを使用（英語サイト専用データ）
+  console.log('🌐 英語サイト専用ガイドカードを生成');
+  container.innerHTML = '';
+  generateFallbackGuideCards(container);
 }
 
 function createEnglishGuideCard(guide) {
@@ -101,7 +86,12 @@ function createEnglishGuideCard(guide) {
   return colDiv;
 }
 
-function getEnglishDescription(japaneseDescription) {
+function getEnglishDescription(description) {
+  // 既に英語の場合はそのまま返す
+  if (typeof description === 'string' && description.length > 0) {
+    return description;
+  }
+  
   const translations = {
     '東京の隠れた名所と美食スポットを案内します。': 'I guide you to Tokyo\'s hidden gems and gourmet spots.',
     '京都の伝統文化と美しい庭園をご紹介します。': 'I introduce Kyoto\'s traditional culture and beautiful gardens.',
@@ -111,7 +101,7 @@ function getEnglishDescription(japaneseDescription) {
     '福岡の食文化と歴史を深く知ることができます。': 'Learn deeply about Fukuoka\'s food culture and history.'
   };
   
-  return translations[japaneseDescription] || 'A knowledgeable local guide who knows all the charms of the area.';
+  return translations[description] || description || 'A knowledgeable local guide who knows all the charms of the area.';
 }
 
 function generateFallbackGuideCards(container) {
@@ -124,11 +114,11 @@ function generateFallbackGuideCards(container) {
       location: 'Shibuya, Tokyo',
       prefecture: 'Tokyo',
       languages: ['Japanese', 'English'],
-      description: 'I guide you to Tokyo\'s hidden gems and gourmet spots.',
-      specialties: ['Gourmet', 'Photo Spots'],
+      description: 'Expert Tokyo guide specializing in hidden local gems, authentic cuisine, and vibrant nightlife districts.',
+      specialties: ['Gourmet', 'Photo Spots', 'Night Tours'],
       fee: 8000,
       rating: 4.8,
-      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop'
+      profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop&crop=face'
     },
     {
       id: 2,
@@ -136,11 +126,11 @@ function generateFallbackGuideCards(container) {
       location: 'Kyoto City, Kyoto',
       prefecture: 'Kyoto',
       languages: ['Japanese', 'English', 'Chinese'],
-      description: 'I introduce Kyoto\'s traditional culture and beautiful gardens.',
-      specialties: ['Cultural Sites', 'Traditional Crafts'],
+      description: 'Traditional culture enthusiast offering authentic temple visits, tea ceremonies, and historical insights.',
+      specialties: ['Cultural Sites', 'Traditional Crafts', 'History'],
       fee: 7500,
       rating: 4.9,
-      profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=250&fit=crop'
+      profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=300&h=250&fit=crop&crop=face'
     },
     {
       id: 3,
@@ -148,11 +138,11 @@ function generateFallbackGuideCards(container) {
       location: 'Namba, Osaka',
       prefecture: 'Osaka',
       languages: ['Japanese', 'English'],
-      description: 'I guide you through Osaka\'s gourmet food and historical sites.',
-      specialties: ['Gourmet', 'Night Tour'],
+      description: 'Osaka foodie guide with deep knowledge of local street food, markets, and culinary traditions.',
+      specialties: ['Gourmet', 'Night Tour', 'Markets'],
       fee: 9000,
       rating: 4.7,
-      profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=250&fit=crop'
+      profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=250&fit=crop&crop=face'
     },
     {
       id: 4,
@@ -160,11 +150,11 @@ function generateFallbackGuideCards(container) {
       location: 'Naha, Okinawa',
       prefecture: 'Okinawa',
       languages: ['Japanese', 'English'],
-      description: 'Experience Okinawa\'s beautiful seas and unique culture.',
-      specialties: ['Marine Activities', 'Cultural Exchange'],
+      description: 'Marine life specialist offering snorkeling, diving tours, and unique Okinawan cultural experiences.',
+      specialties: ['Marine Activities', 'Cultural Exchange', 'Nature'],
       fee: 12000,
       rating: 4.6,
-      profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=250&fit=crop'
+      profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=250&fit=crop&crop=face'
     },
     {
       id: 5,
@@ -172,11 +162,11 @@ function generateFallbackGuideCards(container) {
       location: 'Sapporo, Hokkaido',
       prefecture: 'Hokkaido',
       languages: ['Japanese', 'English'],
-      description: 'Enjoy Hokkaido\'s great nature and fresh seafood.',
-      specialties: ['Nature', 'Gourmet'],
+      description: 'Outdoor enthusiast showcasing Hokkaido\'s pristine nature, seasonal festivals, and premium seafood.',
+      specialties: ['Nature', 'Gourmet', 'Seasonal Tours'],
       fee: 10000,
       rating: 4.8,
-      profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=250&fit=crop'
+      profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=250&fit=crop&crop=face'
     },
     {
       id: 6,
@@ -184,11 +174,11 @@ function generateFallbackGuideCards(container) {
       location: 'Hakata, Fukuoka',
       prefecture: 'Fukuoka',
       languages: ['Japanese', 'English', 'Korean'],
-      description: 'Learn deeply about Fukuoka\'s food culture and history.',
-      specialties: ['Gourmet', 'History'],
+      description: 'Cultural bridge specialist connecting Korean and Japanese traditions through food, festivals, and history.',
+      specialties: ['Gourmet', 'History', 'Cultural Exchange'],
       fee: 8500,
       rating: 4.5,
-      profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=250&fit=crop'
+      profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=250&fit=crop&crop=face'
     }
   ];
   
@@ -198,6 +188,11 @@ function generateFallbackGuideCards(container) {
   });
   
   console.log(`✅ ${fallbackGuides.length}枚のフォールバックガイドカードを生成`);
+  
+  // カウンター即座修正
+  setTimeout(() => {
+    fixCounterDisplay();
+  }, 100);
 }
 
 function fixFilterButton() {
