@@ -567,7 +567,7 @@
           </li>
         </ul>
         
-        <!-- 言語切り替えボタン - 中央配置 -->
+        <!-- 言語切り替えボタン - 中央配置（日本語サイトと同じデザイン） -->
         <div class="d-flex justify-content-center flex-grow-1">
           <div class="language-switcher-center">
             <button class="btn lang-btn-jp" onclick="window.location.href='index.html'" style="
@@ -578,6 +578,7 @@
               padding: 8px 20px;
               font-weight: bold;
               box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+              transition: all 0.3s ease;
             ">
               🇯🇵 日本語
             </button>
@@ -590,6 +591,9 @@
               font-weight: bold;
               box-shadow: 0 2px 10px rgba(66,135,245,0.3);
               margin-left: -1px;
+              transition: all 0.3s ease;
+              transform: scale(1.05);
+              opacity: 1;
             ">
               🇺🇸 English
             </button>
@@ -608,19 +612,24 @@
   <!-- Hero Section -->
   <section id="top" class="hero-section text-center text-white py-5">
     <div class="container hero-content">
+      <!-- 大きなTomoTripロゴ（日本語サイトと同じ） -->
+      <div class="hero-logo-container mb-4">
+        <img src="TomoTripロゴ.png" alt="TomoTrip" class="hero-logo">
+      </div>
+      
       <div class="row justify-content-center">
         <div class="col-lg-8">
-          <h1 class="display-4 fw-bold mb-4">Connect with Local Japanese Guides</h1>
-          <p class="lead mb-4">Experience authentic Japan through the eyes of locals. Book verified guides for personalized cultural experiences.</p>
+          <h1 class="display-4 fw-bold mb-4">Your Special Journey Awaits</h1>
+          <p class="lead mb-4">Discover hidden gems with local guides that tourism can't reveal</p>
           <a href="#guides" class="btn btn-primary btn-lg me-3">Find a Guide</a>
           <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
           
-          <!-- Sponsor Mini Buttons Area (Small Bottom Right) -->
+          <!-- 協賛店専用ボタンエリア（右下小さめ） -->
           <div class="sponsor-mini-buttons">
             <div class="sponsor-mini-wrapper">
               <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
                 <i class="bi bi-shop"></i>
-                <span>Sponsor Register 🚀</span>
+                <span>Sponsor Registration 🚀</span>
               </button>
               <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
                 <i class="bi bi-box-arrow-in-right"></i>
@@ -1642,6 +1651,36 @@
       box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3) !important;
     }
     
+    /* ヒーローセクションロゴスタイル */
+    .hero-logo-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    
+    .hero-logo {
+      width: 140px;
+      height: 140px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 10px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.2),
+        0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      object-fit: cover;
+    }
+    
+    .hero-logo:hover {
+      transform: scale(1.05);
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.3),
+        0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
     /* モバイル対応 */
     @media (max-width: 768px) {
       .language-switcher-center {
@@ -1653,6 +1692,10 @@
         min-width: 80px !important;
         font-size: 12px !important;
         padding: 6px 15px !important;
+      }
+      
+      .hero-logo {
+        display: none !important;
       }
     }
   </style>
@@ -1666,53 +1709,93 @@
       document.body.style.overflow = 'auto';
       document.body.style.overflowY = 'auto';
       
-      // 即座に実行される修正処理
+      // 包括的な修正処理
       function forceFixLanguageButtons() {
-        // すべてのドロップダウン要素を削除
+        // すべてのドロップダウン要素を完全に削除
         const dropdownSelectors = [
           '.dropdown',
           '.dropdown-menu', 
           '.dropdown-toggle',
           '.nav-item.dropdown',
           '.btn.btn-outline-light.dropdown-toggle',
-          '[data-bs-toggle="dropdown"]'
+          '[data-bs-toggle="dropdown"]',
+          'button[data-bs-toggle="dropdown"]'
         ];
         
         dropdownSelectors.forEach(selector => {
           const elements = document.querySelectorAll(selector);
           elements.forEach(el => {
-            if (el.textContent.includes('English') || el.textContent.includes('日本語') || el.getAttribute('data-bs-toggle') === 'dropdown') {
-              el.style.display = 'none';
-              el.style.visibility = 'hidden';
-              el.style.opacity = '0';
-              el.style.position = 'absolute';
-              el.style.left = '-9999px';
-              console.log('ドロップダウンを無効化:', el.textContent.trim());
+            if (el.textContent.includes('English') || el.textContent.includes('日本語') || 
+                el.getAttribute('data-bs-toggle') === 'dropdown' ||
+                el.classList.contains('dropdown-toggle')) {
+              el.remove(); // 完全に削除
+              console.log('ドロップダウンを削除:', el.textContent.trim());
             }
           });
         });
         
-        // 言語ボタンを強制表示
-        const langSwitcher = document.querySelector('.language-switcher-center');
+        // 言語ボタンを強制表示と再構築
+        let langSwitcher = document.querySelector('.language-switcher-center');
+        if (!langSwitcher) {
+          // 言語ボタンが存在しない場合は作成
+          const centerContainer = document.querySelector('.d-flex.justify-content-center.flex-grow-1');
+          if (centerContainer) {
+            langSwitcher = document.createElement('div');
+            langSwitcher.className = 'language-switcher-center';
+            langSwitcher.innerHTML = `
+              <button class="btn lang-btn-jp" onclick="window.location.href='index.html'" style="
+                background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+                color: white; border: none; border-radius: 25px 0 0 25px;
+                padding: 8px 20px; font-weight: bold; transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+              ">🇯🇵 日本語</button>
+              <button class="btn lang-btn-en active" style="
+                background: linear-gradient(135deg, #4287f5, #64a8ff);
+                color: white; border: none; border-radius: 0 25px 25px 0;
+                padding: 8px 20px; font-weight: bold; transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(66,135,245,0.3); margin-left: -1px;
+                transform: scale(1.05); opacity: 1;
+              ">🇺🇸 English</button>
+            `;
+            centerContainer.appendChild(langSwitcher);
+          }
+        }
+        
         if (langSwitcher) {
           langSwitcher.style.display = 'flex';
           langSwitcher.style.visibility = 'visible';
           langSwitcher.style.opacity = '1';
           langSwitcher.style.zIndex = '1000';
-          console.log('✅ 言語切り替えボタンを表示しました');
-        } else {
-          console.log('❌ 言語切り替えボタンが見つかりません');
+          console.log('✅ 言語切り替えボタンを表示/再構築しました');
         }
       }
       
-      // 即座に実行
+      // 協賛店ボタンの機能設定
+      function setupSponsorButtons() {
+        const registerBtn = document.getElementById('sponsorRegisterBtn');
+        const loginBtn = document.getElementById('sponsorLoginBtn');
+        
+        if (registerBtn) {
+          registerBtn.addEventListener('click', () => {
+            alert('Sponsor Registration\n\nContact us for partnership opportunities!\nEmail: sponsor@tomotrip.com');
+          });
+        }
+        
+        if (loginBtn) {
+          loginBtn.addEventListener('click', () => {
+            alert('Sponsor Login\n\nPartner portal coming soon!\nFor now, please contact: sponsor@tomotrip.com');
+          });
+        }
+      }
+      
+      // 実行
       forceFixLanguageButtons();
+      setupSponsorButtons();
       
-      // 100ms後にも実行
+      // 遅延実行
       setTimeout(forceFixLanguageButtons, 100);
-      
-      // 500ms後にも実行
       setTimeout(forceFixLanguageButtons, 500);
+      setTimeout(forceFixLanguageButtons, 1000);
       
       // 基本的な機能を設定
       function showRegisterOptions() {
