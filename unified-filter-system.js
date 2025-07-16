@@ -332,13 +332,48 @@ class UnifiedFilterSystem {
   }
 
   updateCounterDisplay(count) {
-    if (this.filterElements.counter) {
-      if (this.isEnglishSite) {
-        this.filterElements.counter.textContent = `Found ${count} guides`;
-      } else {
-        this.filterElements.counter.innerHTML = `<i class="bi bi-people-fill me-2"></i>${count}人のガイドが見つかりました`;
-      }
+    console.log(`📊 統一フィルター: カウンター表示更新 - ${count}${this.isEnglishSite ? ' guides' : '人'}`);
+    
+    if (this.isEnglishSite) {
+      // 英語サイト - 複数の要素を更新
+      const englishCounters = [
+        document.querySelector('#guide-counter'),
+        document.querySelector('#guide-count-number-en'),
+        document.querySelector('#search-results-counter'),
+        this.filterElements.counter
+      ];
+      
+      englishCounters.forEach(counter => {
+        if (counter) {
+          if (counter.id === 'guide-count-number-en') {
+            counter.textContent = count;
+          } else if (counter.id === 'guide-counter') {
+            counter.innerHTML = `Found <span id="guide-count-number-en">${count}</span> guides`;
+          } else {
+            counter.textContent = `Found ${count} guides`;
+          }
+        }
+      });
+    } else {
+      // 日本語サイト - 複数の要素を更新
+      const japaneseCounters = [
+        document.querySelector('#guides-count'),
+        document.querySelector('#guide-count-number'),
+        this.filterElements.counter
+      ];
+      
+      japaneseCounters.forEach(counter => {
+        if (counter) {
+          if (counter.id === 'guide-count-number') {
+            counter.textContent = count;
+          } else {
+            counter.innerHTML = `<i class="bi bi-people-fill me-2"></i><span id="guide-count-number">${count}</span>人のガイドが見つかりました`;
+          }
+        }
+      });
     }
+    
+    console.log(`✅ 統一フィルター: カウンター表示更新完了`);
   }
 }
 

@@ -56,10 +56,11 @@
     const moreButton = document.querySelector('#load-more-guides');
     if (moreButton) moreButton.textContent = 'Show More';
     
-    // 検索結果カウンター
+    // 検索結果カウンター（動的に統一ガイドシステムに依存）
     const searchCounter = document.querySelector('#search-results-counter');
-    if (searchCounter) {
-      searchCounter.textContent = 'Showing 70 guides found';
+    if (searchCounter && window.unifiedGuideSystem) {
+      const actualCount = window.unifiedGuideSystem.guides.length;
+      searchCounter.textContent = `Showing ${actualCount} guides found`;
     }
     
     console.log('✅ 英語サイト翻訳完了');
