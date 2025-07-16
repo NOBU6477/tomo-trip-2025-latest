@@ -1,306 +1,320 @@
 /**
  * 統一フィルターシステム
- * 複数条件の同時絞り込みとガイド数カウントの正確な表示
+ * 日本語サイト、英語サイト両方で動作する統一されたフィルター機能
  */
 
-(function() {
-  'use strict';
-
-  let isInitialized = false;
-  
-  // フィルター要素のキャッシュ
-  let filterElements = {
-    location: null,
-    language: null,
-    fee: null,
-    keywordCheckboxes: [],
-    customKeyword: null,
-    applyBtn: null,
-    resetBtn: null,
-    counter: null
-  };
-
-  // 初期化
-  function initialize() {
-    if (isInitialized) return;
+class UnifiedFilterSystem {
+  constructor() {
+    this.isEnglishSite = document.documentElement.lang === 'en' || 
+                        window.location.pathname.includes('index-en') ||
+                        document.querySelector('#guide-counter'); // 英語サイト識別子
     
-    console.log('統一フィルターシステム初期化開始');
-    
-    // DOM要素を取得
-    cacheFilterElements();
-    
-    // イベントリスナーを設定
-    setupEventListeners();
-    
-    // 初期カウント表示
-    updateGuideCount();
-    
-    isInitialized = true;
-    console.log('統一フィルターシステム初期化完了');
-  }
-
-  // フィルター要素をキャッシュ
-  function cacheFilterElements() {
-    filterElements.location = document.getElementById('location-filter');
-    filterElements.language = document.getElementById('language-filter');
-    filterElements.fee = document.getElementById('fee-filter');
-    filterElements.keywordCheckboxes = document.querySelectorAll('.keyword-checkbox');
-    filterElements.customKeyword = document.getElementById('keyword-filter-custom');
-    filterElements.applyBtn = document.getElementById('apply-filters');
-    filterElements.resetBtn = document.getElementById('reset-filters');
-    filterElements.counter = document.getElementById('search-results-counter');
-    
-    console.log('フィルター要素キャッシュ完了:', {
-      location: !!filterElements.location,
-      language: !!filterElements.language,
-      fee: !!filterElements.fee,
-      keywords: filterElements.keywordCheckboxes.length,
-      customKeyword: !!filterElements.customKeyword,
-      applyBtn: !!filterElements.applyBtn,
-      resetBtn: !!filterElements.resetBtn,
-      counter: !!filterElements.counter
-    });
-  }
-
-  // イベントリスナー設定
-  function setupEventListeners() {
-    // 検索ボタン
-    if (filterElements.applyBtn) {
-      filterElements.applyBtn.addEventListener('click', applyFilters);
-    }
-    
-    // リセットボタン
-    if (filterElements.resetBtn) {
-      filterElements.resetBtn.addEventListener('click', resetFilters);
-    }
-    
-    // リアルタイム検索（オプション - コメントアウト状態）
-    // setupRealtimeFiltering();
-  }
-
-  // リアルタイムフィルタリング設定（必要に応じて有効化）
-  function setupRealtimeFiltering() {
-    [filterElements.location, filterElements.language, filterElements.fee].forEach(element => {
-      if (element) {
-        element.addEventListener('change', applyFilters);
-      }
-    });
-    
-    filterElements.keywordCheckboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', applyFilters);
-    });
-    
-    if (filterElements.customKeyword) {
-      let timeout;
-      filterElements.customKeyword.addEventListener('input', () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(applyFilters, 500);
-      });
-    }
-  }
-
-  // フィルター条件を取得
-  function getFilterCriteria() {
-    const criteria = {
-      location: filterElements.location ? filterElements.location.value.trim() : '',
-      language: filterElements.language ? filterElements.language.value.trim() : '',
-      fee: filterElements.fee ? parseInt(filterElements.fee.value) || 0 : 0,
-      keywords: []
+    this.filterElements = {
+      toggleButton: document.getElementById('toggle-filter-button'),
+      filterCard: document.getElementById('filter-card'),
+      locationFilter: document.getElementById('location-filter'),
+      languageFilter: document.getElementById('language-filter'), 
+      minFeeFilter: document.getElementById('min-fee-filter'),
+      maxFeeFilter: document.getElementById('max-fee-filter'),
+      keywordCheckboxes: document.querySelectorAll('.keyword-checkbox'),
+      customKeywords: document.getElementById('custom-keywords') || document.getElementById('keyword-filter-custom'),
+      resetButton: document.getElementById('reset-filters') || document.querySelector('[onclick="resetFilters()"]'),
+      applyButton: document.getElementById('apply-filters') || document.querySelector('[onclick="searchGuides()"]'),
+      guideContainer: document.getElementById('guide-cards-container'),
+      counter: this.isEnglishSite ? 
+        document.getElementById('guide-counter') : 
+        document.getElementById('guides-count')
     };
 
-    // チェックボックスキーワード
-    filterElements.keywordCheckboxes.forEach(checkbox => {
+    this.init();
+  }
+
+  init() {
+    console.log(`統一フィルターシステム初期化 - ${this.isEnglishSite ? '英語' : '日本語'}サイト`);
+    
+    this.setupFilterToggle();
+    this.setupFilterHandlers();
+    this.updateCounter();
+  }
+
+  setupFilterToggle() {
+    if (!this.filterElements.toggleButton || !this.filterElements.filterCard) {
+      console.error('フィルタートグル要素が見つかりません');
+      return;
+    }
+
+    this.filterElements.toggleButton.addEventListener('click', () => {
+      this.toggleFilter();
+    });
+  }
+
+  toggleFilter() {
+    const { toggleButton, filterCard } = this.filterElements;
+    const isHidden = filterCard.classList.contains('d-none');
+
+    if (isHidden) {
+      // フィルターを表示
+      filterCard.classList.remove('d-none');
+      
+      if (this.isEnglishSite) {
+        toggleButton.innerHTML = '<i class="bi bi-funnel-fill"></i> Hide Filters';
+      } else {
+        toggleButton.innerHTML = '<i class="bi bi-funnel-fill"></i> フィルターを閉じる';
+      }
+      
+      toggleButton.classList.remove('btn-outline-primary');
+      toggleButton.classList.add('btn-primary');
+
+      // スムーズスクロール
+      setTimeout(() => {
+        filterCard.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+      }, 100);
+
+    } else {
+      // フィルターを隠す
+      filterCard.classList.add('d-none');
+      
+      if (this.isEnglishSite) {
+        toggleButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
+      } else {
+        toggleButton.innerHTML = '<i class="bi bi-funnel"></i> フィルターを開く';
+      }
+      
+      toggleButton.classList.remove('btn-primary');
+      toggleButton.classList.add('btn-outline-primary');
+    }
+  }
+
+  setupFilterHandlers() {
+    // 各フィルター要素にイベントリスナーを追加
+    const elements = [
+      this.filterElements.locationFilter,
+      this.filterElements.languageFilter,
+      this.filterElements.minFeeFilter,
+      this.filterElements.maxFeeFilter,
+      this.filterElements.customKeywords
+    ];
+
+    elements.forEach(element => {
+      if (element) {
+        element.addEventListener('change', () => this.applyFilters());
+        element.addEventListener('input', () => this.applyFilters());
+      }
+    });
+
+    // キーワードチェックボックス
+    this.filterElements.keywordCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => this.applyFilters());
+    });
+
+    // リセットボタン
+    if (this.filterElements.resetButton) {
+      this.filterElements.resetButton.addEventListener('click', () => this.resetFilters());
+    }
+
+    // 適用ボタン（すでにリアルタイムで動作するが念のため）
+    if (this.filterElements.applyButton) {
+      this.filterElements.applyButton.addEventListener('click', () => this.applyFilters());
+    }
+  }
+
+  applyFilters() {
+    const filters = this.getFilterValues();
+    console.log('フィルター適用:', filters);
+
+    // 統一ガイドシステムがあるかチェック
+    if (window.unifiedGuideSystem) {
+      window.unifiedGuideSystem.applyFilters(filters);
+    } else {
+      console.warn('統一ガイドシステムが利用できません');
+      this.fallbackFilter(filters);
+    }
+
+    this.updateCounter();
+  }
+
+  getFilterValues() {
+    const selectedKeywords = [];
+    
+    // チェックボックスから選択されたキーワード
+    this.filterElements.keywordCheckboxes.forEach(checkbox => {
       if (checkbox.checked) {
-        criteria.keywords.push(checkbox.value.toLowerCase().trim());
+        selectedKeywords.push(checkbox.value);
       }
     });
 
     // カスタムキーワード
-    if (filterElements.customKeyword && filterElements.customKeyword.value.trim()) {
-      const customKeywords = filterElements.customKeyword.value
+    if (this.filterElements.customKeywords && this.filterElements.customKeywords.value.trim()) {
+      const customKeywords = this.filterElements.customKeywords.value
         .split(',')
-        .map(kw => kw.trim().toLowerCase())
-        .filter(kw => kw !== '');
-      criteria.keywords.push(...customKeywords);
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+      selectedKeywords.push(...customKeywords);
     }
 
-    return criteria;
+    return {
+      location: this.filterElements.locationFilter ? this.filterElements.locationFilter.value : '',
+      language: this.filterElements.languageFilter ? this.filterElements.languageFilter.value : '',
+      minFee: this.filterElements.minFeeFilter ? parseInt(this.filterElements.minFeeFilter.value) || 0 : 0,
+      maxFee: this.filterElements.maxFeeFilter ? parseInt(this.filterElements.maxFeeFilter.value) || Infinity : Infinity,
+      keywords: selectedKeywords
+    };
   }
 
-  // ガイドカードが条件に一致するかチェック
-  function matchesFilters(guideCard, criteria) {
-    // データ属性から情報を取得
-    const cardLocation = (guideCard.getAttribute('data-location') || '').toLowerCase();
-    const cardLanguages = (guideCard.getAttribute('data-languages') || '').toLowerCase();
-    const cardFee = parseInt(guideCard.getAttribute('data-fee') || '0');
-    const cardKeywords = (guideCard.getAttribute('data-keywords') || '').toLowerCase();
+  fallbackFilter(filters) {
+    // 統一ガイドシステムが利用できない場合のフォールバック
+    if (!this.filterElements.guideContainer) return;
 
-    // 地域フィルター
-    let matchesLocation = true;
-    if (criteria.location && criteria.location !== 'すべて') {
-      const searchLocation = criteria.location.toLowerCase();
-      
-      // 北海道の特別処理
-      if (searchLocation === '北海道') {
-        matchesLocation = cardLocation.includes('北海道') || 
-                         cardLocation.includes('札幌') || 
-                         cardLocation.includes('函館') || 
-                         cardLocation.includes('旭川');
-      } else {
-        matchesLocation = cardLocation.includes(searchLocation);
-      }
-    }
-
-    // 言語フィルター
-    let matchesLanguage = true;
-    if (criteria.language && criteria.language !== 'すべて') {
-      const searchLanguage = criteria.language.toLowerCase();
-      matchesLanguage = cardLanguages.split(',').some(lang => 
-        lang.trim() === searchLanguage
-      );
-    }
-
-    // 料金フィルター
-    let matchesFee = true;
-    if (criteria.fee > 0) {
-      matchesFee = cardFee <= criteria.fee;
-    }
-
-    // キーワードフィルター
-    let matchesKeywords = true;
-    if (criteria.keywords.length > 0) {
-      const cardKeywordList = cardKeywords.split(',').map(kw => kw.trim());
-      matchesKeywords = criteria.keywords.some(keyword => 
-        cardKeywordList.some(cardKw => cardKw.includes(keyword))
-      );
-    }
-
-    return matchesLocation && matchesLanguage && matchesFee && matchesKeywords;
-  }
-
-  // フィルター適用
-  function applyFilters() {
-    console.log('フィルター適用開始');
-    
-    const criteria = getFilterCriteria();
-    console.log('フィルター条件:', criteria);
-
-    const guideCards = document.querySelectorAll('.guide-card');
+    const guideCards = this.filterElements.guideContainer.querySelectorAll('.guide-card, .col-md-4, .col-lg-4');
     let visibleCount = 0;
 
     guideCards.forEach(card => {
-      const guideItem = card.closest('.guide-item');
-      const matches = matchesFilters(card, criteria);
-
-      if (matches) {
-        // 表示
-        if (guideItem) {
-          guideItem.style.display = '';
-          guideItem.classList.remove('hidden-guide', 'filtered-out');
-          guideItem.style.opacity = '1';
-        }
-        card.style.display = '';
-        card.classList.remove('hidden-guide', 'filtered-out');
-        card.style.opacity = '1';
-        visibleCount++;
+      const visible = this.matchesFilters(card, filters);
+      const parentElement = card.closest('.col-md-4, .col-lg-4, .guide-item');
+      
+      if (parentElement) {
+        parentElement.style.display = visible ? '' : 'none';
       } else {
-        // 非表示
-        if (guideItem) {
-          guideItem.style.display = 'none';
-          guideItem.classList.add('filtered-out');
-        }
-        card.style.display = 'none';
-        card.classList.add('filtered-out');
+        card.style.display = visible ? '' : 'none';
       }
+      
+      if (visible) visibleCount++;
     });
 
-    // カウント更新
-    updateGuideCount(visibleCount);
-    
-    // 結果なしメッセージの表示制御
-    toggleNoResultsMessage(visibleCount === 0);
-
-    console.log(`フィルター適用完了: ${visibleCount}件のガイドが表示中`);
+    this.updateCounterDisplay(visibleCount);
   }
 
-  // フィルターリセット
-  function resetFilters() {
-    console.log('フィルターリセット開始');
+  matchesFilters(card, filters) {
+    // データ属性またはテキスト内容からマッチングを判定
+    const cardData = {
+      location: card.dataset.location || card.querySelector('.guide-location')?.textContent || '',
+      languages: card.dataset.languages || this.extractLanguages(card),
+      fee: parseInt(card.dataset.fee) || this.extractFee(card),
+      keywords: card.dataset.keywords || this.extractKeywords(card)
+    };
 
-    // フィルター要素をリセット
-    if (filterElements.location) filterElements.location.value = '';
-    if (filterElements.language) filterElements.language.value = '';
-    if (filterElements.fee) filterElements.fee.value = '';
-    if (filterElements.customKeyword) filterElements.customKeyword.value = '';
+    // 地域フィルター
+    if (filters.location && !cardData.location.includes(filters.location)) {
+      return false;
+    }
 
-    filterElements.keywordCheckboxes.forEach(checkbox => {
+    // 言語フィルター
+    if (filters.language && !cardData.languages.includes(filters.language)) {
+      return false;
+    }
+
+    // 料金フィルター
+    if (cardData.fee < filters.minFee || cardData.fee > filters.maxFee) {
+      return false;
+    }
+
+    // キーワードフィルター
+    if (filters.keywords.length > 0) {
+      const hasMatchingKeyword = filters.keywords.some(keyword => 
+        cardData.keywords.includes(keyword) || 
+        card.textContent.toLowerCase().includes(keyword.toLowerCase())
+      );
+      if (!hasMatchingKeyword) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  extractLanguages(card) {
+    const languageBadges = card.querySelectorAll('.badge, .guide-lang');
+    return Array.from(languageBadges).map(badge => badge.textContent.trim()).join(',');
+  }
+
+  extractFee(card) {
+    const feeText = card.querySelector('.price-badge, .badge')?.textContent || '';
+    const match = feeText.match(/[¥$]?(\d+,?\d*)/);
+    return match ? parseInt(match[1].replace(',', '')) : 0;
+  }
+
+  extractKeywords(card) {
+    // カードのテキスト内容からキーワードを推定
+    const text = card.textContent.toLowerCase();
+    const keywords = [];
+    
+    if (text.includes('グルメ') || text.includes('gourmet') || text.includes('food')) keywords.push('グルメ');
+    if (text.includes('写真') || text.includes('photo')) keywords.push('写真スポット');
+    if (text.includes('ナイト') || text.includes('night')) keywords.push('ナイトツアー');
+    if (text.includes('料理') || text.includes('cuisine') || text.includes('cooking')) keywords.push('料理');
+    if (text.includes('アクティビティ') || text.includes('activity')) keywords.push('アクティビティ');
+    
+    return keywords.join(',');
+  }
+
+  resetFilters() {
+    // すべてのフィルターをリセット
+    if (this.filterElements.locationFilter) this.filterElements.locationFilter.value = '';
+    if (this.filterElements.languageFilter) this.filterElements.languageFilter.value = '';
+    if (this.filterElements.minFeeFilter) this.filterElements.minFeeFilter.value = '';
+    if (this.filterElements.maxFeeFilter) this.filterElements.maxFeeFilter.value = '';
+    if (this.filterElements.customKeywords) this.filterElements.customKeywords.value = '';
+
+    this.filterElements.keywordCheckboxes.forEach(checkbox => {
       checkbox.checked = false;
     });
 
-    // 全ガイドを表示
-    const guideCards = document.querySelectorAll('.guide-card');
-    guideCards.forEach(card => {
-      const guideItem = card.closest('.guide-item');
-      
-      if (guideItem) {
-        guideItem.style.display = '';
-        guideItem.classList.remove('hidden-guide', 'filtered-out');
-        guideItem.style.opacity = '1';
-      }
-      card.style.display = '';
-      card.classList.remove('hidden-guide', 'filtered-out');
-      card.style.opacity = '1';
-    });
-
-    // カウント更新
-    updateGuideCount();
-    
-    // 結果なしメッセージを非表示
-    toggleNoResultsMessage(false);
-
-    console.log('フィルターリセット完了');
+    // フィルターを適用してすべてのガイドを表示
+    this.applyFilters();
   }
 
-  // ガイド数カウント更新
-  function updateGuideCount(visibleCount = null) {
-    if (!filterElements.counter) return;
-
-    if (visibleCount === null) {
-      // 全体のガイド数を取得
-      const allGuides = document.querySelectorAll('.guide-card');
-      visibleCount = allGuides.length;
+  updateCounter() {
+    if (window.unifiedGuideSystem) {
+      // 統一ガイドシステムがカウンターを更新
+      window.unifiedGuideSystem.updateCounter();
+    } else {
+      // フォールバック: 表示されているガイドをカウント
+      const visibleGuides = this.filterElements.guideContainer ? 
+        this.filterElements.guideContainer.querySelectorAll('.guide-card:not([style*="display: none"]), .guide-item:not([style*="display: none"])').length : 
+        0;
+      this.updateCounterDisplay(visibleGuides);
     }
-
-    filterElements.counter.textContent = `${visibleCount}件のガイドが見つかりました`;
   }
 
-  // 結果なしメッセージの表示制御
-  function toggleNoResultsMessage(show) {
-    const noResultsElement = document.getElementById('no-results-message');
-    if (noResultsElement) {
-      if (show) {
-        noResultsElement.classList.remove('d-none');
+  updateCounterDisplay(count) {
+    if (this.filterElements.counter) {
+      if (this.isEnglishSite) {
+        this.filterElements.counter.textContent = `Found ${count} guides`;
       } else {
-        noResultsElement.classList.add('d-none');
+        this.filterElements.counter.innerHTML = `<i class="bi bi-people-fill me-2"></i>${count}人のガイドが見つかりました`;
       }
     }
   }
+}
 
-  // グローバル関数として公開
-  window.unifiedFilterSystem = {
-    initialize: initialize,
-    applyFilters: applyFilters,
-    resetFilters: resetFilters
+// グローバル関数（従来のJavaScriptとの互換性）
+function searchGuides() {
+  if (window.unifiedFilterSystem) {
+    window.unifiedFilterSystem.applyFilters();
+  }
+}
+
+function resetFilters() {
+  if (window.unifiedFilterSystem) {
+    window.unifiedFilterSystem.resetFilters();
+  }
+}
+
+// DOM読み込み完了時に初期化
+document.addEventListener('DOMContentLoaded', function() {
+  // 統一ガイドシステムの読み込み完了を待つ
+  const initFilter = () => {
+    window.unifiedFilterSystem = new UnifiedFilterSystem();
+    console.log('統一フィルターシステム初期化完了');
   };
 
-  // DOMContentLoaded時に初期化
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
+  if (window.unifiedGuideSystem) {
+    initFilter();
   } else {
-    initialize();
+    // 統一ガイドシステムの読み込みを待つ
+    setTimeout(initFilter, 500);
   }
-
-  // 既存のapplyFilters関数をオーバーライド
-  window.applyFilters = applyFilters;
-
-})();
+});

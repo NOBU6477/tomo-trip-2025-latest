@@ -1046,7 +1046,9 @@
       </div>
       <div class="mb-4">
         <div class="text-center mb-3">
-          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">6人のガイドが見つかりました</div>
+          <div id="guides-count" class="guide-counter text-primary fw-bold fs-5 mb-3">
+            <i class="bi bi-people-fill me-2"></i>70人のガイドが見つかりました
+          </div>
           <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
             <i class="bi bi-funnel"></i> フィルターを開く
           </button>
@@ -1195,212 +1197,7 @@
       </div>
       
       <div class="row guides-container" id="guide-cards-container">
-        <!-- 初期表示されるガイド -->
-        <!-- ガイド1 -->
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="1" data-location="東京都 渋谷区" data-languages="日本語,英語" data-fee="6000" data-keywords="グルメ,写真スポット">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">桃太郎</h5>
-                <span class="badge bg-primary">¥6,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>東京都 渋谷区
-              </p>
-              <p class="card-text mb-3">東京の隠れた名所を案内します。グルメや写真スポットが得意です。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="text-dark ms-1">4.5</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="1">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド2 -->
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="2" data-location="京都府 京都市" data-languages="日本語,英語,中国語" data-fee="8000" data-keywords="歴史,文化,寺院,写真スポット">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">花子</h5>
-                <span class="badge bg-primary">¥5,500/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>京都府 京都市
-              </p>
-              <p class="card-text mb-3">歴史と伝統が息づく京都の魅力をご案内。寺社巡りや伝統文化体験が得意です。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.0</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="2">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド3 -->
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="3" data-location="大阪府 大阪市" data-languages="日本語,英語" data-fee="7000" data-keywords="グルメ,ナイトツアー,ローカル">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">一郎</h5>
-                <span class="badge bg-primary">¥5,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>大阪府 大阪市
-              </p>
-              <p class="card-text mb-3">大阪ならではの食べ歩きと街歩きが専門。地元の人だけが知る名店にご案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語(基礎)</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">3.5</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="3">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド4 -->
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="4" data-location="北海道 札幌市" data-languages="日本語,英語,ロシア語" data-fee="8000" data-keywords="自然体験,アクティビティ,絶景">
-            <img src="https://images.unsplash.com/photo-1519638831568-d9897f54ed69?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">雪</h5>
-                <span class="badge bg-primary">¥8,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>北海道 札幌市
-              </p>
-              <p class="card-text mb-3">北海道・札幌のローカルガイド。四季折々の自然と新鮮な海の幸、絶景スポットをご案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark me-1">英語</span>
-                  <span class="badge bg-light text-dark">ロシア語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.0</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="4">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド5 -->
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="5" data-location="沖縄県 那覇市" data-languages="日本語,英語" data-fee="12000" data-keywords="マリンスポーツ,自然体験,ダイビング">
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">海</h5>
-                <span class="badge bg-primary">¥12,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>沖縄県 那覇市
-              </p>
-              <p class="card-text mb-3">沖縄在住15年のダイビングインストラクター。美しい海と独自の文化が残る島々を案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="text-dark ms-1">4.5</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="5">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <!-- ガイド6 -->
-        <div class="col-md-4 guide-item">
-          <div class="card guide-card shadow-sm" data-guide-id="6" data-location="広島県 広島市" data-languages="日本語,英語,フランス語" data-fee="6500" data-keywords="歴史ツアー,文化体験,平和記念公園">
-            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">平和</h5>
-                <span class="badge bg-primary">¥6,500/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>広島県 広島市
-              </p>
-              <p class="card-text mb-3">広島の歴史と文化に精通したガイド。平和記念公園から宮島まで、心に残る旅をご提供します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark me-1">英語</span>
-                  <span class="badge bg-light text-dark">フランス語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.0</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="6">詳細を見る</a>
-            </div>
-          </div>
-        </div>
+        <!-- 統一ガイドシステムで動的生成されます -->
       </div>
       
       <div class="text-center mt-4">
@@ -6414,6 +6211,8 @@
   <script src="auth-persistence-fix.js"></script>
   <script src="auth-protection-override.js"></script>
   <script src="registration-button-fix.js"></script>
+  <script src="unified-guide-system.js"></script>
+  <script src="unified-filter-system.js"></script>
   <script src="client-app.js"></script>
   -->
   
