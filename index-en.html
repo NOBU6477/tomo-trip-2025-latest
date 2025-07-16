@@ -1584,18 +1584,43 @@
   <!-- 英語サイト修正スクリプト -->
   <script src="english-site-fix.js"></script>
   
+  <!-- モバイル言語ボタン -->
+  <script src="mobile-language-buttons.js"></script>
+  
   <style>
-    /* 英語サイト専用: 古いドロップダウンを強制削除 */
+    /* 英語サイト専用: 古いドロップダウンを強制削除 - 全セレクター */
+    .dropdown,
+    .dropdown-menu,
+    .dropdown-toggle,
+    .nav-item.dropdown,
+    .btn.btn-outline-light.dropdown-toggle,
     .dropdown[aria-labelledby="languageDropdown"],
     #languageDropdown,
-    .nav-item.dropdown,
-    .dropdown-toggle,
-    .btn.btn-outline-light.dropdown-toggle {
+    [data-bs-toggle="dropdown"],
+    button[data-bs-toggle="dropdown"] {
       display: none !important;
       visibility: hidden !important;
       opacity: 0 !important;
       position: absolute !important;
       left: -9999px !important;
+      width: 0 !important;
+      height: 0 !important;
+      z-index: -1 !important;
+    }
+    
+    /* 言語切り替えボタンを強制表示 */
+    .language-switcher-center {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      z-index: 1000 !important;
+      position: relative !important;
+    }
+    
+    .lang-btn-jp, .lang-btn-en {
+      display: inline-block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
     }
     
     /* 協賛店ボタンのハレーション除去 */
@@ -1616,6 +1641,20 @@
     .sponsor-mini-btn.sponsor-login:hover {
       box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3) !important;
     }
+    
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+      .language-switcher-center {
+        margin: 1rem 0 !important;
+        justify-content: center !important;
+      }
+      
+      .lang-btn-jp, .lang-btn-en {
+        min-width: 80px !important;
+        font-size: 12px !important;
+        padding: 6px 15px !important;
+      }
+    }
   </style>
   
   <script>
@@ -1627,14 +1666,30 @@
       document.body.style.overflow = 'auto';
       document.body.style.overflowY = 'auto';
       
-      // 古いドロップダウンを即座に削除
-      setTimeout(() => {
-        const oldDropdowns = document.querySelectorAll('.dropdown[aria-labelledby="languageDropdown"], #languageDropdown, .nav-item.dropdown');
-        oldDropdowns.forEach(el => {
-          if (el.textContent.includes('English') || el.textContent.includes('日本語')) {
-            el.remove();
-            console.log('古いドロップダウンを削除しました');
-          }
+      // 即座に実行される修正処理
+      function forceFixLanguageButtons() {
+        // すべてのドロップダウン要素を削除
+        const dropdownSelectors = [
+          '.dropdown',
+          '.dropdown-menu', 
+          '.dropdown-toggle',
+          '.nav-item.dropdown',
+          '.btn.btn-outline-light.dropdown-toggle',
+          '[data-bs-toggle="dropdown"]'
+        ];
+        
+        dropdownSelectors.forEach(selector => {
+          const elements = document.querySelectorAll(selector);
+          elements.forEach(el => {
+            if (el.textContent.includes('English') || el.textContent.includes('日本語') || el.getAttribute('data-bs-toggle') === 'dropdown') {
+              el.style.display = 'none';
+              el.style.visibility = 'hidden';
+              el.style.opacity = '0';
+              el.style.position = 'absolute';
+              el.style.left = '-9999px';
+              console.log('ドロップダウンを無効化:', el.textContent.trim());
+            }
+          });
         });
         
         // 言語ボタンを強制表示
@@ -1643,9 +1698,21 @@
           langSwitcher.style.display = 'flex';
           langSwitcher.style.visibility = 'visible';
           langSwitcher.style.opacity = '1';
-          console.log('言語切り替えボタンを表示しました');
+          langSwitcher.style.zIndex = '1000';
+          console.log('✅ 言語切り替えボタンを表示しました');
+        } else {
+          console.log('❌ 言語切り替えボタンが見つかりません');
         }
-      }, 100);
+      }
+      
+      // 即座に実行
+      forceFixLanguageButtons();
+      
+      // 100ms後にも実行
+      setTimeout(forceFixLanguageButtons, 100);
+      
+      // 500ms後にも実行
+      setTimeout(forceFixLanguageButtons, 500);
       
       // 基本的な機能を設定
       function showRegisterOptions() {
