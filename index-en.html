@@ -1663,42 +1663,45 @@
       opacity: 1 !important;
     }
     
-    /* 協賛店ボタン - 日本語サイトと完全同じ自然な影（外部CSSを強制上書き） */
+    /* 協賛店ボタン - ハレーション完全除去、自然な影のみ */
     .sponsor-mini-btn,
     .sponsor-register,
-    .sponsor-login {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    .sponsor-login,
+    .sponsor-mini-btn.sponsor-register,
+    .sponsor-mini-btn.sponsor-login {
+      box-shadow: none !important;
       animation: none !important;
+      filter: none !important;
     }
     
     .sponsor-mini-btn:hover,
     .sponsor-register:hover,
-    .sponsor-login:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    .sponsor-login:hover,
+    .sponsor-mini-btn.sponsor-register:hover,
+    .sponsor-mini-btn.sponsor-login:hover {
+      box-shadow: none !important;
       animation: none !important;
+      filter: none !important;
       transform: translateY(-1px) !important;
     }
     
-    /* 外部CSSのハレーション効果を完全無効化 */
-    .sponsor-mini-btn.sponsor-register,
-    .sponsor-mini-btn.sponsor-login,
-    .sponsor-register,
-    .sponsor-login {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    .sponsor-mini-btn.sponsor-register:hover,
-    .sponsor-mini-btn.sponsor-login:hover,
-    .sponsor-register:hover,
-    .sponsor-login:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-    }
-    
-    /* パルス効果とキーフレームアニメーションを無効化 */
+    /* 全てのハレーション・パルス・グロー効果を無効化 */
     @keyframes gentlePulse {
       0%, 50%, 100% { 
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+        box-shadow: none !important;
+        filter: none !important;
       }
+    }
+    
+    /* あらゆる光る効果を無効化 */
+    .sponsor-mini-btn::before,
+    .sponsor-mini-btn::after,
+    .sponsor-register::before,
+    .sponsor-register::after,
+    .sponsor-login::before,
+    .sponsor-login::after {
+      display: none !important;
+      opacity: 0 !important;
     }
     
     /* ヒーローセクション - 日本語サイトと同じスタイル */
