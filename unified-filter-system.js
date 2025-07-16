@@ -123,16 +123,18 @@ class UnifiedFilterSystem {
 
   applyFilters() {
     const filters = this.getFilterValues();
-    console.log('フィルター適用:', filters);
+    console.log(`🔄 フィルター適用 (${this.isEnglishSite ? '英語' : '日本語'}サイト):`, filters);
 
     // 統一ガイドシステムがあるかチェック
     if (window.unifiedGuideSystem) {
+      console.log('✅ 統一ガイドシステム経由でフィルター適用');
       window.unifiedGuideSystem.applyFilters(filters);
     } else {
-      console.warn('統一ガイドシステムが利用できません');
+      console.warn('⚠️ 統一ガイドシステムが利用できません - フォールバック実行');
       this.fallbackFilter(filters);
     }
 
+    // カウンター更新を独立して実行
     this.updateCounter();
   }
 

@@ -44,7 +44,12 @@ const initialGuides = [
 ];
 
 // 70人まで拡張するためのランダムガイド生成
-const generateExtendedGuides = () => {
+// スケーラブルガイド追加システム（70人大量生成を停止）
+const getDefaultGuides = () => {
+  return [...initialGuides]; // 初期6人のガイドのみ使用
+};
+
+const generateExtendedGuides_DISABLED = () => {
   const prefectures = ['東京都', '大阪府', '京都府', '北海道', '沖縄県', '広島県', '神奈川県', '愛知県', '福岡県', '宮城県'];
   const cities = {
     '東京都': ['渋谷区', '新宿区', '港区', '中央区'],
@@ -111,10 +116,6 @@ class UnifiedGuideSystem {
   init() {
     console.log(`🌐 統一ガイドシステム初期化 - ${this.isEnglishSite ? '英語' : '日本語'}サイト`);
     
-    // ローカルストレージをクリア（完全リセット）
-    localStorage.removeItem('allGuides');
-    console.log('🗑️ ローカルストレージをクリアしました');
-    
     this.loadGuides();
     this.setupEventListeners();
     this.displayGuides();
@@ -122,9 +123,15 @@ class UnifiedGuideSystem {
   }
 
   loadGuides() {
-    // 強制的に初期70人ガイドを生成（ローカルストレージをクリア）
-    this.guides = generateExtendedGuides();
-    this.saveGuides();
+    // ローカルストレージから既存ガイドを読み込み（スケーラブルシステム）
+    const savedGuides = localStorage.getItem('allGuides');
+    if (savedGuides) {
+      this.guides = JSON.parse(savedGuides);
+    } else {
+      // 初期6人のガイドのみを使用
+      this.guides = getDefaultGuides();
+      this.saveGuides();
+    }
     
     // 新規登録されたガイドも追加
     const newGuides = localStorage.getItem('newRegisteredGuides');
@@ -527,7 +534,10 @@ class UnifiedGuideSystem {
 let unifiedGuideSystem;
 
 document.addEventListener('DOMContentLoaded', () => {
+  // 統一ガイドシステムを初期化してグローバル登録
   unifiedGuideSystem = new UnifiedGuideSystem();
+  window.unifiedGuideSystem = unifiedGuideSystem;
+  console.log('🔗 統一ガイドシステムをグローバルスコープに登録しました');
   console.log('🚀 統一ガイドシステムが初期化されました');
 });
 
