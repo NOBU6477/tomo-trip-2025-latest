@@ -250,15 +250,17 @@
     mediaQuery.addListener(handleResize);
   }
   
-  // 継続的適用システム
+  // 制限付き継続適用システム
+  let fixApplyCount = 0;
   function continuouslyApplyFixes() {
-    if (!isMobile()) return;
+    if (!isMobile() || fixApplyCount > 10) return; // 10回で停止
     
+    fixApplyCount++;
     removeGradientButtons();
     removeOverlappingLogo();
     
-    // 2秒ごとに再適用（他のスクリプトの復元を防止）
-    setTimeout(continuouslyApplyFixes, 2000);
+    // 5秒ごとに再適用（頻度を下げる）
+    setTimeout(continuouslyApplyFixes, 5000);
   }
   
   // 初期化

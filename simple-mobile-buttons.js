@@ -11,11 +11,12 @@ document.addEventListener('DOMContentLoaded', function() {
     return window.innerWidth <= 768;
   }
   
-  // 既存の固定ボタンを削除
+  // 既存の固定ボタンと重複ボタンを削除
   function removeOldButtons() {
     const oldButtons = document.querySelectorAll(
       '.mobile-sponsor-fix, .mobile-sponsor-buttons, .mobile-sponsor-container, ' +
-      '.sponsor-btn-fixed, .fixed-sponsor-btn, .mobile-sponsor-header-buttons'
+      '.sponsor-btn-fixed, .fixed-sponsor-btn, .mobile-sponsor-header-buttons, ' +
+      '.simple-mobile-buttons'
     );
     oldButtons.forEach(btn => btn.remove());
   }
@@ -117,20 +118,16 @@ document.addEventListener('DOMContentLoaded', function() {
     alert('ログイン機能は開発中です');
   };
   
-  // 継続的配置システム（mobile-cleanup-fix.jsとの競合回避）
-  function continuouslyPlaceButtons() {
-    if (!isMobile()) return;
-    
-    placeButtons();
-    
-    // 7秒ごとに再配置（競合回避のため頻度を下げる）
-    setTimeout(continuouslyPlaceButtons, 7000);
-  }
-  
-  // 初期化
+  // 初期化（1回のみ実行）
   addCSS();
-  placeButtons();
-  continuouslyPlaceButtons(); // 継続的配置開始
+  
+  // DOM準備完了後に1回だけ実行
+  setTimeout(() => {
+    if (isMobile() && !document.querySelector('.simple-mobile-buttons')) {
+      placeButtons();
+      console.log('✅ モバイルボタンを1回のみ配置');
+    }
+  }, 2000);
   
   // リサイズ監視
   window.addEventListener('resize', function() {

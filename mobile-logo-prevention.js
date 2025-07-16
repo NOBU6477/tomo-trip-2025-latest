@@ -83,15 +83,16 @@
     document.head.appendChild(style);
   }
   
-  // 継続的監視システム
+  // 制限付き継続監視システム
+  let preventCount = 0;
   function continuousPreventLogo() {
-    if (!isMobile()) return;
+    if (!isMobile() || preventCount > 15) return; // 15回で停止
     
+    preventCount++;
     preventLogoDisplay();
-    overrideLogoStyles();
     
-    // 1秒ごとに再実行
-    setTimeout(continuousPreventLogo, 1000);
+    // 3秒ごとに再実行（頻度を下げる）
+    setTimeout(continuousPreventLogo, 3000);
   }
   
   // 初期化

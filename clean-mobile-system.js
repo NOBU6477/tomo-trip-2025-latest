@@ -1,219 +1,151 @@
 /**
- * クリーンなモバイルシステム
- * シンプルで安全なモバイル対応とスタックオーバーフロー問題の解決
+ * クリーンモバイルシステム
+ * 1回のみの実行で安定したモバイル表示を実現
  */
-
-// 即座に実行してスタックオーバーフローを停止
-if (typeof window !== 'undefined') {
-  // 無限ループの即座停止
-  let intervalId = setInterval(() => {}, 1);
-  for (let i = 1; i < intervalId + 1000; i++) {
-    clearInterval(i);
-    clearTimeout(i);
-  }
-  
-  console.log('🛑 すべてのタイマー停止完了');
-}
 
 (function() {
   'use strict';
   
-  // 初期化フラグ
-  if (window.cleanMobileSystemInitialized) {
-    return; // 重複実行を防止
-  }
-  window.cleanMobileSystemInitialized = true;
-  
-  console.log('📱 クリーンモバイルシステム開始');
+  console.log('🧹 クリーンモバイルシステム開始');
   
   // モバイル検出
   function isMobile() {
-    return window.innerWidth <= 768 || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return window.innerWidth <= 768;
   }
   
-  // モバイル用CSS適用
-  function applyMobileCSS() {
+  // 左上ロゴのみを削除
+  function removeOnlyLogo() {
+    if (!isMobile()) return;
+    
+    const logoSelector = '#top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"]';
+    const logoElement = document.querySelector(logoSelector);
+    
+    if (logoElement) {
+      logoElement.style.display = 'none';
+      console.log('🧹 左上ロゴを削除しました');
+    }
+  }
+  
+  // ヒーローセクションの内容を保護・復元
+  function protectHeroContent() {
+    const heroSection = document.querySelector('.hero-section, #top.hero-section');
+    if (heroSection) {
+      // ヒーローセクション全体を表示
+      heroSection.style.display = 'block';
+      heroSection.style.visibility = 'visible';
+      heroSection.style.opacity = '1';
+      
+      // 内部の重要要素を保護
+      const importantElements = heroSection.querySelectorAll('h1, p, .btn, .container');
+      importantElements.forEach(el => {
+        el.style.display = el.tagName === 'BUTTON' || el.classList.contains('btn') ? 'inline-block' : 'block';
+        el.style.visibility = 'visible';
+        el.style.opacity = '1';
+      });
+      
+      console.log('🧹 ヒーローセクションの内容を保護しました');
+    }
+  }
+  
+  // 重複ボタンを削除
+  function removeDuplicateButtons() {
+    if (!isMobile()) return;
+    
+    const mobileButtonContainers = document.querySelectorAll('.simple-mobile-buttons');
+    if (mobileButtonContainers.length > 1) {
+      // 最初の1つ以外削除
+      for (let i = 1; i < mobileButtonContainers.length; i++) {
+        mobileButtonContainers[i].remove();
+        console.log('🧹 重複モバイルボタンを削除しました');
+      }
+    }
+  }
+  
+  // 固定ボタンを削除
+  function removeFixedButtons() {
+    if (!isMobile()) return;
+    
+    const fixedButtons = document.querySelectorAll('[style*="position: fixed"]');
+    fixedButtons.forEach(btn => {
+      if (btn.textContent.includes('協賛店') || btn.textContent.includes('ログイン')) {
+        btn.remove();
+        console.log('🧹 固定ボタンを削除しました');
+      }
+    });
+  }
+  
+  // CSS適用
+  function applyCleanCSS() {
     const style = document.createElement('style');
-    style.id = 'clean-mobile-css';
+    style.id = 'clean-mobile-system-css';
     style.textContent = `
-      /* モバイル基本修正 */
       @media (max-width: 768px) {
-        body {
-          overflow-x: hidden !important;
-          overflow-y: auto !important;
-          padding-right: 0 !important;
-        }
-        
-        .modal-open {
-          overflow: auto !important;
-          padding-right: 0 !important;
-        }
-        
-        /* 固定ボタンの非表示 */
-        .sponsor-btn-fixed,
-        .fixed-sponsor-btn,
-        [class*="fixed-buttons"] {
+        /* 左上ロゴのみ非表示 */
+        #top.hero-section > div[style*="position: absolute"][style*="top: 2%"][style*="left: 2%"] {
           display: none !important;
         }
         
-        /* モバイル協賛店ボタン */
-        .mobile-sponsor-buttons {
-          position: fixed;
-          bottom: 15px;
-          right: 15px;
-          z-index: 9999;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
+        /* ヒーローセクション保護 */
+        .hero-section,
+        #top.hero-section {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
+          min-height: 50vh !important;
         }
         
-        .mobile-sponsor-btn {
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: white;
-          border: none;
-          padding: 10px 15px;
-          border-radius: 20px;
-          font-size: 11px;
-          font-weight: 600;
-          box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-          min-width: 100px;
-          text-align: center;
-          cursor: pointer;
-          transition: transform 0.2s ease;
+        /* ヒーローセクション内容保護 */
+        .hero-section h1,
+        .hero-section p,
+        .hero-section .container {
+          display: block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
-        .mobile-sponsor-btn:hover {
-          transform: scale(1.05);
+        .hero-section .btn {
+          display: inline-block !important;
+          visibility: visible !important;
+          opacity: 1 !important;
         }
         
-        .mobile-sponsor-btn.login {
-          background: linear-gradient(135deg, #f093fb, #f5576c);
+        /* 固定ボタン無効化 */
+        [style*="position: fixed"] {
+          display: none !important;
         }
         
-        /* ナビゲーション調整 */
-        .navbar-brand img {
-          height: 35px !important;
-        }
-        
-        .navbar-nav {
-          text-align: center;
-        }
-        
-        /* コンテナ調整 */
-        .container {
-          padding-left: 10px !important;
-          padding-right: 10px !important;
-        }
-        
-        /* ガイドカード調整 */
-        .guide-card {
-          margin-bottom: 15px !important;
-        }
-        
-        .card-body {
-          padding: 1rem !important;
-        }
-      }
-      
-      /* デスクトップでは非表示 */
-      @media (min-width: 769px) {
-        .mobile-sponsor-buttons {
+        /* 重複ボタン防止 */
+        .simple-mobile-buttons:not(:first-of-type) {
           display: none !important;
         }
       }
     `;
     
+    const existingStyle = document.getElementById('clean-mobile-system-css');
+    if (existingStyle) existingStyle.remove();
     document.head.appendChild(style);
   }
   
-  // モバイル協賛店ボタンの作成
-  function createMobileButtons() {
+  // 1回のみ実行
+  function executeOnce() {
     if (!isMobile()) return;
     
-    // 既存のモバイルボタンをチェック
-    if (document.getElementById('mobile-sponsor-buttons')) return;
+    applyCleanCSS();
+    removeOnlyLogo();
+    protectHeroContent();
+    removeDuplicateButtons();
+    removeFixedButtons();
     
-    const buttonContainer = document.createElement('div');
-    buttonContainer.id = 'mobile-sponsor-buttons';
-    buttonContainer.className = 'mobile-sponsor-buttons';
-    buttonContainer.innerHTML = `
-      <button class="mobile-sponsor-btn" onclick="goToSponsorRegister()">
-        🏪 協賛店登録
-      </button>
-      <button class="mobile-sponsor-btn login" onclick="goToSponsorLogin()">
-        🔑 ログイン
-      </button>
-    `;
-    
-    document.body.appendChild(buttonContainer);
-    console.log('📱 モバイルボタン作成完了');
+    console.log('✅ クリーンモバイルシステム完了');
   }
   
-  // グローバル関数
-  window.goToSponsorRegister = function() {
-    if (confirm('協賛店登録ページに移動しますか？')) {
-      window.location.href = '/sponsor-registration.html';
-    }
-  };
-  
-  window.goToSponsorLogin = function() {
-    // ログインモーダルがあれば表示、なければアラート
-    const loginModal = document.getElementById('sponsorLoginModal');
-    if (loginModal && window.bootstrap) {
-      try {
-        new bootstrap.Modal(loginModal).show();
-      } catch (e) {
-        alert('ログイン機能は開発中です');
-      }
-    } else {
-      alert('ログイン機能は開発中です');
-    }
-  };
-  
-  // レスポンシブ監視
-  function setupResponsiveMonitoring() {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    
-    function handleResize(e) {
-      const mobileButtons = document.getElementById('mobile-sponsor-buttons');
-      if (e.matches) {
-        // モバイル表示
-        if (!mobileButtons) {
-          createMobileButtons();
-        }
-      } else {
-        // デスクトップ表示
-        if (mobileButtons) {
-          mobileButtons.style.display = 'none';
-        }
-      }
-    }
-    
-    // 初回チェック
-    handleResize(mediaQuery);
-    
-    // リサイズ監視
-    mediaQuery.addListener(handleResize);
-  }
-  
-  // 初期化実行
-  function initialize() {
-    try {
-      applyMobileCSS();
-      createMobileButtons();
-      setupResponsiveMonitoring();
-      
-      console.log('✅ クリーンモバイルシステム完了');
-    } catch (error) {
-      console.error('❌ モバイルシステムエラー:', error);
-    }
-  }
-  
-  // DOM準備完了後に実行
+  // 初期化
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initialize);
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(executeOnce, 1000);
+    });
   } else {
-    initialize();
+    setTimeout(executeOnce, 1000);
   }
   
 })();
