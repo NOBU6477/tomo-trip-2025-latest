@@ -198,30 +198,18 @@
     console.log(`英語版: 合計${allCards.length}枚のガイドカードを表示`);
   }
 
-  // カウンター更新
+  // カウンター更新（無効化）
   function updateCounter() {
-    const counterElements = document.querySelectorAll('.counter-badge, [class*="counter"]');
-    counterElements.forEach(element => {
-      if (element.textContent.includes('Found') || element.textContent.includes('guides')) {
-        element.innerHTML = '<i class="bi bi-people-fill me-2"></i>Found 70 guides';
-      }
-    });
+    console.log('⚠️ load-70-guides-en.js updateCounter は無効化されました');
+    return;
   }
 
-  // 初期化
+  // 初期化（無効化）
   function init() {
-    console.log('英語版70人ガイドシステム初期化');
-    
-    // 遅延実行で確実に表示
-    setTimeout(() => {
-      displayGuides();
-      updateCounter();
-    }, 1000);
-    
-    setTimeout(() => {
-      displayGuides();
-      updateCounter();
-    }, 2000);
+    console.log('⚠️ 英語版70人ガイドシステムは無効化されました');
+    console.log('📍 統一ガイドシステムが代わりに使用されます');
+    // すべての機能を無効化
+    return;
   }
 
   // Filter functionality

@@ -123,15 +123,9 @@ class UnifiedGuideSystem {
   }
 
   loadGuides() {
-    // ローカルストレージから既存ガイドを読み込み（スケーラブルシステム）
-    const savedGuides = localStorage.getItem('allGuides');
-    if (savedGuides) {
-      this.guides = JSON.parse(savedGuides);
-    } else {
-      // 初期6人のガイドのみを使用
-      this.guides = getDefaultGuides();
-      this.saveGuides();
-    }
+    // 初期6人のガイドのみを使用（安定版）
+    this.guides = getDefaultGuides().slice(0, 6);
+    console.log(`📊 基本6人のガイドを読み込みました`);
     
     // 新規登録されたガイドも追加
     const newGuides = localStorage.getItem('newRegisteredGuides');
@@ -142,10 +136,12 @@ class UnifiedGuideSystem {
           this.guides.push(guide);
         }
       });
+      console.log(`📊 新規登録ガイド ${additional.length}人を追加`);
     }
     
     this.filteredGuides = [...this.guides];
-    console.log(`📊 ${this.guides.length}人のガイドを読み込みました (強制再生成)`);
+    this.saveGuides();
+    console.log(`✅ 合計${this.guides.length}人のガイドを読み込み完了`);
   }
 
   saveGuides() {
