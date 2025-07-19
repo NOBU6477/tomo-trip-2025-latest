@@ -810,12 +810,8 @@ function getDefaultGuides() {
       description: "宮城の新鮮な海の幸と温泉をご案内します。",
       profileImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
     }
-      specialties: ["グルメツアー", "文化体験"],
-      fee: 7500,
-      rating: 4.8,
-      description: "福岡の屋台文化と美味しいものをご紹介します。",
-      profileImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face"
-    },
+  ];
+}
     {
       id: 7,
       name: "中村 雄一",
