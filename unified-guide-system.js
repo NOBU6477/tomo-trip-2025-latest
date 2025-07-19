@@ -43,10 +43,123 @@ const initialGuides = [
   }
 ];
 
-// 70人まで拡張するためのランダムガイド生成
-// スケーラブルガイド追加システム（70人大量生成を停止）
+// 24人のガイドデータを確保（基本6人+拡張18人）
 const getDefaultGuides = () => {
-  return [...initialGuides]; // 初期6人のガイドのみ使用
+  const extendedGuides = [...initialGuides];
+  
+  // 追加18人のガイドデータ
+  const additionalGuides = [
+    {
+      id: 7, name: '渡辺 麻衣', location: '福岡県 福岡市', prefecture: '福岡県',
+      languages: ['日本語', '英語'], specialties: ['グルメツアー', '文化体験'], fee: 7500,
+      description: '福岡の屋台文化と美味しいものをご紹介します。',
+      rating: 4.8, profileImage: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 8, name: '中村 雄一', location: '広島県 広島市', prefecture: '広島県',
+      languages: ['日本語', '英語'], specialties: ['歴史散策', '平和学習'], fee: 8500,
+      description: '広島の歴史と平和について深く学べるツアーをご提供します。',
+      rating: 4.7, profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 9, name: '小林 桜', location: '宮城県 仙台市', prefecture: '宮城県',
+      languages: ['日本語', '英語', '中国語'], specialties: ['自然体験', '温泉'], fee: 9500,
+      description: '東北の美しい自然と温泉文化をご案内します。',
+      rating: 4.9, profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b42fc568?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 10, name: '石井 健太', location: '北海道 札幌市', prefecture: '北海道',
+      languages: ['日本語', '英語'], specialties: ['グルメツアー', 'スキー'], fee: 10000,
+      description: '札幌の新鮮な海の幸とウィンタースポーツをお楽しみください。',
+      rating: 4.6, profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 11, name: '森田 智子', location: '沖縄県 那覇市', prefecture: '沖縄県',
+      languages: ['日本語', '英語'], specialties: ['マリンスポーツ', '文化体験'], fee: 11000,
+      description: '沖縄の美しい海と伝統文化をご案内します。',
+      rating: 4.8, profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 12, name: '長谷川 修', location: '愛知県 名古屋市', prefecture: '愛知県',
+      languages: ['日本語', '英語'], specialties: ['歴史散策', 'グルメツアー'], fee: 7800,
+      description: '名古屋の歴史と独特なグルメ文化をご紹介します。',
+      rating: 4.4, profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 13, name: '井上 美香', location: '神奈川県 横浜市', prefecture: '神奈川県',
+      languages: ['日本語', '英語', '中国語'], specialties: ['港町散策', 'アート'], fee: 8200,
+      description: '横浜の国際的な魅力とアートシーンをご案内します。',
+      rating: 4.5, profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b42fc568?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 14, name: '木村 大輔', location: '石川県 金沢市', prefecture: '石川県',
+      languages: ['日本語', '英語'], specialties: ['文化体験', '工芸'], fee: 9200,
+      description: '金沢の伝統工芸と美しい庭園をご紹介します。',
+      rating: 4.7, profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 15, name: '斎藤 恵', location: '奈良県 奈良市', prefecture: '奈良県',
+      languages: ['日本語', '英語'], specialties: ['歴史ツアー', '自然体験'], fee: 8800,
+      description: '古都奈良の歴史と鹿公園をご案内します。',
+      rating: 4.6, profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 16, name: '松本 裕也', location: '長野県 松本市', prefecture: '長野県',
+      languages: ['日本語', '英語'], specialties: ['自然体験', 'アクティビティ'], fee: 9800,
+      description: '信州の美しい山々とアウトドア体験をご提供します。',
+      rating: 4.8, profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 17, name: '野村 翔太', location: '熊本県 熊本市', prefecture: '熊本県',
+      languages: ['日本語', '英語'], specialties: ['自然体験', '温泉'], fee: 8600,
+      description: '阿蘇の雄大な自然と熊本の魅力をご案内します。',
+      rating: 4.5, profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 18, name: '藤田 由美', location: '静岡県 静岡市', prefecture: '静岡県',
+      languages: ['日本語', '英語'], specialties: ['自然体験', 'グルメツアー'], fee: 7900,
+      description: '富士山の絶景と静岡の美味しいお茶をお楽しみください。',
+      rating: 4.4, profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b42fc568?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 19, name: '大島 健吾', location: '新潟県 新潟市', prefecture: '新潟県',
+      languages: ['日本語', '英語'], specialties: ['グルメツアー', '文化体験'], fee: 8300,
+      description: '新潟の美味しいお米と日本酒文化をご紹介します。',
+      rating: 4.6, profileImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 20, name: '橋本 舞', location: '岡山県 岡山市', prefecture: '岡山県',
+      languages: ['日本語', '英語'], specialties: ['歴史散策', 'フルーツ狩り'], fee: 7700,
+      description: '晴れの国岡山の歴史と美味しいフルーツをお楽しみください。',
+      rating: 4.3, profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 21, name: '内田 慎一', location: '和歌山県 和歌山市', prefecture: '和歌山県',
+      languages: ['日本語', '英語'], specialties: ['自然体験', '温泉'], fee: 8700,
+      description: '熊野古道と白浜温泉の神秘的な魅力をご案内します。',
+      rating: 4.7, profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 22, name: '三浦 愛子', location: '青森県 青森市', prefecture: '青森県',
+      languages: ['日本語', '英語'], specialties: ['自然体験', 'グルメツアー'], fee: 9100,
+      description: '青森の美しい自然と美味しいりんご、海の幸をご紹介します。',
+      rating: 4.5, profileImage: 'https://images.unsplash.com/photo-1494790108755-2616b42fc568?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 23, name: '村上 拓海', location: '山梨県 甲府市', prefecture: '山梨県',
+      languages: ['日本語', '英語'], specialties: ['自然体験', 'ワイナリー'], fee: 9300,
+      description: '富士五湖の絶景と山梨のワイナリーをご案内します。',
+      rating: 4.8, profileImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face'
+    },
+    {
+      id: 24, name: '西川 美穂', location: '香川県 高松市', prefecture: '香川県',
+      languages: ['日本語', '英語'], specialties: ['グルメツアー', '文化体験'], fee: 7600,
+      description: '讃岐うどんと瀬戸内海の美しい島々をご案内します。',
+      rating: 4.4, profileImage: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face'
+    }
+  ];
+  
+  return [...extendedGuides, ...additionalGuides];
 };
 
 const generateExtendedGuides_DISABLED = () => {
