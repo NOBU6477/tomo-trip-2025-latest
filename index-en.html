@@ -550,6 +550,88 @@
   </style>
 </head>
 <body>
+  
+  <!-- 協賛店ボタン（右上固定配置）- 英語版 -->
+  <div class="sponsor-mini-buttons">
+    <a href="sponsor-registration.html" class="sponsor-mini-btn sponsor-register">
+      <i class="bi bi-shop"></i>
+      Sponsor Registration
+    </a>
+    <a href="#" onclick="alert('Sponsor login feature coming soon!');" class="sponsor-mini-btn sponsor-login">
+      <i class="bi bi-person-circle"></i>
+      Sponsor Login
+    </a>
+  </div>
+
+  <style>
+    /* 協賛店ミニボタンのスタイル - 英語版 */
+    .sponsor-mini-buttons {
+      position: fixed;
+      top: 100px;
+      right: 20px;
+      z-index: 1050;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sponsor-mini-buttons .sponsor-mini-btn {
+      background: linear-gradient(135deg, #ff6b9d, #4facfe);
+      color: white;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      min-width: 160px;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-register {
+      background: linear-gradient(135deg, #ff6b9d, #ffa8c5);
+    }
+
+    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-login {
+      background: linear-gradient(135deg, #4facfe, #74d0f1);
+    }
+
+    .sponsor-mini-buttons .sponsor-mini-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      color: white;
+      text-decoration: none;
+    }
+
+    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-register:hover {
+      box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
+    }
+
+    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-login:hover {
+      box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .sponsor-mini-buttons {
+        top: 80px;
+        right: 10px;
+        gap: 8px;
+      }
+      
+      .sponsor-mini-buttons .sponsor-mini-btn {
+        font-size: 11px;
+        padding: 8px 14px;
+        min-width: 140px;
+      }
+    }
+  </style>
 
 
   <!-- Navigation -->
@@ -1019,6 +1101,80 @@
       </div>
     </div>
   </section>
+
+  <!-- 右側固定ガイドボタン - 英語版 -->
+  <div class="fixed-guide-button">
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en">
+      <i class="bi bi-question-circle-fill"></i>
+      <span>Filter Features &<br>New Toolbar<br>User Guide</span>
+    </button>
+  </div>
+
+  <style>
+    /* 右側固定ガイドボタンのスタイル - 英語版 */
+    .fixed-guide-button {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1040;
+    }
+
+    .fixed-guide-button .btn {
+      background: linear-gradient(135deg, #17a2b8, #20c997);
+      border: none;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.3;
+      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+      transition: all 0.3s ease;
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fixed-guide-button .btn:hover {
+      transform: translateX(-5px);
+      box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
+      background: linear-gradient(135deg, #138496, #1e7e34);
+    }
+
+    .fixed-guide-button .btn i {
+      font-size: 20px;
+    }
+
+    .fixed-guide-button .btn span {
+      font-size: 11px;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .fixed-guide-button {
+        right: 10px;
+        top: 40%;
+      }
+      
+      .fixed-guide-button .btn {
+        padding: 12px 16px;
+        font-size: 11px;
+        min-width: 100px;
+      }
+      
+      .fixed-guide-button .btn i {
+        font-size: 16px;
+      }
+      
+      .fixed-guide-button .btn span {
+        font-size: 10px;
+      }
+    }
+  </style>
 
   <!-- Filter Help Modal (English Version) -->
   <div class="modal fade" id="filter-help-modal-en" tabindex="-1">
@@ -1664,6 +1820,7 @@
   <script src="complete-fix-system.js"></script>
   <script src="mobile-pagination-fix.js"></script>
   <script src="english-site-system.js"></script>
+  <script src="english-site-ui-fix.js"></script>
   <script src="mobile-toolbar-adapter.js"></script>
   
   <!-- Back to Top Script -->
