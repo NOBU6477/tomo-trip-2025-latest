@@ -740,6 +740,9 @@
       
       <!-- Filter Toggle Button -->
       <div class="text-center mb-3">
+        <button type="button" class="btn btn-sm btn-outline-info me-3" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en" style="border-radius: 20px;">
+          <i class="bi bi-question-circle me-1"></i>Filter Guide
+        </button>
         <button type="button" class="btn btn-outline-primary" id="filterToggleBtn">
           <i class="bi bi-funnel"></i> Filter Guides
         </button>
@@ -1016,6 +1019,255 @@
       </div>
     </div>
   </section>
+
+  <!-- Filter Help Modal (English Version) -->
+  <div class="modal fade" id="filter-help-modal-en" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-question-circle-fill me-2"></i>Filter Features & New Toolbar User Guide
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          
+          <!-- New Feature Introduction -->
+          <div class="alert alert-primary d-flex align-items-start mb-4">
+            <i class="bi bi-stars fs-4 me-3"></i>
+            <div>
+              <h6 class="alert-heading">✨ New Feature: Advanced Pagination System Added</h6>
+              <p class="mb-1">The toolbar displayed in the bottom right is a new feature for efficiently comparing and managing guides.</p>
+              <p class="mb-0 small text-muted">We've evolved from the traditional "Load More" approach to a more user-friendly pagination system.</p>
+            </div>
+          </div>
+
+          <div class="row">
+            
+            <!-- Bookmark Feature -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark d-flex align-items-center">
+                  <i class="bi bi-bookmark-star fs-5 me-2"></i>
+                  <h6 class="mb-0">Bookmark Feature</h6>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-warning text-dark me-2">1</span>
+                    <div>
+                      <strong>Click the star icon</strong> at the top-left of guide cards
+                      <br><small class="text-muted">Save interesting guides</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-warning text-dark me-2">2</span>
+                    <div>
+                      Saved cards display with a <strong class="text-warning">yellow border</strong>
+                      <br><small class="text-muted">Easily recognize bookmarked guides</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start">
+                    <span class="badge bg-warning text-dark me-2">3</span>
+                    <div>
+                      View all saved guides via "Bookmarks" in the toolbar
+                      <br><small class="text-muted">Check your saved guides together</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Compare Feature -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-success h-100">
+                <div class="card-header bg-success text-white d-flex align-items-center">
+                  <i class="bi bi-check2-square fs-5 me-2"></i>
+                  <h6 class="mb-0">Compare Feature (Max 3)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-success me-2">1</span>
+                    <div>
+                      <strong>Click the check icon</strong> at the top-left of guide cards
+                      <br><small class="text-muted">Select guides to compare</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-success me-2">2</span>
+                    <div>
+                      Selected cards display with a <strong class="text-success">green border</strong>
+                      <br><small class="text-muted">Up to 3 guides can be selected simultaneously</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start">
+                    <span class="badge bg-success me-2">3</span>
+                    <div>
+                      Click "Compare" in the toolbar for detailed comparison
+                      <br><small class="text-muted">Compare prices, ratings, and skills side by side</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Keyboard Navigation -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-secondary h-100">
+                <div class="card-header bg-secondary text-white d-flex align-items-center">
+                  <i class="bi bi-keyboard fs-5 me-2"></i>
+                  <h6 class="mb-0">Keyboard Shortcuts</h6>
+                </div>
+                <div class="card-body">
+                  <div class="row text-center">
+                    <div class="col-6 mb-3">
+                      <div class="border rounded p-2">
+                        <div class="d-flex justify-content-center mb-1">
+                          <kbd class="me-1">←</kbd><kbd>→</kbd>
+                        </div>
+                        <small>Page navigation</small>
+                      </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <div class="border rounded p-2">
+                        <div class="d-flex justify-content-center mb-1">
+                          <kbd>Home</kbd>
+                        </div>
+                        <small>First page</small>
+                      </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <div class="border rounded p-2">
+                        <div class="d-flex justify-content-center mb-1">
+                          <kbd>End</kbd>
+                        </div>
+                        <small>Last page</small>
+                      </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                      <div class="border rounded p-2">
+                        <small class="text-muted">Available anywhere<br>except input fields</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Features -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-primary h-100">
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                  <i class="bi bi-gear fs-5 me-2"></i>
+                  <h6 class="mb-0">Other Useful Features</h6>
+                </div>
+                <div class="card-body">
+                  <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                      <i class="bi bi-skip-end me-2 text-primary"></i>
+                      <strong>Page Jump:</strong> Direct navigation via dropdown
+                    </li>
+                    <li class="mb-2">
+                      <i class="bi bi-sort-alpha-down me-2 text-primary"></i>
+                      <strong>Sort Options:</strong> By rating, price, or name
+                    </li>
+                    <li class="mb-2">
+                      <i class="bi bi-shuffle me-2 text-primary"></i>
+                      <strong>Random:</strong> Discover guides by chance
+                    </li>
+                    <li class="mb-0">
+                      <i class="bi bi-clock-history me-2 text-primary"></i>
+                      <strong>Browse History:</strong> Track viewed guides (blue border)
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Usage Example -->
+            <div class="col-12 mb-4">
+              <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                  <h6 class="mb-0">
+                    <i class="bi bi-lightbulb me-2"></i>Efficient Usage Example
+                  </h6>
+                </div>
+                <div class="card-body">
+                  <ol class="mb-3">
+                    <li class="mb-2">
+                      Set your preferred conditions using <strong>Filters</strong>
+                      <br><small class="text-muted">Filter by location, language, and price</small>
+                    </li>
+                    <li class="mb-2">
+                      <strong>Bookmark interesting guides</strong> using the star icon
+                      <br><small class="text-muted">Save candidates for later review</small>
+                    </li>
+                    <li class="mb-2">
+                      <strong>Select guides to compare</strong> using the check icon (max 3)
+                      <br><small class="text-muted">Prepare for detailed comparison</small>
+                    </li>
+                    <li class="mb-2">
+                      Use <kbd>←</kbd><kbd>→</kbd> keys to browse other pages
+                      <br><small class="text-muted">Efficiently navigate between pages</small>
+                    </li>
+                    <li class="mb-0">
+                      Make your final decision using the "Compare" button
+                      <br><small class="text-muted">Compare prices and ratings side by side</small>
+                    </li>
+                  </ol>
+                  
+                  <!-- Try it Now Buttons -->
+                  <div class="text-center">
+                    <div class="row">
+                      <div class="col-md-4 mb-2">
+                        <button class="btn btn-outline-warning w-100" onclick="window.beginnerGuide?.showFloatingToolbar()">
+                          <i class="bi bi-eye me-1"></i>
+                          Highlight Toolbar
+                        </button>
+                      </div>
+                      <div class="col-md-4 mb-2">
+                        <button class="btn btn-outline-success w-100" onclick="window.beginnerGuide?.highlightFeatures()">
+                          <i class="bi bi-cursor me-1"></i>
+                          Highlight Icons
+                        </button>
+                      </div>
+                      <div class="col-md-4 mb-2">
+                        <button class="btn btn-outline-info w-100" onclick="window.systemBridge?.showAdvancedFeatures()">
+                          <i class="bi bi-list-check me-1"></i>
+                          Show All Features
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes and FAQ -->
+            <div class="col-12">
+              <div class="alert alert-warning d-flex align-items-start">
+                <i class="bi bi-exclamation-triangle me-3"></i>
+                <div class="small">
+                  <strong>Notes & FAQ</strong>
+                  <ul class="mt-2 mb-0">
+                    <li>If the toolbar doesn't appear, please reload the page (F5)</li>
+                    <li>Compare feature is limited to maximum 3 guides</li>
+                    <li>Keyboard shortcuts don't work when input fields are focused</li>
+                    <li>On mobile devices, the toolbar position is adjusted to the bottom of the screen</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+            <i class="bi bi-check-circle me-1"></i>Got it!
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer class="footer">
@@ -1412,6 +1664,7 @@
   <script src="complete-fix-system.js"></script>
   <script src="mobile-pagination-fix.js"></script>
   <script src="english-site-system.js"></script>
+  <script src="mobile-toolbar-adapter.js"></script>
   
   <!-- Back to Top Script -->
   <script>

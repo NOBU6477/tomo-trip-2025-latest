@@ -205,6 +205,16 @@ Local Guide is a multilingual guide matching platform that connects tourists wit
 
 Preferred communication style: Simple, everyday language.
 
+## Mobile Strategy (July 19, 2025)
+User confirmed mobile adaptation approach: PC specifications should be fully adapted to mobile phones without losing functionality. Created mobile-toolbar-adapter.js system ensuring:
+- Complete PC-level functionality on mobile devices
+- Adaptive UI for different screen sizes (mobile/tablet detection)
+- Touch-friendly interactions with proper sizing (44px minimum)
+- Swipe gestures for page navigation (left/right swipe)
+- Mobile-optimized modal displays (full-screen on mobile)
+- Responsive toolbar positioning (bottom-center on mobile)
+- Visual hints and feedback for mobile users
+
 ## System Design Clarification (July 19, 2025)
 User confirmed correct understanding of guide display system:
 - Default display shows ALL currently registered guides (dynamically growing count)
