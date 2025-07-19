@@ -200,3 +200,11 @@ Local Guide is a multilingual guide matching platform that connects tourists wit
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
+
+## System Design Clarification (July 19, 2025)
+User confirmed correct understanding of guide display system:
+- Default display shows ALL currently registered guides (dynamically growing count)
+- New guide registrations automatically increase the total displayed count
+- Current system shows 24 registered guides (12 default + 12 new registrations)
+- Filter functionality should work on this complete dataset of all registered guides
+- This is the intended scalable design for a growing guide marketplace
