@@ -573,11 +573,17 @@ class UnifiedGuideSystem {
 let unifiedGuideSystem;
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 統一ガイドシステムを初期化してグローバル登録
-  unifiedGuideSystem = new UnifiedGuideSystem();
-  window.unifiedGuideSystem = unifiedGuideSystem;
-  console.log('🔗 統一ガイドシステムをグローバルスコープに登録しました');
-  console.log('🚀 統一ガイドシステムが初期化されました');
+  console.log('⚠️ 統一ガイドシステムは無効化されました（ページングシステムに移行）');
+  console.log('📄 新しいページング機能付きガイドシステムが使用されます');
+  
+  // ページングシステムが利用できない場合のフォールバック
+  setTimeout(() => {
+    if (!window.paginationGuideSystem) {
+      console.log('⚠️ ページングシステムが初期化されていません');
+    } else {
+      console.log('✅ ページングガイドシステムが正常に動作中');
+    }
+  }, 2000);
 });
 
 // グローバル関数として公開

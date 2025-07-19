@@ -1201,7 +1201,10 @@
       </div>
       
       <div class="text-center mt-4">
-        <button class="btn btn-primary" id="load-more-guides">もっと見る</button>
+        <!-- 旧もっと見るボタンは新しいページングシステムに置き換え -->
+        <div id="load-more-btn" class="text-center mt-4" style="display: none;">
+          <button class="btn btn-primary btn-lg load-more-button">もっと見る</button>
+        </div>
       </div>
     </section>
     
@@ -6213,6 +6216,8 @@
   <script src="emergency-counter-fix.js"></script>
   <script src="japanese-site-counter-fix.js"></script>
   <script src="nuclear-counter-fix.js"></script>
+  <script src="pagination-guide-system.js"></script>
+  <script src="mobile-pagination-fix.js"></script>
   
   <!-- 問題のあるスクリプトファイルを全て無効化 -->
   <!-- 
