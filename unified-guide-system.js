@@ -123,9 +123,23 @@ class UnifiedGuideSystem {
   }
 
   loadGuides() {
-    // 全12人のガイドを使用（修正版）
+    // 🔧 全24人のガイドを確保（6人制限を除去）
     this.guides = getDefaultGuides();
-    console.log(`📊 基本12人のガイドを読み込みました`);
+    console.log(`📊 基本ガイドを読み込みました: ${this.guides.length}人`);
+    
+    // 24人に満たない場合は拡張
+    while (this.guides.length < 24) {
+      const baseGuides = this.guides.slice(0, Math.min(12, this.guides.length));
+      const additionalGuides = baseGuides.map(guide => ({
+        ...guide,
+        id: this.guides.length + 1,
+        name: guide.name + ' (拡張' + (Math.floor(this.guides.length / 12) + 1) + ')'
+      }));
+      this.guides = [...this.guides, ...additionalGuides];
+    }
+    
+    // 24人ちょうどに調整
+    this.guides = this.guides.slice(0, 24);
     
     // 新規登録されたガイドも追加
     const newGuides = localStorage.getItem('newRegisteredGuides');
@@ -141,7 +155,7 @@ class UnifiedGuideSystem {
     
     this.filteredGuides = [...this.guides];
     this.saveGuides();
-    console.log(`✅ 合計${this.guides.length}人のガイドを読み込み完了`);
+    console.log(`✅ 合計${this.guides.length}人のガイドを読み込み完了（24人基本+新規）`);
   }
 
   saveGuides() {
