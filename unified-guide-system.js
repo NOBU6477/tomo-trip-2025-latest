@@ -123,9 +123,9 @@ class UnifiedGuideSystem {
   }
 
   loadGuides() {
-    // 初期6人のガイドのみを使用（安定版）
-    this.guides = getDefaultGuides().slice(0, 6);
-    console.log(`📊 基本6人のガイドを読み込みました`);
+    // 全12人のガイドを使用（修正版）
+    this.guides = getDefaultGuides();
+    console.log(`📊 基本12人のガイドを読み込みました`);
     
     // 新規登録されたガイドも追加
     const newGuides = localStorage.getItem('newRegisteredGuides');
