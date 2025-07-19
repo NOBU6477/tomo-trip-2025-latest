@@ -20,9 +20,15 @@ class PaginationGuideSystem {
   init() {
     this.loadAllGuides();
     this.setupUI();
-    this.displayGuidesPage();
     this.setupFilters();
+    this.displayGuidesPage();
     this.updateCounter();
+    
+    // グローバル関数として公開（リセット機能用）
+    window.resetFilters = () => this.resetFilters();
+    window.searchGuides = () => this.applyFilters();
+    
+    console.log(`✅ ページングシステム初期化完了: ${this.allGuides.length}人のガイドを読み込み`);
   }
 
   loadAllGuides() {
@@ -93,7 +99,10 @@ class PaginationGuideSystem {
 
   displayGuidesPage() {
     const container = document.getElementById('guide-cards-container');
-    if (!container) return;
+    if (!container) {
+      console.error('❌ guide-cards-container が見つかりません');
+      return;
+    }
 
     // 現在のページで表示するガイドを計算
     const startIndex = this.currentPage * this.guidesPerPage;
@@ -101,27 +110,37 @@ class PaginationGuideSystem {
     const guidesToShow = this.filteredGuides.slice(startIndex, endIndex);
 
     console.log(`📄 ページ${this.currentPage + 1}表示: ${startIndex + 1}-${Math.min(endIndex, this.filteredGuides.length)}/${this.filteredGuides.length}`);
+    console.log(`📊 表示予定ガイド数: ${guidesToShow.length}`);
 
     // 初回表示時はクリア、追加表示時は追記
     if (this.currentPage === 0) {
       container.innerHTML = '';
       this.displayedGuides = [];
+      console.log('🗑️ コンテナをクリア');
     }
 
     // ガイドカードを生成して表示
-    guidesToShow.forEach((guide, index) => {
-      if (!this.displayedGuides.find(g => g.id === guide.id)) {
-        const guideCard = this.createGuideCard(guide);
-        container.appendChild(guideCard);
-        this.displayedGuides.push(guide);
-      }
-    });
+    if (guidesToShow.length === 0) {
+      console.warn('⚠️ 表示するガイドがありません');
+      container.innerHTML = '<div class="col-12 text-center py-5"><h4 class="text-muted">該当するガイドが見つかりませんでした</h4></div>';
+    } else {
+      guidesToShow.forEach((guide, index) => {
+        if (!this.displayedGuides.find(g => g.id === guide.id)) {
+          const guideCard = this.createGuideCard(guide);
+          container.appendChild(guideCard);
+          this.displayedGuides.push(guide);
+          console.log(`✅ ガイドカード追加: ${guide.name}`);
+        }
+      });
+    }
 
     // もっと見るボタンの表示/非表示
     this.updateLoadMoreButton();
     
     // カウンター更新
     this.updateCounter();
+    
+    console.log(`📈 最終表示状態: ${this.displayedGuides.length}枚のカード表示中`);
   }
 
   createGuideCard(guide) {
@@ -384,9 +403,17 @@ class PaginationGuideSystem {
     const totalGuides = this.filteredGuides.length;
     const displayedCount = this.displayedGuides.length;
     
-    // カウンター要素を更新
-    const counterSelectors = ['.counter-badge', '#guides-count', '#guide-counter'];
+    // カウンター要素を更新（より多くのセレクターを試行）
+    const counterSelectors = [
+      '.counter-badge', 
+      '#guides-count', 
+      '#guide-counter',
+      '.guide-counter',
+      '.text-primary.fw-bold.fs-5',
+      '#guides .text-primary.fw-bold.fs-5'
+    ];
     
+    let counterUpdated = false;
     counterSelectors.forEach(selector => {
       const elements = document.querySelectorAll(selector);
       elements.forEach(element => {
@@ -395,10 +422,18 @@ class PaginationGuideSystem {
         } else {
           element.innerHTML = `<i class="bi bi-people-fill me-2"></i>${totalGuides}人のガイドが見つかりました（${displayedCount}人表示中）`;
         }
+        counterUpdated = true;
       });
     });
 
-    console.log(`📊 カウンター更新: ${totalGuides}人中${displayedCount}人表示`);
+    // 核修正システムも呼び出し
+    if (window.nuclearCounterFix) {
+      setTimeout(() => {
+        window.nuclearCounterFix();
+      }, 100);
+    }
+
+    console.log(`📊 カウンター更新: ${totalGuides}人中${displayedCount}人表示 (更新${counterUpdated ? '成功' : '失敗'})`);
   }
 
   // 新しいガイドを登録する
@@ -439,12 +474,35 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('⚠️ 既存の統一ガイドシステムを新しいページングシステムに移行');
   }
   
+  // より早く初期化して確実に動作させる
   setTimeout(() => {
     paginationGuideSystem = new PaginationGuideSystem();
     paginationGuideSystem.init();
     
     // グローバルアクセス用
     window.paginationGuideSystem = paginationGuideSystem;
+    
+    // 初期表示の強制実行
+    setTimeout(() => {
+      if (paginationGuideSystem.allGuides.length === 0) {
+        console.error('❌ ガイドデータが読み込まれていません - 再読み込み実行');
+        paginationGuideSystem.loadAllGuides();
+        paginationGuideSystem.displayGuidesPage();
+        paginationGuideSystem.updateCounter();
+      }
+    }, 500);
+  }, 500);
+});
+
+// より確実な初期化のため、window.onloadでも実行
+window.addEventListener('load', function() {
+  setTimeout(() => {
+    if (!window.paginationGuideSystem || !window.paginationGuideSystem.allGuides || window.paginationGuideSystem.allGuides.length === 0) {
+      console.log('🔄 window.onload でページングシステムを再初期化');
+      paginationGuideSystem = new PaginationGuideSystem();
+      paginationGuideSystem.init();
+      window.paginationGuideSystem = paginationGuideSystem;
+    }
   }, 1000);
 });
 
