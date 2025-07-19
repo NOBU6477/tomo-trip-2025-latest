@@ -378,15 +378,42 @@ class PaginationGuideSystem {
   }
 
   resetFilters() {
-    // すべてのフィルターをリセット
-    const filters = ['location-filter', 'language-filter', 'price-filter', 'custom-keywords'];
-    filters.forEach(id => {
-      const element = document.getElementById(id);
-      if (element) element.value = '';
-    });
+    console.log('🔄 フィルターリセット開始');
+    
+    // すべてのフィルターを個別に詳細リセット
+    const locationFilter = document.getElementById('location-filter');
+    const languageFilter = document.getElementById('language-filter');
+    const priceFilter = document.getElementById('price-filter');
+    const customKeywords = document.getElementById('custom-keywords');
+    
+    if (locationFilter) {
+      locationFilter.selectedIndex = 0;
+      locationFilter.value = '';
+      console.log('📍 地域フィルターリセット');
+    }
+    
+    if (languageFilter) {
+      languageFilter.selectedIndex = 0;
+      languageFilter.value = '';
+      console.log('🌐 言語フィルターリセット');
+    }
+    
+    if (priceFilter) {
+      priceFilter.selectedIndex = 0;
+      priceFilter.value = '';
+      console.log('💰 料金フィルターリセット:', priceFilter.value);
+    }
+    
+    if (customKeywords) {
+      customKeywords.value = '';
+      console.log('🔤 カスタムキーワードリセット');
+    }
 
-    document.querySelectorAll('input[name="keywords"]').forEach(cb => {
+    // キーワードチェックボックスをリセット
+    const keywordCheckboxes = document.querySelectorAll('input[name="keywords"]');
+    keywordCheckboxes.forEach((cb, index) => {
       cb.checked = false;
+      console.log(`☑️ キーワードチェックボックス ${index} リセット`);
     });
 
     // フィルターリセット後は元の順序で表示
@@ -395,6 +422,16 @@ class PaginationGuideSystem {
     this.currentPage = 0;
     this.displayedGuides = [];
     this.displayGuidesPage();
+    this.updateCounter();
+
+    // リセット完了確認
+    setTimeout(() => {
+      const priceFilterCheck = document.getElementById('price-filter');
+      if (priceFilterCheck) {
+        console.log('🔍 リセット後の料金フィルター値:', priceFilterCheck.value);
+        console.log('🔍 リセット後の料金フィルター選択インデックス:', priceFilterCheck.selectedIndex);
+      }
+    }, 100);
 
     console.log('🔄 フィルターリセット完了');
   }
