@@ -101,6 +101,48 @@ function forcePaginationReconstruction() {
         fee: 7500, rating: 4.8,
         description: "福岡の屋台文化と美味しいものをご紹介します。",
         profileImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face"
+      },
+      {
+        id: 7, name: "中村 雄一", location: "広島",
+        languages: ["日本語", "英語"], specialties: ["歴史散策", "平和学習"],
+        fee: 8500, rating: 4.7,
+        description: "広島の歴史と平和について深く学べるツアーをご提供します。",
+        profileImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
+      },
+      {
+        id: 8, name: "小林 桜", location: "仙台",
+        languages: ["日本語", "英語", "中国語"], specialties: ["自然体験", "温泉"],
+        fee: 9500, rating: 4.9,
+        description: "東北の美しい自然と温泉文化をご案内します。",
+        profileImage: "https://images.unsplash.com/photo-1494790108755-2616b42fc568?w=150&h=150&fit=crop&crop=face"
+      },
+      {
+        id: 9, name: "石井 健太", location: "札幌",
+        languages: ["日本語", "英語"], specialties: ["グルメツアー", "スキー"],
+        fee: 10000, rating: 4.6,
+        description: "北海道の新鮮な海産物とウィンタースポーツをご紹介します。",
+        profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
+      },
+      {
+        id: 10, name: "森田 愛子", location: "沖縄",
+        languages: ["日本語", "英語"], specialties: ["マリンスポーツ", "文化体験"],
+        fee: 8800, rating: 4.8,
+        description: "沖縄の美しい海と独特の文化をお楽しみいただけます。",
+        profileImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face"
+      },
+      {
+        id: 11, name: "橋本 直樹", location: "金沢",
+        languages: ["日本語", "英語"], specialties: ["工芸体験", "歴史散策"],
+        fee: 9200, rating: 4.7,
+        description: "金沢の伝統工芸と美しい街並みをご案内します。",
+        profileImage: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face"
+      },
+      {
+        id: 12, name: "松本 香織", location: "奈良",
+        languages: ["日本語", "英語", "韓国語"], specialties: ["歴史散策", "寺院巡り"],
+        fee: 7800, rating: 4.5,
+        description: "古都奈良の歴史ある寺院と文化遺産をご紹介します。",
+        profileImage: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop&crop=face"
       }
     ];
     
