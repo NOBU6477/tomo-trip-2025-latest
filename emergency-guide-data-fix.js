@@ -325,7 +325,20 @@ class EmergencyPaginationSystem {
 
     this.displayedGuides = this.filteredGuides.slice(0, endIndex);
     
-    console.log(`🖼️ 緊急システム: ${guidesToShow.length}枚カード追加、合計${this.displayedGuides.length}枚表示`);
+    // 🔧 強制的に12枚制限を適用
+    if (this.currentPage === 0 && this.displayedGuides.length > 12) {
+      console.log(`🔧 初期表示を12枚に制限: ${this.displayedGuides.length} → 12`);
+      const allCards = container.querySelectorAll('.col-md-4, .guide-item');
+      allCards.forEach((card, index) => {
+        if (index >= 12) {
+          card.style.display = 'none';
+          console.log(`🔧 カード${index + 1}を非表示`);
+        }
+      });
+      this.displayedGuides = this.filteredGuides.slice(0, 12);
+    }
+    
+    console.log(`🖼️ 緊急システム: ${guidesToShow.length}枚カード追加、実際表示${Math.min(this.displayedGuides.length, 12)}枚`);
   }
 
   createGuideCard(guide, index) {
@@ -374,21 +387,23 @@ class EmergencyPaginationSystem {
   }
 
   updateCounter() {
-    const displayedCount = this.displayedGuides.length;
+    // 🔧 実際に表示されているカード数を正確に取得
+    const container = document.getElementById('guide-cards-container');
+    const visibleCards = container ? container.querySelectorAll('.col-md-4:not([style*="display: none"]), .guide-item:not([style*="display: none"])').length : 0;
     const totalCount = this.filteredGuides.length;
     
     let counterText;
     if (this.isFiltering) {
-      counterText = `${displayedCount}人のガイドが見つかりました（全${this.allGuides.length}人中）`;
+      counterText = `${visibleCards}人のガイドが見つかりました（全${this.allGuides.length}人中）`;
     } else {
-      if (displayedCount === totalCount) {
+      if (visibleCards === totalCount) {
         counterText = `${totalCount}人のガイドが見つかりました`;
       } else {
-        counterText = `${displayedCount}人のガイドを表示中（全${totalCount}人中）`;
+        counterText = `${visibleCards}人のガイドを表示中（全${totalCount}人中）`;
       }
     }
 
-    console.log(`📊 緊急カウンター更新: "${counterText}"`);
+    console.log(`📊 緊急カウンター更新: "${counterText}" (表示${visibleCards}枚/総数${totalCount})`);
 
     // カウンター要素を更新
     const counterSelectors = [
@@ -405,6 +420,12 @@ class EmergencyPaginationSystem {
         element.innerHTML = `<i class="bi bi-people-fill me-2"></i>${counterText}`;
       });
     });
+
+    // HTML内の#guide-count-numberも更新
+    const countNumber = document.getElementById('guide-count-number');
+    if (countNumber) {
+      countNumber.textContent = visibleCards.toString();
+    }
   }
 
   setupLoadMoreButton() {
@@ -435,9 +456,13 @@ class EmergencyPaginationSystem {
     const loadMoreBtn = document.getElementById('load-more-btn');
     if (!loadMoreBtn) return;
 
-    if (this.hasMoreGuides()) {
-      const remaining = this.filteredGuides.length - this.displayedGuides.length;
-      const nextBatch = Math.min(remaining, this.guidesPerPage);
+    // 🔧 実際に表示されているカード数を基準に計算
+    const container = document.getElementById('guide-cards-container');
+    const visibleCards = container ? container.querySelectorAll('.col-md-4:not([style*="display: none"]), .guide-item:not([style*="display: none"])').length : 0;
+    const totalCards = container ? container.querySelectorAll('.col-md-4, .guide-item').length : 0;
+    
+    if (visibleCards < totalCards || visibleCards < this.filteredGuides.length) {
+      const remaining = Math.max(totalCards - visibleCards, this.filteredGuides.length - visibleCards);
       
       loadMoreBtn.innerHTML = `
         <button class="btn btn-primary btn-lg load-more-button">
@@ -446,7 +471,7 @@ class EmergencyPaginationSystem {
       `;
       loadMoreBtn.style.display = 'block';
       
-      console.log(`🔘 もっと見るボタン表示: 残り${remaining}人`);
+      console.log(`🔘 もっと見るボタン表示: 表示${visibleCards}/${totalCards}枚, 残り${remaining}人`);
     } else {
       loadMoreBtn.style.display = 'none';
       console.log('🔘 もっと見るボタン非表示（全員表示済み）');
