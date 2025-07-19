@@ -444,12 +444,8 @@ class EmergencyPaginationSystem {
 
     this.updateLoadMoreButton();
     
-    // クリックイベントの設定
-    loadMoreBtn.addEventListener('click', () => {
-      this.loadMoreGuides();
-    });
-
-    console.log('🔘 緊急もっと見るボタン設定完了');
+    // 🔧 統一ボタンシステムに委譲（重複イベント防止）
+    console.log('🔘 緊急もっと見るボタン設定完了（統一システム使用）');
   }
 
   updateLoadMoreButton() {
@@ -465,7 +461,7 @@ class EmergencyPaginationSystem {
       const remaining = Math.max(totalCards - visibleCards, this.filteredGuides.length - visibleCards);
       
       loadMoreBtn.innerHTML = `
-        <button class="btn btn-primary btn-lg load-more-button">
+        <button class="btn btn-primary btn-lg load-more-button" onclick="window.handleUnifiedLoadMore()">
           もっと見る（残り${remaining}人）
         </button>
       `;
@@ -486,6 +482,13 @@ class EmergencyPaginationSystem {
   loadMoreGuides() {
     console.log('🔘 緊急もっと見るボタンクリック');
     
+    // 🔧 統一処理システムを使用
+    if (window.handleUnifiedLoadMore) {
+      window.handleUnifiedLoadMore();
+      return;
+    }
+    
+    // フォールバック処理
     if (this.hasMoreGuides()) {
       this.currentPage++;
       this.displayGuidesPage();
