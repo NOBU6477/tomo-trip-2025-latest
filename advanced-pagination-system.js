@@ -708,11 +708,27 @@ class AdvancedPaginationSystem {
   }
 }
 
-// システム初期化
+// AdvancedPaginationSystemクラスをグローバルに公開
+window.AdvancedPaginationSystem = AdvancedPaginationSystem;
+
+// システム初期化（条件付き）
 document.addEventListener('DOMContentLoaded', function() {
-  if (window.getDefaultGuides && window.getDefaultGuides().length > 0) {
+  console.log('🚀 高度ページネーションDOMContentLoaded');
+  
+  // データが利用可能で、まだ初期化されていない場合のみ初期化
+  if (window.getDefaultGuides && window.getDefaultGuides().length > 0 && !window.advancedPagination) {
+    console.log('🚀 高度ページネーション自動初期化');
     window.advancedPagination = new AdvancedPaginationSystem();
   }
 });
+
+// 即座に実行（DOMが既に読み込み済みの場合）
+if (document.readyState !== 'loading') {
+  console.log('🚀 高度ページネーション即座実行');
+  
+  if (window.getDefaultGuides && window.getDefaultGuides().length > 0 && !window.advancedPagination) {
+    window.advancedPagination = new AdvancedPaginationSystem();
+  }
+}
 
 console.log('✅ 高度ページネーションシステム読み込み完了');
