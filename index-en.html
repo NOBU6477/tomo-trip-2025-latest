@@ -3,50 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *;">
-  <title>TomoTrip - Local Guide Matching Platform</title>
-  <meta name="description" content="Connect with local Japanese guides for authentic travel experiences. Professional guide services with verified local experts.">
-  <meta name="keywords" content="Japan travel, local guides, tourism, cultural experience, travel guide">
+  <title>TomoTrip - Connect with Local Guides</title>
   
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-  
-  <!-- 強制スクロール有効化CSS -->
-  <style id="force-scroll-css">
-    /* 全要素のoverflow:hiddenを強制的に無効化 */
-    * {
-      overflow: visible !important;
-    }
-    
-    html, body {
-      overflow: auto !important;
-      overflow-y: auto !important;
-      overflow-x: hidden !important;
-      height: auto !important;
-      max-height: none !important;
-      position: static !important;
-      padding: 0 !important;
-      margin: 0 auto !important;
-      min-height: 100vh !important;
-    }
-    
-    /* Bootstrapのモーダル関連クラスもスクロール有効化 */
-    .modal-open {
-      overflow: auto !important;
-      padding-right: 0 !important;
-    }
-    
-    /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
-    .guide-card,
-    .card,
-    .container,
-    .container-fluid,
-    section,
-    div {
-      overflow: visible !important;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
   
   <style>
     /* Hero Section */
@@ -57,287 +18,54 @@
       display: flex;
       align-items: center;
       position: relative;
-      overflow: hidden;
     }
     
-    .hero-section::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-      z-index: 1;
-    }
-    
-    .hero-content {
-      position: relative;
-      z-index: 2;
-    }
-    
-    /* Language Switcher - Center */
-    .language-switcher-center {
-      display: flex;
-      align-items: center;
-      gap: 0;
-    }
-    
-    /* Price Badge for Guide Cards */
-    .price-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #007bff;
-      color: white;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    
-    .lang-btn-jp, .lang-btn-en {
-      transition: all 0.3s ease;
-      font-size: 13px;
-      min-width: 100px;
-    }
-    
-    .lang-btn-jp:hover {
-      background: linear-gradient(135deg, #ff5252, #ff7979) !important;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(255,107,107,0.4) !important;
-    }
-    
-    .lang-btn-en:hover {
-      background: linear-gradient(135deg, #2196f3, #4fc3f7) !important;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 15px rgba(66,135,245,0.4) !important;
-    }
-    
-    @media (max-width: 768px) {
-      .language-switcher-center {
-        margin: 0.5rem 0;
-      }
-      .lang-btn-jp, .lang-btn-en {
-        min-width: 80px;
-        font-size: 12px;
-        padding: 6px 15px !important;
-      }
-    }
-    
-    /* Guide Cards */
     .guide-card {
-      border: none;
-      border-radius: 15px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s;
+      height: 100%;
     }
     
     .guide-card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
     }
     
-    .guide-card img {
-      height: 200px;
-      object-fit: cover;
-    }
-    
-    .price-badge {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(66, 135, 245, 0.9);
-      color: white;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 0.9em;
-    }
-    
-    /* Navigation */
-    .navbar-brand {
-      font-weight: bold;
-      color: white !important;
-    }
-    
-    /* Counter Badge */
-    .counter-badge {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 15px 30px;
-      border-radius: 50px;
-      font-size: 1.1em;
-      font-weight: 600;
-      margin: 2rem auto;
-      display: inline-block;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-    }
-    
-    /* Benefits Section */
-    .benefit-card {
-      background: white;
-      border-radius: 15px;
-      padding: 2rem;
-      height: 100%;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-      transition: all 0.3s ease;
-    }
-    
-    .benefit-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    }
-    
-    .benefit-icon {
-      width: 60px;
-      height: 60px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    
-    /* How to Use Section */
-    .step-number {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 0 auto 1rem;
-    }
-    
-    /* Footer */
-    .footer {
-      background: #2c3e50;
-      color: white;
-      padding: 3rem 0 1rem;
-    }
-    
-    /* Modal styles */
-    .section-title {
-      color: #333;
-      margin-bottom: 1rem;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid #667eea;
-    }
-    
-    .photo-upload-container {
-      border: 2px dashed #ddd;
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-      transition: border-color 0.3s ease;
-    }
-    
-    .photo-upload-container:hover {
-      border-color: #667eea;
-    }
-    
-    .photo-preview {
-      min-height: 150px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .preview-image {
-      max-width: 100%;
-      max-height: 200px;
-      border-radius: 8px;
-    }
-    
-    .upload-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .form-check-group {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      gap: 10px;
-    }
-    
-    /* Footer styles */
-    .footer {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 3rem 0 1rem;
-      margin-top: 5rem;
-    }
-    
-    .footer h5 {
-      color: white;
-      margin-bottom: 1rem;
-    }
-    
-    .footer a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    
-    .footer a:hover {
-      color: white;
-    }
-
-    /* Sponsor Advertisement Banner - Right to Left Scroll */
+    /* Sponsor Banner */
     .sponsor-banner {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 15px 0;
+      background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+      border-bottom: 2px solid #dee2e6;
+      padding: 10px 0;
       overflow: hidden;
-      position: relative;
-      white-space: nowrap;
-      border-bottom: 3px solid #4f46e5;
     }
 
     .sponsor-scroll {
-      display: inline-block;
+      display: flex;
       animation: scrollRight 30s linear infinite;
       white-space: nowrap;
     }
 
     .sponsor-item {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.95);
-      margin: 0 20px;
-      padding: 8px 20px;
-      border-radius: 25px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-      vertical-align: middle;
-    }
-
-    .sponsor-item:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+      display: inline-flex;
+      align-items: center;
+      margin-right: 40px;
+      padding: 8px 15px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      min-width: 200px;
     }
 
     .sponsor-logo {
+      width: 30px;
       height: 30px;
-      width: auto;
+      border-radius: 50%;
       margin-right: 10px;
-      vertical-align: middle;
+      object-fit: cover;
     }
 
     .sponsor-text {
       color: #333;
       font-weight: 600;
       font-size: 14px;
-      vertical-align: middle;
     }
 
     .sponsor-offer {
@@ -351,101 +79,19 @@
     }
 
     @keyframes scrollRight {
-      0% {
-        transform: translateX(100%);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-
-
-
-
-    @keyframes iconBounce {
-      0%, 100% { transform: rotate(15deg) scale(1.15); }
-      50% { transform: rotate(15deg) scale(1.25); }
-    }
-
-    .sponsor-mini-btn span {
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      font-family: 'Nunito', 'Quicksand', 'Comic Sans MS', cursive, -apple-system, BlinkMacSystemFont, sans-serif;
-      transition: all 0.3s ease;
-    }
-
-    .sponsor-mini-btn:hover span {
-      transform: translateX(3px);
-      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-    }
-
-    /* Shine Effect */
-    .sponsor-mini-btn::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, 
-        transparent, 
-        rgba(255, 255, 255, 0.6), 
-        rgba(255, 255, 255, 0.8),
-        rgba(255, 255, 255, 0.6),
-        transparent);
-      transition: left 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: skewX(-25deg);
-    }
-
-    .sponsor-mini-btn:hover::before {
-      left: 100%;
-    }
-
-    /* Click Feedback */
-    .sponsor-mini-btn:active {
-      transform: translateY(-3px) scale(1.03);
-      transition: all 0.1s ease;
-    }
-
-    /* Animation Pause on Hover */
-    .sponsor-banner:hover .sponsor-scroll {
-      animation-play-state: paused;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hero-section {
-        min-height: 50vh;
-      }
-      
-      .language-switcher {
-        position: relative;
-        top: auto;
-        right: auto;
-        margin: 1rem auto;
-        display: flex;
-        justify-content: center;
-      }
-      
-      .form-check-group {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
   </style>
 </head>
+
 <body>
-  
-
-
-
   <!-- Navigation -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
     <div class="container">
-      <!-- ナビゲーションバー ロゴ -->
-      <a class="navbar-brand d-flex align-items-center" href="/">
-        <img src="TomoTripロゴ.png" alt="TomoTrip ロゴ" style="height: 60px; width: auto; border-radius: 15px;" />
+      <a class="navbar-brand fw-bold" href="/">
+        <img src="TomoTripロゴ.png" alt="TomoTrip" style="height: 40px; width: auto; margin-right: 10px;">
+        TomoTrip
       </a>
       
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -453,56 +99,26 @@
       </button>
       
       <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="#top">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#guides">Find Guides</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#benefits">Benefits</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#how-to-use">How to Use</a>
-          </li>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#guides">Guides</a></li>
+          <li class="nav-item"><a class="nav-link" href="#benefits">Benefits</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
         </ul>
         
-        <!-- 言語切り替えボタン - 中央配置（日本語サイトと同じデザイン） -->
-        <div class="d-flex justify-content-center flex-grow-1">
-          <div class="language-switcher-center">
-            <button class="btn lang-btn-jp" onclick="window.location.href='index.html'" style="
-              background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-              color: white;
-              border: none;
-              border-radius: 25px 0 0 25px;
-              padding: 8px 20px;
-              font-weight: bold;
-              box-shadow: 0 2px 10px rgba(255,107,107,0.3);
-              transition: all 0.3s ease;
-            ">
+        <!-- Language Switcher -->
+        <div class="ms-3">
+          <div class="btn-group" role="group">
+            <button class="btn lang-btn-jp" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border: none; border-radius: 25px 0 0 25px; padding: 8px 20px; font-weight: bold;">
               🇯🇵 日本語
             </button>
-            <button class="btn lang-btn-en active" style="
-              background: linear-gradient(135deg, #4287f5, #64a8ff);
-              color: white;
-              border: none;
-              border-radius: 0 25px 25px 0;
-              padding: 8px 20px;
-              font-weight: bold;
-              box-shadow: 0 2px 10px rgba(66,135,245,0.3);
-              margin-left: -1px;
-              transition: all 0.3s ease;
-              transform: scale(1.05);
-              opacity: 1;
-            ">
+            <button class="btn lang-btn-en active" style="background: linear-gradient(135deg, #4287f5, #64a8ff); color: white; border: none; border-radius: 0 25px 25px 0; padding: 8px 20px; font-weight: bold; transform: scale(1.05);">
               🇺🇸 English
             </button>
           </div>
         </div>
         
-        <!-- ログイン・新規登録ボタン -->
-        <div id="navbar-user-area">
+        <!-- Login/Register Buttons -->
+        <div id="navbar-user-area" class="ms-3">
           <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
           <button class="btn btn-light" onclick="showRegisterOptions()">Sign Up</button>
         </div>
@@ -511,42 +127,11 @@
   </nav>
 
   <!-- Hero Section -->
-  <section id="top" class="hero-section text-center text-white py-5" style="
-    background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
-                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop') center/cover;
-    position: relative; 
-    min-height: 60vh;
-  ">
-    <!-- 装飾要素 -->
-    <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.3;">
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="position: absolute; width: 300px; height: 300px; top: -50px; left: -50px;">
-        <path fill="#FFFFFF" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.5C87.4,-31.9,90.2,-15.9,88.1,-1.2C86,13.5,79.1,27,70.8,39.4C62.5,51.8,52.7,63.1,40.4,70.4C28.1,77.8,14.1,81.1,-0.3,81.6C-14.7,82.1,-29.3,79.9,-41,72.5C-52.6,65.2,-61.3,52.8,-68.9,39.7C-76.6,26.6,-83.3,13.3,-84.7,-0.8C-86,-14.9,-82,-29.9,-73.6,-41.5C-65.2,-53.1,-52.5,-61.4,-39.3,-68.7C-26.1,-76,-13.1,-82.3,1.1,-84.1C15.2,-85.8,30.5,-83.7,44.7,-76.4Z" transform="translate(100 100)" />
-      </svg>
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="position: absolute; width: 400px; height: 400px; bottom: -150px; right: -100px;">
-        <path fill="#FFFFFF" d="M34.6,-59.1C43.5,-53.8,48.7,-41.8,55.8,-30.2C62.8,-18.6,71.7,-7.3,73,5.1C74.4,17.6,68.3,31.2,58.5,40.1C48.7,48.9,35.3,52.9,22.7,56.7C10.2,60.5,-1.5,63.9,-14.6,63.8C-27.8,63.7,-42.4,60,-50.9,50.7C-59.4,41.3,-61.7,26.3,-65.6,11.3C-69.4,-3.7,-74.7,-18.6,-71.1,-31C-67.5,-43.3,-55,-53,-41.7,-57.8C-28.4,-62.5,-14.2,-62.3,-0.6,-61.3C13,-60.3,25.9,-58.3,34.6,-59.1Z" transform="translate(100 100)" />
-      </svg>
-    </div>
-
-    <!-- TomoTrip Logo - 日本語サイトと同じ位置・デザイン -->
+  <section id="top" class="hero-section text-center text-white py-5">
+    <!-- TomoTrip Logo -->
     <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
-      <div style="
-        width: 140px;
-        height: 140px;
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-        backdrop-filter: blur(10px);
-        border: 4px solid rgba(255, 255, 255, 0.3);
-      ">
-        <img src="TomoTripロゴ.png" alt="TomoTrip" style="
-          width: 130px;
-          height: 130px;
-          object-fit: cover;
-          border-radius: 10px;
-        ">
+      <div style="width: 140px; height: 140px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px); border: 4px solid rgba(255, 255, 255, 0.3);">
+        <img src="TomoTripロゴ.png" alt="TomoTrip" style="width: 130px; height: 130px; object-fit: cover; border-radius: 10px;">
       </div>
     </div>
     
@@ -556,8 +141,6 @@
       <div class="position-relative">
         <a href="#guides" class="btn btn-light btn-lg">Find a Guide</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
-        
-
       </div>
     </div>
   </section>
@@ -566,50 +149,37 @@
   <div class="sponsor-banner">
     <div class="sponsor-scroll">
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="Beachside Restaurant" class="sponsor-logo" onerror="this.style.display='none'">
+        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="Beachside Restaurant" class="sponsor-logo">
         <span class="sponsor-text">Beachside Restaurant</span>
         <span class="sponsor-offer">20% OFF</span>
       </div>
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="Yamada Hot Springs Hotel" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">Yamada Hot Springs Hotel</span>
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="Mountain Hotel" class="sponsor-logo">
+        <span class="sponsor-text">Mountain Hotel</span>
         <span class="sponsor-offer">Special Price</span>
       </div>
       <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="Sakura Tour Bus" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">Sakura Tour Bus</span>
+        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="Tour Bus" class="sponsor-logo">
+        <span class="sponsor-text">Tour Bus</span>
         <span class="sponsor-offer">Free Pickup</span>
-      </div>
-      <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=100&h=60&fit=crop" alt="Traditional Craft Center" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">Traditional Craft Center</span>
-        <span class="sponsor-offer">Experience Discount</span>
-      </div>
-      <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1543083115-638c32cd3d58?w=100&h=60&fit=crop" alt="Local Specialty Store" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">Local Specialty Store</span>
-        <span class="sponsor-offer">Souvenir 10% OFF</span>
-      </div>
-      <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=100&h=60&fit=crop" alt="カフェ桜" class="sponsor-logo" onerror="this.style.display='none'">
-        <span class="sponsor-text">カフェ桜</span>
-        <span class="sponsor-offer">ドリンク無料</span>
       </div>
     </div>
   </div>
 
-  <!-- Popular Guides Section -->
-  <section id="guides" class="py-5">
-    <div class="container">
+  <!-- Main Content -->
+  <div class="container py-5">
+    <!-- Popular Guides -->
+    <section id="guides" class="mb-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="position-relative">
-          <button type="button" class="btn btn-sm btn-outline-info me-3" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en" style="border-radius: 20px;">
+          <button type="button" class="btn btn-sm btn-outline-info me-3" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="border-radius: 20px;">
             <i class="bi bi-question-circle me-1"></i>Filter Guide
           </button>
         </div>
         <h2 class="mb-0 flex-grow-1 text-center">Popular Guides</h2>
-        <div style="width: 140px;"></div> <!-- Spacer -->
+        <div style="width: 140px;"></div>
       </div>
+      
       <div class="mb-4">
         <div class="text-center mb-3">
           <div id="guides-count" class="guide-counter text-primary fw-bold fs-5 mb-3">
@@ -619,1022 +189,35 @@
             <i class="bi bi-funnel"></i> Filter Guides
           </button>
         </div>
-      
-      <div class="row justify-content-center">
-        <div class="col-md-10 col-lg-8">
-          <div class="card shadow-sm d-none" id="filter-card">
+      </div>
+
+      <!-- Guide Cards Container -->
+      <div class="row" id="guide-cards-container">
+        <!-- Guide cards will be loaded here -->
+        <div class="col-md-6 mb-4">
+          <div class="card guide-card shadow-sm">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=250&fit=crop" class="card-img-top" alt="Tokyo Guide">
             <div class="card-body">
-              <h5 class="card-title mb-3">Filter Guides</h5>
-              <form id="guide-filter-form">
-                <div class="row g-3">
-                  <div class="col-md-4">
-                    <label for="location-filter" class="form-label">Location</label>
-                    <select class="form-select" id="prefecture-filter">
-                      <option value="">All</option>
-                      <optgroup label="Prefecture">
-                        <option value="Hokkaido">Hokkaido</option>
-                        <option value="Aomori">Aomori</option>
-                        <option value="Iwate">Iwate</option>
-                        <option value="Miyagi">Miyagi</option>
-                        <option value="Akita">Akita</option>
-                        <option value="Yamagata">Yamagata</option>
-                        <option value="Fukushima">Fukushima</option>
-                        <option value="Ibaraki">Ibaraki</option>
-                        <option value="Tochigi">Tochigi</option>
-                        <option value="Gunma">Gunma</option>
-                        <option value="Saitama">Saitama</option>
-                        <option value="Chiba">Chiba</option>
-                        <option value="Tokyo">Tokyo</option>
-                        <option value="Kanagawa">Kanagawa</option>
-                        <option value="Niigata">Niigata</option>
-                        <option value="Toyama">Toyama</option>
-                        <option value="Ishikawa">Ishikawa</option>
-                        <option value="Fukui">Fukui</option>
-                        <option value="Yamanashi">Yamanashi</option>
-                        <option value="Nagano">Nagano</option>
-                        <option value="Gifu">Gifu</option>
-                        <option value="Shizuoka">Shizuoka</option>
-                        <option value="Aichi">Aichi</option>
-                        <option value="Mie">Mie</option>
-                        <option value="Shiga">Shiga</option>
-                        <option value="Kyoto">Kyoto</option>
-                        <option value="Osaka">Osaka</option>
-                        <option value="Hyogo">Hyogo</option>
-                        <option value="Nara">Nara</option>
-                        <option value="Wakayama">Wakayama</option>
-                        <option value="Tottori">Tottori</option>
-                        <option value="Shimane">Shimane</option>
-                        <option value="Okayama">Okayama</option>
-                        <option value="Hiroshima">Hiroshima</option>
-                        <option value="Yamaguchi">Yamaguchi</option>
-                        <option value="Tokushima">Tokushima</option>
-                        <option value="Kagawa">Kagawa</option>
-                        <option value="Ehime">Ehime</option>
-                        <option value="Kochi">Kochi</option>
-                        <option value="Fukuoka">Fukuoka</option>
-                        <option value="Saga">Saga</option>
-                        <option value="Nagasaki">Nagasaki</option>
-                        <option value="Kumamoto">Kumamoto</option>
-                        <option value="Oita">Oita</option>
-                        <option value="Miyazaki">Miyazaki</option>
-                        <option value="Kagoshima">Kagoshima</option>
-                        <option value="Okinawa">Okinawa</option>
-                      </optgroup>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <label for="language-filter" class="form-label">Language</label>
-                    <select class="form-select" id="language-filter">
-                      <option value="">All</option>
-                      <option value="Japanese">Japanese</option>
-                      <option value="English">English</option>
-                      <option value="Chinese">Chinese</option>
-                      <option value="Korean">Korean</option>
-                      <option value="French">French</option>
-                      <option value="Spanish">Spanish</option>
-                      <option value="Portuguese">Portuguese</option>
-                      <option value="Thai">Thai</option>
-                      <option value="Vietnamese">Vietnamese</option>
-                      <option value="German">German</option>
-                      <option value="Italian">Italian</option>
-                      <option value="Russian">Russian</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <label for="fee-filter" class="form-label">Fee (¥/session)</label>
-                    <select class="form-select" id="fee-filter">
-                      <option value="">All</option>
-                      <option value="6000-10000">¥6,000 - ¥10,000</option>
-                      <option value="10000-15000">¥10,000 - ¥15,000</option>
-                      <option value="15000-20000">¥15,000 - ¥20,000</option>
-                      <option value="20000+">¥20,000+</option>
-                    </select>
-                  </div>
-                  <div class="col-12">
-                    <label class="form-label">Keywords</label>
-                    <div class="d-flex flex-wrap" id="keyword-filter-group">
-                      <div class="form-check me-3 mb-2">
-                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Night Tour" id="keyword-night">
-                        <label class="form-check-label" for="keyword-night">Night Tour</label>
-                      </div>
-                      <div class="form-check me-3 mb-2">
-                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Gourmet" id="keyword-food">
-                        <label class="form-check-label" for="keyword-food">Gourmet</label>
-                      </div>
-                      <div class="form-check me-3 mb-2">
-                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Photo Spots" id="keyword-photo">
-                        <label class="form-check-label" for="keyword-photo">Photo Spots</label>
-                      </div>
-                      <div class="form-check me-3 mb-2">
-                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Cuisine" id="keyword-cooking">
-                        <label class="form-check-label" for="keyword-cooking">Cuisine</label>
-                      </div>
-                      <div class="form-check me-3 mb-2">
-                        <input class="form-check-input keyword-checkbox" type="checkbox" value="Activities" id="keyword-activity">
-                        <label class="form-check-label" for="keyword-activity">Activities</label>
-                      </div>
-                    </div>
-                    <input type="text" class="form-control mt-2" id="keyword-filter-custom" placeholder="Enter other keywords (comma-separated for multiple keywords)">
-                    <small class="text-muted mt-1 d-block">
-                      <i class="bi bi-info-circle"></i> You can specify keywords using the checkboxes above or this input field. For multiple keywords, separate them with commas. Example: "hot springs, hiking, temples"
-                    </small>
-                  </div>
-                </div>
-                
-                <div class="row mt-3">
-                  <div class="col-12 text-end">
-                    <button type="reset" class="btn btn-secondary me-2" id="reset-filters">Reset</button>
-                    <button type="button" class="btn btn-primary" id="apply-filters">
-                      <i class="bi bi-search"></i> Search
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-
-      
-      <!-- No Results Message -->
-      <div id="no-results-message" class="alert alert-warning text-center my-4 d-none">No guides found matching your criteria. Please adjust your search filters.</div>
-      
-      <!-- Guide Cards -->
-      <div class="row g-4" id="guide-cards-container">
-      </div>
-      
-      <!-- Load More Button -->
-      <div class="text-center mt-4">
-        <button class="btn btn-outline-primary" id="load-more-guides">
-          <i class="bi bi-arrow-down-circle me-2"></i>Show More
-        </button>
-      </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- How to Use Section -->
-  <section id="how-to-use" class="py-5 bg-light">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="display-5 fw-bold">How to Use</h2>
-        <p class="lead text-muted">Simple steps to connect with local guides</p>
-      </div>
-      
-      <div class="row g-4">
-        <div class="col-lg-4 text-center">
-          <div class="step-number">1</div>
-          <h4>Account Registration</h4>
-          <p class="text-muted">Complete registration with simple information entry and phone number verification</p>
-        </div>
-        <div class="col-lg-4 text-center">
-          <div class="step-number">2</div>
-          <h4>Find Guides</h4>
-          <p class="text-muted">Search for ideal guides by location, language, and expertise</p>
-        </div>
-        <div class="col-lg-4 text-center">
-          <div class="step-number">3</div>
-          <h4>Book and Enjoy</h4>
-          <p class="text-muted">Book for your preferred date and time, and enjoy special experiences</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Benefits Section -->
-  <section id="benefits" class="py-5">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="display-5 fw-bold">Benefits of Being a Guide</h2>
-        <p class="lead text-muted">Use your knowledge and experience to provide special experiences to travelers from around the world</p>
-      </div>
-      
-      <div class="row g-4">
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Your daily life becomes a tourism resource</h5>
-            <p class="text-muted">Share special places and experiences that only locals know, transforming everyday moments into irreplaceable travel memories.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Work efficiently using spare time</h5>
-            <p class="text-muted">Set your schedule at convenient times, earning income while balancing your main job or studies.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Meet new people from around the world</h5>
-            <p class="text-muted">Expand your international network and deepen cross-cultural understanding through interactions with travelers from various countries and cultures.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Utilize and improve language skills</h5>
-            <p class="text-muted">Gain practical opportunities to use foreign languages and naturally improve your communication skills.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Deepen love and pride for your hometown</h5>
-            <p class="text-muted">Promote local attractions to deepen your understanding and attachment to your own region.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Reliable support system</h5>
-            <p class="text-muted">Reliable support for booking management, payments, insurance, and other infrastructure needed for guide activities.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Build valuable experience and skills</h5>
-            <p class="text-muted">Gain experience in tourism, communication, and cultural exchange that enhances your personal and professional development.</p>
-          </div>
-        </div>
-        
-        <div class="col-lg-4 col-md-6">
-          <div class="benefit-card">
-            <div class="benefit-icon">
-              <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <h5>Contribute to local community development</h5>
-            <p class="text-muted">Support your local economy by introducing tourists to local businesses, restaurants, and cultural sites, helping your community thrive.</p>
-          </div>
-        </div>
-      </div>
-      
-      <div class="text-center mt-5">
-        <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#registerGuideModal">Register as Guide</button>
-      </div>
-    </div>
-  </section>
-
-
-
-
-
-  <!-- Filter Help Modal (English Version) -->
-  <div class="modal fade" id="filter-help-modal-en" tabindex="-1">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header bg-info text-white">
-          <h5 class="modal-title">
-            <i class="bi bi-question-circle-fill me-2"></i>Filter Features & New Toolbar User Guide
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          
-          <!-- New Feature Introduction -->
-          <div class="alert alert-primary d-flex align-items-start mb-4">
-            <i class="bi bi-stars fs-4 me-3"></i>
-            <div>
-              <h6 class="alert-heading">✨ New Feature: Advanced Pagination System Added</h6>
-              <p class="mb-1">The toolbar displayed in the bottom right is a new feature for efficiently comparing and managing guides.</p>
-              <p class="mb-0 small text-muted">We've evolved from the traditional "Load More" approach to a more user-friendly pagination system.</p>
-            </div>
-          </div>
-
-          <div class="row">
-            
-            <!-- Bookmark Feature -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-warning h-100">
-                <div class="card-header bg-warning text-dark d-flex align-items-center">
-                  <i class="bi bi-bookmark-star fs-5 me-2"></i>
-                  <h6 class="mb-0">Bookmark Feature</h6>
-                </div>
-                <div class="card-body">
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-warning text-dark me-2">1</span>
-                    <div>
-                      <strong>Click the star icon</strong> at the top-left of guide cards
-                      <br><small class="text-muted">Save interesting guides</small>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-warning text-dark me-2">2</span>
-                    <div>
-                      Saved cards display with a <strong class="text-warning">yellow border</strong>
-                      <br><small class="text-muted">Easily recognize bookmarked guides</small>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-start">
-                    <span class="badge bg-warning text-dark me-2">3</span>
-                    <div>
-                      View all saved guides via "Bookmarks" in the toolbar
-                      <br><small class="text-muted">Check your saved guides together</small>
-                    </div>
-                  </div>
-                </div>
+              <h5 class="card-title">Yuki Tanaka</h5>
+              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Tokyo, Shibuya</p>
+              <p class="card-text mb-3">I guide you to hidden gems in Tokyo. Specializing in gourmet food and photo spots.</p>
+              <div class="mb-3">
+                <span class="badge bg-light text-dark me-1">Japanese</span>
+                <span class="badge bg-light text-dark me-1">English</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-primary">¥6,000/session</span>
+                <button class="btn btn-primary btn-sm">View Details</button>
               </div>
             </div>
-
-            <!-- Compare Feature -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-success h-100">
-                <div class="card-header bg-success text-white d-flex align-items-center">
-                  <i class="bi bi-check2-square fs-5 me-2"></i>
-                  <h6 class="mb-0">Compare Feature (Max 3)</h6>
-                </div>
-                <div class="card-body">
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-success me-2">1</span>
-                    <div>
-                      <strong>Click the check icon</strong> at the top-left of guide cards
-                      <br><small class="text-muted">Select guides to compare</small>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-success me-2">2</span>
-                    <div>
-                      Selected cards display with a <strong class="text-success">green border</strong>
-                      <br><small class="text-muted">Up to 3 guides can be selected simultaneously</small>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-start">
-                    <span class="badge bg-success me-2">3</span>
-                    <div>
-                      Click "Compare" in the toolbar for detailed comparison
-                      <br><small class="text-muted">Compare prices, ratings, and skills side by side</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Keyboard Navigation -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-secondary h-100">
-                <div class="card-header bg-secondary text-white d-flex align-items-center">
-                  <i class="bi bi-keyboard fs-5 me-2"></i>
-                  <h6 class="mb-0">Keyboard Shortcuts</h6>
-                </div>
-                <div class="card-body">
-                  <div class="row text-center">
-                    <div class="col-6 mb-3">
-                      <div class="border rounded p-2">
-                        <div class="d-flex justify-content-center mb-1">
-                          <kbd class="me-1">←</kbd><kbd>→</kbd>
-                        </div>
-                        <small>Page navigation</small>
-                      </div>
-                    </div>
-                    <div class="col-6 mb-3">
-                      <div class="border rounded p-2">
-                        <div class="d-flex justify-content-center mb-1">
-                          <kbd>Home</kbd>
-                        </div>
-                        <small>First page</small>
-                      </div>
-                    </div>
-                    <div class="col-6 mb-3">
-                      <div class="border rounded p-2">
-                        <div class="d-flex justify-content-center mb-1">
-                          <kbd>End</kbd>
-                        </div>
-                        <small>Last page</small>
-                      </div>
-                    </div>
-                    <div class="col-6 mb-3">
-                      <div class="border rounded p-2">
-                        <small class="text-muted">Available anywhere<br>except input fields</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Other Features -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-primary h-100">
-                <div class="card-header bg-primary text-white d-flex align-items-center">
-                  <i class="bi bi-gear fs-5 me-2"></i>
-                  <h6 class="mb-0">Other Useful Features</h6>
-                </div>
-                <div class="card-body">
-                  <ul class="list-unstyled mb-0">
-                    <li class="mb-2">
-                      <i class="bi bi-skip-end me-2 text-primary"></i>
-                      <strong>Page Jump:</strong> Direct navigation via dropdown
-                    </li>
-                    <li class="mb-2">
-                      <i class="bi bi-sort-alpha-down me-2 text-primary"></i>
-                      <strong>Sort Options:</strong> By rating, price, or name
-                    </li>
-                    <li class="mb-2">
-                      <i class="bi bi-shuffle me-2 text-primary"></i>
-                      <strong>Random:</strong> Discover guides by chance
-                    </li>
-                    <li class="mb-0">
-                      <i class="bi bi-clock-history me-2 text-primary"></i>
-                      <strong>Browse History:</strong> Track viewed guides (blue border)
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
-            <!-- Usage Example -->
-            <div class="col-12 mb-4">
-              <div class="card border-success">
-                <div class="card-header bg-success text-white">
-                  <h6 class="mb-0">
-                    <i class="bi bi-lightbulb me-2"></i>Efficient Usage Example
-                  </h6>
-                </div>
-                <div class="card-body">
-                  <ol class="mb-3">
-                    <li class="mb-2">
-                      Set your preferred conditions using <strong>Filters</strong>
-                      <br><small class="text-muted">Filter by location, language, and price</small>
-                    </li>
-                    <li class="mb-2">
-                      <strong>Bookmark interesting guides</strong> using the star icon
-                      <br><small class="text-muted">Save candidates for later review</small>
-                    </li>
-                    <li class="mb-2">
-                      <strong>Select guides to compare</strong> using the check icon (max 3)
-                      <br><small class="text-muted">Prepare for detailed comparison</small>
-                    </li>
-                    <li class="mb-2">
-                      Use <kbd>←</kbd><kbd>→</kbd> keys to browse other pages
-                      <br><small class="text-muted">Efficiently navigate between pages</small>
-                    </li>
-                    <li class="mb-0">
-                      Make your final decision using the "Compare" button
-                      <br><small class="text-muted">Compare prices and ratings side by side</small>
-                    </li>
-                  </ol>
-                  
-                  <!-- Try it Now Buttons -->
-                  <div class="text-center">
-                    <div class="row">
-                      <div class="col-md-4 mb-2">
-                        <button class="btn btn-outline-warning w-100" onclick="window.beginnerGuide?.showFloatingToolbar()">
-                          <i class="bi bi-eye me-1"></i>
-                          Highlight Toolbar
-                        </button>
-                      </div>
-                      <div class="col-md-4 mb-2">
-                        <button class="btn btn-outline-success w-100" onclick="window.beginnerGuide?.highlightFeatures()">
-                          <i class="bi bi-cursor me-1"></i>
-                          Highlight Icons
-                        </button>
-                      </div>
-                      <div class="col-md-4 mb-2">
-                        <button class="btn btn-outline-info w-100" onclick="window.systemBridge?.showAdvancedFeatures()">
-                          <i class="bi bi-list-check me-1"></i>
-                          Show All Features
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Notes and FAQ -->
-            <div class="col-12">
-              <div class="alert alert-warning d-flex align-items-start">
-                <i class="bi bi-exclamation-triangle me-3"></i>
-                <div class="small">
-                  <strong>Notes & FAQ</strong>
-                  <ul class="mt-2 mb-0">
-                    <li>If the toolbar doesn't appear, please reload the page (F5)</li>
-                    <li>Compare feature is limited to maximum 3 guides</li>
-                    <li>Keyboard shortcuts don't work when input fields are focused</li>
-                    <li>On mobile devices, the toolbar position is adjusted to the bottom of the screen</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
-            <i class="bi bi-check-circle me-1"></i>Got it!
-          </button>
-        </div>
+        <!-- More guide cards... -->
       </div>
-    </div>
+    </section>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4">
-          <h5>TomoTrip</h5>
-          <p class="text-muted">Connecting travelers with authentic local experiences in Japan.</p>
-        </div>
-        <div class="col-lg-4">
-          <h5>Quick Links</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-muted">Find Guides</a></li>
-            <li><a href="#" class="text-muted">Become a Guide</a></li>
-            <li><a href="#" class="text-muted">How it Works</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-4">
-          <h5>Support</h5>
-          <ul class="list-unstyled">
-            <li><a href="#" class="text-muted">Help Center</a></li>
-            <li><a href="#" class="text-muted">Contact Us</a></li>
-            <li><a href="#" class="text-muted">Terms of Service</a></li>
-          </ul>
-        </div>
-      </div>
-      <hr class="my-4">
-      <div class="text-center text-muted">
-        <p>&copy; 2026 TomoTrip. All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Tourist Registration Modal -->
-  <div class="modal fade" id="registerTouristModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Register as Tourist</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="tourist-register-form">
-            <!-- Basic Information Section -->
-            <div class="border-bottom pb-3 mb-3">
-              <h4 class="section-title">Basic Information</h4>
-              <div class="mb-3">
-                <label for="tourist-name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="tourist-name" required>
-              </div>
-              <div class="mb-3">
-                <label for="tourist-email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                <input type="email" class="form-control" id="tourist-email" required>
-              </div>
-              <div class="mb-3">
-                <label for="tourist-password" class="form-label">Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="tourist-password" required>
-                <div class="form-text">At least 8 characters including letters and numbers</div>
-              </div>
-            </div>
-            
-            <!-- Phone Verification Section -->
-            <div class="border-bottom pb-3 mb-3">
-              <h4 class="section-title">Phone Verification</h4>
-              <div class="mb-3">
-                <label for="tourist-phone-number" class="form-label">Phone Number <span class="text-danger">*</span></label>
-                <div class="input-group">
-                  <span class="input-group-text">+81</span>
-                  <input type="tel" class="form-control" id="tourist-phone-number" placeholder="9012345678 (without leading 0)" required>
-                  <button type="button" class="btn btn-primary" id="tourist-send-code-btn">Send Code</button>
-                </div>
-                <div class="form-text">Enter without hyphens</div>
-              </div>
-              
-              <div class="mb-4" id="tourist-verification-code-container">
-                <label for="tourist-verification-code" class="form-label">Verification Code <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="tourist-verification-code" maxlength="6" placeholder="6-digit code sent via SMS">
-              </div>
-              
-              <div id="tourist-recaptcha-container" class="mb-3"></div>
-              <div id="tourist-phone-verified" class="alert alert-success d-none">Phone verification completed ✓</div>
-            </div>
-            
-            <!-- ID Document Section -->
-            <div class="border-bottom pb-3 mb-3">
-              <h4 class="section-title">Identity Verification</h4>
-              <div class="mb-3">
-                <label for="tourist-id-type" class="form-label">ID Document Type <span class="text-danger">*</span></label>
-                <select class="form-select" id="tourist-id-type" required>
-                  <option value="" selected disabled>Please select</option>
-                  <option value="passport">Passport</option>
-                  <option value="drivers_license">Driver's License</option>
-                  <option value="my_number">My Number Card</option>
-                </select>
-              </div>
-              
-              <!-- Document Photo Upload -->
-              <div class="mb-3">
-                <label for="tourist-id-photo" class="form-label">Document Photo <span class="text-danger">*</span></label>
-                <div class="photo-upload-container">
-                  <input type="file" class="form-control d-none" id="tourist-id-photo" accept="image/*">
-                  <div class="photo-preview" id="tourist-id-preview">
-                    <img id="tourist-id-preview-img" class="preview-image d-none" alt="Document preview">
-                    <div class="upload-placeholder">
-                      <i class="bi bi-camera-fill fs-1 text-muted"></i>
-                      <p class="text-muted mt-2">Upload document photo</p>
-                    </div>
-                  </div>
-                  <div class="photo-controls mt-2">
-                    <button type="button" class="btn btn-primary me-2" onclick="document.getElementById('tourist-id-photo').click()">
-                      <i class="bi bi-upload"></i> Upload File
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="tourist-camera-btn">
-                      <i class="bi bi-camera"></i> Take Photo
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Registration Button -->
-            <div class="text-center">
-              <button type="submit" class="btn btn-primary btn-lg">Complete Registration</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Guide Registration Modal -->
-  <div class="modal fade" id="registerGuideModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Register as Guide</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="guide-register-form">
-            <!-- Basic Information Section -->
-            <div class="border-bottom pb-3 mb-3">
-              <h4 class="section-title">Basic Information</h4>
-              <div class="mb-3">
-                <label for="guide-name" class="form-label">Full Name <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="guide-name" required>
-              </div>
-              <div class="mb-3">
-                <label for="guide-email" class="form-label">Email Address <span class="text-danger">*</span></label>
-                <input type="email" class="form-control" id="guide-email" required>
-              </div>
-              <div class="mb-3">
-                <label for="guide-password" class="form-label">Password <span class="text-danger">*</span></label>
-                <input type="password" class="form-control" id="guide-password" required>
-              </div>
-            </div>
-            
-            <!-- Guide Profile Section -->
-            <div class="border-bottom pb-3 mb-3">
-              <h4 class="section-title">Guide Profile</h4>
-              <div class="mb-3">
-                <label for="guide-location" class="form-label">Activity Area <span class="text-danger">*</span></label>
-                <select class="form-select" id="guide-location" required>
-                  <option value="" selected disabled>Select prefecture</option>
-                  <option value="hokkaido">Hokkaido</option>
-                  <option value="aomori">Aomori</option>
-                  <option value="iwate">Iwate</option>
-                  <option value="miyagi">Miyagi</option>
-                  <option value="akita">Akita</option>
-                  <option value="yamagata">Yamagata</option>
-                  <option value="fukushima">Fukushima</option>
-                  <option value="ibaraki">Ibaraki</option>
-                  <option value="tochigi">Tochigi</option>
-                  <option value="gunma">Gunma</option>
-                  <option value="saitama">Saitama</option>
-                  <option value="chiba">Chiba</option>
-                  <option value="tokyo">Tokyo</option>
-                  <option value="kanagawa">Kanagawa</option>
-                  <option value="niigata">Niigata</option>
-                  <option value="toyama">Toyama</option>
-                  <option value="ishikawa">Ishikawa</option>
-                  <option value="fukui">Fukui</option>
-                  <option value="yamanashi">Yamanashi</option>
-                  <option value="nagano">Nagano</option>
-                  <option value="gifu">Gifu</option>
-                  <option value="shizuoka">Shizuoka</option>
-                  <option value="aichi">Aichi</option>
-                  <option value="mie">Mie</option>
-                  <option value="shiga">Shiga</option>
-                  <option value="kyoto">Kyoto</option>
-                  <option value="osaka">Osaka</option>
-                  <option value="hyogo">Hyogo</option>
-                  <option value="nara">Nara</option>
-                  <option value="wakayama">Wakayama</option>
-                  <option value="tottori">Tottori</option>
-                  <option value="shimane">Shimane</option>
-                  <option value="okayama">Okayama</option>
-                  <option value="hiroshima">Hiroshima</option>
-                  <option value="yamaguchi">Yamaguchi</option>
-                  <option value="tokushima">Tokushima</option>
-                  <option value="kagawa">Kagawa</option>
-                  <option value="ehime">Ehime</option>
-                  <option value="kochi">Kochi</option>
-                  <option value="fukuoka">Fukuoka</option>
-                  <option value="saga">Saga</option>
-                  <option value="nagasaki">Nagasaki</option>
-                  <option value="kumamoto">Kumamoto</option>
-                  <option value="oita">Oita</option>
-                  <option value="miyazaki">Miyazaki</option>
-                  <option value="kagoshima">Kagoshima</option>
-                  <option value="okinawa">Okinawa</option>
-                </select>
-              </div>
-              
-              <div class="mb-3">
-                <label for="guide-languages" class="form-label">Languages <span class="text-danger">*</span></label>
-                <div class="form-check-group">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="japanese" id="lang-japanese">
-                    <label class="form-check-label" for="lang-japanese">Japanese</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="english" id="lang-english">
-                    <label class="form-check-label" for="lang-english">English</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="chinese" id="lang-chinese">
-                    <label class="form-check-label" for="lang-chinese">Chinese</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="korean" id="lang-korean">
-                    <label class="form-check-label" for="lang-korean">Korean</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="spanish" id="lang-spanish">
-                    <label class="form-check-label" for="lang-spanish">Spanish</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="french" id="lang-french">
-                    <label class="form-check-label" for="lang-french">French</label>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="mb-3">
-                <label for="guide-description" class="form-label">Self Introduction <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="guide-description" rows="4" placeholder="Tell visitors about your expertise, local knowledge, and what makes your tours special..." required></textarea>
-              </div>
-            </div>
-            
-            <!-- Registration Button -->
-            <div class="text-center">
-              <button type="submit" class="btn btn-success btn-lg">Complete Registration</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Login Modal -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Login</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="login-form">
-            <div class="mb-3">
-              <label for="login-email" class="form-label">Email Address</label>
-              <input type="email" class="form-control" id="login-email" required>
-            </div>
-            <div class="mb-3">
-              <label for="login-password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="login-password" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Login</button>
-          </form>
-          <div class="text-center mt-3">
-            <p class="mb-0">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerOptionsModal">Sign up here</a></p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Contact Modal -->
-  <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">お問い合わせ</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="contact-form">
-            <div class="mb-3">
-              <label for="contact-name" class="form-label">Name <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="contact-name" required>
-            </div>
-            
-            <div class="mb-3">
-              <label for="contact-email" class="form-label">Email Address <span class="text-danger">*</span></label>
-              <input type="email" class="form-control" id="contact-email" required>
-            </div>
-            
-            <div class="mb-3">
-              <label for="contact-subject" class="form-label">Subject <span class="text-danger">*</span></label>
-              <select class="form-select" id="contact-subject" required>
-                <option value="" selected disabled>Please select</option>
-                <option value="general">General Inquiry</option>
-                <option value="service">About Services</option>
-                <option value="support">Need Support</option>
-                <option value="feedback">Feedback & Suggestions</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            
-            <div class="mb-3">
-              <label for="contact-message" class="form-label">Message <span class="text-danger">*</span></label>
-              <textarea class="form-control" id="contact-message" rows="5" required></textarea>
-            </div>
-            
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">Send Message</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Back to Top Button -->
-  <button id="backToTopBtn" class="btn btn-primary back-to-top-btn" title="Back to Top">
-    <i class="bi bi-arrow-up"></i>
-  </button>
-
-  <style>
-    .back-to-top-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 1000;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      display: none;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      transition: all 0.3s ease;
-    }
-    
-    .back-to-top-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-    }
-    
-    .back-to-top-btn.show {
-      display: block;
-      animation: fadeInUp 0.3s ease;
-    }
-    
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
-
-  <!-- Fixed Right Side Buttons (English) -->
-  <style>
-    /* Fixed Right Side Buttons */
-    .sponsor-mini-buttons {
-      position: fixed;
-      top: 150px;
-      right: 20px;
-      z-index: 1000;
-    }
-    
-    .mini-button-container {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .mini-button {
-      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: bold;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      min-width: 160px;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .mini-button:hover {
-      background: linear-gradient(135deg, #ff5252, #ff7979);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
-      color: white;
-    }
-    
-    .fixed-guide-button {
-      position: fixed;
-      top: 280px;
-      right: 20px;
-      z-index: 1000;
-    }
-    
-    .guide-help-btn {
-      background: linear-gradient(135deg, #17a2b8, #20c997);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 12px 20px;
-      font-size: 14px;
-      font-weight: bold;
-      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      min-width: 200px;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .guide-help-btn:hover {
-      background: linear-gradient(135deg, #138496, #1e7e34);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
-      color: white;
-    }
-    
-    @media (max-width: 768px) {
-      .sponsor-mini-buttons,
-      .fixed-guide-button {
-        right: 10px;
-      }
-      
-      .mini-button,
-      .guide-help-btn {
-        min-width: 120px;
-        font-size: 12px;
-        padding: 10px 15px;
-      }
-    }
-  </style>
-  
-  <div class="sponsor-mini-buttons">
-    <div class="mini-button-container">
-      <button type="button" class="mini-button sponsor-register-btn" onclick="alert('Sponsor Registration feature coming soon!')">
-        <i class="bi bi-shop"></i>
-        <span>Sponsor Registration</span>
-      </button>
-      <button type="button" class="mini-button sponsor-login-btn" onclick="alert('Sponsor Login feature coming soon!')">
-        <i class="bi bi-box-arrow-in-right"></i>
-        <span>Sponsor Login</span>
-      </button>
-    </div>
-  </div>
-
-  <div class="fixed-guide-button">
-    <button type="button" class="guide-help-btn" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en">
-      <i class="bi bi-question-circle"></i>
-      <span>Filter Features & New Toolbar User Guide</span>
-    </button>
-  </div>
-
-  <!-- 右側固定ボタン（日本語サイトと同じ構造） -->
+  <!-- Right Side Fixed Buttons (Same as Japanese site) -->
   <div style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 15px;">
     <button onclick="alert('Sponsor Registration System - Coming Soon!')" style="background: linear-gradient(135deg, #ff6b6b, #ff8e53); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); transition: all 0.3s ease; min-width: 160px; text-align: center; cursor: pointer;">
       <i class="bi bi-shop me-2"></i>Sponsor Registration
@@ -1644,9 +227,9 @@
     </button>
   </div>
   
-  <!-- フィルターガイドボタン（右下） -->
+  <!-- Filter Guide Button (Bottom Right) -->
   <div style="position: fixed; right: 20px; bottom: 20%; z-index: 1000;">
-    <button type="button" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en" style="background: linear-gradient(135deg, #17a2b8, #20c997); border: none; color: white; padding: 15px 20px; border-radius: 25px; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.3; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3); transition: all 0.3s ease; min-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="background: linear-gradient(135deg, #17a2b8, #20c997); border: none; color: white; padding: 15px 20px; border-radius: 25px; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.3; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3); transition: all 0.3s ease; min-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
       <i class="bi bi-question-circle-fill" style="font-size: 20px;"></i>
       <span style="font-size: 11px; line-height: 1.2;">Filter Features &<br>New Toolbar<br>User Guide</span>
     </button>
@@ -1655,369 +238,20 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- 英語サイト専用システム（最終修正版） -->
-  <script src="english-guide-display-fix.js"></script>
-  
-  <!-- Back to Top Script -->
   <script>
-    // Back to Top functionality
-    const backToTopBtn = document.getElementById('backToTopBtn');
+    console.log('English site loaded successfully');
     
-    window.addEventListener('scroll', function() {
-      if (window.pageYOffset > 300) {
-        backToTopBtn.classList.add('show');
-      } else {
-        backToTopBtn.classList.remove('show');
-      }
-    });
-    
-    backToTopBtn.addEventListener('click', function() {
-      window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-      });
-    });
-    
-    // Filter toggle functionality for English version
-    function initFilterToggleEN() {
-      console.log('Initializing English filter toggle...');
-      
-      const toggleButton = document.getElementById('toggle-filter-button');
-      const filterCard = document.getElementById('filter-card');
-      
-      if (!toggleButton || !filterCard) {
-        console.error('Filter toggle elements not found');
-        return;
-      }
-      
-      toggleButton.addEventListener('click', function() {
-        toggleFilterVisibilityEN();
+    // Button hover effects
+    document.querySelectorAll('[style*="position: fixed"] button').forEach(btn => {
+      btn.addEventListener('mouseover', function() {
+        this.style.transform = 'translateX(-5px)';
+        this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.2)';
       });
       
-      console.log('English filter toggle initialized successfully');
-    }
-    
-    function toggleFilterVisibilityEN() {
-      const toggleButton = document.getElementById('toggle-filter-button');
-      const filterCard = document.getElementById('filter-card');
-      
-      if (!toggleButton || !filterCard) {
-        console.error('Filter elements not found');
-        return;
-      }
-      
-      const isHidden = filterCard.classList.contains('d-none');
-      
-      if (isHidden) {
-        // Show filter
-        filterCard.classList.remove('d-none');
-        toggleButton.innerHTML = '<i class="bi bi-funnel-fill"></i> Hide Filters';
-        toggleButton.classList.remove('btn-outline-primary');
-        toggleButton.classList.add('btn-primary');
-        
-        console.log('Filter shown');
-        
-        // Smooth scroll to filter
-        setTimeout(() => {
-          filterCard.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center' 
-          });
-        }, 100);
-        
-      } else {
-        // Hide filter
-        filterCard.classList.add('d-none');
-        toggleButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
-        toggleButton.classList.remove('btn-primary');
-        toggleButton.classList.add('btn-outline-primary');
-        
-        console.log('Filter hidden');
-      }
-    }
-    
-    // Initialize on DOM ready
-    document.addEventListener('DOMContentLoaded', function() {
-      initFilterToggleEN();
-    });
-  </script>
-  
-
-  
-  <!-- 統一ガイドシステムで処理されます -->
-  
-
-  
-
-  
-
-  
-
-  
-
-  
-  <!-- Registration Button Function -->
-  <script>
-    function showRegisterOptions() {
-      const modal = document.getElementById('registerOptionsModal');
-      if (modal && window.bootstrap) {
-        new bootstrap.Modal(modal).show();
-      }
-    }
-  </script>
-  
-  <!-- Registration Options Modal -->
-  <div class="modal fade" id="registerOptionsModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Choose Registration Method</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-12">
-              <button class="btn btn-primary btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerTouristModal" data-bs-dismiss="modal">
-                <i class="bi bi-person me-2"></i>Register as Tourist
-                <br><small class="text-light">Experience special journeys with local guides</small>
-              </button>
-            </div>
-            <div class="col-12">
-              <button class="btn btn-success btn-lg w-100" data-bs-toggle="modal" data-bs-target="#registerGuideModal" data-bs-dismiss="modal">
-                <i class="bi bi-map me-2"></i>Register as Guide
-                <br><small class="text-light">Share your knowledge and experience</small>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Sponsor Buttons CSS -->
-  <link rel="stylesheet" href="sponsor-buttons-redesign.css">
-  
-  <!-- Bootstrap JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- 英語サイト修正スクリプト -->
-  <script src="english-site-fix.js"></script>
-  
-  <!-- モバイル言語ボタン -->
-  <script src="mobile-language-buttons.js"></script>
-  
-  <style>
-    /* 英語サイト専用: 古いドロップダウンを強制削除 - 全セレクター */
-    .dropdown,
-    .dropdown-menu,
-    .dropdown-toggle,
-    .nav-item.dropdown,
-    .btn.btn-outline-light.dropdown-toggle,
-    .dropdown[aria-labelledby="languageDropdown"],
-    #languageDropdown,
-    [data-bs-toggle="dropdown"],
-    button[data-bs-toggle="dropdown"] {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-      position: absolute !important;
-      left: -9999px !important;
-      width: 0 !important;
-      height: 0 !important;
-      z-index: -1 !important;
-    }
-    
-    /* 言語切り替えボタンを強制表示 */
-    .language-switcher-center {
-      display: flex !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      z-index: 1000 !important;
-      position: relative !important;
-    }
-    
-    .lang-btn-jp, .lang-btn-en {
-      display: inline-block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-    }
-    
-    /* 協賛店ボタン - ハレーション完全除去、自然な影のみ */
-    .sponsor-mini-btn,
-    .sponsor-register,
-    .sponsor-login,
-    .sponsor-mini-btn.sponsor-register,
-    .sponsor-mini-btn.sponsor-login {
-      box-shadow: none !important;
-      animation: none !important;
-      filter: none !important;
-    }
-    
-    .sponsor-mini-btn:hover,
-    .sponsor-register:hover,
-    .sponsor-login:hover,
-    .sponsor-mini-btn.sponsor-register:hover,
-    .sponsor-mini-btn.sponsor-login:hover {
-      box-shadow: none !important;
-      animation: none !important;
-      filter: none !important;
-      transform: translateY(-1px) !important;
-    }
-    
-    /* 全てのハレーション・パルス・グロー効果を無効化 */
-    @keyframes gentlePulse {
-      0%, 50%, 100% { 
-        box-shadow: none !important;
-        filter: none !important;
-      }
-    }
-    
-    /* あらゆる光る効果を無効化 */
-    .sponsor-mini-btn::before,
-    .sponsor-mini-btn::after,
-    .sponsor-register::before,
-    .sponsor-register::after,
-    .sponsor-login::before,
-    .sponsor-login::after {
-      display: none !important;
-      opacity: 0 !important;
-    }
-    
-    /* ヒーローセクション - 日本語サイトと同じスタイル */
-    .hero-section {
-      background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
-                  url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop') center/cover !important;
-      position: relative;
-      min-height: 60vh;
-    }
-    
-    /* モバイル対応 */
-    @media (max-width: 768px) {
-      .language-switcher-center {
-        margin: 1rem 0 !important;
-        justify-content: center !important;
-      }
-      
-      .lang-btn-jp, .lang-btn-en {
-        min-width: 80px !important;
-        font-size: 12px !important;
-        padding: 6px 15px !important;
-      }
-      
-      /* モバイルでロゴを非表示 */
-      .hero-section > div[style*="position: absolute; top: 2%; left: 2%"] {
-        display: none !important;
-      }
-    }
-  </style>
-  
-  <script>
-    // 英語版専用の初期化
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('英語版ページ読み込み完了');
-      
-      // スクロール確保
-      document.body.style.overflow = 'auto';
-      document.body.style.overflowY = 'auto';
-      
-      // 包括的な修正処理
-      function forceFixLanguageButtons() {
-        // すべてのドロップダウン要素を完全に削除
-        const dropdownSelectors = [
-          '.dropdown',
-          '.dropdown-menu', 
-          '.dropdown-toggle',
-          '.nav-item.dropdown',
-          '.btn.btn-outline-light.dropdown-toggle',
-          '[data-bs-toggle="dropdown"]',
-          'button[data-bs-toggle="dropdown"]'
-        ];
-        
-        dropdownSelectors.forEach(selector => {
-          const elements = document.querySelectorAll(selector);
-          elements.forEach(el => {
-            if (el.textContent.includes('English') || el.textContent.includes('日本語') || 
-                el.getAttribute('data-bs-toggle') === 'dropdown' ||
-                el.classList.contains('dropdown-toggle')) {
-              el.remove(); // 完全に削除
-              console.log('ドロップダウンを削除:', el.textContent.trim());
-            }
-          });
-        });
-        
-        // 言語ボタンを強制表示と再構築
-        let langSwitcher = document.querySelector('.language-switcher-center');
-        if (!langSwitcher) {
-          // 言語ボタンが存在しない場合は作成
-          const centerContainer = document.querySelector('.d-flex.justify-content-center.flex-grow-1');
-          if (centerContainer) {
-            langSwitcher = document.createElement('div');
-            langSwitcher.className = 'language-switcher-center';
-            langSwitcher.innerHTML = `
-              <button class="btn lang-btn-jp" onclick="window.location.href='index.html'" style="
-                background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
-                color: white; border: none; border-radius: 25px 0 0 25px;
-                padding: 8px 20px; font-weight: bold; transition: all 0.3s ease;
-                box-shadow: 0 2px 10px rgba(255,107,107,0.3);
-              ">🇯🇵 日本語</button>
-              <button class="btn lang-btn-en active" style="
-                background: linear-gradient(135deg, #4287f5, #64a8ff);
-                color: white; border: none; border-radius: 0 25px 25px 0;
-                padding: 8px 20px; font-weight: bold; transition: all 0.3s ease;
-                box-shadow: 0 2px 10px rgba(66,135,245,0.3); margin-left: -1px;
-                transform: scale(1.05); opacity: 1;
-              ">🇺🇸 English</button>
-            `;
-            centerContainer.appendChild(langSwitcher);
-          }
-        }
-        
-        if (langSwitcher) {
-          langSwitcher.style.display = 'flex';
-          langSwitcher.style.visibility = 'visible';
-          langSwitcher.style.opacity = '1';
-          langSwitcher.style.zIndex = '1000';
-          console.log('✅ 言語切り替えボタンを表示/再構築しました');
-        }
-      }
-      
-      // 協賛店ボタンの機能設定
-      function setupSponsorButtons() {
-        const registerBtn = document.getElementById('sponsorRegisterBtn');
-        const loginBtn = document.getElementById('sponsorLoginBtn');
-        
-        if (registerBtn) {
-          registerBtn.addEventListener('click', () => {
-            alert('Sponsor Registration\n\nContact us for partnership opportunities!\nEmail: sponsor@tomotrip.com');
-          });
-        }
-        
-        if (loginBtn) {
-          loginBtn.addEventListener('click', () => {
-            alert('Sponsor Login\n\nPartner portal coming soon!\nFor now, please contact: sponsor@tomotrip.com');
-          });
-        }
-      }
-      
-      // 実行
-      forceFixLanguageButtons();
-      setupSponsorButtons();
-      
-      // 遅延実行
-      setTimeout(forceFixLanguageButtons, 100);
-      setTimeout(forceFixLanguageButtons, 500);
-      setTimeout(forceFixLanguageButtons, 1000);
-      
-      // 基本的な機能を設定
-      function showRegisterOptions() {
-        const modal = new bootstrap.Modal(document.getElementById('registerOptionsModal'));
-        modal.show();
-      }
-      
-      // グローバル関数として設定
-      window.showRegisterOptions = showRegisterOptions;
-      
-      console.log('英語版初期化完了');
+      btn.addEventListener('mouseout', function() {
+        this.style.transform = 'translateX(0)';
+        this.style.boxShadow = this.style.boxShadow.replace('0 8px 25px rgba(0, 0, 0, 0.2)', '0 4px 15px');
+      });
     });
   </script>
 </body>
