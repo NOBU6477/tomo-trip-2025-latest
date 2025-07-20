@@ -360,88 +360,7 @@
     }
 
 
-      position: relative;
-      overflow: hidden;
-    }
 
-    .sponsor-mini-btn.sponsor-register {
-      background: linear-gradient(135deg, 
-        #ff6b9d 0%, 
-        #c44569 30%,
-        #f8b500 70%,
-        #ff6b9d 100%);
-      color: white;
-      animation: gentlePulse 4s ease-in-out infinite;
-    }
-
-    .sponsor-mini-btn.sponsor-login {
-      background: linear-gradient(135deg, 
-        #4facfe 0%, 
-        #00f2fe 30%,
-        #43e97b 70%,
-        #4facfe 100%);
-      color: white;
-      animation: gentlePulse 4s ease-in-out infinite 2s;
-    }
-
-    .sponsor-mini-btn:hover {
-      transform: translateY(-6px) scale(1.08);
-      animation: buttonWiggle 0.6s ease-in-out;
-    }
-
-    .sponsor-mini-btn.sponsor-register:hover {
-      box-shadow: 
-        0 20px 50px rgba(255, 107, 157, 0.5),
-        0 10px 25px rgba(255, 107, 157, 0.3);
-    }
-
-    .sponsor-mini-btn.sponsor-login:hover {
-      box-shadow: 
-        0 20px 50px rgba(79, 172, 254, 0.5),
-        0 10px 25px rgba(79, 172, 254, 0.3);
-    }
-
-    @keyframes buttonWiggle {
-      0%, 100% { transform: translateY(-6px) scale(1.08) rotateZ(0deg); }
-      25% { transform: translateY(-6px) scale(1.08) rotateZ(-1deg); }
-      75% { transform: translateY(-6px) scale(1.08) rotateZ(1deg); }
-    }
-
-    @keyframes gentlePulse {
-      0%, 100% { 
-        box-shadow: 
-          0 8px 25px rgba(0, 0, 0, 0.15),
-          0 4px 10px rgba(0, 0, 0, 0.1),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-      50% { 
-        box-shadow: 
-          0 12px 35px rgba(0, 0, 0, 0.2),
-          0 6px 15px rgba(0, 0, 0, 0.15),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      }
-    }
-
-    .sponsor-mini-btn i {
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 45px;
-      height: 45px;
-      background: rgba(255, 255, 255, 0.25);
-      border-radius: 50%;
-      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.4);
-    }
-
-    .sponsor-mini-btn:hover i {
-      transform: rotate(15deg) scale(1.15);
-      background: rgba(255, 255, 255, 0.4);
-      animation: iconBounce 0.6s ease-in-out infinite;
-    }
 
     @keyframes iconBounce {
       0%, 100% { transform: rotate(15deg) scale(1.15); }
@@ -638,19 +557,7 @@
         <a href="#guides" class="btn btn-light btn-lg">Find a Guide</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
         
-        <!-- 協賛店専用ボタンエリア（右下小さめ） -->
-        <div class="sponsor-mini-buttons">
-          <div class="sponsor-mini-wrapper">
-            <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
-              <i class="bi bi-shop"></i>
-              <span>Sponsor Registration 🚀</span>
-            </button>
-            <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
-              <i class="bi bi-box-arrow-in-right"></i>
-              <span>Login ✨</span>
-            </button>
-          </div>
-        </div>
+
       </div>
     </div>
   </section>
@@ -706,7 +613,7 @@
       <div class="mb-4">
         <div class="text-center mb-3">
           <div id="guides-count" class="guide-counter text-primary fw-bold fs-5 mb-3">
-            <i class="bi bi-people-fill me-2"></i><span id="guide-count-number">12</span> guides found
+            <i class="bi bi-people-fill me-2"></i><span id="guide-count-number">12</span> guides displaying (Total <span id="total-guide-count">24</span>)
           </div>
           <button type="button" class="btn btn-outline-primary" id="filterToggleBtn">
             <i class="bi bi-funnel"></i> Filter Guides
@@ -1732,7 +1639,7 @@
   
   <!-- 英語サイト専用システム（最終修正版） -->
   <script src="english-guide-display-fix.js"></script>
-  <script src="english-site-ui-complete-fix.js"></script>
+  <script src="english-right-buttons-fix.js"></script>
   
   <!-- Back to Top Script -->
   <script>
