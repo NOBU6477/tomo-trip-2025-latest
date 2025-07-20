@@ -551,87 +551,7 @@
 </head>
 <body>
   
-  <!-- 協賛店ボタン（右上固定配置）- 英語版 -->
-  <div class="sponsor-mini-buttons">
-    <a href="sponsor-registration.html" class="sponsor-mini-btn sponsor-register">
-      <i class="bi bi-shop"></i>
-      Sponsor Registration
-    </a>
-    <a href="#" onclick="alert('Sponsor login feature coming soon!');" class="sponsor-mini-btn sponsor-login">
-      <i class="bi bi-person-circle"></i>
-      Sponsor Login
-    </a>
-  </div>
 
-  <style>
-    /* 協賛店ミニボタンのスタイル - 英語版 */
-    .sponsor-mini-buttons {
-      position: fixed;
-      top: 100px;
-      right: 20px;
-      z-index: 1050;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .sponsor-mini-buttons .sponsor-mini-btn {
-      background: linear-gradient(135deg, #ff6b9d, #4facfe);
-      color: white;
-      text-decoration: none;
-      padding: 12px 18px;
-      border-radius: 25px;
-      font-size: 13px;
-      font-weight: 600;
-      text-align: center;
-      min-width: 160px;
-      transition: all 0.3s ease;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-register {
-      background: linear-gradient(135deg, #ff6b9d, #ffa8c5);
-    }
-
-    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-login {
-      background: linear-gradient(135deg, #4facfe, #74d0f1);
-    }
-
-    .sponsor-mini-buttons .sponsor-mini-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-      color: white;
-      text-decoration: none;
-    }
-
-    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-register:hover {
-      box-shadow: 0 6px 20px rgba(255, 107, 157, 0.3);
-    }
-
-    .sponsor-mini-buttons .sponsor-mini-btn.sponsor-login:hover {
-      box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3);
-    }
-
-    @media (max-width: 768px) {
-      .sponsor-mini-buttons {
-        top: 80px;
-        right: 10px;
-        gap: 8px;
-      }
-      
-      .sponsor-mini-buttons .sponsor-mini-btn {
-        font-size: 11px;
-        padding: 8px 14px;
-        min-width: 140px;
-      }
-    }
-  </style>
 
 
   <!-- Navigation -->
@@ -1803,20 +1723,106 @@
   </style>
 
   <!-- Fixed Right Side Buttons (English) -->
+  <style>
+    /* Fixed Right Side Buttons */
+    .sponsor-mini-buttons {
+      position: fixed;
+      top: 150px;
+      right: 20px;
+      z-index: 1000;
+    }
+    
+    .mini-button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .mini-button {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      min-width: 160px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .mini-button:hover {
+      background: linear-gradient(135deg, #ff5252, #ff7979);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+      color: white;
+    }
+    
+    .fixed-guide-button {
+      position: fixed;
+      top: 280px;
+      right: 20px;
+      z-index: 1000;
+    }
+    
+    .guide-help-btn {
+      background: linear-gradient(135deg, #17a2b8, #20c997);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      min-width: 200px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .guide-help-btn:hover {
+      background: linear-gradient(135deg, #138496, #1e7e34);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4);
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .sponsor-mini-buttons,
+      .fixed-guide-button {
+        right: 10px;
+      }
+      
+      .mini-button,
+      .guide-help-btn {
+        min-width: 120px;
+        font-size: 12px;
+        padding: 10px 15px;
+      }
+    }
+  </style>
+  
   <div class="sponsor-mini-buttons">
     <div class="mini-button-container">
-      <button type="button" class="mini-button sponsor-register-btn" data-bs-toggle="modal" data-bs-target="#sponsorModal">
+      <button type="button" class="mini-button sponsor-register-btn" onclick="alert('Sponsor Registration feature coming soon!')">
         <i class="bi bi-shop"></i>
         <span>Sponsor Registration</span>
       </button>
-      <button type="button" class="mini-button sponsor-login-btn" data-bs-toggle="modal" data-bs-target="#sponsorLoginModal">
+      <button type="button" class="mini-button sponsor-login-btn" onclick="alert('Sponsor Login feature coming soon!')">
         <i class="bi bi-box-arrow-in-right"></i>
         <span>Sponsor Login</span>
       </button>
     </div>
   </div>
 
-  <!-- Fixed Guide Button (English) -->
   <div class="fixed-guide-button">
     <button type="button" class="guide-help-btn" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en">
       <i class="bi bi-question-circle"></i>
@@ -1827,11 +1833,9 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- 英語サイト専用システム -->
-  <script src="english-guide-system.js"></script>
+  <!-- 英語サイト専用システム（修正版） -->
+  <script src="english-guide-system-fixed.js"></script>
   <script src="english-filter-system.js"></script>
-  <script src="english-site-ui-fix.js"></script>
-  <script src="mobile-toolbar-adapter.js"></script>
   
   <!-- Back to Top Script -->
   <script>
