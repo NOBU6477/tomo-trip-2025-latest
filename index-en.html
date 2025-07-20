@@ -82,6 +82,95 @@
       0% { transform: translateX(100%); }
       100% { transform: translateX(-100%); }
     }
+
+    /* 右側固定ボタンスタイル（日本語サイトと同じ楕円形） */
+    .sponsor-mini-buttons {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .sponsor-mini-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      color: white;
+      border: none;
+      border-radius: 35px;
+      padding: 15px 25px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 180px;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+      text-decoration: none;
+    }
+
+    .sponsor-mini-btn.sponsor-login {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+    }
+
+    .sponsor-mini-btn:hover {
+      transform: translateX(-8px) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .sponsor-mini-btn.sponsor-register:hover {
+      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+    }
+
+    .sponsor-mini-btn.sponsor-login:hover {
+      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+    }
+
+    /* Filter Guide Button */
+    .filter-guide-btn {
+      position: fixed;
+      right: 20px;
+      bottom: 15%;
+      z-index: 1000;
+      background: linear-gradient(135deg, #17a2b8, #20c997);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 18px 22px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 160px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
+      line-height: 1.3;
+    }
+
+    .filter-guide-btn:hover {
+      transform: translateX(-8px) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
+    }
+
+    .filter-guide-btn i {
+      font-size: 20px;
+    }
+
+    .filter-guide-btn span {
+      font-size: 11px;
+      line-height: 1.2;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -318,23 +407,23 @@
     </section>
   </div>
 
-  <!-- Right Side Fixed Buttons (Same as Japanese site) -->
-  <div style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 15px;">
-    <button onclick="alert('Sponsor Registration System - Coming Soon!')" style="background: linear-gradient(135deg, #ff6b6b, #ff8e53); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); transition: all 0.3s ease; min-width: 160px; text-align: center; cursor: pointer;">
-      <i class="bi bi-shop me-2"></i>Sponsor Registration
+  <!-- Right Side Fixed Buttons (日本語サイトと完全に同じスタイル) -->
+  <div class="sponsor-mini-buttons">
+    <button class="sponsor-mini-btn sponsor-register" onclick="alert('Sponsor Registration System - Coming Soon!')" title="Sponsor Registration">
+      <i class="bi bi-shop"></i>
+      <span>Sponsor Registration 🚀</span>
     </button>
-    <button onclick="alert('Sponsor Dashboard - Coming Soon!')" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 160px; text-align: center; cursor: pointer;">
-      <i class="bi bi-box-arrow-in-right me-2"></i>Login
+    <button class="sponsor-mini-btn sponsor-login" onclick="alert('Sponsor Dashboard - Coming Soon!')" title="Sponsor Login">
+      <i class="bi bi-box-arrow-in-right"></i>
+      <span>Login ✨</span>
     </button>
   </div>
   
-  <!-- Filter Guide Button (Bottom Right) -->
-  <div style="position: fixed; right: 20px; bottom: 20%; z-index: 1000;">
-    <button type="button" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="background: linear-gradient(135deg, #17a2b8, #20c997); border: none; color: white; padding: 15px 20px; border-radius: 25px; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.3; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3); transition: all 0.3s ease; min-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
-      <i class="bi bi-question-circle-fill" style="font-size: 20px;"></i>
-      <span style="font-size: 11px; line-height: 1.2;">Filter Features &<br>New Toolbar<br>User Guide</span>
-    </button>
-  </div>
+  <!-- Filter Guide Button (日本語サイトと同じ位置・スタイル) -->
+  <button type="button" class="filter-guide-btn" data-bs-toggle="modal" data-bs-target="#filter-help-modal" title="Filter Features & User Guide">
+    <i class="bi bi-question-circle-fill"></i>
+    <span>Filter Features &<br>New Toolbar<br>User Guide</span>
+  </button>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -343,25 +432,28 @@
   <script>
     console.log('English site loaded successfully');
     
-    // 右側ボタンホバーエフェクト
-    document.querySelectorAll('[style*="position: fixed"] button').forEach(btn => {
+    // 右側ボタンホバーエフェクト（日本語サイトと同じ動作）
+    document.querySelectorAll('.sponsor-mini-btn').forEach(btn => {
       btn.addEventListener('mouseover', function() {
-        this.style.transform = 'translateX(-5px)';
-        this.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+        this.style.transform = 'translateX(-8px) translateY(-2px)';
       });
       
       btn.addEventListener('mouseout', function() {
-        this.style.transform = 'translateX(0)';
-        // 元のbox-shadowに戻す
-        if (this.innerHTML.includes('Sponsor Registration')) {
-          this.style.boxShadow = '0 4px 15px rgba(255, 107, 107, 0.3)';
-        } else if (this.innerHTML.includes('Login')) {
-          this.style.boxShadow = '0 4px 15px rgba(78, 205, 196, 0.3)';
-        } else {
-          this.style.boxShadow = '0 4px 15px rgba(23, 162, 184, 0.3)';
-        }
+        this.style.transform = 'translateX(0) translateY(0)';
       });
     });
+
+    // フィルターガイドボタンホバーエフェクト
+    const filterBtn = document.querySelector('.filter-guide-btn');
+    if (filterBtn) {
+      filterBtn.addEventListener('mouseover', function() {
+        this.style.transform = 'translateX(-8px) translateY(-2px)';
+      });
+      
+      filterBtn.addEventListener('mouseout', function() {
+        this.style.transform = 'translateX(0) translateY(0)';
+      });
+    }
     
     // フィルターボタン機能
     function showRegisterOptions() {
