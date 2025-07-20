@@ -145,7 +145,7 @@
       position: absolute;
       bottom: 0;
       right: 0;
-      z-index: 9999 !important;
+      z-index: 1040 !important;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -175,7 +175,7 @@
       white-space: nowrap;
       min-width: 180px;
       pointer-events: auto !important;
-      z-index: 9999 !important;
+      z-index: 1040 !important;
       position: relative !important;
     }
 
@@ -644,7 +644,7 @@
   </div>
 
   <!-- Filter Help Modal (English Version) -->
-  <div class="modal fade" id="filter-help-modal" tabindex="-1">
+  <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header bg-info text-white">
@@ -954,7 +954,7 @@
           return false;
         };
         sponsorRegisterBtn.style.pointerEvents = 'auto';
-        sponsorRegisterBtn.style.zIndex = '9999';
+        sponsorRegisterBtn.style.zIndex = '1040';
       } else {
         console.log('Sponsor register button NOT found');
       }
@@ -969,7 +969,7 @@
           return false;
         };
         sponsorLoginBtn.style.pointerEvents = 'auto';
-        sponsorLoginBtn.style.zIndex = '9999';
+        sponsorLoginBtn.style.zIndex = '1040';
       } else {
         console.log('Sponsor login button NOT found');
       }
@@ -1001,7 +1001,7 @@
         console.log('Fixing button ' + index, btn);
         btn.style.pointerEvents = 'auto';
         btn.style.position = 'relative';
-        btn.style.zIndex = '9999';
+        btn.style.zIndex = '1040';
         btn.style.cursor = 'pointer';
       });
     }
