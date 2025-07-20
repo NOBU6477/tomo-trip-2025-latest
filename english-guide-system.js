@@ -205,7 +205,7 @@ class EnglishGuideSystem {
     const container = document.getElementById('guide-cards-container');
     if (!container) return;
 
-    const guides = guidesToShow || this.guides.slice(0, this.guidesPerPage);
+    const guides = guidesToShow || this.guides;
     this.displayedGuides = guides;
     
     container.innerHTML = guides.map(guide => this.generateGuideCard(guide)).join('');
@@ -218,20 +218,20 @@ class EnglishGuideSystem {
 
   // カウンター更新（英語専用）
   updateCounter() {
-    const counter = document.getElementById('search-results-counter');
-    if (!counter) return;
-
-    const displayedCount = this.displayedGuides.length;
-    const totalCount = this.filteredGuides.length;
+    const counter = document.getElementById('guide-count-number');
+    const guideCountText = document.getElementById('guides-count');
     
-    counter.innerHTML = `
-      <span style="background-color: rgb(102, 126, 234); color: white; padding: 8px 16px; border-radius: 20px; font-weight: 600;">
-        Found ${totalCount} guides (${displayedCount} displayed)
-      </span>
-    `;
+    if (counter) {
+      const displayedCount = this.displayedGuides.length;
+      counter.textContent = displayedCount;
+    }
     
-    counter.style.display = 'block';
-    counter.classList.remove('d-none');
+    if (guideCountText) {
+      const displayedCount = this.displayedGuides.length;
+      guideCountText.innerHTML = `<i class="bi bi-people-fill me-2"></i><span id="guide-count-number">${displayedCount}</span> guides found`;
+    }
+    
+    console.log(`✅ Counter updated: ${this.displayedGuides.length} guides`);
   }
 
   // フィルタリング機能
@@ -280,7 +280,7 @@ class EnglishGuideSystem {
     }
 
     this.filteredGuides = filtered;
-    this.displayGuides(filtered.slice(0, this.guidesPerPage));
+    this.displayGuides(filtered);
     
     console.log(`✅ Filtered to ${filtered.length} guides`);
   }
