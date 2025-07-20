@@ -132,6 +132,14 @@
       box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
     }
 
+    .sponsor-mini-btn.filter-guide-btn {
+      background: linear-gradient(135deg, #17a2b8, #138496);
+    }
+
+    .sponsor-mini-btn.filter-guide-btn:hover {
+      box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
+    }
+
     /* Sponsor Mini Buttons Positioning (日本語サイトと同じ配置) */
     .sponsor-mini-buttons {
       position: absolute;
@@ -332,7 +340,7 @@
         <a href="#guides" class="btn btn-light btn-lg">Find a Guide</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
         
-        <!-- Sponsor Registration & Login Buttons (日本語サイトと同じ配置) -->
+        <!-- Sponsor Registration & Login Buttons + Filter Guide Button (日本語サイトと同じ配置) -->
         <div class="sponsor-mini-buttons">
           <div class="sponsor-mini-wrapper">
             <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
@@ -342,6 +350,10 @@
             <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
               <i class="bi bi-box-arrow-in-right"></i>
               <span>Login ✨</span>
+            </button>
+            <button class="sponsor-mini-btn filter-guide-btn" data-bs-toggle="modal" data-bs-target="#filter-help-modal" title="Filter Features & New Toolbar User Guide">
+              <i class="bi bi-question-circle"></i>
+              <span>Filter Features & New Toolbar User Guide 📖</span>
             </button>
           </div>
         </div>
@@ -627,6 +639,174 @@
     </div>
   </div>
 
+  <!-- Filter Help Modal (English Version) -->
+  <div class="modal fade" id="filter-help-modal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-info text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-question-circle-fill me-2"></i>Filter Features & New Toolbar User Guide
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          
+          <!-- New Feature Introduction -->
+          <div class="alert alert-primary d-flex align-items-start mb-4">
+            <i class="bi bi-stars fs-4 me-3"></i>
+            <div>
+              <h6 class="alert-heading">✨ New Feature: Advanced Pagination System Added</h6>
+              <p class="mb-1">The toolbar displayed at the bottom right is a new feature for efficiently comparing and managing guides.</p>
+              <p class="mb-0 small text-muted">We've evolved from the traditional "Show More" approach to a more user-friendly pagination system.</p>
+            </div>
+          </div>
+
+          <div class="row">
+            
+            <!-- Bookmark Feature -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-warning h-100">
+                <div class="card-header bg-warning text-dark d-flex align-items-center">
+                  <i class="bi bi-bookmark-star fs-5 me-2"></i>
+                  <h6 class="mb-0">Bookmark Feature</h6>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-warning text-dark me-2">1</span>
+                    <div>
+                      <strong>Click the star icon on the top left of guide cards</strong>
+                      <br><small class="text-muted">Save guides of interest</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-warning text-dark me-2">2</span>
+                    <div>
+                      <strong>Saved cards display with a yellow border</strong>
+                      <br><small class="text-muted">Easily identify bookmarked guides</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start">
+                    <span class="badge bg-warning text-dark me-2">3</span>
+                    <div>
+                      <strong>View saved guides from the bottom toolbar</strong>
+                      <br><small class="text-muted">Access all saved guides at once</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comparison Feature -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-success h-100">
+                <div class="card-header bg-success text-white d-flex align-items-center">
+                  <i class="bi bi-check-circle fs-5 me-2"></i>
+                  <h6 class="mb-0">Comparison Feature (Max 3)</h6>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-success me-2">1</span>
+                    <div>
+                      <strong>Click the check icon on the top left of guide cards</strong>
+                      <br><small class="text-muted">Select guides to compare</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start mb-3">
+                    <span class="badge bg-success me-2">2</span>
+                    <div>
+                      <strong>Selected cards display with a green border</strong>
+                      <br><small class="text-muted">Max 3 guides can be selected for comparison</small>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-start">
+                    <span class="badge bg-success me-2">3</span>
+                    <div>
+                      <strong>Click "Compare" in the bottom toolbar for detailed comparison</strong>
+                      <br><small class="text-muted">Compare fees, ratings, styles, and more</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="row">
+            
+            <!-- Keyboard Shortcuts -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-secondary h-100">
+                <div class="card-header bg-secondary text-white d-flex align-items-center">
+                  <i class="bi bi-keyboard fs-5 me-2"></i>
+                  <h6 class="mb-0">Keyboard Shortcuts</h6>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between mb-2">
+                    <kbd>←</kbd>
+                    <span>Previous Page</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <kbd>→</kbd>
+                    <span>Next Page</span>
+                  </div>
+                  <div class="d-flex justify-content-between mb-2">
+                    <kbd>Home</kbd>
+                    <span>First Page</span>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <kbd>End</kbd>
+                    <span>Last Page</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Useful Features -->
+            <div class="col-md-6 mb-4">
+              <div class="card border-primary h-100">
+                <div class="card-header bg-primary text-white d-flex align-items-center">
+                  <i class="bi bi-gear fs-5 me-2"></i>
+                  <h6 class="mb-0">Other Useful Features</h6>
+                </div>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <strong><i class="bi bi-clock-history"></i> Browsing History</strong>
+                    <br><small class="text-muted">Automatically tracks recently viewed guides</small>
+                  </div>
+                  <div class="mb-3">
+                    <strong><i class="bi bi-arrow-up-circle"></i> Quick Page Jump</strong>
+                    <br><small class="text-muted">Jump directly to any page number</small>
+                  </div>
+                  <div>
+                    <strong><i class="bi bi-sort-alpha-down"></i> Sort Options</strong>
+                    <br><small class="text-muted">Sort by rating, price, or name</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="alert alert-success">
+            <h6><i class="bi bi-lightbulb"></i> Pro Tips:</h6>
+            <ul class="mb-0">
+              <li>Use bookmarks to save interesting guides for later review</li>
+              <li>Compare up to 3 guides to find the perfect match</li>
+              <li>Use keyboard shortcuts for faster navigation</li>
+              <li>Your browsing history helps you revisit guides you've seen before</li>
+            </ul>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+            <i class="bi bi-check-lg"></i> Got it!
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 英語サイト専用JavaScript -->
   <script>
     console.log('English site loaded successfully');
@@ -774,6 +954,8 @@
           navigateToSponsorLogin();
         });
       }
+
+      // Filter guide button functionality is handled by Bootstrap modal
 
       // Update guide counter
       updateGuideCounter();
