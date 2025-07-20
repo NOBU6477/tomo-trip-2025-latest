@@ -172,105 +172,68 @@
       text-align: center;
     }
 
-    /* Bottom Toolbar Styles */
-    .bottom-toolbar {
+    /* Floating Toolbar Styles (日本語サイトから完全コピー) */
+    .floating-toolbar {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-      border-top: 2px solid #dee2e6;
-      padding: 12px 0;
-      z-index: 999;
-      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+      bottom: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #dee2e6;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      z-index: 1050;
+      max-width: 400px;
+      transform: translateY(100px);
+      animation: slideUp 0.5s ease-out forwards;
     }
-
-    .toolbar-container {
-      max-width: 1200px;
-      margin: 0 auto;
+    
+    @keyframes slideUp {
+      to {
+        transform: translateY(0);
+      }
+    }
+    
+    .toolbar-content {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
       align-items: center;
-      padding: 0 20px;
+      font-size: 0.85rem;
     }
-
+    
     .toolbar-section {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 5px;
+    }
+    
+    .toolbar-label {
+      font-weight: 500;
+      color: #6c757d;
+    }
+    
+    .guide-card.bookmarked {
+      border: 2px solid #ffc107;
+      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    }
+    
+    .guide-card.recently-viewed {
+      border-left: 4px solid #17a2b8;
     }
 
-    .comparison-counter {
-      font-size: 14px;
-      font-weight: 600;
-      color: #495057;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .toolbar-btn {
-      background: linear-gradient(135deg, #007bff, #0056b3);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 8px 16px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      min-width: 100px;
-      justify-content: center;
-    }
-
-    .toolbar-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3);
-    }
-
-    .toolbar-btn:disabled {
-      background: #6c757d;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-
-    .toolbar-btn:disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    .bookmark-btn {
-      background: linear-gradient(135deg, #ffc107, #e0a800);
-    }
-
-    .bookmark-btn:hover {
-      box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3);
-    }
-
-    .history-btn {
-      background: linear-gradient(135deg, #6c757d, #495057);
-    }
-
-    .history-btn:hover {
-      box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
-    }
-
-    /* Pagination Info */
-    .pagination-info {
-      position: fixed;
-      bottom: 80px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #495057;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      z-index: 1000;
+    @media (max-width: 768px) {
+      .floating-toolbar {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+      }
+      
+      .toolbar-content {
+        justify-content: space-between;
+      }
     }
 
     /* Filter Button Style */
@@ -524,36 +487,32 @@
     </section>
   </div>
 
-  <!-- Bottom Toolbar (日本語サイトと同じ機能) -->
-  <div class="bottom-toolbar" id="bottom-toolbar">
-    <div class="toolbar-container">
+  <!-- Floating Toolbar (日本語サイトと完全に同じ) -->
+  <div id="floating-toolbar" class="floating-toolbar">
+    <div class="toolbar-content">
       <div class="toolbar-section">
-        <span class="comparison-counter">
-          <i class="bi bi-check-square"></i>
-          Comparing: <span id="comparison-count">0</span>/3 people
-        </span>
-        <button class="toolbar-btn comparison-btn" id="comparison-btn" disabled>
-          <i class="bi bi-arrows-collapse"></i>
+        <span class="toolbar-label">Comparing:</span>
+        <span id="comparison-count">0</span>/3 people
+        <button class="btn btn-sm btn-outline-primary ms-2" onclick="showComparison()" disabled id="compare-btn">
           Compare
         </button>
       </div>
-      
       <div class="toolbar-section">
-        <button class="toolbar-btn bookmark-btn" id="bookmark-btn">
-          <i class="bi bi-bookmark-star"></i>
-          Bookmarks(<span id="bookmark-count">0</span>)
-        </button>
-        <button class="toolbar-btn history-btn" id="history-btn">
-          <i class="bi bi-clock-history"></i>
-          History
+        <button class="btn btn-sm btn-info" onclick="showBookmarks()">
+          <i class="bi bi-bookmark-star"></i> Bookmarks(<span id="bookmark-count">0</span>)
         </button>
       </div>
+      <div class="toolbar-section">
+        <button class="btn btn-sm btn-secondary" onclick="showHistory()">
+          <i class="bi bi-clock-history"></i> History
+        </button>
+      </div>
+      <div class="toolbar-section">
+        <select class="form-select form-select-sm" id="quick-jump" onchange="quickJump(this.value)">
+          <option value="">Page Jump</option>
+        </select>
+      </div>
     </div>
-  </div>
-
-  <!-- Pagination Info (日本語サイトと同じ表示) -->
-  <div class="pagination-info">
-    <span id="current-page-info">Page 1 (1-12 people)</span>
   </div>
 
   <!-- Right Side Fixed Buttons (日本語サイトと完全に同じスタイル) -->
@@ -719,20 +678,44 @@
       // Future: window.location.href = 'sponsor-login-en.html';
     }
 
-    // Toolbar button functionality
-    document.getElementById('comparison-btn')?.addEventListener('click', function() {
+    // Floating Toolbar Functions (日本語サイトと同じ機能)
+    function showComparison() {
       if (comparisonCount > 0) {
         alert(`Comparing ${comparisonCount} guides - feature coming soon!`);
+      } else {
+        alert('Please select guides to compare first.');
       }
-    });
+    }
 
-    document.getElementById('bookmark-btn')?.addEventListener('click', function() {
+    function showBookmarks() {
       alert(`Viewing ${bookmarkCount} bookmarked guides - feature coming soon!`);
-    });
+    }
 
-    document.getElementById('history-btn')?.addEventListener('click', function() {
+    function showHistory() {
       alert('Viewing browsing history - feature coming soon!');
-    });
+    }
+
+    function quickJump(page) {
+      if (page && page !== '') {
+        alert(`Jumping to page ${page} - feature coming soon!`);
+        document.getElementById('quick-jump').value = '';
+      }
+    }
+
+    // Initialize Quick Jump Options
+    function updateQuickJump() {
+      const select = document.getElementById('quick-jump');
+      if (select) {
+        select.innerHTML = '<option value="">Page Jump</option>';
+        const totalPages = Math.ceil(24 / 12); // 24 total guides, 12 per page
+        for (let i = 1; i <= totalPages; i++) {
+          const option = document.createElement('option');
+          option.value = i;
+          option.textContent = `Page ${i}`;
+          select.appendChild(option);
+        }
+      }
+    }
 
     // 右側ボタンホバーエフェクト（日本語サイトと同じ動作）
     document.querySelectorAll('.sponsor-mini-btn').forEach(btn => {
@@ -771,6 +754,9 @@
 
       // Update guide counter
       updateGuideCounter();
+      
+      // Initialize floating toolbar
+      updateQuickJump();
     });
 
     // ガイドカウンター表示
