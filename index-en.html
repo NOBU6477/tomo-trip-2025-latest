@@ -145,12 +145,13 @@
       position: absolute;
       bottom: 0;
       right: 0;
-      z-index: 10;
+      z-index: 9999 !important;
       display: flex;
       flex-direction: column;
       gap: 10px;
       margin-bottom: -80px;
       margin-right: 20px;
+      pointer-events: auto !important;
     }
 
     .sponsor-mini-wrapper {
@@ -168,11 +169,14 @@
       font-size: 14px;
       font-weight: 600;
       transition: all 0.3s ease;
-      cursor: pointer;
+      cursor: pointer !important;
       box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
       text-align: center;
       white-space: nowrap;
       min-width: 180px;
+      pointer-events: auto !important;
+      z-index: 9999 !important;
+      position: relative !important;
     }
 
     .sponsor-mini-btn i {
@@ -935,57 +939,94 @@
       });
     }
 
-    // Sponsor button event handlers (copied from working Japanese version)
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('English site DOM loaded');
+    // Emergency button fix with multiple approaches
+    function forceButtonSetup() {
+      console.log('Setting up buttons with multiple approaches...');
       
-      // Sponsor registration button
+      // Approach 1: Direct event listeners
       const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
       if (sponsorRegisterBtn) {
-        sponsorRegisterBtn.addEventListener('click', function(e) {
+        console.log('Found sponsor register button');
+        sponsorRegisterBtn.onclick = function(e) {
           e.preventDefault();
-          alert('🚀 Sponsor Registration System\n\nThank you for your interest in becoming a sponsor!\n\nRedirecting to sponsor registration page...');
-          // window.location.href = 'sponsor-registration.html';
-        });
+          e.stopPropagation();
+          alert('🚀 Sponsor Registration System\n\nThank you for your interest in becoming a sponsor!');
+          return false;
+        };
+        sponsorRegisterBtn.style.pointerEvents = 'auto';
+        sponsorRegisterBtn.style.zIndex = '9999';
+      } else {
+        console.log('Sponsor register button NOT found');
       }
 
-      // Sponsor login button
       const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
       if (sponsorLoginBtn) {
-        sponsorLoginBtn.addEventListener('click', function(e) {
+        console.log('Found sponsor login button');
+        sponsorLoginBtn.onclick = function(e) {
           e.preventDefault();
-          alert('✨ Sponsor Login System\n\nAccess your sponsor dashboard.\n\nRedirecting to sponsor login page...');
-          // window.location.href = 'sponsor-login.html';
-        });
+          e.stopPropagation();
+          alert('✨ Sponsor Login System\n\nAccess your sponsor dashboard!');
+          return false;
+        };
+        sponsorLoginBtn.style.pointerEvents = 'auto';
+        sponsorLoginBtn.style.zIndex = '9999';
+      } else {
+        console.log('Sponsor login button NOT found');
       }
 
-      // Header login button
+      // Header buttons
       const loginBtn = document.getElementById('loginBtn');
       if (loginBtn) {
-        loginBtn.addEventListener('click', function(e) {
+        console.log('Found login button');
+        loginBtn.onclick = function(e) {
           e.preventDefault();
-          alert('🔐 User Login\n\nAccess your account.\n\nRedirecting to login page...');
-          // window.location.href = 'login.html';
-        });
+          alert('🔐 User Login\n\nAccess your account!');
+          return false;
+        };
       }
 
-      // Header sign up button
       const signUpBtn = document.getElementById('signUpBtn');
       if (signUpBtn) {
-        signUpBtn.addEventListener('click', function(e) {
+        console.log('Found sign up button');
+        signUpBtn.onclick = function(e) {
           e.preventDefault();
-          showRegisterOptions();
-        });
+          alert('🎯 Registration Options\n\n1. Tourist Registration\n2. Guide Registration');
+          return false;
+        };
       }
 
-      // Filter guide button functionality is handled by Bootstrap modal
+      // Fix sponsor button positioning and interaction
+      const sponsorButtons = document.querySelectorAll('.sponsor-mini-btn');
+      sponsorButtons.forEach(function(btn, index) {
+        console.log('Fixing button ' + index, btn);
+        btn.style.pointerEvents = 'auto';
+        btn.style.position = 'relative';
+        btn.style.zIndex = '9999';
+        btn.style.cursor = 'pointer';
+      });
+    }
 
+    // Multiple initialization attempts
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('English site DOM loaded');
+      forceButtonSetup();
+      
       // Update guide counter
       updateGuideCounter();
       
-      // Initialize floating toolbar
+      // Initialize floating toolbar  
       updateQuickJump();
     });
+
+    // Backup initialization
+    window.addEventListener('load', function() {
+      console.log('Window loaded, setting up buttons again');
+      setTimeout(forceButtonSetup, 100);
+    });
+
+    // Emergency setup
+    setTimeout(forceButtonSetup, 500);
+    setTimeout(forceButtonSetup, 1000);
 
     // Header button functions
     function showRegisterOptions() {
