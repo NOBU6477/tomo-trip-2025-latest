@@ -132,45 +132,7 @@
       box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
     }
 
-    /* Filter Guide Button */
-    .filter-guide-btn {
-      position: fixed;
-      right: 20px;
-      bottom: 20%;
-      z-index: 1000;
-      background: linear-gradient(135deg, #17a2b8, #20c997);
-      color: white;
-      border: none;
-      border-radius: 25px;
-      padding: 18px 22px;
-      font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3);
-      line-height: 1.3;
-    }
 
-    .filter-guide-btn:hover {
-      transform: translateX(-8px) translateY(-2px);
-      box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
-    }
-
-    .filter-guide-btn i {
-      font-size: 20px;
-    }
-
-    .filter-guide-btn span {
-      font-size: 11px;
-      line-height: 1.2;
-      text-align: center;
-    }
 
     /* Floating Toolbar Styles (日本語サイトから完全コピー) */
     .floating-toolbar {
@@ -338,25 +300,16 @@
     <!-- Popular Guides -->
     <section id="guides" class="mb-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="position-relative">
-          <button type="button" class="btn btn-sm btn-outline-info me-3" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="border-radius: 20px;">
-            <i class="bi bi-question-circle me-1"></i>Filter Guide
-          </button>
-        </div>
-        <h2 class="mb-0 flex-grow-1 text-center">Popular Guides</h2>
-        <div style="width: 140px;"></div>
+        <h2 class="mb-0">
+          <i class="bi bi-people-fill text-primary me-2"></i>Popular Guides
+          <span class="fs-6 text-muted">| <i class="bi bi-geo-alt"></i> <span id="guide-count-number">12</span> guides displaying (Total <span id="total-guide-count">24</span>)</span>
+        </h2>
+        <button type="button" class="btn btn-outline-primary" id="filterToggleBtn">
+          <i class="bi bi-funnel"></i> Filter Guides
+        </button>
       </div>
       
-      <div class="mb-4">
-        <div class="text-center mb-3">
-          <div id="guides-count" class="guide-counter text-primary fw-bold fs-5 mb-3">
-            <i class="bi bi-people-fill me-2"></i><span id="guide-count-number">12</span> guides displaying (Total <span id="total-guide-count">24</span>)
-          </div>
-          <button type="button" class="btn btn-outline-primary" id="filterToggleBtn">
-            <i class="bi bi-funnel"></i> Filter Guides
-          </button>
-        </div>
-      </div>
+
 
       <!-- Guide Cards Container (12枚のガイドカード表示) -->
       <div class="row" id="guide-cards-container">
@@ -493,7 +446,7 @@
       <div class="toolbar-section">
         <span class="toolbar-label">Comparing:</span>
         <span id="comparison-count">0</span>/3 people
-        <button class="btn btn-sm btn-outline-primary ms-2" onclick="showComparison()" disabled id="compare-btn">
+        <button class="btn btn-sm btn-outline-primary ms-2" onclick="showComparison()" id="compare-btn">
           Compare
         </button>
       </div>
@@ -527,11 +480,7 @@
     </button>
   </div>
   
-  <!-- Filter Guide Button (日本語サイトと同じ位置・スタイル) -->
-  <button type="button" class="filter-guide-btn" data-bs-toggle="modal" data-bs-target="#filter-help-modal" title="Filter Features & User Guide">
-    <i class="bi bi-question-circle-fill"></i>
-    <span>Filter Features &<br>New Toolbar<br>User Guide</span>
-  </button>
+
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -627,8 +576,9 @@
     const filterToggleBtn = document.getElementById('filterToggleBtn');
     const filterCollapse = document.getElementById('filterCollapse');
     
-    if (filterToggleBtn) {
-      filterToggleBtn.addEventListener('click', function() {
+    if (filterToggleBtn && filterCollapse) {
+      filterToggleBtn.addEventListener('click', function(e) {
+        e.preventDefault();
         const isExpanded = filterCollapse.classList.contains('show');
         if (isExpanded) {
           filterCollapse.classList.remove('show');
@@ -742,14 +692,22 @@
 
     // Update sponsor buttons with proper navigation
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('English site DOM loaded');
+      
       const sponsorRegBtn = document.querySelector('.sponsor-mini-btn.sponsor-register');
       if (sponsorRegBtn) {
-        sponsorRegBtn.onclick = navigateToSponsorRegistration;
+        sponsorRegBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          navigateToSponsorRegistration();
+        });
       }
 
       const sponsorLoginBtn = document.querySelector('.sponsor-mini-btn.sponsor-login');
       if (sponsorLoginBtn) {
-        sponsorLoginBtn.onclick = navigateToSponsorLogin;
+        sponsorLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          navigateToSponsorLogin();
+        });
       }
 
       // Update guide counter
@@ -757,6 +715,9 @@
       
       // Initialize floating toolbar
       updateQuickJump();
+      
+      // Ensure all buttons are clickable
+      console.log('All buttons initialized successfully');
     });
 
     // ガイドカウンター表示
