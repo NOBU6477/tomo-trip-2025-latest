@@ -134,20 +134,63 @@
 
     /* Sponsor Mini Buttons Positioning (日本語サイトと同じ配置) */
     .sponsor-mini-buttons {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      z-index: 10;
       display: flex;
       flex-direction: column;
       gap: 10px;
+      margin-bottom: -80px;
+      margin-right: 20px;
     }
 
     .sponsor-mini-wrapper {
       display: flex;
       flex-direction: column;
       gap: 10px;
+    }
+
+    .sponsor-mini-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 35px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      text-align: center;
+      white-space: nowrap;
+      min-width: 180px;
+    }
+
+    .sponsor-mini-btn i {
+      margin-right: 8px;
+      font-size: 16px;
+    }
+
+    .sponsor-mini-btn:hover {
+      transform: translateX(-8px) translateY(-2px);
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .sponsor-mini-btn.sponsor-register {
+      background: linear-gradient(135deg, #ff6b9d, #c44569);
+    }
+
+    .sponsor-mini-btn.sponsor-login {
+      background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    }
+
+    .sponsor-mini-btn.sponsor-register:hover {
+      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+    }
+
+    .sponsor-mini-btn.sponsor-login:hover {
+      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
     }
 
 
@@ -288,6 +331,20 @@
       <div class="position-relative">
         <a href="#guides" class="btn btn-light btn-lg">Find a Guide</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
+        
+        <!-- Sponsor Registration & Login Buttons (日本語サイトと同じ配置) -->
+        <div class="sponsor-mini-buttons">
+          <div class="sponsor-mini-wrapper">
+            <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
+              <i class="bi bi-shop"></i>
+              <span>Sponsor Registration 🚀</span>
+            </button>
+            <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Login ✨</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -486,19 +543,7 @@
     </div>
   </div>
 
-  <!-- Sponsor Registration and Login Buttons (Fixed position matching Japanese site) -->
-  <div class="sponsor-mini-buttons">
-    <div class="sponsor-mini-wrapper">
-      <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
-        <i class="bi bi-shop"></i>
-        <span>Sponsor Registration 🚀</span>
-      </button>
-      <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
-        <i class="bi bi-box-arrow-in-right"></i>
-        <span>Login ✨</span>
-      </button>
-    </div>
-  </div>
+
   
 
 
