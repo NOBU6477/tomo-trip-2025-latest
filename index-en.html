@@ -1634,12 +1634,29 @@
     </button>
   </div>
 
+  <!-- 右側固定ボタン（日本語サイトと同じ構造） -->
+  <div style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 15px;">
+    <button onclick="alert('Sponsor Registration System - Coming Soon!')" style="background: linear-gradient(135deg, #ff6b6b, #ff8e53); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3); transition: all 0.3s ease; min-width: 160px; text-align: center; cursor: pointer;">
+      <i class="bi bi-shop me-2"></i>Sponsor Registration
+    </button>
+    <button onclick="alert('Sponsor Dashboard - Coming Soon!')" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-size: 14px; font-weight: 600; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 160px; text-align: center; cursor: pointer;">
+      <i class="bi bi-box-arrow-in-right me-2"></i>Login
+    </button>
+  </div>
+  
+  <!-- フィルターガイドボタン（右下） -->
+  <div style="position: fixed; right: 20px; bottom: 20%; z-index: 1000;">
+    <button type="button" data-bs-toggle="modal" data-bs-target="#filter-help-modal-en" style="background: linear-gradient(135deg, #17a2b8, #20c997); border: none; color: white; padding: 15px 20px; border-radius: 25px; font-size: 13px; font-weight: 600; text-align: center; line-height: 1.3; box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3); transition: all 0.3s ease; min-width: 140px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;">
+      <i class="bi bi-question-circle-fill" style="font-size: 20px;"></i>
+      <span style="font-size: 11px; line-height: 1.2;">Filter Features &<br>New Toolbar<br>User Guide</span>
+    </button>
+  </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
   <!-- 英語サイト専用システム（最終修正版） -->
   <script src="english-guide-display-fix.js"></script>
-  <script src="english-right-buttons-fix.js"></script>
   
   <!-- Back to Top Script -->
   <script>
