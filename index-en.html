@@ -780,6 +780,48 @@
       
       // Initialize floating toolbar
       updateQuickJump();
+    });
+
+    // Sponsor navigation functions
+    function navigateToSponsorRegistration() {
+      alert('🚀 Sponsor Registration System\n\nThank you for your interest in becoming a sponsor!\n\nRedirecting to sponsor registration page...');
+      // 実際のスポンサー登録ページへの遷移をここに実装
+      console.log('Navigating to sponsor registration');
+    }
+
+    function navigateToSponsorLogin() {
+      alert('✨ Sponsor Login System\n\nAccess your sponsor dashboard.\n\nRedirecting to sponsor login page...');
+      // 実際のスポンサーログインページへの遷移をここに実装
+      console.log('Navigating to sponsor login');
+    }
+
+    // Other missing functions
+    function showRegisterOptions() {
+      alert('🎯 Registration Options\n\n1. Tourist Registration\n2. Guide Registration\n\nChoose your preferred registration type.');
+      console.log('Showing registration options');
+    }
+
+    function showComparison() {
+      alert('📊 Guide Comparison\n\nCompare selected guides side by side.');
+      console.log('Showing guide comparison');
+    }
+
+    function showBookmarks() {
+      alert('⭐ Bookmarked Guides\n\nView your saved favorite guides.');
+      console.log('Showing bookmarks');
+    }
+
+    function showHistory() {
+      alert('📅 Browsing History\n\nView recently visited guide profiles.');
+      console.log('Showing browsing history');
+    }
+
+    function quickJump(page) {
+      if (page) {
+        alert(`🚀 Quick Jump\n\nJumping to page ${page}`);
+        console.log(`Quick jump to page: ${page}`);
+      }
+    }
       
       // Ensure all buttons are clickable
       console.log('All buttons initialized successfully');
