@@ -317,8 +317,8 @@
         
         <!-- Login/Register Buttons (右端配置) -->
         <div id="navbar-user-area" class="ms-3">
-          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal" style="border-radius: 20px;">Login</button>
-          <button class="btn btn-light" onclick="showRegisterOptions()" style="border-radius: 20px;">Sign Up</button>
+          <button class="btn btn-outline-light me-2" id="loginBtn" style="border-radius: 20px;">Login</button>
+          <button class="btn btn-light" id="signUpBtn" style="border-radius: 20px;">Sign Up</button>
         </div>
       </div>
     </div>
@@ -935,23 +935,46 @@
       });
     }
 
-    // Update sponsor buttons with proper navigation
+    // Sponsor button event handlers (copied from working Japanese version)
     document.addEventListener('DOMContentLoaded', function() {
       console.log('English site DOM loaded');
       
-      const sponsorRegBtn = document.querySelector('.sponsor-mini-btn.sponsor-register');
-      if (sponsorRegBtn) {
-        sponsorRegBtn.addEventListener('click', function(e) {
+      // Sponsor registration button
+      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
+      if (sponsorRegisterBtn) {
+        sponsorRegisterBtn.addEventListener('click', function(e) {
           e.preventDefault();
-          navigateToSponsorRegistration();
+          alert('🚀 Sponsor Registration System\n\nThank you for your interest in becoming a sponsor!\n\nRedirecting to sponsor registration page...');
+          // window.location.href = 'sponsor-registration.html';
         });
       }
 
-      const sponsorLoginBtn = document.querySelector('.sponsor-mini-btn.sponsor-login');
+      // Sponsor login button
+      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
       if (sponsorLoginBtn) {
         sponsorLoginBtn.addEventListener('click', function(e) {
           e.preventDefault();
-          navigateToSponsorLogin();
+          alert('✨ Sponsor Login System\n\nAccess your sponsor dashboard.\n\nRedirecting to sponsor login page...');
+          // window.location.href = 'sponsor-login.html';
+        });
+      }
+
+      // Header login button
+      const loginBtn = document.getElementById('loginBtn');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('🔐 User Login\n\nAccess your account.\n\nRedirecting to login page...');
+          // window.location.href = 'login.html';
+        });
+      }
+
+      // Header sign up button
+      const signUpBtn = document.getElementById('signUpBtn');
+      if (signUpBtn) {
+        signUpBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showRegisterOptions();
         });
       }
 
@@ -964,25 +987,13 @@
       updateQuickJump();
     });
 
-    // Sponsor navigation functions
-    function navigateToSponsorRegistration() {
-      alert('🚀 Sponsor Registration System\n\nThank you for your interest in becoming a sponsor!\n\nRedirecting to sponsor registration page...');
-      // 実際のスポンサー登録ページへの遷移をここに実装
-      console.log('Navigating to sponsor registration');
-    }
-
-    function navigateToSponsorLogin() {
-      alert('✨ Sponsor Login System\n\nAccess your sponsor dashboard.\n\nRedirecting to sponsor login page...');
-      // 実際のスポンサーログインページへの遷移をここに実装
-      console.log('Navigating to sponsor login');
-    }
-
-    // Other missing functions
+    // Header button functions
     function showRegisterOptions() {
       alert('🎯 Registration Options\n\n1. Tourist Registration\n2. Guide Registration\n\nChoose your preferred registration type.');
       console.log('Showing registration options');
     }
 
+    // Floating toolbar functions
     function showComparison() {
       alert('📊 Guide Comparison\n\nCompare selected guides side by side.');
       console.log('Showing guide comparison');
@@ -1004,6 +1015,15 @@
         console.log(`Quick jump to page: ${page}`);
       }
     }
+
+    // Additional function for complete Japanese version compatibility
+    function enableScrolling() {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    }
+
+    // Immediate scroll fix (copied from Japanese version)
+    enableScrolling();
       
       // Ensure all buttons are clickable
       console.log('All buttons initialized successfully');
