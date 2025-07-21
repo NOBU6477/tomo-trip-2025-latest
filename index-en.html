@@ -338,11 +338,11 @@
     </div>
     
     <div class="container position-relative">
-      <h1 class="display-4 fw-bold mb-3">Your Special Journey Awaits</h1>
-      <p class="lead mb-4">Discover hidden gems with local guides that tourism can't reveal</p>
+      <h1 class="display-4 fw-bold mb-3" id="hero-title">Your Special Journey Awaits</h1>
+      <p class="lead mb-4" id="hero-subtitle">Discover hidden gems with local guides that tourism can't reveal</p>
       <div class="position-relative">
-        <a href="#guides" class="btn btn-light btn-lg">Find a Guide</a>
-        <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">Contact Us</button>
+        <a href="#guides" class="btn btn-light btn-lg" id="find-guide-btn">Find a Guide</a>
+        <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal" id="contact-btn">Contact Us</button>
         
         <!-- Sponsor Registration & Login Buttons + Filter Guide Button (日本語サイトと同じ配置) -->
         <div class="sponsor-mini-buttons">
@@ -478,18 +478,18 @@
             <img src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400&h=250&fit=crop" class="card-img-top" alt="Hokkaido Guide">
             <div class="card-body d-flex flex-column">
               <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">鈴木 雪美</h5>
+                <h5 class="card-title mb-0">Sarah Johnson</h5>
                 <span class="badge bg-primary">4.9★</span>
               </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> 北海道 札幌市</p>
-              <p class="card-text mb-3 flex-grow-1">北海道の大自然と新鮮な海鮮グルメを案内。四季折々の絶景スポットへご案内します。</p>
+              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Hokkaido, Sapporo</p>
+              <p class="card-text mb-3 flex-grow-1">Explore Hokkaido's pristine nature and fresh seafood. I'll guide you to breathtaking seasonal spots.</p>
               <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">日本語</span>
-                <span class="badge bg-light text-dark me-1">英語</span>
+                <span class="badge bg-light text-dark me-1">Japanese</span>
+                <span class="badge bg-light text-dark me-1">English</span>
               </div>
               <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/回</span>
-                <button class="btn btn-primary btn-sm">詳細を見る</button>
+                <span class="fw-bold text-primary">¥6,000/session</span>
+                <button class="btn btn-primary btn-sm">View Details</button>
               </div>
             </div>
           </div>
@@ -501,18 +501,18 @@
             <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=250&fit=crop" class="card-img-top" alt="Nagoya Guide">
             <div class="card-body d-flex flex-column">
               <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">高橋 武</h5>
+                <h5 class="card-title mb-0">Michael Chen</h5>
                 <span class="badge bg-primary">4.6★</span>
               </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> 愛知県 名古屋市</p>
-              <p class="card-text mb-3 flex-grow-1">名古屋の産業文化と味噌カツなどのご当地グルメを案内する地元ガイドです。</p>
+              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Aichi, Nagoya</p>
+              <p class="card-text mb-3 flex-grow-1">Discover Nagoya's industrial culture and local specialties like miso katsu with a knowledgeable local guide.</p>
               <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">日本語</span>
-                <span class="badge bg-light text-dark me-1">英語</span>
+                <span class="badge bg-light text-dark me-1">Japanese</span>
+                <span class="badge bg-light text-dark me-1">English</span>
               </div>
               <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/回</span>
-                <button class="btn btn-primary btn-sm">詳細を見る</button>
+                <span class="fw-bold text-primary">¥6,000/session</span>
+                <button class="btn btn-primary btn-sm">View Details</button>
               </div>
             </div>
           </div>
@@ -524,7 +524,7 @@
       
       <!-- Show More Button -->
       <div class="text-center mt-4">
-        <button class="btn btn-outline-primary btn-lg" onclick="alert('More guides loading...')">
+        <button class="btn btn-outline-primary btn-lg" onclick="alert('More guides loading...')" id="show-more-btn">
           Show More (12 more guides)
         </button>
       </div>
@@ -1055,63 +1055,90 @@
     setTimeout(forceButtonSetup, 500);
     setTimeout(forceButtonSetup, 1000);
 
-    // Anti-automatic language switching system
-    function preventAutoLanguageSwitch() {
-      console.log('Installing anti-auto-switch protection...');
+    // Force English content system
+    function forceEnglishContent() {
+      console.log('Forcing English content display...');
       
+      // Replace common Japanese text with English
+      const replacements = {
+        '特別な旅が待っています': 'Your Special Journey Awaits',
+        '観光では発見できない隠れた名所を地元ガイドと一緒に発見しましょう': 'Discover hidden gems with local guides that tourism can\'t reveal',
+        'ガイドを探す': 'Find a Guide',
+        'お問い合わせ': 'Contact Us',
+        '人気のガイド': 'Popular Guides',
+        '詳細を見る': 'View Details',
+        '日本語': 'Japanese',
+        '英語': 'English',
+        '回': 'session',
+        'スポンサー登録': 'Sponsor Registration',
+        'ログイン': 'Login',
+        'フィルター機能と新しいツールバーのユーザーガイド': 'Filter Features & New Toolbar User Guide'
+      };
+
+      // Text node replacement function
+      function replaceTextNodes(element) {
+        if (element.nodeType === 3) { // Text node
+          let text = element.textContent;
+          for (const [japanese, english] of Object.entries(replacements)) {
+            text = text.replace(new RegExp(japanese, 'g'), english);
+          }
+          if (text !== element.textContent) {
+            element.textContent = text;
+          }
+        } else if (element.nodeType === 1) { // Element node
+          for (let child of element.childNodes) {
+            replaceTextNodes(child);
+          }
+        }
+      }
+
+      // Apply replacements to entire document
+      replaceTextNodes(document.body);
+
+      // Force specific elements to English
+      const elements = {
+        'hero-title': 'Your Special Journey Awaits',
+        'hero-subtitle': 'Discover hidden gems with local guides that tourism can\'t reveal',
+        'find-guide-btn': 'Find a Guide',
+        'contact-btn': 'Contact Us',
+        'show-more-btn': 'Show More (12 more guides)'
+      };
+
+      for (const [id, text] of Object.entries(elements)) {
+        const element = document.getElementById(id);
+        if (element) {
+          element.textContent = text;
+        }
+      }
+
       // Override any global functions that might switch language
       window.switchToJapanese = function() {
         console.log('Blocked automatic switch to Japanese');
         return false;
       };
-      
-      // Block location.href changes to index.html
-      const originalLocationSetter = Object.getOwnPropertyDescriptor(window.location, 'href') || 
-                                   Object.getOwnPropertyDescriptor(Location.prototype, 'href');
-      
-      if (originalLocationSetter && originalLocationSetter.set) {
-        Object.defineProperty(window.location, 'href', {
-          set: function(value) {
-            if (typeof value === 'string' && value.includes('index.html') && !value.includes('index-en.html')) {
-              console.log('Blocked automatic navigation to Japanese site:', value);
-              if (!confirm('Automatic navigation to Japanese version detected. Allow?\n自動的な日本語版への切り替えが検出されました。許可しますか？')) {
-                return;
-              }
-            }
-            originalLocationSetter.set.call(this, value);
-          },
-          get: originalLocationSetter.get
-        });
-      }
-      
-      // Monitor for DOM changes that might redirect
+
+      // Monitor for Japanese text reappearance
       const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-          if (mutation.type === 'childList') {
-            mutation.addedNodes.forEach(function(node) {
-              if (node.nodeType === 1) { // Element node
-                // Check for scripts or elements that might redirect
-                if (node.tagName === 'SCRIPT' || node.tagName === 'META') {
-                  const content = node.textContent || node.getAttribute('content') || '';
-                  if (content.includes('index.html') && !content.includes('index-en.html')) {
-                    console.log('Blocked suspicious element:', node);
-                    node.remove();
-                  }
-                }
-              }
-            });
+          if (mutation.type === 'childList' || mutation.type === 'characterData') {
+            setTimeout(() => replaceTextNodes(document.body), 100);
           }
         });
       });
-      
-      observer.observe(document.body, { childList: true, subtree: true });
+
+      observer.observe(document.body, { 
+        childList: true, 
+        subtree: true, 
+        characterData: true 
+      });
     }
 
-    // Install protection immediately
-    preventAutoLanguageSwitch();
+    // Install English content forcing immediately
+    forceEnglishContent();
     
-    // Reinstall protection after 2 seconds in case other scripts interfere
-    setTimeout(preventAutoLanguageSwitch, 2000);
+    // Reinstall after DOM loads and after any potential interference
+    setTimeout(forceEnglishContent, 1000);
+    setTimeout(forceEnglishContent, 3000);
 
     // Header button functions
     function showRegisterOptions() {
