@@ -4,26 +4,24 @@ console.log('🚨 Emergency Button Fix Loading...');
 function emergencyButtonFix() {
   console.log('🔧 Applying emergency button fixes...');
   
-  // Force language switch button to work
+  // Force language switch button to work (direct switch like Japanese version)
   const langBtn = document.getElementById('switchToJapaneseBtn');
   if (langBtn) {
     langBtn.onclick = function(e) {
       e.preventDefault();
-      console.log('Emergency: Language switch clicked');
-      if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
-        window.location.href = 'index.html';
-      }
+      console.log('Emergency: Language switch clicked - direct switch');
+      window.location.href = 'index.html';
     };
     console.log('✓ Language switch button fixed');
   }
   
-  // Force sponsor buttons to work
+  // Force sponsor buttons to work (direct navigation like Japanese version)
   const sponsorReg = document.getElementById('sponsorRegisterBtn');
   if (sponsorReg) {
     sponsorReg.onclick = function(e) {
       e.preventDefault();
-      console.log('Emergency: Sponsor register clicked');
-      alert('🎯 Sponsor Registration\n\nRegister your business as a sponsor partner.');
+      console.log('Emergency: Sponsor register clicked - direct navigation');
+      window.location.href = 'sponsor-register.html';
     };
     console.log('✓ Sponsor register button fixed');
   }
@@ -32,8 +30,8 @@ function emergencyButtonFix() {
   if (sponsorLogin) {
     sponsorLogin.onclick = function(e) {
       e.preventDefault();
-      console.log('Emergency: Sponsor login clicked');
-      alert('🔑 Sponsor Login\n\nLogin to your sponsor dashboard.');
+      console.log('Emergency: Sponsor login clicked - direct navigation');
+      window.location.href = 'sponsor-login.html';
     };
     console.log('✓ Sponsor login button fixed');
   }

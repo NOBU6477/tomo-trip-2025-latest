@@ -1414,10 +1414,8 @@
         newSwitchBtn.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
-          console.log('Japanese switch button clicked');
-          if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
-            window.location.href = 'index.html';
-          }
+          console.log('Japanese switch button clicked - direct switch');
+          window.location.href = 'index.html';
         });
       } else {
         console.log('Japanese switch button not found');
@@ -1433,7 +1431,8 @@
         newSponsorRegBtn.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
-          alert('🎯 Sponsor Registration\n\nRegister your business as a sponsor partner.');
+          console.log('Sponsor register clicked - direct navigation');
+          window.location.href = 'sponsor-register.html';
         });
       }
 
@@ -1446,7 +1445,8 @@
         newSponsorLoginBtn.addEventListener('click', function(e) {
           e.preventDefault();
           e.stopPropagation();
-          alert('🔑 Sponsor Login\n\nLogin to your sponsor dashboard.');
+          console.log('Sponsor login clicked - direct navigation');
+          window.location.href = 'sponsor-login.html';
         });
       }
 
