@@ -854,7 +854,7 @@
             ">
               🇯🇵 日本語
             </button>
-            <button class="btn lang-btn-en" onclick="window.location.href='index-en.html'" style="
+            <button class="btn lang-btn-en" id="switchToEnglishBtn" onclick="window.location.href='index-en.html'" style="
               background: linear-gradient(135deg, #4287f5, #64a8ff);
               color: white;
               border: none;
@@ -863,6 +863,8 @@
               font-weight: bold;
               box-shadow: 0 2px 10px rgba(66,135,245,0.3);
               margin-left: -1px;
+              cursor: pointer;
+              pointer-events: auto;
             ">
               🇺🇸 English
             </button>
@@ -3366,6 +3368,9 @@
       showStatus('Switched to English');
     }
   </script>
+  
+  <!-- English Switch Fix -->
+  <script src="english-switch-fix.js"></script>
   
   <!-- スムーズスクロール用CSS -->
   <style>
