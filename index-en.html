@@ -422,11 +422,69 @@
                       <select class="form-select" id="location-filter">
                         <option value="">All</option>
                         <optgroup label="Prefectures">
-                          <option value="Tokyo">Tokyo</option>
-                          <option value="Osaka">Osaka</option>
-                          <option value="Kyoto">Kyoto</option>
                           <option value="Hokkaido">Hokkaido</option>
+                          <option value="Aomori">Aomori</option>
+                          <option value="Iwate">Iwate</option>
+                          <option value="Miyagi">Miyagi</option>
+                          <option value="Akita">Akita</option>
+                          <option value="Yamagata">Yamagata</option>
+                          <option value="Fukushima">Fukushima</option>
+                          <option value="Ibaraki">Ibaraki</option>
+                          <option value="Tochigi">Tochigi</option>
+                          <option value="Gunma">Gunma</option>
+                          <option value="Saitama">Saitama</option>
+                          <option value="Chiba">Chiba</option>
+                          <option value="Tokyo">Tokyo</option>
+                          <option value="Kanagawa">Kanagawa</option>
+                          <option value="Niigata">Niigata</option>
+                          <option value="Toyama">Toyama</option>
+                          <option value="Ishikawa">Ishikawa</option>
+                          <option value="Fukui">Fukui</option>
+                          <option value="Yamanashi">Yamanashi</option>
+                          <option value="Nagano">Nagano</option>
+                          <option value="Gifu">Gifu</option>
+                          <option value="Shizuoka">Shizuoka</option>
+                          <option value="Aichi">Aichi</option>
+                          <option value="Mie">Mie</option>
+                          <option value="Shiga">Shiga</option>
+                          <option value="Kyoto">Kyoto</option>
+                          <option value="Osaka">Osaka</option>
+                          <option value="Hyogo">Hyogo</option>
+                          <option value="Nara">Nara</option>
+                          <option value="Wakayama">Wakayama</option>
+                          <option value="Tottori">Tottori</option>
+                          <option value="Shimane">Shimane</option>
+                          <option value="Okayama">Okayama</option>
+                          <option value="Hiroshima">Hiroshima</option>
+                          <option value="Yamaguchi">Yamaguchi</option>
+                          <option value="Tokushima">Tokushima</option>
+                          <option value="Kagawa">Kagawa</option>
+                          <option value="Ehime">Ehime</option>
+                          <option value="Kochi">Kochi</option>
+                          <option value="Fukuoka">Fukuoka</option>
+                          <option value="Saga">Saga</option>
+                          <option value="Nagasaki">Nagasaki</option>
+                          <option value="Kumamoto">Kumamoto</option>
+                          <option value="Oita">Oita</option>
+                          <option value="Miyazaki">Miyazaki</option>
+                          <option value="Kagoshima">Kagoshima</option>
                           <option value="Okinawa">Okinawa</option>
+                        </optgroup>
+                        <optgroup label="Remote Islands">
+                          <option value="Yakushima">Yakushima</option>
+                          <option value="Tanegashima">Tanegashima</option>
+                          <option value="Amami Oshima">Amami Oshima</option>
+                          <option value="Miyakojima">Miyakojima</option>
+                          <option value="Ishigaki">Ishigaki</option>
+                          <option value="Taketomi">Taketomi</option>
+                          <option value="Iriomote">Iriomote</option>
+                          <option value="Yonaguni">Yonaguni</option>
+                          <option value="Sado">Sado</option>
+                          <option value="Oki Islands">Oki Islands</option>
+                          <option value="Iki">Iki</option>
+                          <option value="Tsushima">Tsushima</option>
+                          <option value="Goto Islands">Goto Islands</option>
+                          <option value="Ogasawara Islands">Ogasawara Islands</option>
                         </optgroup>
                       </select>
                     </div>
@@ -438,52 +496,53 @@
                         <option value="English">English</option>
                         <option value="Chinese">Chinese</option>
                         <option value="Korean">Korean</option>
+                        <option value="French">French</option>
                       </select>
                     </div>
                     <div class="col-md-4">
-                      <label for="price-filter" class="form-label">Price Range</label>
+                      <label for="price-filter" class="form-label">Price</label>
                       <select class="form-select" id="price-filter">
                         <option value="">All</option>
-                        <option value="6000">¥6,000</option>
-                        <option value="8000">¥8,000</option>
-                        <option value="10000">¥10,000</option>
-                        <option value="12000">¥12,000+</option>
+                        <option value="under-6000">Under ¥6,000/hour</option>
+                        <option value="6000-10000">¥6,000-10,000/hour</option>
+                        <option value="over-10000">Over ¥10,000/hour</option>
                       </select>
                     </div>
-                  </div>
-                  <div class="row mt-3">
                     <div class="col-12">
                       <label class="form-label">Keywords</label>
-                      <div class="d-flex flex-wrap gap-2 mb-2">
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="Night Tour" id="keyword-night">
+                      <div class="d-flex flex-wrap" id="keyword-filter-group">
+                        <div class="form-check me-3 mb-2">
+                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Night Tour" id="keyword-night">
                           <label class="form-check-label" for="keyword-night">Night Tour</label>
                         </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="Gourmet" id="keyword-gourmet">
-                          <label class="form-check-label" for="keyword-gourmet">Gourmet</label>
+                        <div class="form-check me-3 mb-2">
+                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Gourmet" id="keyword-food">
+                          <label class="form-check-label" for="keyword-food">Gourmet</label>
                         </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="Photo Spots" id="keyword-photo">
+                        <div class="form-check me-3 mb-2">
+                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Photo Spots" id="keyword-photo">
                           <label class="form-check-label" for="keyword-photo">Photo Spots</label>
                         </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="Culture" id="keyword-culture">
-                          <label class="form-check-label" for="keyword-culture">Culture</label>
+                        <div class="form-check me-3 mb-2">
+                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Cuisine" id="keyword-cooking">
+                          <label class="form-check-label" for="keyword-cooking">Cuisine</label>
                         </div>
-                        <div class="form-check">
-                          <input class="form-check-input" type="checkbox" value="Activities" id="keyword-activity">
+                        <div class="form-check me-3 mb-2">
+                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Activities" id="keyword-activity">
                           <label class="form-check-label" for="keyword-activity">Activities</label>
                         </div>
                       </div>
-                      <input type="text" class="form-control" id="custom-keywords" placeholder="Enter custom keywords (comma-separated)">
+                      <input type="text" class="form-control mt-2" id="custom-keywords" placeholder="Enter other keywords (comma-separated)">
+                      <small class="text-muted mt-1 d-block">
+                        <i class="bi bi-info-circle"></i> Use checkboxes or input field for keywords. For multiple keywords, separate with commas. Example: "hot springs, hiking, temples"
+                      </small>
                     </div>
-                  </div>
-                  <div class="d-flex justify-content-center mt-3">
-                    <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
-                    <button type="button" class="btn btn-primary" onclick="searchGuides()">
-                      <i class="bi bi-search"></i> Search
-                    </button>
+                    <div class="col-12 d-flex justify-content-end">
+                      <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
+                      <button type="button" class="btn btn-primary" onclick="searchGuides()">
+                        <i class="bi bi-search"></i> Search
+                      </button>
+                    </div>
                   </div>
                 </form>
               </div>
