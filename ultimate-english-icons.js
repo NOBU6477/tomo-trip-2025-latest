@@ -270,57 +270,86 @@ class UltimateEnglishIcons {
     }
 
     setupFloatingToolbar() {
-        // フローティングツールバーを作成（日本語版と同じ構造）
-        let toolbar = document.querySelector('.english-floating-toolbar');
-        if (!toolbar) {
-            toolbar = document.createElement('div');
-            toolbar.className = 'english-floating-toolbar position-fixed';
-            toolbar.style.cssText = `
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border-radius: 25px;
-                padding: 10px 20px;
-                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                z-index: 1030;
-                display: flex;
-                gap: 15px;
-                align-items: center;
-            `;
-            
-            // 比較中の表示
-            const comparisonInfo = document.createElement('span');
-            comparisonInfo.textContent = `Comparing: ${this.comparedGuides.length}/${this.maxCompareGuides} people`;
-            comparisonInfo.style.fontSize = '14px';
-            comparisonInfo.style.color = '#666';
-            comparisonInfo.className = 'english-comparison-info';
-            
-            // 比較ボタン
-            const compareBtn = document.createElement('button');
-            compareBtn.id = 'englishShowComparison';
-            compareBtn.className = 'btn btn-primary btn-sm';
-            compareBtn.innerHTML = '<i class="bi bi-list-check me-1"></i>Compare';
-            
-            // ブックマークボタン
-            const bookmarkBtn = document.createElement('button');
-            bookmarkBtn.id = 'englishShowBookmarks';
-            bookmarkBtn.className = 'btn btn-outline-primary btn-sm';
-            bookmarkBtn.innerHTML = `<i class="bi bi-bookmark-star me-1"></i>Bookmarks(${this.bookmarkedGuides.length})`;
-            
-            // 履歴ボタン
-            const historyBtn = document.createElement('button');
-            historyBtn.className = 'btn btn-outline-secondary btn-sm';
-            historyBtn.innerHTML = '<i class="bi bi-clock-history me-1"></i>History';
-            
-            toolbar.appendChild(comparisonInfo);
-            toolbar.appendChild(compareBtn);
-            toolbar.appendChild(bookmarkBtn);
-            toolbar.appendChild(historyBtn);
-            
-            document.body.appendChild(toolbar);
-        }
+        // 既存のツールバーを削除
+        const existingToolbars = document.querySelectorAll('.floating-toolbar, .english-floating-toolbar, #floating-toolbar');
+        existingToolbars.forEach(tb => tb.remove());
+        
+        // 日本語版と完全に同じ構造のツールバーを作成
+        const toolbar = document.createElement('div');
+        toolbar.className = 'floating-toolbar position-fixed';
+        toolbar.style.cssText = `
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 12px 24px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1030;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        `;
+        
+        // 比較中の表示（日本語版と同じスタイル）
+        const comparisonSection = document.createElement('div');
+        comparisonSection.className = 'd-flex align-items-center';
+        comparisonSection.innerHTML = `
+            <span class="text-muted me-2" style="font-size: 14px;">Comparing:</span>
+            <span id="english-comparison-count" class="fw-bold text-primary english-comparison-info">${this.comparedGuides.length}</span>
+            <span class="text-muted">/3 people</span>
+        `;
+        
+        // 比較ボタン（日本語版と同じスタイル）
+        const compareBtn = document.createElement('button');
+        compareBtn.id = 'englishShowComparison';
+        compareBtn.className = 'btn btn-primary btn-sm';
+        compareBtn.style.borderRadius = '20px';
+        compareBtn.innerHTML = '<i class="bi bi-list-check me-1"></i>Compare';
+        
+        // ブックマークボタン（日本語版と同じスタイル）
+        const bookmarkBtn = document.createElement('button');
+        bookmarkBtn.id = 'englishShowBookmarks';
+        bookmarkBtn.className = 'btn btn-outline-primary btn-sm';
+        bookmarkBtn.style.borderRadius = '20px';
+        bookmarkBtn.innerHTML = `<i class="bi bi-bookmark-star me-1"></i>Bookmarks(<span id="english-bookmark-count">${this.bookmarkedGuides.length}</span>)`;
+        
+        // 履歴ボタン（日本語版と同じスタイル）
+        const historyBtn = document.createElement('button');
+        historyBtn.className = 'btn btn-outline-secondary btn-sm';
+        historyBtn.style.borderRadius = '20px';
+        historyBtn.innerHTML = '<i class="bi bi-clock-history me-1"></i>History';
+        historyBtn.onclick = () => {
+            alert('History feature will be implemented in the future.\\n\\nThis will show your browsing history and recently viewed guides.');
+        };
+        
+        // ページジャンプ（日本語版と同じスタイル）
+        const pageJump = document.createElement('select');
+        pageJump.className = 'form-select form-select-sm';
+        pageJump.style.cssText = 'width: auto; border-radius: 20px;';
+        pageJump.innerHTML = `
+            <option value="">Page Jump</option>
+            <option value="1">Page 1</option>
+            <option value="2">Page 2</option>
+            <option value="3">Page 3</option>
+        `;
+        pageJump.onchange = (e) => {
+            if (e.target.value) {
+                alert(`Page jump to ${e.target.value} will be implemented in the future.\\n\\nThis will allow quick navigation between guide pages.`);
+                e.target.value = '';
+            }
+        };
+        
+        toolbar.appendChild(comparisonSection);
+        toolbar.appendChild(compareBtn);
+        toolbar.appendChild(bookmarkBtn);
+        toolbar.appendChild(historyBtn);
+        toolbar.appendChild(pageJump);
+        
+        document.body.appendChild(toolbar);
+        console.log('✅ Japanese-style floating toolbar created');
     }
 
     updateToolbarCounts() {
