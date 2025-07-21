@@ -675,6 +675,9 @@
   <!-- Debug Script -->
   <script src="test-english-buttons.js"></script>
   
+  <!-- Emergency Button Fix -->
+  <script src="emergency-button-fix.js"></script>
+  
   <!-- Filter Collapse Modal (日本語サイトと同じフィルター機能) -->
   <div class="collapse" id="filterCollapse">
     <div class="card card-body mb-4">
@@ -1405,8 +1408,12 @@
       const switchToJapaneseBtn = document.getElementById('switchToJapaneseBtn');
       if (switchToJapaneseBtn) {
         console.log('Setting up Japanese switch button');
-        switchToJapaneseBtn.addEventListener('click', function(e) {
+        // Remove any existing listeners first
+        switchToJapaneseBtn.replaceWith(switchToJapaneseBtn.cloneNode(true));
+        const newSwitchBtn = document.getElementById('switchToJapaneseBtn');
+        newSwitchBtn.addEventListener('click', function(e) {
           e.preventDefault();
+          e.stopPropagation();
           console.log('Japanese switch button clicked');
           if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
             window.location.href = 'index.html';
@@ -1420,8 +1427,12 @@
       const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
       if (sponsorRegisterBtn) {
         console.log('Setting up sponsor register button');
-        sponsorRegisterBtn.addEventListener('click', function(e) {
+        // Remove any existing listeners first
+        sponsorRegisterBtn.replaceWith(sponsorRegisterBtn.cloneNode(true));
+        const newSponsorRegBtn = document.getElementById('sponsorRegisterBtn');
+        newSponsorRegBtn.addEventListener('click', function(e) {
           e.preventDefault();
+          e.stopPropagation();
           alert('🎯 Sponsor Registration\n\nRegister your business as a sponsor partner.');
         });
       }
@@ -1429,32 +1440,26 @@
       const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
       if (sponsorLoginBtn) {
         console.log('Setting up sponsor login button');
-        sponsorLoginBtn.addEventListener('click', function(e) {
+        // Remove any existing listeners first
+        sponsorLoginBtn.replaceWith(sponsorLoginBtn.cloneNode(true));
+        const newSponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+        newSponsorLoginBtn.addEventListener('click', function(e) {
           e.preventDefault();
+          e.stopPropagation();
           alert('🔑 Sponsor Login\n\nLogin to your sponsor dashboard.');
         });
       }
 
-      // Header login/signup buttons
+      // Header login/signup buttons (already have data-bs-toggle, so they work automatically)
       const loginBtn = document.getElementById('loginBtn');
       const signUpBtn = document.getElementById('signUpBtn');
       
-      if (loginBtn && !loginBtn.getAttribute('data-bs-toggle')) {
-        console.log('Setting up header login button');
-        loginBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const modal = new bootstrap.Modal(document.getElementById('loginModal'));
-          modal.show();
-        });
+      if (loginBtn) {
+        console.log('Login button found with data-bs-toggle, will work automatically');
       }
 
-      if (signUpBtn && !signUpBtn.getAttribute('data-bs-toggle')) {
-        console.log('Setting up header signup button');
-        signUpBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          const modal = new bootstrap.Modal(document.getElementById('registerModal'));
-          modal.show();
-        });
+      if (signUpBtn) {
+        console.log('Sign up button found with data-bs-toggle, will work automatically');
       }
 
       console.log('All event listeners setup complete');
