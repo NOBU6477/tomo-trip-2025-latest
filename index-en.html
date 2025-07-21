@@ -675,6 +675,9 @@
   <!-- Debug Script -->
   <script src="test-english-buttons.js"></script>
   
+  <!-- Anti Auto-Switch Protection (Load First) -->
+  <script src="anti-auto-switch-protection.js"></script>
+  
   <!-- Emergency Button Fix -->
   <script src="emergency-button-fix.js"></script>
   
@@ -1211,12 +1214,10 @@
         }
       }
 
-      // Language switching functionality
+      // Language switching functionality (disabled for protection)
       window.switchToJapanese = function() {
-        console.log('Switching to Japanese version...');
-        if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
-          window.location.href = 'index.html';
-        }
+        console.log('Auto-switch to Japanese blocked by protection system');
+        return false;
       };
 
       window.switchToEnglish = function() {
@@ -1224,28 +1225,12 @@
         // Already on English version, no action needed
       };
 
-      // Monitor for Japanese text reappearance
-      const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-          if (mutation.type === 'childList' || mutation.type === 'characterData') {
-            setTimeout(() => replaceTextNodes(document.body), 100);
-          }
-        });
-      });
-
-      observer.observe(document.body, { 
-        childList: true, 
-        subtree: true, 
-        characterData: true 
-      });
+      // Disabled monitoring to prevent conflicts with anti-auto-switch protection
+      console.log('English content monitoring disabled to prevent auto-switch conflicts');
     }
 
-    // Install English content forcing immediately
-    forceEnglishContent();
-    
-    // Reinstall after DOM loads and after any potential interference
-    setTimeout(forceEnglishContent, 1000);
-    setTimeout(forceEnglishContent, 3000);
+    // Disabled automatic English content forcing to prevent conflicts
+    console.log('Automatic English content forcing disabled');
 
     // Show More button functionality (copied from Japanese version)
     function setupShowMoreButton() {
