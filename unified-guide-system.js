@@ -330,6 +330,10 @@ class UnifiedGuideSystem {
     });
 
     this.updateCounter();
+    
+    // ブックマーク・比較システムにガイド表示を通知
+    document.dispatchEvent(new CustomEvent('guidesDisplayed'));
+    
     console.log(`🎨 ${container.children.length}/${this.filteredGuides.length}人のガイドカードを表示しました (${this.isEnglishSite ? '英語' : '日本語'}サイト)`);
   }
 
@@ -352,6 +356,15 @@ class UnifiedGuideSystem {
             <img src="${translatedGuide.profileImage}" class="card-img-top" alt="${translatedGuide.name}" 
                  style="height: 250px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=250&fit=crop&crop=face'">
             <div class="price-badge">¥${translatedGuide.fee.toLocaleString()}${sessionText}</div>
+            <!-- Bookmark and Comparison Icons (Always Visible) -->
+            <div class="position-absolute top-0 start-0 m-2">
+              <button class="btn btn-sm btn-light bookmark-btn me-1" data-guide-id="${guide.id}" title="Bookmark this guide" style="border-radius: 50%; width: 35px; height: 35px; padding: 0;">
+                <i class="bi bi-star" style="color: #ffc107;"></i>
+              </button>
+              <button class="btn btn-sm btn-light compare-btn" data-guide-id="${guide.id}" title="Add to comparison" style="border-radius: 50%; width: 35px; height: 35px; padding: 0;">
+                <i class="bi bi-check-circle" style="color: #28a745;"></i>
+              </button>
+            </div>
           </div>
           <div class="card-body">
             <h5 class="card-title">${translatedGuide.name}</h5>
@@ -383,6 +396,15 @@ class UnifiedGuideSystem {
                  style="height: 200px; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop&crop=face'">
             <div class="position-absolute top-0 end-0 m-2">
               <span class="badge bg-primary">¥${guide.fee.toLocaleString()}${sessionText}</span>
+            </div>
+            <!-- ブックマークと比較アイコン（常時表示） -->
+            <div class="position-absolute top-0 start-0 m-2">
+              <button class="btn btn-sm btn-light bookmark-btn me-1" data-guide-id="${guide.id}" title="このガイドをブックマーク" style="border-radius: 50%; width: 35px; height: 35px; padding: 0;">
+                <i class="bi bi-star" style="color: #ffc107;"></i>
+              </button>
+              <button class="btn btn-sm btn-light compare-btn" data-guide-id="${guide.id}" title="比較に追加" style="border-radius: 50%; width: 35px; height: 35px; padding: 0;">
+                <i class="bi bi-check-circle" style="color: #28a745;"></i>
+              </button>
             </div>
           </div>
           <div class="card-body d-flex flex-column">
