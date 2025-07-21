@@ -1101,33 +1101,7 @@
         };
       }
 
-      // Language switch button functionality
-      const switchToJapaneseBtn = document.getElementById('switchToJapaneseBtn');
-      if (switchToJapaneseBtn) {
-        console.log('Found Japanese switch button, adding click handler');
-        switchToJapaneseBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('Japanese switch button clicked');
-          switchToJapanese();
-        });
-      }
-
-      // Also try to find and setup any other language buttons
-      document.querySelectorAll('.lang-btn-jp').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('Language button (JP) clicked');
-          switchToJapanese();
-        });
-      });
-
-      document.querySelectorAll('.lang-btn-en').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('Language button (EN) clicked - already on English');
-          // Already on English, no action needed
-        });
-      });
+      // Language switching functionality will be handled in setupAllEventListeners
 
       // Also handle center language button
       const centerSwitchToJapaneseBtn = document.getElementById('centerSwitchToJapaneseBtn');
@@ -1384,10 +1358,14 @@
     // Also setup after a delay to ensure all elements are ready
     setTimeout(setupShowMoreButton, 1000);
 
-    // Contact form functionality
-    document.addEventListener('DOMContentLoaded', function() {
+    // Unified event listener setup
+    function setupAllEventListeners() {
+      console.log('Setting up all event listeners...');
+      
+      // Contact form functionality
       const contactForm = document.getElementById('contact-form');
       if (contactForm) {
+        console.log('Setting up contact form');
         contactForm.addEventListener('submit', function(e) {
           e.preventDefault();
           alert('Thank you for your message! We will get back to you soon.');
@@ -1399,6 +1377,7 @@
       // Login form functionality
       const loginForm = document.getElementById('login-form');
       if (loginForm) {
+        console.log('Setting up login form');
         loginForm.addEventListener('submit', function(e) {
           e.preventDefault();
           alert('Login functionality coming soon!');
@@ -1410,6 +1389,7 @@
       // Register form functionality
       const registerForm = document.getElementById('register-form');
       if (registerForm) {
+        console.log('Setting up register form');
         registerForm.addEventListener('submit', function(e) {
           e.preventDefault();
           alert('Registration functionality coming soon!');
@@ -1417,7 +1397,75 @@
           if (modal) modal.hide();
         });
       }
-    });
+
+      // Language switch buttons
+      const switchToJapaneseBtn = document.getElementById('switchToJapaneseBtn');
+      if (switchToJapaneseBtn) {
+        console.log('Setting up Japanese switch button');
+        switchToJapaneseBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Japanese switch button clicked');
+          if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
+            window.location.href = 'index.html';
+          }
+        });
+      } else {
+        console.log('Japanese switch button not found');
+      }
+
+      // Sponsor buttons
+      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
+      if (sponsorRegisterBtn) {
+        console.log('Setting up sponsor register button');
+        sponsorRegisterBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('🎯 Sponsor Registration\n\nRegister your business as a sponsor partner.');
+        });
+      }
+
+      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+      if (sponsorLoginBtn) {
+        console.log('Setting up sponsor login button');
+        sponsorLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('🔑 Sponsor Login\n\nLogin to your sponsor dashboard.');
+        });
+      }
+
+      // Header login/signup buttons
+      const loginBtn = document.getElementById('loginBtn');
+      const signUpBtn = document.getElementById('signUpBtn');
+      
+      if (loginBtn && !loginBtn.getAttribute('data-bs-toggle')) {
+        console.log('Setting up header login button');
+        loginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const modal = new bootstrap.Modal(document.getElementById('loginModal'));
+          modal.show();
+        });
+      }
+
+      if (signUpBtn && !signUpBtn.getAttribute('data-bs-toggle')) {
+        console.log('Setting up header signup button');
+        signUpBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const modal = new bootstrap.Modal(document.getElementById('registerModal'));
+          modal.show();
+        });
+      }
+
+      console.log('All event listeners setup complete');
+    }
+
+    // Setup event listeners when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupAllEventListeners);
+    } else {
+      setupAllEventListeners();
+    }
+
+    // Also setup after a delay to ensure all elements are ready
+    setTimeout(setupAllEventListeners, 1000);
 
     // Header button functions
     function showRegisterOptions() {
