@@ -391,13 +391,105 @@
     <!-- Popular Guides -->
     <section id="guides" class="mb-5">
       <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">
-          <i class="bi bi-people-fill text-primary me-2"></i>Popular Guides
-          <span class="fs-6 text-muted">| <i class="bi bi-geo-alt"></i> <span id="guide-count-number">12</span> guides displaying (Total <span id="total-guide-count">24</span>)</span>
-        </h2>
-        <button type="button" class="btn btn-outline-primary" id="filterToggleBtn" style="z-index: 1050; position: relative; cursor: pointer; pointer-events: auto;">
-          <i class="bi bi-funnel"></i> Filter Guides
-        </button>
+        <div class="position-relative">
+          <button type="button" class="btn btn-sm btn-outline-info me-3" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="border-radius: 20px;">
+            <i class="bi bi-question-circle me-1"></i>Filter Guide
+          </button>
+        </div>
+        <h2 class="mb-0 flex-grow-1 text-center">Popular Guides</h2>
+        <div style="width: 140px;"></div> <!-- Spacer -->
+      </div>
+      <div class="mb-4">
+        <div class="text-center mb-3">
+          <div id="guides-count" class="guide-counter text-primary fw-bold fs-5 mb-3">
+            <i class="bi bi-people-fill me-2"></i><span id="guide-count-number">24</span> guides found
+          </div>
+          <button type="button" class="btn btn-outline-primary" id="filterToggleBtn">
+            <i class="bi bi-funnel"></i> Open Filter
+          </button>
+        </div>
+        
+        <div class="row justify-content-center">
+          <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm d-none" id="filter-card">
+              <div class="card-body">
+                <h5 class="card-title mb-3">Filter Guides</h5>
+                <form id="guide-filter-form">
+                  <!-- Real-time search filter form -->
+                  <div class="row g-3">
+                    <div class="col-md-4">
+                      <label for="location-filter" class="form-label">Location</label>
+                      <select class="form-select" id="location-filter">
+                        <option value="">All</option>
+                        <optgroup label="Prefectures">
+                          <option value="Tokyo">Tokyo</option>
+                          <option value="Osaka">Osaka</option>
+                          <option value="Kyoto">Kyoto</option>
+                          <option value="Hokkaido">Hokkaido</option>
+                          <option value="Okinawa">Okinawa</option>
+                        </optgroup>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="language-filter" class="form-label">Language</label>
+                      <select class="form-select" id="language-filter">
+                        <option value="">All</option>
+                        <option value="Japanese">Japanese</option>
+                        <option value="English">English</option>
+                        <option value="Chinese">Chinese</option>
+                        <option value="Korean">Korean</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="price-filter" class="form-label">Price Range</label>
+                      <select class="form-select" id="price-filter">
+                        <option value="">All</option>
+                        <option value="6000">¥6,000</option>
+                        <option value="8000">¥8,000</option>
+                        <option value="10000">¥10,000</option>
+                        <option value="12000">¥12,000+</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row mt-3">
+                    <div class="col-12">
+                      <label class="form-label">Keywords</label>
+                      <div class="d-flex flex-wrap gap-2 mb-2">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="Night Tour" id="keyword-night">
+                          <label class="form-check-label" for="keyword-night">Night Tour</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="Gourmet" id="keyword-gourmet">
+                          <label class="form-check-label" for="keyword-gourmet">Gourmet</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="Photo Spots" id="keyword-photo">
+                          <label class="form-check-label" for="keyword-photo">Photo Spots</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="Culture" id="keyword-culture">
+                          <label class="form-check-label" for="keyword-culture">Culture</label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="Activities" id="keyword-activity">
+                          <label class="form-check-label" for="keyword-activity">Activities</label>
+                        </div>
+                      </div>
+                      <input type="text" class="form-control" id="custom-keywords" placeholder="Enter custom keywords (comma-separated)">
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-center mt-3">
+                    <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
+                    <button type="button" class="btn btn-primary" onclick="searchGuides()">
+                      <i class="bi bi-search"></i> Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       
 
@@ -693,85 +785,13 @@
   <!-- Nuclear Filter Fix -->
   <script src="nuclear-filter-fix.js"></script>
   
-  <!-- Emergency Filter Override -->
-  <script src="emergency-filter-override.js"></script>
+  <!-- Emergency Filter Override (Disabled) -->
+  <!-- <script src="emergency-filter-override.js"></script> -->
   
-  <!-- Filter Collapse Modal (日本語サイトと同じフィルター機能) -->
-  <div class="collapse" id="filterCollapse">
-    <div class="card card-body mb-4">
-      <form id="filterForm">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Location</label>
-            <select class="form-select" id="prefecture-filter">
-              <option value="">All Locations</option>
-              <option value="tokyo">Tokyo</option>
-              <option value="osaka">Osaka</option>
-              <option value="kyoto">Kyoto</option>
-              <option value="hokkaido">Hokkaido</option>
-              <option value="okinawa">Okinawa</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Languages</label>
-            <select class="form-select" id="language-filter">
-              <option value="">All Languages</option>
-              <option value="japanese">Japanese</option>
-              <option value="english">English</option>
-              <option value="chinese">Chinese</option>
-              <option value="korean">Korean</option>
-            </select>
-          </div>
-          <div class="col-md-4">
-            <label class="form-label fw-bold">Price Range</label>
-            <select class="form-select" id="price-filter">
-              <option value="">All Prices</option>
-              <option value="0-5000">Under ¥5,000</option>
-              <option value="5000-8000">¥5,000-¥8,000</option>
-              <option value="8000-12000">¥8,000-¥12,000</option>
-              <option value="12000-20000">¥12,000-¥20,000</option>
-              <option value="20000+">Over ¥20,000</option>
-            </select>
-          </div>
-          <div class="col-12">
-            <label class="form-label fw-bold">Specialties (Keywords)</label>
-            <div class="d-flex flex-wrap gap-2 mb-2">
-              <div class="form-check me-3 mb-2">
-                <input class="form-check-input keyword-checkbox" type="checkbox" value="Night Tour" id="keyword-night">
-                <label class="form-check-label" for="keyword-night">Night Tour</label>
-              </div>
-              <div class="form-check me-3 mb-2">
-                <input class="form-check-input keyword-checkbox" type="checkbox" value="Gourmet" id="keyword-gourmet">
-                <label class="form-check-label" for="keyword-gourmet">Gourmet</label>
-              </div>
-              <div class="form-check me-3 mb-2">
-                <input class="form-check-input keyword-checkbox" type="checkbox" value="Photo Spots" id="keyword-photo">
-                <label class="form-check-label" for="keyword-photo">Photo Spots</label>
-              </div>
-              <div class="form-check me-3 mb-2">
-                <input class="form-check-input keyword-checkbox" type="checkbox" value="Culture" id="keyword-culture">
-                <label class="form-check-label" for="keyword-culture">Culture</label>
-              </div>
-              <div class="form-check me-3 mb-2">
-                <input class="form-check-input keyword-checkbox" type="checkbox" value="Activities" id="keyword-activity">
-                <label class="form-check-label" for="keyword-activity">Activities</label>
-              </div>
-            </div>
-            <input type="text" class="form-control mt-2" id="custom-keywords" placeholder="Enter other keywords (comma-separated)">
-            <small class="text-muted mt-1 d-block">
-              <i class="bi bi-info-circle"></i> Use checkboxes or input field for keywords. For multiple keywords, separate with commas. Example: "hot springs, hiking, temples"
-            </small>
-          </div>
-          <div class="col-12 d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
-            <button type="button" class="btn btn-primary" onclick="searchGuides()">
-              <i class="bi bi-search"></i> Search
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
+  <!-- English Filter Correct -->
+  <script src="english-filter-correct.js"></script>
+  
+
 
   <!-- Filter Help Modal (English Version) -->
   <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
