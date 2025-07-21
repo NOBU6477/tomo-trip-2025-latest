@@ -1101,19 +1101,33 @@
         };
       }
 
-      // Language switch button (safe version)
+      // Language switch button functionality
       const switchToJapaneseBtn = document.getElementById('switchToJapaneseBtn');
       if (switchToJapaneseBtn) {
-        console.log('Found Japanese switch button');
-        switchToJapaneseBtn.onclick = function(e) {
+        console.log('Found Japanese switch button, adding click handler');
+        switchToJapaneseBtn.addEventListener('click', function(e) {
           e.preventDefault();
-          // Confirm before switching to prevent accidental navigation
-          if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
-            window.location.href = 'index.html';
-          }
-          return false;
-        };
+          console.log('Japanese switch button clicked');
+          switchToJapanese();
+        });
       }
+
+      // Also try to find and setup any other language buttons
+      document.querySelectorAll('.lang-btn-jp').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Language button (JP) clicked');
+          switchToJapanese();
+        });
+      });
+
+      document.querySelectorAll('.lang-btn-en').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Language button (EN) clicked - already on English');
+          // Already on English, no action needed
+        });
+      });
 
       // Also handle center language button
       const centerSwitchToJapaneseBtn = document.getElementById('centerSwitchToJapaneseBtn');
@@ -1217,10 +1231,17 @@
         }
       }
 
-      // Override any global functions that might switch language
+      // Language switching functionality
       window.switchToJapanese = function() {
-        console.log('Blocked automatic switch to Japanese');
-        return false;
+        console.log('Switching to Japanese version...');
+        if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
+          window.location.href = 'index.html';
+        }
+      };
+
+      window.switchToEnglish = function() {
+        console.log('Already on English version');
+        // Already on English version, no action needed
       };
 
       // Monitor for Japanese text reappearance
