@@ -33,11 +33,10 @@ function testAllButtons() {
 
   console.log(`=== Result: ${foundButtons}/${tests.length} buttons found ===`);
   
-  // Test event listeners
+  // Test event listeners (disabled to prevent auto-redirect)
   const switchBtn = document.getElementById('switchToJapaneseBtn');
   if (switchBtn) {
-    console.log('Testing language switch button click...');
-    switchBtn.click();
+    console.log('Language switch button found but auto-click disabled to prevent unwanted redirect');
   }
 }
 

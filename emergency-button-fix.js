@@ -4,15 +4,15 @@ console.log('🚨 Emergency Button Fix Loading...');
 function emergencyButtonFix() {
   console.log('🔧 Applying emergency button fixes...');
   
-  // Force language switch button to work (direct switch like Japanese version)
+  // Language switch button (disabled for English version protection)
   const langBtn = document.getElementById('switchToJapaneseBtn');
   if (langBtn) {
     langBtn.onclick = function(e) {
       e.preventDefault();
-      console.log('Emergency: Language switch clicked - direct switch');
-      window.location.href = 'index.html';
+      console.log('Language switch blocked by anti-auto-switch protection');
+      return false;
     };
-    console.log('✓ Language switch button fixed');
+    console.log('✓ Language switch button protected from auto-redirect');
   }
   
   // Force sponsor buttons to work (direct navigation like Japanese version)
