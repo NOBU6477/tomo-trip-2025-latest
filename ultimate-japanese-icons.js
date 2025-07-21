@@ -358,11 +358,16 @@ class UltimateJapaneseIcons {
     }
 
     showComparison() {
+        console.log('📋 比較リスト表示開始');
+        console.log('比較対象ガイド数:', this.comparedGuides.length);
+        console.log('比較対象:', this.comparedGuides);
+        
         if (this.comparedGuides.length === 0) {
-            this.showAlert('比較するガイドが選択されていません', 'info');
+            this.showAlert('比較するガイドが選択されていません\n\nガイドカードの✓ボタンをクリックして比較対象を選択してください。', 'info');
             return;
         }
         
+        console.log('🎯 比較管理モーダル表示');
         this.showManagementModal('comparison');
     }
 
