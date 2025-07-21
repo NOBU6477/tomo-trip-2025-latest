@@ -321,8 +321,8 @@
         
         <!-- Login/Register Buttons (右端配置) -->
         <div id="navbar-user-area" class="ms-3">
-          <button class="btn btn-outline-light me-2" id="loginBtn" style="border-radius: 20px;">Login</button>
-          <button class="btn btn-light" id="signUpBtn" style="border-radius: 20px;">Sign Up</button>
+          <button class="btn btn-outline-light me-2" id="loginBtn" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+          <button class="btn btn-light" id="signUpBtn" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#registerModal">Sign Up</button>
         </div>
       </div>
     </div>
@@ -553,6 +553,114 @@
         <select class="form-select form-select-sm" id="quick-jump" onchange="quickJump(this.value)">
           <option value="">Page Jump</option>
         </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Modal -->
+  <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Contact Us</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="contact-form">
+            <div class="mb-3">
+              <label for="contact-name" class="form-label">Name</label>
+              <input type="text" class="form-control" id="contact-name" required>
+            </div>
+            <div class="mb-3">
+              <label for="contact-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="contact-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="contact-message" class="form-label">Message</label>
+              <textarea class="form-control" id="contact-message" rows="4" required></textarea>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Send Message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="login-form">
+            <div class="mb-3">
+              <label for="login-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="login-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="login-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="login-password" required>
+            </div>
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+            <div class="text-center">
+              <p class="mb-0">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">Register here</a></p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Register Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Register</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="register-form">
+            <div class="mb-3">
+              <label for="register-name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="register-name" required>
+            </div>
+            <div class="mb-3">
+              <label for="register-email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="register-email" required>
+            </div>
+            <div class="mb-3">
+              <label for="register-password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="register-password" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Registration Type</label>
+              <div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="userType" id="tourist" value="tourist" checked>
+                  <label class="form-check-label" for="tourist">Tourist</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="userType" id="guide" value="guide">
+                  <label class="form-check-label" for="guide">Guide</label>
+                </div>
+              </div>
+            </div>
+            <div class="d-grid mb-3">
+              <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+            <div class="text-center">
+              <p class="mb-0">Already have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Login here</a></p>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -1254,6 +1362,41 @@
     
     // Also setup after a delay to ensure all elements are ready
     setTimeout(setupShowMoreButton, 1000);
+
+    // Contact form functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const contactForm = document.getElementById('contact-form');
+      if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          alert('Thank you for your message! We will get back to you soon.');
+          const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+          if (modal) modal.hide();
+        });
+      }
+
+      // Login form functionality
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          alert('Login functionality coming soon!');
+          const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+          if (modal) modal.hide();
+        });
+      }
+
+      // Register form functionality
+      const registerForm = document.getElementById('register-form');
+      if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          alert('Registration functionality coming soon!');
+          const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
+          if (modal) modal.hide();
+        });
+      }
+    });
 
     // Header button functions
     function showRegisterOptions() {
