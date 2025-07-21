@@ -20,6 +20,9 @@ class UltimateJapaneseIcons {
     init() {
         console.log('🎯 究極日本語アイコンシステム初期化');
         
+        // グローバルインスタンスとして設定
+        window.ultimateJapaneseIcons = this;
+        
         // 既存のアイコンを全て削除
         this.removeAllExistingIcons();
         
@@ -212,6 +215,23 @@ class UltimateJapaneseIcons {
             }
         });
 
+        // フローティングツールバーのボタン
+        document.addEventListener('click', (e) => {
+            // ブックマーク表示ボタン
+            if (e.target.id === 'showBookmarks' || e.target.closest('#showBookmarks')) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showBookmarks();
+            }
+            
+            // 比較表示ボタン
+            if (e.target.id === 'showComparison' || e.target.closest('#showComparison')) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.showComparison();
+            }
+        });
+
         console.log('✅ 究極アイコンイベントリスナー設定完了');
     }
 
@@ -264,6 +284,7 @@ class UltimateJapaneseIcons {
         // フローティングツールバーの更新
         const bookmarkBtn = document.getElementById('showBookmarks');
         const comparisonInfo = document.querySelector('.floating-toolbar .d-flex span');
+        const comparisonCount = document.querySelector('.floating-toolbar span[class*="comparison"]');
         
         if (bookmarkBtn) {
             bookmarkBtn.innerHTML = `<i class="bi bi-bookmark-star me-1"></i>ブックマーク(${this.bookmarkedGuides.length})`;
@@ -272,6 +293,19 @@ class UltimateJapaneseIcons {
         if (comparisonInfo) {
             comparisonInfo.textContent = `比較中: ${this.comparedGuides.length}/${this.maxCompareGuides}人`;
         }
+        
+        // 比較カウント表示の更新
+        if (comparisonCount) {
+            comparisonCount.textContent = this.comparedGuides.length;
+        }
+        
+        // より具体的なセレクターで比較カウントを更新
+        const comparisonCountElements = document.querySelectorAll('[class*="comparison"], #comparison-count, .comparison-count');
+        comparisonCountElements.forEach(element => {
+            if (element.tagName === 'SPAN' && element.textContent.match(/^\d+$/)) {
+                element.textContent = this.comparedGuides.length;
+            }
+        });
     }
 
     maintainIcons() {
