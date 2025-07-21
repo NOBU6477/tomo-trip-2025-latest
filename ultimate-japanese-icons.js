@@ -314,6 +314,240 @@ class UltimateJapaneseIcons {
         });
     }
 
+    showBookmarks() {
+        if (this.bookmarkedGuides.length === 0) {
+            this.showAlert('ブックマークされたガイドはありません', 'info');
+            return;
+        }
+        
+        this.showManagementModal('bookmark');
+    }
+
+    showComparison() {
+        if (this.comparedGuides.length === 0) {
+            this.showAlert('比較するガイドが選択されていません', 'info');
+            return;
+        }
+        
+        this.showManagementModal('comparison');
+    }
+
+    showManagementModal(type) {
+        const isBookmark = type === 'bookmark';
+        const guides = isBookmark ? this.bookmarkedGuides : this.comparedGuides;
+        const title = isBookmark ? 'ブックマーク管理' : '比較管理';
+        const emptyMessage = isBookmark ? 'ブックマークされたガイドはありません' : '比較するガイドが選択されていません';
+        
+        if (guides.length === 0) {
+            this.showAlert(emptyMessage, 'info');
+            return;
+        }
+        
+        // モーダルを作成
+        const modalId = `${type}-management-modal`;
+        let modal = document.getElementById(modalId);
+        
+        if (modal) {
+            modal.remove();
+        }
+        
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'modal fade';
+        modal.setAttribute('tabindex', '-1');
+        modal.style.zIndex = '9999';
+        
+        let guideListHTML = '';
+        guides.forEach(guideId => {
+            guideListHTML += `
+                <div class="d-flex align-items-center justify-content-between p-3 border-bottom guide-management-item" data-guide-id="${guideId}">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" 
+                                 class="rounded-circle" width="50" height="50" alt="ガイド${guideId}">
+                        </div>
+                        <div>
+                            <h6 class="mb-1">ガイド ${guideId}</h6>
+                            <small class="text-muted">東京都</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm remove-guide-btn" 
+                            data-guide-id="${guideId}" data-type="${type}">
+                        <i class="bi bi-x-circle"></i> 削除
+                    </button>
+                </div>
+            `;
+        });
+        
+        modal.innerHTML = `
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-${isBookmark ? 'bookmark-star' : 'list-check'} me-2"></i>${title}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                ${isBookmark ? 'ブックマークしたガイドを管理できます。不要なものは削除できます。' : '比較中のガイドを管理できます。最大3人まで選択可能です。'}
+                            </div>
+                        </div>
+                        <div id="${type}-guide-list">
+                            ${guideListHTML}
+                        </div>
+                        ${guides.length === 0 ? `<div class="text-center py-4 text-muted">${emptyMessage}</div>` : ''}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" id="clear-all-${type}">
+                            <i class="bi bi-trash"></i> 全て削除
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                        ${!isBookmark ? '<button type="button" class="btn btn-primary" id="start-comparison">比較開始</button>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Bootstrap モーダル表示
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+        
+        // イベントリスナー設定
+        this.setupManagementModalEvents(modal, type, bsModal);
+    }
+
+    setupManagementModalEvents(modal, type, bsModal) {
+        const isBookmark = type === 'bookmark';
+        
+        // 個別削除ボタン
+        modal.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-guide-btn')) {
+                const btn = e.target.closest('.remove-guide-btn');
+                const guideId = parseInt(btn.dataset.guideId);
+                
+                if (isBookmark) {
+                    this.removeFromBookmarks(guideId);
+                } else {
+                    this.removeFromComparison(guideId);
+                }
+                
+                // UI更新
+                const item = btn.closest('.guide-management-item');
+                item.remove();
+                
+                // リストが空になった場合
+                const list = modal.querySelector(`#${type}-guide-list`);
+                if (list.children.length === 0) {
+                    list.innerHTML = `<div class="text-center py-4 text-muted">${isBookmark ? 'ブックマークされたガイドはありません' : '比較するガイドが選択されていません'}</div>`;
+                }
+                
+                this.showAlert(`ガイド${guideId}を${isBookmark ? 'ブックマーク' : '比較'}から削除しました`, 'success');
+            }
+        });
+        
+        // 全て削除ボタン
+        const clearAllBtn = modal.querySelector(`#clear-all-${type}`);
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', () => {
+                const confirmMessage = `全ての${isBookmark ? 'ブックマーク' : '比較対象'}を削除しますか？`;
+                if (confirm(confirmMessage)) {
+                    if (isBookmark) {
+                        this.clearAllBookmarks();
+                    } else {
+                        this.clearAllComparisons();
+                    }
+                    bsModal.hide();
+                    this.showAlert(`全ての${isBookmark ? 'ブックマーク' : '比較対象'}を削除しました`, 'success');
+                }
+            });
+        }
+        
+        // 比較開始ボタン（比較モーダルのみ）
+        const startComparisonBtn = modal.querySelector('#start-comparison');
+        if (startComparisonBtn) {
+            startComparisonBtn.addEventListener('click', () => {
+                bsModal.hide();
+                this.startComparison();
+            });
+        }
+    }
+
+    removeFromBookmarks(guideId) {
+        const index = this.bookmarkedGuides.indexOf(guideId);
+        if (index !== -1) {
+            this.bookmarkedGuides.splice(index, 1);
+            localStorage.setItem('bookmarkedGuides', JSON.stringify(this.bookmarkedGuides));
+            this.updateToolbarCounts();
+            this.updateGuideCardIcon(guideId, 'bookmark', false);
+        }
+    }
+
+    removeFromComparison(guideId) {
+        const index = this.comparedGuides.indexOf(guideId);
+        if (index !== -1) {
+            this.comparedGuides.splice(index, 1);
+            localStorage.setItem('comparedGuides', JSON.stringify(this.comparedGuides));
+            this.updateToolbarCounts();
+            this.updateGuideCardIcon(guideId, 'compare', false);
+        }
+    }
+
+    clearAllBookmarks() {
+        this.bookmarkedGuides = [];
+        localStorage.setItem('bookmarkedGuides', JSON.stringify(this.bookmarkedGuides));
+        this.updateToolbarCounts();
+        this.updateAllGuideCardIcons('bookmark', false);
+    }
+
+    clearAllComparisons() {
+        this.comparedGuides = [];
+        localStorage.setItem('comparedGuides', JSON.stringify(this.comparedGuides));
+        this.updateToolbarCounts();
+        this.updateAllGuideCardIcons('compare', false);
+    }
+
+    updateGuideCardIcon(guideId, type, isActive) {
+        const cards = document.querySelectorAll(`.ultimate-${type}-btn[data-guide-id="${guideId}"]`);
+        cards.forEach(btn => {
+            const icon = btn.querySelector('i');
+            if (type === 'bookmark') {
+                icon.className = isActive ? 'bi bi-star-fill' : 'bi bi-star';
+                btn.style.backgroundColor = isActive ? '#fff3cd' : 'rgba(255, 255, 255, 0.95)';
+            } else {
+                icon.className = isActive ? 'bi bi-check-circle-fill' : 'bi bi-check-circle';
+                btn.style.backgroundColor = isActive ? '#d4edda' : 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    }
+
+    updateAllGuideCardIcons(type, isActive) {
+        const cards = document.querySelectorAll(`.ultimate-${type}-btn`);
+        cards.forEach(btn => {
+            const icon = btn.querySelector('i');
+            if (type === 'bookmark') {
+                icon.className = isActive ? 'bi bi-star-fill' : 'bi bi-star';
+                btn.style.backgroundColor = isActive ? '#fff3cd' : 'rgba(255, 255, 255, 0.95)';
+            } else {
+                icon.className = isActive ? 'bi bi-check-circle-fill' : 'bi bi-check-circle';
+                btn.style.backgroundColor = isActive ? '#d4edda' : 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    }
+
+    startComparison() {
+        if (this.comparedGuides.length < 2) {
+            this.showAlert('比較するには最低2人のガイドを選択してください', 'warning');
+            return;
+        }
+        
+        alert(`比較機能\n\n選択されたガイド: ${this.comparedGuides.length}人\n\n詳細な比較画面は今後実装予定です。\n現在の選択: ${this.comparedGuides.join(', ')}`);
+    }
+
     showAlert(message, type = 'info') {
         const alertDiv = document.createElement('div');
         alertDiv.style.cssText = `

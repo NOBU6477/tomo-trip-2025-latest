@@ -412,7 +412,7 @@ class UltimateEnglishIcons {
             return;
         }
         
-        alert(`Bookmarked guides: ${this.bookmarkedGuides.length} people\n\nYou can save interesting guides with the bookmark feature.\n\nDetailed view will be implemented in the future.`);
+        this.showManagementModal('bookmark');
     }
 
     showComparison() {
@@ -421,7 +421,223 @@ class UltimateEnglishIcons {
             return;
         }
         
-        alert(`Guides in comparison: ${this.comparedGuides.length} people\n\nYou can compare up to 3 guides.\n\nComparison screen will be implemented in the future.`);
+        this.showManagementModal('comparison');
+    }
+
+    showManagementModal(type) {
+        const isBookmark = type === 'bookmark';
+        const guides = isBookmark ? this.bookmarkedGuides : this.comparedGuides;
+        const title = isBookmark ? 'Bookmark Management' : 'Comparison Management';
+        const emptyMessage = isBookmark ? 'No bookmarked guides' : 'No guides selected for comparison';
+        
+        if (guides.length === 0) {
+            this.showAlert(emptyMessage, 'info');
+            return;
+        }
+        
+        // モーダルを作成
+        const modalId = `english-${type}-management-modal`;
+        let modal = document.getElementById(modalId);
+        
+        if (modal) {
+            modal.remove();
+        }
+        
+        modal = document.createElement('div');
+        modal.id = modalId;
+        modal.className = 'modal fade';
+        modal.setAttribute('tabindex', '-1');
+        modal.style.zIndex = '9999';
+        
+        let guideListHTML = '';
+        guides.forEach(guideId => {
+            guideListHTML += `
+                <div class="d-flex align-items-center justify-content-between p-3 border-bottom guide-management-item" data-guide-id="${guideId}">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=60&h=60&fit=crop&crop=face" 
+                                 class="rounded-circle" width="50" height="50" alt="Guide ${guideId}">
+                        </div>
+                        <div>
+                            <h6 class="mb-1">Guide ${guideId}</h6>
+                            <small class="text-muted">Tokyo, Japan</small>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm remove-guide-btn" 
+                            data-guide-id="${guideId}" data-type="${type}">
+                        <i class="bi bi-x-circle"></i> Remove
+                    </button>
+                </div>
+            `;
+        });
+        
+        modal.innerHTML = `
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="bi bi-${isBookmark ? 'bookmark-star' : 'list-check'} me-2"></i>${title}
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle me-2"></i>
+                                ${isBookmark ? 'Manage your bookmarked guides. Remove unwanted ones here.' : 'Manage guides in comparison. You can select up to 3 guides.'}
+                            </div>
+                        </div>
+                        <div id="english-${type}-guide-list">
+                            ${guideListHTML}
+                        </div>
+                        ${guides.length === 0 ? `<div class="text-center py-4 text-muted">${emptyMessage}</div>` : ''}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" id="english-clear-all-${type}">
+                            <i class="bi bi-trash"></i> Clear All
+                        </button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        ${!isBookmark ? '<button type="button" class="btn btn-primary" id="english-start-comparison">Start Comparison</button>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Bootstrap モーダル表示
+        const bsModal = new bootstrap.Modal(modal);
+        bsModal.show();
+        
+        // イベントリスナー設定
+        this.setupManagementModalEvents(modal, type, bsModal);
+    }
+
+    setupManagementModalEvents(modal, type, bsModal) {
+        const isBookmark = type === 'bookmark';
+        
+        // 個別削除ボタン
+        modal.addEventListener('click', (e) => {
+            if (e.target.closest('.remove-guide-btn')) {
+                const btn = e.target.closest('.remove-guide-btn');
+                const guideId = parseInt(btn.dataset.guideId);
+                
+                if (isBookmark) {
+                    this.removeFromBookmarks(guideId);
+                } else {
+                    this.removeFromComparison(guideId);
+                }
+                
+                // UI更新
+                const item = btn.closest('.guide-management-item');
+                item.remove();
+                
+                // リストが空になった場合
+                const list = modal.querySelector(`#english-${type}-guide-list`);
+                if (list.children.length === 0) {
+                    list.innerHTML = `<div class="text-center py-4 text-muted">${isBookmark ? 'No bookmarked guides' : 'No guides selected for comparison'}</div>`;
+                }
+                
+                this.showAlert(`Guide ${guideId} removed from ${isBookmark ? 'bookmarks' : 'comparison'}`, 'success');
+            }
+        });
+        
+        // 全て削除ボタン
+        const clearAllBtn = modal.querySelector(`#english-clear-all-${type}`);
+        if (clearAllBtn) {
+            clearAllBtn.addEventListener('click', () => {
+                const confirmMessage = `Clear all ${isBookmark ? 'bookmarks' : 'comparisons'}?`;
+                if (confirm(confirmMessage)) {
+                    if (isBookmark) {
+                        this.clearAllBookmarks();
+                    } else {
+                        this.clearAllComparisons();
+                    }
+                    bsModal.hide();
+                    this.showAlert(`All ${isBookmark ? 'bookmarks' : 'comparisons'} cleared`, 'success');
+                }
+            });
+        }
+        
+        // 比較開始ボタン（比較モーダルのみ）
+        const startComparisonBtn = modal.querySelector('#english-start-comparison');
+        if (startComparisonBtn) {
+            startComparisonBtn.addEventListener('click', () => {
+                bsModal.hide();
+                this.startComparison();
+            });
+        }
+    }
+
+    removeFromBookmarks(guideId) {
+        const index = this.bookmarkedGuides.indexOf(guideId);
+        if (index !== -1) {
+            this.bookmarkedGuides.splice(index, 1);
+            localStorage.setItem('englishBookmarkedGuides', JSON.stringify(this.bookmarkedGuides));
+            this.updateToolbarCounts();
+            this.updateGuideCardIcon(guideId, 'bookmark', false);
+        }
+    }
+
+    removeFromComparison(guideId) {
+        const index = this.comparedGuides.indexOf(guideId);
+        if (index !== -1) {
+            this.comparedGuides.splice(index, 1);
+            localStorage.setItem('englishComparedGuides', JSON.stringify(this.comparedGuides));
+            this.updateToolbarCounts();
+            this.updateGuideCardIcon(guideId, 'compare', false);
+        }
+    }
+
+    clearAllBookmarks() {
+        this.bookmarkedGuides = [];
+        localStorage.setItem('englishBookmarkedGuides', JSON.stringify(this.bookmarkedGuides));
+        this.updateToolbarCounts();
+        this.updateAllGuideCardIcons('bookmark', false);
+    }
+
+    clearAllComparisons() {
+        this.comparedGuides = [];
+        localStorage.setItem('englishComparedGuides', JSON.stringify(this.comparedGuides));
+        this.updateToolbarCounts();
+        this.updateAllGuideCardIcons('compare', false);
+    }
+
+    updateGuideCardIcon(guideId, type, isActive) {
+        const cards = document.querySelectorAll(`.ultimate-english-${type}-btn[data-guide-id="${guideId}"]`);
+        cards.forEach(btn => {
+            const icon = btn.querySelector('i');
+            if (type === 'bookmark') {
+                icon.className = isActive ? 'bi bi-star-fill' : 'bi bi-star';
+                btn.style.backgroundColor = isActive ? '#fff3cd' : 'rgba(255, 255, 255, 0.95)';
+            } else {
+                icon.className = isActive ? 'bi bi-check-circle-fill' : 'bi bi-check-circle';
+                btn.style.backgroundColor = isActive ? '#d4edda' : 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    }
+
+    updateAllGuideCardIcons(type, isActive) {
+        const cards = document.querySelectorAll(`.ultimate-english-${type}-btn`);
+        cards.forEach(btn => {
+            const icon = btn.querySelector('i');
+            if (type === 'bookmark') {
+                icon.className = isActive ? 'bi bi-star-fill' : 'bi bi-star';
+                btn.style.backgroundColor = isActive ? '#fff3cd' : 'rgba(255, 255, 255, 0.95)';
+            } else {
+                icon.className = isActive ? 'bi bi-check-circle-fill' : 'bi bi-check-circle';
+                btn.style.backgroundColor = isActive ? '#d4edda' : 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    }
+
+    startComparison() {
+        if (this.comparedGuides.length < 2) {
+            this.showAlert('Please select at least 2 guides for comparison', 'warning');
+            return;
+        }
+        
+        alert(`Comparison Feature\n\nSelected guides: ${this.comparedGuides.length} people\n\nDetailed comparison screen will be implemented in the future.\n\nCurrent selection: ${this.comparedGuides.join(', ')}`);
     }
 
     showAlert(message, type = 'info') {
