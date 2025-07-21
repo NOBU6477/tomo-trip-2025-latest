@@ -524,9 +524,7 @@
       
       <!-- Show More Button -->
       <div class="text-center mt-4">
-        <button class="btn btn-outline-primary btn-lg" onclick="alert('More guides loading...')" id="show-more-btn">
-          Show More (12 more guides)
-        </button>
+        <button class="btn btn-primary btn-lg load-more-button" id="show-more-btn">Show More</button>
       </div>
     </section>
   </div>
@@ -1139,6 +1137,123 @@
     // Reinstall after DOM loads and after any potential interference
     setTimeout(forceEnglishContent, 1000);
     setTimeout(forceEnglishContent, 3000);
+
+    // Show More button functionality (copied from Japanese version)
+    function setupShowMoreButton() {
+      console.log('Setting up Show More button functionality...');
+      
+      // Find the show more button
+      const showMoreBtn = document.querySelector('.load-more-button');
+      if (showMoreBtn) {
+        console.log('Found Show More button, adding functionality');
+        
+        showMoreBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Show More button clicked');
+          
+          // Simulate loading more guides
+          const guidesContainer = document.getElementById('guide-cards-container') || 
+                                document.querySelector('.guides-container') ||
+                                document.querySelector('.row');
+          
+          if (guidesContainer) {
+            // Create additional guide cards
+            const additionalGuides = createAdditionalGuides();
+            
+            // Add them to the container
+            additionalGuides.forEach(guide => {
+              guidesContainer.appendChild(guide);
+            });
+            
+            // Update button text and disable after showing more
+            showMoreBtn.textContent = 'More guides loaded!';
+            showMoreBtn.disabled = true;
+            
+            // Hide button after 2 seconds
+            setTimeout(() => {
+              showMoreBtn.style.display = 'none';
+            }, 2000);
+            
+            console.log('Additional guides loaded successfully');
+          } else {
+            console.error('Guides container not found');
+            alert('Unable to load more guides at this time.');
+          }
+        });
+      } else {
+        console.error('Show More button not found');
+      }
+    }
+    
+    function createAdditionalGuides() {
+      const additionalGuidesData = [
+        {
+          name: "Emma Williams",
+          location: "Tokyo, Shibuya", 
+          rating: "4.8★",
+          description: "Experience Tokyo's vibrant youth culture and cutting-edge fashion in Shibuya and Harajuku.",
+          languages: ["Japanese", "English"],
+          price: "¥6,000/session",
+          image: "https://images.unsplash.com/photo-1494790108755-2616c04fc7d5?w=400&h=250&fit=crop"
+        },
+        {
+          name: "David Park",
+          location: "Kyoto, Gion",
+          rating: "4.7★", 
+          description: "Discover traditional Japanese culture in historic Kyoto with tea ceremonies and temple visits.",
+          languages: ["Japanese", "English", "Korean"],
+          price: "¥6,500/session",
+          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop"
+        },
+        {
+          name: "Lisa Chen",
+          location: "Osaka, Dotonbori",
+          rating: "4.9★",
+          description: "Explore Osaka's famous food scene and learn about the city's merchant culture.",
+          languages: ["Japanese", "English", "Mandarin"],
+          price: "¥5,800/session", 
+          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=250&fit=crop"
+        }
+      ];
+      
+      return additionalGuidesData.map(guide => {
+        const col = document.createElement('div');
+        col.className = 'col-md-4 mb-4';
+        
+        col.innerHTML = `
+          <div class="card guide-card shadow-sm h-100">
+            <img src="${guide.image}" class="card-img-top" alt="${guide.name}">
+            <div class="card-body d-flex flex-column">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <h5 class="card-title mb-0">${guide.name}</h5>
+                <span class="badge bg-primary">${guide.rating}</span>
+              </div>
+              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> ${guide.location}</p>
+              <p class="card-text mb-3 flex-grow-1">${guide.description}</p>
+              <div class="mb-3">
+                ${guide.languages.map(lang => `<span class="badge bg-light text-dark me-1">${lang}</span>`).join('')}
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-auto">
+                <span class="fw-bold text-primary">${guide.price}</span>
+                <button class="btn btn-primary btn-sm">View Details</button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        return col;
+      });
+    }
+    
+    // Initialize Show More functionality after DOM loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupShowMoreButton);
+    } else {
+      setupShowMoreButton();
+    }
+    
+    // Also setup after a delay to ensure all elements are ready
+    setTimeout(setupShowMoreButton, 1000);
 
     // Header button functions
     function showRegisterOptions() {
