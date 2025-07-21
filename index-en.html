@@ -311,7 +311,7 @@
         
         <!-- Language Switcher (中央配置) -->
         <div class="language-switcher-center">
-          <button class="btn lang-btn-jp" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border: none; border-radius: 25px 0 0 25px; padding: 8px 20px; font-weight: bold;">
+          <button class="btn lang-btn-jp" id="switchToJapaneseBtn" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border: none; border-radius: 25px 0 0 25px; padding: 8px 20px; font-weight: bold;">
             🇯🇵 日本語
           </button>
           <button class="btn lang-btn-en active" style="background: linear-gradient(135deg, #4287f5, #64a8ff); color: white; border: none; border-radius: 0 25px 25px 0; padding: 8px 20px; font-weight: bold; transform: scale(1.05);">
@@ -995,6 +995,33 @@
         };
       }
 
+      // Language switch button (safe version)
+      const switchToJapaneseBtn = document.getElementById('switchToJapaneseBtn');
+      if (switchToJapaneseBtn) {
+        console.log('Found Japanese switch button');
+        switchToJapaneseBtn.onclick = function(e) {
+          e.preventDefault();
+          // Confirm before switching to prevent accidental navigation
+          if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
+            window.location.href = 'index.html';
+          }
+          return false;
+        };
+      }
+
+      // Also handle center language button
+      const centerSwitchToJapaneseBtn = document.getElementById('centerSwitchToJapaneseBtn');
+      if (centerSwitchToJapaneseBtn) {
+        console.log('Found center Japanese switch button');
+        centerSwitchToJapaneseBtn.onclick = function(e) {
+          e.preventDefault();
+          if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
+            window.location.href = 'index.html';
+          }
+          return false;
+        };
+      }
+
       // Fix sponsor button positioning and interaction
       const sponsorButtons = document.querySelectorAll('.sponsor-mini-btn');
       sponsorButtons.forEach(function(btn, index) {
@@ -1027,6 +1054,64 @@
     // Emergency setup
     setTimeout(forceButtonSetup, 500);
     setTimeout(forceButtonSetup, 1000);
+
+    // Anti-automatic language switching system
+    function preventAutoLanguageSwitch() {
+      console.log('Installing anti-auto-switch protection...');
+      
+      // Override any global functions that might switch language
+      window.switchToJapanese = function() {
+        console.log('Blocked automatic switch to Japanese');
+        return false;
+      };
+      
+      // Block location.href changes to index.html
+      const originalLocationSetter = Object.getOwnPropertyDescriptor(window.location, 'href') || 
+                                   Object.getOwnPropertyDescriptor(Location.prototype, 'href');
+      
+      if (originalLocationSetter && originalLocationSetter.set) {
+        Object.defineProperty(window.location, 'href', {
+          set: function(value) {
+            if (typeof value === 'string' && value.includes('index.html') && !value.includes('index-en.html')) {
+              console.log('Blocked automatic navigation to Japanese site:', value);
+              if (!confirm('Automatic navigation to Japanese version detected. Allow?\n自動的な日本語版への切り替えが検出されました。許可しますか？')) {
+                return;
+              }
+            }
+            originalLocationSetter.set.call(this, value);
+          },
+          get: originalLocationSetter.get
+        });
+      }
+      
+      // Monitor for DOM changes that might redirect
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.nodeType === 1) { // Element node
+                // Check for scripts or elements that might redirect
+                if (node.tagName === 'SCRIPT' || node.tagName === 'META') {
+                  const content = node.textContent || node.getAttribute('content') || '';
+                  if (content.includes('index.html') && !content.includes('index-en.html')) {
+                    console.log('Blocked suspicious element:', node);
+                    node.remove();
+                  }
+                }
+              }
+            });
+          }
+        });
+      });
+      
+      observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    // Install protection immediately
+    preventAutoLanguageSwitch();
+    
+    // Reinstall protection after 2 seconds in case other scripts interfere
+    setTimeout(preventAutoLanguageSwitch, 2000);
 
     // Header button functions
     function showRegisterOptions() {
