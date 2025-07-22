@@ -65,11 +65,11 @@ class NuclearGuideCardIcons {
             /* 核レベルアイコンCSS */
             .nuclear-icon-container {
                 position: absolute !important;
-                top: 12px !important;
-                right: 12px !important;
+                top: 8px !important;
+                left: 8px !important;
                 z-index: 99999 !important;
                 display: flex !important;
-                gap: 10px !important;
+                gap: 6px !important;
                 visibility: visible !important;
                 opacity: 1 !important;
                 pointer-events: auto !important;
@@ -77,16 +77,16 @@ class NuclearGuideCardIcons {
             
             .nuclear-bookmark-btn,
             .nuclear-compare-btn {
-                width: 40px !important;
-                height: 40px !important;
-                border-radius: 50% !important;
-                border: 3px solid !important;
-                font-size: 18px !important;
+                width: 32px !important;
+                height: 32px !important;
+                border-radius: 6px !important;
+                border: 2px solid !important;
+                font-size: 14px !important;
                 cursor: pointer !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.3) !important;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
                 transition: all 0.3s ease !important;
                 visibility: visible !important;
                 opacity: 1 !important;
@@ -97,30 +97,32 @@ class NuclearGuideCardIcons {
             
             .nuclear-bookmark-btn {
                 border-color: #ffc107 !important;
-                background: rgba(255, 193, 7, 0.9) !important;
-                color: #fff !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                color: #ffc107 !important;
             }
             
             .nuclear-bookmark-btn.bookmarked {
-                background: rgba(255, 193, 7, 1) !important;
-                box-shadow: 0 4px 15px rgba(255, 193, 7, 0.5) !important;
+                background: rgba(255, 193, 7, 0.9) !important;
+                color: #fff !important;
+                box-shadow: 0 3px 12px rgba(255, 193, 7, 0.4) !important;
             }
             
             .nuclear-compare-btn {
                 border-color: #28a745 !important;
-                background: rgba(40, 167, 69, 0.9) !important;
-                color: #fff !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                color: #28a745 !important;
             }
             
             .nuclear-compare-btn.compared {
-                background: rgba(40, 167, 69, 1) !important;
-                box-shadow: 0 4px 15px rgba(40, 167, 69, 0.5) !important;
+                background: rgba(40, 167, 69, 0.9) !important;
+                color: #fff !important;
+                box-shadow: 0 3px 12px rgba(40, 167, 69, 0.4) !important;
             }
             
             .nuclear-bookmark-btn:hover,
             .nuclear-compare-btn:hover {
-                transform: scale(1.15) !important;
-                box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+                transform: scale(1.1) !important;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
             }
             
             /* 干渉防止 */
