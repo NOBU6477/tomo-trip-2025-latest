@@ -231,27 +231,71 @@ class ButtonCleanupFix {
     }
     
     toggleComparison(guideId, button) {
-        const comparisons = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-        const isComparing = comparisons.includes(guideId);
-        
-        if (isComparing) {
-            const index = comparisons.indexOf(guideId);
-            comparisons.splice(index, 1);
-            button.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
-            console.log(`🔍 ガイド${guideId}を比較から削除`);
-        } else {
-            if (comparisons.length >= 3) {
-                alert('比較できるのは最大3人までです');
-                return;
+        try {
+            console.log(`🔄 比較切り替え開始: ガイド${guideId}`);
+            
+            const comparisons = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            const isComparing = comparisons.includes(guideId);
+            const icon = button.querySelector('i');
+            
+            if (isComparing) {
+                // 比較から削除
+                const index = comparisons.indexOf(guideId);
+                comparisons.splice(index, 1);
+                
+                // ボタンスタイルをリセット
+                button.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                button.style.color = '';
+                
+                // アイコンを通常の円に変更
+                if (icon) {
+                    icon.className = 'bi bi-check-circle';
+                    icon.style.color = '#28a745';
+                }
+                
+                console.log(`🔍 ガイド${guideId}を比較から削除`);
+                this.showAlert('比較から削除しました', 'info');
+                
+            } else {
+                // 比較に追加
+                if (comparisons.length >= 3) {
+                    this.showAlert('比較できるのは最大3人までです', 'warning');
+                    return;
+                }
+                
+                comparisons.push(guideId);
+                
+                // ボタンスタイルを変更
+                button.style.backgroundColor = '#d4edda';
+                button.style.color = '#155724';
+                
+                // アイコンを塗りつぶした円に変更
+                if (icon) {
+                    icon.className = 'bi bi-check-circle-fill';
+                    icon.style.color = '#28a745';
+                }
+                
+                console.log(`🔍 ガイド${guideId}を比較に追加`);
+                this.showAlert('比較に追加しました！', 'success');
             }
-            comparisons.push(guideId);
-            button.style.backgroundColor = '#28a745';
-            button.style.color = 'white';
-            console.log(`🔍 ガイド${guideId}を比較に追加`);
+            
+            // LocalStorageに保存
+            localStorage.setItem('comparisonGuides', JSON.stringify(comparisons));
+            
+            // ツールバーの数値を更新
+            this.updateToolbarCounts();
+            
+            // 選択マッピングシステムに通知
+            if (window.selectionMappingFix) {
+                window.selectionMappingFix.trackSelection(guideId, 'compare', !isComparing);
+            }
+            
+            console.log(`✅ 比較状態更新完了: ${comparisons.length}件`);
+            
+        } catch (error) {
+            console.error('❌ 比較切り替えエラー:', error);
+            this.showAlert('比較操作でエラーが発生しました', 'error');
         }
-        
-        localStorage.setItem('comparisonGuides', JSON.stringify(comparisons));
-        this.updateToolbarCounts();
     }
     
     restoreButtonState(bookmarkBtn, compareBtn, guideId) {

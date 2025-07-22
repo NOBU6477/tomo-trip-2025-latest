@@ -113,6 +113,107 @@ class SelectionMappingFix {
         return 'ガイド名未取得';
     }
     
+    trackSelection(guideId, type, isSelected) {
+        console.log(`🎯 選択追跡: ガイド${guideId}, タイプ=${type}, 選択=${isSelected}`);
+        
+        // 実際のガイドデータを取得
+        const guideData = this.extractGuideDataFromCard(guideId);
+        
+        // 選択情報をマッピングテーブルに保存
+        if (!this.selectionMapping[guideId]) {
+            this.selectionMapping[guideId] = {
+                realData: guideData
+            };
+        }
+        
+        this.selectionMapping[guideId][type] = isSelected;
+        this.selectionMapping[guideId].realData = guideData; // 最新データで更新
+        
+        // LocalStorageにも保存
+        localStorage.setItem('selectionMapping', JSON.stringify(this.selectionMapping));
+        
+        console.log(`📝 選択データ保存: ${guideData.name} (${guideData.location})`);
+    }
+    
+    extractGuideDataFromCard(guideId) {
+        // 実際のガイドカードからデータを抽出
+        const guideCards = document.querySelectorAll('.guide-card, .card, [class*="card"]');
+        const targetCard = Array.from(guideCards).find((card, index) => {
+            return (index + 1) === parseInt(guideId);
+        });
+        
+        if (targetCard) {
+            const img = targetCard.querySelector('img');
+            const nameElement = targetCard.querySelector('h5, h6, .card-title, [class*="name"], strong');
+            const locationElement = targetCard.querySelector('[class*="location"], .text-muted, small');
+            const priceElement = targetCard.querySelector('[class*="price"], .text-success, .fw-bold, .text-primary');
+            const ratingElement = targetCard.querySelector('.badge, [class*="rating"], .text-warning');
+            
+            // より精密な名前抽出
+            let name = 'Unknown Guide';
+            if (nameElement) {
+                name = nameElement.textContent.trim();
+                // 余分な文字を除去
+                name = name.replace(/^\d+\.\s*/, '').replace(/\s+/g, ' ');
+            }
+            
+            // より精密な場所抽出
+            let location = '東京都';
+            if (locationElement) {
+                location = locationElement.textContent.trim();
+                // 都道府県名を抽出
+                const locationMatch = location.match(/(東京都|[一-龯]+(県|府|道))/);
+                if (locationMatch) {
+                    location = locationMatch[0];
+                }
+            }
+            
+            // 価格抽出
+            let price = 8000;
+            if (priceElement) {
+                const priceText = priceElement.textContent;
+                const priceMatch = priceText.match(/¥?(\d{1,3}(?:,\d{3})*)/);
+                if (priceMatch) {
+                    price = parseInt(priceMatch[1].replace(',', ''));
+                }
+            }
+            
+            // 評価抽出
+            let rating = 4.5;
+            if (ratingElement) {
+                const ratingText = ratingElement.textContent;
+                const ratingMatch = ratingText.match(/(\d+\.?\d*)★?/);
+                if (ratingMatch) {
+                    rating = parseFloat(ratingMatch[1]);
+                }
+            }
+            
+            const extractedData = {
+                id: guideId,
+                name: name,
+                location: location,
+                image: img ? img.src : 'https://via.placeholder.com/150x150',
+                price: price,
+                rating: rating,
+                extractedAt: new Date().toISOString()
+            };
+            
+            console.log(`📊 抽出データ[ガイド${guideId}]:`, extractedData);
+            return extractedData;
+        }
+        
+        // フォールバックデータ
+        return {
+            id: guideId,
+            name: `ガイド${guideId}`,
+            location: '東京都',
+            image: 'https://via.placeholder.com/150x150',
+            price: 8000,
+            rating: 4.5,
+            extractedAt: new Date().toISOString()
+        };
+    }
+    
     analyzeCurrentSelections() {
         // 現在の選択状態を分析
         console.log('🔍 現在の選択状態を分析中...');
