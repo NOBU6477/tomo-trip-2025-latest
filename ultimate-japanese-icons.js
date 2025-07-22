@@ -49,9 +49,9 @@ class UltimateJapaneseIcons {
     }
 
     forceDisplayIcons() {
-        // ボタンクリーンアップシステムが存在する場合は処理をスキップ
-        if (window.buttonCleanupFix) {
-            console.log('⏭️ Button Cleanup Fix が有効なため、処理をスキップ');
+        // 新しい日本語ガイド管理システムが存在する場合は処理をスキップ
+        if (window.japaneseGuideManager || window.buttonCleanupFix) {
+            console.log('⏭️ 新しい管理システムが有効なため、処理をスキップ');
             return;
         }
 
