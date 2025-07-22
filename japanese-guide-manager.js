@@ -41,43 +41,112 @@ class JapaneseGuideManager {
     }
     
     addToolbarEventListeners() {
-        // 比較ボタンの機能強化
-        const comparisonButton = document.querySelector('.floating-toolbar .btn:first-child, button[onclick*="comparison"], [class*="compare"]');
-        if (comparisonButton) {
-            // 既存のイベントを削除
-            comparisonButton.removeAttribute('onclick');
-            comparisonButton.replaceWith(comparisonButton.cloneNode(true));
-            
-            // 新しいイベントリスナー追加
-            const newComparisonBtn = document.querySelector('.floating-toolbar .btn:first-child, [class*="compare"]');
-            if (newComparisonBtn) {
-                newComparisonBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.showComparisonManagement();
-                });
-                console.log('✅ 比較ボタンイベント設定完了');
+        // 複数のセレクタでボタンを検索
+        const findAndEnhanceButton = (selectors, callback, buttonName) => {
+            for (const selector of selectors) {
+                const buttons = document.querySelectorAll(selector);
+                if (buttons.length > 0) {
+                    buttons.forEach(btn => {
+                        // 既存のイベントを削除
+                        btn.removeAttribute('onclick');
+                        const clonedBtn = btn.cloneNode(true);
+                        btn.parentNode.replaceChild(clonedBtn, btn);
+                        
+                        // 新しいイベントリスナー追加
+                        clonedBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            callback();
+                        });
+                    });
+                    console.log(`✅ ${buttonName}ボタンイベント設定完了 (${buttons.length}個)`);
+                    return true;
+                }
             }
-        }
+            return false;
+        };
+        
+        // 比較ボタンの機能強化
+        const comparisonSelectors = [
+            '.floating-toolbar .btn:first-child',
+            'button[onclick*="comparison"]',
+            '[class*="compare"]',
+            'button:contains("比較")',
+            'button:contains("Comparing")',
+            '.btn:contains("比較中")',
+            '.floating-toolbar button:first-of-type'
+        ];
+        
+        findAndEnhanceButton(comparisonSelectors, () => {
+            this.showComparisonManagement();
+        }, '比較');
         
         // ブックマークボタンの機能強化
-        const bookmarkButton = document.querySelector('.floating-toolbar .btn:nth-child(3), button[onclick*="bookmark"], [class*="bookmark"]');
-        if (bookmarkButton) {
-            // 既存のイベントを削除
-            bookmarkButton.removeAttribute('onclick');
-            bookmarkButton.replaceWith(bookmarkButton.cloneNode(true));
+        const bookmarkSelectors = [
+            '.floating-toolbar .btn:nth-child(3)',
+            'button[onclick*="bookmark"]',
+            '[class*="bookmark"]',
+            'button:contains("ブックマーク")',
+            'button:contains("Bookmark")',
+            '.btn:contains("ブックマーク")',
+            '.floating-toolbar button:nth-of-type(3)'
+        ];
+        
+        findAndEnhanceButton(bookmarkSelectors, () => {
+            this.showBookmarkManagement();
+        }, 'ブックマーク');
+        
+        // フォールバック: 全てのツールバーボタンに対して検索
+        setTimeout(() => {
+            this.addFallbackEventListeners();
+        }, 2000);
+    }
+    
+    addFallbackEventListeners() {
+        // ツールバー内の全ボタンをスキャン
+        const toolbarButtons = document.querySelectorAll('.floating-toolbar button, .floating-toolbar .btn');
+        
+        toolbarButtons.forEach((btn, index) => {
+            const text = btn.textContent.toLowerCase().trim();
             
-            // 新しいイベントリスナー追加
-            const newBookmarkBtn = document.querySelector('.floating-toolbar .btn:nth-child(3), [class*="bookmark"]');
-            if (newBookmarkBtn) {
-                newBookmarkBtn.addEventListener('click', (e) => {
+            // ブックマークボタンを特定
+            if (text.includes('ブックマーク') || text.includes('bookmark') || index === 2) {
+                console.log(`📍 ブックマークボタン発見: "${btn.textContent}" (index: ${index})`);
+                
+                // 既存のイベントを削除
+                const clonedBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(clonedBtn, btn);
+                
+                // 新しいイベントリスナー追加
+                clonedBtn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    console.log('🔄 ブックマーク管理モーダルを表示');
                     this.showBookmarkManagement();
                 });
-                console.log('✅ ブックマークボタンイベント設定完了');
+                
+                console.log('✅ ブックマークボタンにフォールバックイベント設定完了');
             }
-        }
+            
+            // 比較ボタンを特定
+            if (text.includes('比較') || text.includes('comparing') || index === 0) {
+                console.log(`📍 比較ボタン発見: "${btn.textContent}" (index: ${index})`);
+                
+                // 既存のイベントを削除
+                const clonedBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(clonedBtn, btn);
+                
+                // 新しいイベントリスナー追加
+                clonedBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔄 比較管理モーダルを表示');
+                    this.showComparisonManagement();
+                });
+                
+                console.log('✅ 比較ボタンにフォールバックイベント設定完了');
+            }
+        });
     }
     
     addResetButton() {
@@ -109,16 +178,22 @@ class JapaneseGuideManager {
     }
     
     addModalHTML() {
+        // 既存のモーダルを削除
+        const existingComparison = document.getElementById('japanese-comparison-modal');
+        const existingBookmark = document.getElementById('japanese-bookmark-modal');
+        if (existingComparison) existingComparison.remove();
+        if (existingBookmark) existingBookmark.remove();
+        
         // 比較管理モーダル
         const comparisonModalHTML = `
-            <div class="modal fade" id="japanese-comparison-modal" tabindex="-1">
+            <div class="modal fade" id="japanese-comparison-modal" tabindex="-1" style="z-index: 1055;">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-success text-white">
                             <h5 class="modal-title">
                                 <i class="bi bi-check-circle me-2"></i>比較管理
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close btn-close-white" onclick="japaneseGuideManager.closeModal('japanese-comparison-modal')"></button>
                         </div>
                         <div class="modal-body">
                             <div class="alert alert-info">
@@ -134,7 +209,7 @@ class JapaneseGuideManager {
                             <button type="button" class="btn btn-success" onclick="japaneseGuideManager.startComparison()">
                                 <i class="bi bi-play me-1"></i>比較開始
                             </button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                            <button type="button" class="btn btn-secondary" onclick="japaneseGuideManager.closeModal('japanese-comparison-modal')">閉じる</button>
                         </div>
                     </div>
                 </div>
@@ -143,14 +218,14 @@ class JapaneseGuideManager {
         
         // ブックマーク管理モーダル
         const bookmarkModalHTML = `
-            <div class="modal fade" id="japanese-bookmark-modal" tabindex="-1">
+            <div class="modal fade" id="japanese-bookmark-modal" tabindex="-1" style="z-index: 1055;">
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-warning text-dark">
                             <h5 class="modal-title">
                                 <i class="bi bi-star me-2"></i>ブックマーク管理
                             </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close" onclick="japaneseGuideManager.closeModal('japanese-bookmark-modal')"></button>
                         </div>
                         <div class="modal-body">
                             <div class="alert alert-warning">
@@ -163,7 +238,7 @@ class JapaneseGuideManager {
                             <button type="button" class="btn btn-danger" onclick="japaneseGuideManager.clearAllBookmarks()">
                                 <i class="bi bi-trash me-1"></i>全て削除
                             </button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">閉じる</button>
+                            <button type="button" class="btn btn-primary" onclick="japaneseGuideManager.closeModal('japanese-bookmark-modal')">閉じる</button>
                         </div>
                     </div>
                 </div>
@@ -171,12 +246,24 @@ class JapaneseGuideManager {
         `;
         
         // モーダルをページに追加
-        if (!document.getElementById('japanese-comparison-modal')) {
-            document.body.insertAdjacentHTML('beforeend', comparisonModalHTML);
-        }
+        document.body.insertAdjacentHTML('beforeend', comparisonModalHTML);
+        document.body.insertAdjacentHTML('beforeend', bookmarkModalHTML);
         
-        if (!document.getElementById('japanese-bookmark-modal')) {
-            document.body.insertAdjacentHTML('beforeend', bookmarkModalHTML);
+        console.log('✅ モーダルHTML追加完了');
+    }
+    
+    closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            
+            // バックドロップ削除
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
+            
+            console.log(`✅ モーダル ${modalId} を閉じました`);
         }
     }
     
@@ -195,17 +282,47 @@ class JapaneseGuideManager {
     }
     
     showBookmarkManagement() {
-        console.log('🔄 ブックマーク管理モーダル表示');
+        console.log('🔄 ブックマーク管理モーダル表示開始');
         
-        // データ更新
-        this.bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-        
-        // リスト更新
-        this.updateBookmarkList();
-        
-        // モーダル表示
-        const modal = new bootstrap.Modal(document.getElementById('japanese-bookmark-modal'));
-        modal.show();
+        try {
+            // データ更新
+            this.bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            console.log('📚 ブックマークデータ:', this.bookmarkedGuides);
+            
+            // モーダルが存在するか確認
+            let modalElement = document.getElementById('japanese-bookmark-modal');
+            if (!modalElement) {
+                console.log('⚠️ ブックマークモーダルが存在しません。再作成します。');
+                this.addModalHTML();
+                modalElement = document.getElementById('japanese-bookmark-modal');
+            }
+            
+            // リスト更新
+            this.updateBookmarkList();
+            
+            // モーダル表示
+            if (modalElement) {
+                // Bootstrap モーダルチェック
+                if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                    console.log('✅ ブックマーク管理モーダル表示成功');
+                } else {
+                    // フォールバック: 直接表示
+                    modalElement.style.display = 'block';
+                    modalElement.classList.add('show');
+                    document.body.classList.add('modal-open');
+                    console.log('✅ ブックマーク管理モーダル（フォールバック）表示成功');
+                }
+            } else {
+                console.error('❌ ブックマークモーダル要素が見つかりません');
+                this.showAlert('ブックマーク管理画面の表示に失敗しました', 'error');
+            }
+            
+        } catch (error) {
+            console.error('❌ ブックマーク管理モーダル表示エラー:', error);
+            this.showAlert('ブックマーク管理画面でエラーが発生しました', 'error');
+        }
     }
     
     updateComparisonList() {
