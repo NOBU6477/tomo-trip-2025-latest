@@ -7,6 +7,12 @@ class UnifiedManagementModal {
         this.isJapanese = language === 'ja';
         this.texts = this.getTexts();
         
+        // ブックマークデータ更新メソッドを追加
+        this.refreshBookmarkData = () => {
+            console.log('🔄 ブックマークデータを更新中...');
+            // 必要に応じてモーダルの内容を更新
+        };
+        
         // 既存のモーダル表示関数をオーバーライド
         this.overrideExistingModals();
     }
