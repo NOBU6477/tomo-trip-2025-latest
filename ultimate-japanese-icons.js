@@ -49,11 +49,17 @@ class UltimateJapaneseIcons {
     }
 
     forceDisplayIcons() {
+        // ボタンクリーンアップシステムが存在する場合は処理をスキップ
+        if (window.buttonCleanupFix) {
+            console.log('⏭️ Button Cleanup Fix が有効なため、処理をスキップ');
+            return;
+        }
+
         if (this.isProcessing) return;
         this.isProcessing = true;
 
         try {
-            console.log('🔄 アイコン強制表示開始');
+            console.log('🔄 アイコン強制表示開始（非推奨：Button Cleanup Fix使用推奨）');
 
             // ガイドカードを検索
             const guideCards = document.querySelectorAll('.guide-card, .card, [class*="card"]');
