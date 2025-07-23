@@ -103,6 +103,9 @@ document.addEventListener('DOMContentLoaded', function() {
             keywords: allKeywords
         });
         
+        // デバッグ情報追加
+        console.log('フィルタリング開始 - 対象カード数:', guideCards.length);
+        
         // ガイドカードを取得
         const guideCards = document.querySelectorAll('.guide-card');
         let visibleCount = 0;
@@ -116,7 +119,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // 地域フィルター
             if (locationValue) {
                 const locationText = card.querySelector('.text-muted')?.textContent || '';
-                if (!locationText.includes(locationValue)) {
+                console.log('Location filter check:', locationValue, 'vs', locationText);
+                // locationValueは英語のvalue（例：Tokyo）、locationTextは日本語（例：東京, 渋谷）
+                // 地域マッピングを使用
+                const locationMapping = {
+                    'Tokyo': '東京',
+                    'Osaka': '大阪', 
+                    'Kyoto': '京都',
+                    'Hokkaido': '北海道',
+                    'Aichi': '愛知',
+                    'Kanagawa': '神奈川',
+                    'Hyogo': '兵庫'
+                };
+                const japaneseLocation = locationMapping[locationValue] || locationValue;
+                if (!locationText.includes(japaneseLocation)) {
                     isVisible = false;
                 }
             }
@@ -125,8 +141,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (languageValue) {
                 const languageBadges = card.querySelectorAll('.badge');
                 let hasLanguage = false;
+                // 言語マッピング
+                const languageMapping = {
+                    'Japanese': '日本語',
+                    'English': '英語',
+                    'Chinese': '中国語',
+                    'Korean': '韓国語',
+                    'French': 'フランス語'
+                };
+                const japaneseLanguage = languageMapping[languageValue] || languageValue;
+                console.log('Language filter check:', languageValue, '->', japaneseLanguage);
+                
                 languageBadges.forEach(badge => {
-                    if (badge.textContent.includes(languageValue)) {
+                    if (badge.textContent.includes(japaneseLanguage)) {
                         hasLanguage = true;
                     }
                 });
@@ -137,10 +164,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 価格フィルター
             if (priceValue) {
-                const priceText = card.querySelector('.fw-bold')?.textContent || '';
+                const priceElement = card.querySelector('.fw-bold.text-primary');
+                const priceText = priceElement ? priceElement.textContent : '';
+                console.log('Price filter check:', priceValue, 'vs', priceText);
                 const priceMatch = priceText.match(/¥([\d,]+)/);
                 if (priceMatch) {
                     const price = parseInt(priceMatch[1].replace(',', ''));
+                    console.log('Extracted price:', price);
                     if (priceValue === 'under-6000' && price >= 6000) {
                         isVisible = false;
                     } else if (priceValue === '6000-10000' && (price < 6000 || price > 10000)) {
@@ -148,6 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else if (priceValue === 'over-10000' && price <= 10000) {
                         isVisible = false;
                     }
+                } else {
+                    console.log('Price not found in text:', priceText);
                 }
             }
             
