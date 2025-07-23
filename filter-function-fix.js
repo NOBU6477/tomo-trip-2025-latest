@@ -183,17 +183,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // キーワードフィルター
+            // キーワードフィルター（強化版）
             if (allKeywords.length > 0) {
                 const cardText = card.textContent.toLowerCase();
+                const keywordElement = card.querySelector('.text-muted small');
+                const keywordText = keywordElement ? keywordElement.textContent : '';
+                
+                console.log('Keyword filter check:', allKeywords, 'vs card text + keywords:', keywordText);
+                
                 let hasKeyword = false;
                 allKeywords.forEach(keyword => {
-                    if (cardText.includes(keyword.toLowerCase())) {
+                    const lowerKeyword = keyword.toLowerCase();
+                    if (cardText.includes(lowerKeyword) || 
+                        keywordText.includes(keyword) ||
+                        keywordText.includes(lowerKeyword)) {
                         hasKeyword = true;
+                        console.log('  Found keyword match:', keyword);
                     }
                 });
+                
                 if (!hasKeyword) {
                     isVisible = false;
+                    console.log('  No keyword match found');
                 }
             }
             
