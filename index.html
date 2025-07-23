@@ -1153,7 +1153,7 @@
 
     // Multiple initialization attempts
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('English site DOM loaded');
+      console.log('Japanese site DOM loaded');
       forceButtonSetup();
       
       // Update guide counter
@@ -1161,6 +1161,17 @@
       
       // Initialize floating toolbar  
       updateQuickJump();
+      
+      // 英語切り替えボタンの設定
+      const englishBtn = document.getElementById('switchToEnglishBtn');
+      if (englishBtn) {
+        englishBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('英語版への切り替え実行');
+          window.location.href = 'index-en.html';
+        });
+        console.log('英語切り替えボタン設定完了');
+      }
     });
 
     // Backup initialization
@@ -1172,13 +1183,36 @@
     // Emergency setup
     setTimeout(forceButtonSetup, 500);
     setTimeout(forceButtonSetup, 1000);
+    
+    // 英語切り替えボタンの緊急設定
+    setTimeout(function() {
+      const englishBtn = document.getElementById('switchToEnglishBtn');
+      if (englishBtn) {
+        // 既存のevent listenerを削除
+        englishBtn.onclick = null;
+        
+        // 新しいevent listenerを追加
+        englishBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('緊急設定：英語版への切り替え実行');
+          window.location.href = 'index-en.html';
+        });
+        
+        // インライン clickハンドラも設定
+        englishBtn.onclick = function() {
+          console.log('インライン：英語版への切り替え実行');
+          window.location.href = 'index-en.html';
+        };
+        
+        console.log('英語切り替えボタン緊急設定完了');
+      }
+    }, 1500);
 
-    // Force English content system
-    // 英語切り替え機能
-    function switchToEnglish() {
+    // 英語切り替え機能をグローバルスコープに定義
+    window.switchToEnglish = function() {
       console.log('英語版への切り替え');
       window.location.href = 'index-en.html';
-    }
+    };
 
     // 日本語版専用 - 翻訳システム削除
 
