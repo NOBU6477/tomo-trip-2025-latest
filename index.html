@@ -788,14 +788,7 @@
   <!-- Debug Script (Disabled to prevent auto-redirect) -->
   <!-- <script src="test-english-buttons.js"></script> -->
   
-  <!-- Nuclear English Protection (Load First) -->
-  <script src="nuclear-english-protection.js"></script>
-  
-  <!-- Anti Auto-Switch Protection -->
-  <script src="anti-auto-switch-protection.js"></script>
-  
-  <!-- Emergency Button Fix -->
-  <script src="emergency-button-fix.js"></script>
+  <!-- 日本語版専用 - 英語関連スクリプト削除 -->
   
   <!-- English Filter Fix (Disabled - Conflicts with new system) -->
   <!-- <script src="english-filter-fix.js"></script> -->
@@ -812,45 +805,10 @@
   <!-- English Filter Correct (Replaced with Ultimate Fix) -->
   <!-- <script src="english-filter-correct.js"></script> -->
   
-  <!-- Ultimate English Filter Fix -->
-  <script src="ultimate-english-filter-fix.js"></script>
+  <!-- 日本語専用フィルター -->
   
-  <!-- English Guide Card Converter -->
-  <script src="english-guide-card-converter.js"></script>
-  
-  <!-- English Button Fix (Same structure as Japanese site) -->
-  <script src="english-button-fix.js"></script>
-  
-  <!-- Bookmark & Comparison System (Always visible icons) -->
-  <script src="bookmark-comparison-system.js"></script>
-  <!-- Icon Display Fix System -->
-  <script src="icon-display-fix.js"></script>
-  <!-- English Comparison System (Same as Japanese version) -->
-  <script src="english-comparison-system.js"></script>
-  <!-- Complete English Comparison (Japanese version copy) -->
-  <script src="complete-english-comparison.js"></script>
-  <!-- Ultimate English Icons System (Complete Japanese version copy) -->
-  <script src="ultimate-english-icons.js"></script>
-  <!-- Japanese Floating Toolbar Copy -->
-  <script src="japanese-floating-toolbar-copy.js"></script>
-  <!-- Unified Management Modal -->
-  <script src="unified-management-modal.js"></script>
-  <!-- English Display Cleanup -->
-  <script src="english-display-cleanup.js"></script>
-  <!-- Real Guide Data System -->
-  <script src="real-guide-data-system.js"></script>
-  <!-- Guide Card Mapper -->
-  <script src="guide-card-mapper.js"></script>
-  <!-- Selection Mapping Fix -->
-  <script src="selection-mapping-fix.js"></script>
-  <!-- English Layout Fix -->
-  <script src="english-layout-fix.js"></script>
-  <!-- Button Cleanup Fix -->
-  <script src="button-cleanup-fix.js"></script>
-  <!-- Bookmark System Test -->
-  <script src="bookmark-system-test.js"></script>
-  <!-- Guide Selection Manager -->
-  <script src="guide-selection-manager.js"></script>
+  <!-- 純粋日本語版専用システム -->
+  <script src="japanese-only-fix.js"></script>
   
 
 
@@ -1215,78 +1173,7 @@
     setTimeout(forceButtonSetup, 1000);
 
     // Force English content system
-    function forceEnglishContent() {
-      console.log('Forcing English content display...');
-      
-      // Replace common Japanese text with English
-      const replacements = {
-        '特別な旅が待っています': 'Your Special Journey Awaits',
-        '観光では発見できない隠れた名所を地元ガイドと一緒に発見しましょう': 'Discover hidden gems with local guides that tourism can\'t reveal',
-        'ガイドを探す': 'Find a Guide',
-        'お問い合わせ': 'Contact Us',
-        '人気のガイド': 'Popular Guides',
-        '詳細を見る': 'View Details',
-        '日本語': 'Japanese',
-        '英語': 'English',
-        '回': 'session',
-        'スポンサー登録': 'Sponsor Registration',
-        'ログイン': 'Login',
-        'フィルター機能と新しいツールバーのユーザーガイド': 'Filter Features & New Toolbar User Guide'
-      };
-
-      // Text node replacement function
-      function replaceTextNodes(element) {
-        if (element.nodeType === 3) { // Text node
-          let text = element.textContent;
-          for (const [japanese, english] of Object.entries(replacements)) {
-            text = text.replace(new RegExp(japanese, 'g'), english);
-          }
-          if (text !== element.textContent) {
-            element.textContent = text;
-          }
-        } else if (element.nodeType === 1) { // Element node
-          for (let child of element.childNodes) {
-            replaceTextNodes(child);
-          }
-        }
-      }
-
-      // Apply replacements to entire document
-      replaceTextNodes(document.body);
-
-      // Force specific elements to English
-      const elements = {
-        'hero-title': 'Your Special Journey Awaits',
-        'hero-subtitle': 'Discover hidden gems with local guides that tourism can\'t reveal',
-        'find-guide-btn': 'Find a Guide',
-        'contact-btn': 'Contact Us',
-        'show-more-btn': 'Show More (12 more guides)'
-      };
-
-      for (const [id, text] of Object.entries(elements)) {
-        const element = document.getElementById(id);
-        if (element) {
-          element.textContent = text;
-        }
-      }
-
-      // Language switching functionality (disabled for protection)
-      window.switchToJapanese = function() {
-        console.log('Auto-switch to Japanese blocked by protection system');
-        return false;
-      };
-
-      window.switchToEnglish = function() {
-        console.log('Already on English version');
-        // Already on English version, no action needed
-      };
-
-      // Disabled monitoring to prevent conflicts with anti-auto-switch protection
-      console.log('English content monitoring disabled to prevent auto-switch conflicts');
-    }
-
-    // Disabled automatic English content forcing to prevent conflicts
-    console.log('Automatic English content forcing disabled');
+    // 日本語版専用 - 翻訳システム削除
 
     // Show More button functionality (copied from Japanese version)
     function setupShowMoreButton() {
@@ -1338,30 +1225,30 @@
     function createAdditionalGuides() {
       const additionalGuidesData = [
         {
-          name: "Emma Williams",
-          location: "Tokyo, Shibuya", 
+          name: "田中美香",
+          location: "東京, 渋谷", 
           rating: "4.8★",
-          description: "Experience Tokyo's vibrant youth culture and cutting-edge fashion in Shibuya and Harajuku.",
-          languages: ["Japanese", "English"],
-          price: "¥6,000/session",
+          description: "渋谷・原宿で若者文化と最先端ファッションを体験しましょう。",
+          languages: ["日本語", "英語"],
+          price: "¥6,000/回",
           image: "https://images.unsplash.com/photo-1494790108755-2616c04fc7d5?w=400&h=250&fit=crop"
         },
         {
-          name: "David Park",
-          location: "Kyoto, Gion",
+          name: "朴大輔",
+          location: "京都, 祇園",
           rating: "4.7★", 
-          description: "Discover traditional Japanese culture in historic Kyoto with tea ceremonies and temple visits.",
-          languages: ["Japanese", "English", "Korean"],
-          price: "¥6,500/session",
+          description: "歴史ある京都で茶道体験と寺院参拝を通じて伝統文化を学びましょう。",
+          languages: ["日本語", "英語", "韓国語"],
+          price: "¥6,500/回",
           image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop"
         },
         {
-          name: "Lisa Chen",
-          location: "Osaka, Dotonbori",
+          name: "陳麗莎",
+          location: "大阪, 道頓堀",
           rating: "4.9★",
-          description: "Explore Osaka's famous food scene and learn about the city's merchant culture.",
-          languages: ["Japanese", "English", "Mandarin"],
-          price: "¥5,800/session", 
+          description: "大阪の有名な食文化と商人の街の歴史を探索しましょう。",
+          languages: ["日本語", "英語", "中国語"],
+          price: "¥5,800/回", 
           image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=250&fit=crop"
         }
       ];
