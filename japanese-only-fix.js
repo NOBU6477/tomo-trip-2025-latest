@@ -19,7 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
         'Sponsor Registration': '協賛店登録',
         'Compare': '比較',
         'Bookmarks': 'ブックマーク',
-        'History': '履歴'
+        'History': '履歴',
+        '/session': '/回',
+        'Show More': 'もっと見る'
     };
 
     function forceJapaneseContent() {
@@ -55,13 +57,30 @@ document.addEventListener('DOMContentLoaded', function() {
             'hero-title': 'あなただけの特別な旅を',
             'hero-subtitle': '地元ガイドと一緒に、観光では見つけられない隠れた魅力を体験しましょう',
             'find-guide-btn': 'ガイドを探す',
-            'contact-btn': 'お問い合わせ'
+            'contact-btn': 'お問い合わせ',
+            'show-more-btn': 'もっと見る'
         };
 
         Object.entries(specificElements).forEach(([id, text]) => {
             const element = document.getElementById(id);
             if (element) {
                 element.textContent = text;
+            }
+        });
+
+        // ガイドカードのボタンを日本語化
+        const detailButtons = document.querySelectorAll('.btn-primary.btn-sm');
+        detailButtons.forEach(button => {
+            if (button.textContent.includes('View Details')) {
+                button.textContent = '詳細を見る';
+            }
+        });
+
+        // ガイドカードの料金表示を日本語化
+        const priceElements = document.querySelectorAll('.fw-bold.text-primary');
+        priceElements.forEach(element => {
+            if (element.textContent.includes('/session')) {
+                element.textContent = element.textContent.replace('/session', '/回');
             }
         });
     }
