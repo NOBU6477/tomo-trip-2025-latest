@@ -18,16 +18,19 @@
         const panel = document.createElement('div');
         panel.id = 'management-center-panel';
         panel.innerHTML = `
-            <div class="floating-toolbar" style="position:fixed;bottom:20px;right:20px;background:#4CAF50;color:white;padding:15px;border-radius:12px;z-index:99999;font-size:14px;min-width:180px;text-align:center;box-shadow:0 8px 25px rgba(0,0,0,0.3);">
-                <div style="font-weight:bold;margin-bottom:10px;font-size:16px;">🏆管理センター</div>
-                <div style="display:flex;gap:8px;justify-content:center;margin-bottom:8px;">
-                    <button class="toolbar-btn" data-action="compare" style="padding:8px 12px;border:none;border-radius:6px;background:rgba(255,255,255,0.2);color:white;cursor:pointer;font-size:11px;font-weight:bold;border:1px solid rgba(255,255,255,0.3);">比較</button>
-                    <button class="toolbar-btn" data-action="bookmark" style="padding:8px 12px;border:none;border-radius:6px;background:rgba(255,255,255,0.2);color:white;cursor:pointer;font-size:11px;font-weight:bold;border:1px solid rgba(255,255,255,0.3);">ブックマーク</button>
-                    <button class="toolbar-btn" data-action="history" style="padding:8px 12px;border:none;border-radius:6px;background:rgba(255,255,255,0.2);color:white;cursor:pointer;font-size:11px;font-weight:bold;border:1px solid rgba(255,255,255,0.3);">履歴</button>
-                    <button class="toolbar-btn" data-action="manage" style="padding:8px 12px;border:none;border-radius:6px;background:rgba(255,255,255,0.2);color:white;cursor:pointer;font-size:11px;font-weight:bold;border:1px solid rgba(255,255,255,0.3);">管理</button>
+            <div class="floating-toolbar" style="position:fixed;top:50%;right:20px;transform:translateY(-50%);background:#4CAF50;color:white;padding:20px;border-radius:15px;z-index:99999;font-size:14px;min-width:200px;text-align:center;box-shadow:0 12px 35px rgba(0,0,0,0.4);border:3px solid rgba(255,255,255,0.2);">
+                <div style="font-weight:bold;margin-bottom:15px;font-size:18px;text-shadow:0 2px 4px rgba(0,0,0,0.3);">🏆管理センター</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px;">
+                    <button class="toolbar-btn" data-action="compare" style="padding:10px 8px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;cursor:pointer;font-size:12px;font-weight:bold;border:2px solid rgba(255,255,255,0.4);transition:all 0.3s ease;">比較</button>
+                    <button class="toolbar-btn" data-action="bookmark" style="padding:10px 8px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;cursor:pointer;font-size:12px;font-weight:bold;border:2px solid rgba(255,255,255,0.4);transition:all 0.3s ease;">ブックマーク</button>
+                    <button class="toolbar-btn" data-action="history" style="padding:10px 8px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;cursor:pointer;font-size:12px;font-weight:bold;border:2px solid rgba(255,255,255,0.4);transition:all 0.3s ease;">履歴</button>
+                    <button class="toolbar-btn" data-action="manage" style="padding:10px 8px;border:none;border-radius:8px;background:rgba(255,255,255,0.25);color:white;cursor:pointer;font-size:12px;font-weight:bold;border:2px solid rgba(255,255,255,0.4);transition:all 0.3s ease;">管理</button>
                 </div>
-                <div id="comparison-counter" style="font-size:11px;color:rgba(255,255,255,0.9);margin-bottom:5px;">比較中: 0/3人</div>
-                <div id="bookmark-counter" style="font-size:11px;color:rgba(255,255,255,0.9);">ブックマーク(0)</div>
+                <div style="background:rgba(255,255,255,0.15);border-radius:8px;padding:10px;margin-bottom:10px;">
+                    <div id="comparison-counter" style="font-size:12px;color:rgba(255,255,255,0.95);margin-bottom:3px;font-weight:600;">比較中: 0/3人</div>
+                    <div id="bookmark-counter" style="font-size:12px;color:rgba(255,255,255,0.95);font-weight:600;">ブックマーク(0)</div>
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,0.7);line-height:1.3;">ガイドカードの⭐✓ボタンで選択</div>
             </div>
         `;
         
@@ -61,12 +64,14 @@
                 
                 // ホバーエフェクト
                 btn.onmouseover = function() {
-                    this.style.background = 'rgba(255,255,255,0.4)';
-                    this.style.transform = 'translateY(-2px)';
+                    this.style.background = 'rgba(255,255,255,0.45)';
+                    this.style.transform = 'scale(1.05)';
+                    this.style.boxShadow = '0 4px 12px rgba(255,255,255,0.3)';
                 };
                 btn.onmouseout = function() {
-                    this.style.background = 'rgba(255,255,255,0.2)';
-                    this.style.transform = 'translateY(0)';
+                    this.style.background = 'rgba(255,255,255,0.25)';
+                    this.style.transform = 'scale(1)';
+                    this.style.boxShadow = 'none';
                 };
             });
             
@@ -248,7 +253,7 @@
                     
                     <div class="alert alert-info mb-4">
                         <h6><i class="bi bi-info-circle me-2"></i>管理センター位置</h6>
-                        <p class="mb-0">画面右下にある<strong class="text-success">緑色の「🏆管理センター」</strong>パネルをご利用ください。</p>
+                        <p class="mb-0">画面右側中央にある<strong class="text-success">緑色の「🏆管理センター」</strong>パネルをご利用ください。</p>
                     </div>
                     
                     <div class="row">
@@ -325,6 +330,171 @@
             `;
             
             showCustomModal('管理センター使い方ガイド', content);
+        };
+        
+        // 削除・操作用の追加関数
+        window.removeFromComparison = function(index) {
+            const comparisonList = JSON.parse(localStorage.getItem('comparisonList') || '[]');
+            if (index >= 0 && index < comparisonList.length) {
+                comparisonList.splice(index, 1);
+                localStorage.setItem('comparisonList', JSON.stringify(comparisonList));
+                
+                // カウンター更新
+                if (window.updateComparisonCounter) {
+                    window.updateComparisonCounter();
+                }
+                
+                // モーダルを閉じて再表示
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    bootstrap.Modal.getInstance(activeModal).hide();
+                    setTimeout(() => showComparisonManager(), 300);
+                }
+            }
+        };
+        
+        window.removeFromBookmarks = function(index) {
+            const bookmarkList = JSON.parse(localStorage.getItem('bookmarkList') || '[]');
+            if (index >= 0 && index < bookmarkList.length) {
+                bookmarkList.splice(index, 1);
+                localStorage.setItem('bookmarkList', JSON.stringify(bookmarkList));
+                
+                // カウンター更新
+                if (window.updateBookmarkCounter) {
+                    window.updateBookmarkCounter();
+                }
+                
+                // モーダルを閉じて再表示
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    bootstrap.Modal.getInstance(activeModal).hide();
+                    setTimeout(() => showBookmarkManager(), 300);
+                }
+            }
+        };
+        
+        window.clearAllBookmarks = function() {
+            if (confirm('すべてのブックマークを削除しますか？')) {
+                localStorage.setItem('bookmarkList', '[]');
+                
+                // カウンター更新
+                if (window.updateBookmarkCounter) {
+                    window.updateBookmarkCounter();
+                }
+                
+                // モーダルを閉じて再表示
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    bootstrap.Modal.getInstance(activeModal).hide();
+                    setTimeout(() => showBookmarkManager(), 300);
+                }
+            }
+        };
+        
+        window.clearHistory = function() {
+            if (confirm('閲覧履歴を削除しますか？')) {
+                localStorage.setItem('viewHistory', '[]');
+                
+                // モーダルを閉じて再表示
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    bootstrap.Modal.getInstance(activeModal).hide();
+                    setTimeout(() => showHistoryManager(), 300);
+                }
+            }
+        };
+        
+        window.clearAllData = function() {
+            if (confirm('すべてのデータ（比較・ブックマーク・履歴）を削除しますか？\n\nこの操作は取り消せません。')) {
+                localStorage.setItem('comparisonList', '[]');
+                localStorage.setItem('bookmarkList', '[]');  
+                localStorage.setItem('viewHistory', '[]');
+                
+                // カウンター更新
+                if (window.updateComparisonCounter) {
+                    window.updateComparisonCounter();
+                }
+                if (window.updateBookmarkCounter) {
+                    window.updateBookmarkCounter();
+                }
+                
+                alert('すべてのデータが削除されました。');
+                
+                // モーダルを閉じる
+                const activeModal = document.querySelector('.modal.show');
+                if (activeModal) {
+                    bootstrap.Modal.getInstance(activeModal).hide();
+                }
+            }
+        };
+        
+        window.exportData = function() {
+            const data = {
+                comparisonList: JSON.parse(localStorage.getItem('comparisonList') || '[]'),
+                bookmarkList: JSON.parse(localStorage.getItem('bookmarkList') || '[]'),
+                viewHistory: JSON.parse(localStorage.getItem('viewHistory') || '[]'),
+                exportedAt: new Date().toLocaleString('ja-JP')
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `tomotrip_data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('データのエクスポートが完了しました。');
+        };
+        
+        window.startComparison = function() {
+            const comparisonList = JSON.parse(localStorage.getItem('comparisonList') || '[]');
+            if (comparisonList.length < 2) {
+                alert('比較するには最低2人のガイドが必要です。');
+                return;
+            }
+            
+            let comparisonContent = `
+                <div style="max-width:700px;">
+                    <h5 class="mb-4 text-center">ガイド比較結果</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-success">
+                                <tr>
+                                    <th>項目</th>
+                                    ${comparisonList.map(guide => `<th>${guide.name}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>場所</strong></td>
+                                    ${comparisonList.map(guide => `<td>${guide.location}</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td><strong>料金</strong></td>
+                                    ${comparisonList.map(guide => `<td class="text-primary fw-bold">¥${guide.price}</td>`).join('')}
+                                </tr>
+                                <tr>
+                                    <td><strong>追加日時</strong></td>
+                                    ${comparisonList.map(guide => `<td class="small text-muted">${guide.comparedAt || '不明'}</td>`).join('')}
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center mt-3">
+                        <button class="btn btn-success" onclick="alert('詳細な比較機能は今後のアップデートで追加予定です。')">詳細比較</button>
+                    </div>
+                </div>
+            `;
+            
+            // モーダルを閉じて比較結果を表示
+            const activeModal = document.querySelector('.modal.show');
+            if (activeModal) {
+                bootstrap.Modal.getInstance(activeModal).hide();
+                setTimeout(() => showCustomModal('ガイド比較', comparisonContent), 300);
+            }
         };
     }
     
