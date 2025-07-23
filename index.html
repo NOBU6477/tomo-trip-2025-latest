@@ -390,13 +390,25 @@
             <button class="btn btn-light dropdown-toggle" id="signUpBtn" style="border-radius: 20px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
               新規登録
             </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#" onclick="registerAsGuide()">
-                <i class="bi bi-compass"></i> ガイドとして登録
-              </a></li>
-              <li><a class="dropdown-item" href="#" onclick="registerAsTourist()">
-                <i class="bi bi-person"></i> 観光客として登録
-              </a></li>
+            <ul class="dropdown-menu shadow-lg border-0" style="border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #f8f9fa, #ffffff); margin-top: 8px;">
+              <li>
+                <a class="dropdown-item py-3 px-4" href="#" onclick="registerAsGuide()" 
+                   style="border-bottom: 1px solid rgba(0,0,0,0.1); transition: all 0.3s ease; background: transparent;" 
+                   onmouseover="this.style.background='linear-gradient(135deg, #4ecdc4, #44a08d)'; this.style.color='white'; this.style.transform='translateX(8px)'" 
+                   onmouseout="this.style.background='transparent'; this.style.color='#333'; this.style.transform='translateX(0)'">
+                  <i class="bi bi-compass me-3" style="font-size: 18px; color: #4ecdc4;"></i>
+                  <span style="font-weight: 600; font-size: 14px;">ガイドとして登録</span>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-3 px-4" href="#" onclick="registerAsTourist()" 
+                   style="transition: all 0.3s ease; background: transparent;" 
+                   onmouseover="this.style.background='linear-gradient(135deg, #ff6b6b, #ff8e53)'; this.style.color='white'; this.style.transform='translateX(8px)'" 
+                   onmouseout="this.style.background='transparent'; this.style.color='#333'; this.style.transform='translateX(0)'">
+                  <i class="bi bi-person me-3" style="font-size: 18px; color: #ff6b6b;"></i>
+                  <span style="font-weight: 600; font-size: 14px;">観光客として登録</span>
+                </a>
+              </li>
             </ul>
           </div>
         </div>
@@ -1601,8 +1613,6 @@
       }
     }
   </script>
-  
-
 
   <!-- Filter Function Fix -->
   <script src="filter-function-fix.js"></script>
@@ -1618,8 +1628,6 @@
   <script src="registration-system.js"></script>
   <!-- Pagination System -->
   <script src="pagination-system.js"></script>
-  
-
 
 </body>
 </html>
