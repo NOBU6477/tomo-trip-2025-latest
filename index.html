@@ -504,6 +504,9 @@
       <div class="position-relative">
         <a href="#guides" class="btn btn-light btn-lg" id="find-guide-btn">ガイドを探す</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal" id="contact-btn">お問い合わせ</button>
+        <button class="btn btn-info btn-lg ms-2" id="usage-guide-btn" style="background: linear-gradient(135deg, #17a2b8, #138496); border: none;">
+          <i class="bi bi-question-circle me-2"></i>使い方ガイド
+        </button>
         
         <!-- Sponsor Registration & Login Buttons + Filter Guide Button (日本語サイトと同じ配置) -->
         <div class="sponsor-mini-buttons">
@@ -960,6 +963,78 @@
     </div>
   </div>
 
+  <!-- Usage Guide Modal -->
+  <div class="modal fade" id="usageGuideModal" tabindex="-1" aria-labelledby="usageGuideModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="usageGuideModalLabel">
+            <i class="bi bi-book me-2"></i>フィルター機能＆管理センター使い方ガイド
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="text-primary mb-3"><i class="bi bi-funnel me-2"></i>フィルター機能の使い方</h6>
+              <ol class="list-group list-group-numbered">
+                <li class="list-group-item border-0 ps-0">
+                  <strong>「ガイドを絞り込み」ボタンをクリック</strong><br>
+                  <small class="text-muted">青色のボタンを押してフィルターパネルを表示</small>
+                </li>
+                <li class="list-group-item border-0 ps-0">
+                  <strong>条件を選択</strong><br>
+                  <small class="text-muted">場所・言語・価格帯・専門分野から選択</small>
+                </li>
+                <li class="list-group-item border-0 ps-0">
+                  <strong>キーワード検索</strong><br>
+                  <small class="text-muted">「夜間ツアー」「グルメ」「写真スポット」等をチェック</small>
+                </li>
+                <li class="list-group-item border-0 ps-0">
+                  <strong>検索実行</strong><br>
+                  <small class="text-muted">「検索」ボタンで結果を表示</small>
+                </li>
+              </ol>
+            </div>
+            <div class="col-md-6">
+              <h6 class="text-success mb-3"><i class="bi bi-gear me-2"></i>管理センターの使い方</h6>
+              <div class="alert alert-info mb-3">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>右下の緑色パネルが管理センターです</strong>
+              </div>
+              <ol class="list-group list-group-numbered">
+                <li class="list-group-item border-0 ps-0">
+                  <strong>「比較」機能</strong><br>
+                  <small class="text-muted">最大3人のガイドを比較できます</small>
+                </li>
+                <li class="list-group-item border-0 ps-0">
+                  <strong>「ブックマーク」機能</strong><br>
+                  <small class="text-muted">気になるガイドを保存できます</small>
+                </li>
+                <li class="list-group-item border-0 ps-0">
+                  <strong>「履歴」機能</strong><br>
+                  <small class="text-muted">閲覧履歴を確認できます</small>
+                </li>
+                <li class="list-group-item border-0 ps-0">
+                  <strong>「管理」ボタン</strong><br>
+                  <small class="text-muted">保存したデータの管理ができます</small>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <hr>
+          <div class="alert alert-warning">
+            <i class="bi bi-lightbulb me-2"></i>
+            <strong>ヒント：</strong>ガイドカードの星マーク（⭐）でブックマーク、チェックマーク（✓）で比較リストに追加できます
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
@@ -1027,8 +1102,148 @@
         });
       }
       
+      // Usage guide button
+      const usageGuideBtn = document.getElementById('usage-guide-btn');
+      if (usageGuideBtn) {
+        usageGuideBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const usageModal = new bootstrap.Modal(document.getElementById('usageGuideModal'));
+          usageModal.show();
+        });
+      }
+      
+      // Management center buttons
+      const compareBtn = document.querySelector('.toolbar-btn[onclick*="比較"]');
+      if (compareBtn) {
+        compareBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showComparisonModal();
+        });
+      }
+      
+      const bookmarkBtn = document.querySelector('.toolbar-btn[onclick*="ブックマーク"]');
+      if (bookmarkBtn) {
+        bookmarkBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showBookmarkModal();
+        });
+      }
+      
+      const historyBtn = document.querySelector('.toolbar-btn[onclick*="履歴"]');
+      if (historyBtn) {
+        historyBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          showHistoryModal();
+        });
+      }
+      
       console.log('All button handlers initialized successfully');
     });
+    
+    // Management Center Functions
+    function showComparisonModal() {
+      const comparisonData = JSON.parse(localStorage.getItem('comparisonList') || '[]');
+      let modalContent = '<div class="modal fade" id="comparisonModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">';
+      modalContent += '<div class="modal-header bg-success text-white"><h5 class="modal-title">比較リスト</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>';
+      modalContent += '<div class="modal-body">';
+      
+      if (comparisonData.length === 0) {
+        modalContent += '<p class="text-center text-muted">比較リストは空です。ガイドカードの✓マークをクリックして追加してください。</p>';
+      } else {
+        modalContent += '<div class="row">';
+        comparisonData.forEach(guide => {
+          modalContent += `<div class="col-md-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <h6 class="card-title">${guide.name}</h6>
+                <p class="card-text small">${guide.location}</p>
+                <p class="card-text"><strong>¥${guide.price}</strong></p>
+              </div>
+            </div>
+          </div>`;
+        });
+        modalContent += '</div>';
+      }
+      
+      modalContent += '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button></div></div></div></div>';
+      
+      document.body.insertAdjacentHTML('beforeend', modalContent);
+      const modal = new bootstrap.Modal(document.getElementById('comparisonModal'));
+      modal.show();
+      
+      modal._element.addEventListener('hidden.bs.modal', function() {
+        document.getElementById('comparisonModal').remove();
+      });
+    }
+    
+    function showBookmarkModal() {
+      const bookmarkData = JSON.parse(localStorage.getItem('bookmarkList') || '[]');
+      let modalContent = '<div class="modal fade" id="bookmarkModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">';
+      modalContent += '<div class="modal-header bg-warning text-dark"><h5 class="modal-title">ブックマークリスト</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>';
+      modalContent += '<div class="modal-body">';
+      
+      if (bookmarkData.length === 0) {
+        modalContent += '<p class="text-center text-muted">ブックマークは空です。ガイドカードの⭐マークをクリックして追加してください。</p>';
+      } else {
+        modalContent += '<div class="row">';
+        bookmarkData.forEach(guide => {
+          modalContent += `<div class="col-md-4 mb-3">
+            <div class="card h-100">
+              <div class="card-body">
+                <h6 class="card-title">${guide.name}</h6>
+                <p class="card-text small">${guide.location}</p>
+                <p class="card-text"><strong>¥${guide.price}</strong></p>
+              </div>
+            </div>
+          </div>`;
+        });
+        modalContent += '</div>';
+      }
+      
+      modalContent += '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button></div></div></div></div>';
+      
+      document.body.insertAdjacentHTML('beforeend', modalContent);
+      const modal = new bootstrap.Modal(document.getElementById('bookmarkModal'));
+      modal.show();
+      
+      modal._element.addEventListener('hidden.bs.modal', function() {
+        document.getElementById('bookmarkModal').remove();
+      });
+    }
+    
+    function showHistoryModal() {
+      const historyData = JSON.parse(localStorage.getItem('viewHistory') || '[]');
+      let modalContent = '<div class="modal fade" id="historyModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content">';
+      modalContent += '<div class="modal-header bg-info text-white"><h5 class="modal-title">閲覧履歴</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>';
+      modalContent += '<div class="modal-body">';
+      
+      if (historyData.length === 0) {
+        modalContent += '<p class="text-center text-muted">閲覧履歴はありません。</p>';
+      } else {
+        modalContent += '<div class="list-group">';
+        historyData.slice(-10).reverse().forEach((guide, index) => {
+          modalContent += `<div class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">${guide.name}</h6>
+              <small class="text-muted">${guide.viewedAt || '最近'}</small>
+            </div>
+            <p class="mb-1">${guide.location}</p>
+            <small class="text-muted">¥${guide.price}</small>
+          </div>`;
+        });
+        modalContent += '</div>';
+      }
+      
+      modalContent += '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button></div></div></div></div>';
+      
+      document.body.insertAdjacentHTML('beforeend', modalContent);
+      const modal = new bootstrap.Modal(document.getElementById('historyModal'));
+      modal.show();
+      
+      modal._element.addEventListener('hidden.bs.modal', function() {
+        document.getElementById('historyModal').remove();
+      });
+    }
   </script>
   
   <!-- Debug Script (Disabled to prevent auto-redirect) -->
