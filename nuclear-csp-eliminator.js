@@ -8,20 +8,14 @@ console.log('☢️ 核レベルCSP除去開始');
     function eliminateEvalUsage() {
         console.log('☢️ eval使用完全除去');
         
-        // window.eval を無効化
-        if (window.eval) {
-            window.eval = function() {
-                console.log('☢️ eval使用阻止');
-                return null;
+        // eval使用を検出のみ（無効化はしない）
+        const originalEval = window.eval;
+        if (originalEval) {
+            window.eval = function(code) {
+                console.log('☢️ eval使用検出（許可）:', code.substring(0, 50));
+                return originalEval.call(this, code);
             };
         }
-        
-        // Function constructor を制限
-        const originalFunction = window.Function;
-        window.Function = function() {
-            console.log('☢️ Function constructor制限');
-            return function() { return null; };
-        };
         
         // setTimeout/setInterval の文字列実行を阻止
         const originalSetTimeout = window.setTimeout;
