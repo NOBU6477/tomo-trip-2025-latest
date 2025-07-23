@@ -14,6 +14,14 @@
             console.log(`ガイドカウンター更新: ${actualCount}人`);
         }
         
+        // 複数のカウンター要素を更新
+        const allCountElements = document.querySelectorAll('#guide-count-number');
+        allCountElements.forEach(element => {
+            if (element && actualCount > 0) {
+                element.textContent = actualCount;
+            }
+        });
+        
         return actualCount;
     }
     

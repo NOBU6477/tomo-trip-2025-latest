@@ -21,6 +21,14 @@
             guideCountText.innerHTML = `${peopleIcon}<span id="guide-count-number">${actualCount}</span> guides found`;
         }
         
+        // Also update individual guide counter element
+        const guideCountElements = document.querySelectorAll('#guide-count-number');
+        guideCountElements.forEach(element => {
+            if (element && actualCount > 0) {
+                element.textContent = actualCount;
+            }
+        });
+        
         return actualCount;
     }
     

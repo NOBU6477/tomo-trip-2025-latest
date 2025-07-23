@@ -401,15 +401,15 @@
           <div class="col-md-10 col-lg-8">
             <div class="card shadow-sm d-none" id="filter-card">
               <div class="card-body">
-                <h5 class="card-title mb-3">Filter Guides</h5>
+                <h5 class="card-title mb-3">ガイドを絞り込み</h5>
                 <form id="guide-filter-form">
                   <!-- Real-time search filter form -->
                   <div class="row g-3">
                     <div class="col-md-4">
-                      <label for="location-filter" class="form-label">Location</label>
+                      <label for="location-filter" class="form-label">場所</label>
                       <select class="form-select" id="location-filter">
-                        <option value="">All</option>
-                        <optgroup label="Prefectures">
+                        <option value="">すべて</option>
+                        <optgroup label="都道府県">
                           <option value="Hokkaido">Hokkaido</option>
                           <option value="Aomori">Aomori</option>
                           <option value="Iwate">Iwate</option>
@@ -477,58 +477,58 @@
                       </select>
                     </div>
                     <div class="col-md-4">
-                      <label for="language-filter" class="form-label">Language</label>
+                      <label for="language-filter" class="form-label">言語</label>
                       <select class="form-select" id="language-filter">
-                        <option value="">All</option>
-                        <option value="Japanese">Japanese</option>
-                        <option value="English">English</option>
-                        <option value="Chinese">Chinese</option>
-                        <option value="Korean">Korean</option>
-                        <option value="French">French</option>
+                        <option value="">すべて</option>
+                        <option value="Japanese">日本語</option>
+                        <option value="English">英語</option>
+                        <option value="Chinese">中国語</option>
+                        <option value="Korean">韓国語</option>
+                        <option value="French">フランス語</option>
                       </select>
                     </div>
                     <div class="col-md-4">
-                      <label for="price-filter" class="form-label">Price</label>
+                      <label for="price-filter" class="form-label">価格</label>
                       <select class="form-select" id="price-filter">
-                        <option value="">All</option>
-                        <option value="under-6000">Under ¥6,000/hour</option>
-                        <option value="6000-10000">¥6,000-10,000/hour</option>
-                        <option value="over-10000">Over ¥10,000/hour</option>
+                        <option value="">すべて</option>
+                        <option value="under-6000">¥6,000未満/時間</option>
+                        <option value="6000-10000">¥6,000-10,000/時間</option>
+                        <option value="over-10000">¥10,000以上/時間</option>
                       </select>
                     </div>
                     <div class="col-12">
-                      <label class="form-label">Keywords</label>
+                      <label class="form-label">キーワード</label>
                       <div class="d-flex flex-wrap" id="keyword-filter-group">
                         <div class="form-check me-3 mb-2">
                           <input class="form-check-input keyword-checkbox" type="checkbox" value="Night Tour" id="keyword-night">
-                          <label class="form-check-label" for="keyword-night">Night Tour</label>
+                          <label class="form-check-label" for="keyword-night">ナイトツアー</label>
                         </div>
                         <div class="form-check me-3 mb-2">
                           <input class="form-check-input keyword-checkbox" type="checkbox" value="Gourmet" id="keyword-food">
-                          <label class="form-check-label" for="keyword-food">Gourmet</label>
+                          <label class="form-check-label" for="keyword-food">グルメ</label>
                         </div>
                         <div class="form-check me-3 mb-2">
                           <input class="form-check-input keyword-checkbox" type="checkbox" value="Photo Spots" id="keyword-photo">
-                          <label class="form-check-label" for="keyword-photo">Photo Spots</label>
+                          <label class="form-check-label" for="keyword-photo">撮影スポット</label>
                         </div>
                         <div class="form-check me-3 mb-2">
                           <input class="form-check-input keyword-checkbox" type="checkbox" value="Cuisine" id="keyword-cooking">
-                          <label class="form-check-label" for="keyword-cooking">Cuisine</label>
+                          <label class="form-check-label" for="keyword-cooking">料理</label>
                         </div>
                         <div class="form-check me-3 mb-2">
                           <input class="form-check-input keyword-checkbox" type="checkbox" value="Activities" id="keyword-activity">
-                          <label class="form-check-label" for="keyword-activity">Activities</label>
+                          <label class="form-check-label" for="keyword-activity">アクティビティ</label>
                         </div>
                       </div>
-                      <input type="text" class="form-control mt-2" id="custom-keywords" placeholder="Enter other keywords (comma-separated)">
+                      <input type="text" class="form-control mt-2" id="custom-keywords" placeholder="その他のキーワード（カンマ区切り）">
                       <small class="text-muted mt-1 d-block">
-                        <i class="bi bi-info-circle"></i> Use checkboxes or input field for keywords. For multiple keywords, separate with commas. Example: "hot springs, hiking, temples"
+                        <i class="bi bi-info-circle"></i> チェックボックスまたは入力欄をキーワードに使用してください。複数のキーワードはカンマで区切ってください。例：「温泉, ハイキング, 寺院」
                       </small>
                     </div>
                     <div class="col-12 d-flex justify-content-end">
-                      <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
+                      <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">リセット</button>
                       <button type="button" class="btn btn-primary" onclick="searchGuides()">
-                        <i class="bi bi-search"></i> Search
+                        <i class="bi bi-search"></i> 検索
                       </button>
                     </div>
                   </div>
