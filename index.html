@@ -555,7 +555,7 @@
 
 
       <!-- Guide Cards Container (12枚のガイドカード表示) -->
-      <div class="row" id="guide-cards-container">
+      <div class="row" id="guides-container">
         <!-- 1行目 -->
         <div class="col-md-4 mb-4">
           <div class="card guide-card shadow-sm h-100">
@@ -681,7 +681,28 @@
     </section>
   </div>
 
-  <!-- Floating Toolbar will be created by ultimate-english-icons.js -->
+  <!-- Floating Toolbar for Comparison/Bookmark -->
+  <div class="floating-toolbar">
+    <div class="toolbar-content">
+      <div class="toolbar-status">
+        <span class="comparing-status">比較中: <span class="compare-count">0</span>/3人</span>
+      </div>
+      <div class="toolbar-buttons">
+        <button class="toolbar-btn" onclick="paginationSystem.showComparison()" title="比較">
+          <i class="bi bi-list-check"></i>
+          <span class="d-none d-md-inline">比較</span>
+        </button>
+        <button class="toolbar-btn" onclick="paginationSystem.showBookmarks()" title="ブックマーク">
+          <i class="bi bi-star"></i>
+          <span class="d-none d-md-inline">ブックマーク(<span class="bookmark-count">0</span>)</span>
+        </button>
+        <button class="toolbar-btn" onclick="paginationSystem.showHistory()" title="履歴">
+          <i class="bi bi-clock-history"></i>
+          <span class="d-none d-md-inline">履歴</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- Contact Modal -->
   <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
@@ -1540,6 +1561,8 @@
   <script src="enhanced-keyword-filter.js"></script>
   <!-- Registration System Integration -->
   <script src="registration-system.js"></script>
+  <!-- Pagination System -->
+  <script src="pagination-system.js"></script>
   
   <!-- 管理センター機能 -->
   <script>
