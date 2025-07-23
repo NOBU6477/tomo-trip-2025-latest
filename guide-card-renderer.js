@@ -240,6 +240,26 @@ class GuideEditor {
             checkbox.checked = guide.keywords.includes(checkbox.value);
         });
         
+        // モーダルタイトルと削除ボタン設定
+        setTimeout(() => {
+            const modalTitle = document.querySelector('#guideEditModal .modal-title');
+            if (modalTitle) {
+                modalTitle.textContent = 'ガイド情報編集';
+            }
+            
+            // 削除ボタンを表示
+            const deleteBtn = document.getElementById('deleteGuideBtn');
+            if (deleteBtn) {
+                deleteBtn.style.display = 'inline-block';
+            }
+            
+            // 保存ボタンのテキスト
+            const saveBtn = document.getElementById('saveGuideBtn');
+            if (saveBtn) {
+                saveBtn.textContent = '保存';
+            }
+        }, 50);
+        
         const modal = new bootstrap.Modal(document.getElementById('guideEditModal'));
         modal.show();
     }
@@ -347,8 +367,22 @@ window.addNewGuide = function() {
         modal.show();
         
         // モーダルタイトル変更
-        document.querySelector('#guideEditModal .modal-title').textContent = '新規ガイド追加';
-        document.getElementById('deleteGuideBtn').style.display = 'none'; // 削除ボタンを隠す
+        const modalTitle = document.querySelector('#guideEditModal .modal-title');
+        if (modalTitle) {
+            modalTitle.textContent = '新規ガイド追加';
+        }
+        
+        // 削除ボタンを隠す
+        const deleteBtn = document.getElementById('deleteGuideBtn');
+        if (deleteBtn) {
+            deleteBtn.style.display = 'none';
+        }
+        
+        // 保存ボタンのテキスト
+        const saveBtn = document.getElementById('saveGuideBtn');
+        if (saveBtn) {
+            saveBtn.textContent = '追加する';
+        }
     }
 };
 
