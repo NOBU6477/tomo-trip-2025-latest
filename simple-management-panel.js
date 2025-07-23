@@ -239,6 +239,93 @@
                 document.getElementById(modalId).remove();
             });
         };
+        
+        // 管理センター使い方ガイド
+        window.openManagementGuide = function() {
+            const content = `
+                <div style="max-width:600px;">
+                    <h5 class="mb-4 text-center">🏆 管理センター完全ガイド</h5>
+                    
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="bi bi-info-circle me-2"></i>管理センター位置</h6>
+                        <p class="mb-0">画面右下にある<strong class="text-success">緑色の「🏆管理センター」</strong>パネルをご利用ください。</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-primary">
+                                <div class="card-header bg-primary text-white">
+                                    <strong>1. ガイド選択方法</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small mb-2">ガイドカードの右上にある以下のボタンをクリック：</p>
+                                    <div class="d-flex gap-2 mb-2">
+                                        <button class="btn btn-sm btn-outline-warning" disabled>⭐</button>
+                                        <span class="small">ブックマーク</span>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-outline-success" disabled>✓</button>
+                                        <span class="small">比較リストに追加</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success">
+                                <div class="card-header bg-success text-white">
+                                    <strong>2. 選択したガイドの確認</strong>
+                                </div>
+                                <div class="card-body">
+                                    <p class="small mb-2">管理センターの各ボタンで確認：</p>
+                                    <ul class="small mb-0">
+                                        <li><strong>比較</strong> - 比較中のガイド一覧</li>
+                                        <li><strong>ブックマーク</strong> - 保存したガイド</li>
+                                        <li><strong>履歴</strong> - 閲覧したガイド</li>
+                                        <li><strong>管理</strong> - 全データ統計</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-warning mb-3">
+                        <div class="card-header bg-warning text-dark">
+                            <strong>3. 管理センター機能詳細</strong>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h6 class="text-success">比較機能</h6>
+                                    <ul class="small">
+                                        <li>最大3人まで選択可能</li>
+                                        <li>料金・評価・特技を比較</li>
+                                        <li>個別削除可能</li>
+                                    </ul>
+                                </div>
+                                <div class="col-6">
+                                    <h6 class="text-warning">ブックマーク機能</h6>
+                                    <ul class="small">
+                                        <li>無制限に保存可能</li>
+                                        <li>後で簡単にアクセス</li>
+                                        <li>個別・一括削除可能</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="alert alert-success">
+                            <strong>💡 使い方のコツ</strong><br>
+                            気になるガイドを⭐でブックマーク → 詳しく比較したいガイドを✓で選択 → 管理センターで比較・管理
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            showCustomModal('管理センター使い方ガイド', content);
+        };
     }
     
     // DOM読み込み後に実行
