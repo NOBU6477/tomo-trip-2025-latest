@@ -253,7 +253,7 @@
                     
                     <div class="alert alert-info mb-4">
                         <h6><i class="bi bi-info-circle me-2"></i>管理センター位置</h6>
-                        <p class="mb-0">画面右側中央にある<strong class="text-success">緑色の「🏆管理センター」</strong>パネルをご利用ください。</p>
+                        <p class="mb-0">画面右下にある<strong class="text-success">緑色の「🏆」トリガーボタン</strong>をクリックして管理センターを開いてください。</p>
                     </div>
                     
                     <div class="row">
