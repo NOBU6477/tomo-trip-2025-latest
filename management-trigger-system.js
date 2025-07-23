@@ -47,6 +47,7 @@
         // 管理センターパネル（初期は非表示）
         const panel = document.createElement('div');
         panel.id = 'management-center-panel';
+        panel.dataset.newSystem = 'true'; // 新システムマーカー
         panel.style.display = 'none';
         panel.innerHTML = `
             <div class="floating-toolbar" style="

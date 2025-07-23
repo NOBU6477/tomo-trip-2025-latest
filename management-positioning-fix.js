@@ -6,7 +6,14 @@
     console.log('管理センター位置調整システム開始');
     
     function adjustManagementCenter() {
+        // 旧システムのパネルを無効化
         const managementPanel = document.getElementById('management-center-panel');
+        if (managementPanel && !managementPanel.dataset.isNewSystem) {
+            managementPanel.style.display = 'none';
+            managementPanel.remove();
+            return;
+        }
+        
         if (!managementPanel) return;
         
         const toolbar = managementPanel.querySelector('.floating-toolbar');
