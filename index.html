@@ -140,6 +140,69 @@
       box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
     }
 
+    /* Floating toolbar styles */
+    .floating-toolbar {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #2E7D32, #388E3C);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 25px;
+      z-index: 1000;
+      box-shadow: 0 8px 32px rgba(46, 125, 50, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .toolbar-content {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .toolbar-status {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .toolbar-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .toolbar-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .toolbar-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Guide actions buttons on cards */
+    .guide-actions .btn {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
     /* Sponsor Mini Buttons Positioning (日本語サイトと同じ配置) */
     .sponsor-mini-buttons {
       position: absolute;
@@ -319,9 +382,9 @@
           </button>
         </div>
         
-        <!-- Login/Register Buttons (右端配置) -->
-        <div id="navbar-user-area" class="ms-3">
-          <button class="btn btn-outline-light me-2" id="loginBtn" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+        <!-- Login/Register Buttons (右端配置・横並び) -->
+        <div id="navbar-user-area" class="ms-3 d-flex align-items-center gap-2">
+          <button class="btn btn-outline-light" id="loginBtn" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
           <!-- 新規登録ドロップダウン -->
           <div class="dropdown">
             <button class="btn btn-light dropdown-toggle" id="signUpBtn" style="border-radius: 20px;" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1539,15 +1602,7 @@
     }
   </script>
   
-  <!-- 究極管理センター -->
-  <div id="management-center" style="position:fixed;bottom:20px;right:20px;background:#2E7D32;color:white;padding:10px;border-radius:8px;z-index:9999;font-size:12px;box-shadow:0 4px 20px rgba(0,0,0,0.3);">
-    <div style="font-weight:bold;margin-bottom:6px;text-align:center;">🏆究極管理センター</div>
-    <div style="display:flex;gap:6px;">
-      <button onclick="handleCompare()" style="padding:4px 8px;border:none;border-radius:4px;background:rgba(255,255,255,0.3);color:white;cursor:pointer;font-size:10px;">📊 比較</button>
-      <button onclick="handleBookmark()" style="padding:4px 8px;border:none;border-radius:4px;background:rgba(255,255,255,0.3);color:white;cursor:pointer;font-size:10px;">⭐ ブックマーク</button>
-      <button onclick="handleHistory()" style="padding:4px 8px;border:none;border-radius:4px;background:rgba(255,255,255,0.3);color:white;cursor:pointer;font-size:10px;">📚 履歴</button>
-    </div>
-  </div>
+
 
   <!-- Filter Function Fix -->
   <script src="filter-function-fix.js"></script>
@@ -1564,20 +1619,7 @@
   <!-- Pagination System -->
   <script src="pagination-system.js"></script>
   
-  <!-- 管理センター機能 -->
-  <script>
-    function handleCompare() {
-      alert('比較機能：選択したガイドを比較できます。\n\n現在：3人まで選択可能\n機能：料金・評価・特技を並べて表示');
-    }
-    
-    function handleBookmark() {
-      alert('ブックマーク機能：気に入ったガイドを保存できます。\n\n機能：後で確認・連絡先保存・お気に入りリスト');
-    }
-    
-    function handleHistory() {
-      alert('履歴機能：閲覧したガイドの履歴を確認できます。\n\n機能：最近見たガイド・検索履歴・以前の予約履歴');
-    }
-  </script>
+
 
 </body>
 </html>
