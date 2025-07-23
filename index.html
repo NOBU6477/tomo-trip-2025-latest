@@ -544,7 +544,7 @@
   </div>
 
   <!-- Main Content -->
-  <div class="container py-5">
+  <div class="container py-4">
     <!-- Popular Guides -->
     <section id="guides" class="mb-5">
       <h2 class="text-center mb-4">人気のガイド</h2>
@@ -960,12 +960,76 @@
     </div>
   </div>
 
-
-  
-
-
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <script>
+    // Force Bootstrap functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize all dropdowns
+      const dropdownElements = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+      dropdownElements.forEach(function(dropdown) {
+        new bootstrap.Dropdown(dropdown);
+      });
+      
+      // Initialize all modals
+      const modalElements = document.querySelectorAll('.modal');
+      modalElements.forEach(function(modal) {
+        new bootstrap.Modal(modal);
+      });
+      
+      // Force button click handlers
+      const loginBtn = document.getElementById('loginBtn');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+          loginModal.show();
+        });
+      }
+      
+      const contactBtn = document.getElementById('contact-btn');
+      if (contactBtn) {
+        contactBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
+          contactModal.show();
+        });
+      }
+      
+      const filterToggleBtn = document.getElementById('filterToggleBtn');
+      if (filterToggleBtn) {
+        filterToggleBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const filterCard = document.getElementById('filter-card');
+          if (filterCard) {
+            filterCard.classList.toggle('d-none');
+          }
+        });
+      }
+      
+      // Sponsor button handlers
+      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
+      if (sponsorRegisterBtn) {
+        sponsorRegisterBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('協賛店登録ページに移動します');
+          console.log('協賛店登録ボタンクリック');
+        });
+      }
+      
+      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+      if (sponsorLoginBtn) {
+        sponsorLoginBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          alert('協賛店ログインページに移動します');
+          console.log('協賛店ログインボタンクリック');
+        });
+      }
+      
+      console.log('All button handlers initialized successfully');
+    });
+  </script>
   
   <!-- Debug Script (Disabled to prevent auto-redirect) -->
   <!-- <script src="test-english-buttons.js"></script> -->
