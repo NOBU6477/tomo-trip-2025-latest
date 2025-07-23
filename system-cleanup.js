@@ -36,6 +36,35 @@
                 }
                 console.log('重複アイコンを削除:', iconContainers.length - 1, '個');
             }
+            
+            // 丸印のアイコンを個別にチェック（⭐と✓）
+            const starButtons = card.querySelectorAll('button:contains("⭐"), [innerHTML*="⭐"]');
+            const checkButtons = card.querySelectorAll('button:contains("✓"), [innerHTML*="✓"]');
+            
+            // ⭐ボタンが複数の場合
+            if (starButtons.length > 1) {
+                for (let i = 1; i < starButtons.length; i++) {
+                    console.log('重複⭐ボタン削除');
+                    starButtons[i].remove();
+                }
+            }
+            
+            // ✓ボタンが複数の場合  
+            if (checkButtons.length > 1) {
+                for (let i = 1; i < checkButtons.length; i++) {
+                    console.log('重複✓ボタン削除');
+                    checkButtons[i].remove();
+                }
+            }
+            
+            // 丸い背景のアイコンを探して削除（新システム以外）
+            const circularElements = card.querySelectorAll('*[style*="border-radius:50%"]:not(.bookmark-btn):not(.compare-btn)');
+            circularElements.forEach(element => {
+                if (element.innerHTML.includes('⭐') || element.innerHTML.includes('✓')) {
+                    console.log('不要な丸印削除:', element);
+                    element.remove();
+                }
+            });
         });
     }
     

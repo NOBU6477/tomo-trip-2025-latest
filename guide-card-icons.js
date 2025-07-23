@@ -1,34 +1,51 @@
-// ガイドカードにブックマーク・比較ボタンを追加するシステム
+// ガイドカードアイコンシステム - 統合版
 
 (function() {
     'use strict';
     
-    console.log('ガイドカードアイコンシステム開始');
+    console.log('ガイドカードアイコンシステム開始（統合版）');
+    
+    // 重複実行を防ぐ
+    if (window.guideCardIconsActive) {
+        console.log('既に実行済み - スキップ');
+        return;
+    }
+    window.guideCardIconsActive = true;
+    
+    // 既存のアイコンを全て削除
+    function clearExistingIcons() {
+        const existingIcons = document.querySelectorAll('.guide-card-icons, .bookmark-btn, .compare-btn');
+        existingIcons.forEach(icon => {
+            icon.remove();
+        });
+        console.log('既存アイコンを削除:', existingIcons.length, '個');
+    }
     
     function addIconsToGuideCards() {
-        const guideCards = document.querySelectorAll('.guide-card');
+        // まず既存のアイコンを削除
+        clearExistingIcons();
+        
+        const guideCards = document.querySelectorAll('.guide-card, .card');
+        console.log('ガイドカード検出:', guideCards.length, '枚');
         
         guideCards.forEach((card, index) => {
-            // 既にアイコンが追加されている場合はスキップ
+            // 再度チェック - アイコンが存在する場合はスキップ
             if (card.querySelector('.guide-card-icons')) {
                 return;
             }
             
-            // ガイド情報を取得
-            const nameElement = card.querySelector('h5');
-            const locationElement = card.querySelector('.text-muted');
-            const priceElement = card.querySelector('.text-primary');
+            // ガイド情報を取得（複数セレクタで対応）
+            const nameElement = card.querySelector('h5, .card-title, .guide-name');
+            const locationElement = card.querySelector('.text-muted, .guide-location');
+            const priceElement = card.querySelector('.text-primary, .guide-price');
             
-            if (!nameElement || !locationElement || !priceElement) {
+            if (!nameElement) {
                 return;
             }
             
-            const guideData = {
-                id: index,
-                name: nameElement.textContent.trim(),
-                location: locationElement.textContent.trim(),
-                price: priceElement.textContent.replace('¥', '').replace(',', '').trim()
-            };
+            const guideName = nameElement.textContent.trim();
+            const guideLocation = locationElement ? locationElement.textContent.trim() : '場所不明';
+            const guidePrice = priceElement ? priceElement.textContent.replace(/[^\d]/g, '') : '6000';
             
             // アイコンコンテナを作成
             const iconsContainer = document.createElement('div');
