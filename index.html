@@ -6680,76 +6680,92 @@
         console.log('フィルターリセット完了: ' + guideCards.length + '人表示');
     };
     
-    // 即座に実行 - 管理センターボタン強制表示
+    // 根本原因解決 - 正確なID使用
     setTimeout(function() {
-        console.log('強制管理センター作成開始');
+        console.log('根本修復開始');
         
-        // 既存ボタンを削除
-        var existingBtn = document.getElementById('emergency-management-btn');
+        // 1. 管理センターボタンを強制作成
+        var existingBtn = document.getElementById('management-center-btn');
         if (existingBtn) existingBtn.remove();
         
-        // 管理センターボタンを強制作成
-        var forceBtn = document.createElement('div');
-        forceBtn.id = 'emergency-management-btn';
-        forceBtn.innerHTML = '🏆';
-        forceBtn.style.cssText = 'position:fixed;top:50%;right:15px;transform:translateY(-50%);width:100px;height:100px;background:linear-gradient(135deg,#ff6b6b,#4ecdc4,#45b7d1);color:white;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:48px;cursor:pointer;z-index:9999;box-shadow:0 8px 25px rgba(255,107,107,0.4);border:none;transition:all 0.3s ease;animation:pulse 2s infinite;';
-        forceBtn.title = '管理センター';
+        var managementBtn = document.createElement('div');
+        managementBtn.id = 'management-center-btn';
+        managementBtn.innerHTML = '🏆';
+        managementBtn.style.cssText = 'position:fixed!important;top:50%!important;right:15px!important;transform:translateY(-50%)!important;width:100px!important;height:100px!important;background:linear-gradient(135deg,#ff6b6b,#4ecdc4,#45b7d1)!important;color:white!important;border-radius:20px!important;display:flex!important;align-items:center!important;justify-content:center!important;font-size:48px!important;cursor:pointer!important;z-index:99999!important;box-shadow:0 8px 25px rgba(255,107,107,0.4)!important;border:none!important;transition:all 0.3s ease!important;animation:managementPulse 2s infinite!important;';
+        managementBtn.title = '管理センター';
         
-        forceBtn.onclick = function() {
-            var panel = document.getElementById('force-management-panel');
+        managementBtn.onclick = function() {
+            console.log('管理センターボタンクリック');
+            var panel = document.getElementById('management-panel');
             if (panel) {
                 panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
             } else {
-                createForcePanel();
+                createManagementPanel();
             }
         };
         
-        document.body.appendChild(forceBtn);
-        console.log('強制管理センターボタン作成完了');
+        document.body.appendChild(managementBtn);
+        console.log('管理センターボタン作成完了');
         
-        function createForcePanel() {
+        function createManagementPanel() {
             var panel = document.createElement('div');
-            panel.id = 'force-management-panel';
-            panel.style.cssText = 'position:fixed;top:50%;right:130px;transform:translateY(-50%);background:white;border:2px solid #ddd;border-radius:15px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9998;width:300px;display:block;';
+            panel.id = 'management-panel';
+            panel.style.cssText = 'position:fixed!important;top:50%!important;right:130px!important;transform:translateY(-50%)!important;background:white!important;border:2px solid #ddd!important;border-radius:15px!important;padding:20px!important;box-shadow:0 10px 30px rgba(0,0,0,0.3)!important;z-index:99998!important;width:300px!important;display:block!important;';
             
-            panel.innerHTML = '<h4 style="margin:0 0 15px 0;color:#333;">📋 管理センター</h4>' +
-                '<div style="margin:10px 0;padding:10px;background:#f8f9fa;border-radius:8px;">' +
-                '<div style="margin-bottom:5px;font-size:14px;color:#666;">比較中: 0/3人</div>' +
-                '<div style="font-size:14px;color:#666;">ブックマーク: 0人</div>' +
+            panel.innerHTML = '<h4 style="margin:0 0 15px 0;color:#333;font-size:18px;">📋 管理センター</h4>' +
+                '<div style="margin:10px 0;padding:12px;background:#f8f9fa;border-radius:8px;border:1px solid #dee2e6;">' +
+                '<div style="margin-bottom:8px;font-size:14px;color:#666;font-weight:500;">📊 現在の状況</div>' +
+                '<div style="margin-bottom:5px;font-size:13px;color:#666;">比較中: 0/3人</div>' +
+                '<div style="font-size:13px;color:#666;">ブックマーク: 0人</div>' +
                 '</div>' +
-                '<div style="display:flex;flex-direction:column;gap:10px;">' +
-                '<button onclick="alert(\'ブックマーク管理機能（開発中）\')" style="padding:10px;background:#28a745;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">ブックマーク管理</button>' +
-                '<button onclick="alert(\'比較管理機能（開発中）\')" style="padding:10px;background:#17a2b8;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">比較管理</button>' +
-                '<button onclick="localStorage.clear();alert(\'全削除完了\')" style="padding:10px;background:#dc3545;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">全削除</button>' +
-                '<button onclick="this.parentElement.parentElement.remove()" style="padding:10px;background:#6c757d;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">閉じる</button>' +
+                '<div style="display:flex;flex-direction:column;gap:8px;">' +
+                '<button onclick="alert(\'📖 ブックマーク管理\\n現在のブックマーク: 0人\\n\\n機能開発中です\')" style="padding:12px;background:#28a745;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;">📖 ブックマーク管理</button>' +
+                '<button onclick="alert(\'⚖️ 比較管理\\n現在の比較対象: 0/3人\\n\\n機能開発中です\')" style="padding:12px;background:#17a2b8;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;">⚖️ 比較管理</button>' +
+                '<button onclick="if(confirm(\'すべての選択を削除しますか？\')){localStorage.clear();alert(\'🗑️ 削除完了\\nすべてのデータを削除しました\')}" style="padding:12px;background:#dc3545;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;">🗑️ 全削除</button>' +
+                '<button onclick="document.getElementById(\'management-panel\').remove()" style="padding:12px;background:#6c757d;color:white;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;transition:all 0.2s;">✖️ 閉じる</button>' +
                 '</div>';
             
             document.body.appendChild(panel);
-            console.log('強制管理パネル作成完了');
+            console.log('管理パネル作成完了');
         }
         
-        // フィルターボタンの修正
-        var filterBtn = document.getElementById('filterToggleBtn');
-        if (filterBtn) {
-            filterBtn.onclick = function() {
-                var panel = document.getElementById('filter-panel');
-                if (panel) {
-                    if (panel.style.display === 'none' || !panel.style.display) {
-                        panel.style.display = 'block';
-                        this.textContent = '▲ フィルターを非表示';
+        // 2. フィルターボタンの正確な修正（正しいIDを使用）
+        var realFilterBtn = document.getElementById('toggle-filter-button'); // 実際のID
+        if (realFilterBtn) {
+            console.log('フィルターボタン発見: toggle-filter-button');
+            realFilterBtn.onclick = function(e) {
+                e.preventDefault();
+                console.log('フィルターボタンクリック実行');
+                var filterCard = document.getElementById('filter-card');
+                if (filterCard) {
+                    if (filterCard.classList.contains('d-none')) {
+                        filterCard.classList.remove('d-none');
+                        this.innerHTML = '<i class="bi bi-funnel"></i> フィルターを閉じる';
                         this.className = 'btn btn-secondary';
+                        console.log('フィルター開いた');
                     } else {
-                        panel.style.display = 'none';
-                        this.textContent = '▼ フィルターを絞り込み';
-                        this.className = 'btn btn-primary';
+                        filterCard.classList.add('d-none');
+                        this.innerHTML = '<i class="bi bi-funnel"></i> フィルターを開く';
+                        this.className = 'btn btn-outline-primary';
+                        console.log('フィルター閉じた');
                     }
+                } else {
+                    console.log('filter-card要素が見つかりません');
                 }
-                console.log('フィルターパネル切り替え完了');
             };
             console.log('フィルターボタン修正完了');
+        } else {
+            console.log('toggle-filter-button要素が見つかりません');
         }
         
-    }, 2000);
+        // 3. アニメーション追加
+        var style = document.createElement('style');
+        style.textContent = '@keyframes managementPulse { 0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); } 50% { box-shadow: 0 12px 35px rgba(255, 107, 107, 0.7); } 100% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); } }';
+        document.head.appendChild(style);
+        
+        console.log('全修復完了');
+        
+    }, 1000); // 1秒に短縮
     
     // パルスアニメーションCSS追加
     var pulseStyle = document.createElement('style');
