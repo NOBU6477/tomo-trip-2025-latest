@@ -6679,6 +6679,82 @@
         
         console.log('フィルターリセット完了: ' + guideCards.length + '人表示');
     };
+    
+    // 即座に実行 - 管理センターボタン強制表示
+    setTimeout(function() {
+        console.log('強制管理センター作成開始');
+        
+        // 既存ボタンを削除
+        var existingBtn = document.getElementById('emergency-management-btn');
+        if (existingBtn) existingBtn.remove();
+        
+        // 管理センターボタンを強制作成
+        var forceBtn = document.createElement('div');
+        forceBtn.id = 'emergency-management-btn';
+        forceBtn.innerHTML = '🏆';
+        forceBtn.style.cssText = 'position:fixed;top:50%;right:15px;transform:translateY(-50%);width:100px;height:100px;background:linear-gradient(135deg,#ff6b6b,#4ecdc4,#45b7d1);color:white;border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:48px;cursor:pointer;z-index:9999;box-shadow:0 8px 25px rgba(255,107,107,0.4);border:none;transition:all 0.3s ease;animation:pulse 2s infinite;';
+        forceBtn.title = '管理センター';
+        
+        forceBtn.onclick = function() {
+            var panel = document.getElementById('force-management-panel');
+            if (panel) {
+                panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+            } else {
+                createForcePanel();
+            }
+        };
+        
+        document.body.appendChild(forceBtn);
+        console.log('強制管理センターボタン作成完了');
+        
+        function createForcePanel() {
+            var panel = document.createElement('div');
+            panel.id = 'force-management-panel';
+            panel.style.cssText = 'position:fixed;top:50%;right:130px;transform:translateY(-50%);background:white;border:2px solid #ddd;border-radius:15px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9998;width:300px;display:block;';
+            
+            panel.innerHTML = '<h4 style="margin:0 0 15px 0;color:#333;">📋 管理センター</h4>' +
+                '<div style="margin:10px 0;padding:10px;background:#f8f9fa;border-radius:8px;">' +
+                '<div style="margin-bottom:5px;font-size:14px;color:#666;">比較中: 0/3人</div>' +
+                '<div style="font-size:14px;color:#666;">ブックマーク: 0人</div>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;gap:10px;">' +
+                '<button onclick="alert(\'ブックマーク管理機能（開発中）\')" style="padding:10px;background:#28a745;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">ブックマーク管理</button>' +
+                '<button onclick="alert(\'比較管理機能（開発中）\')" style="padding:10px;background:#17a2b8;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">比較管理</button>' +
+                '<button onclick="localStorage.clear();alert(\'全削除完了\')" style="padding:10px;background:#dc3545;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">全削除</button>' +
+                '<button onclick="this.parentElement.parentElement.remove()" style="padding:10px;background:#6c757d;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;">閉じる</button>' +
+                '</div>';
+            
+            document.body.appendChild(panel);
+            console.log('強制管理パネル作成完了');
+        }
+        
+        // フィルターボタンの修正
+        var filterBtn = document.getElementById('filterToggleBtn');
+        if (filterBtn) {
+            filterBtn.onclick = function() {
+                var panel = document.getElementById('filter-panel');
+                if (panel) {
+                    if (panel.style.display === 'none' || !panel.style.display) {
+                        panel.style.display = 'block';
+                        this.textContent = '▲ フィルターを非表示';
+                        this.className = 'btn btn-secondary';
+                    } else {
+                        panel.style.display = 'none';
+                        this.textContent = '▼ フィルターを絞り込み';
+                        this.className = 'btn btn-primary';
+                    }
+                }
+                console.log('フィルターパネル切り替え完了');
+            };
+            console.log('フィルターボタン修正完了');
+        }
+        
+    }, 2000);
+    
+    // パルスアニメーションCSS追加
+    var pulseStyle = document.createElement('style');
+    pulseStyle.textContent = '@keyframes pulse { 0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); } 50% { box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6); } 100% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); } }';
+    document.head.appendChild(pulseStyle);
   </script>
 
 </body>
