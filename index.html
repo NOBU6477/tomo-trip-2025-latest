@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:;">
   <title>TomoTrip - 地元ガイドと特別な旅を</title>
   
   <!-- Bootstrap CSS -->
@@ -1246,8 +1247,8 @@
     }
   </script>
   
-  <!-- 核レベル修正システム -->
-  <script src="nuclear-level-fix.js"></script>
+  <!-- シンプル管理システム（CSP対応） -->
+  <script src="simple-management-system.js"></script>
 
   <!-- フィルターヘルプモーダル -->
   <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
