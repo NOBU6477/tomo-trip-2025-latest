@@ -499,7 +499,7 @@
         
         <div class="row justify-content-center">
           <div class="col-md-10 col-lg-8">
-            <div class="card shadow-sm" id="filter-card">
+            <div class="card shadow-sm d-none" id="filter-card">
               <div class="card-body">
                 <h5 class="card-title mb-3">ガイドを絞り込み</h5>
                 <form id="guide-filter-form">
@@ -991,9 +991,11 @@
       if (filterToggleBtn) {
         filterToggleBtn.addEventListener('click', function(e) {
           e.preventDefault();
+          console.log('Filter toggle button clicked');
           const filterCard = document.getElementById('filter-card');
           if (filterCard) {
             filterCard.classList.toggle('d-none');
+            console.log('Filter card visibility toggled');
           }
         });
       }
@@ -1602,6 +1604,25 @@
       
       // 古い管理ボタンを削除
       removeOldManagementButtons();
+      
+      // フィルターボタンのイベントリスナーを設定
+      const filterBtn = document.getElementById('filterToggleBtn');
+      if (filterBtn) {
+        filterBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          console.log('Filter button clicked from DOM loaded');
+          const filterCard = document.getElementById('filter-card');
+          if (filterCard) {
+            if (filterCard.classList.contains('d-none')) {
+              filterCard.classList.remove('d-none');
+              console.log('Filter panel shown');
+            } else {
+              filterCard.classList.add('d-none');
+              console.log('Filter panel hidden');
+            }
+          }
+        });
+      }
       
       // Update guide counter
       updateGuideCounter();
