@@ -64,12 +64,14 @@
         container.id = 'final-management-container';
         container.style.cssText = `
             position: fixed !important;
-            bottom: 30px !important;
-            right: 30px !important;
-            z-index: 2147483647 !important;
-            width: 70px !important;
-            height: 70px !important;
+            bottom: 80px !important;
+            right: 80px !important;
+            z-index: 999999999 !important;
+            width: 80px !important;
+            height: 80px !important;
             pointer-events: auto !important;
+            display: block !important;
+            visibility: visible !important;
         `;
         
         // ボタン作成
@@ -84,7 +86,7 @@
             background: linear-gradient(135deg, #4CAF50, #45a049) !important;
             border: 3px solid rgba(255, 255, 255, 0.3) !important;
             color: white !important;
-            font-size: 28px !important;
+            font-size: 32px !important;
             cursor: pointer !important;
             box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4) !important;
             transition: all 0.3s ease !important;
@@ -455,16 +457,50 @@
         }, 15000);
     }
     
-    // 7. 実行
+    // 7. 強制実行システム
+    console.log('🚀 強制実行システム開始');
+    
+    // 即座に実行
+    finalInitialize();
+    
+    // DOM準備後に実行
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', finalInitialize);
-    } else {
-        finalInitialize();
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOMContentLoaded実行');
+            finalInitialize();
+        });
     }
     
-    // 追加の実行トリガー
-    setTimeout(finalInitialize, 100);
-    setTimeout(finalInitialize, 1000);
-    setTimeout(finalInitialize, 3000);
+    // 複数回実行
+    setTimeout(() => {
+        console.log('100ms後実行');
+        finalInitialize();
+    }, 100);
+    
+    setTimeout(() => {
+        console.log('500ms後実行');
+        finalInitialize();
+    }, 500);
+    
+    setTimeout(() => {
+        console.log('1000ms後実行');
+        finalInitialize();
+    }, 1000);
+    
+    setTimeout(() => {
+        console.log('2000ms後実行');
+        finalInitialize();
+    }, 2000);
+    
+    // 緊急デバッグシステム
+    setTimeout(() => {
+        const btn = document.getElementById('final-management-container');
+        if (!btn) {
+            console.error('❌ 管理ボタンが見つかりません - 緊急作成開始');
+            createReliableManagementButton();
+        } else {
+            console.log('✅ 管理ボタン確認完了');
+        }
+    }, 3000);
     
 })();
