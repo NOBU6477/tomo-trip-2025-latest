@@ -1247,12 +1247,20 @@
     }
   </script>
   
-  <!-- 緊急ボタン修正システム（最優先実行） -->
-  <script src="emergency-button-fix.js"></script>
-  <!-- デバッグシステム（問題原因特定） -->
-  <script src="debug-system.js"></script>
-  <!-- 日本語版専用修正システム -->
-  <script src="japanese-only-fix.js"></script>
+  <!-- CSP準拠解決システム（eval不使用・最優先） -->
+  <script src="csp-compliant-solution.js"></script>
+  
+  <!-- 最終手段：HTML直接埋め込みボタン -->
+  <iframe src="simple-html-button.html" style="position: fixed; bottom: 0; right: 0; width: 120px; height: 120px; border: none; z-index: 999999999; pointer-events: none; background: transparent;" id="fallback-button-frame"></iframe>
+  <script>
+    // iframeの内容にpointer-eventsを有効化
+    setTimeout(function() {
+        var frame = document.getElementById('fallback-button-frame');
+        if (frame) {
+            frame.style.pointerEvents = 'auto';
+        }
+    }, 1000);
+  </script>
 
   <!-- フィルターヘルプモーダル -->
   <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
