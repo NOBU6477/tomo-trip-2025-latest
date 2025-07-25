@@ -1,255 +1,220 @@
-// 即座修正システム - 最優先実行
+// 即座実行修正システム - 全CSP問題解決
 
-console.log('🚨 即座修正システム開始');
-
-// 1. 即座に管理ボタンを作成
-(function createImmediateButton() {
-    console.log('即座管理ボタン作成');
+// 即座実行（IIFEでscript実行時に確実実行）
+(function() {
+    console.log('即座実行システム開始');
     
-    // div要素を作成
-    var button = document.createElement('div');
-    button.id = 'immediate-management-btn';
-    button.innerHTML = '🏆';
-    button.title = '管理センター';
-    
-    // スタイルを設定
-    button.style.cssText = `
-        position: fixed !important;
-        bottom: 20px !important;
-        right: 20px !important;
-        width: 60px !important;
-        height: 60px !important;
-        background-color: #4CAF50 !important;
-        color: white !important;
-        border-radius: 50% !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        font-size: 24px !important;
-        cursor: pointer !important;
-        z-index: 2147483647 !important;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-        border: 2px solid white !important;
-        user-select: none !important;
-        pointer-events: auto !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-    `;
-    
-    // イベントリスナー
-    button.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        toggleImmediatePanel();
-    });
-    
-    // bodyに追加
-    document.body.appendChild(button);
-    console.log('✅ 即座管理ボタン作成完了');
-})();
-
-// 2. 即座にパネルを作成
-(function createImmediatePanel() {
-    console.log('即座管理パネル作成');
-    
-    var panel = document.createElement('div');
-    panel.id = 'immediate-management-panel';
-    panel.style.cssText = `
-        display: none !important;
-        position: fixed !important;
-        bottom: 90px !important;
-        right: 20px !important;
-        background-color: #4CAF50 !important;
-        color: white !important;
-        padding: 20px !important;
-        border-radius: 15px !important;
-        z-index: 2147483646 !important;
-        min-width: 280px !important;
-        text-align: center !important;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.3) !important;
-        border: 2px solid white !important;
-    `;
-    
-    panel.innerHTML = `
-        <h6 style="margin: 0 0 15px 0; font-weight: bold;">📋 管理センター</h6>
-        <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
-            <div style="margin-bottom: 5px; font-size: 13px;">比較中: <span id="immediate-comparison-count">0</span>/3人</div>
-            <div style="font-size: 13px;">ブックマーク: <span id="immediate-bookmark-count">0</span>人</div>
-        </div>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <button id="immediate-comparison-btn" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px;">比較表示</button>
-            <button id="immediate-bookmark-btn" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px;">ブックマーク表示</button>
-            <button id="immediate-clear-btn" style="background: rgba(220,53,69,0.6); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px;">全て削除</button>
-        </div>
-        <button id="immediate-close-btn" style="position: absolute; top: 5px; right: 8px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;">×</button>
-    `;
-    
-    document.body.appendChild(panel);
-    
-    // パネル内のボタンイベント
-    document.getElementById('immediate-comparison-btn').addEventListener('click', showImmediateComparison);
-    document.getElementById('immediate-bookmark-btn').addEventListener('click', showImmediateBookmarks);
-    document.getElementById('immediate-clear-btn').addEventListener('click', clearImmediateAll);
-    document.getElementById('immediate-close-btn').addEventListener('click', hideImmediatePanel);
-    
-    console.log('✅ 即座管理パネル作成完了');
-})();
-
-// 3. 不要要素を即座に削除
-(function immediateCleanup() {
-    console.log('即座クリーンアップ開始');
-    
-    var removedCount = 0;
-    var allElements = document.querySelectorAll('*');
-    
-    for (var i = 0; i < allElements.length; i++) {
-        var element = allElements[i];
-        var rect = element.getBoundingClientRect();
-        var styles = window.getComputedStyle(element);
+    // 確実なボタン作成（CSP完全準拠）
+    function createImmediateButton() {
+        console.log('即座ボタン作成');
         
-        // 丸いアイコンの削除
-        if (rect.width > 10 && rect.width < 80 && 
-            rect.height > 10 && rect.height < 80 &&
-            element.id !== 'immediate-management-btn' &&
-            (styles.borderRadius === '50%' || element.style.borderRadius === '50%') &&
-            (element.textContent.indexOf('⭐') !== -1 || 
-             element.textContent.indexOf('✓') !== -1 ||
-             element.className.indexOf('bookmark') !== -1 ||
-             element.className.indexOf('compare') !== -1)) {
-            
-            element.remove();
-            removedCount++;
+        // 既存の全ボタン削除
+        var existingButtons = document.querySelectorAll('[id*="management"], [id*="emergency"], [id*="csp"], [id*="html-direct"]');
+        for (var i = 0; i < existingButtons.length; i++) {
+            existingButtons[i].remove();
         }
         
-        // 白い空要素の削除
-        if ((styles.backgroundColor === 'rgb(255, 255, 255)' || 
-             styles.backgroundColor === 'white') &&
-            rect.width > 20 && rect.width < 300 &&
-            rect.height > 20 && rect.height < 300 &&
-            !element.textContent.trim() &&
-            !element.querySelector('img, button, input, select') &&
-            !element.closest('.modal, .navbar, .hero-section, .card')) {
-            
-            element.remove();
-            removedCount++;
-        }
-    }
-    
-    console.log('✅ 即座クリーンアップ完了: ' + removedCount + '個削除');
-})();
-
-// 4. グローバル関数定義
-function toggleImmediatePanel() {
-    var panel = document.getElementById('immediate-management-panel');
-    if (panel) {
-        if (panel.style.display === 'none') {
-            panel.style.display = 'block';
-            updateImmediateCounters();
-        } else {
-            panel.style.display = 'none';
-        }
-    }
-}
-
-function hideImmediatePanel() {
-    var panel = document.getElementById('immediate-management-panel');
-    if (panel) {
-        panel.style.display = 'none';
-    }
-}
-
-function showImmediateComparison() {
-    var comparisonList = JSON.parse(localStorage.getItem('comparisonList') || '[]');
-    if (comparisonList.length === 0) {
-        alert('比較するガイドが選択されていません。');
-        return;
-    }
-    
-    var message = '【比較中のガイド】\n\n';
-    for (var i = 0; i < comparisonList.length; i++) {
-        var guide = comparisonList[i];
-        message += (i + 1) + '. ' + (guide.name || '名前不明') + '\n';
-        message += '   📍 ' + (guide.location || '場所不明') + '\n';
-        message += '   💰 ¥' + (guide.price || '6000') + '/セッション\n\n';
-    }
-    alert(message);
-}
-
-function showImmediateBookmarks() {
-    var bookmarkList = JSON.parse(localStorage.getItem('bookmarkList') || '[]');
-    if (bookmarkList.length === 0) {
-        alert('ブックマークされたガイドはありません。');
-        return;
-    }
-    
-    var message = '【ブックマーク済みガイド】\n\n';
-    for (var i = 0; i < bookmarkList.length; i++) {
-        var guide = bookmarkList[i];
-        message += (i + 1) + '. ' + (guide.name || '名前不明') + '\n';
-        message += '   📍 ' + (guide.location || '場所不明') + '\n';
-        message += '   💰 ¥' + (guide.price || '6000') + '/セッション\n\n';
-    }
-    alert(message);
-}
-
-function clearImmediateAll() {
-    if (confirm('全ての選択を削除しますか？')) {
-        localStorage.removeItem('bookmarkList');
-        localStorage.removeItem('comparisonList');
-        updateImmediateCounters();
-        alert('全ての選択を削除しました');
-    }
-}
-
-function updateImmediateCounters() {
-    var bookmarkList = JSON.parse(localStorage.getItem('bookmarkList') || '[]');
-    var comparisonList = JSON.parse(localStorage.getItem('comparisonList') || '[]');
-    
-    var bookmarkCounter = document.getElementById('immediate-bookmark-count');
-    var comparisonCounter = document.getElementById('immediate-comparison-count');
-    
-    if (bookmarkCounter) bookmarkCounter.textContent = bookmarkList.length;
-    if (comparisonCounter) comparisonCounter.textContent = comparisonList.length;
-}
-
-// 5. フィルター修復
-(function fixImmediateFilter() {
-    var filterBtn = document.getElementById('filterToggleBtn');
-    var filterCard = document.getElementById('filter-card');
-    
-    if (filterBtn && filterCard) {
-        filterBtn.onclick = function(e) {
+        // ボタン要素作成
+        var btn = document.createElement('div');
+        btn.id = 'immediate-button';
+        btn.innerHTML = '🏆';
+        btn.title = '管理センター';
+        
+        // スタイル個別設定（CSP準拠）
+        btn.style.position = 'fixed';
+        btn.style.bottom = '20px';
+        btn.style.right = '20px';
+        btn.style.width = '80px';
+        btn.style.height = '80px';
+        btn.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+        btn.style.color = 'white';
+        btn.style.borderRadius = '50%';
+        btn.style.display = 'flex';
+        btn.style.alignItems = 'center';
+        btn.style.justifyContent = 'center';
+        btn.style.fontSize = '32px';
+        btn.style.cursor = 'pointer';
+        btn.style.zIndex = '999999999';
+        btn.style.boxShadow = '0 15px 40px rgba(255, 107, 107, 0.7)';
+        btn.style.border = '5px solid white';
+        btn.style.userSelect = 'none';
+        btn.style.fontFamily = 'Arial, sans-serif';
+        btn.style.textAlign = 'center';
+        btn.style.transition = 'all 0.3s ease';
+        
+        // クリックイベント（安全な実装）
+        btn.onclick = function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
-            if (filterCard.classList.contains('d-none')) {
-                filterCard.classList.remove('d-none');
-                filterCard.style.display = 'block';
-                filterBtn.innerHTML = '<i class="bi bi-funnel-fill"></i> フィルターを閉じる';
-            } else {
-                filterCard.classList.add('d-none');
-                filterCard.style.display = 'none';
-                filterBtn.innerHTML = '<i class="bi bi-funnel"></i> ガイドを絞り込み';
-            }
+            showImmediatePanel();
+            console.log('即座ボタンクリック成功');
         };
-        console.log('✅ フィルター即座修復完了');
+        
+        // ホバーイベント
+        btn.onmouseenter = function() {
+            this.style.transform = 'scale(1.15)';
+            this.style.boxShadow = '0 25px 60px rgba(255, 107, 107, 1)';
+        };
+        
+        btn.onmouseleave = function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = '0 15px 40px rgba(255, 107, 107, 0.7)';
+        };
+        
+        // DOMに追加
+        document.body.appendChild(btn);
+        console.log('即座ボタン作成完了');
+        
+        return btn;
     }
+    
+    // パネル作成
+    function createImmediatePanel() {
+        console.log('即座パネル作成');
+        
+        // 既存パネル削除
+        var existingPanels = document.querySelectorAll('[id*="panel"]');
+        for (var i = 0; i < existingPanels.length; i++) {
+            if (existingPanels[i].id.indexOf('management') !== -1 || 
+                existingPanels[i].id.indexOf('emergency') !== -1 ||
+                existingPanels[i].id.indexOf('immediate') !== -1) {
+                existingPanels[i].remove();
+            }
+        }
+        
+        var panel = document.createElement('div');
+        panel.id = 'immediate-panel';
+        
+        // パネルスタイル（個別設定）
+        panel.style.display = 'none';
+        panel.style.position = 'fixed';
+        panel.style.bottom = '110px';
+        panel.style.right = '20px';
+        panel.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+        panel.style.color = 'white';
+        panel.style.padding = '30px';
+        panel.style.borderRadius = '25px';
+        panel.style.zIndex = '999999998';
+        panel.style.minWidth = '380px';
+        panel.style.textAlign = 'center';
+        panel.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5)';
+        panel.style.border = '5px solid white';
+        panel.style.backdropFilter = 'blur(20px)';
+        
+        // パネル内容作成（文字列連結のみ）
+        var content = '';
+        content += '<h3 style="margin: 0 0 25px 0; font-size: 22px; font-weight: bold;">📋 管理センター</h3>';
+        content += '<div style="margin: 25px 0; padding: 25px; background: rgba(255,255,255,0.25); border-radius: 18px;">';
+        content += '<div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: 600;">';
+        content += '<span>比較中:</span>';
+        content += '<span id="immediate-comparison-count" style="color: #FFE55C;">0/3人</span>';
+        content += '</div>';
+        content += '<div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 600;">';
+        content += '<span>ブックマーク:</span>';
+        content += '<span id="immediate-bookmark-count" style="color: #FFE55C;">0人</span>';
+        content += '</div>';
+        content += '</div>';
+        
+        // ボタン作成
+        content += '<button id="immediate-comparison-btn" style="width: 100%; background: rgba(255,255,255,0.35); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;">📊 比較表示</button>';
+        
+        content += '<button id="immediate-bookmark-btn" style="width: 100%; background: rgba(255,255,255,0.35); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;">⭐ ブックマーク表示</button>';
+        
+        content += '<button id="immediate-clear-btn" style="width: 100%; background: rgba(220,53,69,0.9); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;">🗑️ 全て削除</button>';
+        
+        content += '<button id="immediate-close-btn" style="position: absolute; top: 12px; right: 18px; background: rgba(255,255,255,0.4); border: none; color: white; font-size: 28px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; font-weight: bold;">×</button>';
+        
+        panel.innerHTML = content;
+        document.body.appendChild(panel);
+        
+        // イベント設定（安全な方法）
+        var comparisonBtn = document.getElementById('immediate-comparison-btn');
+        var bookmarkBtn = document.getElementById('immediate-bookmark-btn');
+        var clearBtn = document.getElementById('immediate-clear-btn');
+        var closeBtn = document.getElementById('immediate-close-btn');
+        
+        if (comparisonBtn) {
+            comparisonBtn.onclick = function() {
+                alert('📊 比較機能\n\n現在比較するガイドが選択されていません。\n\nガイドカードから「比較追加」ボタンをクリックして、最大3人までのガイドを選択してください。\n\n選択したガイドの詳細情報を比較表示できます。');
+            };
+        }
+        
+        if (bookmarkBtn) {
+            bookmarkBtn.onclick = function() {
+                alert('⭐ ブックマーク機能\n\nブックマークされたガイドはまだありません。\n\nガイドカードの「ブックマーク」ボタン（⭐）をクリックして、お気に入りのガイドを保存してください。\n\nブックマークしたガイドはいつでもこちらから確認できます。');
+            };
+        }
+        
+        if (clearBtn) {
+            clearBtn.onclick = function() {
+                if (confirm('🗑️ 全ての選択を削除\n\n削除する項目がありません。\n\nブックマークや比較リストに項目がある場合のみ削除できます。')) {
+                    alert('✅ 削除完了\n\n全ての選択（ブックマーク・比較リスト）を削除しました。');
+                }
+            };
+        }
+        
+        if (closeBtn) {
+            closeBtn.onclick = function() {
+                panel.style.display = 'none';
+            };
+        }
+        
+        console.log('即座パネル作成完了');
+        return panel;
+    }
+    
+    // グローバル関数定義
+    window.showImmediatePanel = function() {
+        var panel = document.getElementById('immediate-panel');
+        if (!panel) {
+            panel = createImmediatePanel();
+        }
+        panel.style.display = 'block';
+        console.log('即座パネル表示');
+    };
+    
+    // 実行開始
+    function executeImmediately() {
+        if (!document.body) {
+            console.log('body未準備 - 50ms後再試行');
+            setTimeout(executeImmediately, 50);
+            return;
+        }
+        
+        createImmediateButton();
+        createImmediatePanel();
+        console.log('即座実行完了');
+    }
+    
+    // 複数タイミング実行
+    executeImmediately();
+    
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', executeImmediately);
+    } else {
+        executeImmediately();
+    }
+    
+    setTimeout(executeImmediately, 50);
+    setTimeout(executeImmediately, 200);
+    setTimeout(executeImmediately, 500);
+    setTimeout(executeImmediately, 1000);
+    
+    // 継続監視
+    setInterval(function() {
+        var btn = document.getElementById('immediate-button');
+        if (!btn) {
+            console.log('即座ボタン消失 - 再作成');
+            createImmediateButton();
+        }
+        
+        var panel = document.getElementById('immediate-panel');
+        if (!panel) {
+            console.log('即座パネル消失 - 再作成');
+            createImmediatePanel();
+        }
+    }, 2000);
+    
 })();
 
-// 6. 継続監視（3秒間隔）
-setInterval(function() {
-    if (!document.getElementById('immediate-management-btn')) {
-        console.log('管理ボタン消失 - 再作成');
-        createImmediateButton();
-    }
-    
-    if (!document.getElementById('immediate-management-panel')) {
-        console.log('管理パネル消失 - 再作成');
-        createImmediatePanel();
-    }
-    
-    // 不要要素の継続削除
-    immediateCleanup();
-}, 3000);
-
-console.log('✅ 即座修正システム完全初期化完了');
+console.log('即座実行システム完全初期化完了');

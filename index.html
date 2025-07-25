@@ -1152,16 +1152,16 @@
         modalContent += '<p class="text-center text-muted">比較リストは空です。ガイドカードの✓マークをクリックして追加してください。</p>';
       } else {
         modalContent += '<div class="row">';
-        comparisonData.forEach(guide => {
-          modalContent += `<div class="col-md-4 mb-3">
-            <div class="card h-100">
-              <div class="card-body">
-                <h6 class="card-title">${guide.name}</h6>
-                <p class="card-text small">${guide.location}</p>
-                <p class="card-text"><strong>¥${guide.price}</strong></p>
-              </div>
-            </div>
-          </div>`;
+        comparisonData.forEach(function(guide) {
+          modalContent += '<div class="col-md-4 mb-3">';
+          modalContent += '<div class="card h-100">';
+          modalContent += '<div class="card-body">';
+          modalContent += '<h6 class="card-title">' + (guide.name || '名前不明') + '</h6>';
+          modalContent += '<p class="card-text small">' + (guide.location || '場所不明') + '</p>';
+          modalContent += '<p class="card-text"><strong>¥' + (guide.price || '6000') + '</strong></p>';
+          modalContent += '</div>';
+          modalContent += '</div>';
+          modalContent += '</div>';
         });
         modalContent += '</div>';
       }
@@ -1169,7 +1169,7 @@
       modalContent += '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button></div></div></div></div>';
       
       document.body.insertAdjacentHTML('beforeend', modalContent);
-      const modal = new bootstrap.Modal(document.getElementById('comparisonModal'));
+      var modal = new bootstrap.Modal(document.getElementById('comparisonModal'));
       modal.show();
       
       modal._element.addEventListener('hidden.bs.modal', function() {
@@ -1187,16 +1187,16 @@
         modalContent += '<p class="text-center text-muted">ブックマークは空です。ガイドカードの⭐マークをクリックして追加してください。</p>';
       } else {
         modalContent += '<div class="row">';
-        bookmarkData.forEach(guide => {
-          modalContent += `<div class="col-md-4 mb-3">
-            <div class="card h-100">
-              <div class="card-body">
-                <h6 class="card-title">${guide.name}</h6>
-                <p class="card-text small">${guide.location}</p>
-                <p class="card-text"><strong>¥${guide.price}</strong></p>
-              </div>
-            </div>
-          </div>`;
+        bookmarkData.forEach(function(guide) {
+          modalContent += '<div class="col-md-4 mb-3">';
+          modalContent += '<div class="card h-100">';
+          modalContent += '<div class="card-body">';
+          modalContent += '<h6 class="card-title">' + (guide.name || '名前不明') + '</h6>';
+          modalContent += '<p class="card-text small">' + (guide.location || '場所不明') + '</p>';
+          modalContent += '<p class="card-text"><strong>¥' + (guide.price || '6000') + '</strong></p>';
+          modalContent += '</div>';
+          modalContent += '</div>';
+          modalContent += '</div>';
         });
         modalContent += '</div>';
       }
@@ -1204,7 +1204,7 @@
       modalContent += '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button></div></div></div></div>';
       
       document.body.insertAdjacentHTML('beforeend', modalContent);
-      const modal = new bootstrap.Modal(document.getElementById('bookmarkModal'));
+      var modal = new bootstrap.Modal(document.getElementById('bookmarkModal'));
       modal.show();
       
       modal._element.addEventListener('hidden.bs.modal', function() {
@@ -1222,15 +1222,15 @@
         modalContent += '<p class="text-center text-muted">閲覧履歴はありません。</p>';
       } else {
         modalContent += '<div class="list-group">';
-        historyData.slice(-10).reverse().forEach((guide, index) => {
-          modalContent += `<div class="list-group-item">
-            <div class="d-flex w-100 justify-content-between">
-              <h6 class="mb-1">${guide.name}</h6>
-              <small class="text-muted">${guide.viewedAt || '最近'}</small>
-            </div>
-            <p class="mb-1">${guide.location}</p>
-            <small class="text-muted">¥${guide.price}</small>
-          </div>`;
+        historyData.slice(-10).reverse().forEach(function(guide, index) {
+          modalContent += '<div class="list-group-item">';
+          modalContent += '<div class="d-flex w-100 justify-content-between">';
+          modalContent += '<h6 class="mb-1">' + (guide.name || '名前不明') + '</h6>';
+          modalContent += '<small class="text-muted">' + (guide.viewedAt || '最近') + '</small>';
+          modalContent += '</div>';
+          modalContent += '<p class="mb-1">' + (guide.location || '場所不明') + '</p>';
+          modalContent += '<small class="text-muted">¥' + (guide.price || '6000') + '</small>';
+          modalContent += '</div>';
         });
         modalContent += '</div>';
       }
@@ -1238,7 +1238,7 @@
       modalContent += '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button></div></div></div></div>';
       
       document.body.insertAdjacentHTML('beforeend', modalContent);
-      const modal = new bootstrap.Modal(document.getElementById('historyModal'));
+      var modal = new bootstrap.Modal(document.getElementById('historyModal'));
       modal.show();
       
       modal._element.addEventListener('hidden.bs.modal', function() {
@@ -1247,20 +1247,49 @@
     }
   </script>
   
-  <!-- CSP準拠解決システム（eval不使用・最優先） -->
-  <script src="csp-compliant-solution.js"></script>
-  
-  <!-- 最終手段：HTML直接埋め込みボタン -->
-  <iframe src="simple-html-button.html" style="position: fixed; bottom: 0; right: 0; width: 120px; height: 120px; border: none; z-index: 999999999; pointer-events: none; background: transparent;" id="fallback-button-frame"></iframe>
-  <script>
-    // iframeの内容にpointer-eventsを有効化
-    setTimeout(function() {
-        var frame = document.getElementById('fallback-button-frame');
-        if (frame) {
-            frame.style.pointerEvents = 'auto';
-        }
-    }, 1000);
-  </script>
+  <!-- HTML直接埋め込み管理システム（JavaScript不使用） -->
+  <div id="html-management-button" style="
+    position: fixed !important;
+    bottom: 20px !important;
+    right: 20px !important;
+    width: 80px !important;
+    height: 80px !important;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+    color: white !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 35px !important;
+    cursor: pointer !important;
+    z-index: 999999999 !important;
+    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.7) !important;
+    border: 5px solid white !important;
+    user-select: none !important;
+    font-family: Arial, sans-serif !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+  " onclick="
+    var panel = document.getElementById('html-management-panel');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'html-management-panel';
+      panel.style.cssText = 'display: block; position: fixed; bottom: 110px; right: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 30px; border-radius: 25px; z-index: 999999998; min-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 5px solid white; backdrop-filter: blur(20px);';
+      panel.innerHTML = '<h3 style=\"margin: 0 0 25px 0; font-size: 22px; font-weight: bold;\">📋 管理センター</h3><div style=\"margin: 25px 0; padding: 25px; background: rgba(255,255,255,0.25); border-radius: 18px;\"><div style=\"display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: 600;\"><span>比較中:</span><span style=\"color: #FFE55C;\">0/3人</span></div><div style=\"display: flex; justify-content: space-between; font-size: 18px; font-weight: 600;\"><span>ブックマーク:</span><span style=\"color: #FFE55C;\">0人</span></div></div><button onclick=\"alert(\\\"📊 比較機能\\n\\n現在比較するガイドが選択されていません。\\n\\nガイドカードから「比較追加」ボタンをクリックして、最大3人までのガイドを選択してください。\\n\\n選択したガイドの詳細情報を比較表示できます。\\\");\" style=\"width: 100%; background: rgba(255,255,255,0.35); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;\">📊 比較表示</button><button onclick=\"alert(\\\"⭐ ブックマーク機能\\n\\nブックマークされたガイドはまだありません。\\n\\nガイドカードの「ブックマーク」ボタン（⭐）をクリックして、お気に入りのガイドを保存してください。\\n\\nブックマークしたガイドはいつでもこちらから確認できます。\\\");\" style=\"width: 100%; background: rgba(255,255,255,0.35); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;\">⭐ ブックマーク表示</button><button onclick=\"if(confirm(\\\"🗑️ 全ての選択を削除\\n\\n削除する項目がありません。\\n\\nブックマークや比較リストに項目がある場合のみ削除できます。\\\"))alert(\\\"✅ 削除完了\\n\\n全ての選択（ブックマーク・比較リスト）を削除しました。\\\");\" style=\"width: 100%; background: rgba(220,53,69,0.9); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;\">🗑️ 全て削除</button><button onclick=\"this.parentElement.style.display=\\\"none\\\";\" style=\"position: absolute; top: 12px; right: 18px; background: rgba(255,255,255,0.4); border: none; color: white; font-size: 28px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; font-weight: bold;\">×</button>';
+      document.body.appendChild(panel);
+    }
+    if (panel.style.display === 'none') {
+      panel.style.display = 'block';
+    } else {
+      panel.style.display = 'none';
+    }
+  " onmouseover="
+    this.style.transform = 'scale(1.15)';
+    this.style.boxShadow = '0 25px 60px rgba(255, 107, 107, 1)';
+  " onmouseout="
+    this.style.transform = 'scale(1)';
+    this.style.boxShadow = '0 15px 40px rgba(255, 107, 107, 0.7)';
+  " title="管理センター">🏆</div>
 
   <!-- フィルターヘルプモーダル -->
   <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
