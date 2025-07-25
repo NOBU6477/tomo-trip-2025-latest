@@ -505,7 +505,7 @@
       <div class="position-relative">
         <a href="#guides" class="btn btn-light btn-lg" id="find-guide-btn">ガイドを探す</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal" id="contact-btn">お問い合わせ</button>
-        <button class="btn btn-success btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+        <button class="btn btn-success btn-lg ms-2" onclick="showManagementGuide()" style="background: linear-gradient(135deg, #28a745, #20c997); border: none;">
           <i class="bi bi-gear me-2"></i>管理センター使い方
         </button>
         
@@ -1536,6 +1536,30 @@
       }
     }
 
+    // 管理センター使い方ガイド表示機能
+    function showManagementGuide() {
+      alert('📋 管理センター使い方ガイド\n\n🏆 右側中央の管理センターボタン（トロフィーアイコン）をクリックすると管理パネルが開きます。\n\n📊 比較機能：最大3人のガイドを比較選択\n⭐ ブックマーク機能：お気に入りガイドを保存\n🗑️ 削除機能：選択したアイテムを一括削除\n\n各ガイドカードの左上にある⭐（ブックマーク）と✓（比較）ボタンを使用して選択してください。');
+    }
+
+    // 古いhtml-management-button要素を強制削除
+    function removeOldManagementButtons() {
+      // すべての古い管理ボタンを検索して削除
+      const oldButtons = document.querySelectorAll('#html-management-button, .html-management-button, [id*="html-management"], [class*="html-management"]');
+      oldButtons.forEach(function(button) {
+        console.log('Removing old management button:', button);
+        button.remove();
+      });
+      
+      // 左下の緑ボタンも削除
+      const leftBottomButtons = document.querySelectorAll('[style*="bottom"][style*="left"], [style*="position: fixed"][style*="left: 20px"]');
+      leftBottomButtons.forEach(function(button) {
+        if (button.textContent.includes('管理') || button.style.background.includes('green')) {
+          console.log('Removing left-bottom green button:', button);
+          button.remove();
+        }
+      });
+    }
+
     // 右側ボタンホバーエフェクト（日本語サイトと同じ動作）
     document.querySelectorAll('.sponsor-mini-btn').forEach(btn => {
       btn.addEventListener('mouseover', function() {
@@ -1646,6 +1670,9 @@
       console.log('Japanese site DOM loaded');
       forceButtonSetup();
       
+      // 古い管理ボタンを削除
+      removeOldManagementButtons();
+      
       // Update guide counter
       updateGuideCounter();
       
@@ -1673,6 +1700,11 @@
     // Emergency setup
     setTimeout(forceButtonSetup, 500);
     setTimeout(forceButtonSetup, 1000);
+    
+    // 古いボタン削除を継続実行
+    setTimeout(removeOldManagementButtons, 1000);
+    setTimeout(removeOldManagementButtons, 3000);
+    setTimeout(removeOldManagementButtons, 5000);
     
     // 英語切り替えボタンの緊急設定
     setTimeout(function() {
