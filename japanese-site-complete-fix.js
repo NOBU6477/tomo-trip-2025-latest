@@ -1,17 +1,17 @@
-// English Site Complete Fix System (copied from Japanese version)
+// 日本語版完全修復システム
 
 (function() {
     'use strict';
     
-    console.log('English Site Complete Fix System Starting');
+    console.log('日本語版完全修復システム開始');
     
-    // 1. Create Management Button (forced creation)
+    // 1. 管理センターボタンの強制作成
     function createManagementButton() {
-        // Remove existing button
+        // 既存のボタンを削除
         const existing = document.getElementById('management-trigger-btn');
         if (existing) existing.remove();
         
-        // Create trigger button
+        // トリガーボタンを作成
         const triggerBtn = document.createElement('div');
         triggerBtn.id = 'management-trigger-btn';
         triggerBtn.innerHTML = `
@@ -36,20 +36,20 @@
                 border: 3px solid rgba(255, 255, 255, 0.2);
             " onmouseover="this.style.transform='scale(1.1)'" 
                onmouseout="this.style.transform='scale(1)'"
-               title="Open Management Center">
+               title="管理センターを開く">
                 🏆
             </button>
         `;
         
         document.body.appendChild(triggerBtn);
-        console.log('✅ Management Center Button Created');
+        console.log('✅ 管理センターボタン作成完了');
         
-        // Create management panel too
+        // 管理パネルも作成
         createManagementPanel();
     }
     
     function createManagementPanel() {
-        // Remove existing panel
+        // 既存のパネルを削除
         const existing = document.getElementById('management-center-panel');
         if (existing) existing.remove();
         
@@ -70,29 +70,29 @@
                 text-align: center;
                 box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             ">
-                <h5>📋 Management Center</h5>
+                <h5>📋 管理センター</h5>
                 <div style="margin: 15px 0;">
-                    <div>Comparing: <span id="comparison-count">0</span>/3 people</div>
-                    <div>Bookmarks: <span id="bookmark-count">0</span> people</div>
+                    <div>比較中: <span id="comparison-count">0</span>/3人</div>
+                    <div>ブックマーク: <span id="bookmark-count">0</span>人</div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button onclick="window.showComparison()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">Show Comparison</button>
-                    <button onclick="window.showBookmarks()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">Show Bookmarks</button>
-                    <button onclick="window.clearAll()" style="background: rgba(255,0,0,0.3); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">Clear All</button>
+                    <button onclick="window.showComparison()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">比較表示</button>
+                    <button onclick="window.showBookmarks()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">ブックマーク表示</button>
+                    <button onclick="window.clearAll()" style="background: rgba(255,0,0,0.3); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer;">全て削除</button>
                 </div>
                 <button onclick="window.toggleManagementPanel()" style="position: absolute; top: 5px; right: 10px; background: none; border: none; color: white; font-size: 18px; cursor: pointer;">×</button>
             </div>
         `;
         
         document.body.appendChild(panel);
-        console.log('✅ Management Panel Created');
+        console.log('✅ 管理パネル作成完了');
     }
     
-    // 2. Fix Filter System
+    // 2. フィルター機能の修復
     function fixFilterSystem() {
-        console.log('🔧 Filter System Repair Starting');
+        console.log('🔧 フィルターシステム修復開始');
         
-        // Fix filter toggle button
+        // フィルタートグルボタンの修復
         const filterBtn = document.getElementById('filterToggleBtn');
         if (filterBtn) {
             filterBtn.onclick = function(e) {
@@ -102,22 +102,22 @@
                     if (filterCard.style.display === 'none' || filterCard.classList.contains('d-none')) {
                         filterCard.style.display = 'block';
                         filterCard.classList.remove('d-none');
-                        filterBtn.innerHTML = '<i class="bi bi-funnel-fill"></i> Close Filter';
-                        console.log('✅ Filter Shown');
+                        filterBtn.innerHTML = '<i class="bi bi-funnel-fill"></i> フィルターを閉じる';
+                        console.log('✅ フィルター表示');
                     } else {
                         filterCard.style.display = 'none';
                         filterCard.classList.add('d-none');
-                        filterBtn.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
-                        console.log('✅ Filter Hidden');
+                        filterBtn.innerHTML = '<i class="bi bi-funnel"></i> ガイドを絞り込む';
+                        console.log('✅ フィルター非表示');
                     }
                 }
             };
-            console.log('✅ Filter Toggle Fixed');
+            console.log('✅ フィルタートグル修復完了');
         }
         
-        // Filter application function
+        // フィルター適用機能
         window.applyFilters = function() {
-            console.log('🔍 Applying Filters');
+            console.log('🔍 フィルター適用開始');
             
             const locationSelect = document.getElementById('location-filter');
             const languageSelect = document.getElementById('language-filter');
@@ -129,7 +129,7 @@
             const selectedPrice = priceSelect ? priceSelect.value : '';
             const keyword = keywordInput ? keywordInput.value.toLowerCase() : '';
             
-            console.log('Filter Conditions:', {
+            console.log('フィルター条件:', {
                 location: selectedLocation,
                 language: selectedLanguage, 
                 price: selectedPrice,
@@ -142,7 +142,7 @@
             guideCards.forEach(card => {
                 let shouldShow = true;
                 
-                // Location filter
+                // 場所フィルター
                 if (selectedLocation && selectedLocation !== '') {
                     const locationText = card.querySelector('.text-muted')?.textContent || '';
                     if (!locationText.includes(selectedLocation)) {
@@ -150,7 +150,7 @@
                     }
                 }
                 
-                // Language filter
+                // 言語フィルター
                 if (selectedLanguage && selectedLanguage !== '') {
                     const cardText = card.textContent.toLowerCase();
                     if (!cardText.includes(selectedLanguage.toLowerCase())) {
@@ -158,7 +158,7 @@
                     }
                 }
                 
-                // Price filter
+                // 価格フィルター
                 if (selectedPrice && selectedPrice !== '') {
                     const priceText = card.querySelector('.text-primary')?.textContent || '';
                     const price = parseInt(priceText.replace(/[^\d]/g, ''));
@@ -168,7 +168,7 @@
                     if (selectedPrice === 'high' && price < 15000) shouldShow = false;
                 }
                 
-                // Keyword search
+                // キーワード検索
                 if (keyword) {
                     const cardText = card.textContent.toLowerCase();
                     if (!cardText.includes(keyword)) {
@@ -186,16 +186,16 @@
                 }
             });
             
-            // Update counter
+            // カウンター更新
             updateGuideCount(visibleCount);
-            console.log(`✅ Filter Applied: ${visibleCount} guides shown`);
+            console.log(`✅ フィルター適用完了: ${visibleCount}人表示`);
         };
         
-        // Reset function
+        // リセット機能
         window.resetFilters = function() {
-            console.log('🔄 Resetting Filters');
+            console.log('🔄 フィルターリセット開始');
             
-            // Reset filter elements
+            // フィルター要素をリセット
             const locationSelect = document.getElementById('location-filter');
             const languageSelect = document.getElementById('language-filter');
             const priceSelect = document.getElementById('price-filter');
@@ -206,7 +206,7 @@
             if (priceSelect) priceSelect.value = '';
             if (keywordInput) keywordInput.value = '';
             
-            // Show all guide cards
+            // 全ガイドカードを表示
             const guideCards = document.querySelectorAll('.guide-card');
             guideCards.forEach(card => {
                 card.style.display = 'block';
@@ -214,15 +214,15 @@
             });
             
             updateGuideCount(guideCards.length);
-            console.log(`✅ Filters Reset: ${guideCards.length} guides shown`);
+            console.log(`✅ フィルターリセット完了: ${guideCards.length}人表示`);
         };
     }
     
-    // 3. Remove White Boxes
+    // 3. 白い枠の除去
     function removeWhiteBoxes() {
-        console.log('🗑️ Removing White Boxes');
+        console.log('🗑️ 白い枠除去開始');
         
-        // Search for various white elements
+        // 様々な白い要素を検索
         const allElements = document.querySelectorAll('*');
         let removedCount = 0;
         
@@ -230,12 +230,12 @@
             const computedStyle = window.getComputedStyle(element);
             const rect = element.getBoundingClientRect();
             
-            // White background small elements
+            // 白い背景で小さい要素
             if (computedStyle.backgroundColor === 'rgb(255, 255, 255)' ||
                 computedStyle.backgroundColor === 'white' ||
                 computedStyle.backgroundColor === '#ffffff') {
                 
-                // Remove empty small elements
+                // 空で小さい要素を削除
                 if (rect.width < 50 && rect.height < 50 && 
                     !element.textContent.trim() &&
                     !element.querySelector('img, button, input, select') &&
@@ -250,17 +250,17 @@
             }
         });
         
-        console.log(`✅ White Box Removal Complete: ${removedCount} removed`);
+        console.log(`✅ 白い枠除去完了: ${removedCount}個削除`);
     }
     
-    // 4. Update Guide Counter
+    // 4. ガイドカウンター更新
     function updateGuideCount(count) {
         const counter = document.querySelector('.text-primary.mb-3');
         if (counter) {
-            counter.innerHTML = `<i class="bi bi-people-fill"></i> Found ${count} guides`;
+            counter.innerHTML = `<i class="bi bi-people-fill"></i> ${count}人のガイドが見つかりました`;
         }
         
-        // Update management center counters
+        // 管理センターのカウンター更新
         updateManagementCounters();
     }
     
@@ -275,7 +275,7 @@
         if (comparisonCounter) comparisonCounter.textContent = comparisonList.length;
     }
     
-    // 5. Define Global Functions
+    // 5. グローバル関数の定義
     function defineGlobalFunctions() {
         window.toggleManagementPanel = function() {
             const panel = document.getElementById('management-center-panel');
@@ -292,11 +292,11 @@
         window.showComparison = function() {
             const comparisonList = JSON.parse(localStorage.getItem('comparisonList') || '[]');
             if (comparisonList.length === 0) {
-                alert('No guides selected for comparison');
+                alert('比較するガイドが選択されていません');
                 return;
             }
             
-            let message = 'Comparing Guides:\n';
+            let message = '比較中のガイド:\n';
             comparisonList.forEach((guide, index) => {
                 message += `${index + 1}. ${guide.name} (${guide.location}) - ¥${guide.price}\n`;
             });
@@ -306,11 +306,11 @@
         window.showBookmarks = function() {
             const bookmarkList = JSON.parse(localStorage.getItem('bookmarkList') || '[]');
             if (bookmarkList.length === 0) {
-                alert('No bookmarked guides');
+                alert('ブックマークされたガイドはありません');
                 return;
             }
             
-            let message = 'Bookmarked Guides:\n';
+            let message = 'ブックマーク済みガイド:\n';
             bookmarkList.forEach((guide, index) => {
                 message += `${index + 1}. ${guide.name} (${guide.location}) - ¥${guide.price}\n`;
             });
@@ -318,12 +318,12 @@
         };
         
         window.clearAll = function() {
-            if (confirm('Clear all selections?')) {
+            if (confirm('全ての選択を削除しますか？')) {
                 localStorage.removeItem('bookmarkList');
                 localStorage.removeItem('comparisonList');
                 updateManagementCounters();
                 
-                // Reset guide card states
+                // ガイドカードの状態をリセット
                 const bookmarkBtns = document.querySelectorAll('.bookmark-btn');
                 const compareBtns = document.querySelectorAll('.compare-btn');
                 
@@ -335,14 +335,14 @@
                     btn.style.background = 'rgba(255, 255, 255, 0.9)';
                 });
                 
-                alert('All selections cleared');
+                alert('全ての選択を削除しました');
             }
         };
         
-        console.log('✅ Global Functions Defined');
+        console.log('✅ グローバル関数定義完了');
     }
     
-    // Initialization
+    // 初期化
     function initialize() {
         setTimeout(() => {
             createManagementButton();
@@ -350,22 +350,22 @@
             removeWhiteBoxes();
             defineGlobalFunctions();
             
-            // Initialize counter
+            // カウンター初期化
             const guideCards = document.querySelectorAll('.guide-card');
             updateGuideCount(guideCards.length);
             
-            console.log('✅ English Site Complete Fix Complete');
+            console.log('✅ 日本語版完全修復完了');
         }, 1000);
     }
     
-    // Execute after DOM ready
+    // DOM読み込み完了後に実行
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initialize);
     } else {
         initialize();
     }
     
-    // Also execute immediately
+    // 即座に実行も行う
     setTimeout(initialize, 500);
     
 })();
