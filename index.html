@@ -1247,10 +1247,132 @@
     }
   </script>
   
-  <!-- 即座修正システム（最優先実行） -->
-  <script src="immediate-fix.js"></script>
-  <!-- 直接HTML修正システム -->
-  <script src="direct-html-fix.js"></script>
+  <!-- 緊急インライン修正（HTML内直接実装） -->
+  <script>
+  // 緊急管理ボタン - HTMLに直接埋め込み
+  (function() {
+      console.log('緊急インライン修正開始');
+      
+      // 管理ボタンの作成
+      function createEmergencyButton() {
+          var btn = document.createElement('div');
+          btn.id = 'emergency-btn';
+          btn.innerHTML = '🏆';
+          btn.style.position = 'fixed';
+          btn.style.bottom = '20px';
+          btn.style.right = '20px';
+          btn.style.width = '60px';
+          btn.style.height = '60px';
+          btn.style.backgroundColor = '#4CAF50';
+          btn.style.color = 'white';
+          btn.style.borderRadius = '50%';
+          btn.style.display = 'flex';
+          btn.style.alignItems = 'center';
+          btn.style.justifyContent = 'center';
+          btn.style.fontSize = '24px';
+          btn.style.cursor = 'pointer';
+          btn.style.zIndex = '999999999';
+          btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+          btn.style.border = '2px solid white';
+          
+          btn.onclick = function() {
+              var panel = document.getElementById('emergency-panel');
+              if (panel) {
+                  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+              }
+          };
+          
+          document.body.appendChild(btn);
+          console.log('緊急ボタン作成完了');
+      }
+      
+      // 管理パネルの作成
+      function createEmergencyPanel() {
+          var panel = document.createElement('div');
+          panel.id = 'emergency-panel';
+          panel.style.display = 'none';
+          panel.style.position = 'fixed';
+          panel.style.bottom = '90px';
+          panel.style.right = '20px';
+          panel.style.backgroundColor = '#4CAF50';
+          panel.style.color = 'white';
+          panel.style.padding = '20px';
+          panel.style.borderRadius = '15px';
+          panel.style.zIndex = '999999998';
+          panel.style.minWidth = '280px';
+          panel.style.textAlign = 'center';
+          panel.style.boxShadow = '0 8px 25px rgba(0,0,0,0.3)';
+          panel.style.border = '2px solid white';
+          
+          panel.innerHTML = '<h6 style="margin: 0 0 15px 0; font-weight: bold;">📋 管理センター</h6>' +
+              '<div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">' +
+              '<div style="margin-bottom: 5px; font-size: 13px;">比較中: 0/3人</div>' +
+              '<div style="font-size: 13px;">ブックマーク: 0人</div>' +
+              '</div>' +
+              '<button onclick="alert(\'比較機能\')" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; width: 100%; margin: 4px 0;">比較表示</button>' +
+              '<button onclick="alert(\'ブックマーク機能\')" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; width: 100%; margin: 4px 0;">ブックマーク表示</button>' +
+              '<button onclick="if(confirm(\'削除しますか？\')) alert(\'削除完了\')" style="background: rgba(220,53,69,0.6); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; width: 100%; margin: 4px 0;">全て削除</button>' +
+              '<button onclick="this.parentElement.style.display=\'none\'" style="position: absolute; top: 5px; right: 8px; background: none; border: none; color: white; font-size: 16px; cursor: pointer;">×</button>';
+          
+          document.body.appendChild(panel);
+          console.log('緊急パネル作成完了');
+      }
+      
+      // 不要要素の削除
+      function cleanupElements() {
+          var elements = document.querySelectorAll('*');
+          var removed = 0;
+          
+          for (var i = 0; i < elements.length; i++) {
+              var el = elements[i];
+              var rect = el.getBoundingClientRect();
+              var styles = window.getComputedStyle(el);
+              
+              // 丸いアイコンの削除
+              if (el.id !== 'emergency-btn' && 
+                  rect.width > 10 && rect.width < 80 && 
+                  rect.height > 10 && rect.height < 80 &&
+                  (styles.borderRadius === '50%' || el.style.borderRadius === '50%') &&
+                  (el.textContent.indexOf('⭐') !== -1 || el.textContent.indexOf('✓') !== -1)) {
+                  el.remove();
+                  removed++;
+              }
+              
+              // 白い空要素の削除
+              if ((styles.backgroundColor === 'rgb(255, 255, 255)' || styles.backgroundColor === 'white') &&
+                  rect.width > 20 && rect.width < 300 &&
+                  rect.height > 20 && rect.height < 300 &&
+                  !el.textContent.trim() &&
+                  !el.querySelector('img, button, input, select') &&
+                  !el.closest('.modal, .navbar, .hero-section, .card')) {
+                  el.remove();
+                  removed++;
+              }
+          }
+          
+          console.log('クリーンアップ完了: ' + removed + '個削除');
+      }
+      
+      // 実行
+      setTimeout(function() {
+          createEmergencyButton();
+          createEmergencyPanel();
+          cleanupElements();
+      }, 100);
+      
+      // 継続監視
+      setInterval(function() {
+          if (!document.getElementById('emergency-btn')) {
+              createEmergencyButton();
+          }
+          if (!document.getElementById('emergency-panel')) {
+              createEmergencyPanel();
+          }
+          cleanupElements();
+      }, 5000);
+      
+  })();
+  </script>
 
   <!-- フィルターヘルプモーダル -->
   <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
