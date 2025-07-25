@@ -141,57 +141,7 @@
       box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
     }
 
-    /* Floating toolbar styles */
-    .floating-toolbar {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: linear-gradient(135deg, #2E7D32, #388E3C);
-      color: white;
-      padding: 12px 20px;
-      border-radius: 25px;
-      z-index: 1000;
-      box-shadow: 0 8px 32px rgba(46, 125, 50, 0.3);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .toolbar-content {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .toolbar-status {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .toolbar-buttons {
-      display: flex;
-      gap: 12px;
-    }
-
-    .toolbar-btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      padding: 8px 16px;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 13px;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .toolbar-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-    }
+    /* Floating toolbar削除済み */
 
     /* Guide actions buttons on cards */
     .guide-actions .btn {
@@ -271,22 +221,7 @@
 
 
 
-    /* Floating Toolbar Styles (日本語サイトから完全コピー) */
-    .floating-toolbar {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1px solid #dee2e6;
-      border-radius: 15px;
-      padding: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      z-index: 1050;
-      max-width: 400px;
-      transform: translateY(100px);
-      animation: slideUp 0.5s ease-out forwards;
-    }
+    /* Floating Toolbar削除済み */
     
     @keyframes slideUp {
       to {
@@ -564,7 +499,7 @@
         
         <div class="row justify-content-center">
           <div class="col-md-10 col-lg-8">
-            <div class="card shadow-sm d-none" id="filter-card">
+            <div class="card shadow-sm" id="filter-card">
               <div class="card-body">
                 <h5 class="card-title mb-3">ガイドを絞り込み</h5>
                 <form id="guide-filter-form">
@@ -833,28 +768,7 @@
     </section>
   </div>
 
-  <!-- Floating Toolbar for Comparison/Bookmark -->
-  <div class="floating-toolbar">
-    <div class="toolbar-content">
-      <div class="toolbar-status">
-        <span class="comparing-status">比較中: <span class="compare-count">0</span>/3人</span>
-      </div>
-      <div class="toolbar-buttons">
-        <button class="toolbar-btn" onclick="paginationSystem.showComparison()" title="比較">
-          <i class="bi bi-list-check"></i>
-          <span class="d-none d-md-inline">比較</span>
-        </button>
-        <button class="toolbar-btn" onclick="paginationSystem.showBookmarks()" title="ブックマーク">
-          <i class="bi bi-star"></i>
-          <span class="d-none d-md-inline">ブックマーク(<span class="bookmark-count">0</span>)</span>
-        </button>
-        <button class="toolbar-btn" onclick="paginationSystem.showHistory()" title="履歴">
-          <i class="bi bi-clock-history"></i>
-          <span class="d-none d-md-inline">履歴</span>
-        </button>
-      </div>
-    </div>
-  </div>
+  <!-- Floating Toolbar削除済み -->
 
   <!-- Contact Modal -->
   <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
@@ -1550,13 +1464,29 @@
         button.remove();
       });
       
-      // 左下の緑ボタンも削除
-      const leftBottomButtons = document.querySelectorAll('[style*="bottom"][style*="left"], [style*="position: fixed"][style*="left: 20px"]');
+      // 左下の緑ボタンと白い枠を削除
+      const leftBottomButtons = document.querySelectorAll('[style*="bottom"][style*="left"], [style*="position: fixed"][style*="left: 20px"], [style*="bottom: 20px"]');
       leftBottomButtons.forEach(function(button) {
-        if (button.textContent.includes('管理') || button.style.background.includes('green')) {
+        if (button.textContent.includes('管理') || button.style.background.includes('green') || button.classList.contains('floating-toolbar')) {
           console.log('Removing left-bottom green button:', button);
           button.remove();
         }
+      });
+      
+      // 白い枠（sponsor-admin-panel等）を削除
+      const whiteBoxes = document.querySelectorAll('[style*="background: white"], [style*="background: rgba(255,255,255"], .sponsor-admin-panel, [id*="admin-panel"]');
+      whiteBoxes.forEach(function(box) {
+        if (box.style.borderRadius && box.style.background.includes('white')) {
+          console.log('Removing white box:', box);
+          box.remove();
+        }
+      });
+      
+      // floating-toolbar要素を直接削除
+      const floatingToolbars = document.querySelectorAll('.floating-toolbar, #floating-toolbar');
+      floatingToolbars.forEach(function(toolbar) {
+        console.log('Removing floating toolbar:', toolbar);
+        toolbar.remove();
       });
     }
 
