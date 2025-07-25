@@ -505,7 +505,7 @@
       <div class="position-relative">
         <a href="#guides" class="btn btn-light btn-lg" id="find-guide-btn">ガイドを探す</a>
         <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal" id="contact-btn">お問い合わせ</button>
-        <button class="btn btn-success btn-lg ms-2" onclick="openManagementGuide()" style="background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+        <button class="btn btn-success btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#filter-help-modal" style="background: linear-gradient(135deg, #28a745, #20c997); border: none;">
           <i class="bi bi-gear me-2"></i>管理センター使い方
         </button>
         
@@ -1247,35 +1247,37 @@
     }
   </script>
   
-  <!-- HTML直接埋め込み管理システム（JavaScript不使用） -->
-  <div id="html-management-button" style="
+  <!-- 中央右側管理センターボタン（目立つ位置・JavaScript不使用） -->
+  <div id="prominent-management-button" style="
     position: fixed !important;
-    bottom: 20px !important;
-    right: 20px !important;
-    width: 80px !important;
-    height: 80px !important;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4) !important;
+    top: 50% !important;
+    right: 15px !important;
+    transform: translateY(-50%) !important;
+    width: 100px !important;
+    height: 100px !important;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1) !important;
     color: white !important;
     border-radius: 50% !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 35px !important;
+    font-size: 40px !important;
     cursor: pointer !important;
     z-index: 999999999 !important;
-    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.7) !important;
-    border: 5px solid white !important;
+    box-shadow: 0 20px 50px rgba(255, 107, 107, 0.8), 0 0 30px rgba(78, 205, 196, 0.5) !important;
+    border: 6px solid white !important;
     user-select: none !important;
     font-family: Arial, sans-serif !important;
     text-align: center !important;
-    transition: all 0.3s ease !important;
+    transition: all 0.4s ease !important;
+    animation: prominentPulse 3s infinite !important;
   " onclick="
-    var panel = document.getElementById('html-management-panel');
+    var panel = document.getElementById('prominent-management-panel');
     if (!panel) {
       panel = document.createElement('div');
-      panel.id = 'html-management-panel';
-      panel.style.cssText = 'display: block; position: fixed; bottom: 110px; right: 20px; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 30px; border-radius: 25px; z-index: 999999998; min-width: 380px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 5px solid white; backdrop-filter: blur(20px);';
-      panel.innerHTML = '<h3 style=\"margin: 0 0 25px 0; font-size: 22px; font-weight: bold;\">📋 管理センター</h3><div style=\"margin: 25px 0; padding: 25px; background: rgba(255,255,255,0.25); border-radius: 18px;\"><div style=\"display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: 600;\"><span>比較中:</span><span style=\"color: #FFE55C;\">0/3人</span></div><div style=\"display: flex; justify-content: space-between; font-size: 18px; font-weight: 600;\"><span>ブックマーク:</span><span style=\"color: #FFE55C;\">0人</span></div></div><button onclick=\"alert(\\\"📊 比較機能\\n\\n現在比較するガイドが選択されていません。\\n\\nガイドカードから「比較追加」ボタンをクリックして、最大3人までのガイドを選択してください。\\n\\n選択したガイドの詳細情報を比較表示できます。\\\");\" style=\"width: 100%; background: rgba(255,255,255,0.35); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;\">📊 比較表示</button><button onclick=\"alert(\\\"⭐ ブックマーク機能\\n\\nブックマークされたガイドはまだありません。\\n\\nガイドカードの「ブックマーク」ボタン（⭐）をクリックして、お気に入りのガイドを保存してください。\\n\\nブックマークしたガイドはいつでもこちらから確認できます。\\\");\" style=\"width: 100%; background: rgba(255,255,255,0.35); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;\">⭐ ブックマーク表示</button><button onclick=\"if(confirm(\\\"🗑️ 全ての選択を削除\\n\\n削除する項目がありません。\\n\\nブックマークや比較リストに項目がある場合のみ削除できます。\\\"))alert(\\\"✅ 削除完了\\n\\n全ての選択（ブックマーク・比較リスト）を削除しました。\\\");\" style=\"width: 100%; background: rgba(220,53,69,0.9); border: none; color: white; padding: 18px 30px; border-radius: 18px; cursor: pointer; font-size: 18px; font-weight: 700; margin: 8px 0; transition: all 0.3s ease;\">🗑️ 全て削除</button><button onclick=\"this.parentElement.style.display=\\\"none\\\";\" style=\"position: absolute; top: 12px; right: 18px; background: rgba(255,255,255,0.4); border: none; color: white; font-size: 28px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; font-weight: bold;\">×</button>';
+      panel.id = 'prominent-management-panel';
+      panel.style.cssText = 'display: block; position: fixed; top: 50%; right: 130px; transform: translateY(-50%); background: linear-gradient(45deg, #ff6b6b, #4ecdc4); color: white; padding: 35px; border-radius: 30px; z-index: 999999998; min-width: 420px; text-align: center; box-shadow: 0 25px 70px rgba(0,0,0,0.6); border: 6px solid white; backdrop-filter: blur(25px);';
+      panel.innerHTML = '<h3 style=\"margin: 0 0 30px 0; font-size: 24px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);\">📋 管理センター</h3><div style=\"margin: 30px 0; padding: 30px; background: rgba(255,255,255,0.3); border-radius: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);\"><div style=\"display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 20px; font-weight: 700;\"><span>比較中:</span><span style=\"color: #FFE55C; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);\">0/3人</span></div><div style=\"display: flex; justify-content: space-between; font-size: 20px; font-weight: 700;\"><span>ブックマーク:</span><span style=\"color: #FFE55C; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);\">0人</span></div></div><button onclick=\"alert(\\\"📊 比較機能\\n\\n現在比較するガイドが選択されていません。\\n\\nガイドカードから「比較追加」ボタンをクリックして、最大3人までのガイドを選択してください。\\n\\n選択したガイドの詳細情報を比較表示できます。\\\");\" style=\"width: 100%; background: rgba(255,255,255,0.4); border: none; color: white; padding: 20px 35px; border-radius: 20px; cursor: pointer; font-size: 20px; font-weight: 800; margin: 10px 0; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);\">📊 比較表示</button><button onclick=\"alert(\\\"⭐ ブックマーク機能\\n\\nブックマークされたガイドはまだありません。\\n\\nガイドカードの「ブックマーク」ボタン（⭐）をクリックして、お気に入りのガイドを保存してください。\\n\\nブックマークしたガイドはいつでもこちらから確認できます。\\\");\" style=\"width: 100%; background: rgba(255,255,255,0.4); border: none; color: white; padding: 20px 35px; border-radius: 20px; cursor: pointer; font-size: 20px; font-weight: 800; margin: 10px 0; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);\">⭐ ブックマーク表示</button><button onclick=\"if(confirm(\\\"🗑️ 全ての選択を削除\\n\\n削除する項目がありません。\\n\\nブックマークや比較リストに項目がある場合のみ削除できます。\\\"))alert(\\\"✅ 削除完了\\n\\n全ての選択（ブックマーク・比較リスト）を削除しました。\\\");\" style=\"width: 100%; background: rgba(220,53,69,0.9); border: none; color: white; padding: 20px 35px; border-radius: 20px; cursor: pointer; font-size: 20px; font-weight: 800; margin: 10px 0; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2);\">🗑️ 全て削除</button><button onclick=\"this.parentElement.style.display=\\\"none\\\";\" style=\"position: absolute; top: 15px; right: 20px; background: rgba(255,255,255,0.5); border: none; color: white; font-size: 32px; cursor: pointer; width: 45px; height: 45px; border-radius: 50%; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.3);\">×</button>';
       document.body.appendChild(panel);
     }
     if (panel.style.display === 'none') {
@@ -1284,12 +1286,22 @@
       panel.style.display = 'none';
     }
   " onmouseover="
-    this.style.transform = 'scale(1.15)';
-    this.style.boxShadow = '0 25px 60px rgba(255, 107, 107, 1)';
+    this.style.transform = 'translateY(-50%) scale(1.2)';
+    this.style.boxShadow = '0 25px 70px rgba(255, 107, 107, 1), 0 0 50px rgba(78, 205, 196, 0.8)';
+    this.style.animationPlayState = 'paused';
   " onmouseout="
-    this.style.transform = 'scale(1)';
-    this.style.boxShadow = '0 15px 40px rgba(255, 107, 107, 0.7)';
-  " title="管理センター">🏆</div>
+    this.style.transform = 'translateY(-50%) scale(1)';
+    this.style.boxShadow = '0 20px 50px rgba(255, 107, 107, 0.8), 0 0 30px rgba(78, 205, 196, 0.5)';
+    this.style.animationPlayState = 'running';
+  " title="管理センター - クリックで開く">🏆</div>
+  
+  <!-- アニメーション用CSS -->
+  <style>
+    @keyframes prominentPulse {
+      0%, 100% { box-shadow: 0 20px 50px rgba(255, 107, 107, 0.8), 0 0 30px rgba(78, 205, 196, 0.5); }
+      50% { box-shadow: 0 25px 60px rgba(255, 107, 107, 1), 0 0 40px rgba(78, 205, 196, 0.7); }
+    }
+  </style>
 
   <!-- フィルターヘルプモーダル -->
   <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
