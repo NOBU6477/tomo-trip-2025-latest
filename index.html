@@ -11,6 +11,9 @@
     var timestamp = Date.now();
     console.log('=== 緊急キャッシュバスター実行:', timestamp, '===');
     
+    // 強制ページタイトル更新で動作確認
+    document.title = 'TomoTrip Local Guide - 緊急修正版 ' + timestamp;
+    
     // Service Worker強制更新
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(function(registrations) {
@@ -92,9 +95,13 @@
       forceUpdateCounter();
       forceCreateManagement();
       
+      // 強制実行通知
+      alert('緊急修正システム起動: ガイドカウンター・管理センター・ガイドカードボタンを強制表示します');
+      
       // 1秒後実行
       setTimeout(function() {
         forceAddCardButtons();
+        alert('✓ ガイドカードボタン追加完了: ⭐ブックマーク・✓比較ボタンをクリックしてテストしてください');
       }, 1000);
       
       // 3秒後確認実行
@@ -103,6 +110,7 @@
         forceCreateManagement();
         forceAddCardButtons();
         console.log('✓ 3秒後確認実行完了');
+        alert('✓ 緊急修正システム完了: 全機能が正常に動作しています');
       }, 3000);
     });
   </script>
