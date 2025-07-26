@@ -26,6 +26,12 @@ class TomoTripHandler(http.server.SimpleHTTPRequestHandler):
         # ルートアクセス時にindex.htmlを返す
         if self.path == '/':
             self.path = '/index.html'
+        elif self.path == '/health':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write(b'TomoTrip Server OK - External Access Ready')
+            return
         return super().do_GET()
     
     def log_message(self, format, *args):
@@ -35,15 +41,17 @@ class TomoTripHandler(http.server.SimpleHTTPRequestHandler):
 def main():
     """メインサーバー関数"""
     try:
-        # TCPサーバー作成（デプロイメント対応）
-        with socketserver.TCPServer(("", PORT), TomoTripHandler) as httpd:
-            print(f"🏝️ TomoTrip Local Guide Server")
-            print(f"📍 Port: {PORT}")
-            print(f"🌐 Ready for deployment")
-            print("=" * 40)
-            
-            # サーバー開始
-            httpd.serve_forever()
+        # TCPサーバー作成（外部アクセス完全対応）
+        httpd = socketserver.TCPServer(("0.0.0.0", PORT), TomoTripHandler)
+        httpd.allow_reuse_address = True
+        print(f"🏝️ TomoTrip Local Guide Server")
+        print(f"📍 Port: {PORT}")
+        print(f"🌐 External Access: ENABLED")
+        print(f"🔓 Host: 0.0.0.0 (ALL INTERFACES)")
+        print("=" * 40)
+        
+        # サーバー開始
+        httpd.serve_forever()
             
     except Exception as e:
         print(f"❌ Server Error: {e}")
