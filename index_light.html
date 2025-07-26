@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TomoTrip Local Guide - 特別な旅の体験を</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    body {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .hero-section {
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                  url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920') center/cover;
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .guide-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    .guide-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .navbar-brand img {
+      height: 40px;
+    }
+    
+    .filter-section {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    
+    #management-center-trigger {
+      position: fixed;
+      top: 45%;
+      right: 15px;
+      z-index: 9999;
+      background: linear-gradient(135deg, #007bff, #0056b3);
+      color: white;
+      border: 3px solid white;
+      border-radius: 15px;
+      padding: 15px 20px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(0,123,255,0.5);
+      min-width: 140px;
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 8px 25px rgba(0,123,255,0.5); }
+      50% { box-shadow: 0 12px 35px rgba(0,123,255,0.8); }
+      100% { box-shadow: 0 8px 25px rgba(0,123,255,0.5); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="TomoTripロゴ.png" alt="TomoTrip" class="me-2">
+        <span class="fw-bold text-white">TomoTrip</span>
+      </a>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="#" onclick="alert('協賛店登録システムに移動します')">協賛店登録</a>
+        <a class="nav-link" href="#" onclick="alert('協賛店ダッシュボードに移動します')">ログイン</a>
+        <a class="nav-link" href="#" onclick="alert('新規登録システムに移動します')">新規登録</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero-section text-white text-center">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-4">特別な旅の体験を</h1>
+      <p class="lead mb-4">地元を知り尽くしたガイドと一緒に、忘れられない思い出を作りませんか？</p>
+      <button class="btn btn-primary btn-lg px-5" onclick="document.getElementById('guides-section').scrollIntoView()">
+        <i class="bi bi-search me-2"></i>ガイドを探す
+      </button>
+    </div>
+  </section>
+
+  <!-- Filter Section -->
+  <div class="container mt-5">
+    <div class="filter-section p-4" id="filter-card" style="display: none;">
+      <h5 class="mb-3"><i class="bi bi-funnel me-2"></i>ガイド検索フィルター</h5>
+      <div class="row">
+        <div class="col-md-4">
+          <label class="form-label">地域</label>
+          <select class="form-select" id="location-filter">
+            <option value="">すべての地域</option>
+            <option value="東京">東京</option>
+            <option value="京都">京都</option>
+            <option value="大阪">大阪</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">言語</label>
+          <select class="form-select" id="language-filter">
+            <option value="">すべての言語</option>
+            <option value="日本語">日本語</option>
+            <option value="英語">English</option>
+            <option value="中国語">中文</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">料金</label>
+          <select class="form-select" id="price-filter">
+            <option value="">すべての料金</option>
+            <option value="6000-10000">¥6,000 - ¥10,000</option>
+            <option value="10000-15000">¥10,000 - ¥15,000</option>
+            <option value="15000+">¥15,000以上</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-3">
+        <button class="btn btn-primary me-2" onclick="applyFilters()">
+          <i class="bi bi-search me-1"></i>検索
+        </button>
+        <button class="btn btn-outline-secondary" onclick="resetFilters()">
+          <i class="bi bi-arrow-clockwise me-1"></i>リセット
+        </button>
+      </div>
+    </div>
+
+    <div class="text-center mb-4">
+      <button class="btn btn-outline-primary" onclick="toggleFilter()">
+        <i class="bi bi-funnel"></i> ガイドを絞り込み
+      </button>
+    </div>
+
+    <div class="mb-3">
+      <span id="guides-count" class="text-muted">
+        <strong style="color:#007bff;font-size:1.2em;">6人のガイドが見つかりました</strong>
+      </span>
+    </div>
+  </div>
+
+  <!-- Guides Section -->
+  <section class="container mb-5" id="guides-section">
+    <div class="row" id="guides-container">
+      <!-- Guide cards will be loaded here -->
+    </div>
+  </section>
+
+  <!-- Management Center Trigger -->
+  <div id="management-center-trigger" onclick="showManagementModal()">
+    🏆 管理センター
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // 軽量化されたJavaScript - 必要最小限の機能のみ
+    console.log('=== TomoTrip Local Guide 軽量版 起動 ===');
+
+    // ガイドデータ（6人のサンプル）
+    const guides = [
+      {
+        id: 1,
+        name: "田中 太郎",
+        location: "東京",
+        language: "日本語, English",
+        price: "¥8,000",
+        specialty: "歴史・文化",
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300"
+      },
+      {
+        id: 2,
+        name: "佐藤 花子",
+        location: "京都",
+        language: "日本語, English, 中文",
+        price: "¥12,000",
+        specialty: "寺社仏閣",
+        rating: 4.9,
+        image: "https://images.unsplash.com/photo-1494790108755-2616b612b098?w=300"
+      },
+      {
+        id: 3,
+        name: "山田 次郎",
+        location: "大阪",
+        language: "日本語, English",
+        price: "¥7,500",
+        specialty: "グルメ",
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300"
+      },
+      {
+        id: 4,
+        name: "鈴木 美香",
+        location: "東京",
+        language: "日本語, English, Français",
+        price: "¥10,500",
+        specialty: "ショッピング",
+        rating: 4.6,
+        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300"
+      },
+      {
+        id: 5,
+        name: "高橋 健一",
+        location: "京都",
+        language: "日本語, English",
+        price: "¥9,000",
+        specialty: "自然・庭園",
+        rating: 4.8,
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300"
+      },
+      {
+        id: 6,
+        name: "中村 さくら",
+        location: "大阪",
+        language: "日本語, English, 한국어",
+        price: "¥11,000",
+        specialty: "エンターテイメント",
+        rating: 4.7,
+        image: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=300"
+      }
+    ];
+
+    // ガイドカード表示
+    function displayGuides(guidesToShow = guides) {
+      const container = document.getElementById('guides-container');
+      container.innerHTML = '';
+
+      guidesToShow.forEach(guide => {
+        container.innerHTML += `
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card guide-card h-100">
+              <img src="${guide.image}" class="card-img-top" alt="${guide.name}" style="height: 200px; object-fit: cover;">
+              <div class="card-body">
+                <h5 class="card-title">${guide.name}</h5>
+                <p class="card-text">
+                  <i class="bi bi-geo-alt text-primary"></i> ${guide.location}<br>
+                  <i class="bi bi-translate text-success"></i> ${guide.language}<br>
+                  <i class="bi bi-star-fill text-warning"></i> ${guide.rating} / 5.0<br>
+                  <i class="bi bi-tag text-info"></i> ${guide.specialty}
+                </p>
+                <div class="d-flex justify-content-between align-items-center">
+                  <strong class="text-primary">${guide.price}</strong>
+                  <button class="btn btn-primary btn-sm" onclick="viewGuideDetails(${guide.id})">
+                    <i class="bi bi-eye me-1"></i>詳細を見る
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+
+      // カウンター更新
+      document.getElementById('guides-count').innerHTML = 
+        `<strong style="color:#007bff;font-size:1.2em;">${guidesToShow.length}人のガイドが見つかりました</strong>`;
+    }
+
+    // フィルター機能
+    function toggleFilter() {
+      const filterCard = document.getElementById('filter-card');
+      const isHidden = filterCard.style.display === 'none';
+      filterCard.style.display = isHidden ? 'block' : 'none';
+    }
+
+    function applyFilters() {
+      const location = document.getElementById('location-filter').value;
+      const language = document.getElementById('language-filter').value;
+      const price = document.getElementById('price-filter').value;
+
+      let filteredGuides = guides.filter(guide => {
+        if (location && !guide.location.includes(location)) return false;
+        if (language && !guide.language.includes(language)) return false;
+        if (price) {
+          const guidePrice = parseInt(guide.price.replace(/[¥,]/g, ''));
+          if (price === '6000-10000' && (guidePrice < 6000 || guidePrice > 10000)) return false;
+          if (price === '10000-15000' && (guidePrice < 10000 || guidePrice > 15000)) return false;
+          if (price === '15000+' && guidePrice < 15000) return false;
+        }
+        return true;
+      });
+
+      displayGuides(filteredGuides);
+    }
+
+    function resetFilters() {
+      document.getElementById('location-filter').value = '';
+      document.getElementById('language-filter').value = '';
+      document.getElementById('price-filter').value = '';
+      displayGuides(guides);
+    }
+
+    // 管理モーダル
+    function showManagementModal() {
+      alert('🏆 管理センター\n\n現在開発中の機能:\n• ブックマーク管理\n• ガイド比較\n• 閲覧履歴\n\n本格版では完全な管理システムが利用できます。');
+    }
+
+    // ガイド詳細
+    function viewGuideDetails(guideId) {
+      const guide = guides.find(g => g.id === guideId);
+      alert(`📋 ${guide.name}の詳細\n\n地域: ${guide.location}\n言語: ${guide.language}\n料金: ${guide.price}\n専門: ${guide.specialty}\n評価: ${guide.rating}/5.0\n\n詳細ページは開発中です。`);
+    }
+
+    // 初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      displayGuides();
+      console.log('✓ TomoTrip軽量版の初期化完了');
+    });
+  </script>
+</body>
+</html>
