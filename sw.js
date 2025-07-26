@@ -2,9 +2,9 @@
  * Service Worker - キャッシュ制御とオフライン対応
  */
 
-const CACHE_NAME = 'local-guide-v1.2';
-const STATIC_CACHE = 'static-v1.2';
-const DYNAMIC_CACHE = 'dynamic-v1.2';
+const CACHE_NAME = 'local-guide-v2-emergency-fix-' + Date.now();
+const STATIC_CACHE = 'static-v2-emergency-fix-' + Date.now();
+const DYNAMIC_CACHE = 'dynamic-v2-emergency-fix-' + Date.now();
 
 // キャッシュするリソース（404エラーファイルを除外）
 const STATIC_ASSETS = [

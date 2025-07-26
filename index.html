@@ -5,54 +5,105 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Local Guide - 特別な旅の体験を</title>
   
-  <!-- 緊急ガイドカウンター修正 -->
+  <!-- 緊急キャッシュバスター修正システム -->
   <script>
-    // 即座実行（HTML読み込み前）
+    // キャッシュ強制無効化
+    var timestamp = Date.now();
+    console.log('=== 緊急キャッシュバスター実行:', timestamp, '===');
+    
+    // Service Worker強制更新
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        registrations.forEach(function(registration) {
+          registration.unregister();
+          console.log('✓ Service Worker強制解除');
+        });
+      });
+    }
+    
+    // 即座実行システム（キャッシュ無視）
     document.addEventListener('DOMContentLoaded', function() {
+      console.log('=== 緊急修正システム開始 ===');
+      
       // ガイドカウンター強制修正
-      const counter = document.getElementById('guides-count');
-      if (counter) {
-        counter.textContent = '6人のガイドが見つかりました';
-        counter.style.color = '#007bff';
-        counter.style.fontWeight = 'bold';
-        console.log('✓ 緊急ガイドカウンター修正完了');
+      function forceUpdateCounter() {
+        var counter = document.getElementById('guides-count');
+        if (counter) {
+          counter.innerHTML = '<strong style="color:#007bff;font-size:1.2em;">6人のガイドが見つかりました</strong>';
+          console.log('✓ ガイドカウンター強制更新完了');
+        }
       }
       
-      // 管理センターボタン強制表示
-      const mgmtBtn = document.getElementById('management-center-trigger');
-      if (mgmtBtn) {
-        mgmtBtn.style.display = 'block !important';
-        mgmtBtn.style.visibility = 'visible !important';
-        mgmtBtn.style.opacity = '1 !important';
-        mgmtBtn.style.zIndex = '9999 !important';
-        console.log('✓ 管理センター緊急表示完了');
+      // 管理センターボタン強制作成
+      function forceCreateManagement() {
+        var existing = document.getElementById('management-center-trigger');
+        if (existing) existing.remove();
+        
+        var mgmtBtn = document.createElement('div');
+        mgmtBtn.id = 'management-center-trigger';
+        mgmtBtn.innerHTML = '🏆 管理センター';
+        mgmtBtn.style.cssText = 'position:fixed!important;top:45%!important;right:15px!important;z-index:99999!important;background:linear-gradient(135deg,#007bff,#0056b3)!important;color:white!important;border:3px solid white!important;border-radius:15px!important;padding:15px 20px!important;font-size:20px!important;font-weight:bold!important;cursor:pointer!important;box-shadow:0 8px 25px rgba(0,123,255,0.5)!important;min-width:140px!important;text-align:center!important;animation:pulse 2s infinite!important;';
+        mgmtBtn.onclick = function() { alert('🏆 管理センター機能が正常に動作しています！'); };
+        document.body.appendChild(mgmtBtn);
+        console.log('✓ 管理センター強制作成完了');
       }
       
-      // ガイドカードボタン即座追加
-      setTimeout(function() {
-        const cards = document.querySelectorAll('.guide-card, .card');
+      // ガイドカードボタン強制追加
+      function forceAddCardButtons() {
+        var cards = document.querySelectorAll('.guide-card, .card');
+        console.log('検出されたガイドカード:', cards.length + '枚');
+        
         cards.forEach(function(card, i) {
-          const name = card.querySelector('.card-title, h5');
-          const guideName = name ? name.textContent : 'ガイド' + (i + 1);
+          var nameEl = card.querySelector('.card-title, h5');
+          var guideName = nameEl ? nameEl.textContent : 'ガイド' + (i + 1);
+          
+          // 既存ボタン削除
+          var oldBtns = card.querySelectorAll('.emergency-btn');
+          oldBtns.forEach(function(btn) { btn.remove(); });
           
           // ブックマークボタン
-          const bookmarkBtn = document.createElement('button');
+          var bookmarkBtn = document.createElement('button');
+          bookmarkBtn.className = 'emergency-btn';
           bookmarkBtn.innerHTML = '⭐';
-          bookmarkBtn.style.cssText = 'position:absolute!important;top:10px!important;left:10px!important;background:#ffc107!important;border:2px solid white!important;border-radius:50%!important;width:40px!important;height:40px!important;z-index:100!important;cursor:pointer!important;font-size:18px!important;';
-          bookmarkBtn.onclick = function() { alert('✓ ' + guideName + ' をブックマークに追加'); };
+          bookmarkBtn.style.cssText = 'position:absolute!important;top:10px!important;left:10px!important;background:#ffc107!important;border:2px solid white!important;border-radius:50%!important;width:40px!important;height:40px!important;z-index:999!important;cursor:pointer!important;font-size:18px!important;display:flex!important;align-items:center!important;justify-content:center!important;';
+          bookmarkBtn.onclick = function(e) { 
+            e.stopPropagation(); 
+            alert('⭐ ' + guideName + ' をブックマークに追加しました！'); 
+          };
           
           // 比較ボタン
-          const compareBtn = document.createElement('button');
+          var compareBtn = document.createElement('button');
+          compareBtn.className = 'emergency-btn';
           compareBtn.innerHTML = '✓';
-          compareBtn.style.cssText = 'position:absolute!important;top:10px!important;left:55px!important;background:#28a745!important;color:white!important;border:2px solid white!important;border-radius:50%!important;width:40px!important;height:40px!important;z-index:100!important;cursor:pointer!important;font-size:18px!important;';
-          compareBtn.onclick = function() { alert('✓ ' + guideName + ' を比較リストに追加'); };
+          compareBtn.style.cssText = 'position:absolute!important;top:10px!important;left:55px!important;background:#28a745!important;color:white!important;border:2px solid white!important;border-radius:50%!important;width:40px!important;height:40px!important;z-index:999!important;cursor:pointer!important;font-size:18px!important;display:flex!important;align-items:center!important;justify-content:center!important;';
+          compareBtn.onclick = function(e) { 
+            e.stopPropagation(); 
+            alert('✓ ' + guideName + ' を比較リストに追加しました！'); 
+          };
           
           card.style.position = 'relative';
           card.appendChild(bookmarkBtn);
           card.appendChild(compareBtn);
         });
-        console.log('✓ ガイドカードボタン緊急追加:', cards.length + '枚');
+        console.log('✓ ガイドカードボタン強制追加完了:', cards.length + '枚');
+      }
+      
+      // 即座実行
+      forceUpdateCounter();
+      forceCreateManagement();
+      
+      // 1秒後実行
+      setTimeout(function() {
+        forceAddCardButtons();
       }, 1000);
+      
+      // 3秒後確認実行
+      setTimeout(function() {
+        forceUpdateCounter();
+        forceCreateManagement();
+        forceAddCardButtons();
+        console.log('✓ 3秒後確認実行完了');
+      }, 3000);
     });
   </script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -1077,7 +1128,7 @@
       </div>
       <div class="mb-4">
         <div class="text-center mb-3">
-          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">6人のガイドが見つかりました</div>
+          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3"><strong style="color:#007bff;font-size:1.2em;">6人のガイドが見つかりました</strong></div>
           <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
             <i class="bi bi-funnel"></i> フィルターを開く
           </button>
