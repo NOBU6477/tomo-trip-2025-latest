@@ -3,16 +3,18 @@ import http.server
 import socketserver
 import os
 
-PORT = 5000
+PORT = int(os.environ.get('PORT', 5000))
 
-class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=".", **kwargs)
+    
     def end_headers(self):
-        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
-        self.send_header('Pragma', 'no-cache')
-        self.send_header('Expires', '0')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Cache-Control', 'no-cache')
         super().end_headers()
 
-os.chdir('.')
-with socketserver.TCPServer(("", PORT), MyHTTPRequestHandler) as httpd:
-    print(f"Server running at http://localhost:{PORT}")
-    httpd.serve_forever()
+if __name__ == "__main__":
+    with socketserver.TCPServer(("0.0.0.0", PORT), Handler) as httpd:
+        print(f"🏝️ TomoTrip Server on port {PORT}")
+        httpd.serve_forever()
