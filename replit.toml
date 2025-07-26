@@ -1,0 +1,8 @@
+[run]
+run = "python3 main.py"
+
+[deployment]
+run = ["sh", "-c", "python3 main.py"]
+
+[nix]
+channel = "stable-23.11"
