@@ -240,6 +240,13 @@ Local Guide is a multilingual guide matching platform that connects tourists wit
 
 Preferred communication style: Simple, everyday language.
 
+## Production Readiness Requirements (July 26, 2025)
+User confirmed preference for production-ready solution prioritizing:
+1. Operational speed and performance
+2. Long-term durability and stability  
+3. Real-world deployment capability
+4. Scalable architecture for growth
+
 ## Mobile Strategy (July 19, 2025)
 User confirmed mobile adaptation approach: PC specifications should be fully adapted to mobile phones without losing functionality. Created mobile-toolbar-adapter.js system ensuring:
 - Complete PC-level functionality on mobile devices
