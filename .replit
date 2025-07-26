@@ -21,7 +21,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 production_server.py"
+args = "python3 simple_server.py"
 waitForPort = 5000
 
 [nix]
