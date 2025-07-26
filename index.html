@@ -6771,6 +6771,61 @@
     var pulseStyle = document.createElement('style');
     pulseStyle.textContent = '@keyframes pulse { 0% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); } 50% { box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6); } 100% { box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4); } }';
     document.head.appendChild(pulseStyle);
+    
+    // 緊急修復システム - 即座に実行
+    (function() {
+        console.log('=== 緊急修復システム開始 ===');
+        
+        function emergencyFix() {
+            console.log('緊急修復実行中...');
+            
+            // 管理センターボタンを即座に作成
+            var existingManagement = document.getElementById('emergency-management-btn');
+            if (!existingManagement) {
+                var btn = document.createElement('div');
+                btn.id = 'emergency-management-btn';
+                btn.innerHTML = '🏆';
+                btn.setAttribute('style', 'position:fixed;top:50%;right:20px;transform:translateY(-50%);width:80px;height:80px;background:#ff6b6b;color:white;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer;z-index:999999;box-shadow:0 4px 15px rgba(255,107,107,0.5);');
+                btn.title = '管理センター';
+                btn.onclick = function() {
+                    alert('📋 管理センター\n\n🔖 ブックマーク: 0人\n⚖️ 比較中: 0/3人\n\n機能開発中です');
+                };
+                document.body.appendChild(btn);
+                console.log('✅ 管理センターボタン作成完了');
+            }
+            
+            // フィルターボタン修復
+            var filterBtn = document.getElementById('toggle-filter-button');
+            if (filterBtn) {
+                filterBtn.onclick = function() {
+                    console.log('フィルターボタンクリック');
+                    var filterCard = document.getElementById('filter-card');
+                    if (filterCard) {
+                        var isHidden = filterCard.classList.contains('d-none');
+                        if (isHidden) {
+                            filterCard.classList.remove('d-none');
+                            this.innerHTML = '<i class="bi bi-funnel"></i> フィルターを閉じる';
+                            this.className = 'btn btn-secondary';
+                        } else {
+                            filterCard.classList.add('d-none');
+                            this.innerHTML = '<i class="bi bi-funnel"></i> フィルターを開く';
+                            this.className = 'btn btn-outline-primary';
+                        }
+                        console.log('✅ フィルター切り替え完了');
+                    }
+                };
+                console.log('✅ フィルターボタン修復完了');
+            }
+        }
+        
+        // 即座に実行
+        emergencyFix();
+        
+        // 追加で500ms後にも実行（保険）
+        setTimeout(emergencyFix, 500);
+        
+        console.log('=== 緊急修復システム完了 ===');
+    })();
   </script>
 
 </body>
