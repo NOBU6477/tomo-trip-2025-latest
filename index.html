@@ -156,15 +156,8 @@
         forceAddCardButtons();
         console.log('✓ システム初期化完了 - 本格運用対応');
         
-        // 外部アクセス確認システム
-        fetch('/api/system-status')
-          .then(response => response.json())
-          .then(data => {
-            console.log('✅ 外部アクセステスト成功:', data);
-          })
-          .catch(error => {
-            console.log('⚠️ 外部アクセステスト:', error);
-          });
+        // 外部アクセス確認システム（無効化でローディング問題解決）
+        console.log('✅ システム初期化完了 - 外部アクセステストをスキップ');
       }, 3000);
     });
     
@@ -2713,24 +2706,8 @@
       characterDataOldValue: true
     });
     
-    // 継続的な監視（1秒ごと）- より頻繁にチェック
-    setInterval(function() {
-      let replaced = 0;
-      document.querySelectorAll('button, a, .btn').forEach(el => {
-        if (el.textContent && el.textContent.includes('See Details')) {
-          if (el.innerHTML.includes('<i class="bi bi-eye')) {
-            el.innerHTML = '<i class="bi bi-eye me-1"></i>詳細を見る';
-          } else {
-            el.textContent = '詳細を見る';
-          }
-          el.setAttribute('data-forced-japanese', 'true');
-          replaced++;
-        }
-      });
-      if (replaced > 0) {
-        console.log(`定期チェック: ${replaced}個のSee Detailsボタンを詳細を見るに修正`);
-      }
-    }, 1000);
+    // 継続的な監視を無効化（ローディング問題解決）
+    console.log('継続的な監視システムは無効化されています - ローディング問題解決のため');
     
     // より強力な保護 - DOM変更を即座にキャッチ
     const aggressiveObserver = new MutationObserver(function(mutations) {
@@ -3749,14 +3726,8 @@
         attributeFilter: ['class']
       });
       
-      // 定期的にスクロールを確認・修正
-      setInterval(function() {
-        if (document.body.style.overflow === 'hidden' || 
-            document.documentElement.style.overflow === 'hidden') {
-          document.body.style.overflow = 'auto';
-          document.documentElement.style.overflow = 'auto';
-        }
-      }, 100);
+      // スクロール監視を無効化（ローディング問題解決）
+      console.log('スクロール監視システムは無効化されています');
     }
 
     // 協賛店ボタンのイベントリスナー設定
@@ -4019,25 +3990,8 @@
     // グローバル関数として設定
     window.isUserAuthenticated = isUserAuthenticated;
 
-    // ストレージ監視システム
-    let storageMonitor = setInterval(() => {
-      const hasTouristData = localStorage.getItem('touristData');
-      if (!hasTouristData) {
-        console.log('警告: touristDataが消失しました');
-        
-        // バックアップから復旧を試行
-        const backup1 = localStorage.getItem('auth_backup_1');
-        const backup2 = localStorage.getItem('auth_backup_2');
-        const sessionBackup = sessionStorage.getItem('currentUser');
-        
-        if (backup1 || backup2 || sessionBackup) {
-          console.log('バックアップから自動復旧を実行');
-          const recoveryData = backup1 || backup2 || sessionBackup;
-          localStorage.setItem('touristData', recoveryData);
-          sessionStorage.setItem('currentUser', recoveryData);
-        }
-      }
-    }, 2000);
+    // ストレージ監視システムを無効化（ローディング問題解決）
+    console.log('ストレージ監視システムは無効化されています - ローディング問題解決のため');
       
       function protectTouristStorageEarly(touristData) {
         const originalRemoveItem = localStorage.removeItem;
@@ -4318,22 +4272,8 @@
         }
       }, 3000);
       
-      // 定期的な認証状態チェックと復旧
-      setInterval(() => {
-        const mainData = localStorage.getItem('touristData');
-        if (!mainData && window.touristAuthData) {
-          console.log('🚨 認証データ消失検出 - 復旧実行');
-          forceAuthRecovery();
-          // UI状態も確認して更新
-          setTimeout(() => {
-            const registerBtn = document.getElementById('registerDropdown');
-            if (registerBtn && registerBtn.textContent.includes('新規登録')) {
-              console.log('UI状態が不正 - 強制更新');
-              updateLoginStateUI();
-            }
-          }, 100);
-        }
-      }, 1000);
+      // 認証状態チェックを無効化（ローディング問題解決）
+      console.log('認証状態チェックシステムは無効化されています - ローディング問題解決のため');
 
       // 他のスクリプトからの干渉をブロック
       const protectedKeys = ['touristData', 'currentUser', 'auth_backup_1', 'auth_backup_2', 'auth_session_backup'];
@@ -6483,16 +6423,8 @@
         }
       });
       
-      // 定期的な認証状態チェック（30秒ごと）
-      setInterval(function() {
-        const currentAuth = isUserAuthenticated();
-        const bodyAuth = document.body.getAttribute('data-user-authenticated') === 'true';
-        
-        if (currentAuth !== bodyAuth) {
-          console.log('🔧 認証状態の不整合を検出 - UI同期');
-          updateLoginStateUI();
-        }
-      }, 30000);
+      // 定期的な認証状態チェックを無効化（ローディング問題解決）
+      console.log('認証状態チェックは無効化されています - ローディング問題解決のため');
       
       // ストレージ変更の監視
       window.addEventListener('storage', function(e) {
