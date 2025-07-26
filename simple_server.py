@@ -15,17 +15,26 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
         self.send_header('Pragma', 'no-cache')
         self.send_header('Expires', '0')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         super().end_headers()
 
+def start_server():
+    ports_to_try = [5000, 5001, 8080, 3000]
+    
+    for port in ports_to_try:
+        try:
+            with socketserver.TCPServer(("0.0.0.0", port), Handler) as httpd:
+                httpd.allow_reuse_address = True
+                print(f"TomoTrip Server running on port {port}")
+                httpd.serve_forever()
+                break
+        except OSError as e:
+            print(f"Port {port} in use, trying next port...")
+            continue
+    else:
+        print("All ports failed to start")
+
 if __name__ == "__main__":
-    try:
-        with socketserver.TCPServer(("0.0.0.0", PORT), Handler) as httpd:
-            httpd.allow_reuse_address = True
-            print(f"TomoTrip Server running on port {PORT}")
-            httpd.serve_forever()
-    except OSError as e:
-        print(f"Port {PORT} in use, trying port 5001")
-        with socketserver.TCPServer(("0.0.0.0", 5001), Handler) as httpd:
-            httpd.allow_reuse_address = True
-            print(f"TomoTrip Server running on port 5001")
-            httpd.serve_forever()
+    start_server()
