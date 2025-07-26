@@ -1027,7 +1027,7 @@
       </div>
       <div class="mb-4">
         <div class="text-center mb-3">
-          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">6人のガイドが見つかりました</div>
+          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">ガイドを読み込み中...</div>
           <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
             <i class="bi bi-funnel"></i> フィルターを開く
           </button>
@@ -1172,6 +1172,52 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      
+      <!-- 管理センターボタン（直接埋め込み版） -->
+      <div id="management-center-trigger" style="position: fixed; top: 45%; right: 15px; z-index: 2000; 
+        background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); 
+        color: white; border: none; border-radius: 12px; 
+        padding: 12px 16px; font-size: 18px; font-weight: bold; 
+        cursor: pointer; box-shadow: 0 4px 12px rgba(0,123,255,0.3); 
+        transition: all 0.3s ease; min-width: 120px; text-align: center;
+        animation: pulse 2s infinite;" 
+        onclick="toggleManagementCenter()">
+        🏆 管理センター
+      </div>
+      
+      <style>
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }
+      </style>
+      
+      <!-- 管理センターパネル -->
+      <div id="management-center-panel" style="position: fixed; top: 50%; right: 150px; 
+        background: white; border: 2px solid #007bff; border-radius: 12px; 
+        padding: 20px; z-index: 2001; display: none; min-width: 280px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+        <h5 style="color: #007bff; margin-bottom: 15px;">📊 管理センター</h5>
+        <div style="display: flex; gap: 10px; flex-direction: column;">
+          <button onclick="showBookmarks()" style="background: #28a745; color: white; border: none; 
+            padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+            📖 ブックマーク表示
+          </button>
+          <button onclick="showComparisons()" style="background: #17a2b8; color: white; border: none; 
+            padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+            ⚖️ 比較リスト表示
+          </button>
+          <button onclick="clearAllData()" style="background: #dc3545; color: white; border: none; 
+            padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+            🗑️ 全データ削除
+          </button>
+          <button onclick="toggleManagementCenter()" style="background: #6c757d; color: white; border: none; 
+            padding: 8px 12px; border-radius: 6px; cursor: pointer;">
+            ✖️ 閉じる
+          </button>
         </div>
       </div>
       
@@ -5013,11 +5059,9 @@
   <!-- 専用ボタン翻訳機能 - 一時無効化 -->
   <!-- <script src="button-translator.js"></script> -->
   
-  <!-- 統一認証システム -->
-  <script src="unified-auth-system.js"></script>
-  
-  <!-- 認証テストヘルパー -->
-  <script src="auth-test-helper.js"></script>
+  <!-- 外部JSファイル全無効化（CSPエラー解決） -->
+  <!-- <script src="unified-auth-system.js"></script> -->
+  <!-- <script src="auth-test-helper.js"></script> -->
   
   <!-- セクション別の専用翻訳スクリプト - 一時無効化 -->
   <!-- <script src="benefits-translator.js"></script> -->
@@ -5050,28 +5094,17 @@
 
   <!-- desktop-fixes.js 削除済み -->
   
-  <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
-  <script src="shared-language-utils.js"></script>
+  <!-- 外部JSファイル全無効化（CSPエラー解決のため） -->
+  <!-- <script src="shared-language-utils.js"></script> -->
+  <!-- <script src="navigation-buttons.js"></script> -->
+  <!-- <script src="guide-tags-display.js"></script> -->
+  <!-- <script src="guide-data-storage-api.js"></script> -->
   
-  <!-- ナビゲーションボタン -->
-  <script src="navigation-buttons.js"></script>
-  
-  <!-- ガイドタグ表示 -->
-  <script src="guide-tags-display.js"></script>
-  
-  <!-- ガイドデータAPI (新機能) -->
-  <script src="guide-data-storage-api.js"></script>
-  
-  <!-- ガイドデータ初期化 (新機能) -->
-  <script src="initialize-guide-data.js"></script>
-  
-  <!-- ガイドカードデータ抽出器 (修正版) -->
-  <script src="guide-card-extractor.js"></script>
-  
-  <!-- ガイド詳細データ管理 -->
-
-  <script src="data-reset.js"></script>
-  <script src="password-toggle.js"></script>
+  <!-- 外部JSファイル全無効化（CSPエラー解決のため） -->
+  <!-- <script src="initialize-guide-data.js"></script> -->
+  <!-- <script src="guide-card-extractor.js"></script> -->
+  <!-- <script src="data-reset.js"></script> -->
+  <!-- <script src="password-toggle.js"></script> -->
   
   <!-- モーダルの読み込み -->
   <div id="modals-container"></div>
@@ -6223,8 +6256,8 @@
   <!-- 基本的なBootstrapのみ有効にする -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- Filter Toggle Functionality -->
-  <script src="filter-toggle.js"></script>
+  <!-- 外部JSファイル全無効化（CSPエラー解決のため） -->
+  <!-- <script src="filter-toggle.js"></script> -->
   <!-- 削除済み: guide-filter-fix.js -->
   
   <!-- 削除済み: japanese-counter-fix.js -->
@@ -6322,6 +6355,171 @@
       // This will be handled by the automatic filter system in load-70-guides.js
       console.log('Manual filter apply triggered (Japanese)');
     }
+    
+    // ===== プロダクション対応管理システム =====
+    function toggleManagementCenter() {
+      const panel = document.getElementById('management-center-panel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    function showBookmarks() {
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+      alert('ブックマークされたガイド: ' + bookmarks.length + '人\n' + 
+            (bookmarks.length > 0 ? bookmarks.map(b => '・' + b.name).join('\n') : '（なし）'));
+    }
+    
+    function showComparisons() {
+      const comparisons = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+      alert('比較リストのガイド: ' + comparisons.length + '人\n' + 
+            (comparisons.length > 0 ? comparisons.map(c => '・' + c.name).join('\n') : '（なし）'));
+    }
+    
+    function clearAllData() {
+      if (confirm('すべてのデータ（ブックマーク、比較リスト）を削除しますか？')) {
+        localStorage.removeItem('bookmarkedGuides');
+        localStorage.removeItem('comparisonGuides');
+        localStorage.removeItem('viewingHistory');
+        alert('すべてのデータを削除しました');
+        updateManagementDisplay();
+      }
+    }
+    
+    function updateManagementDisplay() {
+      // ガイドカード上のアイコン表示を更新
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+      const comparisons = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+      
+      document.querySelectorAll('.guide-card').forEach(card => {
+        const guideId = card.getAttribute('data-guide-id');
+        const isBookmarked = bookmarks.some(b => b.id === guideId);
+        const isCompared = comparisons.some(c => c.id === guideId);
+        
+        // 既存のアイコンを削除
+        card.querySelectorAll('.bookmark-icon, .compare-icon').forEach(icon => icon.remove());
+        
+        // アイコンを追加
+        if (isBookmarked || isCompared) {
+          const iconContainer = document.createElement('div');
+          iconContainer.style.cssText = 'position: absolute; top: 10px; right: 10px; z-index: 10;';
+          
+          if (isBookmarked) {
+            const bookmarkIcon = document.createElement('span');
+            bookmarkIcon.className = 'bookmark-icon';
+            bookmarkIcon.innerHTML = '⭐';
+            bookmarkIcon.style.cssText = 'background: #ffc107; border-radius: 50%; padding: 4px; margin-right: 4px;';
+            iconContainer.appendChild(bookmarkIcon);
+          }
+          
+          if (isCompared) {
+            const compareIcon = document.createElement('span');
+            compareIcon.className = 'compare-icon';
+            compareIcon.innerHTML = '✓';
+            compareIcon.style.cssText = 'background: #28a745; color: white; border-radius: 50%; padding: 4px;';
+            iconContainer.appendChild(compareIcon);
+          }
+          
+          card.style.position = 'relative';
+          card.appendChild(iconContainer);
+        }
+      });
+    }
+    
+    // ===== 動的ガイドカウンター =====
+    function updateGuideCount() {
+      const visibleGuides = document.querySelectorAll('.guide-item:not(.d-none):not([style*="display: none"])');
+      const counter = document.getElementById('guides-count');
+      if (counter) {
+        counter.textContent = visibleGuides.length + '人のガイドが見つかりました';
+      }
+    }
+    
+    // ページ読み込み時にガイド数を更新
+    document.addEventListener('DOMContentLoaded', function() {
+      setTimeout(() => {
+        updateGuideCount();
+        updateManagementDisplay();
+        
+        // フィルターボタンの機能を追加
+        const filterButton = document.getElementById('toggle-filter-button');
+        const filterCard = document.getElementById('filter-card');
+        
+        if (filterButton && filterCard) {
+          filterButton.addEventListener('click', function() {
+            if (filterCard.classList.contains('d-none')) {
+              filterCard.classList.remove('d-none');
+              filterButton.innerHTML = '<i class="bi bi-funnel"></i> フィルターを閉じる';
+            } else {
+              filterCard.classList.add('d-none');
+              filterButton.innerHTML = '<i class="bi bi-funnel"></i> フィルターを開く';
+            }
+          });
+        }
+        
+        // ガイドカードにクリックイベントを追加
+        document.querySelectorAll('.guide-card').forEach(card => {
+          const guideId = card.getAttribute('data-guide-id');
+          const guideName = card.querySelector('.card-title')?.textContent || 'ガイド';
+          
+          // ブックマークボタンを追加
+          const bookmarkBtn = document.createElement('button');
+          bookmarkBtn.innerHTML = '⭐ ブックマーク';
+          bookmarkBtn.style.cssText = 'position: absolute; top: 10px; left: 10px; background: #ffc107; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; z-index: 10;';
+          bookmarkBtn.onclick = function(e) {
+            e.preventDefault();
+            toggleBookmark(guideId, guideName);
+          };
+          
+          // 比較ボタンを追加
+          const compareBtn = document.createElement('button');
+          compareBtn.innerHTML = '✓ 比較';
+          compareBtn.style.cssText = 'position: absolute; top: 40px; left: 10px; background: #28a745; color: white; border: none; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; z-index: 10;';
+          compareBtn.onclick = function(e) {
+            e.preventDefault();
+            toggleComparison(guideId, guideName);
+          };
+          
+          card.style.position = 'relative';
+          card.appendChild(bookmarkBtn);
+          card.appendChild(compareBtn);
+        });
+      }, 500);
+    });
+    
+    function toggleBookmark(guideId, guideName) {
+      let bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+      const existingIndex = bookmarks.findIndex(b => b.id === guideId);
+      
+      if (existingIndex >= 0) {
+        bookmarks.splice(existingIndex, 1);
+        alert(guideName + ' をブックマークから削除しました');
+      } else {
+        bookmarks.push({ id: guideId, name: guideName, timestamp: Date.now() });
+        alert(guideName + ' をブックマークに追加しました');
+      }
+      
+      localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarks));
+      updateManagementDisplay();
+    }
+    
+    function toggleComparison(guideId, guideName) {
+      let comparisons = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+      const existingIndex = comparisons.findIndex(c => c.id === guideId);
+      
+      if (existingIndex >= 0) {
+        comparisons.splice(existingIndex, 1);
+        alert(guideName + ' を比較リストから削除しました');
+      } else {
+        if (comparisons.length >= 3) {
+          alert('比較リストは最大3人までです');
+          return;
+        }
+        comparisons.push({ id: guideId, name: guideName, timestamp: Date.now() });
+        alert(guideName + ' を比較リストに追加しました（' + comparisons.length + '/3）');
+      }
+      
+      localStorage.setItem('comparisonGuides', JSON.stringify(comparisons));
+      updateManagementDisplay();
+    }
   </script>
 
   <!-- 統合サイト修正システム - 無効化 -->
@@ -6330,38 +6528,18 @@
   <!-- 日本語ボタン専用修正 - 無効化 -->
   <!-- <script src="japanese-button-fix.js"></script> -->
   
-  <!-- リアルタイムガイド登録システム -->
-  <script src="realtime-guide-registration.js"></script>
-  
-  <!-- 静的サイト切り替えシステム -->
-  <script src="static-site-system.js"></script>
-  
-  <!-- 最優先: DOM ハイジャック防止システム -->
-  <script src="dom-hijack-prevention.js"></script>
-  
-  <!-- 最終ヘッダー修正システム -->
-  <script src="final-header-fix.js"></script>
-  
-  <!-- クリーンモバイルシステム（軽量化） -->
-  <script src="clean-mobile-system.js"></script>
-  
-  <!-- 基本機能のみ -->
-  <script src="unified-filter-fix.js"></script>
-  
-  <!-- ガイド登録テストシステム -->
-  <script src="guide-registration-test.js"></script>
-  
-  <!-- 電話番号認証システム -->
-  <script src="phone-verification-system.js"></script>
-  
-  <!-- ガイド登録処理システム -->
-  <script src="guide-registration-handler.js"></script>
-  
-  <!-- シンプル画像システム（全て統合） -->
-  <script src="simple-image-system.js"></script>
-  
-  <!-- 修正済み検索システム -->
-  <script src="enhanced-search-fix.js"></script>
+  <!-- 外部JSファイル全無効化（CSPエラー解決のため） -->
+  <!-- <script src="realtime-guide-registration.js"></script> -->
+  <!-- <script src="static-site-system.js"></script> -->
+  <!-- <script src="dom-hijack-prevention.js"></script> -->
+  <!-- <script src="final-header-fix.js"></script> -->
+  <!-- <script src="clean-mobile-system.js"></script> -->
+  <!-- <script src="unified-filter-fix.js"></script> -->
+  <!-- <script src="guide-registration-test.js"></script> -->
+  <!-- <script src="phone-verification-system.js"></script> -->
+  <!-- <script src="guide-registration-handler.js"></script> -->
+  <!-- <script src="simple-image-system.js"></script> -->
+  <!-- <script src="enhanced-search-fix.js"></script> -->
   
   <!-- 新規登録ボタン機能 -->
   <script>
