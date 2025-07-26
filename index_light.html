@@ -170,6 +170,14 @@
     🏆 管理センター
   </div>
 
+  <!-- Server Statistics Display -->
+  <div id="server-stats" style="position:fixed;bottom:10px;left:10px;background:rgba(0,0,0,0.8);color:white;padding:10px;border-radius:8px;font-size:12px;z-index:9998;max-width:200px;">
+    <div>📊 サーバー統計</div>
+    <div id="current-connections">接続数: 読み込み中...</div>
+    <div id="total-requests">総リクエスト: 読み込み中...</div>
+    <div id="uptime">稼働時間: 読み込み中...</div>
+  </div>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -373,6 +381,35 @@
     function getViewedGuides() {
       return JSON.parse(localStorage.getItem('viewed_guides') || '[]');
     }
+
+    // サーバー統計表示機能
+    function updateServerStats() {
+      fetch('/stats')
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById('current-connections').textContent = 
+            `現在接続: ${data.current_connections}/${data.max_capacity}`;
+          document.getElementById('total-requests').textContent = 
+            `総リクエスト: ${data.total_requests}`;
+          document.getElementById('uptime').textContent = 
+            `稼働時間: ${data.uptime_hours}h`;
+          
+          // 高負荷時の色変更
+          const statsDiv = document.getElementById('server-stats');
+          if (data.current_connections > data.max_capacity * 0.8) {
+            statsDiv.style.background = 'rgba(220,53,69,0.9)'; // 赤色警告
+          } else {
+            statsDiv.style.background = 'rgba(0,0,0,0.8)'; // 通常
+          }
+        })
+        .catch(error => {
+          console.log('統計取得エラー:', error);
+          document.getElementById('current-connections').textContent = 'オフライン';
+        });
+    }
+
+    // 統計の定期更新
+    setInterval(updateServerStats, 5000); // 5秒ごと更新
   </script>
 </body>
 </html>
