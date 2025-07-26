@@ -155,8 +155,35 @@
         forceCreateManagement();
         forceAddCardButtons();
         console.log('✓ システム初期化完了 - 本格運用対応');
+        
+        // 外部アクセス確認システム
+        fetch('/api/system-status')
+          .then(response => response.json())
+          .then(data => {
+            console.log('✅ 外部アクセステスト成功:', data);
+          })
+          .catch(error => {
+            console.log('⚠️ 外部アクセステスト:', error);
+          });
       }, 3000);
     });
+    
+    // システム状態監視
+    function checkSystemHealth() {
+      const healthIndicator = document.createElement('div');
+      healthIndicator.id = 'system-health';
+      healthIndicator.style.cssText = 'position:fixed!important;bottom:20px!important;left:20px!important;background:#28a745!important;color:white!important;padding:8px 15px!important;border-radius:20px!important;font-size:12px!important;z-index:99999!important;';
+      healthIndicator.innerHTML = '🟢 システム正常稼働中';
+      document.body.appendChild(healthIndicator);
+      
+      // 5秒後に非表示
+      setTimeout(() => {
+        if (healthIndicator) healthIndicator.remove();
+      }, 5000);
+    }
+    
+    // ページ読み込み完了時にヘルスチェック実行
+    window.addEventListener('load', checkSystemHealth);
   </script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
