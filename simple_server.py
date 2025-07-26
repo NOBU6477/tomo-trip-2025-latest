@@ -1,40 +1,31 @@
 #!/usr/bin/env python3
-"""
-TomoTrip Simple Server - 外部アクセス対応
-"""
-
 import http.server
 import socketserver
 import os
-import sys
-from datetime import datetime
 
-PORT = int(os.environ.get('PORT', 5000))
+PORT = 5000
 
-class SimpleHandler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=".", **kwargs)
-    
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.path = '/index.html'
+        return super().do_GET()
+
     def end_headers(self):
-        # 外部アクセス対応ヘッダー
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        self.send_header('Cache-Control', 'no-cache')
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
         super().end_headers()
-    
-    def log_message(self, format, *args):
-        # アクセスログ出力
-        sys.stdout.write(f"[{datetime.now().strftime('%H:%M:%S')}] {format % args}\n")
-        sys.stdout.flush()
 
 if __name__ == "__main__":
-    with socketserver.TCPServer(("0.0.0.0", PORT), SimpleHandler) as httpd:
-        print("=" * 50)
-        print("🏝️ TomoTrip Simple Server")
-        print("=" * 50)
-        print(f"📍 URL: http://0.0.0.0:{PORT}")
-        print(f"🌐 外部アクセス: 対応済み")
-        print(f"⚡ 起動時刻: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-        print("=" * 50)
-        httpd.serve_forever()
+    try:
+        with socketserver.TCPServer(("0.0.0.0", PORT), Handler) as httpd:
+            httpd.allow_reuse_address = True
+            print(f"TomoTrip Server running on port {PORT}")
+            httpd.serve_forever()
+    except OSError as e:
+        print(f"Port {PORT} in use, trying port 5001")
+        with socketserver.TCPServer(("0.0.0.0", 5001), Handler) as httpd:
+            httpd.allow_reuse_address = True
+            print(f"TomoTrip Server running on port 5001")
+            httpd.serve_forever()
