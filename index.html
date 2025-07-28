@@ -485,7 +485,8 @@
                 // Ensure registered guides have proper ID and rating
                 id: guide.id || Date.now() + Math.random(),
                 rating: guide.rating || 4.5,
-                image: guide.image || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`
+                // Use profilePhoto if available, otherwise use image field, fallback to placeholder
+                image: guide.image || guide.profilePhoto || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`
             }))];
         }
 
@@ -1510,7 +1511,8 @@
             }
             
             function collectFormData() {
-                const profilePhoto = document.getElementById('profilePreview').src;
+                const profilePreview = document.getElementById('profilePreview');
+                const profilePhoto = profilePreview && profilePreview.src ? profilePreview.src : null;
                 const firstName = document.getElementById('regFirstName').value;
                 const lastName = document.getElementById('regLastName').value;
                 const displayFirstName = document.getElementById('guideDisplayFirstName').value || firstName;
@@ -1558,6 +1560,10 @@
                     
                     data.description = document.getElementById('guideDescription').value || '';
                     data.rating = (4.5 + Math.random() * 0.4).toFixed(1); // Random rating between 4.5-4.9
+                    
+                    // Guide-specific data for display  
+                    data.name = displayFirstName + ' ' + displayLastName;
+                    data.image = profilePhoto || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`;
                 }
                 
                 return data;
