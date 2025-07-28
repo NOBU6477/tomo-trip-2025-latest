@@ -192,11 +192,33 @@ function saveGuideData(originalData, isPublished = false) {
             
             if (isPublished) {
                 alert('ガイド情報を公開しました！\n\nホームページのガイド検索に反映されます。');
-                // Clear caches to force refresh
+                
+                // Clear all relevant caches to force refresh
                 localStorage.removeItem('guideCardsCache');
+                localStorage.removeItem('displayedGuides');
+                localStorage.removeItem('currentGuideId');
+                
+                console.log('Redirecting to homepage...');
+                
+                // Multiple fallback methods for reliable redirect
                 setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
+                    try {
+                        // Try relative path first (most compatible)
+                        window.location.replace('index.html');
+                    } catch (e) {
+                        try {
+                            window.location.href = 'index.html';
+                        } catch (e2) {
+                            try {
+                                window.location = 'index.html';
+                            } catch (e3) {
+                                // Final fallback - navigate to root
+                                window.location = '/';
+                            }
+                        }
+                    }
+                }, 1000);
+                
             } else {
                 alert('下書きを保存しました。');
             }
