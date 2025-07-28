@@ -102,6 +102,7 @@ function getLanguageNames(languageCodes) {
 function setupSaveHandlers(originalGuideData) {
     // Save draft functionality
     window.saveDraft = function() {
+        console.log('Saving draft...');
         saveGuideData(originalGuideData, false);
     };
     
@@ -110,13 +111,27 @@ function setupSaveHandlers(originalGuideData) {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('Form submitted for publishing...');
             saveGuideData(originalGuideData, true);
         });
     }
+    
+    // Also set up global functions for direct access
+    window.saveAndPublish = function() {
+        console.log('Publishing guide...');
+        saveGuideData(originalGuideData, true);
+    };
 }
 
 function saveGuideData(originalData, isPublished = false) {
     try {
+        console.log('Starting save process with data:', originalData);
+        
+        // Validate input data
+        if (!originalData || !originalData.id) {
+            throw new Error('Invalid original data: missing ID');
+        }
+        
         // Get current profile photo (prioritize new uploaded photo)
         const profileImg = document.getElementById('profile-preview');
         const profileInput = document.getElementById('profile-photo');
@@ -127,16 +142,24 @@ function saveGuideData(originalData, isPublished = false) {
             currentProfilePhoto = profileImg.src;
         }
         
+        // Get form elements with validation
+        const bioElement = document.getElementById('guide-bio');
+        const experienceElement = document.getElementById('guide-experience');
+        const hourlyRateElement = document.getElementById('guide-hourly-rate');
+        const groupRateElement = document.getElementById('guide-group-rate');
+        const startTimeElement = document.getElementById('available-start');
+        const endTimeElement = document.getElementById('available-end');
+        
         // Collect updated data from form
         const updatedData = {
             ...originalData,
-            description: document.getElementById('guide-bio')?.value || originalData.description,
-            experience: document.getElementById('guide-experience')?.value || originalData.experience || '',
-            price: parseInt(document.getElementById('guide-hourly-rate')?.value) || originalData.price,
-            groupRate: parseInt(document.getElementById('guide-group-rate')?.value) || originalData.groupRate || 2000,
+            description: bioElement?.value || originalData.description || '',
+            experience: experienceElement?.value || originalData.experience || '',
+            price: parseInt(hourlyRateElement?.value) || originalData.price || 3000,
+            groupRate: parseInt(groupRateElement?.value) || originalData.groupRate || 2000,
             availability: {
-                start: document.getElementById('available-start')?.value || '09:00',
-                end: document.getElementById('available-end')?.value || '18:00'
+                start: startTimeElement?.value || '09:00',
+                end: endTimeElement?.value || '18:00'
             },
             lastUpdated: new Date().toISOString(),
             isPublished: isPublished,
@@ -144,8 +167,10 @@ function saveGuideData(originalData, isPublished = false) {
             image: currentProfilePhoto,
             profilePhoto: currentProfilePhoto,
             // Add specialties from the specialty system
-            specialties: window.selectedSpecialties || []
+            specialties: window.selectedSpecialties || originalData.specialties || []
         };
+        
+        console.log('Prepared data for saving:', updatedData);
         
         // Update in localStorage
         const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
@@ -181,7 +206,9 @@ function saveGuideData(originalData, isPublished = false) {
         
     } catch (error) {
         console.error('Error saving guide data:', error);
-        alert('保存中にエラーが発生しました: ' + error.message);
+        console.error('Original data:', originalData);
+        console.error('Error details:', error);
+        alert('保存中にエラーが発生しました: ' + (error.message || '不明なエラー'));
     }
 }
 

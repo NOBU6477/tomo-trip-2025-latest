@@ -283,7 +283,7 @@
         <button type="button" class="btn btn-outline-secondary me-3" onclick="saveDraft()">
           <i class="bi bi-save"></i> 下書き保存
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" onclick="if(window.saveAndPublish) { window.saveAndPublish(); } else { console.error('saveAndPublish not available'); }">
           <i class="bi bi-check-circle"></i> 公開して完了
         </button>
       </div>
