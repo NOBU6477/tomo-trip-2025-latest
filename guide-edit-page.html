@@ -397,6 +397,36 @@
         alert('下書き保存でエラーが発生しました。');
       }
     }
+    
+    // saveAndExit関数を追加してエラーを解決
+    function saveAndExit() {
+      // フォーム送信イベントをトリガー
+      const form = document.querySelector('form');
+      if (form) {
+        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+        form.dispatchEvent(submitEvent);
+      }
+    }
+    
+    // プロフィール写真更新の即座反映機能
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileInput = document.getElementById('profile-photo');
+      const profilePreview = document.getElementById('profile-preview');
+      
+      if (profileInput && profilePreview) {
+        profileInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              profilePreview.src = e.target.result;
+              console.log('Profile photo preview updated');
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>

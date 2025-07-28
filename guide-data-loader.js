@@ -117,6 +117,16 @@ function setupSaveHandlers(originalGuideData) {
 
 function saveGuideData(originalData, isPublished = false) {
     try {
+        // Get current profile photo (prioritize new uploaded photo)
+        const profileImg = document.getElementById('profile-preview');
+        const profileInput = document.getElementById('profile-photo');
+        let currentProfilePhoto = originalData.profilePhoto || originalData.image;
+        
+        // Use preview image if it's different from original
+        if (profileImg && profileImg.src && !profileImg.src.includes('placeholder')) {
+            currentProfilePhoto = profileImg.src;
+        }
+        
         // Collect updated data from form
         const updatedData = {
             ...originalData,
@@ -129,15 +139,13 @@ function saveGuideData(originalData, isPublished = false) {
                 end: document.getElementById('available-end')?.value || '18:00'
             },
             lastUpdated: new Date().toISOString(),
-            isPublished: isPublished
+            isPublished: isPublished,
+            // Update both image and profilePhoto fields
+            image: currentProfilePhoto,
+            profilePhoto: currentProfilePhoto,
+            // Add specialties from the specialty system
+            specialties: window.selectedSpecialties || []
         };
-        
-        // Update profile photo if changed
-        const profileImg = document.getElementById('profile-preview');
-        if (profileImg && profileImg.src && profileImg.src !== originalData.image) {
-            updatedData.image = profileImg.src;
-            updatedData.profilePhoto = profileImg.src;
-        }
         
         // Update in localStorage
         const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
@@ -147,10 +155,20 @@ function saveGuideData(originalData, isPublished = false) {
             registeredGuides[guideIndex] = updatedData;
             localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
             
-            console.log('Guide data updated successfully');
+            // Also update the displayed guides cache to ensure immediate reflection
+            const displayedGuides = JSON.parse(localStorage.getItem('displayedGuides')) || [];
+            const displayedIndex = displayedGuides.findIndex(guide => guide.id == originalData.id);
+            if (displayedIndex !== -1) {
+                displayedGuides[displayedIndex] = updatedData;
+                localStorage.setItem('displayedGuides', JSON.stringify(displayedGuides));
+            }
+            
+            console.log('Guide data updated successfully:', updatedData);
             
             if (isPublished) {
                 alert('ガイド情報を公開しました！\n\nホームページのガイド検索に反映されます。');
+                // Clear caches to force refresh
+                localStorage.removeItem('guideCardsCache');
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 1500);
