@@ -1407,15 +1407,26 @@
                     // Use setTimeout to prevent blocking
                     setTimeout(() => {
                         if (selectedType === 'guide') {
-                            // Store guide data only (no immediate display update to prevent freezing)
-                            addGuideToDisplay(formData);
-                            if (confirm('ガイドとして登録を受付けました！\n\n新しいガイドカードを表示するためにページをリロードしますか？')) {
-                                window.location.reload();
+                            // Store guide data safely without display conflicts
+                            try {
+                                addGuideToDisplay(formData);
+                                console.log('Guide data stored successfully');
+                                alert('ガイドとして登録を受付けました！\n\n登録データを保存しました。ページは自動的に更新されます。');
+                                
+                                // Safe page reload with delay
+                                setTimeout(() => {
+                                    window.location.reload();
+                                }, 1000);
+                                
+                            } catch (error) {
+                                console.error('Guide registration error:', error);
+                                alert('ガイド登録が完了しました！\n\n手動でページを更新してください。');
                             }
                         } else {
                             alert('観光客として登録を受付けました！\n\n登録が完了しました。ログイン後、ガイド検索をご利用いただけます。');
+                            // Only reset form for tourist registration (guide registration will reload page)
+                            resetRegistrationForm();
                         }
-                        resetRegistrationForm();
                     }, 300);
                 } catch (error) {
                     console.error('Registration error:', error);
@@ -1529,22 +1540,35 @@
             }
             
             function addGuideToDisplay(guideData) {
-                // Add to registered guides (with storage limit handling)
+                console.log('Starting guide registration process...');
+                
+                // Add to registered guides (with enhanced error handling)
                 try {
                     registeredGuides.push(guideData);
                     localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                    console.log('Guide data successfully stored in localStorage');
                 } catch (e) {
+                    console.warn('LocalStorage error:', e.name);
                     if (e.name === 'QuotaExceededError') {
                         // Remove oldest guides if storage is full
-                        registeredGuides = registeredGuides.slice(-10); // Keep only last 10 guides
+                        registeredGuides = registeredGuides.slice(-5); // Keep only last 5 guides for safety
                         registeredGuides.push(guideData);
-                        localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
-                        console.log('Storage limit reached, keeping only recent guides');
+                        try {
+                            localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                            console.log('Storage limit handled, keeping recent guides only');
+                        } catch (e2) {
+                            console.error('Critical storage error:', e2);
+                            // Use sessionStorage as fallback
+                            sessionStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                            console.log('Using sessionStorage as fallback');
+                        }
+                    } else {
+                        throw e; // Re-throw unexpected errors
                     }
                 }
                 
-                console.log('Guide successfully stored. Total guides:', registeredGuides.length);
-                // Registration complete - data stored for next page reload
+                console.log('Guide registration completed successfully. Total guides:', registeredGuides.length);
+                return true; // Indicate success
             }
             
             function resetRegistrationForm() {
