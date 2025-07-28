@@ -1436,11 +1436,15 @@
                             try {
                                 addGuideToDisplay(formData);
                                 console.log('Guide data stored successfully');
-                                alert('ガイドとして登録を受付けました！\n\n登録データを保存しました。ページは自動的に更新されます。');
                                 
-                                // Safe page reload with delay
+                                // Store guide ID for editing
+                                localStorage.setItem('currentGuideId', formData.id);
+                                
+                                alert('ガイド登録が完了しました！\n\nプロフィール編集ページで写真やより詳細な情報を設定できます。');
+                                
+                                // Redirect to guide edit page
                                 setTimeout(() => {
-                                    window.location.reload();
+                                    window.location.href = 'guide-edit-page.html';
                                 }, 1000);
                                 
                             } catch (error) {
