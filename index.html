@@ -713,7 +713,10 @@
                 findGuideBtn: () => {
                     document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth' });
                 },
-                contactBtn: () => console.log('Contact clicked'),
+                contactBtn: () => {
+                    const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
+                    contactModal.show();
+                },
                 sponsorRegBtn: () => console.log('Sponsor registration clicked'),
                 sponsorLoginBtn: () => console.log('Sponsor login clicked'),
                 managementBtn: () => console.log('Management center clicked'),
@@ -745,6 +748,49 @@
             console.log('✅ TomoTrip Complete Version Loaded Successfully - All Features Active');
         });
     </script>
+
+    <!-- Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #17a2b8, #007bff); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="contactModalLabel">お問い合わせ</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label fw-bold">お名前</label>
+                            <input type="text" class="form-control" id="contactName" placeholder="山田 太郎" style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label fw-bold">メールアドレス</label>
+                            <input type="email" class="form-control" id="contactEmail" placeholder="email@example.com" style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactSubject" class="form-label fw-bold">件名</label>
+                            <select class="form-select" id="contactSubject" style="border-radius: 10px; padding: 12px;">
+                                <option value="">件名を選択してください</option>
+                                <option value="guide">ガイドサービスについて</option>
+                                <option value="registration">登録について</option>
+                                <option value="payment">料金について</option>
+                                <option value="technical">技術的な問題</option>
+                                <option value="other">その他</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="contactMessage" class="form-label fw-bold">メッセージ</label>
+                            <textarea class="form-control" id="contactMessage" rows="5" placeholder="お問い合わせ内容をご記入ください" style="border-radius: 10px; padding: 12px;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 10px; padding: 10px 20px;">キャンセル</button>
+                    <button type="button" class="btn btn-primary" id="contactSubmitBtn" style="border-radius: 10px; padding: 10px 20px;">送信</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Login Modal -->
     <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -1305,6 +1351,24 @@
                 registrationSubmitBtn.style.display = 'inline-block';
             }
             
+            // Contact form submission
+            document.getElementById('contactSubmitBtn').addEventListener('click', function() {
+                const name = document.getElementById('contactName').value;
+                const email = document.getElementById('contactEmail').value;
+                const subject = document.getElementById('contactSubject').value;
+                const message = document.getElementById('contactMessage').value;
+                
+                if (!name || !email || !subject || !message) {
+                    alert('すべての項目を入力してください。');
+                    return;
+                }
+                
+                alert('お問い合わせを受付けました。\n\n内容を確認次第、ご連絡いたします。ありがとうございました。');
+                const contactModal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+                contactModal.hide();
+                document.getElementById('contactForm').reset();
+            });
+
             // Login form submission
             document.getElementById('loginSubmitBtn').addEventListener('click', function() {
                 const email = document.getElementById('loginEmail').value;
@@ -1349,7 +1413,7 @@
                                 window.location.reload();
                             }
                         } else {
-                            alert('観光客として登録を受付けました。確認メールをご確認ください。');
+                            alert('観光客として登録を受付けました！\n\n登録が完了しました。ログイン後、ガイド検索をご利用いただけます。');
                         }
                         resetRegistrationForm();
                     }, 300);
@@ -1517,6 +1581,33 @@
             // Reset modal when closed
             document.getElementById('registrationModal').addEventListener('hidden.bs.modal', function () {
                 resetRegistrationForm();
+            });
+            
+            // Add emergency page unfreezing mechanism
+            document.addEventListener('DOMContentLoaded', function() {
+                // Prevent page freeze by ensuring proper scrolling
+                document.body.style.overflow = 'auto';
+                document.documentElement.style.overflow = 'auto';
+                
+                // Remove any modal-open classes that might cause freezing
+                document.body.classList.remove('modal-open');
+                
+                // Force proper overflow settings
+                const style = document.createElement('style');
+                style.textContent = `
+                    body, html { 
+                        overflow-y: auto !important; 
+                        overflow-x: hidden !important; 
+                        height: auto !important; 
+                        max-height: none !important; 
+                    }
+                    .modal-open { 
+                        overflow: hidden !important; 
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                console.log('Page unfreeze mechanism activated');
             });
         });
     </script>
