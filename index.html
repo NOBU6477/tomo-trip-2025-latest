@@ -317,27 +317,116 @@
                     <div class="filter-section" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
                         <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
                             <div class="d-flex flex-wrap gap-3">
-                                <select class="form-select" style="width: auto; min-width: 150px;" id="locationFilter">
+                                <select class="form-select" style="width: auto; min-width: 180px;" id="locationFilter">
                                     <option value="">すべての地域</option>
-                                    <option value="tokyo">東京</option>
-                                    <option value="kyoto">京都</option>
-                                    <option value="osaka">大阪</option>
-                                    <option value="hiroshima">広島</option>
+                                    <optgroup label="北海道・東北">
+                                        <option value="hokkaido">北海道</option>
+                                        <option value="aomori">青森県</option>
+                                        <option value="iwate">岩手県</option>
+                                        <option value="miyagi">宮城県</option>
+                                        <option value="akita">秋田県</option>
+                                        <option value="yamagata">山形県</option>
+                                        <option value="fukushima">福島県</option>
+                                    </optgroup>
+                                    <optgroup label="関東">
+                                        <option value="ibaraki">茨城県</option>
+                                        <option value="tochigi">栃木県</option>
+                                        <option value="gunma">群馬県</option>
+                                        <option value="saitama">埼玉県</option>
+                                        <option value="chiba">千葉県</option>
+                                        <option value="tokyo">東京都</option>
+                                        <option value="kanagawa">神奈川県</option>
+                                    </optgroup>
+                                    <optgroup label="中部">
+                                        <option value="niigata">新潟県</option>
+                                        <option value="toyama">富山県</option>
+                                        <option value="ishikawa">石川県</option>
+                                        <option value="fukui">福井県</option>
+                                        <option value="yamanashi">山梨県</option>
+                                        <option value="nagano">長野県</option>
+                                        <option value="gifu">岐阜県</option>
+                                        <option value="shizuoka">静岡県</option>
+                                        <option value="aichi">愛知県</option>
+                                    </optgroup>
+                                    <optgroup label="近畿">
+                                        <option value="mie">三重県</option>
+                                        <option value="shiga">滋賀県</option>
+                                        <option value="kyoto">京都府</option>
+                                        <option value="osaka">大阪府</option>
+                                        <option value="hyogo">兵庫県</option>
+                                        <option value="nara">奈良県</option>
+                                        <option value="wakayama">和歌山県</option>
+                                    </optgroup>
+                                    <optgroup label="中国・四国">
+                                        <option value="tottori">鳥取県</option>
+                                        <option value="shimane">島根県</option>
+                                        <option value="okayama">岡山県</option>
+                                        <option value="hiroshima">広島県</option>
+                                        <option value="yamaguchi">山口県</option>
+                                        <option value="tokushima">徳島県</option>
+                                        <option value="kagawa">香川県</option>
+                                        <option value="ehime">愛媛県</option>
+                                        <option value="kochi">高知県</option>
+                                    </optgroup>
+                                    <optgroup label="九州・沖縄">
+                                        <option value="fukuoka">福岡県</option>
+                                        <option value="saga">佐賀県</option>
+                                        <option value="nagasaki">長崎県</option>
+                                        <option value="kumamoto">熊本県</option>
+                                        <option value="oita">大分県</option>
+                                        <option value="miyazaki">宮崎県</option>
+                                        <option value="kagoshima">鹿児島県</option>
+                                        <option value="okinawa">沖縄県</option>
+                                    </optgroup>
+                                    <optgroup label="離島特別地域">
+                                        <option value="ogasawara">小笠原諸島</option>
+                                        <option value="izu">伊豆諸島</option>
+                                        <option value="sado">佐渡島</option>
+                                        <option value="awaji">淡路島</option>
+                                        <option value="yakushima">屋久島</option>
+                                        <option value="amami">奄美大島</option>
+                                        <option value="ishigaki">石垣島</option>
+                                        <option value="miyako">宮古島</option>
+                                    </optgroup>
                                 </select>
                                 
-                                <select class="form-select" style="width: auto; min-width: 150px;" id="languageFilter">
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
                                     <option value="">すべての言語</option>
-                                    <option value="japanese">日本語</option>
-                                    <option value="english">英語</option>
-                                    <option value="chinese">中国語</option>
-                                    <option value="korean">韓国語</option>
+                                    <optgroup label="アジア言語">
+                                        <option value="japanese">日本語</option>
+                                        <option value="english">英語</option>
+                                        <option value="chinese">中国語（簡体字）</option>
+                                        <option value="chinese_traditional">中国語（繁体字）</option>
+                                        <option value="korean">韓国語</option>
+                                        <option value="thai">タイ語</option>
+                                        <option value="vietnamese">ベトナム語</option>
+                                        <option value="indonesian">インドネシア語</option>
+                                        <option value="tagalog">タガログ語（フィリピン）</option>
+                                        <option value="hindi">ヒンディー語</option>
+                                    </optgroup>
+                                    <optgroup label="ヨーロッパ言語">
+                                        <option value="spanish">スペイン語</option>
+                                        <option value="french">フランス語</option>
+                                        <option value="german">ドイツ語</option>
+                                        <option value="italian">イタリア語</option>
+                                        <option value="portuguese">ポルトガル語</option>
+                                        <option value="russian">ロシア語</option>
+                                        <option value="dutch">オランダ語</option>
+                                        <option value="swedish">スウェーデン語</option>
+                                    </optgroup>
+                                    <optgroup label="その他">
+                                        <option value="arabic">アラビア語</option>
+                                        <option value="hebrew">ヘブライ語</option>
+                                        <option value="turkish">トルコ語</option>
+                                        <option value="swahili">スワヒリ語</option>
+                                    </optgroup>
                                 </select>
                                 
-                                <select class="form-select" style="width: auto; min-width: 150px;" id="priceFilter">
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter">
                                     <option value="">すべての価格</option>
-                                    <option value="low">¥3,000以下</option>
-                                    <option value="medium">¥3,000-¥7,000</option>
-                                    <option value="high">¥7,000以上</option>
+                                    <option value="budget">¥6,000～¥10,000</option>
+                                    <option value="premium">¥10,001～¥20,000</option>
+                                    <option value="luxury">¥20,001以上</option>
                                 </select>
                             </div>
                             
@@ -347,8 +436,9 @@
                             </div>
                         </div>
                         
-                        <div class="mt-3">
-                            <small class="text-muted" id="guideCounter">12人のガイドが見つかりました</small>
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <small class="text-muted" id="guideCounter">12人のガイドが見つかりました（全12人中）</small>
+                            <small class="text-info" id="totalGuideCounter">登録ガイド総数: 12人</small>
                         </div>
                     </div>
                 </div>
@@ -373,67 +463,94 @@
     
     <!-- Complete JavaScript - No Loops, No Conflicts -->
     <script>
-        // Guide data
+        // Location mapping for display
+        const locationNames = {
+            hokkaido: "北海道", aomori: "青森県", iwate: "岩手県", miyagi: "宮城県", akita: "秋田県", yamagata: "山形県", fukushima: "福島県",
+            ibaraki: "茨城県", tochigi: "栃木県", gunma: "群馬県", saitama: "埼玉県", chiba: "千葉県", tokyo: "東京都", kanagawa: "神奈川県",
+            niigata: "新潟県", toyama: "富山県", ishikawa: "石川県", fukui: "福井県", yamanashi: "山梨県", nagano: "長野県", gifu: "岐阜県", shizuoka: "静岡県", aichi: "愛知県",
+            mie: "三重県", shiga: "滋賀県", kyoto: "京都府", osaka: "大阪府", hyogo: "兵庫県", nara: "奈良県", wakayama: "和歌山県",
+            tottori: "鳥取県", shimane: "島根県", okayama: "岡山県", hiroshima: "広島県", yamaguchi: "山口県", tokushima: "徳島県", kagawa: "香川県", ehime: "愛媛県", kochi: "高知県",
+            fukuoka: "福岡県", saga: "佐賀県", nagasaki: "長崎県", kumamoto: "熊本県", oita: "大分県", miyazaki: "宮崎県", kagoshima: "鹿児島県", okinawa: "沖縄県",
+            ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
+        };
+
+        // Expanded guide data with diverse locations and updated pricing
         const guideData = [
             {
                 id: 1, name: "田中 健太", location: "tokyo", languages: ["japanese", "english"], 
-                price: 5000, rating: 4.8, specialty: "歴史・文化", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
+                price: 8000, rating: 4.8, specialty: "歴史・文化", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
                 description: "東京の隠れた歴史スポットをご案内します"
             },
             {
                 id: 2, name: "佐藤 美咲", location: "kyoto", languages: ["japanese", "english", "chinese"], 
-                price: 6000, rating: 4.9, specialty: "寺社・庭園", image: "https://images.unsplash.com/photo-1494790108755-2616c9a84d84?w=300&h=300&fit=crop&crop=face",
+                price: 9500, rating: 4.9, specialty: "寺社・庭園", image: "https://images.unsplash.com/photo-1494790108755-2616c9a84d84?w=300&h=300&fit=crop&crop=face",
                 description: "京都の美しい寺社と庭園を巡りましょう"
             },
             {
                 id: 3, name: "鈴木 大輔", location: "osaka", languages: ["japanese", "korean"], 
-                price: 4500, rating: 4.7, specialty: "グルメ・食べ歩き", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
+                price: 7000, rating: 4.7, specialty: "グルメ・食べ歩き", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
                 description: "大阪の本当に美味しいグルメスポットへ"
             },
             {
                 id: 4, name: "山田 花子", location: "hiroshima", languages: ["japanese", "english"], 
-                price: 5500, rating: 4.6, specialty: "平和学習・歴史", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
+                price: 8500, rating: 4.6, specialty: "平和学習・歴史", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
                 description: "広島の平和と歴史を学ぶツアー"
             },
             {
                 id: 5, name: "高橋 翔太", location: "tokyo", languages: ["japanese", "english"], 
-                price: 7000, rating: 4.8, specialty: "現代カルチャー", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face",
+                price: 12000, rating: 4.8, specialty: "現代カルチャー", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face",
                 description: "最新の東京カルチャーを体験"
             },
             {
                 id: 6, name: "中村 愛", location: "kyoto", languages: ["japanese", "chinese"], 
-                price: 6500, rating: 4.9, specialty: "伝統工芸・体験", image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop&crop=face",
+                price: 10500, rating: 4.9, specialty: "伝統工芸・体験", image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop&crop=face",
                 description: "京都の伝統工芸を体験しましょう"
             },
             {
                 id: 7, name: "渡辺 雄一", location: "osaka", languages: ["japanese", "english", "korean"], 
-                price: 4000, rating: 4.5, specialty: "ナイトライフ", image: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=300&h=300&fit=crop&crop=face",
+                price: 6500, rating: 4.5, specialty: "ナイトライフ", image: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=300&h=300&fit=crop&crop=face",
                 description: "大阪の夜を楽しむガイドツアー"
             },
             {
                 id: 8, name: "林 彩香", location: "hiroshima", languages: ["japanese", "english", "chinese"], 
-                price: 5200, rating: 4.7, specialty: "自然・景観", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face",
+                price: 9000, rating: 4.7, specialty: "自然・景観", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face",
                 description: "広島の美しい自然と景観を巡る"
             },
             {
                 id: 9, name: "小林 誠", location: "tokyo", languages: ["japanese", "english"], 
-                price: 8000, rating: 4.9, specialty: "ラグジュアリー", image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=300&h=300&fit=crop&crop=face",
+                price: 25000, rating: 4.9, specialty: "ラグジュアリー", image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=300&h=300&fit=crop&crop=face",
                 description: "東京のラグジュアリーな体験をご提供"
             },
             {
                 id: 10, name: "井上 麻衣", location: "kyoto", languages: ["japanese", "english"], 
-                price: 5800, rating: 4.8, specialty: "着物・文化体験", image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&h=300&fit=crop&crop=face",
+                price: 9800, rating: 4.8, specialty: "着物・文化体験", image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&h=300&fit=crop&crop=face",
                 description: "着物を着て京都の文化を体験"
             },
             {
                 id: 11, name: "森田 健", location: "osaka", languages: ["japanese", "korean"], 
-                price: 4800, rating: 4.6, specialty: "商店街・ローカル", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face",
+                price: 7500, rating: 4.6, specialty: "商店街・ローカル", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face",
                 description: "地元の商店街とローカルな魅力"
             },
             {
                 id: 12, name: "清水 結衣", location: "hiroshima", languages: ["japanese", "english", "chinese"], 
-                price: 6200, rating: 4.8, specialty: "島めぐり・海", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face",
+                price: 11000, rating: 4.8, specialty: "島めぐり・海", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face",
                 description: "瀬戸内海の美しい島々を巡る"
+            },
+            // Additional guides for scalability demonstration
+            {
+                id: 13, name: "青木 太郎", location: "hokkaido", languages: ["japanese", "english", "russian"], 
+                price: 15000, rating: 4.7, specialty: "雪祭り・冬アクティビティ", image: "https://images.unsplash.com/photo-1559190394-90dfc4e2e3a8?w=300&h=300&fit=crop&crop=face",
+                description: "北海道の雄大な自然と冬の魅力を体験"
+            },
+            {
+                id: 14, name: "石川 美雪", location: "okinawa", languages: ["japanese", "english", "chinese"], 
+                price: 13500, rating: 4.9, specialty: "海洋アクティビティ", image: "https://images.unsplash.com/photo-1554693166-fcc388b4bb45?w=300&h=300&fit=crop&crop=face",
+                description: "沖縄の美しい海と文化を満喫"
+            },
+            {
+                id: 15, name: "松本 健吾", location: "nagano", languages: ["japanese", "english", "german"], 
+                price: 11500, rating: 4.6, specialty: "山岳・温泉", image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=300&h=300&fit=crop&crop=face",
+                description: "信州の山岳美と名湯を巡る旅"
             }
         ];
 
@@ -455,7 +572,7 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <span class="badge bg-primary me-1">${guide.location === 'tokyo' ? '東京' : guide.location === 'kyoto' ? '京都' : guide.location === 'osaka' ? '大阪' : '広島'}</span>
+                                <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location}</span>
                                 <span class="badge bg-secondary">${guide.specialty}</span>
                             </div>
                             <p class="card-text text-muted small mb-2">${guide.description}</p>
@@ -497,8 +614,12 @@
         // Update counter
         function updateCounter() {
             const counter = document.getElementById('guideCounter');
+            const totalCounter = document.getElementById('totalGuideCounter');
             if (counter) {
-                counter.textContent = `${displayedGuides.length}人のガイドが見つかりました`;
+                counter.textContent = `${displayedGuides.length}人のガイドが見つかりました（全${currentGuides.length}人中）`;
+            }
+            if (totalCounter) {
+                totalCounter.textContent = `登録ガイド総数: ${guideData.length}人`;
             }
         }
 
@@ -519,12 +640,12 @@
             }
 
             if (price) {
-                if (price === 'low') {
-                    filtered = filtered.filter(guide => guide.price <= 3000);
-                } else if (price === 'medium') {
-                    filtered = filtered.filter(guide => guide.price > 3000 && guide.price <= 7000);
-                } else if (price === 'high') {
-                    filtered = filtered.filter(guide => guide.price > 7000);
+                if (price === 'budget') {
+                    filtered = filtered.filter(guide => guide.price >= 6000 && guide.price <= 10000);
+                } else if (price === 'premium') {
+                    filtered = filtered.filter(guide => guide.price >= 10001 && guide.price <= 20000);
+                } else if (price === 'luxury') {
+                    filtered = filtered.filter(guide => guide.price >= 20001);
                 }
             }
 
@@ -579,6 +700,9 @@
             
             // Display initial guides
             displayGuides(guideData.slice(0, 12));
+            
+            // Update total counter on load
+            updateCounter();
             
             // Button event listeners
             const buttons = {
