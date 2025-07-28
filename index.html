@@ -1407,7 +1407,11 @@
                 // Check if user is a registered guide
                 try {
                     const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+                    console.log('Registered guides:', registeredGuides);
+                    console.log('Looking for email:', email);
+                    
                     const foundGuide = registeredGuides.find(guide => guide.email === email);
+                    console.log('Found guide:', foundGuide);
                     
                     if (foundGuide) {
                         // Guide found - redirect to editing page
@@ -1426,12 +1430,40 @@
                     } else {
                         // No guide found - show registration option
                         if (confirm('登録されたガイドが見つかりません。\n新規登録を行いますか？')) {
-                            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                            loginModal.hide();
-                            setTimeout(() => {
-                                const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
-                                registerModal.show();
-                            }, 500);
+                            console.log('User confirmed registration');
+                            
+                            try {
+                                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                                if (loginModal) {
+                                    loginModal.hide();
+                                }
+                                
+                                setTimeout(() => {
+                                    try {
+                                        // Check if registration modal exists
+                                        const registerModalElement = document.getElementById('registerModal');
+                                        if (registerModalElement) {
+                                            const registerModal = new bootstrap.Modal(registerModalElement);
+                                            registerModal.show();
+                                        } else {
+                                            console.error('Registration modal not found');
+                                            alert('登録フォームが見つかりません。ページを再読み込みしてください。');
+                                        }
+                                    } catch (modalError) {
+                                        console.error('Modal error:', modalError);
+                                        alert('モーダル表示エラーが発生しました。');
+                                    }
+                                }, 300);
+                                
+                            } catch (error) {
+                                console.error('Modal transition error:', error);
+                                alert('モーダル切り替え中にエラーが発生しました。');
+                            }
+                        } else {
+                            console.log('User cancelled registration');
+                            // Clear login form
+                            document.getElementById('loginEmail').value = '';
+                            document.getElementById('loginPassword').value = '';
                         }
                     }
                 } catch (error) {
