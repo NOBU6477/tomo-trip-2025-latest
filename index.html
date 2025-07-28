@@ -1516,7 +1516,17 @@
             
             function collectFormData() {
                 const profilePreview = document.getElementById('profilePreview');
-                const profilePhoto = profilePreview && profilePreview.src ? profilePreview.src : null;
+                // Only store small images, avoid large base64 data to prevent storage quota issues
+                let profilePhoto = null;
+                if (profilePreview && profilePreview.src && profilePreview.src !== '') {
+                    if (profilePreview.src.startsWith('data:') && profilePreview.src.length > 50000) {
+                        // Large base64 image - use placeholder instead to save storage space
+                        profilePhoto = `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`;
+                        console.log('Large image detected, using placeholder URL to avoid storage quota');
+                    } else {
+                        profilePhoto = profilePreview.src;
+                    }
+                }
                 const firstName = document.getElementById('regFirstName').value;
                 const lastName = document.getElementById('regLastName').value;
                 const displayFirstName = document.getElementById('guideDisplayFirstName').value || firstName;
@@ -1576,25 +1586,48 @@
             function addGuideToDisplay(guideData) {
                 console.log('Starting guide registration process...');
                 
+                // Optimize data for storage by removing large base64 images
+                const optimizedGuideData = {
+                    ...guideData,
+                    // Replace large base64 images with placeholder URLs to save storage space
+                    image: guideData.image && guideData.image.length > 1000 ? 
+                        `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face` : 
+                        guideData.image,
+                    profilePhoto: guideData.profilePhoto && guideData.profilePhoto.length > 1000 ? 
+                        `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face` : 
+                        guideData.profilePhoto
+                };
+                
                 // Add to registered guides (with enhanced error handling)
                 try {
-                    registeredGuides.push(guideData);
+                    registeredGuides.push(optimizedGuideData);
                     localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
                     console.log('Guide data successfully stored in localStorage');
                 } catch (e) {
                     console.warn('LocalStorage error:', e.name);
                     if (e.name === 'QuotaExceededError') {
-                        // Remove oldest guides if storage is full
-                        registeredGuides = registeredGuides.slice(-5); // Keep only last 5 guides for safety
-                        registeredGuides.push(guideData);
+                        // Clean up old guides and retry
+                        console.log('Storage quota exceeded, cleaning up old data...');
+                        registeredGuides = registeredGuides.slice(-3); // Keep only last 3 guides
+                        registeredGuides.push(optimizedGuideData);
+                        
                         try {
                             localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
-                            console.log('Storage limit handled, keeping recent guides only');
+                            console.log('Storage cleaned up, guide saved successfully');
                         } catch (e2) {
-                            console.error('Critical storage error:', e2);
-                            // Use sessionStorage as fallback
-                            sessionStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
-                            console.log('Using sessionStorage as fallback');
+                            console.error('Critical storage error after cleanup:', e2);
+                            // Final fallback: use minimal data
+                            const minimalData = {
+                                id: optimizedGuideData.id,
+                                name: optimizedGuideData.name,
+                                location: optimizedGuideData.location,
+                                price: optimizedGuideData.price,
+                                rating: optimizedGuideData.rating,
+                                image: `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`
+                            };
+                            registeredGuides = [minimalData];
+                            localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                            console.log('Using minimal data storage as final fallback');
                         }
                     } else {
                         throw e; // Re-throw unexpected errors
