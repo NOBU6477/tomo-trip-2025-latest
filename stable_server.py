@@ -20,7 +20,7 @@ class StableHandler(http.server.SimpleHTTPRequestHandler):
         
         if self.path == '/':
             try:
-                with open('index_light.html', 'r', encoding='utf-8') as f:
+                with open('index.html', 'r', encoding='utf-8') as f:
                     content = f.read()
                 
                 self.send_response(200)
