@@ -1334,20 +1334,25 @@
                     const formData = collectFormData();
                     console.log('Form data collected successfully');
                     
-                    if (selectedType === 'guide') {
-                        // Add new guide to the list and display
-                        addGuideToDisplay(formData);
-                        alert('ガイドとして登録を受付けました。ガイドカードが追加されました！');
-                    } else {
-                        alert('観光客として登録を受付けました。確認メールをご確認ください。');
-                    }
-                    
-                    // Close modal and reset form
+                    // Close modal first to prevent UI conflicts
                     const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
                     if (registrationModal) {
                         registrationModal.hide();
                     }
-                    resetRegistrationForm();
+                    
+                    // Use setTimeout to prevent blocking
+                    setTimeout(() => {
+                        if (selectedType === 'guide') {
+                            // Store guide data only (no immediate display update to prevent freezing)
+                            addGuideToDisplay(formData);
+                            if (confirm('ガイドとして登録を受付けました！\n\n新しいガイドカードを表示するためにページをリロードしますか？')) {
+                                window.location.reload();
+                            }
+                        } else {
+                            alert('観光客として登録を受付けました。確認メールをご確認ください。');
+                        }
+                        resetRegistrationForm();
+                    }, 300);
                 } catch (error) {
                     console.error('Registration error:', error);
                     alert('登録処理中にエラーが発生しました: ' + error.message);
@@ -1474,44 +1479,8 @@
                     }
                 }
                 
-                // Add to current guide data display
-                const newGuide = {
-                    id: guideData.id,
-                    name: guideData.displayName.last + ' ' + guideData.displayName.first,
-                    location: guideData.location,
-                    languages: guideData.languages,
-                    price: guideData.price,
-                    priceDisplay: guideData.priceDisplay || ('¥' + guideData.price.toLocaleString()),
-                    rating: parseFloat(guideData.rating),
-                    specialty: guideData.specialty || '総合ガイド',
-                    image: guideData.profilePhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face',
-                    description: guideData.description || 'プロフェッショナルなガイドサービスを提供します'
-                };
-                
-                // Add to global guide data
-                if (typeof guideData !== 'undefined' && Array.isArray(window.guideData)) {
-                    window.guideData.push(newGuide);
-                }
-                
-                // Refresh the guide display
-                if (typeof displayGuides === 'function') {
-                    const container = document.getElementById('guideCardsContainer');
-                    if (container) {
-                        // Add the new guide card to the existing display
-                        const newGuideCard = createGuideCard(newGuide);
-                        container.insertAdjacentHTML('beforeend', newGuideCard);
-                        
-                        // Update counters
-                        if (typeof updateCounter === 'function') {
-                            updateCounter();
-                        }
-                        
-                        // Add event listeners to the new card
-                        if (typeof addCardEventListeners === 'function') {
-                            addCardEventListeners();
-                        }
-                    }
-                }
+                console.log('Guide successfully stored. Total guides:', registeredGuides.length);
+                // Registration complete - data stored for next page reload
             }
             
             function resetRegistrationForm() {
