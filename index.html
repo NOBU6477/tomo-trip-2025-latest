@@ -907,10 +907,18 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="idDocumentFront" class="form-label fw-bold">表面</label>
                                         <input type="file" class="form-control" id="idDocumentFront" accept="image/*" required style="border-radius: 10px;">
+                                        <div id="idDocumentFrontPreview" class="mt-2" style="display: none;">
+                                            <img id="idDocumentFrontImg" src="" alt="身分証明書（表面）" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                                            <p class="small text-muted mt-1">身分証明書（表面）</p>
+                                        </div>
                                     </div>
                                     <div class="col-md-6 mb-3" id="idDocumentBackSection" style="display: none;">
                                         <label for="idDocumentBack" class="form-label fw-bold">裏面</label>
                                         <input type="file" class="form-control" id="idDocumentBack" accept="image/*" style="border-radius: 10px;">
+                                        <div id="idDocumentBackPreview" class="mt-2" style="display: none;">
+                                            <img id="idDocumentBackImg" src="" alt="身分証明書（裏面）" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                                            <p class="small text-muted mt-1">身分証明書（裏面）</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1232,6 +1240,41 @@
                 }
             });
             
+            // ID Document photo preview
+            document.getElementById('idDocumentFront').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const preview = document.getElementById('idDocumentFrontPreview');
+                const img = document.getElementById('idDocumentFrontImg');
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.style.display = 'none';
+                }
+            });
+            
+            document.getElementById('idDocumentBack').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const preview = document.getElementById('idDocumentBackPreview');
+                const img = document.getElementById('idDocumentBackImg');
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        img.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.style.display = 'none';
+                }
+            });
+            
             // Registration type selection
             touristCard.addEventListener('click', function() {
                 selectRegistrationType('tourist');
@@ -1278,28 +1321,37 @@
             });
             
             // Registration form submission
-            document.getElementById('registrationSubmitBtn').addEventListener('click', function() {
+            document.getElementById('registrationSubmitBtn').addEventListener('click', function(e) {
+                e.preventDefault();
                 console.log('Registration button clicked');
                 
-                if (!validateRegistrationForm()) {
-                    return;
+                try {
+                    if (!validateRegistrationForm()) {
+                        console.log('Form validation failed');
+                        return;
+                    }
+                    
+                    const formData = collectFormData();
+                    console.log('Form data collected successfully');
+                    
+                    if (selectedType === 'guide') {
+                        // Add new guide to the list and display
+                        addGuideToDisplay(formData);
+                        alert('ガイドとして登録を受付けました。ガイドカードが追加されました！');
+                    } else {
+                        alert('観光客として登録を受付けました。確認メールをご確認ください。');
+                    }
+                    
+                    // Close modal and reset form
+                    const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                    if (registrationModal) {
+                        registrationModal.hide();
+                    }
+                    resetRegistrationForm();
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    alert('登録処理中にエラーが発生しました: ' + error.message);
                 }
-                
-                const formData = collectFormData();
-                console.log('Form data collected:', formData);
-                
-                if (selectedType === 'guide') {
-                    // Add new guide to the list and display
-                    addGuideToDisplay(formData);
-                    alert('ガイドとして登録を受付けました。ガイドカードが追加されました！');
-                } else {
-                    alert('観光客として登録を受付けました。確認メールをご確認ください。');
-                }
-                
-                // Close modal and reset form
-                const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
-                registrationModal.hide();
-                resetRegistrationForm();
             });
             
             function validateRegistrationForm() {
@@ -1408,9 +1460,19 @@
             }
             
             function addGuideToDisplay(guideData) {
-                // Add to registered guides
-                registeredGuides.push(guideData);
-                localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                // Add to registered guides (with storage limit handling)
+                try {
+                    registeredGuides.push(guideData);
+                    localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        // Remove oldest guides if storage is full
+                        registeredGuides = registeredGuides.slice(-10); // Keep only last 10 guides
+                        registeredGuides.push(guideData);
+                        localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                        console.log('Storage limit reached, keeping only recent guides');
+                    }
+                }
                 
                 // Add to current guide data display
                 const newGuide = {
@@ -1477,6 +1539,10 @@
                 // Reset price fields
                 document.getElementById('guidePriceInput').disabled = false;
                 document.getElementById('guidePriceRange').disabled = false;
+                
+                // Reset ID document previews
+                document.getElementById('idDocumentFrontPreview').style.display = 'none';
+                document.getElementById('idDocumentBackPreview').style.display = 'none';
             }
             
             // Reset modal when closed
