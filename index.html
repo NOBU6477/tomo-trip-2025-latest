@@ -57,50 +57,97 @@
         justify-content: center;
       }
     }
-  </style>
-  <!-- login-modal-styles.css 削除 - 404エラー防止 -->
-  <!-- 強制スクロール有効化CSS - すべてのoverflow:hiddenを無効化 -->
-  <style id="force-scroll-css">
-    /* 全要素のoverflow:hiddenを強制的に無効化 */
-    * {
-      overflow: visible !important;
+    
+    /* Language Switcher - Center */
+    .language-switcher-center {
+      display: flex;
+      align-items: center;
+      gap: 0;
     }
     
-    html, body {
-      overflow: auto !important;
+    .lang-btn-jp, .lang-btn-en {
+      transition: all 0.3s ease;
+      font-size: 13px;
+      min-width: 100px;
+    }
+    
+    .lang-btn-jp:hover {
+      background: linear-gradient(135deg, #ff5252, #ff7979) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255,107,107,0.4) !important;
+    }
+    
+    .lang-btn-en:hover {
+      background: linear-gradient(135deg, #2196f3, #4fc3f7) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(66,135,245,0.4) !important;
+    }
+    
+    @media (max-width: 768px) {
+      .language-switcher-center {
+        margin: 0.5rem 0;
+      }
+      .lang-btn-jp, .lang-btn-en {
+        min-width: 80px;
+        font-size: 12px;
+        padding: 6px 15px !important;
+      }
+    }
+    
+    /* 画像プレビュー強制表示 */
+    .document-preview img:not(.d-none) {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      max-width: 300px;
+      max-height: 200px;
+      object-fit: cover;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    .profile-photo:not(.d-none) {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border: 3px solid #dee2e6;
+    }
+    
+    .document-preview-container {
+      min-height: 50px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+  </style>
+
+  <!-- 新しいスクロール実装CSS -->
+  <style id="new-scroll-css">
+    html {
+      overflow: visible !important;
       overflow-y: auto !important;
-      overflow-x: hidden !important;
       height: auto !important;
-      max-height: none !important;
-      position: static !important;
-      padding: 0 !important;
-      margin: 0 auto !important;
       min-height: 100vh !important;
     }
     
-    /* Bootstrapのモーダル関連クラスもスクロール有効化 */
-    .modal-open {
-      overflow: auto !important;
+    body {
+      overflow-y: auto !important;
+      height: auto !important;
+      min-height: 100vh !important;
+      position: static !important;
+      padding-bottom: 50px;
+    }
+    
+    body.modal-open {
+      overflow: visible !important;
+      overflow-y: auto !important;
       padding-right: 0 !important;
-    }
-    
-    /* カード要素やセクション要素のoverflow:hiddenを個別に修正 */
-    .guide-card,
-    .card,
-    .container,
-    .container-fluid,
-    section {
-      overflow: visible !important;
-    }
-    
-    /* ヒーローセクションのみ例外的にhiddenを維持（デザインのため） */
-    .hero-section {
-      overflow: hidden !important;
-    }
-    
-    /* その他全てのdiv要素は強制的にvisible */
-    div:not(.hero-section) {
-      overflow: visible !important;
+      position: static !important;
     }
     
     .modal-backdrop {
@@ -266,7 +313,7 @@
       transition: transform 0.3s;
       margin-bottom: 1.5rem;
       border-radius: 10px;
-      overflow: hidden;
+      overflow: visible;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
     .guide-card:hover {
@@ -343,7 +390,7 @@
       max-width: 400px;
       box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
       position: relative;
-      overflow: hidden;
+      overflow: visible;
       animation: counterPulse 2s ease-in-out infinite alternate;
     }
     
@@ -417,7 +464,7 @@
       border-radius: 15px !important;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
       background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      overflow: hidden;
+      overflow: visible;
       position: relative;
     }
     
@@ -596,7 +643,7 @@
       position: relative;
       width: 150px;
       height: 150px;
-      overflow: hidden;
+      overflow: visible;
       cursor: pointer;
     }
     
@@ -646,7 +693,7 @@
     .sponsor-banner {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       padding: 15px 0;
-      overflow: hidden;
+      overflow: visible;
       position: relative;
       white-space: nowrap;
       border-bottom: 3px solid #4f46e5;
@@ -706,6 +753,15 @@
         transform: translateX(-100%);
       }
     }
+    
+    /* スポンサーバナーの強制表示 */
+    .sponsor-banner {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      height: auto !important;
+      min-height: 60px !important;
+    }
 
     /* モバイル対応 */
     @media (max-width: 768px) {
@@ -745,9 +801,9 @@
   <!-- ナビゲーションバー -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-      <a class="navbar-brand" href="#">
-        <img src="https://img.icons8.com/color/48/000000/palm-tree.png" alt="TomoTrip" style="height: 30px; width: 30px;" class="me-2">
-        TomoTrip
+      <!-- ナビゲーションバー ロゴ -->
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="TomoTripロゴ.png" alt="TomoTrip ロゴ" style="height: 60px; width: auto; border-radius: 15px;" />
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -765,15 +821,33 @@
           </li>
         </ul>
         
-        <!-- 言語切り替えボタン -->
-        <div class="dropdown me-3">
-          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            日本語
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item" href="index.html">日本語</a></li>
-            <li><a class="dropdown-item" href="index-en.html">English</a></li>
-          </ul>
+        <!-- 言語切り替えボタン - 中央配置 -->
+        <div class="d-flex justify-content-center flex-grow-1">
+          <div class="language-switcher-center">
+            <button class="btn lang-btn-jp active" style="
+              background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+              color: white;
+              border: none;
+              border-radius: 25px 0 0 25px;
+              padding: 8px 20px;
+              font-weight: bold;
+              box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+            ">
+              🇯🇵 日本語
+            </button>
+            <button class="btn lang-btn-en" onclick="window.location.href='index-en.html'" style="
+              background: linear-gradient(135deg, #4287f5, #64a8ff);
+              color: white;
+              border: none;
+              border-radius: 0 25px 25px 0;
+              padding: 8px 20px;
+              font-weight: bold;
+              box-shadow: 0 2px 10px rgba(66,135,245,0.3);
+              margin-left: -1px;
+            ">
+              🇺🇸 English
+            </button>
+          </div>
         </div>
         
         <!-- ログイン・新規登録ボタン -->
@@ -790,11 +864,10 @@
     background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
                 url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop') center/cover;
     position: relative; 
-    overflow: hidden;
     min-height: 60vh;
   ">
     <!-- 装飾要素 -->
-    <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; overflow: hidden; opacity: 0.3;">
+    <div style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0.3;">
       <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="position: absolute; width: 300px; height: 300px; top: -50px; left: -50px;">
         <path fill="#FFFFFF" d="M44.7,-76.4C58.8,-69.2,71.8,-59.1,79.6,-45.5C87.4,-31.9,90.2,-15.9,88.1,-1.2C86,13.5,79.1,27,70.8,39.4C62.5,51.8,52.7,63.1,40.4,70.4C28.1,77.8,14.1,81.1,-0.3,81.6C-14.7,82.1,-29.3,79.9,-41,72.5C-52.6,65.2,-61.3,52.8,-68.9,39.7C-76.6,26.6,-83.3,13.3,-84.7,-0.8C-86,-14.9,-82,-29.9,-73.6,-41.5C-65.2,-53.1,-52.5,-61.4,-39.3,-68.7C-26.1,-76,-13.1,-82.3,1.1,-84.1C15.2,-85.8,30.5,-83.7,44.7,-76.4Z" transform="translate(100 100)" />
       </svg>
@@ -802,10 +875,27 @@
         <path fill="#FFFFFF" d="M34.6,-59.1C43.5,-53.8,48.7,-41.8,55.8,-30.2C62.8,-18.6,71.7,-7.3,73,5.1C74.4,17.6,68.3,31.2,58.5,40.1C48.7,48.9,35.3,52.9,22.7,56.7C10.2,60.5,-1.5,63.9,-14.6,63.8C-27.8,63.7,-42.4,60,-50.9,50.7C-59.4,41.3,-61.7,26.3,-65.6,11.3C-69.4,-3.7,-74.7,-18.6,-71.1,-31C-67.5,-43.3,-55,-53,-41.7,-57.8C-28.4,-62.5,-14.2,-62.3,-0.6,-61.3C13,-60.3,25.9,-58.3,34.6,-59.1Z" transform="translate(100 100)" />
       </svg>
     </div>
+
     <!-- TomoTrip Logo -->
     <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
-      <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 12px 24px; border-radius: 50px; font-weight: bold; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        🌴 TomoTrip
+      <div style="
+        width: 140px;
+        height: 140px;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(10px);
+        border: 4px solid rgba(255, 255, 255, 0.3);
+      ">
+        <img src="TomoTripロゴ.png" alt="TomoTrip" style="
+          width: 130px;
+          height: 130px;
+          object-fit: cover;
+          border-radius: 10px;
+        ">
       </div>
     </div>
     
@@ -834,8 +924,8 @@
   </section>
 
   <!-- 協賛店広告バナー -->
-  <div class="sponsor-banner">
-    <div class="sponsor-scroll">
+  <div class="sponsor-banner" id="main-sponsor-banner">
+    <div class="sponsor-scroll" id="main-sponsor-scroll">
       <div class="sponsor-item">
         <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="海の家レストラン" class="sponsor-logo" onerror="this.style.display='none'">
         <span class="sponsor-text">海の家レストラン</span>
@@ -936,13 +1026,10 @@
         <div style="width: 140px;"></div> <!-- スペーサー -->
       </div>
       <div class="mb-4">
-        <div id="search-results-counter"></div>
-        <div id="no-results-message" class="alert alert-info text-center my-4 d-none">検索条件に一致するガイドが見つかりませんでした。条件を変更してお試しください。</div>
-        
-        <!-- フィルター切り替えボタン -->
         <div class="text-center mb-3">
+          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">6人のガイドが見つかりました</div>
           <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
-            <i class="bi bi-funnel"></i> ガイドを絞り込み
+            <i class="bi bi-funnel"></i> フィルターを開く
           </button>
         </div>
         
@@ -1037,13 +1124,12 @@
                       </select>
                     </div>
                     <div class="col-md-4">
-                      <label for="fee-filter" class="form-label">料金</label>
-                      <select class="form-select" id="fee-filter">
+                      <label for="price-filter" class="form-label">料金</label>
+                      <select class="form-select" id="price-filter">
                         <option value="">すべて</option>
-                        <option value="6000">¥6,000~/回</option>
-                        <option value="10000">¥10,000以下/回</option>
-                        <option value="15000">¥15,000以下/回</option>
-                        <option value="20000">¥20,000以下/回</option>
+                        <option value="6000円以下">¥6,000以下/時間</option>
+                        <option value="6000-10000円">¥6,000-10,000/時間</option>
+                        <option value="10000円以上">¥10,000以上/時間</option>
                       </select>
                     </div>
                     <div class="col-12">
@@ -1070,14 +1156,14 @@
                           <label class="form-check-label" for="keyword-activity">アクティビティ</label>
                         </div>
                       </div>
-                      <input type="text" class="form-control mt-2" id="keyword-filter-custom" placeholder="その他のキーワードを入力（コンマ区切りで複数入力可）">
+                      <input type="text" class="form-control mt-2" id="custom-keywords" placeholder="その他のキーワードを入力（コンマ区切りで複数入力可）">
                       <small class="text-muted mt-1 d-block">
                         <i class="bi bi-info-circle"></i> 上記のチェックボックスまたはこの入力欄でキーワードを指定できます。複数のキーワードを入力する場合は、カンマ（,）で区切ってください。例: 「温泉,登山,ハイキング」
                       </small>
                     </div>
                     <div class="col-12 d-flex justify-content-end">
-                      <button type="reset" class="btn btn-secondary me-2" id="reset-filters">リセット</button>
-                      <button type="button" class="btn btn-primary" id="apply-filters">
+                      <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">リセット</button>
+                      <button type="button" class="btn btn-primary" onclick="searchGuides()">
                         <i class="bi bi-search"></i> 検索
                       </button>
                     </div>
@@ -1094,7 +1180,7 @@
         <!-- ガイド1 -->
         <div class="col-md-4 guide-item">
           <div class="card guide-card shadow-sm" data-guide-id="1" data-location="東京都 渋谷区" data-languages="日本語,英語" data-fee="6000" data-keywords="グルメ,写真スポット">
-            <img src="attached_assets/IMG20221024140826_1750355257888.jpg" class="card-img-top guide-image" alt="ガイド写真">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">桃太郎</h5>
@@ -1128,7 +1214,7 @@
         <!-- ガイド2 -->
         <div class="col-md-4 guide-item">
           <div class="card guide-card shadow-sm" data-guide-id="2" data-location="京都府 京都市" data-languages="日本語,英語,中国語" data-fee="8000" data-keywords="歴史,文化,寺院,写真スポット">
-            <img src="attached_assets/IMG20221024140826_1750355257888.jpg" class="card-img-top guide-image" alt="ガイド写真">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">花子</h5>
@@ -1162,7 +1248,7 @@
         <!-- ガイド3 -->
         <div class="col-md-4 guide-item">
           <div class="card guide-card shadow-sm" data-guide-id="3" data-location="大阪府 大阪市" data-languages="日本語,英語" data-fee="7000" data-keywords="グルメ,ナイトツアー,ローカル">
-            <img src="attached_assets/IMG20221024140826_1750355257888.jpg" class="card-img-top guide-image" alt="ガイド写真">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">一郎</h5>
@@ -1193,23 +1279,22 @@
           </div>
         </div>
         
-        <!-- 追加のガイド（初期状態では非表示） -->
         <!-- ガイド4 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="4">
-            <img src="https://placehold.co/400x300?text=北海道ガイド" class="card-img-top guide-image" alt="ガイド写真">
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" data-guide-id="4" data-location="北海道 札幌市" data-languages="日本語,英語,ロシア語" data-fee="8000" data-keywords="自然体験,アクティビティ,絶景">
+            <img src="https://images.unsplash.com/photo-1519638831568-d9897f54ed69?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">雪</h5>
                 <span class="badge bg-primary">¥8,000/セッション</span>
               </div>
-              <p class="card-text text-muted mb-2">
+              <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>北海道 札幌市
               </p>
               <p class="card-text mb-3">北海道・札幌のローカルガイド。四季折々の自然と新鮮な海の幸、絶景スポットをご案内します。</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
                   <span class="badge bg-light text-dark me-1">英語</span>
                   <span class="badge bg-light text-dark">ロシア語</span>
                 </div>
@@ -1230,21 +1315,21 @@
         </div>
         
         <!-- ガイド5 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="5">
-            <img src="https://placehold.co/400x300?text=沖縄ガイド" class="card-img-top guide-image" alt="ガイド写真">
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" data-guide-id="5" data-location="沖縄県 那覇市" data-languages="日本語,英語" data-fee="12000" data-keywords="マリンスポーツ,自然体験,ダイビング">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">海</h5>
                 <span class="badge bg-primary">¥12,000/セッション</span>
               </div>
-              <p class="card-text text-muted mb-2">
+              <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>沖縄県 那覇市
               </p>
               <p class="card-text mb-3">沖縄在住15年のダイビングインストラクター。美しい海と独自の文化が残る島々を案内します。</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
                   <span class="badge bg-light text-dark">英語</span>
                 </div>
                 <div class="text-warning">
@@ -1264,21 +1349,21 @@
         </div>
         
         <!-- ガイド6 -->
-        <div class="col-md-4 guide-item hidden-guide">
-          <div class="card guide-card shadow-sm" data-guide-id="6">
-            <img src="https://placehold.co/400x300?text=広島ガイド" class="card-img-top guide-image" alt="ガイド写真">
+        <div class="col-md-4 guide-item">
+          <div class="card guide-card shadow-sm" data-guide-id="6" data-location="広島県 広島市" data-languages="日本語,英語,フランス語" data-fee="6500" data-keywords="歴史ツアー,文化体験,平和記念公園">
+            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
             <div class="card-body">
               <div class="d-flex justify-content-between align-items-start mb-2">
                 <h5 class="card-title mb-0">平和</h5>
                 <span class="badge bg-primary">¥6,500/セッション</span>
               </div>
-              <p class="card-text text-muted mb-2">
+              <p class="card-text text-muted mb-2 guide-location">
                 <i class="bi bi-geo-alt-fill me-1"></i>広島県 広島市
               </p>
               <p class="card-text mb-3">広島の歴史と文化に精通したガイド。平和記念公園から宮島まで、心に残る旅をご提供します。</p>
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <span class="badge bg-light text-dark me-1">日本語</span>
+                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
                   <span class="badge bg-light text-dark me-1">英語</span>
                   <span class="badge bg-light text-dark">フランス語</span>
                 </div>
@@ -1567,7 +1652,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="tourist-id-front-preview-container">
                   <div class="document-preview">
-                    <img id="tourist-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー">
+                    <img id="tourist-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="tourist-id-front-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -1586,7 +1671,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="tourist-id-back-preview-container">
                   <div class="document-preview">
-                    <img id="tourist-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー">
+                    <img id="tourist-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="tourist-id-back-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -1756,7 +1841,7 @@
               <div class="mb-4 text-center">
                 <label for="guide-profile-photo" class="form-label d-block">プロフィール写真 <span class="text-danger">*</span></label>
                 <div class="profile-photo-container mx-auto mb-3">
-                  <img id="guide-profile-preview" src="https://placehold.co/150?text=写真" class="img-thumbnail rounded-circle profile-photo" alt="プロフィール写真">
+                  <img id="guide-profile-preview" src="https://placehold.co/150?text=写真" class="img-thumbnail rounded-circle profile-photo" alt="プロフィール写真" style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #dee2e6;">
                   <div class="profile-photo-overlay">
                     <i class="bi bi-camera-fill"></i>
                   </div>
@@ -1857,7 +1942,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="guide-id-front-preview-container">
                   <div class="document-preview">
-                    <img id="guide-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー">
+                    <img id="guide-id-front-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書表面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="guide-id-front-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -1876,7 +1961,7 @@
                 <div class="form-text">JPG、PNG形式のみ、5MB以下</div>
                 <div class="mt-2 document-preview-container" id="guide-id-back-preview-container">
                   <div class="document-preview">
-                    <img id="guide-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー">
+                    <img id="guide-id-back-preview" class="img-fluid img-thumbnail d-none" alt="身分証明書裏面のプレビュー" style="max-width: 300px; max-height: 200px; object-fit: cover; border: 2px solid #dee2e6; border-radius: 8px;">
                     <button type="button" class="btn btn-danger btn-sm mt-2 d-none" id="guide-id-back-delete">
                       <i class="bi bi-trash"></i> 削除
                     </button>
@@ -2019,13 +2104,9 @@
       // ローカルストレージの言語設定をクリア
       localStorage.removeItem('selectedLanguage');
       localStorage.removeItem('localGuideLanguage');
-      sessionStorage.removeItem('forcedEnglish');
+
       
-      // 言語ドロップダウンボタンを日本語に設定
-      const langBtn = document.getElementById('languageDropdown');
-      if (langBtn) {
-        langBtn.textContent = '日本語';
-      }
+      // 言語ボタンシステムに置換済み - ドロップダウン削除
       
       console.log('初期状態を日本語に強制設定しました');
     }
@@ -2822,115 +2903,10 @@
       showStatus('日本語に切り替えました');
     }
     
-    function switchToEnglish_DISABLED() {
-      console.log('旧 switchToEnglish 関数は無効化されました');
-      
-      // メインコンテンツ
-      const mainTitle = document.querySelector('h1');
-      if (mainTitle) mainTitle.textContent = 'Your Special Journey Awaits';
-      
-      const subtitle = document.querySelector('.hero-section p');
-      if (subtitle) subtitle.textContent = 'Discover hidden gems with local guides that tourism can\'t reveal';
-      
-      // ヒーローセクションのボタン
-      const heroGuideBtn = document.querySelector('.btn-light.btn-lg');
-      if (heroGuideBtn) heroGuideBtn.textContent = 'Find Guides';
-      
-      const heroContactBtn = document.querySelector('.btn-outline-light.btn-lg');
-      if (heroContactBtn) heroContactBtn.textContent = 'Contact Us';
-      
-      // 右下のボタン
-      const sponsorRegBtn = document.querySelector('#sponsorRegisterBtn span');
-      if (sponsorRegBtn) sponsorRegBtn.textContent = 'Sponsor Registration 🚀';
-      
-      const sponsorLoginBtn = document.querySelector('#sponsorLoginBtn span');
-      if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'Login ✨';
-      
-      // 使い方セクション
-      const howItWorksH4s = document.querySelectorAll('#how-it-works h4');
-      if (howItWorksH4s.length >= 3) {
-        howItWorksH4s[0].textContent = 'Register';
-        howItWorksH4s[1].textContent = 'Find Guides';
-        howItWorksH4s[2].textContent = 'Experience Special Journey';
-      }
-      
-      // 人気のガイドセクション
-      const popularGuidesTitle = document.querySelector('#guides h2');
-      if (popularGuidesTitle) popularGuidesTitle.textContent = 'Popular Guides';
-      
-      // ガイド一覧の要素（正しいセレクター）
-      const filterButton = document.querySelector('#toggle-filter-button');
-      if (filterButton) filterButton.innerHTML = '<i class="bi bi-funnel"></i> Filter Guides';
-      
-      const moreButton = document.querySelector('#load-more-guides');
-      if (moreButton) moreButton.textContent = 'Show More';
-      
-      // 検索結果カウンターの翻訳（動的対応）
-      const searchCounter = document.querySelector('#search-results-counter');
-      if (searchCounter) {
-        // 既存のテキストをチェックして英語に設定
-        if (searchCounter.textContent.includes('件') || searchCounter.textContent.includes('表示中')) {
-          searchCounter.textContent = 'Showing 3 guides (76 total)';
-        } else if (searchCounter.textContent === '' || !searchCounter.textContent.includes('Showing')) {
-          searchCounter.textContent = 'Showing 3 guides (76 total)';
-        }
-      }
-      
-      // カウンターの動的監視（日本語から英語への切り替え時）
-      setTimeout(() => {
-        const searchCounterDelayed = document.querySelector('#search-results-counter');
-        if (searchCounterDelayed && searchCounterDelayed.textContent.includes('件')) {
-          searchCounterDelayed.textContent = 'Showing 3 guides (76 total)';
-        }
-      }, 500);
-      
-      // 「フィルターの使い方」ボタン
-      const filterTutorialBtn = document.querySelector('#filter-tutorial-btn');
-      if (filterTutorialBtn) filterTutorialBtn.innerHTML = '<i class="bi bi-question-circle me-1"></i>How to Filter';
-      
-      // 日本語モードでは詳細ボタンを日本語のまま保持
-      console.log('日本語モード - 詳細ボタンの英語翻訳をスキップ');
-        
-        // 動的生成されたガイドカードの翻訳も再実行
-        const dynamicGuideCards = document.querySelectorAll('.guide-card');
-        dynamicGuideCards.forEach((card, index) => {
-          const description = card.querySelector('.card-text.mb-3');
-          if (description && (description.textContent.includes('案内します') || description.textContent.includes('専門'))) {
-            const englishDescriptions = [
-              'I guide you to hidden gems in Tokyo. Specializing in gourmet food and photo spots.',
-              'Introducing the charm of Kyoto where history and tradition live. Specializing in temple visits and traditional cultural experiences.',
-              'Specializing in Osaka\'s unique food tours and city walks. I\'ll guide you to local restaurants only locals know about.'
-            ];
-            if (englishDescriptions[index]) {
-              description.textContent = englishDescriptions[index];
-            }
-          }
-        });
-        
-        // メリットセクションの説明文も再翻訳（日本語が残っている場合）
-        const delayedBenefitDescriptions = document.querySelectorAll('#guide-benefits .text-muted, #guide-benefits .guide-benefit-card p');
-        delayedBenefitDescriptions.forEach((desc, index) => {
-          if (desc.textContent.includes('地元の方だけが') || desc.textContent.includes('予約を受け入れる')) {
-            const englishTexts = [
-              'By sharing special places that only locals know about, your everyday surroundings become valuable tourism resources.',
-              'Rather than a formal guided tour, you can naturally convey the charm of your local area as if spending time with friends.',
-              'You can set your schedule according to your convenience, allowing you to earn income while balancing with your main job or studies.',
-              'By providing unique guided experiences that utilize your hobbies, skills, and specialized knowledge, you can turn your passion into income.',
-              'By promoting the attractions of your local area, you will develop a deeper appreciation and attachment to your hometown.',
-              'We provide the essential support for guide activities such as reservation management, payment, and insurance, so you can work with peace of mind.',
-              'When and how often you accept bookings is completely up to you, allowing for a lifestyle that suits your needs.',
-              'By introducing tourists to local shops and facilities, you contribute to the revitalization of the local economy and community development.'
-            ];
-            if (englishTexts[index]) {
-              desc.textContent = englishTexts[index];
-            }
-          }
-        });
-      }, 1000);
-      
-      // 使い方セクションのタイトルと説明文
-      const howItWorksTitle = document.querySelector('#how-it-works h2');
-      if (howItWorksTitle) howItWorksTitle.textContent = 'How to Use';
+
+
+
+
       
       const howItWorksPs = document.querySelectorAll('#how-it-works p');
       if (howItWorksPs.length >= 3) {
@@ -3315,7 +3291,7 @@
       if (window.nuclearScrollFix) {
         setTimeout(() => {
           window.nuclearScrollFix();
-          console.log('英語切り替え後のスクロール修復実行');
+
         }, 100);
       }
       
@@ -3530,7 +3506,7 @@
         const originalMethods = {
           localRemove: localStorage.removeItem,
           localClear: localStorage.clear,
-          sessionRemove: sessionStorage.removeItem,
+
           sessionClear: sessionStorage.clear
         };
         
@@ -4996,8 +4972,7 @@
     });
   </script>
   
-  <!-- 包括的フィルターシステム -->
-  <script src="comprehensive-filter.js"></script>
+  <!-- 包括的フィルターシステム削除済み -->
   
   <!-- フィルターチュートリアルシステム -->
   <script src="filter-tutorial.js"></script>
@@ -5014,34 +4989,26 @@
   <!-- シンプル動作修正スクリプト - 一時無効化 -->
   <!-- <script src="simple-working-fix.js"></script> -->
   
-  <!-- 直接翻訳システム - 最もシンプルで確実 -->
-  <script src="direct-translation.js"></script>
+  <!-- 直接翻訳システム削除済み -->
   
-  <!-- 70人ガイド表示システム -->
-  <script src="load-70-guides.js"></script>
+  <!-- 70人ガイド表示システム - 削除済み -->
   
   <!-- 他のスクリプトは一時無効化（競合防止） -->
   <!-- <script src="bootstrap-disable-fix.js"></script> -->
   <!-- <script src="nuclear-scroll-fix.js"></script> -->
   <!-- <script src="direct-scroll-force.js"></script> -->
   
-  <!-- コンソールデバッグヘルパー -->
-  <script src="console-debug-helper.js"></script>
+  <!-- コンソールデバッグヘルパー削除済み -->
   
-  <!-- スクロール問題修正システム -->
-  <script src="scroll-debug-fix.js"></script>
+  <!-- スクロール問題修正システム - 削除済み -->
   
-  <!-- 深層スクロール調査システム -->
-  <script src="deep-scroll-investigation.js"></script>
+  <!-- 深層スクロール調査システム - 削除済み -->
   
-  <!-- Bootstrap Modal スクロール修正 -->
-  <script src="bootstrap-modal-scroll-fix.js"></script>
+  <!-- Bootstrap Modal スクロール修正削除済み -->
   
-  <!-- 究極スクロール復元システム -->
-  <script src="ultimate-scroll-restoration.js"></script>
+  <!-- 究極スクロール復元システム - 削除済み -->
   
-  <!-- 完全独立言語システム -->
-  <script src="complete-language-fix.js"></script>
+  <!-- 完全独立言語システム削除済み -->
   
   <!-- 専用ボタン翻訳機能 - 一時無効化 -->
   <!-- <script src="button-translator.js"></script> -->
@@ -5068,21 +5035,20 @@
   <!-- <script src="add-guide-data.js"></script> -->
   <script src="guide-login.js"></script>
   
-  <!-- ガイドログインデバッグツール -->
-  <script src="guide-login-debug.js"></script>
+  <!-- ガイドログインデバッグツール削除済み -->
   
   <!-- 観光客ログイン機能 -->
 
   
   <!-- セッションデバッグ機能 -->
-  <script src="session-debugger.js"></script>
+  <!-- セッションデバッガー削除済み -->
   
   <!-- アクセス制御機能 -->
 
   
   <!-- デバイス別の最適化スクリプト - 各環境でのみ実行 -->
-  <!-- smartphones.js 削除 - 404エラー防止 -->
-  <script src="desktop-fixes.js"></script>
+
+  <!-- desktop-fixes.js 削除済み -->
   
   <!-- 共有言語ユーティリティ - 言語設定の保存と復元 -->
   <script src="shared-language-utils.js"></script>
@@ -5103,18 +5069,14 @@
   <script src="guide-card-extractor.js"></script>
   
   <!-- ガイド詳細データ管理 -->
-  <!-- guide-details-data.js 削除 - 404エラー防止 -->
+
   <script src="data-reset.js"></script>
   <script src="password-toggle.js"></script>
   
   <!-- モーダルの読み込み -->
   <div id="modals-container"></div>
   <!-- 問題のある追加スクリプトも無効化 -->
-  <!--
-  <script src="auto-fill-system.js"></script>
-  <script src="load-70-guides.js"></script>
-  <script src="filter-toggle.js"></script>
-  -->
+  <!-- 削除済みスクリプト: auto-fill-system.js, load-70-guides.js, filter-toggle.js -->
   
   <script>
     // モーダルHTMLを読み込む
@@ -5449,9 +5411,7 @@
             console.log('ログインボタン非表示');
           }
           
-          // 新規登録ドロップダウンを正確に特定
-          const registerDropdown = document.getElementById('registerDropdown');
-          console.log('登録ドロップダウン要素:', registerDropdown);
+          // ドロップダウンシステム完全削除 - 直接ボタンシステムのみ維持
           
           if (registerDropdown) {
             console.log('現在のボタンテキスト:', registerDropdown.textContent);
@@ -5462,7 +5422,7 @@
               ${userData.name}さん
               <i class="bi bi-chevron-down ms-1"></i>
             `;
-            registerDropdown.className = 'btn btn-outline-light dropdown-toggle';
+            // ドロップダウン無効化 - 直接ボタンシステムを維持
             
             console.log('ボタンテキストを更新:', userData.name);
             
@@ -5550,17 +5510,7 @@
     // 言語選択ドロップダウンの設定
     function setupLanguageDropdown() {
       const languageItems = document.querySelectorAll('[data-lang]');
-      const languageButton = document.getElementById('languageDropdown');
-      
-      languageItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-          e.preventDefault();
-          const lang = this.getAttribute('data-lang');
-          const langText = lang === 'ja' ? '日本語' : 'English';
-          
-          if (languageButton) {
-            languageButton.textContent = langText;
-          }
+      // 言語ドロップダウンは削除済み - 直接ボタンシステムに移行
           
           // 言語変更処理
           if (typeof changeLanguage === 'function') {
@@ -5575,12 +5525,7 @@
     
     // 言語変更処理（直接実行版）
     function changeLanguageDirectly(lang) {
-      const languageButton = document.getElementById('languageDropdown');
-      const langText = lang === 'ja' ? '日本語' : 'English';
-      
-      if (languageButton) {
-        languageButton.textContent = langText;
-      }
+      // 言語ドロップダウンは削除済み - 直接ボタンシステムに移行
       
       console.log('言語を変更:', langText);
       showNotification(`言語を${langText}に変更しました`, 'success');
@@ -5655,10 +5600,7 @@
           }
           
           // 新規登録ボタンを非表示
-          const registerDropdown = document.querySelector('.dropdown-toggle');
-          if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
-            registerDropdown.style.display = 'none';
-          }
+          // ドロップダウン要素は削除済み - 直接ボタンシステムを維持
           
           // 既存のユーザーステータスを削除
           const existingStatus = document.getElementById('user-status');
@@ -5707,10 +5649,7 @@
       }
       
       // 新規登録ボタンを表示
-      const registerDropdown = document.querySelector('.dropdown-toggle');
-      if (registerDropdown && registerDropdown.textContent.includes('新規登録')) {
-        registerDropdown.style.display = '';
-      }
+      // ドロップダウン要素は削除済み - 直接ボタンシステムを維持
       
       // ユーザーステータスを削除
       const userStatus = document.getElementById('user-status');
@@ -5903,7 +5842,7 @@
       const guides = {
         '1': {
           name: '清水 宏美',
-          image: 'attached_assets/IMG20221024140826_1750355257888.jpg',
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face',
           fee: '¥6,000',
           rating: 4.5,
           location: '石川県 金沢市',
@@ -5913,7 +5852,7 @@
         },
         '2': {
           name: '藤井 直美',
-          image: 'attached_assets/IMG20221024140826_1750355257888.jpg',
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face',
           fee: '¥10,000',
           rating: 4.0,
           location: '千葉県 千葉市',
@@ -5923,7 +5862,7 @@
         },
         '3': {
           name: '小川 博文',
-          image: 'attached_assets/IMG20221024140826_1750355257888.jpg',
+          image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face',
           fee: '¥20,000',
           rating: 3.5,
           location: '奈良県 奈良市',
@@ -6286,13 +6225,11 @@
   
   <!-- Filter Toggle Functionality -->
   <script src="filter-toggle.js"></script>
-  <script src="guide-filter-fix.js"></script>
+  <!-- 削除済み: guide-filter-fix.js -->
   
-  <!-- Japanese Counter Fix - Prevent English Display -->
-  <script src="japanese-counter-fix.js"></script>
+  <!-- 削除済み: japanese-counter-fix.js -->
   
-  <!-- Enhanced Filter Fix for Japanese Site -->
-  <script src="enhanced-filter-fix-ja.js"></script>
+  <!-- 削除済み: enhanced-filter-fix-ja.js -->
   
   <!-- Back to Top Button -->
   <button id="backToTopBtn" class="btn btn-primary back-to-top-btn" title="トップに戻る">
@@ -6375,8 +6312,9 @@
       
       // Update counter
       const counter = document.getElementById('search-results-counter');
+      const visibleCards = document.querySelectorAll('.guide-item:not(.d-none)');
       if (counter) {
-        counter.textContent = '70人のガイドが見つかりました';
+        counter.textContent = `${visibleCards.length}人のガイドが見つかりました`;
       }
     }
     
@@ -6386,8 +6324,44 @@
     }
   </script>
 
-  <!-- Fix Benefit Cards Display -->
-  <script src="benefit-card-fix.js"></script>
+  <!-- 統合サイト修正システム - 無効化 -->
+  <!-- <script src="unified-site-fix.js"></script> -->
+  
+  <!-- 日本語ボタン専用修正 - 無効化 -->
+  <!-- <script src="japanese-button-fix.js"></script> -->
+  
+  <!-- リアルタイムガイド登録システム -->
+  <script src="realtime-guide-registration.js"></script>
+  
+  <!-- 静的サイト切り替えシステム -->
+  <script src="static-site-system.js"></script>
+  
+  <!-- 最優先: DOM ハイジャック防止システム -->
+  <script src="dom-hijack-prevention.js"></script>
+  
+  <!-- 最終ヘッダー修正システム -->
+  <script src="final-header-fix.js"></script>
+  
+  <!-- クリーンモバイルシステム（軽量化） -->
+  <script src="clean-mobile-system.js"></script>
+  
+  <!-- 基本機能のみ -->
+  <script src="unified-filter-fix.js"></script>
+  
+  <!-- ガイド登録テストシステム -->
+  <script src="guide-registration-test.js"></script>
+  
+  <!-- 電話番号認証システム -->
+  <script src="phone-verification-system.js"></script>
+  
+  <!-- ガイド登録処理システム -->
+  <script src="guide-registration-handler.js"></script>
+  
+  <!-- シンプル画像システム（全て統合） -->
+  <script src="simple-image-system.js"></script>
+  
+  <!-- 修正済み検索システム -->
+  <script src="enhanced-search-fix.js"></script>
   
   <!-- 新規登録ボタン機能 -->
   <script>
@@ -6436,7 +6410,10 @@
   <script src="client-app.js"></script>
   -->
   
-  <!-- 緊急修復システム - CSPエラーとスクロール問題を根本解決 -->
-  <script src="emergency-fix.js"></script>
+  <!-- 根本的スクロール解決 - 核兵器級システムが処理 -->
+  
+  <!-- タイマー干渉ファイル削除済み -->
+  
+  <!-- スクロール問題は simple-scroll-fix.js で解決済み -->
 </body>
 </html>
