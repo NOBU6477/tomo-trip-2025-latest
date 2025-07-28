@@ -124,6 +124,42 @@
       border-radius: 8px;
       margin-top: 10px;
     }
+
+    /* 🏆管理センターボタン */
+    .management-center-button {
+      position: fixed;
+      top: 50%;
+      right: 15px;
+      transform: translateY(-50%);
+      z-index: 1000;
+    }
+
+    .management-btn {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(135deg, #ffd700, #ffed4a);
+      border: 3px solid #fff;
+      border-radius: 15px;
+      color: #333;
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    .management-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 35px rgba(255, 215, 0, 0.6);
+      background: linear-gradient(135deg, #ffed4a, #ffd700);
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
   </style>
 
   <!-- 新しいスクロール実装CSS -->
@@ -919,26 +955,10 @@
             </button>
           </div>
         </div>
-        
+
         <!-- 🏆管理センター固定ボタン -->
-        <div class="management-center-button" style="position: fixed; top: 50%; right: 15px; z-index: 1030; transform: translateY(-50%);">
-          <button onclick="showManagementModal()" style="
-            width: 100px; 
-            height: 100px; 
-            border-radius: 50%; 
-            background: linear-gradient(135deg, #4287f5, #667eea); 
-            border: 3px solid white; 
-            color: white; 
-            font-size: 14px; 
-            font-weight: bold; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
-            cursor: pointer; 
-            animation: pulse 2s infinite;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-          ">
+        <div class="management-center-button">
+          <button class="btn management-btn" onclick="showManagementModal()" title="管理センター">
             🏆<br>管理センター
           </button>
         </div>
@@ -1050,7 +1070,7 @@
       </div>
       <div class="mb-4">
         <div class="text-center mb-3">
-          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">12人のガイドが見つかりました</div>
+          <div id="guides-count" class="text-primary fw-bold fs-5 mb-3">6人のガイドが見つかりました</div>
           <button type="button" class="btn btn-outline-primary" id="toggle-filter-button">
             <i class="bi bi-funnel"></i> フィルターを開く
           </button>
@@ -1198,7 +1218,7 @@
         </div>
       </div>
       
-      <div class="row guides-container" id="guides-container">
+      <div class="row guides-container" id="guide-cards-container">
         <!-- 初期表示されるガイド -->
         <!-- ガイド1 -->
         <div class="col-md-4 guide-item">
@@ -1405,222 +1425,10 @@
             </div>
           </div>
         </div>
-        
-        <!-- 追加ガイド7-12（初期非表示） -->
-        <div class="col-md-4 guide-item d-none additional-guides">
-          <div class="card guide-card shadow-sm" data-guide-id="7" data-location="福岡県 福岡市" data-languages="日本語,英語,韓国語" data-fee="7500" data-keywords="グルメ,ナイトツアー,屋台">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">博多太郎</h5>
-                <span class="badge bg-primary">¥7,500/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>福岡県 福岡市
-              </p>
-              <p class="card-text mb-3">博多の屋台文化とグルメに精通したガイド。夜の博多を満喫できるナイトツアーが人気です。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="text-dark ms-1">4.5</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="7">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 guide-item d-none additional-guides">
-          <div class="card guide-card shadow-sm" data-guide-id="8" data-location="宮城県 仙台市" data-languages="日本語,英語" data-fee="6800" data-keywords="歴史,文化,温泉">
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">伊達美</h5>
-                <span class="badge bg-primary">¥6,800/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>宮城県 仙台市
-              </p>
-              <p class="card-text mb-3">東北の歴史と文化に詳しいガイド。伊達政宗ゆかりの地と温泉文化をご案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.2</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="8">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 guide-item d-none additional-guides">
-          <div class="card guide-card shadow-sm" data-guide-id="9" data-location="愛知県 名古屋市" data-languages="日本語,英語,中国語" data-fee="7200" data-keywords="グルメ,工業見学,文化">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">名古屋次郎</h5>
-                <span class="badge bg-primary">¥7,200/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>愛知県 名古屋市
-              </p>
-              <p class="card-text mb-3">名古屋の独特なグルメ文化と工業都市の魅力をご案内。味噌カツから最新テクノロジーまで。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">3.8</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="9">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 guide-item d-none additional-guides">
-          <div class="card guide-card shadow-sm" data-guide-id="10" data-location="神奈川県 鎌倉市" data-languages="日本語,英語,フランス語" data-fee="8500" data-keywords="歴史,寺院,自然散策">
-            <img src="https://images.unsplash.com/photo-1519638831568-d9897f54ed69?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">鎌倉花</h5>
-                <span class="badge bg-primary">¥8,500/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>神奈川県 鎌倉市
-              </p>
-              <p class="card-text mb-3">古都鎌倉の歴史と自然を愛するガイド。寺社仏閣巡りとハイキングコースをご案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <span class="text-dark ms-1">5.0</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="10">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 guide-item d-none additional-guides">
-          <div class="card guide-card shadow-sm" data-guide-id="11" data-location="石川県 金沢市" data-languages="日本語,英語" data-fee="7800" data-keywords="伝統工芸,庭園,料理">
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">加賀美雪</h5>
-                <span class="badge bg-primary">¥7,800/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>石川県 金沢市
-              </p>
-              <p class="card-text mb-3">金沢の伝統工芸と美食文化に精通したガイド。兼六園から加賀料理まで、文化の深みをご案内。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i>
-                  <span class="text-dark ms-1">4.3</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="11">詳細を見る</a>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 guide-item d-none additional-guides">
-          <div class="card guide-card shadow-sm" data-guide-id="12" data-location="奈良県 奈良市" data-languages="日本語,英語,イタリア語" data-fee="7000" data-keywords="歴史,動物,文化遺産">
-            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=300&fit=crop&crop=face" class="card-img-top guide-image" alt="ガイド写真">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">奈良鹿太</h5>
-                <span class="badge bg-primary">¥7,000/セッション</span>
-              </div>
-              <p class="card-text text-muted mb-2 guide-location">
-                <i class="bi bi-geo-alt-fill me-1"></i>奈良県 奈良市
-              </p>
-              <p class="card-text mb-3">奈良の古代史と鹿との触れ合いを大切にするガイド。世界遺産の魅力を丁寧にご案内します。</p>
-              <div class="d-flex justify-content-between align-items-center">
-                <div>
-                  <span class="badge bg-light text-dark guide-lang me-1">日本語</span>
-                  <span class="badge bg-light text-dark">英語</span>
-                </div>
-                <div class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star"></i>
-                  <span class="text-dark ms-1">4.1</span>
-                </div>
-              </div>
-            </div>
-            <div class="card-footer bg-white border-0 pt-0">
-              <a href="#" class="btn btn-outline-primary w-100 guide-details-link" data-guide-id="12">詳細を見る</a>
-            </div>
-          </div>
-        </div>
       </div>
       
-      <!-- ページネーション追加エリア -->
-      <div id="pagination-container" class="text-center mt-4">
-        <div class="pagination-info mb-3">
-          <span id="current-page-info" class="text-primary fw-bold">ページ1 (1-12人)</span>
-        </div>
-        <div class="pagination-controls">
-          <button class="btn btn-outline-primary btn-sm me-2" id="prevPageBtn" disabled>
-            <i class="bi bi-chevron-left"></i> 前へ
-          </button>
-          <span id="page-indicator" class="mx-3">1 / 2</span>
-          <button class="btn btn-outline-primary btn-sm ms-2" id="nextPageBtn">
-            次へ <i class="bi bi-chevron-right"></i>
-          </button>
-        </div>
-        <button class="btn btn-primary mt-3" id="load-more-guides">もっと見る</button>
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" id="load-more-guides">もっと見る</button>
       </div>
     </section>
     
@@ -1975,80 +1783,6 @@
               <button type="submit" class="btn btn-primary">送信する</button>
             </div>
           </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 🏆管理センターモーダル -->
-  <div class="modal fade" id="managementModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">🏆 管理センター</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h6 class="card-title"><i class="bi bi-bookmark-star me-2"></i>ブックマーク管理</h6>
-                  <p class="card-text text-muted">お気に入りのガイドを管理できます。</p>
-                  <div id="bookmark-list" class="mb-3">
-                    <!-- ブックマークされたガイドがここに表示 -->
-                    <div class="text-center text-muted">
-                      <i class="bi bi-bookmark"></i>
-                      <p class="small">ブックマークされたガイドはありません</p>
-                    </div>
-                  </div>
-                  <button class="btn btn-outline-danger btn-sm" onclick="clearBookmarks()">
-                    <i class="bi bi-trash"></i> 全削除
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="card h-100">
-                <div class="card-body">
-                  <h6 class="card-title"><i class="bi bi-list-check me-2"></i>比較リスト</h6>
-                  <p class="card-text text-muted">最大3人のガイドを比較できます。</p>
-                  <div id="comparison-list" class="mb-3">
-                    <!-- 比較リストのガイドがここに表示 -->
-                    <div class="text-center text-muted">
-                      <i class="bi bi-list-check"></i>
-                      <p class="small">比較リストは空です</p>
-                    </div>
-                  </div>
-                  <button class="btn btn-outline-danger btn-sm" onclick="clearComparisons()">
-                    <i class="bi bi-trash"></i> 全削除
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-body">
-                  <h6 class="card-title"><i class="bi bi-clock-history me-2"></i>閲覧履歴</h6>
-                  <p class="card-text text-muted">最近見たガイドの履歴です。</p>
-                  <div id="history-list">
-                    <div class="text-center text-muted">
-                      <i class="bi bi-clock"></i>
-                      <p class="small">閲覧履歴はありません</p>
-                    </div>
-                  </div>
-                  <button class="btn btn-outline-danger btn-sm" onclick="clearHistory()">
-                    <i class="bi bi-trash"></i> 履歴削除
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
         </div>
       </div>
     </div>
@@ -6710,9 +6444,6 @@
     </div>
   </div>
   
-  <!-- 完全版12人ガイド表示 ページネーションシステム -->
-  <script src="pagination-system.js"></script>
-  
   <!-- 問題のあるスクリプトファイルを全て無効化 -->
   <!-- 
   <script src="auth-debug-tracer.js"></script>
@@ -6727,110 +6458,141 @@
   <!-- タイマー干渉ファイル削除済み -->
   
   <!-- スクロール問題は simple-scroll-fix.js で解決済み -->
-  
+  <!-- 🏆管理センターモーダル -->
+  <div class="modal fade" id="managementModal" tabindex="-1" aria-labelledby="managementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-warning">
+          <h5 class="modal-title fw-bold" id="managementModalLabel">🏆 管理センター</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="card h-100">
+                <div class="card-header bg-primary text-white">
+                  <h6 class="mb-0"><i class="bi bi-bookmark-fill me-2"></i>ブックマーク</h6>
+                </div>
+                <div class="card-body" id="bookmark-list">
+                  <div class="text-center text-muted">
+                    <i class="bi bi-bookmark"></i>
+                    <p class="small">ブックマークされたガイドはありません</p>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-outline-danger btn-sm w-100" onclick="clearBookmarks()">
+                    全て削除
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                  <h6 class="mb-0"><i class="bi bi-list-check me-2"></i>比較リスト</h6>
+                </div>
+                <div class="card-body" id="comparison-list">
+                  <div class="text-center text-muted">
+                    <i class="bi bi-list-check"></i>
+                    <p class="small">比較リストは空です</p>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-outline-danger btn-sm w-100" onclick="clearComparisons()">
+                    全て削除
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="card h-100">
+                <div class="card-header bg-info text-white">
+                  <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>閲覧履歴</h6>
+                </div>
+                <div class="card-body" id="history-list">
+                  <div class="text-center text-muted">
+                    <i class="bi bi-clock"></i>
+                    <p class="small">閲覧履歴はありません</p>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <button class="btn btn-outline-danger btn-sm w-100" onclick="clearHistory()">
+                    全て削除
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // 🏆管理センター機能 - pagination-system.jsと統合
+    // 🏆管理センター機能
     function showManagementModal() {
-      if (window.paginationSystem) {
-        // pagination-system.jsの機能を活用
-        const bookmarkedGuides = window.paginationSystem.allGuides.filter(g => 
-          window.paginationSystem.bookmarkedGuides.includes(g.id)
-        );
-        const comparedGuides = window.paginationSystem.allGuides.filter(g => 
-          window.paginationSystem.comparedGuides.includes(g.id)
-        );
-        
-        // モーダル表示前にコンテンツ更新
-        updateBookmarkDisplay(bookmarkedGuides);
-        updateComparisonDisplay(comparedGuides);
-        updateHistoryDisplay(window.paginationSystem.viewHistory);
-      }
-      
       var modal = new bootstrap.Modal(document.getElementById('managementModal'));
       modal.show();
     }
     
-    // 管理センター用表示更新関数
-    function updateBookmarkDisplay(bookmarks = []) {
-      const container = document.getElementById('bookmark-list');
-      if (!container) return;
-      
-      if (bookmarks.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-bookmark"></i><p class="small">ブックマークされたガイドはありません</p></div>';
-      } else {
-        container.innerHTML = bookmarks.map(guide => 
-          '<div class="small mb-1 p-2 border rounded">' + guide.name + ' (' + guide.location + ') - ¥' + guide.price.toLocaleString() + '</div>'
-        ).join('');
-      }
-    }
-    
-    function updateComparisonDisplay(comparisons = []) {
-      const container = document.getElementById('comparison-list');
-      if (!container) return;
-      
-      if (comparisons.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-list-check"></i><p class="small">比較リストは空です</p></div>';
-      } else {
-        container.innerHTML = comparisons.map(guide => 
-          '<div class="small mb-1 p-2 border rounded">' + guide.name + ' (' + guide.location + ') - ¥' + guide.price.toLocaleString() + ' ★' + guide.rating + '</div>'
-        ).join('');
-      }
-    }
-    
-    function updateHistoryDisplay(history = []) {
-      const container = document.getElementById('history-list');
-      if (!container) return;
-      
-      if (history.length === 0) {
-        container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-clock"></i><p class="small">閲覧履歴はありません</p></div>';
-      } else {
-        const recentHistory = history.slice(0, 10);
-        container.innerHTML = recentHistory.map(item => {
-          const guide = window.paginationSystem?.allGuides.find(g => g.id === item.guideId);
-          if (guide) {
-            const actionText = {
-              'view': '詳細閲覧',
-              'bookmark': 'ブックマーク',
-              'compare': '比較追加'
-            };
-            return '<div class="small mb-1 p-2 border rounded">' + guide.name + ' - ' + actionText[item.action] + '</div>';
-          }
-          return '';
-        }).filter(item => item).join('');
-      }
-    }
-    
-    // 管理センターのクリア機能をpagination-system.jsと連携
     function clearBookmarks() {
-      if (window.paginationSystem) {
-        window.paginationSystem.bookmarkedGuides = [];
-        localStorage.setItem('tomoTrip_bookmarks', JSON.stringify([]));
-        window.paginationSystem.renderCurrentPage();
-        window.paginationSystem.updateToolbar();
-        updateBookmarkDisplay([]);
-        alert('ブックマークを全て削除しました');
-      }
+      localStorage.removeItem('bookmarkedGuides');
+      alert('ブックマークを全て削除しました');
+      updateBookmarkDisplay();
     }
     
     function clearComparisons() {
-      if (window.paginationSystem) {
-        window.paginationSystem.comparedGuides = [];
-        localStorage.setItem('tomoTrip_compared', JSON.stringify([]));
-        window.paginationSystem.renderCurrentPage();
-        window.paginationSystem.updateToolbar();
-        updateComparisonDisplay([]);
-        alert('比較リストを全て削除しました');
-      }
+      localStorage.removeItem('comparisonList');
+      alert('比較リストを全て削除しました');
+      updateComparisonDisplay();
     }
     
     function clearHistory() {
-      if (window.paginationSystem) {
-        window.paginationSystem.viewHistory = [];
-        localStorage.setItem('tomoTrip_history', JSON.stringify([]));
-        updateHistoryDisplay([]);
-        alert('閲覧履歴を全て削除しました');
+      localStorage.removeItem('viewHistory');
+      alert('閲覧履歴を全て削除しました');
+      updateHistoryDisplay();
+    }
+    
+    function updateBookmarkDisplay() {
+      const bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+      const container = document.getElementById('bookmark-list');
+      if (bookmarks.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-bookmark"></i><p class="small">ブックマークされたガイドはありません</p></div>';
+      } else {
+        container.innerHTML = bookmarks.map(guide => '<div class="small mb-1 p-2 border rounded">' + guide.name + ' - ' + guide.location + '</div>').join('');
       }
     }
+    
+    function updateComparisonDisplay() {
+      const comparisons = JSON.parse(localStorage.getItem('comparisonList') || '[]');
+      const container = document.getElementById('comparison-list');
+      if (comparisons.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-list-check"></i><p class="small">比較リストは空です</p></div>';
+      } else {
+        container.innerHTML = comparisons.map(guide => '<div class="small mb-1 p-2 border rounded">' + guide.name + ' - ' + guide.location + '</div>').join('');
+      }
+    }
+    
+    function updateHistoryDisplay() {
+      const history = JSON.parse(localStorage.getItem('viewHistory') || '[]');
+      const container = document.getElementById('history-list');
+      if (history.length === 0) {
+        container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-clock"></i><p class="small">閲覧履歴はありません</p></div>';
+      } else {
+        container.innerHTML = history.map(guide => '<div class="small mb-1 p-2 border rounded">' + guide.name + ' - ' + guide.location + ' <small class="text-muted">(' + guide.viewedAt + ')</small></div>').join('');
+      }
+    }
+    
+    // 初期化
+    document.addEventListener('DOMContentLoaded', function() {
+      updateBookmarkDisplay();
+      updateComparisonDisplay();
+      updateHistoryDisplay();
+    });
   </script>
+
 </body>
 </html>
