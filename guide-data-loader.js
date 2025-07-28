@@ -137,29 +137,29 @@ function compressImageData(dataURL, quality, maxWidth, maxHeight) {
 
 function setupSaveHandlers(originalGuideData) {
     // Save draft functionality
-    window.saveDraft = function() {
+    window.saveDraft = async function() {
         console.log('Saving draft...');
-        saveGuideData(originalGuideData, false);
+        await saveGuideData(originalGuideData, false);
     };
     
     // Save and publish functionality
     const form = document.querySelector('form');
     if (form) {
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             console.log('Form submitted for publishing...');
-            saveGuideData(originalGuideData, true);
+            await saveGuideData(originalGuideData, true);
         });
     }
     
     // Also set up global functions for direct access
-    window.saveAndPublish = function() {
+    window.saveAndPublish = async function() {
         console.log('Publishing guide...');
-        saveGuideData(originalGuideData, true);
+        await saveGuideData(originalGuideData, true);
     };
 }
 
-function saveGuideData(originalData, isPublished = false) {
+async function saveGuideData(originalData, isPublished = false) {
     try {
         console.log('Starting save process with data:', originalData);
         
