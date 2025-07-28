@@ -1394,18 +1394,49 @@
                 document.getElementById('contactForm').reset();
             });
 
-            // Login form submission
+            // Login form submission with guide detection
             document.getElementById('loginSubmitBtn').addEventListener('click', function() {
                 const email = document.getElementById('loginEmail').value;
                 const password = document.getElementById('loginPassword').value;
                 
-                if (email && password) {
-                    // Simulate login process
-                    alert('ログイン機能は開発中です。現在はデモ版です。');
-                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-                    loginModal.hide();
-                } else {
+                if (!email || !password) {
                     alert('メールアドレスとパスワードを入力してください。');
+                    return;
+                }
+                
+                // Check if user is a registered guide
+                try {
+                    const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+                    const foundGuide = registeredGuides.find(guide => guide.email === email);
+                    
+                    if (foundGuide) {
+                        // Guide found - redirect to editing page
+                        console.log('Guide found for login:', foundGuide);
+                        localStorage.setItem('currentGuideId', foundGuide.id);
+                        
+                        // Close modal and redirect
+                        const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                        loginModal.hide();
+                        
+                        // Show success message and redirect
+                        alert('ガイドとしてログインしました。編集ページに移動します。');
+                        setTimeout(() => {
+                            window.location.href = 'guide-edit-page.html';
+                        }, 1000);
+                    } else {
+                        // No guide found - show registration option
+                        if (confirm('登録されたガイドが見つかりません。\n新規登録を行いますか？')) {
+                            const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                            loginModal.hide();
+                            setTimeout(() => {
+                                const registerModal = new bootstrap.Modal(document.getElementById('registerModal'));
+                                registerModal.show();
+                            }, 500);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    alert('ログイン処理でエラーが発生しました。');
                 }
             });
             
