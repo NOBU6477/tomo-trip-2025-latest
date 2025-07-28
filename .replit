@@ -27,6 +27,22 @@ args = "SimpleServer"
 task = "workflow.run"
 args = "CleanServer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "MainServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "StableServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "TestServer"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Port5001Server"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
@@ -62,6 +78,57 @@ author = "agent"
 task = "shell.exec"
 args = "python3 simple_server.py"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "MainServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 simple_server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "StableServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 simple_server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "TestServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 test_server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Port5001Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = """
+python3 -c \"
+import http.server
+import socketserver
+import os
+
+PORT = 5001
+class Handler(http.server.SimpleHTTPRequestHandler):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, directory=os.getcwd(), **kwargs)
+
+socketserver.TCPServer.allow_reuse_address = True
+with socketserver.TCPServer(('0.0.0.0', PORT), Handler) as httpd:
+    print(f'✅ Server起動: ポート{PORT}')
+    httpd.serve_forever()
+\""""
+waitForPort = 5001
 
 [nix]
 channel = "stable-24_05"
