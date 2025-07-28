@@ -219,6 +219,10 @@
         </div>
         <div class="mb-3">
           <label for="guide-specialties" class="form-label">得意分野</label>
+          <div class="alert alert-info mb-3" style="font-size: 0.9rem;">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>使い方：</strong> 下のボタンをクリックして得意分野を選択してください。複数選択可能です。選択した項目は下に表示され、再度クリックで削除できます。
+          </div>
           <div class="tag-input" id="specialties-container">
             <div class="mb-2">
               <button type="button" class="tag" onclick="addSpecialty('歴史・文化')">歴史・文化</button>
@@ -228,9 +232,9 @@
               <button type="button" class="tag" onclick="addSpecialty('アクティビティ')">アクティビティ</button>
               <button type="button" class="tag" onclick="addSpecialty('ナイトライフ')">ナイトライフ</button>
             </div>
-            <input type="text" class="form-control" id="custom-specialty" placeholder="カスタム得意分野を追加..." onkeypress="handleSpecialtyKeyPress(event)">
+            <input type="text" class="form-control" id="custom-specialty" placeholder="カスタム得意分野を追加してEnterキーを押してください..." onkeypress="handleSpecialtyKeyPress(event)">
           </div>
-          <div id="selected-specialties"></div>
+          <div id="selected-specialties" class="mt-2"></div>
         </div>
       </div>
 
@@ -241,14 +245,15 @@
           <div class="col-md-6">
             <div class="mb-3">
               <label for="guide-hourly-rate" class="form-label">時給料金（円）</label>
-              <input type="number" class="form-control" id="guide-hourly-rate" min="6000" value="6000">
-              <div class="form-text">最低料金は6,000円です</div>
+              <input type="number" class="form-control" id="guide-hourly-rate" min="6000" step="1000" value="6000">
+              <div class="form-text">最低料金は6,000円です（¥1,000単位で設定）</div>
             </div>
           </div>
           <div class="col-md-6">
             <div class="mb-3">
               <label for="guide-group-rate" class="form-label">グループ料金（追加1名あたり）</label>
-              <input type="number" class="form-control" id="guide-group-rate" min="1000" value="2000">
+              <input type="number" class="form-control" id="guide-group-rate" min="1000" step="1000" value="2000">
+              <div class="form-text">¥1,000単位で設定してください</div>
             </div>
           </div>
         </div>
@@ -287,5 +292,111 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <script src="guide-data-loader.js"></script>
+  
+  <script>
+    let selectedSpecialties = [];
+    
+    // 得意分野追加機能
+    function addSpecialty(specialty) {
+      if (!selectedSpecialties.includes(specialty)) {
+        selectedSpecialties.push(specialty);
+        updateSelectedSpecialties();
+      }
+    }
+    
+    // 選択された得意分野を表示更新
+    function updateSelectedSpecialties() {
+      const container = document.getElementById('selected-specialties');
+      container.innerHTML = '';
+      
+      if (selectedSpecialties.length > 0) {
+        const title = document.createElement('div');
+        title.className = 'mb-2 text-muted';
+        title.textContent = '選択済み得意分野:';
+        container.appendChild(title);
+        
+        selectedSpecialties.forEach(specialty => {
+          const tag = document.createElement('span');
+          tag.className = 'badge bg-primary me-2 mb-1';
+          tag.style.cursor = 'pointer';
+          tag.style.fontSize = '0.9rem';
+          tag.innerHTML = specialty + ' <i class="bi bi-x-circle ms-1"></i>';
+          tag.onclick = () => removeSpecialty(specialty);
+          container.appendChild(tag);
+        });
+      }
+    }
+    
+    // 得意分野削除機能
+    function removeSpecialty(specialty) {
+      selectedSpecialties = selectedSpecialties.filter(s => s !== specialty);
+      updateSelectedSpecialties();
+    }
+    
+    // カスタム得意分野追加
+    function handleSpecialtyKeyPress(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        const input = document.getElementById('custom-specialty');
+        const value = input.value.trim();
+        if (value && !selectedSpecialties.includes(value)) {
+          selectedSpecialties.push(value);
+          updateSelectedSpecialties();
+          input.value = '';
+        }
+      }
+    }
+    
+    // 料金入力の¥1000単位制限
+    document.addEventListener('DOMContentLoaded', function() {
+      const hourlyRate = document.getElementById('guide-hourly-rate');
+      const groupRate = document.getElementById('guide-group-rate');
+      
+      // ¥1000単位でのみ入力可能にする
+      [hourlyRate, groupRate].forEach(input => {
+        input.addEventListener('input', function() {
+          let value = parseInt(this.value);
+          if (!isNaN(value)) {
+            // 1000の倍数に調整
+            value = Math.round(value / 1000) * 1000;
+            // 最低料金チェック
+            if (this.id === 'guide-hourly-rate' && value < 6000) {
+              value = 6000;
+            } else if (this.id === 'guide-group-rate' && value < 1000) {
+              value = 1000;
+            }
+            this.value = value;
+          }
+        });
+      });
+    });
+    
+    // 下書き保存機能
+    function saveDraft() {
+      const guideId = localStorage.getItem('currentGuideId');
+      if (!guideId) {
+        alert('ガイドIDが見つかりません。');
+        return;
+      }
+      
+      try {
+        const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+        const guideIndex = registeredGuides.findIndex(guide => guide.id == guideId);
+        
+        if (guideIndex !== -1) {
+          // 現在のフォームデータを保存
+          registeredGuides[guideIndex].specialties = selectedSpecialties;
+          registeredGuides[guideIndex].hourlyRate = document.getElementById('guide-hourly-rate').value;
+          registeredGuides[guideIndex].groupRate = document.getElementById('guide-group-rate').value;
+          
+          localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+          alert('下書きを保存しました。');
+        }
+      } catch (error) {
+        console.error('Draft save error:', error);
+        alert('下書き保存でエラーが発生しました。');
+      }
+    }
+  </script>
 </body>
 </html>
