@@ -936,26 +936,109 @@
                                     <label for="guideLocation" class="form-label fw-bold">活動エリア<span class="text-danger">*</span></label>
                                     <select class="form-select" id="guideLocation" required style="border-radius: 10px; padding: 12px;">
                                         <option value="">選択してください</option>
-                                        <option value="tokyo">東京都</option>
-                                        <option value="kyoto">京都府</option>
-                                        <option value="osaka">大阪府</option>
-                                        <option value="hiroshima">広島県</option>
-                                        <option value="hokkaido">北海道</option>
-                                        <option value="okinawa">沖縄県</option>
-                                        <option value="nagano">長野県</option>
+                                        <optgroup label="北海道・東北">
+                                            <option value="hokkaido">北海道</option>
+                                            <option value="aomori">青森県</option>
+                                            <option value="iwate">岩手県</option>
+                                            <option value="miyagi">宮城県</option>
+                                            <option value="akita">秋田県</option>
+                                            <option value="yamagata">山形県</option>
+                                            <option value="fukushima">福島県</option>
+                                        </optgroup>
+                                        <optgroup label="関東">
+                                            <option value="ibaraki">茨城県</option>
+                                            <option value="tochigi">栃木県</option>
+                                            <option value="gunma">群馬県</option>
+                                            <option value="saitama">埼玉県</option>
+                                            <option value="chiba">千葉県</option>
+                                            <option value="tokyo">東京都</option>
+                                            <option value="kanagawa">神奈川県</option>
+                                        </optgroup>
+                                        <optgroup label="中部">
+                                            <option value="niigata">新潟県</option>
+                                            <option value="toyama">富山県</option>
+                                            <option value="ishikawa">石川県</option>
+                                            <option value="fukui">福井県</option>
+                                            <option value="yamanashi">山梨県</option>
+                                            <option value="nagano">長野県</option>
+                                            <option value="gifu">岐阜県</option>
+                                            <option value="shizuoka">静岡県</option>
+                                            <option value="aichi">愛知県</option>
+                                        </optgroup>
+                                        <optgroup label="近畿">
+                                            <option value="mie">三重県</option>
+                                            <option value="shiga">滋賀県</option>
+                                            <option value="kyoto">京都府</option>
+                                            <option value="osaka">大阪府</option>
+                                            <option value="hyogo">兵庫県</option>
+                                            <option value="nara">奈良県</option>
+                                            <option value="wakayama">和歌山県</option>
+                                        </optgroup>
+                                        <optgroup label="中国・四国">
+                                            <option value="tottori">鳥取県</option>
+                                            <option value="shimane">島根県</option>
+                                            <option value="okayama">岡山県</option>
+                                            <option value="hiroshima">広島県</option>
+                                            <option value="yamaguchi">山口県</option>
+                                            <option value="tokushima">徳島県</option>
+                                            <option value="kagawa">香川県</option>
+                                            <option value="ehime">愛媛県</option>
+                                            <option value="kochi">高知県</option>
+                                        </optgroup>
+                                        <optgroup label="九州・沖縄">
+                                            <option value="fukuoka">福岡県</option>
+                                            <option value="saga">佐賀県</option>
+                                            <option value="nagasaki">長崎県</option>
+                                            <option value="kumamoto">熊本県</option>
+                                            <option value="oita">大分県</option>
+                                            <option value="miyazaki">宮崎県</option>
+                                            <option value="kagoshima">鹿児島県</option>
+                                            <option value="okinawa">沖縄県</option>
+                                        </optgroup>
+                                        <optgroup label="離島特別地域">
+                                            <option value="ogasawara">小笠原諸島</option>
+                                            <option value="izu">伊豆諸島</option>
+                                            <option value="sado">佐渡島</option>
+                                            <option value="awaji">淡路島</option>
+                                            <option value="yakushima">屋久島</option>
+                                            <option value="amami">奄美大島</option>
+                                            <option value="ishigaki">石垣島</option>
+                                            <option value="miyako">宮古島</option>
+                                        </optgroup>
                                     </select>
                                 </div>
                                 
                                 <div class="mb-3">
                                     <label for="guideLanguages" class="form-label fw-bold">対応可能な言語<span class="text-danger">*</span></label>
                                     <select class="form-select" id="guideLanguages" multiple required style="border-radius: 10px; padding: 12px;">
-                                        <option value="japanese">日本語</option>
-                                        <option value="english">英語</option>
-                                        <option value="chinese">中国語</option>
-                                        <option value="korean">韓国語</option>
-                                        <option value="spanish">スペイン語</option>
-                                        <option value="french">フランス語</option>
-                                        <option value="german">ドイツ語</option>
+                                        <optgroup label="アジア言語">
+                                            <option value="japanese">日本語</option>
+                                            <option value="english">英語</option>
+                                            <option value="chinese">中国語（簡体字）</option>
+                                            <option value="chinese_traditional">中国語（繁体字）</option>
+                                            <option value="korean">韓国語</option>
+                                            <option value="thai">タイ語</option>
+                                            <option value="vietnamese">ベトナム語</option>
+                                            <option value="indonesian">インドネシア語</option>
+                                            <option value="tagalog">タガログ語（フィリピン）</option>
+                                            <option value="hindi">ヒンディー語</option>
+                                        </optgroup>
+                                        <optgroup label="ヨーロッパ言語">
+                                            <option value="spanish">スペイン語</option>
+                                            <option value="french">フランス語</option>
+                                            <option value="german">ドイツ語</option>
+                                            <option value="italian">イタリア語</option>
+                                            <option value="portuguese">ポルトガル語</option>
+                                            <option value="russian">ロシア語</option>
+                                            <option value="dutch">オランダ語</option>
+                                            <option value="swedish">スウェーデン語</option>
+                                        </optgroup>
+                                        <optgroup label="その他">
+                                            <option value="arabic">アラビア語</option>
+                                            <option value="hebrew">ヘブライ語</option>
+                                            <option value="turkish">トルコ語</option>
+                                            <option value="swahili">スワヒリ語</option>
+                                        </optgroup>
                                     </select>
                                     <small class="text-muted">複数選択可能です（Ctrl+クリック）</small>
                                 </div>
@@ -968,26 +1051,26 @@
                                 
                                 <div class="mb-3">
                                     <label for="guidePrice" class="form-label fw-bold">1日ガイド料金<span class="text-danger">*</span></label>
-                                    <select class="form-select" id="guidePrice" required style="border-radius: 10px; padding: 12px;">
-                                        <option value="">料金を選択してください</option>
-                                        <option value="6000">¥6,000</option>
-                                        <option value="7000">¥7,000</option>
-                                        <option value="8000">¥8,000</option>
-                                        <option value="9000">¥9,000</option>
-                                        <option value="10000">¥10,000</option>
-                                        <option value="11000">¥11,000</option>
-                                        <option value="12000">¥12,000</option>
-                                        <option value="13000">¥13,000</option>
-                                        <option value="14000">¥14,000</option>
-                                        <option value="15000">¥15,000</option>
-                                        <option value="16000">¥16,000</option>
-                                        <option value="17000">¥17,000</option>
-                                        <option value="18000">¥18,000</option>
-                                        <option value="19000">¥19,000</option>
-                                        <option value="20000">¥20,000</option>
-                                        <option value="25000">¥25,000</option>
-                                        <option value="30000">¥30,000</option>
-                                    </select>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text">¥</span>
+                                                <input type="number" class="form-control" id="guidePriceInput" placeholder="6000" min="6000" step="1000" style="border-radius: 0 10px 10px 0; padding: 12px;">
+                                            </div>
+                                            <small class="text-muted">¥6,000以上、¥1,000単位で入力</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="form-select" id="guidePriceRange" style="border-radius: 10px; padding: 12px;">
+                                                <option value="">または選択</option>
+                                                <option value="6000-10000">¥6,000～¥10,000</option>
+                                                <option value="10000-15000">¥10,000～¥15,000</option>
+                                                <option value="15000-20000">¥15,000～¥20,000</option>
+                                                <option value="20000-25000">¥20,000～¥25,000</option>
+                                                <option value="25000-30000">¥25,000～¥30,000</option>
+                                                <option value="30000+">¥30,000～</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 
                                 <div class="mb-3">
@@ -1128,6 +1211,27 @@
                 }
             });
             
+            // Price range selection handlers
+            document.getElementById('guidePriceRange').addEventListener('change', function() {
+                const priceInput = document.getElementById('guidePriceInput');
+                if (this.value) {
+                    priceInput.value = '';
+                    priceInput.disabled = true;
+                } else {
+                    priceInput.disabled = false;
+                }
+            });
+            
+            document.getElementById('guidePriceInput').addEventListener('input', function() {
+                const priceRange = document.getElementById('guidePriceRange');
+                if (this.value) {
+                    priceRange.value = '';
+                    priceRange.disabled = true;
+                } else {
+                    priceRange.disabled = false;
+                }
+            });
+            
             // Registration type selection
             touristCard.addEventListener('click', function() {
                 selectRegistrationType('tourist');
@@ -1175,11 +1279,14 @@
             
             // Registration form submission
             document.getElementById('registrationSubmitBtn').addEventListener('click', function() {
+                console.log('Registration button clicked');
+                
                 if (!validateRegistrationForm()) {
                     return;
                 }
                 
                 const formData = collectFormData();
+                console.log('Form data collected:', formData);
                 
                 if (selectedType === 'guide') {
                     // Add new guide to the list and display
@@ -1229,10 +1336,16 @@
                 if (selectedType === 'guide') {
                     const location = document.getElementById('guideLocation').value;
                     const languages = Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value);
-                    const price = document.getElementById('guidePrice').value;
+                    const priceInput = document.getElementById('guidePriceInput').value;
+                    const priceRange = document.getElementById('guidePriceRange').value;
                     
-                    if (!location || languages.length === 0 || !price) {
-                        alert('ガイド情報の必須項目をすべて入力してください。');
+                    if (!location || languages.length === 0 || (!priceInput && !priceRange)) {
+                        alert('ガイド情報の必須項目をすべて入力してください。料金は直接入力またはレンジ選択のいずれかを入力してください。');
+                        return false;
+                    }
+                    
+                    if (priceInput && priceInput < 6000) {
+                        alert('料金は¥6,000以上で設定してください。');
                         return false;
                     }
                 }
@@ -1268,7 +1381,25 @@
                     data.location = document.getElementById('guideLocation').value;
                     data.languages = Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value);
                     data.specialty = document.getElementById('guideSpecialty').value || '';
-                    data.price = parseInt(document.getElementById('guidePrice').value);
+                    
+                    // Handle price input
+                    const priceInput = document.getElementById('guidePriceInput').value;
+                    const priceRange = document.getElementById('guidePriceRange').value;
+                    
+                    if (priceInput) {
+                        data.price = parseInt(priceInput);
+                        data.priceDisplay = '¥' + parseInt(priceInput).toLocaleString();
+                    } else if (priceRange) {
+                        if (priceRange === '30000+') {
+                            data.price = 30000;
+                            data.priceDisplay = '¥30,000～';
+                        } else {
+                            const [min, max] = priceRange.split('-').map(p => parseInt(p));
+                            data.price = min;
+                            data.priceDisplay = '¥' + min.toLocaleString() + '～¥' + max.toLocaleString();
+                        }
+                    }
+                    
                     data.description = document.getElementById('guideDescription').value || '';
                     data.rating = (4.5 + Math.random() * 0.4).toFixed(1); // Random rating between 4.5-4.9
                 }
@@ -1288,6 +1419,7 @@
                     location: guideData.location,
                     languages: guideData.languages,
                     price: guideData.price,
+                    priceDisplay: guideData.priceDisplay || ('¥' + guideData.price.toLocaleString()),
                     rating: parseFloat(guideData.rating),
                     specialty: guideData.specialty || '総合ガイド',
                     image: guideData.profilePhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face',
@@ -1341,6 +1473,10 @@
                 document.getElementById('verifyCodeBtn').classList.remove('btn-outline-success');
                 document.getElementById('verifyCodeBtn').classList.add('btn-success');
                 document.getElementById('verificationCode').disabled = false;
+                
+                // Reset price fields
+                document.getElementById('guidePriceInput').disabled = false;
+                document.getElementById('guidePriceRange').disabled = false;
             }
             
             // Reset modal when closed
