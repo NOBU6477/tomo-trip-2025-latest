@@ -23,13 +23,17 @@ args = "TomoTrip"
 task = "workflow.run"
 args = "SimpleServer"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "CleanServer"
+
 [[workflows.workflow]]
 name = "Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 stable_server.py"
+args = "python3 simple_server.py"
 waitForPort = 5000
 
 [[workflows.workflow]]
@@ -43,6 +47,15 @@ waitForPort = 8000
 
 [[workflows.workflow]]
 name = "SimpleServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 simple_server.py"
+waitForPort = 5000
+
+[[workflows.workflow]]
+name = "CleanServer"
 author = "agent"
 
 [[workflows.workflow.tasks]]
