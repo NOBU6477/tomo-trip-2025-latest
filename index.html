@@ -274,8 +274,8 @@
             </a>
             
             <div class="d-flex">
-                <button class="btn btn-outline-primary me-2" id="loginBtn">ログイン</button>
-                <button class="btn btn-primary" id="registerBtn">新規登録</button>
+                <button class="btn btn-outline-primary me-2" id="loginBtn" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+                <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
             </div>
         </div>
     </nav>
@@ -743,6 +743,240 @@
             });
             
             console.log('✅ TomoTrip Complete Version Loaded Successfully - All Features Active');
+        });
+    </script>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="loginModalLabel">ログイン</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label fw-bold">メールアドレス</label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="email@example.com" style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-4">
+                            <label for="loginPassword" class="form-label fw-bold">パスワード</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="パスワードを入力" style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">ログイン状態を保持</label>
+                            </div>
+                            <a href="#" class="text-decoration-none">パスワードを忘れた方</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">キャンセル</button>
+                    <button type="button" class="btn btn-primary" id="loginSubmitBtn" style="border-radius: 25px; padding: 10px 20px; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">ログイン</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="registrationModalLabel">新規登録</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <!-- Registration Type Selection -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">登録タイプを選択してください</h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card h-100 text-center p-3" style="border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer;" id="touristCard">
+                                    <div class="card-body">
+                                        <i class="bi bi-backpack2 fs-1 text-primary mb-2"></i>
+                                        <h6 class="fw-bold">観光客として登録</h6>
+                                        <small class="text-muted">ガイドを探して特別な旅を体験</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 text-center p-3" style="border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer;" id="guideCard">
+                                    <div class="card-body">
+                                        <i class="bi bi-person-badge fs-1 text-success mb-2"></i>
+                                        <h6 class="fw-bold">ガイドとして登録</h6>
+                                        <small class="text-muted">地元の魅力を観光客に伝える</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Form (Initially Hidden) -->
+                    <div id="registrationForm" style="display: none;">
+                        <form id="userRegistrationForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="regFirstName" class="form-label fw-bold">名前</label>
+                                    <input type="text" class="form-control" id="regFirstName" placeholder="太郎" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="regLastName" class="form-label fw-bold">苗字</label>
+                                    <input type="text" class="form-control" id="regLastName" placeholder="田中" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="regEmail" class="form-label fw-bold">メールアドレス</label>
+                                <input type="email" class="form-control" id="regEmail" placeholder="email@example.com" style="border-radius: 10px; padding: 12px;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="regPassword" class="form-label fw-bold">パスワード</label>
+                                <input type="password" class="form-control" id="regPassword" placeholder="8文字以上のパスワード" style="border-radius: 10px; padding: 12px;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="regPhone" class="form-label fw-bold">電話番号</label>
+                                <input type="tel" class="form-control" id="regPhone" placeholder="090-1234-5678" style="border-radius: 10px; padding: 12px;">
+                            </div>
+                            
+                            <!-- Guide-specific fields (Initially Hidden) -->
+                            <div id="guideSpecificFields" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="guideLanguages" class="form-label fw-bold">対応可能な言語</label>
+                                    <select class="form-select" id="guideLanguages" multiple style="border-radius: 10px; padding: 12px;">
+                                        <option value="japanese">日本語</option>
+                                        <option value="english">英語</option>
+                                        <option value="chinese">中国語</option>
+                                        <option value="korean">韓国語</option>
+                                        <option value="spanish">スペイン語</option>
+                                        <option value="french">フランス語</option>
+                                    </select>
+                                    <small class="text-muted">複数選択可能です</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="guideSpecialty" class="form-label fw-bold">専門分野</label>
+                                    <input type="text" class="form-control" id="guideSpecialty" placeholder="歴史・文化、グルメ、自然など" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="guidePrice" class="form-label fw-bold">1日ガイド料金（円）</label>
+                                    <input type="number" class="form-control" id="guidePrice" placeholder="8000" min="3000" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    <a href="#" class="text-decoration-none">利用規約</a>と<a href="#" class="text-decoration-none">プライバシーポリシー</a>に同意する
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">キャンセル</button>
+                    <button type="button" class="btn btn-success" id="registrationSubmitBtn" style="display: none; border-radius: 25px; padding: 10px 20px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">登録する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Modal JavaScript Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Registration type selection
+            const touristCard = document.getElementById('touristCard');
+            const guideCard = document.getElementById('guideCard');
+            const registrationForm = document.getElementById('registrationForm');
+            const guideSpecificFields = document.getElementById('guideSpecificFields');
+            const registrationSubmitBtn = document.getElementById('registrationSubmitBtn');
+            
+            let selectedType = null;
+            
+            touristCard.addEventListener('click', function() {
+                selectRegistrationType('tourist');
+            });
+            
+            guideCard.addEventListener('click', function() {
+                selectRegistrationType('guide');
+            });
+            
+            function selectRegistrationType(type) {
+                selectedType = type;
+                
+                // Reset card styles
+                touristCard.style.border = '2px solid #e9ecef';
+                guideCard.style.border = '2px solid #e9ecef';
+                
+                // Highlight selected card
+                if (type === 'tourist') {
+                    touristCard.style.border = '2px solid #007bff';
+                    guideSpecificFields.style.display = 'none';
+                } else {
+                    guideCard.style.border = '2px solid #28a745';
+                    guideSpecificFields.style.display = 'block';
+                }
+                
+                // Show registration form
+                registrationForm.style.display = 'block';
+                registrationSubmitBtn.style.display = 'inline-block';
+            }
+            
+            // Login form submission
+            document.getElementById('loginSubmitBtn').addEventListener('click', function() {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                
+                if (email && password) {
+                    // Simulate login process
+                    alert('ログイン機能は開発中です。現在はデモ版です。');
+                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    loginModal.hide();
+                } else {
+                    alert('メールアドレスとパスワードを入力してください。');
+                }
+            });
+            
+            // Registration form submission
+            document.getElementById('registrationSubmitBtn').addEventListener('click', function() {
+                const firstName = document.getElementById('regFirstName').value;
+                const lastName = document.getElementById('regLastName').value;
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+                const phone = document.getElementById('regPhone').value;
+                const agreeTerms = document.getElementById('agreeTerms').checked;
+                
+                if (firstName && lastName && email && password && phone && agreeTerms && selectedType) {
+                    // Simulate registration process
+                    alert(`${selectedType === 'tourist' ? '観光客' : 'ガイド'}として登録を受付けました。確認メールをご確認ください。（現在はデモ版です）`);
+                    const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                    registrationModal.hide();
+                    
+                    // Reset form
+                    document.getElementById('userRegistrationForm').reset();
+                    registrationForm.style.display = 'none';
+                    registrationSubmitBtn.style.display = 'none';
+                    touristCard.style.border = '2px solid #e9ecef';
+                    guideCard.style.border = '2px solid #e9ecef';
+                    selectedType = null;
+                } else {
+                    alert('すべてのフィールドを入力し、利用規約に同意してください。');
+                }
+            });
+            
+            // Reset modal when closed
+            document.getElementById('registrationModal').addEventListener('hidden.bs.modal', function () {
+                document.getElementById('userRegistrationForm').reset();
+                registrationForm.style.display = 'none';
+                registrationSubmitBtn.style.display = 'none';
+                touristCard.style.border = '2px solid #e9ecef';
+                guideCard.style.border = '2px solid #e9ecef';
+                selectedType = null;
+            });
         });
     </script>
 </body>
