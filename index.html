@@ -1198,7 +1198,7 @@
         </div>
       </div>
       
-      <div class="row guides-container" id="guide-cards-container">
+      <div class="row guides-container" id="guides-container">
         <!-- 初期表示されるガイド -->
         <!-- ガイド1 -->
         <div class="col-md-4 guide-item">
@@ -6710,7 +6710,7 @@
     </div>
   </div>
   
-  <!-- 12人ガイド表示 ページネーションシステム -->
+  <!-- 完全版12人ガイド表示 ページネーションシステム -->
   <script src="pagination-system.js"></script>
   
   <!-- 問題のあるスクリプトファイルを全て無効化 -->
@@ -6729,122 +6729,108 @@
   <!-- スクロール問題は simple-scroll-fix.js で解決済み -->
   
   <script>
-    // 🏆管理センター機能
+    // 🏆管理センター機能 - pagination-system.jsと統合
     function showManagementModal() {
+      if (window.paginationSystem) {
+        // pagination-system.jsの機能を活用
+        const bookmarkedGuides = window.paginationSystem.allGuides.filter(g => 
+          window.paginationSystem.bookmarkedGuides.includes(g.id)
+        );
+        const comparedGuides = window.paginationSystem.allGuides.filter(g => 
+          window.paginationSystem.comparedGuides.includes(g.id)
+        );
+        
+        // モーダル表示前にコンテンツ更新
+        updateBookmarkDisplay(bookmarkedGuides);
+        updateComparisonDisplay(comparedGuides);
+        updateHistoryDisplay(window.paginationSystem.viewHistory);
+      }
+      
       var modal = new bootstrap.Modal(document.getElementById('managementModal'));
       modal.show();
     }
     
-    // ブックマーク管理
-    function clearBookmarks() {
-      localStorage.removeItem('bookmarkedGuides');
-      alert('ブックマークを全て削除しました');
-      updateBookmarkDisplay();
-    }
-    
-    // 比較リスト管理
-    function clearComparisons() {
-      localStorage.removeItem('comparisonList');
-      alert('比較リストを全て削除しました');
-      updateComparisonDisplay();
-    }
-    
-    // 閲覧履歴管理
-    function clearHistory() {
-      localStorage.removeItem('viewHistory');
-      alert('閲覧履歴を全て削除しました');
-      updateHistoryDisplay();
-    }
-    
-    // 表示更新関数
-    function updateBookmarkDisplay() {
-      const bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    // 管理センター用表示更新関数
+    function updateBookmarkDisplay(bookmarks = []) {
       const container = document.getElementById('bookmark-list');
+      if (!container) return;
+      
       if (bookmarks.length === 0) {
         container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-bookmark"></i><p class="small">ブックマークされたガイドはありません</p></div>';
       } else {
-        container.innerHTML = bookmarks.map(guide => '<div class="small mb-1">' + guide.name + ' - ' + guide.location + '</div>').join('');
+        container.innerHTML = bookmarks.map(guide => 
+          '<div class="small mb-1 p-2 border rounded">' + guide.name + ' (' + guide.location + ') - ¥' + guide.price.toLocaleString() + '</div>'
+        ).join('');
       }
     }
     
-    function updateComparisonDisplay() {
-      const comparisons = JSON.parse(localStorage.getItem('comparisonList') || '[]');
+    function updateComparisonDisplay(comparisons = []) {
       const container = document.getElementById('comparison-list');
+      if (!container) return;
+      
       if (comparisons.length === 0) {
         container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-list-check"></i><p class="small">比較リストは空です</p></div>';
       } else {
-        container.innerHTML = comparisons.map(guide => '<div class="small mb-1">' + guide.name + ' - ' + guide.location + '</div>').join('');
+        container.innerHTML = comparisons.map(guide => 
+          '<div class="small mb-1 p-2 border rounded">' + guide.name + ' (' + guide.location + ') - ¥' + guide.price.toLocaleString() + ' ★' + guide.rating + '</div>'
+        ).join('');
       }
     }
     
-    function updateHistoryDisplay() {
-      const history = JSON.parse(localStorage.getItem('viewHistory') || '[]');
+    function updateHistoryDisplay(history = []) {
       const container = document.getElementById('history-list');
+      if (!container) return;
+      
       if (history.length === 0) {
         container.innerHTML = '<div class="text-center text-muted"><i class="bi bi-clock"></i><p class="small">閲覧履歴はありません</p></div>';
       } else {
-        container.innerHTML = history.map(guide => '<div class="small mb-1">' + guide.name + ' - ' + guide.location + ' <small class="text-muted">(' + guide.viewedAt + ')</small></div>').join('');
+        const recentHistory = history.slice(0, 10);
+        container.innerHTML = recentHistory.map(item => {
+          const guide = window.paginationSystem?.allGuides.find(g => g.id === item.guideId);
+          if (guide) {
+            const actionText = {
+              'view': '詳細閲覧',
+              'bookmark': 'ブックマーク',
+              'compare': '比較追加'
+            };
+            return '<div class="small mb-1 p-2 border rounded">' + guide.name + ' - ' + actionText[item.action] + '</div>';
+          }
+          return '';
+        }).filter(item => item).join('');
       }
     }
     
-    // 12人ガイド表示とページネーション機能
-    document.addEventListener('DOMContentLoaded', function() {
-      const loadMoreBtn = document.getElementById('load-more-guides');
-      const additionalGuides = document.querySelectorAll('.additional-guides');
-      let currentPage = 1;
-      
-      if (loadMoreBtn) {
-        loadMoreBtn.addEventListener('click', function() {
-          if (currentPage === 1) {
-            // 追加の6人を表示
-            additionalGuides.forEach(guide => {
-              guide.classList.remove('d-none');
-            });
-            
-            // ボタンテキストを更新
-            loadMoreBtn.textContent = '前のページ';
-            loadMoreBtn.classList.remove('btn-primary');
-            loadMoreBtn.classList.add('btn-outline-primary');
-            
-            // ページ情報を更新
-            const pageInfo = document.getElementById('current-page-info');
-            const pageIndicator = document.getElementById('page-indicator');
-            if (pageInfo) pageInfo.textContent = 'ページ2 (7-12人)';
-            if (pageIndicator) pageIndicator.textContent = '2 / 2';
-            
-            currentPage = 2;
-          } else {
-            // 最初の6人に戻る
-            additionalGuides.forEach(guide => {
-              guide.classList.add('d-none');
-            });
-            
-            // ボタンテキストを更新
-            loadMoreBtn.textContent = 'もっと見る';
-            loadMoreBtn.classList.add('btn-primary');
-            loadMoreBtn.classList.remove('btn-outline-primary');
-            
-            // ページ情報を更新
-            const pageInfo = document.getElementById('current-page-info');
-            const pageIndicator = document.getElementById('page-indicator');
-            if (pageInfo) pageInfo.textContent = 'ページ1 (1-6人)';
-            if (pageIndicator) pageIndicator.textContent = '1 / 2';
-            
-            currentPage = 1;
-          }
-        });
+    // 管理センターのクリア機能をpagination-system.jsと連携
+    function clearBookmarks() {
+      if (window.paginationSystem) {
+        window.paginationSystem.bookmarkedGuides = [];
+        localStorage.setItem('tomoTrip_bookmarks', JSON.stringify([]));
+        window.paginationSystem.renderCurrentPage();
+        window.paginationSystem.updateToolbar();
+        updateBookmarkDisplay([]);
+        alert('ブックマークを全て削除しました');
       }
-      
-      // 管理センター表示更新
-      updateBookmarkDisplay();
-      updateComparisonDisplay();
-      updateHistoryDisplay();
-    });
+    }
     
-    // CSS アニメーション追加
-    const style = document.createElement('style');
-    style.textContent = '@keyframes pulse { 0% { transform: translateY(-50%) scale(1); } 50% { transform: translateY(-50%) scale(1.05); } 100% { transform: translateY(-50%) scale(1); } } .management-center-button button:hover { transform: translateY(-50%) scale(1.1) !important; box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important; }';
-    document.head.appendChild(style);
+    function clearComparisons() {
+      if (window.paginationSystem) {
+        window.paginationSystem.comparedGuides = [];
+        localStorage.setItem('tomoTrip_compared', JSON.stringify([]));
+        window.paginationSystem.renderCurrentPage();
+        window.paginationSystem.updateToolbar();
+        updateComparisonDisplay([]);
+        alert('比較リストを全て削除しました');
+      }
+    }
+    
+    function clearHistory() {
+      if (window.paginationSystem) {
+        window.paginationSystem.viewHistory = [];
+        localStorage.setItem('tomoTrip_history', JSON.stringify([]));
+        updateHistoryDisplay([]);
+        alert('閲覧履歴を全て削除しました');
+      }
+    }
   </script>
 </body>
 </html>
