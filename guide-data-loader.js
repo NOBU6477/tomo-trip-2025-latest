@@ -99,6 +99,42 @@ function getLanguageNames(languageCodes) {
     return languageCodes.map(code => languageNames[code] || code).join(', ');
 }
 
+// Image compression function to prevent LocalStorage quota errors
+function compressImageData(dataURL, quality, maxWidth, maxHeight) {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+            // Calculate new dimensions
+            let { width, height } = img;
+            
+            if (width > height) {
+                if (width > maxWidth) {
+                    height *= maxWidth / width;
+                    width = maxWidth;
+                }
+            } else {
+                if (height > maxHeight) {
+                    width *= maxHeight / height;
+                    height = maxHeight;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // Draw and compress
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressedDataURL);
+        };
+        
+        img.src = dataURL;
+    });
+}
+
 function setupSaveHandlers(originalGuideData) {
     // Save draft functionality
     window.saveDraft = function() {
@@ -142,6 +178,19 @@ function saveGuideData(originalData, isPublished = false) {
             currentProfilePhoto = profileImg.src;
         }
         
+        // Compress image if it's too large to prevent LocalStorage quota exceeded
+        if (currentProfilePhoto && currentProfilePhoto.length > 100000) { // 100KB limit
+            console.log('Image too large, compressing...', currentProfilePhoto.length, 'bytes');
+            try {
+                currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.4, 150, 150);
+                console.log('Image compressed to:', currentProfilePhoto.length, 'bytes');
+            } catch (error) {
+                console.error('Image compression failed:', error);
+                // Use a smaller compression if the first attempt fails
+                currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.2, 100, 100);
+            }
+        }
+        
         // Get form elements with validation
         const bioElement = document.getElementById('guide-bio');
         const experienceElement = document.getElementById('guide-experience');
@@ -172,13 +221,48 @@ function saveGuideData(originalData, isPublished = false) {
         
         console.log('Prepared data for saving:', updatedData);
         
-        // Update in localStorage
-        const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+        // Update in localStorage with error handling
+        let registeredGuides = [];
+        try {
+            registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+        } catch (error) {
+            console.error('Error parsing localStorage data:', error);
+            // Clear corrupted data
+            localStorage.removeItem('registeredGuides');
+            registeredGuides = [];
+        }
         const guideIndex = registeredGuides.findIndex(guide => guide.id == originalData.id);
         
         if (guideIndex !== -1) {
             registeredGuides[guideIndex] = updatedData;
-            localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+            
+            // Try to save with quota error handling
+            try {
+                localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+            } catch (error) {
+                console.error('LocalStorage quota exceeded:', error);
+                
+                // Emergency compression - remove large images from older guides
+                const compressedGuides = registeredGuides.map(guide => {
+                    if (guide.id !== originalData.id) {
+                        return {
+                            ...guide,
+                            profilePhoto: null,
+                            image: null
+                        };
+                    }
+                    return guide;
+                });
+                
+                try {
+                    localStorage.setItem('registeredGuides', JSON.stringify(compressedGuides));
+                    console.log('Successfully saved with compressed older guide images');
+                } catch (finalError) {
+                    console.error('Failed to save even with compression:', finalError);
+                    alert('保存中にエラーが発生しました。\n画像サイズが大きすぎる可能性があります。\n\n別の画像をお試しください。');
+                    return;
+                }
+            }
             
             // Also update the displayed guides cache to ensure immediate reflection
             const displayedGuides = JSON.parse(localStorage.getItem('displayedGuides')) || [];
