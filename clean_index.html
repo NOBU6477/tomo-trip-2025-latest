@@ -3,305 +3,262 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Local Guide</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="basic_styles.css">
+  <title>TomoTrip - あなただけの特別な旅を</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+  
+  <style>
+    /* Language Switcher - Center */
+    .language-switcher-center {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    
+    .lang-btn-jp, .lang-btn-en {
+      transition: all 0.3s ease;
+      font-size: 13px;
+      min-width: 100px;
+    }
+    
+    .lang-btn-jp:hover {
+      background: linear-gradient(135deg, #ff5252, #ff7979) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255,107,107,0.4) !important;
+    }
+    
+    .lang-btn-en:hover {
+      background: linear-gradient(135deg, #2196f3, #64b5f6) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(66,135,245,0.4) !important;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
+                  url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop') center/cover;
+      position: relative;
+      min-height: 60vh;
+    }
+
+    /* モバイル対応 */
+    @media (max-width: 768px) {
+      .language-switcher-center {
+        margin: 1rem 0 !important;
+        justify-content: center !important;
+      }
+      
+      .lang-btn-jp, .lang-btn-en {
+        min-width: 80px !important;
+        font-size: 12px !important;
+        padding: 6px 15px !important;
+      }
+    }
+
+    /* 協賛店ボタン */
+    .sponsor-mini-buttons {
+      position: absolute;
+      bottom: -50px;
+      right: -20px;
+      z-index: 10;
+    }
+
+    .sponsor-mini-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sponsor-mini-btn {
+      background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .sponsor-mini-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(255,107,107,0.5);
+    }
+
+    .sponsor-login {
+      background: linear-gradient(135deg, #4287f5, #64a8ff) !important;
+      box-shadow: 0 2px 10px rgba(66,135,245,0.3) !important;
+    }
+
+    .sponsor-login:hover {
+      box-shadow: 0 4px 15px rgba(66,135,245,0.5) !important;
+    }
+  </style>
 </head>
 <body>
+  <!-- ナビゲーションバー -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-      <a class="navbar-brand" href="#">
-        <i data-feather="map"></i> Local Guide
+      <!-- ナビゲーションバー ロゴ -->
+      <a class="navbar-brand d-flex align-items-center" href="/">
+        <img src="TomoTripロゴ.png" alt="TomoTrip ロゴ" style="height: 60px; width: auto; border-radius: 15px;" />
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item">
-            <a class="nav-link active" href="#" data-i18n="nav.home">ホーム</a>
+            <a class="nav-link active" href="#top">ホーム</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#guides" data-i18n="nav.find_guides">ガイドを探す</a>
+            <a class="nav-link" href="#guides">ガイドを探す</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#how-it-works" data-i18n="nav.how_it_works">使い方</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#about" data-i18n="nav.about">サービスについて</a>
+            <a class="nav-link" href="#how-it-works">使い方</a>
           </li>
         </ul>
         
-        <!-- 言語選択ドロップダウン -->
-        <div class="nav-item dropdown me-3">
-          <button class="btn btn-outline-light dropdown-toggle" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i data-feather="globe"></i> <span id="current-language">日本語</span>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-            <li><a class="dropdown-item" href="#" onclick="changeLanguage('ja')">日本語</a></li>
-            <li><a class="dropdown-item" href="#" onclick="changeLanguage('en')">English</a></li>
-          </ul>
-        </div>
-        
-        <!-- 未ログイン時 -->
-        <div id="not-logged-in">
-          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal" data-i18n="nav.login">ログイン</button>
-          <button type="button" class="btn btn-light" id="show-user-type-modal" data-i18n="nav.register">新規登録</button>
-        </div>
-        
-        <!-- ログイン時 -->
-        <div id="logged-in" class="d-none">
-          <div class="dropdown">
-            <button class="btn btn-light dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-              <img id="user-avatar" src="https://placehold.co/30" alt="User" class="rounded-circle me-1" width="30" height="30">
-              <span id="user-name">ユーザー</span>
+        <!-- 言語切り替えボタン - 中央配置 -->
+        <div class="d-flex justify-content-center flex-grow-1">
+          <div class="language-switcher-center">
+            <button class="btn lang-btn-jp active" style="
+              background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+              color: white;
+              border: none;
+              border-radius: 25px 0 0 25px;
+              padding: 8px 20px;
+              font-weight: bold;
+              box-shadow: 0 2px 10px rgba(255,107,107,0.3);
+            ">
+              🇯🇵 日本語
             </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-              <li><a class="dropdown-item" href="#" id="profile-link" data-i18n="nav.profile">プロフィール</a></li>
-              <li><a class="dropdown-item" href="bookings.html" data-i18n="nav.bookings">予約管理</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#" id="logout-btn" data-i18n="nav.logout">ログアウト</a></li>
-            </ul>
+            <button class="btn lang-btn-en" onclick="window.location.href='index-en.html'" style="
+              background: linear-gradient(135deg, #4287f5, #64a8ff);
+              color: white;
+              border: none;
+              border-radius: 0 25px 25px 0;
+              padding: 8px 20px;
+              font-weight: bold;
+              box-shadow: 0 2px 10px rgba(66,135,245,0.3);
+              margin-left: -1px;
+            ">
+              🇺🇸 English
+            </button>
           </div>
+        </div>
+        
+        <!-- ログイン・新規登録ボタン -->
+        <div id="navbar-user-area">
+          <button class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+          <button class="btn btn-light" onclick="showRegisterOptions()">新規登録</button>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- メインコンテンツ -->
-  <div class="container mt-4" id="main-content">
-    <!-- ここにメインコンテンツ挿入 -->
-  </div>
-
-  <!-- ユーザータイプ選択モーダル -->
-  <div class="modal fade" id="userTypeModal" tabindex="-1" aria-labelledby="userTypeModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="userTypeModalLabel" data-i18n="user_type.title">アカウントタイプを選択</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <!-- ヒーローセクション -->
+  <section id="top" class="hero-section text-center text-white py-5">
+    <!-- TomoTrip Logo -->
+    <div style="position: absolute; top: 2%; left: 2%; z-index: 20;">
+      <div style="background: linear-gradient(45deg, #ff6b6b, #4ecdc4); padding: 12px 24px; border-radius: 50px; font-weight: bold; color: white; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        🌴 TomoTrip
+      </div>
+    </div>
+    
+    <div class="container position-relative">
+      <h1 class="display-4 fw-bold mb-3">あなただけの特別な旅を</h1>
+      <p class="lead mb-4">地元ガイドと一緒に、観光では見つけられない隠れた魅力を体験しましょう</p>
+      <div class="position-relative">
+        <a href="#guides" class="btn btn-light btn-lg">ガイドを探す</a>
+        <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">お問い合わせ</button>
+        
+        <!-- 協賛店専用ボタンエリア（右下小さめ） -->
+        <div class="sponsor-mini-buttons">
+          <div class="sponsor-mini-wrapper">
+            <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="協賛店登録">
+              <i class="bi bi-shop"></i>
+              <span>協賛店登録 🚀</span>
+            </button>
+            <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="協賛店ログイン">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>ログイン ✨</span>
+            </button>
+          </div>
         </div>
-        <div class="modal-body">
-          <div class="row">
-            <div class="col-md-6 mb-3 mb-md-0">
-              <div class="card h-100">
-                <div class="card-body text-center">
-                  <i class="fas fa-user fa-3x mb-3 text-primary"></i>
-                  <h5 class="card-title" data-i18n="user_type.tourist">ツーリスト</h5>
-                  <p class="card-text" data-i18n="user_type.tourist_desc">現地ガイドを探して旅行を楽しみたい方</p>
-                  <button class="btn btn-primary" id="register-as-tourist-btn" data-i18n="user_type.register_tourist">ツーリストとして登録</button>
-                </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ガイド表示エリア -->
+  <section id="guides" class="py-5">
+    <div class="container">
+      <h2 class="text-center mb-5">おすすめガイド</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop" class="card-img-top" alt="ガイド写真">
+            <div class="card-body">
+              <h5 class="card-title">田中太郎</h5>
+              <p class="card-text">東京の隠れた名所をご案内します。20年の経験でお客様に最高の体験を提供します。</p>
+              <div class="mb-2">
+                <span class="badge bg-primary">東京都</span>
+                <span class="badge bg-success">日本語・英語</span>
               </div>
+              <p class="text-muted">料金: ¥5,000/日</p>
             </div>
-            <div class="col-md-6">
-              <div class="card h-100">
-                <div class="card-body text-center">
-                  <i class="fas fa-map-marked-alt fa-3x mb-3 text-success"></i>
-                  <h5 class="card-title" data-i18n="user_type.guide">ガイド</h5>
-                  <p class="card-text" data-i18n="user_type.guide_desc">あなたの地元を案内したい方</p>
-                  <button class="btn btn-success" id="register-as-guide-btn" data-i18n="user_type.register_guide">ガイドとして登録</button>
-                </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616b332446c?w=300&h=200&fit=crop" class="card-img-top" alt="ガイド写真">
+            <div class="card-body">
+              <h5 class="card-title">佐藤花子</h5>
+              <p class="card-text">京都の伝統文化と美しい庭園をご紹介。着物レンタルサービスも含まれます。</p>
+              <div class="mb-2">
+                <span class="badge bg-primary">京都府</span>
+                <span class="badge bg-success">日本語・中国語</span>
               </div>
+              <p class="text-muted">料金: ¥6,000/日</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=200&fit=crop" class="card-img-top" alt="ガイド写真">
+            <div class="card-body">
+              <h5 class="card-title">山田一郎</h5>
+              <p class="card-text">大阪のグルメ情報に詳しく、本場のたこ焼きや串カツをご案内します。</p>
+              <div class="mb-2">
+                <span class="badge bg-primary">大阪府</span>
+                <span class="badge bg-success">日本語・韓国語</span>
+              </div>
+              <p class="text-muted">料金: ¥4,500/日</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- ガイド登録モーダル -->
-  <div class="modal fade" id="registerGuideModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" data-i18n="register.guide_title">ガイド登録</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="guide-registration-form">
-            <!-- 基本情報 -->
-            <h6 class="fw-bold mb-3" data-i18n="register.basic_info">基本情報</h6>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-name" class="form-label" data-i18n="register.name">氏名</label>
-                  <input type="text" class="form-control" id="guide-name" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-email" class="form-label" data-i18n="register.email">メールアドレス</label>
-                  <input type="email" class="form-control" id="guide-email" required>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-password" class="form-label" data-i18n="register.password">パスワード</label>
-                  <input type="password" class="form-control" id="guide-password" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-confirm-password" class="form-label" data-i18n="register.confirm_password">パスワード（確認）</label>
-                  <input type="password" class="form-control" id="guide-confirm-password" required>
-                </div>
-              </div>
-            </div>
-            
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-phone" class="form-label" data-i18n="register.phone">電話番号</label>
-                  <input type="tel" class="form-control" id="guide-phone" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-birthdate" class="form-label" data-i18n="register.birthdate">生年月日</label>
-                  <input type="date" class="form-control" id="guide-birthdate" required>
-                </div>
-              </div>
-            </div>
-            
-            <!-- 電話番号認証 -->
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label class="form-label" data-i18n="register.phone_verification">電話番号認証</label>
-                  <div class="input-group">
-                    <span class="input-group-text">+81</span>
-                    <input type="tel" class="form-control" id="verification-phone" placeholder="電話番号（ハイフンなし）">
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- ガイド情報 -->
-            <h6 class="fw-bold mb-3 mt-4" data-i18n="register.guide_info">ガイド情報</h6>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-location" class="form-label" data-i18n="register.location">活動地域</label>
-                  <input type="text" class="form-control" id="guide-location" required>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="mb-3">
-                  <label for="guide-languages" class="form-label" data-i18n="register.languages">対応言語</label>
-                  <select class="form-select" id="guide-languages" multiple required>
-                    <option value="ja">日本語</option>
-                    <option value="en">英語</option>
-                    <option value="zh">中国語</option>
-                    <option value="ko">韓国語</option>
-                    <option value="es">スペイン語</option>
-                    <option value="fr">フランス語</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            
-            <div class="mb-3">
-              <label for="guide-bio" class="form-label" data-i18n="register.bio">自己紹介</label>
-              <textarea class="form-control" id="guide-bio" rows="3" required></textarea>
-            </div>
-            
-            <div class="mb-3">
-              <label for="guide-specialties" class="form-label" data-i18n="register.specialties">得意な案内分野</label>
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="history" id="specialty-history">
-                    <label class="form-check-label" for="specialty-history" data-i18n="specialties.history">歴史・文化</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="nature" id="specialty-nature">
-                    <label class="form-check-label" for="specialty-nature" data-i18n="specialties.nature">自然・アウトドア</label>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="food" id="specialty-food">
-                    <label class="form-check-label" for="specialty-food" data-i18n="specialties.food">グルメ・食文化</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="art" id="specialty-art">
-                    <label class="form-check-label" for="specialty-art" data-i18n="specialties.art">芸術・伝統工芸</label>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="nightlife" id="specialty-nightlife">
-                    <label class="form-check-label" for="specialty-nightlife" data-i18n="specialties.nightlife">ナイトライフ</label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="shopping" id="specialty-shopping">
-                    <label class="form-check-label" for="specialty-shopping" data-i18n="specialties.shopping">ショッピング</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- 証明書類 -->
-            <h6 class="fw-bold mb-3 mt-4" data-i18n="register.documents">証明書類</h6>
-            <div class="mb-3">
-              <label for="id-document" class="form-label" data-i18n="register.id_document">身分証明書</label>
-              <input type="file" class="form-control" id="id-document" required>
-              <div class="form-text" data-i18n="register.id_document_help">運転免許証、パスポート、マイナンバーカードのいずれか</div>
-            </div>
-            
-            <!-- 注意事項と同意 -->
-            <div class="mb-3 form-check">
-              <input type="checkbox" class="form-check-input" id="guide-terms" required>
-              <label class="form-check-label" for="guide-terms" data-i18n="register.terms">利用規約とプライバシーポリシーに同意します</label>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="common.cancel">キャンセル</button>
-          <button type="button" class="btn btn-primary" id="submit-guide-registration" data-i18n="common.register">登録する</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Bootstrap Bundle with Popper -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Feather Icons -->
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <!-- Bootstrap JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   
-  <!-- Custom Scripts -->
-  <script src="guideModal.js"></script>
-  <script src="pure_phone_auth.js"></script>
-
   <script>
-    // Featherアイコンの初期化
-    document.addEventListener('DOMContentLoaded', function() {
-      feather.replace();
-      
-      // ユーザータイプモーダルを表示
-      document.getElementById('show-user-type-modal').addEventListener('click', function() {
-        var modal = new bootstrap.Modal(document.getElementById('userTypeModal'));
-        modal.show();
-      });
-      
-      // ガイド登録ボタンのイベント
-      document.getElementById('register-as-guide-btn').addEventListener('click', function() {
-        var userTypeModal = bootstrap.Modal.getInstance(document.getElementById('userTypeModal'));
-        userTypeModal.hide();
-        
-        setTimeout(function() {
-          var guideModal = new bootstrap.Modal(document.getElementById('registerGuideModal'));
-          guideModal.show();
-        }, 500);
-      });
-    });
+    // シンプルな機能のみ
+    function showRegisterOptions() {
+      alert('新規登録機能は準備中です');
+    }
+    
+    document.getElementById('sponsorRegisterBtn').onclick = function() {
+      alert('協賛店登録ページに移動します');
+    };
+    
+    document.getElementById('sponsorLoginBtn').onclick = function() {
+      alert('協賛店ログインページに移動します');
+    };
   </script>
 </body>
 </html>
