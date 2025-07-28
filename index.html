@@ -818,57 +818,188 @@
                     <!-- Registration Form (Initially Hidden) -->
                     <div id="registrationForm" style="display: none;">
                         <form id="userRegistrationForm">
+                            <!-- Profile Photo Upload -->
+                            <div class="mb-4 text-center">
+                                <label class="form-label fw-bold">プロフィール写真</label>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="profile-photo-preview mb-3" style="width: 120px; height: 120px; border: 3px dashed #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                                        <img id="profilePreview" src="" alt="プロフィール写真" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none;">
+                                        <span id="photoPlaceholder" class="text-muted">写真を選択</span>
+                                    </div>
+                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*" style="border-radius: 10px;">
+                                </div>
+                            </div>
+
+                            <!-- Basic Information -->
+                            <h6 class="fw-bold mb-3 text-primary">基本情報</h6>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="regFirstName" class="form-label fw-bold">名前</label>
-                                    <input type="text" class="form-control" id="regFirstName" placeholder="太郎" style="border-radius: 10px; padding: 12px;">
+                                    <label for="regFirstName" class="form-label fw-bold">名前（本名）<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="regFirstName" placeholder="太郎" required style="border-radius: 10px; padding: 12px;">
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="regLastName" class="form-label fw-bold">苗字</label>
-                                    <input type="text" class="form-control" id="regLastName" placeholder="田中" style="border-radius: 10px; padding: 12px;">
+                                    <label for="regLastName" class="form-label fw-bold">苗字（本名）<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="regLastName" placeholder="田中" required style="border-radius: 10px; padding: 12px;">
                                 </div>
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="regEmail" class="form-label fw-bold">メールアドレス</label>
-                                <input type="email" class="form-control" id="regEmail" placeholder="email@example.com" style="border-radius: 10px; padding: 12px;">
+                                <label for="regEmail" class="form-label fw-bold">メールアドレス<span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="regEmail" placeholder="email@example.com" required style="border-radius: 10px; padding: 12px;">
                             </div>
-                            <div class="mb-3">
-                                <label for="regPassword" class="form-label fw-bold">パスワード</label>
-                                <input type="password" class="form-control" id="regPassword" placeholder="8文字以上のパスワード" style="border-radius: 10px; padding: 12px;">
+                            
+                            <!-- Password Fields -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="regPassword" class="form-label fw-bold">パスワード<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="regPassword" placeholder="8文字以上のパスワード" required style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword1" style="border-radius: 0 10px 10px 0;">
+                                            <i class="bi bi-eye" id="eyeIcon1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="regPasswordConfirm" class="form-label fw-bold">パスワード確認<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="regPasswordConfirm" placeholder="パスワード再入力" required style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2" style="border-radius: 0 10px 10px 0;">
+                                            <i class="bi bi-eye" id="eyeIcon2"></i>
+                                        </button>
+                                    </div>
+                                    <div class="invalid-feedback" id="passwordMismatch"></div>
+                                </div>
                             </div>
+                            
+                            <!-- Phone Verification -->
                             <div class="mb-3">
-                                <label for="regPhone" class="form-label fw-bold">電話番号</label>
-                                <input type="tel" class="form-control" id="regPhone" placeholder="090-1234-5678" style="border-radius: 10px; padding: 12px;">
+                                <label for="regPhone" class="form-label fw-bold">電話番号<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="tel" class="form-control" id="regPhone" placeholder="090-1234-5678" required style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                    <button class="btn btn-primary" type="button" id="sendVerificationBtn" style="border-radius: 0 10px 10px 0;">認証コード送信</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Verification Code (Initially Hidden) -->
+                            <div class="mb-3" id="verificationCodeSection" style="display: none;">
+                                <label for="verificationCode" class="form-label fw-bold">認証コード<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="verificationCode" placeholder="6桁の認証コード" maxlength="6" style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                    <button class="btn btn-success" type="button" id="verifyCodeBtn" style="border-radius: 0 10px 10px 0;">認証</button>
+                                </div>
+                                <small class="text-muted">SMSで送信された6桁のコードを入力してください</small>
+                            </div>
+
+                            <!-- ID Document Verification -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3 text-primary">身分証明書確認<span class="text-danger">*</span></h6>
+                                <div class="mb-3">
+                                    <label for="idDocumentType" class="form-label fw-bold">書類の種類</label>
+                                    <select class="form-select" id="idDocumentType" required style="border-radius: 10px; padding: 12px;">
+                                        <option value="">選択してください</option>
+                                        <option value="drivers_license">運転免許証</option>
+                                        <option value="passport">パスポート</option>
+                                        <option value="residence_card">在留カード</option>
+                                        <option value="mynumber">マイナンバーカード</option>
+                                    </select>
+                                </div>
+                                <div class="row" id="idDocumentUpload">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="idDocumentFront" class="form-label fw-bold">表面</label>
+                                        <input type="file" class="form-control" id="idDocumentFront" accept="image/*" required style="border-radius: 10px;">
+                                    </div>
+                                    <div class="col-md-6 mb-3" id="idDocumentBackSection" style="display: none;">
+                                        <label for="idDocumentBack" class="form-label fw-bold">裏面</label>
+                                        <input type="file" class="form-control" id="idDocumentBack" accept="image/*" style="border-radius: 10px;">
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Guide-specific fields (Initially Hidden) -->
                             <div id="guideSpecificFields" style="display: none;">
+                                <h6 class="fw-bold mb-3 text-success">ガイド情報</h6>
+                                
+                                <!-- Display Name for Guide Cards -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="guideDisplayFirstName" class="form-label fw-bold">表示用名前（任意）</label>
+                                        <input type="text" class="form-control" id="guideDisplayFirstName" placeholder="ガイドカード表示用" style="border-radius: 10px; padding: 12px;">
+                                        <small class="text-muted">空欄の場合は本名が使用されます</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="guideDisplayLastName" class="form-label fw-bold">表示用苗字（任意）</label>
+                                        <input type="text" class="form-control" id="guideDisplayLastName" placeholder="ガイドカード表示用" style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                </div>
+
                                 <div class="mb-3">
-                                    <label for="guideLanguages" class="form-label fw-bold">対応可能な言語</label>
-                                    <select class="form-select" id="guideLanguages" multiple style="border-radius: 10px; padding: 12px;">
+                                    <label for="guideLocation" class="form-label fw-bold">活動エリア<span class="text-danger">*</span></label>
+                                    <select class="form-select" id="guideLocation" required style="border-radius: 10px; padding: 12px;">
+                                        <option value="">選択してください</option>
+                                        <option value="tokyo">東京都</option>
+                                        <option value="kyoto">京都府</option>
+                                        <option value="osaka">大阪府</option>
+                                        <option value="hiroshima">広島県</option>
+                                        <option value="hokkaido">北海道</option>
+                                        <option value="okinawa">沖縄県</option>
+                                        <option value="nagano">長野県</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="guideLanguages" class="form-label fw-bold">対応可能な言語<span class="text-danger">*</span></label>
+                                    <select class="form-select" id="guideLanguages" multiple required style="border-radius: 10px; padding: 12px;">
                                         <option value="japanese">日本語</option>
                                         <option value="english">英語</option>
                                         <option value="chinese">中国語</option>
                                         <option value="korean">韓国語</option>
                                         <option value="spanish">スペイン語</option>
                                         <option value="french">フランス語</option>
+                                        <option value="german">ドイツ語</option>
                                     </select>
-                                    <small class="text-muted">複数選択可能です</small>
+                                    <small class="text-muted">複数選択可能です（Ctrl+クリック）</small>
                                 </div>
+                                
                                 <div class="mb-3">
-                                    <label for="guideSpecialty" class="form-label fw-bold">専門分野</label>
+                                    <label for="guideSpecialty" class="form-label fw-bold">専門分野（任意）</label>
                                     <input type="text" class="form-control" id="guideSpecialty" placeholder="歴史・文化、グルメ、自然など" style="border-radius: 10px; padding: 12px;">
+                                    <small class="text-muted">得意分野やツアー内容を入力してください</small>
                                 </div>
+                                
                                 <div class="mb-3">
-                                    <label for="guidePrice" class="form-label fw-bold">1日ガイド料金（円）</label>
-                                    <input type="number" class="form-control" id="guidePrice" placeholder="8000" min="3000" style="border-radius: 10px; padding: 12px;">
+                                    <label for="guidePrice" class="form-label fw-bold">1日ガイド料金<span class="text-danger">*</span></label>
+                                    <select class="form-select" id="guidePrice" required style="border-radius: 10px; padding: 12px;">
+                                        <option value="">料金を選択してください</option>
+                                        <option value="6000">¥6,000</option>
+                                        <option value="7000">¥7,000</option>
+                                        <option value="8000">¥8,000</option>
+                                        <option value="9000">¥9,000</option>
+                                        <option value="10000">¥10,000</option>
+                                        <option value="11000">¥11,000</option>
+                                        <option value="12000">¥12,000</option>
+                                        <option value="13000">¥13,000</option>
+                                        <option value="14000">¥14,000</option>
+                                        <option value="15000">¥15,000</option>
+                                        <option value="16000">¥16,000</option>
+                                        <option value="17000">¥17,000</option>
+                                        <option value="18000">¥18,000</option>
+                                        <option value="19000">¥19,000</option>
+                                        <option value="20000">¥20,000</option>
+                                        <option value="25000">¥25,000</option>
+                                        <option value="30000">¥30,000</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="guideDescription" class="form-label fw-bold">自己紹介文（任意）</label>
+                                    <textarea class="form-control" id="guideDescription" rows="3" placeholder="ガイドとしての経験や案内スタイルを説明してください" style="border-radius: 10px; padding: 12px;"></textarea>
                                 </div>
                             </div>
                             
                             <div class="form-check mb-3">
                                 <input class="form-check-input" type="checkbox" id="agreeTerms" required>
                                 <label class="form-check-label" for="agreeTerms">
-                                    <a href="#" class="text-decoration-none">利用規約</a>と<a href="#" class="text-decoration-none">プライバシーポリシー</a>に同意する
+                                    <a href="#" class="text-decoration-none">利用規約</a>と<a href="#" class="text-decoration-none">プライバシーポリシー</a>に同意する<span class="text-danger">*</span>
                                 </label>
                             </div>
                         </form>
@@ -896,7 +1027,108 @@
             const registrationSubmitBtn = document.getElementById('registrationSubmitBtn');
             
             let selectedType = null;
+            let isPhoneVerified = false;
+            let registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
             
+            // Profile photo preview
+            document.getElementById('profilePhoto').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const preview = document.getElementById('profilePreview');
+                const placeholder = document.getElementById('photoPlaceholder');
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Password visibility toggle
+            document.getElementById('togglePassword1').addEventListener('click', function() {
+                togglePasswordVisibility('regPassword', 'eyeIcon1');
+            });
+            document.getElementById('togglePassword2').addEventListener('click', function() {
+                togglePasswordVisibility('regPasswordConfirm', 'eyeIcon2');
+            });
+            
+            function togglePasswordVisibility(inputId, iconId) {
+                const input = document.getElementById(inputId);
+                const icon = document.getElementById(iconId);
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'bi bi-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'bi bi-eye';
+                }
+            }
+            
+            // Password confirmation validation
+            document.getElementById('regPasswordConfirm').addEventListener('input', function() {
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = this.value;
+                const feedback = document.getElementById('passwordMismatch');
+                
+                if (confirmPassword && password !== confirmPassword) {
+                    this.classList.add('is-invalid');
+                    feedback.textContent = 'パスワードが一致しません';
+                    feedback.style.display = 'block';
+                } else {
+                    this.classList.remove('is-invalid');
+                    feedback.style.display = 'none';
+                }
+            });
+            
+            // Phone verification
+            document.getElementById('sendVerificationBtn').addEventListener('click', function() {
+                const phone = document.getElementById('regPhone').value;
+                if (phone.match(/^[0-9-+()]+$/)) {
+                    document.getElementById('verificationCodeSection').style.display = 'block';
+                    this.disabled = true;
+                    this.textContent = '送信済み';
+                    
+                    // Simulate SMS sending
+                    alert('認証コードを送信しました（デモ版では「123456」を入力してください）');
+                } else {
+                    alert('正しい電話番号を入力してください');
+                }
+            });
+            
+            document.getElementById('verifyCodeBtn').addEventListener('click', function() {
+                const code = document.getElementById('verificationCode').value;
+                if (code === '123456') {
+                    isPhoneVerified = true;
+                    this.textContent = '認証完了';
+                    this.disabled = true;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-success');
+                    document.getElementById('verificationCode').disabled = true;
+                    alert('電話番号認証が完了しました');
+                } else {
+                    alert('認証コードが正しくありません');
+                }
+            });
+            
+            // ID Document type change handler
+            document.getElementById('idDocumentType').addEventListener('change', function() {
+                const backSection = document.getElementById('idDocumentBackSection');
+                const backInput = document.getElementById('idDocumentBack');
+                
+                if (this.value === 'drivers_license') {
+                    backSection.style.display = 'block';
+                    backInput.required = true;
+                } else {
+                    backSection.style.display = 'none';
+                    backInput.required = false;
+                }
+            });
+            
+            // Registration type selection
             touristCard.addEventListener('click', function() {
                 selectRegistrationType('tourist');
             });
@@ -943,39 +1175,177 @@
             
             // Registration form submission
             document.getElementById('registrationSubmitBtn').addEventListener('click', function() {
+                if (!validateRegistrationForm()) {
+                    return;
+                }
+                
+                const formData = collectFormData();
+                
+                if (selectedType === 'guide') {
+                    // Add new guide to the list and display
+                    addGuideToDisplay(formData);
+                    alert('ガイドとして登録を受付けました。ガイドカードが追加されました！');
+                } else {
+                    alert('観光客として登録を受付けました。確認メールをご確認ください。');
+                }
+                
+                // Close modal and reset form
+                const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                registrationModal.hide();
+                resetRegistrationForm();
+            });
+            
+            function validateRegistrationForm() {
                 const firstName = document.getElementById('regFirstName').value;
                 const lastName = document.getElementById('regLastName').value;
                 const email = document.getElementById('regEmail').value;
                 const password = document.getElementById('regPassword').value;
+                const passwordConfirm = document.getElementById('regPasswordConfirm').value;
                 const phone = document.getElementById('regPhone').value;
                 const agreeTerms = document.getElementById('agreeTerms').checked;
+                const idDocType = document.getElementById('idDocumentType').value;
+                const idDocFront = document.getElementById('idDocumentFront').files[0];
                 
-                if (firstName && lastName && email && password && phone && agreeTerms && selectedType) {
-                    // Simulate registration process
-                    alert(`${selectedType === 'tourist' ? '観光客' : 'ガイド'}として登録を受付けました。確認メールをご確認ください。（現在はデモ版です）`);
-                    const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
-                    registrationModal.hide();
-                    
-                    // Reset form
-                    document.getElementById('userRegistrationForm').reset();
-                    registrationForm.style.display = 'none';
-                    registrationSubmitBtn.style.display = 'none';
-                    touristCard.style.border = '2px solid #e9ecef';
-                    guideCard.style.border = '2px solid #e9ecef';
-                    selectedType = null;
-                } else {
-                    alert('すべてのフィールドを入力し、利用規約に同意してください。');
+                if (!firstName || !lastName || !email || !password || !phone || !agreeTerms || !selectedType) {
+                    alert('必須項目をすべて入力してください。');
+                    return false;
                 }
-            });
+                
+                if (password !== passwordConfirm) {
+                    alert('パスワードが一致しません。');
+                    return false;
+                }
+                
+                if (!isPhoneVerified) {
+                    alert('電話番号認証を完了してください。');
+                    return false;
+                }
+                
+                if (!idDocType || !idDocFront) {
+                    alert('身分証明書の確認を完了してください。');
+                    return false;
+                }
+                
+                if (selectedType === 'guide') {
+                    const location = document.getElementById('guideLocation').value;
+                    const languages = Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value);
+                    const price = document.getElementById('guidePrice').value;
+                    
+                    if (!location || languages.length === 0 || !price) {
+                        alert('ガイド情報の必須項目をすべて入力してください。');
+                        return false;
+                    }
+                }
+                
+                return true;
+            }
             
-            // Reset modal when closed
-            document.getElementById('registrationModal').addEventListener('hidden.bs.modal', function () {
+            function collectFormData() {
+                const profilePhoto = document.getElementById('profilePreview').src;
+                const firstName = document.getElementById('regFirstName').value;
+                const lastName = document.getElementById('regLastName').value;
+                const displayFirstName = document.getElementById('guideDisplayFirstName').value || firstName;
+                const displayLastName = document.getElementById('guideDisplayLastName').value || lastName;
+                
+                const data = {
+                    id: Date.now(),
+                    type: selectedType,
+                    realName: {
+                        first: firstName,
+                        last: lastName
+                    },
+                    displayName: {
+                        first: displayFirstName,
+                        last: displayLastName
+                    },
+                    email: document.getElementById('regEmail').value,
+                    phone: document.getElementById('regPhone').value,
+                    profilePhoto: profilePhoto,
+                    registrationDate: new Date().toISOString()
+                };
+                
+                if (selectedType === 'guide') {
+                    data.location = document.getElementById('guideLocation').value;
+                    data.languages = Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value);
+                    data.specialty = document.getElementById('guideSpecialty').value || '';
+                    data.price = parseInt(document.getElementById('guidePrice').value);
+                    data.description = document.getElementById('guideDescription').value || '';
+                    data.rating = (4.5 + Math.random() * 0.4).toFixed(1); // Random rating between 4.5-4.9
+                }
+                
+                return data;
+            }
+            
+            function addGuideToDisplay(guideData) {
+                // Add to registered guides
+                registeredGuides.push(guideData);
+                localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+                
+                // Add to current guide data display
+                const newGuide = {
+                    id: guideData.id,
+                    name: guideData.displayName.last + ' ' + guideData.displayName.first,
+                    location: guideData.location,
+                    languages: guideData.languages,
+                    price: guideData.price,
+                    rating: parseFloat(guideData.rating),
+                    specialty: guideData.specialty || '総合ガイド',
+                    image: guideData.profilePhoto || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face',
+                    description: guideData.description || 'プロフェッショナルなガイドサービスを提供します'
+                };
+                
+                // Add to global guide data
+                if (typeof guideData !== 'undefined' && Array.isArray(window.guideData)) {
+                    window.guideData.push(newGuide);
+                }
+                
+                // Refresh the guide display
+                if (typeof displayGuides === 'function') {
+                    const container = document.getElementById('guideCardsContainer');
+                    if (container) {
+                        // Add the new guide card to the existing display
+                        const newGuideCard = createGuideCard(newGuide);
+                        container.insertAdjacentHTML('beforeend', newGuideCard);
+                        
+                        // Update counters
+                        if (typeof updateCounter === 'function') {
+                            updateCounter();
+                        }
+                        
+                        // Add event listeners to the new card
+                        if (typeof addCardEventListeners === 'function') {
+                            addCardEventListeners();
+                        }
+                    }
+                }
+            }
+            
+            function resetRegistrationForm() {
                 document.getElementById('userRegistrationForm').reset();
+                document.getElementById('profilePreview').style.display = 'none';
+                document.getElementById('photoPlaceholder').style.display = 'block';
+                document.getElementById('verificationCodeSection').style.display = 'none';
+                document.getElementById('idDocumentBackSection').style.display = 'none';
                 registrationForm.style.display = 'none';
                 registrationSubmitBtn.style.display = 'none';
                 touristCard.style.border = '2px solid #e9ecef';
                 guideCard.style.border = '2px solid #e9ecef';
                 selectedType = null;
+                isPhoneVerified = false;
+                
+                // Reset buttons
+                document.getElementById('sendVerificationBtn').disabled = false;
+                document.getElementById('sendVerificationBtn').textContent = '認証コード送信';
+                document.getElementById('verifyCodeBtn').disabled = false;
+                document.getElementById('verifyCodeBtn').textContent = '認証';
+                document.getElementById('verifyCodeBtn').classList.remove('btn-outline-success');
+                document.getElementById('verifyCodeBtn').classList.add('btn-success');
+                document.getElementById('verificationCode').disabled = false;
+            }
+            
+            // Reset modal when closed
+            document.getElementById('registrationModal').addEventListener('hidden.bs.modal', function () {
+                resetRegistrationForm();
             });
         });
     </script>
