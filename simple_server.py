@@ -17,14 +17,23 @@ class FastHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         print(f"📡 リクエスト: {self.path}")
         
-        # ルートアクセス時は軽量版HTMLを直接返す
+        # ルートアクセス時は完全版HTMLファイルを返す
         if self.path == '/':
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.send_header('Cache-Control', 'no-cache')
-            self.end_headers()
+            try:
+                with open('index_light.html', 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html; charset=utf-8')
+                self.send_header('Cache-Control', 'no-cache')
+                self.end_headers()
+                self.wfile.write(html_content.encode('utf-8'))
+                print("✅ 完全版HTML送信完了")
+                return
+            except FileNotFoundError:
+                print("❌ index_light.html が見つかりません - インライン版にフォールバック")
             
-            # 軽量HTMLを直接出力（外部ファイル読み込みなし）
+            # フォールバック用簡易HTML
             html_content = '''<!DOCTYPE html>
 <html lang="ja">
 <head>
