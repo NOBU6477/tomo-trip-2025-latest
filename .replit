@@ -43,7 +43,7 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "python3 simple_server.py"
-waitForPort = 8000
+waitForPort = 5000
 
 [[workflows.workflow]]
 name = "SimpleServer"
