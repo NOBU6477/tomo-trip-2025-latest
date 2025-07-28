@@ -99,7 +99,7 @@ function getLanguageNames(languageCodes) {
     return languageCodes.map(code => languageNames[code] || code).join(', ');
 }
 
-// Image compression function to prevent LocalStorage quota errors
+// Enhanced image compression function with better quality preservation
 function compressImageData(dataURL, quality, maxWidth, maxHeight) {
     return new Promise((resolve) => {
         const canvas = document.createElement('canvas');
@@ -107,26 +107,44 @@ function compressImageData(dataURL, quality, maxWidth, maxHeight) {
         const img = new Image();
         
         img.onload = function() {
-            // Calculate new dimensions
+            // Calculate new dimensions maintaining aspect ratio
             let { width, height } = img;
+            const aspectRatio = width / height;
             
+            // Smart resizing based on aspect ratio
             if (width > height) {
                 if (width > maxWidth) {
-                    height *= maxWidth / width;
                     width = maxWidth;
+                    height = width / aspectRatio;
                 }
             } else {
                 if (height > maxHeight) {
-                    width *= maxHeight / height;
                     height = maxHeight;
+                    width = height * aspectRatio;
                 }
             }
             
-            canvas.width = width;
-            canvas.height = height;
+            // Ensure dimensions are not larger than max
+            if (width > maxWidth) {
+                width = maxWidth;
+                height = width / aspectRatio;
+            }
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = height * aspectRatio;
+            }
             
-            // Draw and compress
-            ctx.drawImage(img, 0, 0, width, height);
+            canvas.width = Math.round(width);
+            canvas.height = Math.round(height);
+            
+            // Enable image smoothing for better quality
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Draw with anti-aliasing
+            ctx.drawImage(img, 0, 0, Math.round(width), Math.round(height));
+            
+            // Use higher quality JPEG compression
             const compressedDataURL = canvas.toDataURL('image/jpeg', quality);
             resolve(compressedDataURL);
         };
@@ -179,15 +197,22 @@ async function saveGuideData(originalData, isPublished = false) {
         }
         
         // Compress image if it's too large to prevent LocalStorage quota exceeded
-        if (currentProfilePhoto && currentProfilePhoto.length > 100000) { // 100KB limit
+        if (currentProfilePhoto && currentProfilePhoto.length > 200000) { // 200KB limit (increased)
             console.log('Image too large, compressing...', currentProfilePhoto.length, 'bytes');
             try {
-                currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.4, 150, 150);
+                // First attempt: Higher quality, larger size
+                currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.8, 300, 300);
                 console.log('Image compressed to:', currentProfilePhoto.length, 'bytes');
+                
+                // If still too large, apply moderate compression
+                if (currentProfilePhoto.length > 150000) {
+                    currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.7, 250, 250);
+                    console.log('Second compression to:', currentProfilePhoto.length, 'bytes');
+                }
             } catch (error) {
                 console.error('Image compression failed:', error);
-                // Use a smaller compression if the first attempt fails
-                currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.2, 100, 100);
+                // Final fallback with balanced quality
+                currentProfilePhoto = await compressImageData(currentProfilePhoto, 0.6, 200, 200);
             }
         }
         
@@ -242,17 +267,27 @@ async function saveGuideData(originalData, isPublished = false) {
             } catch (error) {
                 console.error('LocalStorage quota exceeded:', error);
                 
-                // Emergency compression - remove large images from older guides
-                const compressedGuides = registeredGuides.map(guide => {
-                    if (guide.id !== originalData.id) {
-                        return {
-                            ...guide,
-                            profilePhoto: null,
-                            image: null
-                        };
+                // Emergency compression - compress images from older guides instead of removing
+                const compressedGuides = await Promise.all(registeredGuides.map(async guide => {
+                    if (guide.id !== originalData.id && guide.profilePhoto && guide.profilePhoto.length > 50000) {
+                        try {
+                            const compressedImage = await compressImageData(guide.profilePhoto, 0.5, 150, 150);
+                            return {
+                                ...guide,
+                                profilePhoto: compressedImage,
+                                image: compressedImage
+                            };
+                        } catch (err) {
+                            // Only remove if compression fails
+                            return {
+                                ...guide,
+                                profilePhoto: null,
+                                image: null
+                            };
+                        }
                     }
                     return guide;
-                });
+                }));
                 
                 try {
                     localStorage.setItem('registeredGuides', JSON.stringify(compressedGuides));
