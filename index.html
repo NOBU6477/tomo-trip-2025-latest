@@ -474,8 +474,23 @@
             ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
         };
 
-        // Expanded guide data with diverse locations and updated pricing
-        const guideData = [
+        // Load registered guides from localStorage and merge with default data
+        function loadAllGuides() {
+            const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+            console.log('Loading registered guides:', registeredGuides.length);
+            
+            // Merge registered guides with default guides
+            return [...defaultGuideData, ...registeredGuides.map(guide => ({
+                ...guide,
+                // Ensure registered guides have proper ID and rating
+                id: guide.id || Date.now() + Math.random(),
+                rating: guide.rating || 4.5,
+                image: guide.image || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`
+            }))];
+        }
+
+        // Default guide data with diverse locations and updated pricing
+        const defaultGuideData = [
             {
                 id: 1, name: "田中 健太", location: "tokyo", languages: ["japanese", "english"], 
                 price: 8000, rating: 4.8, specialty: "歴史・文化", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
@@ -554,6 +569,8 @@
             }
         ];
 
+        // Initialize guides with registered guides included
+        let guideData = loadAllGuides();
         let currentGuides = guideData;
         let displayedGuides = [];
 
@@ -698,6 +715,11 @@
                 window.clearTimeout(i);
             }
             
+            // Initialize data with all guides (including registered ones)
+            guideData = loadAllGuides();
+            currentGuides = guideData;
+            console.log('Page loaded with total guides:', guideData.length);
+            
             // Display initial guides
             displayGuides(guideData.slice(0, 12));
             
@@ -725,6 +747,8 @@
                     document.getElementById('locationFilter').value = '';
                     document.getElementById('languageFilter').value = '';
                     document.getElementById('priceFilter').value = '';
+                    // Refresh guide data to include any new registrations
+                    guideData = loadAllGuides();
                     currentGuides = guideData;
                     displayGuides(guideData.slice(0, 12));
                 },
@@ -1568,6 +1592,12 @@
                 }
                 
                 console.log('Guide registration completed successfully. Total guides:', registeredGuides.length);
+                
+                // Update guideData array immediately to include new guide
+                guideData = loadAllGuides();
+                currentGuides = guideData;
+                console.log('Guide data refreshed. Total guides now:', guideData.length);
+                
                 return true; // Indicate success
             }
             
