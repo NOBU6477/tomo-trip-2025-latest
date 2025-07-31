@@ -274,7 +274,15 @@
             </a>
             
             <div class="d-flex">
-                <button class="btn btn-outline-primary me-2" id="loginBtn" data-bs-toggle="modal" data-bs-target="#loginModal">ログイン</button>
+                <div class="dropdown me-2">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        ログイン
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="loginDropdown">
+                        <li><a class="dropdown-item" href="#" id="touristLoginBtn">観光客としてログイン</a></li>
+                        <li><a class="dropdown-item" href="#" id="guideLoginBtn">ガイドとしてログイン</a></li>
+                    </ul>
+                </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
             </div>
         </div>
@@ -781,18 +789,66 @@
             window.viewGuideDetail = function(guideId) {
                 console.log('viewGuideDetail called with guideId:', guideId);
                 
-                if (!window.checkTouristRegistration()) {
-                    console.log('User not registered as tourist, showing registration prompt');
-                    alert('ガイドの詳細を見るには、観光客として登録が必要です。\n\n先に観光客登録を完了してください。');
-                    // Show registration modal
-                    const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                    registrationModal.show();
-                    return;
+                // Check both localStorage and sessionStorage for tourist registration
+                const touristData = localStorage.getItem('touristData') || sessionStorage.getItem('touristData');
+                console.log('Tourist data from localStorage:', touristData);
+                
+                if (!touristData) {
+                    console.log('User not registered as tourist, showing registration modal');
+                    
+                    // Prevent any navigation
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Show modal prompt instead of alert
+                    const alertModal = document.createElement('div');
+                    alertModal.className = 'modal fade';
+                    alertModal.innerHTML = `
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning text-dark">
+                                    <h5 class="modal-title">登録が必要です</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <p class="mb-3">ガイドの詳細を見るには、観光客として登録が必要です。</p>
+                                    <p class="text-muted">先に観光客登録を完了してください。</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                                    <button type="button" class="btn btn-primary" id="openRegistrationBtn">観光客登録</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(alertModal);
+                    const modal = new bootstrap.Modal(alertModal);
+                    modal.show();
+                    
+                    // Handle registration button click
+                    document.getElementById('openRegistrationBtn').addEventListener('click', function() {
+                        modal.hide();
+                        setTimeout(() => {
+                            document.getElementById('userType').value = 'tourist';
+                            const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                            registrationModal.show();
+                            alertModal.remove();
+                        }, 300);
+                    });
+                    
+                    // Clean up modal after hiding
+                    alertModal.addEventListener('hidden.bs.modal', function() {
+                        alertModal.remove();
+                    });
+                    
+                    return false;
                 }
                 
                 console.log('User registered, navigating to guide details page');
                 // If registered, navigate to guide detail page
                 window.location.href = `guide-details.html?id=${guideId}`;
+                return true;
             }
             
             // Clear any existing intervals/timeouts to prevent conflicts
@@ -857,6 +913,17 @@
                 if (element) {
                     element.addEventListener('click', buttons[id]);
                 }
+            });
+            
+            // Login dropdown functionality
+            document.getElementById('touristLoginBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('観光客ログイン機能は開発中です。\n\n現在は新規登録後、すぐにガイド詳細をご覧いただけます。');
+            });
+
+            document.getElementById('guideLoginBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('ガイドログイン機能は開発中です。\n\n現在は新規登録後、プロフィール編集ページに移動します。');
             });
             
             console.log('✅ TomoTrip Complete Version Loaded Successfully - All Features Active');
