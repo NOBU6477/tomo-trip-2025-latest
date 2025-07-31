@@ -1532,6 +1532,8 @@
                     
                     const formData = collectFormData();
                     console.log('Form data collected successfully');
+                    console.log('Selected type:', selectedType);
+                    console.log('Form data type:', formData.type);
                     
                     // Close modal first to prevent UI conflicts
                     const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
@@ -1541,7 +1543,9 @@
                     
                     // Use setTimeout to prevent blocking
                     setTimeout(() => {
-                        if (selectedType === 'guide') {
+                        console.log('Checking selectedType in setTimeout:', selectedType);
+                        console.log('Checking formData.type:', formData.type);
+                        if (selectedType === 'guide' || formData.type === 'guide') {
                             // Store guide data safely without display conflicts
                             try {
                                 addGuideToDisplay(formData);
@@ -1562,6 +1566,7 @@
                                 alert('ガイド登録が完了しました！\n\n手動でページを更新してください。');
                             }
                         } else {
+                            console.log('Processing as tourist registration');
                             alert('観光客として登録を受付けました！\n\n登録が完了しました。ログイン後、ガイド検索をご利用いただけます。');
                             // Only reset form for tourist registration (guide registration will reload page)
                             resetRegistrationForm();
