@@ -848,10 +848,114 @@
                     return false;
                 }
                 
-                console.log('User registered, navigating to guide details page');
-                // If registered, navigate to guide detail page
-                window.location.href = `guide-details.html?id=${guideId}`;
+                console.log('User registered, showing guide detail modal');
+                // If registered, show guide detail in modal instead of navigation
+                showGuideDetailModal(guideId);
                 return true;
+            }
+            
+            // Show guide detail in modal
+            window.showGuideDetailModal = function(guideId) {
+                // Language names mapping for modal display
+                const languageNames = {
+                    japanese: '日本語', english: '英語', chinese: '中国語', korean: '韓国語',
+                    spanish: 'スペイン語', french: 'フランス語', german: 'ドイツ語', italian: 'イタリア語',
+                    portuguese: 'ポルトガル語', russian: 'ロシア語', thai: 'タイ語', vietnamese: 'ベトナム語'
+                };
+                
+                // Find guide data
+                const guide = guideData.find(g => g.id == guideId);
+                if (!guide) {
+                    console.error('Guide not found:', guideId);
+                    return;
+                }
+                
+                // Create detailed modal
+                const detailModal = document.createElement('div');
+                detailModal.className = 'modal fade';
+                detailModal.innerHTML = `
+                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-primary text-white">
+                                <h5 class="modal-title">ガイド詳細 - ${guide.name}</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <img src="${guide.image}" class="img-fluid rounded" alt="${guide.name}">
+                                        <div class="mt-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="text-warning">★</span>
+                                                <span class="fw-bold">${guide.rating}</span>
+                                            </div>
+                                            <div class="fw-bold text-primary fs-4">¥${(guide.price || 0).toLocaleString()}</div>
+                                            <small class="text-muted">1日ガイド料金</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <h6 class="text-primary mb-3">基本情報</h6>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>所在地：</strong></div>
+                                            <div class="col-sm-8">${locationNames[guide.location] || guide.location}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>専門分野：</strong></div>
+                                            <div class="col-sm-8">${guide.specialty}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-sm-4"><strong>対応言語：</strong></div>
+                                            <div class="col-sm-8">
+                                                ${guide.languages.map(lang => languageNames[lang] || lang).join(', ')}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-primary">ガイド紹介</h6>
+                                            <p class="text-muted">${guide.description}</p>
+                                        </div>
+                                        <div class="mb-3">
+                                            <h6 class="text-primary">サービス詳細</h6>
+                                            <ul class="text-muted">
+                                                <li>プロフェッショナルガイドサービス</li>
+                                                <li>現地での安全なサポート</li>
+                                                <li>写真撮影サービス</li>
+                                                <li>おすすめスポット案内</li>
+                                                <li>文化・歴史解説</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                                <button type="button" class="btn btn-success" onclick="bookGuide(${guide.id})">
+                                    <i class="bi bi-calendar-check me-2"></i>予約する
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" onclick="contactGuide(${guide.id})">
+                                    <i class="bi bi-chat-dots me-2"></i>メッセージ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(detailModal);
+                const modal = new bootstrap.Modal(detailModal);
+                modal.show();
+                
+                // Clean up modal after hiding
+                detailModal.addEventListener('hidden.bs.modal', function() {
+                    detailModal.remove();
+                });
+            }
+            
+            // Booking and contact functions
+            window.bookGuide = function(guideId) {
+                alert(`ガイドID: ${guideId} の予約機能は開発中です。\n\n今後、詳細な予約システムを実装予定です。`);
+            }
+            
+            window.contactGuide = function(guideId) {
+                alert(`ガイドID: ${guideId} へのメッセージ機能は開発中です。\n\n今後、チャット機能を実装予定です。`);
             }
             
             // Clear any existing intervals/timeouts to prevent conflicts
@@ -963,6 +1067,9 @@
             console.log('🔧 Debug functions available:');
             console.log('  - clearTouristData() - clears registration data for testing');
             console.log('  - checkRegistrationStatus() - shows current registration status');
+            console.log('📋 Modal System Features:');
+            console.log('  - Unregistered users: Registration modal display');
+            console.log('  - Registered users: Guide detail modal with booking/contact buttons');
         });
     </script>
 

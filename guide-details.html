@@ -44,94 +44,102 @@
     (function() {
       'use strict';
       
-      const touristData = localStorage.getItem('touristData');
-      
-      if (!touristData) {
-        // 未認証の場合は認証要求ページを表示
-        const urlParams = new URLSearchParams(window.location.search);
-        const guideId = urlParams.get('id');
+      function checkAuthentication() {
+        const touristData = localStorage.getItem('touristData');
         
-        document.write(`
-          <!DOCTYPE html>
-          <html lang="ja">
-          <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>ログインが必要です - TomoTrip</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-            <style>
-              body {
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                min-height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-family: 'Noto Sans JP', sans-serif;
-              }
-              .auth-container {
-                background: white;
-                border-radius: 20px;
-                padding: 40px;
-                text-align: center;
-                box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-                max-width: 500px;
-                margin: 20px;
-              }
-              .auth-icon {
-                font-size: 4rem;
-                color: #667eea;
-                margin-bottom: 20px;
-              }
-              .btn-custom {
-                border-radius: 25px;
-                padding: 12px 30px;
-                font-weight: 600;
-                margin: 10px;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="auth-container">
-              <div class="auth-icon">
-                <i class="bi bi-shield-lock"></i>
+        if (!touristData) {
+          // 未認証の場合は認証要求ページを表示
+          const urlParams = new URLSearchParams(window.location.search);
+          const guideId = urlParams.get('id');
+          
+          document.write(`
+            <!DOCTYPE html>
+            <html lang="ja">
+            <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>ログインが必要です - TomoTrip</title>
+              <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+              <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+              <style>
+                body {
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  min-height: 100vh;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-family: 'Noto Sans JP', sans-serif;
+                }
+                .auth-container {
+                  background: white;
+                  border-radius: 20px;
+                  padding: 40px;
+                  text-align: center;
+                  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+                  max-width: 500px;
+                  margin: 20px;
+                }
+                .auth-icon {
+                  font-size: 4rem;
+                  color: #667eea;
+                  margin-bottom: 20px;
+                }
+                .btn-custom {
+                  border-radius: 25px;
+                  padding: 12px 30px;
+                  font-weight: 600;
+                  margin: 10px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="auth-container">
+                <div class="auth-icon">
+                  <i class="bi bi-shield-lock"></i>
+                </div>
+                <h2 class="mb-3">ログインが必要です</h2>
+                <p class="text-muted mb-4">
+                  ガイドの詳細情報をご覧いただくには、<br>
+                  観光客としてログインしてください。
+                </p>
+                <div class="alert alert-info">
+                  <strong>安全なサービスのために</strong><br>
+                  身元確認済みのユーザーのみが<br>
+                  ガイド詳細を閲覧できます
+                </div>
+                <div class="mt-4">
+                  <a href="index.html" class="btn btn-primary btn-custom">
+                    <i class="bi bi-house-door me-2"></i>ホームページに戻る
+                  </a>
+                </div>
+                <div class="mt-2">
+                  <small class="text-muted">
+                    ホームページからログインまたは新規登録してください
+                  </small>
+                </div>
               </div>
-              <h2 class="mb-3">ログインが必要です</h2>
-              <p class="text-muted mb-4">
-                ガイドの詳細情報をご覧いただくには、<br>
-                観光客としてログインしてください。
-              </p>
-              <div class="alert alert-info">
-                <strong>安全なサービスのために</strong><br>
-                身元確認済みのユーザーのみが<br>
-                ガイド詳細を閲覧できます
-              </div>
-              <div class="mt-4">
-                <a href="index.html" class="btn btn-primary btn-custom">
-                  <i class="bi bi-house-door me-2"></i>ホームページに戻る
-                </a>
-              </div>
-              <div class="mt-2">
-                <small class="text-muted">
-                  ホームページからログインまたは新規登録してください
-                </small>
-              </div>
-            </div>
-          </body>
-          </html>
-        `);
-        // Stop execution by throwing an exception instead of return
-        throw new Error('Authentication required - redirecting to login page');
+            </body>
+            </html>
+          `);
+          // Stop execution completely
+          window.stop();
+          return false;
+        }
+        
+        // 認証済みの場合はページを通常表示
+        document.addEventListener('DOMContentLoaded', function() {
+          const authCheck = document.getElementById('authCheck');
+          if (authCheck) {
+            authCheck.style.display = 'none';
+          }
+          document.body.style.display = 'block';
+        });
+        
+        return true;
       }
       
-      // 認証済みの場合はページを通常表示
-      document.addEventListener('DOMContentLoaded', function() {
-        const authCheck = document.getElementById('authCheck');
-        if (authCheck) {
-          authCheck.style.display = 'none';
-        }
-        document.body.style.display = 'block';
-      });
+      // Execute authentication check
+      checkAuthentication();
       
     })();
   </script>
