@@ -1048,13 +1048,15 @@
                 });
             }
             
-            // Add debug function to clear tourist data for testing
+            // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
                 localStorage.removeItem('touristData');
                 sessionStorage.removeItem('touristData');
-                console.log('Tourist data cleared for testing');
-                console.log('Current tourist status: NOT REGISTERED');
+                console.log('✅ Tourist data cleared for testing');
+                console.log('✅ Current tourist status: NOT REGISTERED');
+                console.log('✅ Next "詳細を見る" click will show registration modal');
                 alert('観光客登録データをクリアしました。\n\n次回「詳細を見る」ボタンをクリックすると登録モーダルが表示されます。');
+                return 'Tourist data cleared successfully';
             };
             
             // Show current registration status
@@ -1077,6 +1079,9 @@
             console.log('📋 Modal System Features:');
             console.log('  - Unregistered users: Registration modal display');
             console.log('  - Registered users: Guide detail modal with booking/contact buttons');
+            console.log('');
+            console.log('⚠️  IMPORTANT: Use browser console (F12 → Console tab), not server terminal');
+            console.log('   Right-click page → Inspect → Console tab to access these functions');
         });
     </script>
 
