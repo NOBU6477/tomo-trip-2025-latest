@@ -485,8 +485,13 @@
                 // Ensure registered guides have proper ID and rating
                 id: guide.id || Date.now() + Math.random(),
                 rating: guide.rating || 4.5,
+                // Ensure price is set with default value
+                price: guide.price || 8000,
                 // Use profilePhoto if available, otherwise use image field, fallback to placeholder
-                image: guide.image || guide.profilePhoto || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`
+                image: guide.image || guide.profilePhoto || `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000)}?w=300&h=300&fit=crop&crop=face`,
+                // Ensure location and specialty have defaults
+                location: guide.location || 'tokyo',
+                specialty: guide.specialty || '観光案内'
             }))];
         }
 
@@ -600,7 +605,7 @@
                                     <span class="fw-bold">${guide.rating}</span>
                                 </div>
                                 <div class="text-end">
-                                    <div class="fw-bold text-primary">¥${guide.price.toLocaleString()}</div>
+                                    <div class="fw-bold text-primary">¥${(guide.price || 0).toLocaleString()}</div>
                                     <small class="text-muted">1日ガイド</small>
                                 </div>
                             </div>
@@ -754,10 +759,25 @@
                     displayGuides(guideData.slice(0, 12));
                 },
                 loadMoreBtn: () => {
+                    console.log('Load More button clicked');
                     const currentCount = displayedGuides.length;
                     const nextGuides = currentGuides.slice(currentCount, currentCount + 6);
+                    console.log('Current displayed guides:', currentCount);
+                    console.log('Next guides to load:', nextGuides.length);
+                    
                     if (nextGuides.length > 0) {
-                        displayGuides([...displayedGuides, ...nextGuides]);
+                        // Validate guide data before displaying
+                        const validatedGuides = nextGuides.map(guide => ({
+                            ...guide,
+                            price: guide.price || 0,
+                            rating: guide.rating || 4.5,
+                            priceDisplay: guide.priceDisplay || '¥' + (guide.price || 0).toLocaleString()
+                        }));
+                        
+                        displayGuides([...displayedGuides, ...validatedGuides]);
+                        console.log('Guides displayed successfully');
+                    } else {
+                        console.log('No more guides to load');
                     }
                 }
             };
@@ -1623,7 +1643,7 @@
                     
                     if (priceInput) {
                         data.price = parseInt(priceInput);
-                        data.priceDisplay = '¥' + parseInt(priceInput).toLocaleString();
+                        data.priceDisplay = '¥' + (parseInt(priceInput) || 0).toLocaleString();
                     } else if (priceRange) {
                         if (priceRange === '30000+') {
                             data.price = 30000;
@@ -1631,7 +1651,7 @@
                         } else {
                             const [min, max] = priceRange.split('-').map(p => parseInt(p));
                             data.price = min;
-                            data.priceDisplay = '¥' + min.toLocaleString() + '～¥' + max.toLocaleString();
+                            data.priceDisplay = '¥' + (min || 0).toLocaleString() + '～¥' + (max || 0).toLocaleString();
                         }
                     }
                     
