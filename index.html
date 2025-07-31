@@ -754,11 +754,12 @@
             // View detail buttons
             document.querySelectorAll('.view-detail-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
+                    e.preventDefault();
                     e.stopPropagation();
                     const guideId = this.getAttribute('data-guide-id');
                     console.log('View detail clicked for guide:', guideId);
                     if (window.viewGuideDetail) {
-                        window.viewGuideDetail(guideId);
+                        window.viewGuideDetail(guideId, e);
                     } else {
                         console.error('viewGuideDetail function not found');
                     }
@@ -786,7 +787,7 @@
                 return touristData !== null;
             }
             
-            window.viewGuideDetail = function(guideId) {
+            window.viewGuideDetail = function(guideId, event) {
                 console.log('viewGuideDetail called with guideId:', guideId);
                 
                 // Check both localStorage and sessionStorage for tourist registration
@@ -797,8 +798,10 @@
                     console.log('User not registered as tourist, showing registration modal');
                     
                     // Prevent any navigation
-                    event.preventDefault();
-                    event.stopPropagation();
+                    if (event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
                     
                     // Show modal prompt instead of alert
                     const alertModal = document.createElement('div');
@@ -872,7 +875,10 @@
             const buttons = {
                 jpBtn: () => console.log('🇯🇵 日本語 selected'),
                 enBtn: () => console.log('🇺🇸 English selected'),
-                loginBtn: () => console.log('Login clicked'),
+                loginBtn: () => {
+                    console.log('Login clicked');
+                    // This is now handled by the dropdown menu
+                },
                 registerBtn: () => console.log('Register clicked'),
                 findGuideBtn: () => {
                     document.querySelector('.main-content').scrollIntoView({ behavior: 'smooth' });
@@ -916,17 +922,33 @@
             });
             
             // Login dropdown functionality
-            document.getElementById('touristLoginBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('観光客ログイン機能は開発中です。\n\n現在は新規登録後、すぐにガイド詳細をご覧いただけます。');
-            });
+            const touristLoginBtn = document.getElementById('touristLoginBtn');
+            const guideLoginBtn = document.getElementById('guideLoginBtn');
+            
+            if (touristLoginBtn) {
+                touristLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('観光客ログイン機能は開発中です。\n\n現在は新規登録後、すぐにガイド詳細をご覧いただけます。');
+                });
+            }
 
-            document.getElementById('guideLoginBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('ガイドログイン機能は開発中です。\n\n現在は新規登録後、プロフィール編集ページに移動します。');
-            });
+            if (guideLoginBtn) {
+                guideLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('ガイドログイン機能は開発中です。\n\n現在は新規登録後、プロフィール編集ページに移動します。');
+                });
+            }
+            
+            // Add debug function to clear tourist data for testing
+            window.clearTouristData = function() {
+                localStorage.removeItem('touristData');
+                sessionStorage.removeItem('touristData');
+                console.log('Tourist data cleared for testing');
+                alert('観光客登録データをクリアしました。\n\nガイド詳細ボタンをクリックして登録モーダルをテストできます。');
+            };
             
             console.log('✅ TomoTrip Complete Version Loaded Successfully - All Features Active');
+            console.log('🔧 Debug function available: clearTouristData() - clears registration data for testing');
         });
     </script>
 
