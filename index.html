@@ -947,8 +947,22 @@
                 alert('観光客登録データをクリアしました。\n\nガイド詳細ボタンをクリックして登録モーダルをテストできます。');
             };
             
+            // Show current registration status
+            window.checkRegistrationStatus = function() {
+                const touristData = localStorage.getItem('touristData');
+                if (touristData) {
+                    console.log('Current tourist registration:', JSON.parse(touristData));
+                    alert('現在観光客として登録済みです。\n\nclearTouristData()を実行してからテストしてください。');
+                } else {
+                    console.log('No tourist registration found');
+                    alert('観光客未登録です。\n\nガイド詳細ボタンをクリックして登録モーダルをテストできます。');
+                }
+            };
+            
             console.log('✅ TomoTrip Complete Version Loaded Successfully - All Features Active');
-            console.log('🔧 Debug function available: clearTouristData() - clears registration data for testing');
+            console.log('🔧 Debug functions available:');
+            console.log('  - clearTouristData() - clears registration data for testing');
+            console.log('  - checkRegistrationStatus() - shows current registration status');
         });
     </script>
 

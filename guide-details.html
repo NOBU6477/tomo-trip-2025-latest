@@ -120,7 +120,8 @@
           </body>
           </html>
         `);
-        return;
+        // Stop execution by throwing an exception instead of return
+        throw new Error('Authentication required - redirecting to login page');
       }
       
       // 認証済みの場合はページを通常表示
