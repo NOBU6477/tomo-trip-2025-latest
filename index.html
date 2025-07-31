@@ -449,10 +449,17 @@
                 <!-- Guide cards will be populated here -->
             </div>
             
-            <!-- Load More Button -->
+            <!-- Pagination Controls -->
             <div class="row mt-4">
-                <div class="col-12 text-center">
-                    <button class="btn btn-outline-primary btn-lg" id="loadMoreBtn">もっと見る</button>
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-secondary" id="prevPageBtn" disabled>← 前のページ</button>
+                        <div class="pagination-info">
+                            <span id="pageInfo" class="fw-bold">ページ 1</span>
+                            <small class="text-muted ms-2">(<span id="displayRange">1-12</span>人目を表示)</small>
+                        </div>
+                        <button class="btn btn-outline-primary" id="nextPageBtn">次のページ →</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -579,6 +586,8 @@
         let guideData = loadAllGuides();
         let currentGuides = guideData;
         let displayedGuides = [];
+        let currentPage = 1;
+        const guidesPerPage = 12;
 
         // Generate guide card HTML
         function createGuideCard(guide) {
@@ -615,23 +624,52 @@
             `;
         }
 
-        // Display guides
-        function displayGuides(guides, append = false) {
+        // Display guides with pagination
+        function displayGuides(allGuides, page = 1) {
+            currentPage = page;
+            const startIndex = (page - 1) * guidesPerPage;
+            const endIndex = startIndex + guidesPerPage;
+            const pageGuides = allGuides.slice(startIndex, endIndex);
+            
+            displayedGuides = pageGuides;
             const container = document.getElementById('guideCardsContainer');
-            if (!append) {
-                container.innerHTML = '';
-                displayedGuides = [];
-            }
+            container.innerHTML = pageGuides.map(guide => createGuideCard(guide)).join('');
             
-            guides.forEach(guide => {
-                if (!displayedGuides.find(g => g.id === guide.id)) {
-                    displayedGuides.push(guide);
-                }
-            });
-            
-            container.innerHTML = displayedGuides.map(guide => createGuideCard(guide)).join('');
             updateCounter();
+            updatePaginationControls(allGuides.length);
             addCardEventListeners();
+        }
+        
+        // Update pagination controls
+        function updatePaginationControls(totalGuides) {
+            const totalPages = Math.ceil(totalGuides / guidesPerPage);
+            const startIndex = (currentPage - 1) * guidesPerPage + 1;
+            const endIndex = Math.min(currentPage * guidesPerPage, totalGuides);
+            
+            // Update page info
+            document.getElementById('pageInfo').textContent = `ページ ${currentPage} / ${totalPages}`;
+            document.getElementById('displayRange').textContent = `${startIndex}-${endIndex}`;
+            
+            // Update button states
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            
+            if (prevBtn && nextBtn) {
+                prevBtn.disabled = currentPage <= 1;
+                nextBtn.disabled = currentPage >= totalPages;
+                
+                if (currentPage <= 1) {
+                    prevBtn.classList.add('disabled');
+                } else {
+                    prevBtn.classList.remove('disabled');
+                }
+                
+                if (currentPage >= totalPages) {
+                    nextBtn.classList.add('disabled');
+                } else {
+                    nextBtn.classList.remove('disabled');
+                }
+            }
         }
 
         // Update counter
@@ -673,7 +711,7 @@
             }
 
             currentGuides = filtered;
-            displayGuides(filtered.slice(0, 12));
+            displayGuides(filtered, 1);
         }
 
         // Add event listeners to guide cards
@@ -727,7 +765,7 @@
             console.log('Page loaded with total guides:', guideData.length);
             
             // Display initial guides
-            displayGuides(guideData.slice(0, 12));
+            displayGuides(guideData, 1);
             
             // Update total counter on load
             updateCounter();
@@ -756,28 +794,17 @@
                     // Refresh guide data to include any new registrations
                     guideData = loadAllGuides();
                     currentGuides = guideData;
-                    displayGuides(guideData.slice(0, 12));
+                    displayGuides(guideData, 1);
                 },
-                loadMoreBtn: () => {
-                    console.log('Load More button clicked');
-                    const currentCount = displayedGuides.length;
-                    const nextGuides = currentGuides.slice(currentCount, currentCount + 6);
-                    console.log('Current displayed guides:', currentCount);
-                    console.log('Next guides to load:', nextGuides.length);
-                    
-                    if (nextGuides.length > 0) {
-                        // Validate guide data before displaying
-                        const validatedGuides = nextGuides.map(guide => ({
-                            ...guide,
-                            price: guide.price || 0,
-                            rating: guide.rating || 4.5,
-                            priceDisplay: guide.priceDisplay || '¥' + (guide.price || 0).toLocaleString()
-                        }));
-                        
-                        displayGuides([...displayedGuides, ...validatedGuides]);
-                        console.log('Guides displayed successfully');
-                    } else {
-                        console.log('No more guides to load');
+                prevPageBtn: () => {
+                    if (currentPage > 1) {
+                        displayGuides(currentGuides, currentPage - 1);
+                    }
+                },
+                nextPageBtn: () => {
+                    const totalPages = Math.ceil(currentGuides.length / guidesPerPage);
+                    if (currentPage < totalPages) {
+                        displayGuides(currentGuides, currentPage + 1);
                     }
                 }
             };
