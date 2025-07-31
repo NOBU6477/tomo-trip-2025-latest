@@ -1569,7 +1569,13 @@
                             console.log('Processing as tourist registration');
                             alert('観光客として登録を受付けました！\n\n登録が完了しました。ログイン後、ガイド検索をご利用いただけます。');
                             // Only reset form for tourist registration (guide registration will reload page)
-                            resetRegistrationForm();
+                            try {
+                                console.log('Starting resetRegistrationForm...');
+                                resetRegistrationForm();
+                                console.log('resetRegistrationForm completed');
+                            } catch (error) {
+                                console.error('Error in resetRegistrationForm:', error);
+                            }
                         }
                     }, 300);
                 } catch (error) {
@@ -1760,34 +1766,78 @@
             }
             
             function resetRegistrationForm() {
-                document.getElementById('userRegistrationForm').reset();
-                document.getElementById('profilePreview').style.display = 'none';
-                document.getElementById('photoPlaceholder').style.display = 'block';
-                document.getElementById('verificationCodeSection').style.display = 'none';
-                document.getElementById('idDocumentBackSection').style.display = 'none';
-                registrationForm.style.display = 'none';
-                registrationSubmitBtn.style.display = 'none';
-                touristCard.style.border = '2px solid #e9ecef';
-                guideCard.style.border = '2px solid #e9ecef';
-                selectedType = null;
-                isPhoneVerified = false;
-                
-                // Reset buttons
-                document.getElementById('sendVerificationBtn').disabled = false;
-                document.getElementById('sendVerificationBtn').textContent = '認証コード送信';
-                document.getElementById('verifyCodeBtn').disabled = false;
-                document.getElementById('verifyCodeBtn').textContent = '認証';
-                document.getElementById('verifyCodeBtn').classList.remove('btn-outline-success');
-                document.getElementById('verifyCodeBtn').classList.add('btn-success');
-                document.getElementById('verificationCode').disabled = false;
-                
-                // Reset price fields
-                document.getElementById('guidePriceInput').disabled = false;
-                document.getElementById('guidePriceRange').disabled = false;
-                
-                // Reset ID document previews
-                document.getElementById('idDocumentFrontPreview').style.display = 'none';
-                document.getElementById('idDocumentBackPreview').style.display = 'none';
+                try {
+                    console.log('Starting form reset...');
+                    
+                    // Safe element access with null checks
+                    const userForm = document.getElementById('userRegistrationForm');
+                    if (userForm) userForm.reset();
+                    
+                    const profilePreview = document.getElementById('profilePreview');
+                    if (profilePreview) profilePreview.style.display = 'none';
+                    
+                    const photoPlaceholder = document.getElementById('photoPlaceholder');
+                    if (photoPlaceholder) photoPlaceholder.style.display = 'block';
+                    
+                    const verificationCodeSection = document.getElementById('verificationCodeSection');
+                    if (verificationCodeSection) verificationCodeSection.style.display = 'none';
+                    
+                    const idDocumentBackSection = document.getElementById('idDocumentBackSection');
+                    if (idDocumentBackSection) idDocumentBackSection.style.display = 'none';
+                    
+                    if (typeof registrationForm !== 'undefined' && registrationForm) registrationForm.style.display = 'none';
+                    if (typeof registrationSubmitBtn !== 'undefined' && registrationSubmitBtn) registrationSubmitBtn.style.display = 'none';
+                    if (typeof touristCard !== 'undefined' && touristCard) touristCard.style.border = '2px solid #e9ecef';
+                    if (typeof guideCard !== 'undefined' && guideCard) guideCard.style.border = '2px solid #e9ecef';
+                    
+                    selectedType = null;
+                    isPhoneVerified = false;
+                    
+                    // Reset buttons with null checks
+                    const sendVerificationBtn = document.getElementById('sendVerificationBtn');
+                    if (sendVerificationBtn) {
+                        sendVerificationBtn.disabled = false;
+                        sendVerificationBtn.textContent = '認証コード送信';
+                    }
+                    
+                    const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+                    if (verifyCodeBtn) {
+                        verifyCodeBtn.disabled = false;
+                        verifyCodeBtn.textContent = '認証';
+                        verifyCodeBtn.classList.remove('btn-outline-success');
+                        verifyCodeBtn.classList.add('btn-success');
+                    }
+                    
+                    const verificationCode = document.getElementById('verificationCode');
+                    if (verificationCode) verificationCode.disabled = false;
+                    
+                    // Reset price fields with null checks
+                    const guidePriceInput = document.getElementById('guidePriceInput');
+                    if (guidePriceInput) guidePriceInput.disabled = false;
+                    
+                    const guidePriceRange = document.getElementById('guidePriceRange');
+                    if (guidePriceRange) guidePriceRange.disabled = false;
+                    
+                    // Reset ID document previews with null checks
+                    const idDocumentFrontPreview = document.getElementById('idDocumentFrontPreview');
+                    if (idDocumentFrontPreview) idDocumentFrontPreview.style.display = 'none';
+                    
+                    const idDocumentBackPreview = document.getElementById('idDocumentBackPreview');
+                    if (idDocumentBackPreview) idDocumentBackPreview.style.display = 'none';
+                    
+                    // Ensure page responsiveness after reset
+                    document.body.style.overflow = 'auto';
+                    document.documentElement.style.overflow = 'auto';
+                    document.body.classList.remove('modal-open');
+                    
+                    console.log('Form reset completed successfully');
+                } catch (error) {
+                    console.error('Error in resetRegistrationForm:', error);
+                    // Even if reset fails, ensure page is responsive
+                    document.body.style.overflow = 'auto';
+                    document.documentElement.style.overflow = 'auto';
+                    document.body.classList.remove('modal-open');
+                }
             }
             
             // Reset modal when closed
