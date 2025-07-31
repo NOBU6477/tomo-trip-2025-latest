@@ -749,7 +749,11 @@
                     e.stopPropagation();
                     const guideId = this.getAttribute('data-guide-id');
                     console.log('View detail clicked for guide:', guideId);
-                    viewGuideDetail(guideId);
+                    if (window.viewGuideDetail) {
+                        window.viewGuideDetail(guideId);
+                    } else {
+                        console.error('viewGuideDetail function not found');
+                    }
                 });
             });
 
@@ -767,6 +771,29 @@
         // Main initialization
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🌴 TomoTrip Complete Version Loading...');
+            
+            // Define tourist registration functions in global scope
+            window.checkTouristRegistration = function() {
+                const touristData = localStorage.getItem('touristData');
+                return touristData !== null;
+            }
+            
+            window.viewGuideDetail = function(guideId) {
+                console.log('viewGuideDetail called with guideId:', guideId);
+                
+                if (!window.checkTouristRegistration()) {
+                    console.log('User not registered as tourist, showing registration prompt');
+                    alert('ガイドの詳細を見るには、観光客として登録が必要です。\n\n先に観光客登録を完了してください。');
+                    // Show registration modal
+                    const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                    registrationModal.show();
+                    return;
+                }
+                
+                console.log('User registered, navigating to guide details page');
+                // If registered, navigate to guide detail page
+                window.location.href = `guide-details.html?id=${guideId}`;
+            }
             
             // Clear any existing intervals/timeouts to prevent conflicts
             for (let i = 1; i < 99999; i++) {
@@ -1914,25 +1941,7 @@
                 resetRegistrationForm();
             });
             
-            // Function to check if user is registered as tourist
-            function checkTouristRegistration() {
-                const touristData = localStorage.getItem('touristData');
-                return touristData !== null;
-            }
-            
-            // Function to handle guide detail view
-            function viewGuideDetail(guideId) {
-                if (!checkTouristRegistration()) {
-                    alert('ガイドの詳細を見るには、観光客として登録が必要です。\n\n先に観光客登録を完了してください。');
-                    // Show registration modal
-                    const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                    registrationModal.show();
-                    return;
-                }
-                
-                // If registered, navigate to guide detail page
-                window.location.href = `guide-details.html?id=${guideId}`;
-            }
+
             
             // Add emergency page unfreezing mechanism
             document.addEventListener('DOMContentLoaded', function() {
