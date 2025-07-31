@@ -618,6 +618,11 @@
                                     <small class="text-muted">1日ガイド</small>
                                 </div>
                             </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
+                                    詳細を見る
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -735,6 +740,16 @@
                     console.log('Added to comparison:', guideId);
                     this.classList.toggle('btn-success');
                     this.classList.toggle('btn-outline-success');
+                });
+            });
+
+            // View detail buttons
+            document.querySelectorAll('.view-detail-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const guideId = this.getAttribute('data-guide-id');
+                    console.log('View detail clicked for guide:', guideId);
+                    viewGuideDetail(guideId);
                 });
             });
 
@@ -1567,7 +1582,24 @@
                             }
                         } else {
                             console.log('Processing as tourist registration');
-                            alert('観光客として登録を受付けました！\n\n登録が完了しました。ログイン後、ガイド検索をご利用いただけます。');
+                            
+                            // Save tourist registration data
+                            try {
+                                const touristData = {
+                                    id: formData.id,
+                                    realName: formData.realName,
+                                    email: formData.email,
+                                    phone: formData.phone,
+                                    registeredAt: new Date().toISOString(),
+                                    type: 'tourist'
+                                };
+                                localStorage.setItem('touristData', JSON.stringify(touristData));
+                                console.log('Tourist registration data saved:', touristData);
+                            } catch (error) {
+                                console.error('Error saving tourist data:', error);
+                            }
+                            
+                            alert('観光客として登録を受付けました！\n\n登録が完了しました。ガイドの詳細ページをご覧いただけます。');
                             // Only reset form for tourist registration (guide registration will reload page)
                             try {
                                 console.log('Starting resetRegistrationForm...');
@@ -1881,6 +1913,26 @@
             document.getElementById('registrationModal').addEventListener('hidden.bs.modal', function () {
                 resetRegistrationForm();
             });
+            
+            // Function to check if user is registered as tourist
+            function checkTouristRegistration() {
+                const touristData = localStorage.getItem('touristData');
+                return touristData !== null;
+            }
+            
+            // Function to handle guide detail view
+            function viewGuideDetail(guideId) {
+                if (!checkTouristRegistration()) {
+                    alert('ガイドの詳細を見るには、観光客として登録が必要です。\n\n先に観光客登録を完了してください。');
+                    // Show registration modal
+                    const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                    registrationModal.show();
+                    return;
+                }
+                
+                // If registered, navigate to guide detail page
+                window.location.href = `guide-details.html?id=${guideId}`;
+            }
             
             // Add emergency page unfreezing mechanism
             document.addEventListener('DOMContentLoaded', function() {
