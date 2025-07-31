@@ -792,7 +792,12 @@
                 
                 // Check both localStorage and sessionStorage for tourist registration
                 const touristData = localStorage.getItem('touristData') || sessionStorage.getItem('touristData');
-                console.log('Tourist data from localStorage:', touristData);
+                console.log('Tourist data check result:', touristData ? 'REGISTERED' : 'NOT REGISTERED');
+                if (touristData) {
+                    console.log('Tourist data details:', touristData);
+                } else {
+                    console.log('No tourist registration found - showing registration modal');
+                }
                 
                 if (!touristData) {
                     console.log('User not registered as tourist, showing registration modal');
@@ -1048,18 +1053,20 @@
                 localStorage.removeItem('touristData');
                 sessionStorage.removeItem('touristData');
                 console.log('Tourist data cleared for testing');
-                alert('観光客登録データをクリアしました。\n\nガイド詳細ボタンをクリックして登録モーダルをテストできます。');
+                console.log('Current tourist status: NOT REGISTERED');
+                alert('観光客登録データをクリアしました。\n\n次回「詳細を見る」ボタンをクリックすると登録モーダルが表示されます。');
             };
             
             // Show current registration status
             window.checkRegistrationStatus = function() {
                 const touristData = localStorage.getItem('touristData');
                 if (touristData) {
-                    console.log('Current tourist registration:', JSON.parse(touristData));
-                    alert('現在観光客として登録済みです。\n\nclearTouristData()を実行してからテストしてください。');
+                    const data = JSON.parse(touristData);
+                    console.log('Current tourist registration:', data);
+                    alert(`現在観光客として登録済みです。\n\n登録名: ${data.realName.first} ${data.realName.last}\nメール: ${data.email}\n\nclearTouristData()を実行して未登録状態をテストできます。`);
                 } else {
                     console.log('No tourist registration found');
-                    alert('観光客未登録です。\n\nガイド詳細ボタンをクリックして登録モーダルをテストできます。');
+                    alert('観光客未登録です。\n\n「詳細を見る」ボタンをクリックすると登録モーダルが表示されます。');
                 }
             };
             
