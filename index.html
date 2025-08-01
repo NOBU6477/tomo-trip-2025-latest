@@ -1075,7 +1075,8 @@
                 console.log('%c  clearTouristData() - 登録データクリア', 'color: #6c757d;');
                 console.log('%c  checkRegistrationStatus() - 登録状態確認', 'color: #6c757d;');
                 
-                // IMPORTANT: Setup sponsor buttons AFTER console clear
+                // CRITICAL: Setup sponsor buttons AFTER console clear
+                console.log('%c🚨 CALLING setupSponsorButtons...', 'color: #ff0000; font-size: 16px; font-weight: bold;');
                 setupSponsorButtons();
             }, 1000);
             
@@ -1166,6 +1167,7 @@
             // ULTIMATE SPONSOR BUTTON FIX - VISIBLE DEBUGGING
             function setupSponsorButtons() {
                 console.log('%c🔧 SPONSOR BUTTON SETUP STARTED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
+                console.log('%c📍 Function called at:', 'color: #ff6b35;', new Date().toLocaleTimeString());
                 
                 // Force wait for DOM
                 setTimeout(() => {
@@ -1230,6 +1232,10 @@
                     console.log('%c🎯 SPONSOR BUTTONS SETUP FINISHED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
                 }, 300);
             }
+            
+            // EMERGENCY BACKUP: Call setupSponsorButtons immediately as well
+            console.log('%c🆘 EMERGENCY BACKUP CALL', 'color: #ff0000; font-weight: bold;');
+            setTimeout(setupSponsorButtons, 2000);
             
             // Remove duplicate call - will be called after console clear
             
