@@ -1092,77 +1092,51 @@
                 }
             }
             
-            // FINAL SOLUTION: Simple link-based approach
+            // CLEAN SETUP FUNCTION - NO DUPLICATE LISTENERS
             function setupLoginLinks() {
-                console.log('⚡ Setting up login links...');
+                console.log('⚡ Setting up login links (clean approach)...');
                 
-                // Use delegation on dropdown menu
+                // Check if dropdown menu exists
                 const dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="loginDropdown"]');
                 if (dropdownMenu) {
-                    console.log('✅ Found dropdown menu');
+                    console.log('✅ Found dropdown menu, relying on global document handler');
                     
-                    dropdownMenu.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        const loginType = e.target.getAttribute('data-login-type');
-                        console.log('🎯 Login link clicked:', loginType, e.target.textContent);
-                        
-                        if (loginType === 'tourist') {
-                            console.log('🎯 Opening tourist login modal');
-                            showLoginModal('tourist');
-                        } else if (loginType === 'guide') {
-                            console.log('🎯 Opening guide login modal');
-                            showLoginModal('guide');
-                        }
-                        
-                        // Close dropdown
-                        const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
-                        if (dropdown) dropdown.hide();
-                        
-                        return false;
-                    });
+                    // Verify login links exist
+                    const touristLink = document.getElementById('directTouristLoginBtn');
+                    const guideLink = document.getElementById('directGuideLoginBtn');
                     
-                    console.log('✅ Login links setup completed');
+                    if (touristLink && guideLink) {
+                        console.log('✅ Both login links found:', touristLink.getAttribute('data-login-type'), guideLink.getAttribute('data-login-type'));
+                    } else {
+                        console.log('❌ Login links missing:', !!touristLink, !!guideLink);
+                    }
+                } else {
+                    console.log('❌ Dropdown menu not found');
                 }
             }
             
-            // Setup login links
+            // Single setup call
             setupLoginLinks();
-            setTimeout(setupLoginLinks, 500);
             
-            // NUCLEAR SOLUTION: Multiple event capture methods
+            // SIMPLIFIED GLOBAL CLICK HANDLER
             document.addEventListener('click', function(e) {
-                console.log('🔍 Document click detected:', e.target.tagName, e.target.id, e.target.textContent);
-                
-                if (e.target.id === 'directTouristLoginBtn') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🎯 Tourist login via delegation!');
-                    showLoginModal('tourist');
-                    return false;
-                }
-                if (e.target.id === 'directGuideLoginBtn') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🎯 Guide login via delegation!');
-                    showLoginModal('guide');
-                    return false;
+                // Only log clicks on specific elements to reduce noise
+                if (e.target.id || e.target.getAttribute('data-login-type')) {
+                    console.log('🔍 Click detected:', e.target.tagName, e.target.id, e.target.getAttribute('data-login-type'), e.target.textContent.trim());
                 }
                 
-                // Text-based fallback
-                if (e.target.textContent && e.target.textContent.trim() === '観光客ログイン') {
+                // Handle login links directly
+                const loginType = e.target.getAttribute('data-login-type');
+                if (loginType) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🎯 Tourist login via text match!');
-                    showLoginModal('tourist');
-                    return false;
-                }
-                if (e.target.textContent && e.target.textContent.trim() === 'ガイドログイン') {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🎯 Guide login via text match!');
-                    showLoginModal('guide');
+                    console.log('🎯 Login link clicked via document handler:', loginType);
+                    showLoginModal(loginType);
+                    
+                    // Close dropdown
+                    const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                    if (dropdown) dropdown.hide();
+                    
                     return false;
                 }
             }, { capture: true });
@@ -1171,8 +1145,14 @@
             const loginDropdown = document.getElementById('loginDropdown');
             if (loginDropdown) {
                 loginDropdown.addEventListener('shown.bs.dropdown', function() {
-                    console.log('🔽 Dropdown opened');
-                    setupLoginLinks();
+                    console.log('🔽 Dropdown opened - verifying elements');
+                    setTimeout(function() {
+                        const touristLink = document.getElementById('directTouristLoginBtn');
+                        const guideLink = document.getElementById('directGuideLoginBtn');
+                        console.log('Dropdown items check:', !!touristLink, !!guideLink);
+                        if (touristLink) console.log('Tourist link data:', touristLink.getAttribute('data-login-type'));
+                        if (guideLink) console.log('Guide link data:', guideLink.getAttribute('data-login-type'));
+                    }, 50);
                 });
             }
             
