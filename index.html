@@ -838,9 +838,27 @@
                     document.getElementById('openRegistrationBtn').addEventListener('click', function() {
                         modal.hide();
                         setTimeout(() => {
-                            document.getElementById('userType').value = 'tourist';
-                            const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                            registrationModal.show();
+                            // Check if userType field exists and set it
+                            const userTypeField = document.getElementById('userType');
+                            if (userTypeField) {
+                                userTypeField.value = 'tourist';
+                            }
+                            
+                            // Check if registrationModal exists and show it
+                            const registrationModalElement = document.getElementById('registrationModal');
+                            if (registrationModalElement) {
+                                const registrationModal = new bootstrap.Modal(registrationModalElement);
+                                registrationModal.show();
+                            } else {
+                                // Fallback: trigger header registration button
+                                const headerRegBtn = document.querySelector('#registerBtn[data-bs-target="#registrationModal"]');
+                                if (headerRegBtn) {
+                                    headerRegBtn.click();
+                                } else {
+                                    console.log('Registration modal not found, redirecting to header button');
+                                    alert('登録フォームが見つかりません。ヘッダーの「新規登録」ボタンをお試しください。');
+                                }
+                            }
                             alertModal.remove();
                         }, 300);
                     });
