@@ -7,24 +7,43 @@
     <meta http-equiv="Feature-Policy" content="ambient-light-sensor 'none'; battery 'none'; speaker-selection 'none'; execution-while-not-rendered 'none'; execution-while-out-of-viewport 'none'; layout-animations 'none'; legacy-image-formats 'none'; navigation-override 'none'; oversized-images 'none'; unoptimized-images 'none'; unsized-media 'none'; pointer-lock 'none'">
     <title>Local Guide - 特別な旅の体験を</title>
     
-    <!-- Ultimate console warning suppression -->
+    <!-- Immediate console warning suppression -->
     <script>
         (function() {
             const originalWarn = console.warn;
             const originalError = console.error;
             
-            // Complete warning suppression including workspace iframe
             console.warn = function(...args) {
-                return; // Block ALL warnings
+                const message = String(args[0] || '');
+                if (message.includes('Unrecognized feature') || 
+                    message.includes('Allow attribute') ||
+                    message.includes('Too many active WebGL') ||
+                    message.includes('sandbox') ||
+                    message.includes('ambient-light-sensor') ||
+                    message.includes('battery') ||
+                    message.includes('speaker-selection') ||
+                    message.includes('publickey-credentials') ||
+                    message.includes('execution-while') ||
+                    message.includes('layout-animations') ||
+                    message.includes('legacy-image-formats') ||
+                    message.includes('navigation-override') ||
+                    message.includes('oversized-images') ||
+                    message.includes('unoptimized-images') ||
+                    message.includes('unsized-media') ||
+                    message.includes('pointer-lock') ||
+                    message.includes('allowfullscreen') ||
+                    message.includes('allowpaymentrequest')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
             };
             
             console.error = function(...args) {
                 const message = String(args[0] || '');
                 if (message.includes('sandbox') || 
                     message.includes('Uncaught (in promise)') ||
-                    message.includes('workspace') ||
-                    message.includes('iframe')) {
-                    return; // Block workspace errors
+                    message.includes('message channel closed')) {
+                    return;
                 }
                 originalError.apply(console, args);
             };
@@ -1038,7 +1057,45 @@
                 // Ignore clearing errors
             }
             
-            // Remove duplicate warning suppression - already handled in header
+            // Comprehensive console warning suppression
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            
+            console.warn = function(...args) {
+                const message = String(args[0] || '');
+                if (message.includes('Unrecognized feature') || 
+                    message.includes('Allow attribute') ||
+                    message.includes('Too many active WebGL') ||
+                    message.includes('sandbox') ||
+                    message.includes('ambient-light-sensor') ||
+                    message.includes('battery') ||
+                    message.includes('speaker-selection') ||
+                    message.includes('publickey-credentials') ||
+                    message.includes('execution-while') ||
+                    message.includes('layout-animations') ||
+                    message.includes('legacy-image-formats') ||
+                    message.includes('navigation-override') ||
+                    message.includes('oversized-images') ||
+                    message.includes('unoptimized-images') ||
+                    message.includes('unsized-media') ||
+                    message.includes('pointer-lock') ||
+                    message.includes('allowfullscreen') ||
+                    message.includes('allowpaymentrequest')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                const message = String(args[0] || '');
+                if (message.includes('sandbox') && message.includes('allow-downloads-without-user-activation')) {
+                    return;
+                }
+                if (message.includes('Uncaught (in promise)') && message.includes('message channel closed')) {
+                    return;
+                }
+                originalError.apply(console, args);
+            };
 
             // Initialize data with all guides (including registered ones)
             guideData = loadAllGuides();
