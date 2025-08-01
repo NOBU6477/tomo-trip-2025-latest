@@ -7,24 +7,39 @@
     <meta http-equiv="Feature-Policy" content="ambient-light-sensor 'none'; battery 'none'; speaker-selection 'none'; execution-while-not-rendered 'none'; execution-while-out-of-viewport 'none'; layout-animations 'none'; legacy-image-formats 'none'; navigation-override 'none'; oversized-images 'none'; unoptimized-images 'none'; unsized-media 'none'; pointer-lock 'none'">
     <title>Local Guide - 特別な旅の体験を</title>
     
-    <!-- Ultimate console warning suppression -->
+    <!-- Smart console management -->
     <script>
         (function() {
             const originalWarn = console.warn;
             const originalError = console.error;
             
-            // Complete warning suppression including workspace iframe
+            // Selective warning suppression - allow important errors
             console.warn = function(...args) {
-                return; // Block ALL warnings
+                const message = String(args[0] || '');
+                // Allow sponsor-related debugging
+                if (message.includes('sponsor') || message.includes('Sponsor')) {
+                    originalWarn.apply(console, args);
+                    return;
+                }
+                // Block other warnings
+                return;
             };
             
             console.error = function(...args) {
                 const message = String(args[0] || '');
+                // Allow important errors but block noise
+                if (message.includes('sponsor') || message.includes('Sponsor') || 
+                    message.includes('handleSponsor') || message.includes('redirect')) {
+                    originalError.apply(console, args);
+                    return;
+                }
                 if (message.includes('sandbox') || 
                     message.includes('Uncaught (in promise)') ||
                     message.includes('workspace') ||
-                    message.includes('iframe')) {
-                    return; // Block workspace errors
+                    message.includes('iframe') ||
+                    message.includes('404') ||
+                    message.includes('Failed to load resource')) {
+                    return; // Block noise
                 }
                 originalError.apply(console, args);
             };
@@ -1115,6 +1130,13 @@
                 }
             };
             
+            // Debug: Check if buttons exist before adding listeners
+            console.log('=== DEBUG: Checking button elements ===');
+            Object.keys(buttons).forEach(id => {
+                const element = document.getElementById(id);
+                console.log(`Button ${id}: ${element ? 'Found' : 'Not found'}`);
+            });
+            
             // Add event listeners safely
             Object.keys(buttons).forEach(id => {
                 const element = document.getElementById(id);
@@ -1126,29 +1148,45 @@
                 }
             });
             
-            // Direct sponsor button event listeners (backup solution)
-            const sponsorRegButton = document.getElementById('sponsorRegBtn');
-            const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
-            
-            if (sponsorRegButton) {
-                sponsorRegButton.addEventListener('click', function() {
-                    console.log('Direct sponsor registration event triggered');
-                    window.location.href = 'sponsor-admin.html';
-                });
-                console.log('✅ Direct sponsor registration listener added');
-            } else {
-                console.log('❌ Sponsor registration button not found');
-            }
-            
-            if (sponsorLoginButton) {
-                sponsorLoginButton.addEventListener('click', function() {
-                    console.log('Direct sponsor login event triggered');
-                    showSponsorLoginModal();
-                });
-                console.log('✅ Direct sponsor login listener added');
-            } else {
-                console.log('❌ Sponsor login button not found');
-            }
+            // Force sponsor button setup with multiple attempts
+            setTimeout(() => {
+                console.log('=== SPONSOR BUTTON SETUP ATTEMPT ===');
+                const sponsorRegButton = document.getElementById('sponsorRegBtn');
+                const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
+                
+                console.log('Sponsor Reg Button:', sponsorRegButton);
+                console.log('Sponsor Login Button:', sponsorLoginButton);
+                
+                if (sponsorRegButton) {
+                    // Remove existing listeners first
+                    sponsorRegButton.removeEventListener('click', buttons.sponsorRegBtn);
+                    
+                    // Add new listener
+                    sponsorRegButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('🚀 Sponsor registration - Direct redirect');
+                        window.location.href = 'sponsor-admin.html';
+                    });
+                    console.log('✅ Direct sponsor registration listener added');
+                } else {
+                    console.log('❌ Sponsor registration button not found in DOM');
+                }
+                
+                if (sponsorLoginButton) {
+                    // Remove existing listeners first
+                    sponsorLoginButton.removeEventListener('click', buttons.sponsorLoginBtn);
+                    
+                    // Add new listener
+                    sponsorLoginButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('🔐 Sponsor login - Show modal');
+                        showSponsorLoginModal();
+                    });
+                    console.log('✅ Direct sponsor login listener added');
+                } else {
+                    console.log('❌ Sponsor login button not found in DOM');
+                }
+            }, 100);
             
             // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
             // Setting up login system
@@ -1385,15 +1423,25 @@
                 window.location.href = 'sponsor-admin.html';
             };
             
-            // Global sponsor button handlers (backup solution)
+            // Global sponsor button handlers (PRIMARY solution)
             window.handleSponsorRegistration = function() {
-                console.log('Global sponsor registration handler called');
-                window.location.href = 'sponsor-admin.html';
+                console.log('🚀 Global sponsor registration handler called - Redirecting now');
+                try {
+                    window.location.href = 'sponsor-admin.html';
+                } catch (error) {
+                    console.error('Redirect error:', error);
+                    alert('協賛店管理画面への移動中にエラーが発生しました。');
+                }
             };
             
             window.handleSponsorLogin = function() {
-                console.log('Global sponsor login handler called');
-                showSponsorLoginModal();
+                console.log('🔐 Global sponsor login handler called - Opening modal');
+                try {
+                    showSponsorLoginModal();
+                } catch (error) {
+                    console.error('Modal error:', error);
+                    alert('ログインモーダルの表示中にエラーが発生しました。');
+                }
             };
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
