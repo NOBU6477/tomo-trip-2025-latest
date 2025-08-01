@@ -1069,49 +1069,35 @@
             });
             
             // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
-            console.log('🔧 Setting up login system (clean approach)...');
+            // Setting up login system
             
             function showLoginModal(loginType) {
-                try {
-                    console.log(`🎯 Opening login modal for: ${loginType}`);
-                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                    loginModal.show();
-                    
-                    // Set login type in modal for later use
-                    document.getElementById('loginModal').setAttribute('data-login-type', loginType);
-                    console.log('✅ Login modal displayed successfully');
-                } catch (error) {
-                    console.error('❌ Error showing login modal:', error);
-                    // Fallback - try direct modal show
-                    const modalElement = document.getElementById('loginModal');
-                    if (modalElement) {
-                        modalElement.style.display = 'block';
-                        modalElement.classList.add('show');
-                        modalElement.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                return new Promise((resolve) => {
+                    try {
+                        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                        loginModal.show();
+                        document.getElementById('loginModal').setAttribute('data-login-type', loginType);
+                        resolve(true);
+                    } catch (error) {
+                        const modalElement = document.getElementById('loginModal');
+                        if (modalElement) {
+                            modalElement.style.display = 'block';
+                            modalElement.classList.add('show');
+                            modalElement.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                        }
+                        resolve(false);
                     }
-                }
+                });
             }
             
             // CLEAN SETUP FUNCTION - NO DUPLICATE LISTENERS
             function setupLoginLinks() {
-                console.log('⚡ Setting up login links (clean approach)...');
+                // Setting up login links
                 
                 // Check if dropdown menu exists
                 const dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="loginDropdown"]');
-                if (dropdownMenu) {
-                    console.log('✅ Found dropdown menu, relying on global document handler');
-                    
-                    // Verify login links exist
-                    const touristLink = document.getElementById('directTouristLoginBtn');
-                    const guideLink = document.getElementById('directGuideLoginBtn');
-                    
-                    if (touristLink && guideLink) {
-                        console.log('✅ Both login links found:', touristLink.getAttribute('data-login-type'), guideLink.getAttribute('data-login-type'));
-                    } else {
-                        console.log('❌ Login links missing:', !!touristLink, !!guideLink);
-                    }
-                } else {
-                    console.log('❌ Dropdown menu not found');
+                if (!dropdownMenu) {
+                    // Dropdown menu not found - this is expected for custom dropdown
                 }
             }
             
@@ -1125,7 +1111,7 @@
                 if (textContent === '観光客ログイン') {
                     e.preventDefault();
                     e.stopPropagation();
-                    showLoginModal('tourist');
+                    showLoginModal('tourist').catch(() => {});
                     document.getElementById('customLoginDropdown').style.display = 'none';
                     return false;
                 }
@@ -1133,7 +1119,7 @@
                 if (textContent === 'ガイドログイン') {
                     e.preventDefault();
                     e.stopPropagation();
-                    showLoginModal('guide');
+                    showLoginModal('guide').catch(() => {});
                     document.getElementById('customLoginDropdown').style.display = 'none';
                     return false;
                 }
@@ -1156,7 +1142,7 @@
                 
                 if (touristBtn) {
                     touristBtn.onclick = function() {
-                        showLoginModal('tourist');
+                        showLoginModal('tourist').catch(() => {});
                         document.getElementById('customLoginDropdown').style.display = 'none';
                         return false;
                     };
@@ -1164,7 +1150,7 @@
                 
                 if (guideBtn) {
                     guideBtn.onclick = function() {
-                        showLoginModal('guide');
+                        showLoginModal('guide').catch(() => {});
                         document.getElementById('customLoginDropdown').style.display = 'none';
                         return false;
                     };
@@ -1290,12 +1276,12 @@
     </script>
 
     <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true" data-login-type="tourist" style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 15px 15px 0 0;">
                     <h5 class="modal-title fw-bold" id="loginModalLabel">🔐 ログイン</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" tabindex="0"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="loginForm">
@@ -1336,12 +1322,12 @@
     </div>
 
     <!-- Contact Modal -->
-    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content" style="border-radius: 15px;">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #17a2b8, #007bff); color: white; border-radius: 15px 15px 0 0;">
                     <h5 class="modal-title fw-bold" id="contactModalLabel">お問い合わせ</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" tabindex="0"></button>
                 </div>
                 <div class="modal-body p-4">
                     <form id="contactForm">
@@ -1381,12 +1367,12 @@
 
 
     <!-- Registration Modal -->
-    <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="border-radius: 15px;">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
                     <h5 class="modal-title fw-bold" id="registrationModalLabel">新規登録</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" tabindex="0"></button>
                 </div>
                 <div class="modal-body p-4">
                     <!-- Registration Type Selection -->
