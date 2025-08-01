@@ -1898,7 +1898,44 @@
                                 console.error('Error saving tourist data:', error);
                             }
                             
-                            alert('観光客として登録を受付けました！\n\n登録が完了しました。ガイドの詳細ページをご覧いただけます。');
+                            // Show comprehensive success modal
+                            const successModal = document.createElement('div');
+                            successModal.className = 'modal fade';
+                            successModal.innerHTML = `
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                                            <h5 class="modal-title fw-bold">🎉 登録完了</h5>
+                                        </div>
+                                        <div class="modal-body p-4 text-center">
+                                            <div class="mb-4">
+                                                <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-3">観光客として登録が完了しました！</h6>
+                                            <div class="alert alert-success" style="border-radius: 10px;">
+                                                <h6 class="alert-heading fw-bold">✨ これで全てのガイドとやり取りできます</h6>
+                                                <hr>
+                                                <ul class="list-unstyled mb-0">
+                                                    <li>📋 <strong>ガイド詳細情報の閲覧</strong></li>
+                                                    <li>📞 <strong>ガイドへの直接連絡</strong></li>
+                                                    <li>📅 <strong>ツアーの予約・申し込み</strong></li>
+                                                    <li>💬 <strong>メッセージのやり取り</strong></li>
+                                                    <li>⭐ <strong>レビューの投稿・閲覧</strong></li>
+                                                </ul>
+                                            </div>
+                                            <p class="text-muted mb-0">お気に入りのガイドを見つけて、特別な旅をお楽しみください！</p>
+                                        </div>
+                                        <div class="modal-footer border-0 p-4 pt-0">
+                                            <button type="button" class="btn btn-success w-100" onclick="this.closest('.modal').remove()" style="border-radius: 25px; padding: 12px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                                                ガイドを探す
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            document.body.appendChild(successModal);
+                            const successModalInstance = new bootstrap.Modal(successModal);
+                            successModalInstance.show();
                             // Only reset form for tourist registration (guide registration will reload page)
                             try {
                                 console.log('Starting resetRegistrationForm...');
