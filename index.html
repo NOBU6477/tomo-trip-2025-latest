@@ -278,9 +278,9 @@
                     <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                         ログイン
                     </button>
-                    <ul class="dropdown-menu" aria-labelledby="loginDropdown">
-                        <li><a class="dropdown-item" href="#" id="directTouristLoginBtn" data-login-type="tourist">観光客ログイン</a></li>
-                        <li><a class="dropdown-item" href="#" id="directGuideLoginBtn" data-login-type="guide">ガイドログイン</a></li>
+                    <ul class="dropdown-menu" aria-labelledby="loginDropdown" style="z-index: 9999;">
+                        <li><a class="dropdown-item" href="javascript:void(0)" id="directTouristLoginBtn" data-login-type="tourist" style="cursor: pointer;">観光客ログイン</a></li>
+                        <li><a class="dropdown-item" href="javascript:void(0)" id="directGuideLoginBtn" data-login-type="guide" style="cursor: pointer;">ガイドログイン</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -1118,12 +1118,17 @@
             // Single setup call
             setupLoginLinks();
             
-            // MAIN CLICK HANDLER - data-login-type approach
+            // COMPREHENSIVE CLICK HANDLER - ALL CLICKS LOGGED
             document.addEventListener('click', function(e) {
-                // Only log clicks on specific elements to reduce noise
-                if (e.target.id || e.target.getAttribute('data-login-type')) {
-                    console.log('🔍 Click detected:', e.target.tagName, e.target.id, e.target.getAttribute('data-login-type'), e.target.textContent.trim());
-                }
+                // Log ALL clicks to see what's happening
+                console.log('🔍 ALL CLICKS:', {
+                    tagName: e.target.tagName,
+                    id: e.target.id,
+                    className: e.target.className,
+                    textContent: e.target.textContent ? e.target.textContent.trim() : '',
+                    dataLoginType: e.target.getAttribute('data-login-type'),
+                    parentElement: e.target.parentElement ? e.target.parentElement.tagName : null
+                });
                 
                 // Handle login links directly
                 const loginType = e.target.getAttribute('data-login-type');
@@ -1139,7 +1144,33 @@
                     
                     return false;
                 }
-            }, { capture: true });
+                
+                // Text-based fallback for dropdown items
+                const textContent = e.target.textContent ? e.target.textContent.trim() : '';
+                if (textContent === '観光客ログイン') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Tourist login clicked via text match!');
+                    showLoginModal('tourist');
+                    
+                    const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                    if (dropdown) dropdown.hide();
+                    
+                    return false;
+                }
+                
+                if (textContent === 'ガイドログイン') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Guide login clicked via text match!');
+                    showLoginModal('guide');
+                    
+                    const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                    if (dropdown) dropdown.hide();
+                    
+                    return false;
+                }
+            }, true); // Use capture phase
             
             // Bootstrap dropdown event handling
             const loginDropdown = document.getElementById('loginDropdown');
