@@ -1058,15 +1058,14 @@
             // Initialize data with all guides (including registered ones)
             guideData = loadAllGuides();
             currentGuides = guideData;
+            // IMMEDIATE: Setup sponsor buttons FIRST - NO CONSOLE CLEAR
+            console.log('%c🚨 IMMEDIATE SPONSOR SETUP', 'color: #ff0000; font-size: 16px; font-weight: bold;');
+            setupSponsorButtons();
+            
             // Clean console display and show only essential information
-            console.clear();
             console.log('%c🌴 TomoTrip - Production Ready', 'color: #28a745; font-size: 16px; font-weight: bold;');
             console.log('%cSystem Status: ✅ All Features Active', 'color: #28a745; font-weight: bold;');
             console.log('%cTotal Guides: ' + guideData.length, 'color: #007bff; font-weight: bold;');
-            
-            // IMMEDIATE: Setup sponsor buttons BEFORE any console clearing
-            console.log('%c🚨 IMMEDIATE SPONSOR SETUP', 'color: #ff0000; font-size: 16px; font-weight: bold;');
-            setupSponsorButtons();
             
             // Hide all iframe-related warnings completely - BUT NO MORE CONSOLE CLEAR
             setTimeout(() => {
@@ -1169,10 +1168,13 @@
                 console.log('%c🔧 SPONSOR BUTTON SETUP STARTED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
                 console.log('%c📍 Function called at:', 'color: #ff6b35;', new Date().toLocaleTimeString());
                 
-                // Force wait for DOM
-                setTimeout(() => {
-                    const sponsorRegButton = document.getElementById('sponsorRegBtn');
-                    const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
+                // FORCE IMMEDIATE EXECUTION - NO TIMEOUT
+                const sponsorRegId = 'sponsorRegBtn';
+                const sponsorLoginId = 'sponsorLoginBtn';
+                
+                // IMMEDIATE DOM ACCESS - NO TIMEOUT
+                const sponsorRegButton = document.getElementById(sponsorRegId);
+                const sponsorLoginButton = document.getElementById(sponsorLoginId);
                     
                     console.log('%cREG BUTTON:', 'color: #ff6b35; font-weight: bold;', sponsorRegButton);
                     console.log('%cLOGIN BUTTON:', 'color: #ff6b35; font-weight: bold;', sponsorLoginButton);
@@ -1229,8 +1231,7 @@
                         console.log('%c❌ LOGIN BUTTON NOT FOUND!', 'color: #ff0000; font-weight: bold;');
                     }
                     
-                    console.log('%c🎯 SPONSOR BUTTONS SETUP FINISHED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
-                }, 300);
+                console.log('%c🎯 SPONSOR BUTTONS SETUP FINISHED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
             }
             
             // MULTIPLE BACKUPS: Ensure sponsor buttons work
