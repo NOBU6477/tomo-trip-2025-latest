@@ -279,8 +279,8 @@
                         ログイン
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="loginDropdown">
-                        <li><button class="dropdown-item" type="button" id="directTouristLoginBtn">観光客ログイン</button></li>
-                        <li><button class="dropdown-item" type="button" id="directGuideLoginBtn">ガイドログイン</button></li>
+                        <li><button class="dropdown-item" type="button" id="directTouristLoginBtn" onclick="console.log('Tourist onclick triggered'); showLoginModal('tourist'); return false;">観光客ログイン</button></li>
+                        <li><button class="dropdown-item" type="button" id="directGuideLoginBtn" onclick="console.log('Guide onclick triggered'); showLoginModal('guide'); return false;">ガイドログイン</button></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -1135,21 +1135,76 @@
             setTimeout(setupDropdownLoginButtons, 200);
             setTimeout(setupDropdownLoginButtons, 1000);
             
-            // Also add event delegation as backup
+            // NUCLEAR SOLUTION: Multiple event capture methods
             document.addEventListener('click', function(e) {
+                console.log('🔍 Document click detected:', e.target.tagName, e.target.id, e.target.textContent);
+                
                 if (e.target.id === 'directTouristLoginBtn') {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('🎯 Tourist login via delegation!');
                     showLoginModal('tourist');
+                    return false;
                 }
                 if (e.target.id === 'directGuideLoginBtn') {
                     e.preventDefault();
                     e.stopPropagation();
                     console.log('🎯 Guide login via delegation!');
                     showLoginModal('guide');
+                    return false;
                 }
-            });
+                
+                // Text-based fallback
+                if (e.target.textContent && e.target.textContent.trim() === '観光客ログイン') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Tourist login via text match!');
+                    showLoginModal('tourist');
+                    return false;
+                }
+                if (e.target.textContent && e.target.textContent.trim() === 'ガイドログイン') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Guide login via text match!');
+                    showLoginModal('guide');
+                    return false;
+                }
+            }, { capture: true });
+            
+            // Bootstrap dropdown event handling
+            const loginDropdown = document.getElementById('loginDropdown');
+            if (loginDropdown) {
+                loginDropdown.addEventListener('shown.bs.dropdown', function() {
+                    console.log('🔽 Dropdown opened - Force re-binding buttons');
+                    setTimeout(function() {
+                        setupDropdownLoginButtons();
+                        
+                        // Additional force binding
+                        const dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="loginDropdown"]');
+                        if (dropdownMenu) {
+                            dropdownMenu.addEventListener('click', function(e) {
+                                console.log('🔍 Dropdown menu direct click:', e.target.id, e.target.textContent);
+                                
+                                if (e.target.id === 'directTouristLoginBtn' || e.target.textContent.includes('観光客')) {
+                                    e.preventDefault();
+                                    e.stopImmediatePropagation();
+                                    console.log('🎯 Tourist login via dropdown menu!');
+                                    showLoginModal('tourist');
+                                    return false;
+                                }
+                                
+                                if (e.target.id === 'directGuideLoginBtn' || e.target.textContent.includes('ガイド')) {
+                                    e.preventDefault();
+                                    e.stopImmediatePropagation();
+                                    console.log('🎯 Guide login via dropdown menu!');
+                                    showLoginModal('guide');
+                                    return false;
+                                }
+                            }, { capture: true });
+                        }
+                    }, 100);
+                });
+            }
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
