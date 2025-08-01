@@ -1182,33 +1182,69 @@
                         const guideBtn = document.getElementById('directGuideLoginBtn');
                         console.log('Dropdown buttons check:', !!touristBtn, !!guideBtn);
                         
-                        // DIRECT BUTTON EVENT LISTENERS - NO BOOTSTRAP INTERFERENCE
+                        // MULTIPLE EVENT LISTENER APPROACHES - GUARANTEED DETECTION
                         if (touristBtn) {
+                            // Method 1: onclick property
                             touristBtn.onclick = function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('🎯 TOURIST BUTTON CLICKED DIRECTLY!');
+                                console.log('🎯 TOURIST CLICKED - onclick method!');
                                 showLoginModal('tourist');
-                                
                                 const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
                                 if (dropdown) dropdown.hide();
                                 return false;
                             };
-                            console.log('✅ Tourist button onclick assigned');
+                            
+                            // Method 2: addEventListener
+                            touristBtn.addEventListener('click', function(e) {
+                                console.log('🎯 TOURIST CLICKED - addEventListener method!');
+                                e.preventDefault();
+                                e.stopPropagation();
+                                showLoginModal('tourist');
+                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                                if (dropdown) dropdown.hide();
+                            }, true);
+                            
+                            // Method 3: mousedown event
+                            touristBtn.addEventListener('mousedown', function(e) {
+                                console.log('🎯 TOURIST MOUSEDOWN - alternative method!');
+                                e.preventDefault();
+                                showLoginModal('tourist');
+                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                                if (dropdown) dropdown.hide();
+                            });
+                            
+                            console.log('✅ Tourist button - ALL 3 methods assigned');
                         }
                         
                         if (guideBtn) {
+                            // Method 1: onclick property
                             guideBtn.onclick = function(e) {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                console.log('🎯 GUIDE BUTTON CLICKED DIRECTLY!');
+                                console.log('🎯 GUIDE CLICKED - onclick method!');
                                 showLoginModal('guide');
-                                
                                 const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
                                 if (dropdown) dropdown.hide();
                                 return false;
                             };
-                            console.log('✅ Guide button onclick assigned');
+                            
+                            // Method 2: addEventListener
+                            guideBtn.addEventListener('click', function(e) {
+                                console.log('🎯 GUIDE CLICKED - addEventListener method!');
+                                e.preventDefault();
+                                e.stopPropagation();
+                                showLoginModal('guide');
+                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                                if (dropdown) dropdown.hide();
+                            }, true);
+                            
+                            // Method 3: mousedown event
+                            guideBtn.addEventListener('mousedown', function(e) {
+                                console.log('🎯 GUIDE MOUSEDOWN - alternative method!');
+                                e.preventDefault();
+                                showLoginModal('guide');
+                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                                if (dropdown) dropdown.hide();
+                            });
+                            
+                            console.log('✅ Guide button - ALL 3 methods assigned');
                         }
                     }, 100);
                 });
