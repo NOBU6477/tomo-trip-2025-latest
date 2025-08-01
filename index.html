@@ -1083,8 +1083,14 @@
                     const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
                     contactModal.show();
                 },
-                sponsorRegBtn: () => console.log('Sponsor registration clicked'),
-                sponsorLoginBtn: () => console.log('Sponsor login clicked'),
+                sponsorRegBtn: () => {
+                    console.log('Sponsor registration clicked - redirecting to sponsor-admin.html');
+                    window.location.href = 'sponsor-admin.html';
+                },
+                sponsorLoginBtn: () => {
+                    console.log('Sponsor login clicked - showing login modal');
+                    showSponsorLoginModal();
+                },
                 managementBtn: () => console.log('Management center clicked'),
                 searchBtn: filterGuides,
                 resetBtn: () => {
@@ -1219,6 +1225,138 @@
                     // Ignore click handler errors
                 }
             });
+            
+            // Sponsor login modal function
+            window.showSponsorLoginModal = function() {
+                const modalHtml = `
+                    <div class="modal fade" id="sponsorLoginModal" tabindex="-1" aria-labelledby="sponsorLoginModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                                <div class="modal-header border-0" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border-radius: 15px 15px 0 0;">
+                                    <h5 class="modal-title fw-bold" id="sponsorLoginModalLabel">
+                                        <i class="bi bi-shop me-2"></i>協賛店ログイン
+                                    </h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body p-4">
+                                    <form id="sponsorLoginForm">
+                                        <div class="mb-3">
+                                            <label for="sponsorEmail" class="form-label fw-bold">
+                                                <i class="bi bi-envelope me-2"></i>メールアドレス
+                                            </label>
+                                            <input type="email" class="form-control" id="sponsorEmail" placeholder="sponsor@example.com" required style="border-radius: 10px; padding: 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="sponsorPassword" class="form-label fw-bold">
+                                                <i class="bi bi-lock me-2"></i>パスワード
+                                            </label>
+                                            <input type="password" class="form-control" id="sponsorPassword" placeholder="パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                                        </div>
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="rememberSponsor">
+                                            <label class="form-check-label" for="rememberSponsor">
+                                                ログイン状態を記憶する
+                                            </label>
+                                        </div>
+                                    </form>
+                                    <div class="alert alert-info" style="border-radius: 10px;">
+                                        <small><i class="bi bi-info-circle me-2"></i>協賛店として初めてご利用の場合は、「協賛店登録」から新規登録してください。</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0 p-4 pt-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
+                                        キャンセル
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="processSponsorLogin()" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #4ecdc4, #44a08d); border: none;">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Remove existing modal if any
+                const existingModal = document.getElementById('sponsorLoginModal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+                
+                // Add modal to body
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                
+                // Show modal
+                const modal = new bootstrap.Modal(document.getElementById('sponsorLoginModal'));
+                modal.show();
+                
+                // Clean up when modal is hidden
+                document.getElementById('sponsorLoginModal').addEventListener('hidden.bs.modal', function() {
+                    this.remove();
+                });
+            };
+            
+            // Process sponsor login
+            window.processSponsorLogin = function() {
+                const email = document.getElementById('sponsorEmail').value.trim();
+                const password = document.getElementById('sponsorPassword').value.trim();
+                
+                if (!email || !password) {
+                    alert('メールアドレスとパスワードを入力してください。');
+                    return;
+                }
+                
+                // For development - simulate sponsor login
+                console.log('Sponsor login attempt:', email);
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal'));
+                modal.hide();
+                
+                // Show success and redirect
+                setTimeout(() => {
+                    const successModal = document.createElement('div');
+                    successModal.className = 'modal fade';
+                    successModal.innerHTML = `
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                                    <h5 class="modal-title fw-bold">✅ 協賛店ログイン成功</h5>
+                                </div>
+                                <div class="modal-body p-4 text-center">
+                                    <div class="mb-4">
+                                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                                    </div>
+                                    <h6 class="fw-bold mb-3">協賛店管理画面にリダイレクトします</h6>
+                                    <p class="text-muted mb-0">ログインアカウント: ${email}</p>
+                                    <div class="alert alert-info mt-3" style="border-radius: 10px;">
+                                        <small>現在、ログイン機能は開発中です。協賛店管理システムは今後実装予定です。</small>
+                                    </div>
+                                </div>
+                                <div class="modal-footer border-0 p-4 pt-0">
+                                    <button type="button" class="btn btn-success w-100" onclick="redirectToSponsorDashboard()" style="border-radius: 25px; padding: 12px;">
+                                        管理画面へ進む
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(successModal);
+                    const modal = new bootstrap.Modal(successModal);
+                    modal.show();
+                    
+                    // Clean up
+                    successModal.addEventListener('hidden.bs.modal', function() {
+                        successModal.remove();
+                    });
+                }, 500);
+            };
+            
+            // Redirect to sponsor dashboard
+            window.redirectToSponsorDashboard = function() {
+                console.log('Redirecting to sponsor dashboard (sponsor-admin.html)');
+                window.location.href = 'sponsor-admin.html';
+            };
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
