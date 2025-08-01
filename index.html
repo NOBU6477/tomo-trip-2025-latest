@@ -1189,7 +1189,8 @@
                             console.log('%c🚀 REGISTRATION ONCLICK FIRED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
                             e.preventDefault();
                             e.stopPropagation();
-                            window.location.href = 'sponsor-admin.html';
+                            console.log('%c🎯 REDIRECTING TO: sponsor-registration.html', 'color: #ff6b35; font-weight: bold;');
+                            window.location.href = 'sponsor-registration.html';
                             return false;
                         };
                         
@@ -1197,7 +1198,8 @@
                             console.log('%c🚀 REGISTRATION LISTENER FIRED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
                             e.preventDefault();
                             e.stopPropagation();
-                            window.location.href = 'sponsor-admin.html';
+                            console.log('%c🎯 REDIRECTING TO: sponsor-registration.html', 'color: #ff6b35; font-weight: bold;');
+                            window.location.href = 'sponsor-registration.html';
                         }, { capture: true });
                         
                         console.log('%c✅ REGISTRATION BUTTON SETUP COMPLETE', 'color: #00ff00; font-weight: bold;');
