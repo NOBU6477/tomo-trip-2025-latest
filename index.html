@@ -1064,7 +1064,7 @@
             console.log('%cSystem Status: ✅ All Features Active', 'color: #28a745; font-weight: bold;');
             console.log('%cTotal Guides: ' + guideData.length, 'color: #007bff; font-weight: bold;');
             
-            // Hide all iframe-related warnings completely
+            // Hide all iframe-related warnings completely - BUT PRESERVE SPONSOR DEBUG
             setTimeout(() => {
                 console.clear();
                 console.log('%c🌴 TomoTrip - クリーンモード', 'color: #28a745; font-size: 18px; font-weight: bold;');
@@ -1074,6 +1074,9 @@
                 console.log('%cデバッグ機能:', 'color: #ffc107; font-weight: bold;');
                 console.log('%c  clearTouristData() - 登録データクリア', 'color: #6c757d;');
                 console.log('%c  checkRegistrationStatus() - 登録状態確認', 'color: #6c757d;');
+                
+                // IMPORTANT: Setup sponsor buttons AFTER console clear
+                setupSponsorButtons();
             }, 1000);
             
             // Display initial guides
@@ -1160,76 +1163,75 @@
                 }
             });
             
-            // ULTIMATE SPONSOR BUTTON FIX - BYPASS ALL POTENTIAL ISSUES
+            // ULTIMATE SPONSOR BUTTON FIX - VISIBLE DEBUGGING
             function setupSponsorButtons() {
-                console.log('🔧 ULTIMATE SPONSOR BUTTON SETUP');
+                console.log('%c🔧 SPONSOR BUTTON SETUP STARTED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
                 
                 // Force wait for DOM
                 setTimeout(() => {
                     const sponsorRegButton = document.getElementById('sponsorRegBtn');
                     const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
                     
-                    console.log('Sponsor Reg Button:', sponsorRegButton);
-                    console.log('Sponsor Login Button:', sponsorLoginButton);
+                    console.log('%cREG BUTTON:', 'color: #ff6b35; font-weight: bold;', sponsorRegButton);
+                    console.log('%cLOGIN BUTTON:', 'color: #ff6b35; font-weight: bold;', sponsorLoginButton);
                     
                     if (sponsorRegButton) {
-                        // Remove ALL existing listeners
-                        sponsorRegButton.replaceWith(sponsorRegButton.cloneNode(true));
-                        const newRegButton = document.getElementById('sponsorRegBtn');
+                        // Complete button replacement
+                        const newRegButton = sponsorRegButton.cloneNode(true);
+                        sponsorRegButton.parentNode.replaceChild(newRegButton, sponsorRegButton);
                         
-                        // Add direct onclick handler
+                        // Add multiple event handlers
                         newRegButton.onclick = function(e) {
+                            console.log('%c🚀 REGISTRATION ONCLICK FIRED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('🚀 ONCLICK: Sponsor registration - Redirecting NOW');
                             window.location.href = 'sponsor-admin.html';
                             return false;
                         };
                         
-                        // Also add event listener as backup
                         newRegButton.addEventListener('click', function(e) {
+                            console.log('%c🚀 REGISTRATION LISTENER FIRED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('🚀 LISTENER: Sponsor registration - Redirecting NOW');
                             window.location.href = 'sponsor-admin.html';
-                        }, true);
+                        }, { capture: true });
                         
-                        console.log('✅ Sponsor registration button fully setup');
+                        console.log('%c✅ REGISTRATION BUTTON SETUP COMPLETE', 'color: #00ff00; font-weight: bold;');
                     } else {
-                        console.log('❌ Sponsor registration button not found');
+                        console.log('%c❌ REGISTRATION BUTTON NOT FOUND!', 'color: #ff0000; font-weight: bold;');
                     }
                     
                     if (sponsorLoginButton) {
-                        // Remove ALL existing listeners
-                        sponsorLoginButton.replaceWith(sponsorLoginButton.cloneNode(true));
-                        const newLoginButton = document.getElementById('sponsorLoginBtn');
+                        // Complete button replacement
+                        const newLoginButton = sponsorLoginButton.cloneNode(true);
+                        sponsorLoginButton.parentNode.replaceChild(newLoginButton, sponsorLoginButton);
                         
-                        // Add direct onclick handler
+                        // Add multiple event handlers
                         newLoginButton.onclick = function(e) {
+                            console.log('%c🔐 LOGIN ONCLICK FIRED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('🔐 ONCLICK: Sponsor login - Opening modal NOW');
                             showSponsorLoginModal();
                             return false;
                         };
                         
-                        // Also add event listener as backup
                         newLoginButton.addEventListener('click', function(e) {
+                            console.log('%c🔐 LOGIN LISTENER FIRED!', 'color: #00ff00; font-size: 16px; font-weight: bold;');
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('🔐 LISTENER: Sponsor login - Opening modal NOW');
                             showSponsorLoginModal();
-                        }, true);
+                        }, { capture: true });
                         
-                        console.log('✅ Sponsor login button fully setup');
+                        console.log('%c✅ LOGIN BUTTON SETUP COMPLETE', 'color: #00ff00; font-weight: bold;');
                     } else {
-                        console.log('❌ Sponsor login button not found');
+                        console.log('%c❌ LOGIN BUTTON NOT FOUND!', 'color: #ff0000; font-weight: bold;');
                     }
-                }, 200);
+                    
+                    console.log('%c🎯 SPONSOR BUTTONS SETUP FINISHED', 'color: #ff6b35; font-size: 14px; font-weight: bold;');
+                }, 300);
             }
             
-            // Call setup function
-            setupSponsorButtons();
+            // Remove duplicate call - will be called after console clear
             
             // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
             // Setting up login system
