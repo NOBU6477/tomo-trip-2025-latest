@@ -274,14 +274,9 @@
             </a>
             
             <div class="d-flex">
-                <div class="dropdown me-2">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        ログイン
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="loginDropdown">
-                        <li><button class="dropdown-item" type="button" id="touristLoginBtn" data-login-type="tourist">観光客としてログイン</button></li>
-                        <li><button class="dropdown-item" type="button" id="guideLoginBtn" data-login-type="guide">ガイドとしてログイン</button></li>
-                    </ul>
+                <div class="btn-group me-2" role="group">
+                    <button type="button" class="btn btn-outline-primary" id="directTouristLoginBtn">観光客ログイン</button>
+                    <button type="button" class="btn btn-outline-success" id="directGuideLoginBtn">ガイドログイン</button>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
             </div>
@@ -1068,8 +1063,8 @@
                 }
             });
             
-            // Login functionality - Fixed Bootstrap dropdown handling
-            console.log('🔧 Setting up login buttons with Bootstrap dropdown fix...');
+            // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
+            console.log('🔧 Setting up DIRECT login buttons (no Bootstrap dropdown)...');
             
             function showLoginModal(loginType) {
                 try {
@@ -1087,181 +1082,45 @@
                     if (modalElement) {
                         modalElement.style.display = 'block';
                         modalElement.classList.add('show');
+                        modalElement.style.backgroundColor = 'rgba(0,0,0,0.5)';
                     }
                 }
             }
             
-            // SOLUTION 1: Bootstrap dropdown event interception - Force override
-            const loginDropdown = document.getElementById('loginDropdown');
-            if (loginDropdown) {
-                loginDropdown.addEventListener('shown.bs.dropdown', function() {
-                    console.log('🔽 Dropdown shown - FORCE binding login buttons');
-                    
-                    setTimeout(function() {
-                        const touristBtn = document.getElementById('touristLoginBtn');
-                        const guideBtn = document.getElementById('guideLoginBtn');
-                        
-                        if (touristBtn) {
-                            // Remove all existing event listeners by cloning
-                            const newTouristBtn = touristBtn.cloneNode(true);
-                            touristBtn.parentNode.replaceChild(newTouristBtn, touristBtn);
-                            
-                            // Add multiple event types to ensure capture
-                            ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function(eventType) {
-                                newTouristBtn.addEventListener(eventType, function(e) {
-                                    e.preventDefault();
-                                    e.stopImmediatePropagation();
-                                    console.log(`🎯 Tourist login ${eventType} - Bootstrap dropdown method`);
-                                    showLoginModal('tourist');
-                                    return false;
-                                }, { capture: true, passive: false });
-                            });
-                            
-                            console.log('✅ Tourist button re-bound with multiple events');
-                        }
-                        
-                        if (guideBtn) {
-                            // Remove all existing event listeners by cloning
-                            const newGuideBtn = guideBtn.cloneNode(true);
-                            guideBtn.parentNode.replaceChild(newGuideBtn, guideBtn);
-                            
-                            // Add multiple event types to ensure capture
-                            ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function(eventType) {
-                                newGuideBtn.addEventListener(eventType, function(e) {
-                                    e.preventDefault();
-                                    e.stopImmediatePropagation();
-                                    console.log(`🎯 Guide login ${eventType} - Bootstrap dropdown method`);
-                                    showLoginModal('guide');
-                                    return false;
-                                }, { capture: true, passive: false });
-                            });
-                            
-                            console.log('✅ Guide button re-bound with multiple events');
-                        }
-                    }, 10); // Very short delay to ensure DOM is ready
-                });
-            }
-            
-            // SOLUTION 2: Ultimate event interception - Monitor all dropdown interactions
-            setTimeout(function() {
-                const dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="loginDropdown"]');
-                if (dropdownMenu) {
-                    console.log('🎯 Adding ULTIMATE capture listener to dropdown menu');
-                    
-                    // Intercept ALL possible events on the dropdown menu
-                    ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend', 'pointerdown', 'pointerup'].forEach(function(eventType) {
-                        dropdownMenu.addEventListener(eventType, function(e) {
-                            console.log(`🔍 Dropdown menu ${eventType}:`, e.target.tagName, e.target.id, e.target.textContent.trim());
-                            
-                            // Check for tourist login
-                            if (e.target.id === 'touristLoginBtn' || 
-                                (e.target.textContent && e.target.textContent.includes('観光客'))) {
-                                e.preventDefault();
-                                e.stopImmediatePropagation();
-                                console.log(`🎯 Tourist login intercepted via ${eventType}`);
-                                showLoginModal('tourist');
-                                return false;
-                            }
-                            
-                            // Check for guide login
-                            if (e.target.id === 'guideLoginBtn' || 
-                                (e.target.textContent && e.target.textContent.includes('ガイド'))) {
-                                e.preventDefault();
-                                e.stopImmediatePropagation();
-                                console.log(`🎯 Guide login intercepted via ${eventType}`);
-                                showLoginModal('guide');
-                                return false;
-                            }
-                        }, { capture: true, passive: false });
+            // Setup direct login buttons immediately
+            function setupDirectLoginButtons() {
+                console.log('⚡ Setting up direct login buttons...');
+                
+                const directTouristBtn = document.getElementById('directTouristLoginBtn');
+                const directGuideBtn = document.getElementById('directGuideLoginBtn');
+                
+                if (directTouristBtn) {
+                    console.log('✅ Found direct tourist login button');
+                    directTouristBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('🎯 DIRECT Tourist login clicked!');
+                        showLoginModal('tourist');
                     });
                 }
-            }, 50);
-            
-            // SOLUTION 3: Nuclear option - Intercept EVERYTHING on document
-            ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function(eventType) {
-                document.addEventListener(eventType, function(e) {
-                    // Log clicks in dropdown area
-                    if (e.target.id && (e.target.id.includes('Login') || e.target.className.includes('dropdown'))) {
-                        console.log(`📍 Document ${eventType}:`, e.target.tagName, e.target.id, e.target.className);
-                    }
-                    
-                    // Ultimate priority interception
-                    if (e.target.hasAttribute && e.target.hasAttribute('data-login-type')) {
-                        const loginType = e.target.getAttribute('data-login-type');
+                
+                if (directGuideBtn) {
+                    console.log('✅ Found direct guide login button');
+                    directGuideBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        e.stopImmediatePropagation();
-                        console.log(`🎯 Login via data attribute ${eventType}: ${loginType}`);
-                        showLoginModal(loginType);
-                        return false;
-                    }
-                    
-                    // ID-based nuclear detection
-                    if (e.target.id === 'touristLoginBtn') {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        console.log(`🎯 Tourist login via ID ${eventType}`);
-                        showLoginModal('tourist');
-                        return false;
-                    }
-                    
-                    if (e.target.id === 'guideLoginBtn') {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        console.log(`🎯 Guide login via ID ${eventType}`);
+                        console.log('🎯 DIRECT Guide login clicked!');
                         showLoginModal('guide');
-                        return false;
-                    }
-                    
-                    // Text-based nuclear detection
-                    if (e.target.textContent) {
-                        if (e.target.textContent.includes('観光客としてログイン')) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                            console.log(`🎯 Tourist login via text ${eventType}`);
-                            showLoginModal('tourist');
-                            return false;
-                        }
-                        
-                        if (e.target.textContent.includes('ガイドとしてログイン')) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                            console.log(`🎯 Guide login via text ${eventType}`);
-                            showLoginModal('guide');
-                            return false;
-                        }
-                    }
-                }, { capture: true, passive: false });
-            });
+                    });
+                }
+                
+                console.log('✅ Direct login buttons setup completed');
+            }
             
-            // SOLUTION 4: Direct button replacement approach
-            setTimeout(function() {
-                console.log('🔄 Attempting direct button setup...');
-                const buttons = ['touristLoginBtn', 'guideLoginBtn'];
-                
-                buttons.forEach(function(buttonId) {
-                    const btn = document.getElementById(buttonId);
-                    if (btn) {
-                        console.log(`✅ Found button: ${buttonId}`);
-                        
-                        // Remove any existing listeners
-                        const newBtn = btn.cloneNode(true);
-                        btn.parentNode.replaceChild(newBtn, btn);
-                        
-                        // Add new listener
-                        newBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            e.stopImmediatePropagation();
-                            const loginType = buttonId.includes('tourist') ? 'tourist' : 'guide';
-                            console.log(`🎯 ${loginType} login clicked via direct replacement`);
-                            showLoginModal(loginType);
-                        }, { capture: true });
-                        
-                        console.log(`🔧 Replaced and rebound: ${buttonId}`);
-                    }
-                });
-                
-                console.log('✅ Direct button setup completed');
-            }, 1000);
+            // Setup immediately
+            setupDirectLoginButtons();
+            
+            // Also setup with delay as backup
+            setTimeout(setupDirectLoginButtons, 100);
+            setTimeout(setupDirectLoginButtons, 500);
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
