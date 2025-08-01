@@ -1069,7 +1069,7 @@
             });
             
             // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
-            console.log('🔧 Setting up DIRECT login buttons (no Bootstrap dropdown)...');
+            console.log('🔧 Setting up login system (clean approach)...');
             
             function showLoginModal(loginType) {
                 try {
@@ -1118,7 +1118,7 @@
             // Single setup call
             setupLoginLinks();
             
-            // SIMPLIFIED GLOBAL CLICK HANDLER
+            // MAIN CLICK HANDLER - data-login-type approach
             document.addEventListener('click', function(e) {
                 // Only log clicks on specific elements to reduce noise
                 if (e.target.id || e.target.getAttribute('data-login-type')) {
