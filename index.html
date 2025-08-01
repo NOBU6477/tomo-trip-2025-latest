@@ -336,8 +336,8 @@
 
     <!-- Right Side Buttons -->
     <div class="sponsor-buttons">
-        <button class="sponsor-btn" id="sponsorRegBtn">協賛店登録</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn">ログイン</button>
+        <button class="sponsor-btn" id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" onclick="handleSponsorLogin()">ログイン</button>
     </div>
 
     <!-- Management Center Button -->
@@ -1120,8 +1120,35 @@
                 const element = document.getElementById(id);
                 if (element) {
                     element.addEventListener('click', buttons[id]);
+                    console.log(`✅ Event listener added for ${id}`);
+                } else {
+                    console.log(`❌ Element not found: ${id}`);
                 }
             });
+            
+            // Direct sponsor button event listeners (backup solution)
+            const sponsorRegButton = document.getElementById('sponsorRegBtn');
+            const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
+            
+            if (sponsorRegButton) {
+                sponsorRegButton.addEventListener('click', function() {
+                    console.log('Direct sponsor registration event triggered');
+                    window.location.href = 'sponsor-admin.html';
+                });
+                console.log('✅ Direct sponsor registration listener added');
+            } else {
+                console.log('❌ Sponsor registration button not found');
+            }
+            
+            if (sponsorLoginButton) {
+                sponsorLoginButton.addEventListener('click', function() {
+                    console.log('Direct sponsor login event triggered');
+                    showSponsorLoginModal();
+                });
+                console.log('✅ Direct sponsor login listener added');
+            } else {
+                console.log('❌ Sponsor login button not found');
+            }
             
             // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
             // Setting up login system
@@ -1356,6 +1383,17 @@
             window.redirectToSponsorDashboard = function() {
                 console.log('Redirecting to sponsor dashboard (sponsor-admin.html)');
                 window.location.href = 'sponsor-admin.html';
+            };
+            
+            // Global sponsor button handlers (backup solution)
+            window.handleSponsorRegistration = function() {
+                console.log('Global sponsor registration handler called');
+                window.location.href = 'sponsor-admin.html';
+            };
+            
+            window.handleSponsorLogin = function() {
+                console.log('Global sponsor login handler called');
+                showSponsorLoginModal();
             };
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
