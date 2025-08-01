@@ -1068,31 +1068,59 @@
                 }
             });
             
-            // Login dropdown functionality
-            const touristLoginBtn = document.getElementById('touristLoginBtn');
-            const guideLoginBtn = document.getElementById('guideLoginBtn');
-            
-            if (touristLoginBtn) {
-                touristLoginBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Tourist login clicked - opening login modal');
+            // Login dropdown functionality - with debugging and fallback
+            function setupLoginButtons() {
+                const touristLoginBtn = document.getElementById('touristLoginBtn');
+                const guideLoginBtn = document.getElementById('guideLoginBtn');
+                
+                console.log('Setting up login buttons...');
+                console.log('Tourist login button found:', !!touristLoginBtn);
+                console.log('Guide login button found:', !!guideLoginBtn);
+                
+                if (touristLoginBtn) {
+                    // Remove existing listeners if any
+                    touristLoginBtn.replaceWith(touristLoginBtn.cloneNode(true));
+                    const newTouristBtn = document.getElementById('touristLoginBtn');
                     
-                    // Show login modal
-                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                    loginModal.show();
-                });
-            }
+                    newTouristBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Tourist login clicked - opening login modal');
+                        
+                        // Show login modal
+                        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                        loginModal.show();
+                    });
+                    console.log('Tourist login event listener added');
+                } else {
+                    console.warn('Tourist login button not found');
+                }
 
-            if (guideLoginBtn) {
-                guideLoginBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Guide login clicked - opening login modal');
+                if (guideLoginBtn) {
+                    // Remove existing listeners if any
+                    guideLoginBtn.replaceWith(guideLoginBtn.cloneNode(true));
+                    const newGuideBtn = document.getElementById('guideLoginBtn');
                     
-                    // Show login modal
-                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                    loginModal.show();
-                });
+                    newGuideBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Guide login clicked - opening login modal');
+                        
+                        // Show login modal
+                        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                        loginModal.show();
+                    });
+                    console.log('Guide login event listener added');
+                } else {
+                    console.warn('Guide login button not found');
+                }
             }
+            
+            // Setup login buttons immediately
+            setupLoginButtons();
+            
+            // Also setup after a short delay to ensure DOM is fully ready
+            setTimeout(setupLoginButtons, 500);
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
