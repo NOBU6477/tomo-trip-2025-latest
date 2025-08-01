@@ -1090,10 +1090,12 @@
             window.clearTouristData = function() {
                 localStorage.removeItem('touristData');
                 sessionStorage.removeItem('touristData');
+                localStorage.clear(); // Clear all localStorage data
+                sessionStorage.clear(); // Clear all sessionStorage data
                 console.log('✅ Tourist data cleared for testing');
                 console.log('✅ Current tourist status: NOT REGISTERED');
                 console.log('✅ Next "詳細を見る" click will show registration modal');
-                alert('観光客登録データをクリアしました。\n\n次回「詳細を見る」ボタンをクリックすると登録モーダルが表示されます。');
+                alert('観光客登録データを完全クリアしました。\n\n次回「詳細を見る」ボタンをクリックすると登録促進モーダルが表示されます。');
                 return 'Tourist data cleared successfully';
             };
             
@@ -1120,6 +1122,16 @@
             console.log('');
             console.log('⚠️  IMPORTANT: Use browser console (F12 → Console tab), not server terminal');
             console.log('   Right-click page → Inspect → Console tab to access these functions');
+            console.log('');
+            
+            // Check current registration status on load
+            const currentTouristData = localStorage.getItem('touristData') || sessionStorage.getItem('touristData');
+            if (currentTouristData) {
+                console.log('🟡 CURRENT STATUS: REGISTERED - Guide details will be shown');
+                console.log('🔧 To test unregistered flow: run clearTouristData() in console');
+            } else {
+                console.log('🟢 CURRENT STATUS: NOT REGISTERED - Registration modal will be shown');
+            }
         });
     </script>
 
