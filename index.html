@@ -1099,12 +1099,24 @@
                     contactModal.show();
                 },
                 sponsorRegBtn: () => {
-                    console.log('Sponsor registration clicked - redirecting to sponsor-admin.html');
-                    window.location.href = 'sponsor-admin.html';
+                    console.log('Sponsor registration clicked');
+                    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-admin.html');
+                    try {
+                        window.location.href = 'sponsor-admin.html';
+                    } catch (error) {
+                        console.error('Redirect failed:', error);
+                        alert('リダイレクトに失敗しました');
+                    }
                 },
                 sponsorLoginBtn: () => {
-                    console.log('Sponsor login clicked - showing login modal');
-                    showSponsorLoginModal();
+                    console.log('Sponsor login clicked');
+                    console.log('🔐 DIRECT ACTION: Showing sponsor login modal');
+                    try {
+                        showSponsorLoginModal();
+                    } catch (error) {
+                        console.error('Modal failed:', error);
+                        alert('モーダル表示に失敗しました');
+                    }
                 },
                 managementBtn: () => console.log('Management center clicked'),
                 searchBtn: filterGuides,
@@ -1148,45 +1160,76 @@
                 }
             });
             
-            // Force sponsor button setup with multiple attempts
-            setTimeout(() => {
-                console.log('=== SPONSOR BUTTON SETUP ATTEMPT ===');
-                const sponsorRegButton = document.getElementById('sponsorRegBtn');
-                const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
+            // ULTIMATE SPONSOR BUTTON FIX - BYPASS ALL POTENTIAL ISSUES
+            function setupSponsorButtons() {
+                console.log('🔧 ULTIMATE SPONSOR BUTTON SETUP');
                 
-                console.log('Sponsor Reg Button:', sponsorRegButton);
-                console.log('Sponsor Login Button:', sponsorLoginButton);
-                
-                if (sponsorRegButton) {
-                    // Remove existing listeners first
-                    sponsorRegButton.removeEventListener('click', buttons.sponsorRegBtn);
+                // Force wait for DOM
+                setTimeout(() => {
+                    const sponsorRegButton = document.getElementById('sponsorRegBtn');
+                    const sponsorLoginButton = document.getElementById('sponsorLoginBtn');
                     
-                    // Add new listener
-                    sponsorRegButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('🚀 Sponsor registration - Direct redirect');
-                        window.location.href = 'sponsor-admin.html';
-                    });
-                    console.log('✅ Direct sponsor registration listener added');
-                } else {
-                    console.log('❌ Sponsor registration button not found in DOM');
-                }
-                
-                if (sponsorLoginButton) {
-                    // Remove existing listeners first
-                    sponsorLoginButton.removeEventListener('click', buttons.sponsorLoginBtn);
+                    console.log('Sponsor Reg Button:', sponsorRegButton);
+                    console.log('Sponsor Login Button:', sponsorLoginButton);
                     
-                    // Add new listener
-                    sponsorLoginButton.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('🔐 Sponsor login - Show modal');
-                        showSponsorLoginModal();
-                    });
-                    console.log('✅ Direct sponsor login listener added');
-                } else {
-                    console.log('❌ Sponsor login button not found in DOM');
-                }
-            }, 100);
+                    if (sponsorRegButton) {
+                        // Remove ALL existing listeners
+                        sponsorRegButton.replaceWith(sponsorRegButton.cloneNode(true));
+                        const newRegButton = document.getElementById('sponsorRegBtn');
+                        
+                        // Add direct onclick handler
+                        newRegButton.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🚀 ONCLICK: Sponsor registration - Redirecting NOW');
+                            window.location.href = 'sponsor-admin.html';
+                            return false;
+                        };
+                        
+                        // Also add event listener as backup
+                        newRegButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🚀 LISTENER: Sponsor registration - Redirecting NOW');
+                            window.location.href = 'sponsor-admin.html';
+                        }, true);
+                        
+                        console.log('✅ Sponsor registration button fully setup');
+                    } else {
+                        console.log('❌ Sponsor registration button not found');
+                    }
+                    
+                    if (sponsorLoginButton) {
+                        // Remove ALL existing listeners
+                        sponsorLoginButton.replaceWith(sponsorLoginButton.cloneNode(true));
+                        const newLoginButton = document.getElementById('sponsorLoginBtn');
+                        
+                        // Add direct onclick handler
+                        newLoginButton.onclick = function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🔐 ONCLICK: Sponsor login - Opening modal NOW');
+                            showSponsorLoginModal();
+                            return false;
+                        };
+                        
+                        // Also add event listener as backup
+                        newLoginButton.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🔐 LISTENER: Sponsor login - Opening modal NOW');
+                            showSponsorLoginModal();
+                        }, true);
+                        
+                        console.log('✅ Sponsor login button fully setup');
+                    } else {
+                        console.log('❌ Sponsor login button not found');
+                    }
+                }, 200);
+            }
+            
+            // Call setup function
+            setupSponsorButtons();
             
             // Login functionality - FINAL SOLUTION: Direct buttons (no dropdown)
             // Setting up login system
