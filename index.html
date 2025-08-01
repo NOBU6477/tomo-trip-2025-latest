@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Permissions-Policy" content="ambient-light-sensor=(), battery=(), speaker-selection=(), publickey-credentials=()">
+    <meta http-equiv="Feature-Policy" content="ambient-light-sensor 'none'; battery 'none'; speaker-selection 'none'">
     <title>Local Guide - 特別な旅の体験を</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -1002,11 +1004,28 @@
             }
             
             // Clear any existing intervals/timeouts to prevent conflicts
-            for (let i = 1; i < 99999; i++) {
-                window.clearInterval(i);
-                window.clearTimeout(i);
+            try {
+                for (let i = 1; i < 99999; i++) {
+                    window.clearInterval(i);
+                    window.clearTimeout(i);
+                }
+            } catch (e) {
+                // Ignore clearing errors
             }
             
+            // Suppress browser feature warnings
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                if (typeof args[0] === 'string' && 
+                    (args[0].includes('Unrecognized feature') || 
+                     args[0].includes('Allow attribute') ||
+                     args[0].includes('Too many active WebGL') ||
+                     args[0].includes('sandbox'))) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+
             // Initialize data with all guides (including registered ones)
             guideData = loadAllGuides();
             currentGuides = guideData;
@@ -1159,11 +1178,15 @@
             
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                const dropdown = document.getElementById('customLoginDropdown');
-                const loginButton = document.getElementById('loginDropdown');
+                try {
+                    const dropdown = document.getElementById('customLoginDropdown');
+                    const loginButton = document.getElementById('loginDropdown');
                 
-                if (dropdown && !dropdown.contains(e.target) && e.target !== loginButton) {
-                    dropdown.style.display = 'none';
+                    if (dropdown && !dropdown.contains(e.target) && e.target !== loginButton) {
+                        dropdown.style.display = 'none';
+                    }
+                } catch (error) {
+                    // Ignore click handler errors
                 }
             });
             
