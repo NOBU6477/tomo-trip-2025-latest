@@ -1118,105 +1118,56 @@
             // Single setup call
             setupLoginLinks();
             
-            // COMPREHENSIVE CLICK HANDLER - ALL CLICKS LOGGED
+            // SIMPLIFIED CLICK HANDLER - REDUCED LOGGING
             document.addEventListener('click', function(e) {
-                // Log ALL clicks to see what's happening
-                console.log('🔍 ALL CLICKS:', {
-                    tagName: e.target.tagName,
-                    id: e.target.id,
-                    className: e.target.className,
-                    textContent: e.target.textContent ? e.target.textContent.trim() : '',
-                    dataLoginType: e.target.getAttribute('data-login-type'),
-                    parentElement: e.target.parentElement ? e.target.parentElement.tagName : null
-                });
-                
-                // Handle login links directly
-                const loginType = e.target.getAttribute('data-login-type');
-                if (loginType) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🎯 Login link clicked via document handler:', loginType);
-                    showLoginModal(loginType);
-                    
-                    // Close dropdown
-                    const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
-                    if (dropdown) dropdown.hide();
-                    
-                    return false;
-                }
-                
                 // Text-based fallback for dropdown items
                 const textContent = e.target.textContent ? e.target.textContent.trim() : '';
                 if (textContent === '観光客ログイン') {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🎯 Tourist login clicked via text match!');
                     showLoginModal('tourist');
-                    
-                    const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
-                    if (dropdown) dropdown.hide();
-                    
+                    document.getElementById('customLoginDropdown').style.display = 'none';
                     return false;
                 }
                 
                 if (textContent === 'ガイドログイン') {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🎯 Guide login clicked via text match!');
                     showLoginModal('guide');
-                    
-                    const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
-                    if (dropdown) dropdown.hide();
-                    
+                    document.getElementById('customLoginDropdown').style.display = 'none';
                     return false;
                 }
-            }, true); // Use capture phase
+            }, true);
             
             // CUSTOM DROPDOWN FUNCTIONS - NO BOOTSTRAP INTERFERENCE
             window.toggleLoginDropdown = function() {
-                console.log('🔽 Custom dropdown toggle clicked');
                 const dropdown = document.getElementById('customLoginDropdown');
                 if (dropdown.style.display === 'none' || dropdown.style.display === '') {
                     dropdown.style.display = 'block';
-                    console.log('🔽 Dropdown opened - setting up listeners');
                     setupCustomDropdownListeners();
                 } else {
                     dropdown.style.display = 'none';
-                    console.log('🔼 Dropdown closed');
                 }
             };
             
             function setupCustomDropdownListeners() {
                 const touristBtn = document.getElementById('directTouristLoginBtn');
                 const guideBtn = document.getElementById('directGuideLoginBtn');
-                console.log('Dropdown buttons check:', !!touristBtn, !!guideBtn);
                 
                 if (touristBtn) {
-                    // Remove any existing listeners
-                    touristBtn.onclick = null;
-                    
-                    // Set new onclick
                     touristBtn.onclick = function() {
-                        console.log('🎯 TOURIST CLICKED - CUSTOM DROPDOWN!');
                         showLoginModal('tourist');
                         document.getElementById('customLoginDropdown').style.display = 'none';
                         return false;
                     };
-                    console.log('✅ Tourist button onclick assigned');
                 }
                 
                 if (guideBtn) {
-                    // Remove any existing listeners
-                    guideBtn.onclick = null;
-                    
-                    // Set new onclick
                     guideBtn.onclick = function() {
-                        console.log('🎯 GUIDE CLICKED - CUSTOM DROPDOWN!');
                         showLoginModal('guide');
                         document.getElementById('customLoginDropdown').style.display = 'none';
                         return false;
                     };
-                    console.log('✅ Guide button onclick assigned');
                 }
             }
             
@@ -1427,40 +1378,7 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 15px;">
-                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
-                    <h5 class="modal-title fw-bold" id="loginModalLabel">ログイン</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label for="loginEmail" class="form-label fw-bold">メールアドレス</label>
-                            <input type="email" class="form-control" id="loginEmail" placeholder="email@example.com" style="border-radius: 10px; padding: 12px;">
-                        </div>
-                        <div class="mb-4">
-                            <label for="loginPassword" class="form-label fw-bold">パスワード</label>
-                            <input type="password" class="form-control" id="loginPassword" placeholder="パスワードを入力" style="border-radius: 10px; padding: 12px;">
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="rememberMe">
-                                <label class="form-check-label" for="rememberMe">ログイン状態を保持</label>
-                            </div>
-                            <a href="#" class="text-decoration-none">パスワードを忘れた方</a>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">キャンセル</button>
-                    <button type="button" class="btn btn-primary" id="loginSubmitBtn" style="border-radius: 25px; padding: 10px 20px; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">ログイン</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Registration Modal -->
     <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
