@@ -279,8 +279,8 @@
                         ログイン
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="loginDropdown" style="z-index: 9999;">
-                        <li><a class="dropdown-item" href="javascript:void(0)" id="directTouristLoginBtn" data-login-type="tourist" style="cursor: pointer;">観光客ログイン</a></li>
-                        <li><a class="dropdown-item" href="javascript:void(0)" id="directGuideLoginBtn" data-login-type="guide" style="cursor: pointer;">ガイドログイン</a></li>
+                        <li><button class="dropdown-item w-100 text-start border-0 bg-transparent" id="directTouristLoginBtn" data-login-type="tourist" type="button" style="cursor: pointer;">観光客ログイン</button></li>
+                        <li><button class="dropdown-item w-100 text-start border-0 bg-transparent" id="directGuideLoginBtn" data-login-type="guide" type="button" style="cursor: pointer;">ガイドログイン</button></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -1172,18 +1172,45 @@
                 }
             }, true); // Use capture phase
             
-            // Bootstrap dropdown event handling
+            // Bootstrap dropdown event handling + DIRECT BUTTON LISTENERS
             const loginDropdown = document.getElementById('loginDropdown');
             if (loginDropdown) {
                 loginDropdown.addEventListener('shown.bs.dropdown', function() {
-                    console.log('🔽 Dropdown opened - verifying elements');
+                    console.log('🔽 Dropdown opened - adding direct listeners');
                     setTimeout(function() {
-                        const touristLink = document.getElementById('directTouristLoginBtn');
-                        const guideLink = document.getElementById('directGuideLoginBtn');
-                        console.log('Dropdown items check:', !!touristLink, !!guideLink);
-                        if (touristLink) console.log('Tourist link data:', touristLink.getAttribute('data-login-type'));
-                        if (guideLink) console.log('Guide link data:', guideLink.getAttribute('data-login-type'));
-                    }, 50);
+                        const touristBtn = document.getElementById('directTouristLoginBtn');
+                        const guideBtn = document.getElementById('directGuideLoginBtn');
+                        console.log('Dropdown buttons check:', !!touristBtn, !!guideBtn);
+                        
+                        // DIRECT BUTTON EVENT LISTENERS - NO BOOTSTRAP INTERFERENCE
+                        if (touristBtn) {
+                            touristBtn.onclick = function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log('🎯 TOURIST BUTTON CLICKED DIRECTLY!');
+                                showLoginModal('tourist');
+                                
+                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                                if (dropdown) dropdown.hide();
+                                return false;
+                            };
+                            console.log('✅ Tourist button onclick assigned');
+                        }
+                        
+                        if (guideBtn) {
+                            guideBtn.onclick = function(e) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                console.log('🎯 GUIDE BUTTON CLICKED DIRECTLY!');
+                                showLoginModal('guide');
+                                
+                                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                                if (dropdown) dropdown.hide();
+                                return false;
+                            };
+                            console.log('✅ Guide button onclick assigned');
+                        }
+                    }, 100);
                 });
             }
             
