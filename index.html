@@ -279,8 +279,8 @@
                         ログイン
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="loginDropdown">
-                        <li><button class="dropdown-item" type="button" id="directTouristLoginBtn" onclick="console.log('Tourist onclick triggered'); showLoginModal('tourist'); return false;">観光客ログイン</button></li>
-                        <li><button class="dropdown-item" type="button" id="directGuideLoginBtn" onclick="console.log('Guide onclick triggered'); showLoginModal('guide'); return false;">ガイドログイン</button></li>
+                        <li><a class="dropdown-item" href="#" id="directTouristLoginBtn" data-login-type="tourist">観光客ログイン</a></li>
+                        <li><a class="dropdown-item" href="#" id="directGuideLoginBtn" data-login-type="guide">ガイドログイン</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -1092,48 +1092,44 @@
                 }
             }
             
-            // Setup dropdown login buttons (now back in dropdown format)
-            function setupDropdownLoginButtons() {
-                console.log('⚡ Setting up dropdown login buttons...');
+            // FINAL SOLUTION: Simple link-based approach
+            function setupLoginLinks() {
+                console.log('⚡ Setting up login links...');
                 
-                const directTouristBtn = document.getElementById('directTouristLoginBtn');
-                const directGuideBtn = document.getElementById('directGuideLoginBtn');
-                
-                if (directTouristBtn) {
-                    console.log('✅ Found tourist login button in dropdown');
-                    directTouristBtn.addEventListener('click', function(e) {
+                // Use delegation on dropdown menu
+                const dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="loginDropdown"]');
+                if (dropdownMenu) {
+                    console.log('✅ Found dropdown menu');
+                    
+                    dropdownMenu.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('🎯 Tourist login clicked in dropdown!');
-                        showLoginModal('tourist');
                         
-                        // Close dropdown after click
+                        const loginType = e.target.getAttribute('data-login-type');
+                        console.log('🎯 Login link clicked:', loginType, e.target.textContent);
+                        
+                        if (loginType === 'tourist') {
+                            console.log('🎯 Opening tourist login modal');
+                            showLoginModal('tourist');
+                        } else if (loginType === 'guide') {
+                            console.log('🎯 Opening guide login modal');
+                            showLoginModal('guide');
+                        }
+                        
+                        // Close dropdown
                         const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
                         if (dropdown) dropdown.hide();
-                    });
-                }
-                
-                if (directGuideBtn) {
-                    console.log('✅ Found guide login button in dropdown');
-                    directGuideBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('🎯 Guide login clicked in dropdown!');
-                        showLoginModal('guide');
                         
-                        // Close dropdown after click
-                        const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
-                        if (dropdown) dropdown.hide();
+                        return false;
                     });
+                    
+                    console.log('✅ Login links setup completed');
                 }
-                
-                console.log('✅ Dropdown login buttons setup completed');
             }
             
-            // Setup immediately and with delays
-            setupDropdownLoginButtons();
-            setTimeout(setupDropdownLoginButtons, 200);
-            setTimeout(setupDropdownLoginButtons, 1000);
+            // Setup login links
+            setupLoginLinks();
+            setTimeout(setupLoginLinks, 500);
             
             // NUCLEAR SOLUTION: Multiple event capture methods
             document.addEventListener('click', function(e) {
@@ -1175,34 +1171,8 @@
             const loginDropdown = document.getElementById('loginDropdown');
             if (loginDropdown) {
                 loginDropdown.addEventListener('shown.bs.dropdown', function() {
-                    console.log('🔽 Dropdown opened - Force re-binding buttons');
-                    setTimeout(function() {
-                        setupDropdownLoginButtons();
-                        
-                        // Additional force binding
-                        const dropdownMenu = document.querySelector('.dropdown-menu[aria-labelledby="loginDropdown"]');
-                        if (dropdownMenu) {
-                            dropdownMenu.addEventListener('click', function(e) {
-                                console.log('🔍 Dropdown menu direct click:', e.target.id, e.target.textContent);
-                                
-                                if (e.target.id === 'directTouristLoginBtn' || e.target.textContent.includes('観光客')) {
-                                    e.preventDefault();
-                                    e.stopImmediatePropagation();
-                                    console.log('🎯 Tourist login via dropdown menu!');
-                                    showLoginModal('tourist');
-                                    return false;
-                                }
-                                
-                                if (e.target.id === 'directGuideLoginBtn' || e.target.textContent.includes('ガイド')) {
-                                    e.preventDefault();
-                                    e.stopImmediatePropagation();
-                                    console.log('🎯 Guide login via dropdown menu!');
-                                    showLoginModal('guide');
-                                    return false;
-                                }
-                            }, { capture: true });
-                        }
-                    }, 100);
+                    console.log('🔽 Dropdown opened');
+                    setupLoginLinks();
                 });
             }
             
