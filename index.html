@@ -1068,59 +1068,68 @@
                 }
             });
             
-            // Login dropdown functionality - with debugging and fallback
-            function setupLoginButtons() {
+            // Login dropdown functionality - using event delegation for reliability
+            console.log('Setting up login buttons with event delegation...');
+            
+            // Use event delegation on document body to catch clicks
+            document.body.addEventListener('click', function(e) {
+                const target = e.target;
+                
+                // Check if clicked element is tourist login button
+                if (target && (target.id === 'touristLoginBtn' || target.closest('#touristLoginBtn'))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Tourist login clicked via delegation - opening login modal');
+                    
+                    // Show login modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
+                    return;
+                }
+                
+                // Check if clicked element is guide login button
+                if (target && (target.id === 'guideLoginBtn' || target.closest('#guideLoginBtn'))) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Guide login clicked via delegation - opening login modal');
+                    
+                    // Show login modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
+                    return;
+                }
+            });
+            
+            // Also try direct event listeners as backup
+            setTimeout(function() {
                 const touristLoginBtn = document.getElementById('touristLoginBtn');
                 const guideLoginBtn = document.getElementById('guideLoginBtn');
                 
-                console.log('Setting up login buttons...');
-                console.log('Tourist login button found:', !!touristLoginBtn);
-                console.log('Guide login button found:', !!guideLoginBtn);
+                console.log('Backup: Tourist login button found:', !!touristLoginBtn);
+                console.log('Backup: Guide login button found:', !!guideLoginBtn);
                 
                 if (touristLoginBtn) {
-                    // Remove existing listeners if any
-                    touristLoginBtn.replaceWith(touristLoginBtn.cloneNode(true));
-                    const newTouristBtn = document.getElementById('touristLoginBtn');
-                    
-                    newTouristBtn.addEventListener('click', function(e) {
+                    touristLoginBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Tourist login clicked - opening login modal');
+                        console.log('Tourist login clicked DIRECT - opening login modal');
                         
-                        // Show login modal
                         const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                         loginModal.show();
                     });
-                    console.log('Tourist login event listener added');
-                } else {
-                    console.warn('Tourist login button not found');
                 }
-
+                
                 if (guideLoginBtn) {
-                    // Remove existing listeners if any
-                    guideLoginBtn.replaceWith(guideLoginBtn.cloneNode(true));
-                    const newGuideBtn = document.getElementById('guideLoginBtn');
-                    
-                    newGuideBtn.addEventListener('click', function(e) {
+                    guideLoginBtn.addEventListener('click', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        console.log('Guide login clicked - opening login modal');
+                        console.log('Guide login clicked DIRECT - opening login modal');
                         
-                        // Show login modal
                         const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                         loginModal.show();
                     });
-                    console.log('Guide login event listener added');
-                } else {
-                    console.warn('Guide login button not found');
                 }
-            }
-            
-            // Setup login buttons immediately
-            setupLoginButtons();
-            
-            // Also setup after a short delay to ensure DOM is fully ready
-            setTimeout(setupLoginButtons, 500);
+            }, 1000);
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
