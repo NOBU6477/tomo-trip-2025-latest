@@ -836,27 +836,47 @@
                     
                     // Handle registration button click
                     document.getElementById('openRegistrationBtn').addEventListener('click', function() {
+                        console.log('Registration button clicked - triggering header registration');
                         modal.hide();
+                        
                         setTimeout(() => {
-                            // Check if userType field exists and set it
-                            const userTypeField = document.getElementById('userType');
-                            if (userTypeField) {
-                                userTypeField.value = 'tourist';
-                            }
-                            
-                            // Check if registrationModal exists and show it
-                            const registrationModalElement = document.getElementById('registrationModal');
-                            if (registrationModalElement) {
-                                const registrationModal = new bootstrap.Modal(registrationModalElement);
-                                registrationModal.show();
+                            // Direct trigger of header registration button
+                            const headerRegBtn = document.getElementById('registerBtn');
+                            if (headerRegBtn) {
+                                console.log('Found header registration button - clicking');
+                                headerRegBtn.click();
+                                
+                                // Auto-select tourist type after modal opens
+                                setTimeout(() => {
+                                    const touristCard = document.getElementById('touristCard');
+                                    if (touristCard) {
+                                        console.log('Auto-selecting tourist card');
+                                        touristCard.click();
+                                    }
+                                }, 500);
                             } else {
-                                // Fallback: trigger header registration button
-                                const headerRegBtn = document.querySelector('#registerBtn[data-bs-target="#registrationModal"]');
-                                if (headerRegBtn) {
-                                    headerRegBtn.click();
-                                } else {
-                                    console.log('Registration modal not found, redirecting to header button');
-                                    alert('登録フォームが見つかりません。ヘッダーの「新規登録」ボタンをお試しください。');
+                                console.log('Header registration button not found - trying alternative approach');
+                                // Alternative: Try to open registration modal directly via Bootstrap
+                                try {
+                                    const registrationModalElement = document.getElementById('registrationModal');
+                                    if (registrationModalElement) {
+                                        const registrationModal = new bootstrap.Modal(registrationModalElement);
+                                        registrationModal.show();
+                                        
+                                        // Auto-select tourist type
+                                        setTimeout(() => {
+                                            const touristCard = document.getElementById('touristCard');
+                                            if (touristCard) {
+                                                console.log('Auto-selecting tourist card');
+                                                touristCard.click();
+                                            }
+                                        }, 500);
+                                    } else {
+                                        alert('登録フォームが見つかりません。ページをリロードしてヘッダーの「新規登録」ボタンをお試しください。');
+                                    }
+                                } catch (error) {
+                                    console.error('Error opening registration modal:', error);
+                                    alert('登録フォームでエラーが発生しました。ページをリロードしてください。');
                                 }
                             }
                             alertModal.remove();
