@@ -61,7 +61,7 @@
         /* Language Switcher - Center Position */
         .language-switcher-center {
             position: absolute;
-            top: 40%;
+            top: 25%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -274,9 +274,14 @@
             </a>
             
             <div class="d-flex">
-                <div class="btn-group me-2" role="group">
-                    <button type="button" class="btn btn-outline-primary" id="directTouristLoginBtn">観光客ログイン</button>
-                    <button type="button" class="btn btn-outline-success" id="directGuideLoginBtn">ガイドログイン</button>
+                <div class="dropdown me-2">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        ログイン
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="loginDropdown">
+                        <li><button class="dropdown-item" type="button" id="directTouristLoginBtn">観光客ログイン</button></li>
+                        <li><button class="dropdown-item" type="button" id="directGuideLoginBtn">ガイドログイン</button></li>
+                    </ul>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
             </div>
@@ -1087,40 +1092,64 @@
                 }
             }
             
-            // Setup direct login buttons immediately
-            function setupDirectLoginButtons() {
-                console.log('⚡ Setting up direct login buttons...');
+            // Setup dropdown login buttons (now back in dropdown format)
+            function setupDropdownLoginButtons() {
+                console.log('⚡ Setting up dropdown login buttons...');
                 
                 const directTouristBtn = document.getElementById('directTouristLoginBtn');
                 const directGuideBtn = document.getElementById('directGuideLoginBtn');
                 
                 if (directTouristBtn) {
-                    console.log('✅ Found direct tourist login button');
+                    console.log('✅ Found tourist login button in dropdown');
                     directTouristBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        console.log('🎯 DIRECT Tourist login clicked!');
+                        e.stopPropagation();
+                        console.log('🎯 Tourist login clicked in dropdown!');
                         showLoginModal('tourist');
+                        
+                        // Close dropdown after click
+                        const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                        if (dropdown) dropdown.hide();
                     });
                 }
                 
                 if (directGuideBtn) {
-                    console.log('✅ Found direct guide login button');
+                    console.log('✅ Found guide login button in dropdown');
                     directGuideBtn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        console.log('🎯 DIRECT Guide login clicked!');
+                        e.stopPropagation();
+                        console.log('🎯 Guide login clicked in dropdown!');
                         showLoginModal('guide');
+                        
+                        // Close dropdown after click
+                        const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('loginDropdown'));
+                        if (dropdown) dropdown.hide();
                     });
                 }
                 
-                console.log('✅ Direct login buttons setup completed');
+                console.log('✅ Dropdown login buttons setup completed');
             }
             
-            // Setup immediately
-            setupDirectLoginButtons();
+            // Setup immediately and with delays
+            setupDropdownLoginButtons();
+            setTimeout(setupDropdownLoginButtons, 200);
+            setTimeout(setupDropdownLoginButtons, 1000);
             
-            // Also setup with delay as backup
-            setTimeout(setupDirectLoginButtons, 100);
-            setTimeout(setupDirectLoginButtons, 500);
+            // Also add event delegation as backup
+            document.addEventListener('click', function(e) {
+                if (e.target.id === 'directTouristLoginBtn') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Tourist login via delegation!');
+                    showLoginModal('tourist');
+                }
+                if (e.target.id === 'directGuideLoginBtn') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Guide login via delegation!');
+                    showLoginModal('guide');
+                }
+            });
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
