@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>協賛店情報編集 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .edit-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header-section {
+            background: linear-gradient(45deg, #fd7e14, #e83e8c);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .form-section {
+            padding: 2rem;
+        }
+        .section-title {
+            color: #fd7e14;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        .progress-steps {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .step {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+        .step.current {
+            background: #fd7e14;
+            color: white;
+        }
+        .step.pending {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+        .image-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .image-upload-area:hover {
+            border-color: #fd7e14;
+            background: #fff3cd;
+        }
+        .preview-image {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #fd7e14, #e83e8c);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .form-control:focus {
+            border-color: #fd7e14;
+            box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="edit-container">
+            <!-- Header -->
+            <div class="header-section">
+                <h1><i class="bi bi-pencil-square"></i> 協賛店情報編集</h1>
+                <p class="mb-0">詳細情報を追加して、魅力的な店舗ページを作成しましょう</p>
+            </div>
+
+            <!-- Progress Steps -->
+            <div class="form-section">
+                <div class="progress-steps">
+                    <div class="text-center">
+                        <div class="step completed">
+                            <i class="bi bi-check-circle"></i> 基本登録
+                        </div>
+                        <div class="step current">
+                            <i class="bi bi-pencil"></i> 詳細編集
+                        </div>
+                        <div class="step pending">
+                            <i class="bi bi-eye"></i> 公開
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Store Info Display -->
+                <div class="alert alert-info">
+                    <strong>編集中の店舗：</strong> <span id="currentStoreName">読み込み中...</span>
+                </div>
+
+                <form id="sponsorEditForm">
+                    <!-- 画像アップロードセクション -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-camera"></i> 店舗画像</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">メイン画像（店舗外観）</label>
+                                <div class="image-upload-area" onclick="document.getElementById('mainImage').click()">
+                                    <i class="bi bi-cloud-upload fs-1 text-muted"></i>
+                                    <p class="mt-2 mb-0">クリックして画像をアップロード</p>
+                                    <small class="text-muted">推奨サイズ: 800x600px</small>
+                                </div>
+                                <input type="file" id="mainImage" class="d-none" accept="image/*">
+                                <div id="mainImagePreview" class="mt-2"></div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">ロゴ・看板画像</label>
+                                <div class="image-upload-area" onclick="document.getElementById('logoImage').click()">
+                                    <i class="bi bi-shop fs-1 text-muted"></i>
+                                    <p class="mt-2 mb-0">ロゴまたは看板画像</p>
+                                    <small class="text-muted">推奨サイズ: 400x400px</small>
+                                </div>
+                                <input type="file" id="logoImage" class="d-none" accept="image/*">
+                                <div id="logoImagePreview" class="mt-2"></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">追加画像（内装・商品・メニューなど）</label>
+                            <div class="image-upload-area" onclick="document.getElementById('additionalImages').click()">
+                                <i class="bi bi-images fs-1 text-muted"></i>
+                                <p class="mt-2 mb-0">複数の画像をアップロード可能</p>
+                                <small class="text-muted">最大6枚まで</small>
+                            </div>
+                            <input type="file" id="additionalImages" class="d-none" accept="image/*" multiple>
+                            <div id="additionalImagesPreview" class="mt-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- 詳細説明セクション -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-chat-text"></i> 詳細説明</h3>
+                        
+                        <div class="mb-3">
+                            <label for="detailedDescription" class="form-label">詳しい店舗紹介</label>
+                            <textarea class="form-control" id="detailedDescription" rows="5" placeholder="お店の歴史、こだわり、雰囲気、おすすめ商品・メニューなどを詳しくご紹介ください"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="specialty" class="form-label">特色・売り</label>
+                                <textarea class="form-control" id="specialty" rows="3" placeholder="例：創業50年の老舗、地元食材使用、職人の手作り"></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="atmosphere" class="form-label">店内の雰囲気</label>
+                                <textarea class="form-control" id="atmosphere" rows="3" placeholder="例：落ち着いた和風空間、カジュアルで明るい、家族連れ歓迎"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- サービス詳細セクション -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-star"></i> サービス詳細</h3>
+                        
+                        <div class="mb-3">
+                            <label for="detailedDiscount" class="form-label">特典の詳細</label>
+                            <textarea class="form-control" id="detailedDiscount" rows="3" placeholder="特典の利用方法、条件、期間などを詳しくご記入ください"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">提供サービス</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="serviceWifi" value="wifi">
+                                        <label class="form-check-label" for="serviceWifi">Wi-Fi無料</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="serviceParking" value="parking">
+                                        <label class="form-check-label" for="serviceParking">駐車場完備</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="serviceCard" value="card">
+                                        <label class="form-check-label" for="serviceCard">カード決済OK</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="serviceBarrierFree" value="barrier-free">
+                                        <label class="form-check-label" for="serviceBarrierFree">バリアフリー</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="priceRange" class="form-label">価格帯</label>
+                                <select class="form-select" id="priceRange">
+                                    <option value="">選択してください</option>
+                                    <option value="budget">リーズナブル（〜1,000円）</option>
+                                    <option value="moderate">中程度（1,000円〜3,000円）</option>
+                                    <option value="upscale">高級（3,000円〜）</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="capacity" class="form-label">収容人数</label>
+                                <input type="number" class="form-control" id="capacity" placeholder="例：50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- アクセス情報セクション -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-geo-alt"></i> アクセス情報</h3>
+                        
+                        <div class="mb-3">
+                            <label for="accessInfo" class="form-label">アクセス方法</label>
+                            <textarea class="form-control" id="accessInfo" rows="3" placeholder="最寄り駅、バス停、目印となる建物などを詳しくご記入ください"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nearestStation" class="form-label">最寄り駅</label>
+                                <input type="text" class="form-control" id="nearestStation" placeholder="例：JR渋谷駅 徒歩5分">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="parkingInfo" class="form-label">駐車場情報</label>
+                                <input type="text" class="form-control" id="parkingInfo" placeholder="例：専用駐車場10台、近隣コインパーキング有">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 保存・公開ボタン -->
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary me-2" onclick="saveDraft()">
+                            <i class="bi bi-save"></i> 下書き保存
+                        </button>
+                        <button type="button" class="btn btn-primary me-2" onclick="previewStore()">
+                            <i class="bi bi-eye"></i> プレビュー
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> 完了して公開
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentSponsorId = null;
+        let currentSponsorData = null;
+
+        // ページロード時に店舗データを読み込み
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            currentSponsorId = urlParams.get('id');
+            
+            if (currentSponsorId) {
+                loadSponsorData();
+            } else {
+                alert('編集対象の店舗が見つかりません');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // 店舗データの読み込み
+        function loadSponsorData() {
+            const sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            currentSponsorData = sponsors.find(s => s.id === currentSponsorId);
+            
+            if (currentSponsorData) {
+                document.getElementById('currentStoreName').textContent = currentSponsorData.storeName;
+                // 既存データがあれば入力フィールドに設定
+                if (currentSponsorData.detailedDescription) {
+                    document.getElementById('detailedDescription').value = currentSponsorData.detailedDescription;
+                }
+                // その他のフィールドも同様に設定...
+            } else {
+                alert('店舗データが見つかりません');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 画像アップロード処理
+        function setupImageUpload(inputId, previewId) {
+            document.getElementById(inputId).addEventListener('change', function(e) {
+                const files = e.target.files;
+                const preview = document.getElementById(previewId);
+                preview.innerHTML = '';
+
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.className = 'preview-image';
+                        preview.appendChild(img);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // 画像アップロード設定
+        setupImageUpload('mainImage', 'mainImagePreview');
+        setupImageUpload('logoImage', 'logoImagePreview');
+        setupImageUpload('additionalImages', 'additionalImagesPreview');
+
+        // 下書き保存
+        function saveDraft() {
+            const editData = collectFormData();
+            editData.status = 'draft';
+            updateSponsorData(editData);
+            alert('下書きを保存しました');
+        }
+
+        // プレビュー
+        function previewStore() {
+            const editData = collectFormData();
+            updateSponsorData(editData);
+            window.open(`sponsor-preview.html?id=${currentSponsorId}`, '_blank');
+        }
+
+        // フォーム送信（公開）
+        document.getElementById('sponsorEditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const editData = collectFormData();
+            editData.status = 'published';
+            editData.publishDate = new Date().toISOString();
+            
+            updateSponsorData(editData);
+            
+            alert('協賛店情報が公開されました！\n協賛店一覧ページでご確認いただけます。');
+            window.location.href = 'sponsor-list.html';
+        });
+
+        // フォームデータ収集
+        function collectFormData() {
+            return {
+                detailedDescription: document.getElementById('detailedDescription').value,
+                specialty: document.getElementById('specialty').value,
+                atmosphere: document.getElementById('atmosphere').value,
+                detailedDiscount: document.getElementById('detailedDiscount').value,
+                services: getSelectedServices(),
+                priceRange: document.getElementById('priceRange').value,
+                capacity: document.getElementById('capacity').value,
+                accessInfo: document.getElementById('accessInfo').value,
+                nearestStation: document.getElementById('nearestStation').value,
+                parkingInfo: document.getElementById('parkingInfo').value,
+                lastUpdated: new Date().toISOString()
+            };
+        }
+
+        // 選択されたサービスを取得
+        function getSelectedServices() {
+            const services = [];
+            if (document.getElementById('serviceWifi').checked) services.push('wifi');
+            if (document.getElementById('serviceParking').checked) services.push('parking');
+            if (document.getElementById('serviceCard').checked) services.push('card');
+            if (document.getElementById('serviceBarrierFree').checked) services.push('barrier-free');
+            return services;
+        }
+
+        // 店舗データの更新
+        function updateSponsorData(editData) {
+            let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            const index = sponsors.findIndex(s => s.id === currentSponsorId);
+            
+            if (index !== -1) {
+                sponsors[index] = { ...sponsors[index], ...editData };
+                localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
+                currentSponsorData = sponsors[index];
+            }
+        }
+
+        console.log('✅ Sponsor Edit Page Loaded');
+    </script>
+</body>
+</html>

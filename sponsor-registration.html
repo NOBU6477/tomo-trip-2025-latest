@@ -1,241 +1,297 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>協賛店登録 - TomoTrip</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      font-family: 'Nunito', sans-serif;
-      padding: 20px 0;
-    }
-    
-    .registration-container {
-      max-width: 800px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-      overflow: hidden;
-    }
-    
-    .header-section {
-      background: linear-gradient(135deg, #ff6b6b, #ffa726);
-      padding: 40px;
-      text-align: center;
-      color: white;
-    }
-    
-    .header-section h1 {
-      font-family: 'Quicksand', sans-serif;
-      font-weight: 700;
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-    
-    .form-section {
-      padding: 40px;
-    }
-    
-    .form-group {
-      margin-bottom: 25px;
-    }
-    
-    .form-label {
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 8px;
-      display: block;
-    }
-    
-    .form-control {
-      border-radius: 12px;
-      border: 2px solid #e9ecef;
-      padding: 12px 16px;
-      font-size: 16px;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-      border-color: #ff6b6b;
-      box-shadow: 0 0 0 0.2rem rgba(255, 107, 107, 0.25);
-    }
-    
-    .logo-upload-area {
-      border: 3px dashed #dee2e6;
-      border-radius: 12px;
-      padding: 40px;
-      text-align: center;
-      background: #f8f9fa;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    
-    .logo-upload-area:hover {
-      border-color: #ff6b6b;
-      background: #fff5f5;
-    }
-    
-    .logo-preview {
-      max-width: 200px;
-      max-height: 200px;
-      border-radius: 12px;
-      margin: 10px auto;
-      display: block;
-    }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #ff6b6b, #ffa726);
-      border: none;
-      border-radius: 25px;
-      padding: 15px 40px;
-      font-weight: 700;
-      font-size: 18px;
-      transition: all 0.3s ease;
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
-    }
-    
-    .btn-secondary {
-      background: #6c757d;
-      border: none;
-      border-radius: 25px;
-      padding: 15px 40px;
-      font-weight: 600;
-      color: white;
-    }
-    
-    .success-message {
-      display: none;
-      text-align: center;
-      padding: 40px;
-    }
-    
-    .success-icon {
-      font-size: 4rem;
-      color: #28a745;
-      margin-bottom: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>協賛店登録 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .registration-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header-section {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .form-section {
+            padding: 2rem;
+        }
+        .section-title {
+            color: #28a745;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        .form-control:focus {
+            border-color: #28a745;
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+        }
+        .required-mark {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .map-container {
+            height: 200px;
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-  <div class="registration-container">
-    <div class="header-section">
-      <h1>🏪 協賛店登録</h1>
-      <p class="lead mb-0">TomoTripの協賛店として参加しませんか？</p>
-    </div>
-    
-    <div class="form-section" id="registrationForm">
-      <form id="sponsorForm">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" for="storeName">店舗名 *</label>
-              <input type="text" class="form-control" id="storeName" required>
+    <div class="container">
+        <div class="registration-container">
+            <!-- Header -->
+            <div class="header-section">
+                <h1><i class="bi bi-shop"></i> 協賛店登録</h1>
+                <p class="mb-0">TomoTripに参加して、世界中の旅行者にお店をアピールしませんか？</p>
             </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" for="storeType">業種 *</label>
-              <select class="form-control" id="storeType" required>
-                <option value="">選択してください</option>
-                <option value="restaurant">レストラン</option>
-                <option value="cafe">カフェ</option>
-                <option value="hotel">ホテル・宿泊施設</option>
-                <option value="shop">ショップ・小売店</option>
-                <option value="activity">アクティビティ・体験</option>
-                <option value="transportation">交通・移動</option>
-                <option value="other">その他</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" for="contactName">担当者名 *</label>
-              <input type="text" class="form-control" id="contactName" required>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" for="contactEmail">メールアドレス *</label>
-              <input type="email" class="form-control" id="contactEmail" required>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" for="phone">電話番号 *</label>
-              <input type="tel" class="form-control" id="phone" required placeholder="03-1234-5678">
-              <small class="text-muted">観光客がタップで電話できるように表示されます</small>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label" for="website">ウェブサイト</label>
-              <input type="url" class="form-control" id="website" placeholder="https://">
-            </div>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label" for="address">住所 *</label>
-          <input type="text" class="form-control" id="address" required placeholder="東京都渋谷区桜丘町1-1">
-          <small class="text-muted">観光客がタップで地図表示できるように表示されます</small>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">店舗ロゴ *</label>
-          <div class="logo-upload-area" onclick="document.getElementById('logoFile').click()">
-            <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #6c757d;"></i>
-            <p class="mt-3 mb-0">クリックしてロゴをアップロード</p>
-            <small class="text-muted">PNG, JPG, GIF (最大5MB)</small>
-            <img id="logoPreview" class="logo-preview" style="display: none;">
-          </div>
-          <input type="file" id="logoFile" accept="image/*" style="display: none;" required>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label" for="description">店舗説明</label>
-          <textarea class="form-control" id="description" rows="4" placeholder="お店の特徴や魅力をご紹介ください"></textarea>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label" for="benefits">観光客向け特典</label>
-          <textarea class="form-control" id="benefits" rows="3" placeholder="割引やサービスなど、観光客向けの特典があれば記載ください"></textarea>
-        </div>
-        
-        <div class="text-center mt-4">
-          <button type="button" class="btn btn-secondary me-3" onclick="window.history.back()">戻る</button>
-          <button type="submit" class="btn btn-primary">登録する</button>
-        </div>
-      </form>
-    </div>
-    
-    <div class="success-message" id="successMessage">
-      <i class="bi bi-check-circle success-icon"></i>
-      <h3>登録完了！</h3>
-      <p class="lead">協賛店として登録いただき、ありがとうございます。<br>
-      審査完了後、メールでご連絡いたします。</p>
-      <button class="btn btn-primary" onclick="goToSponsorList()">協賛店一覧を見る</button>
-      <button class="btn btn-secondary ms-3" onclick="window.location.href='index.html'">トップページに戻る</button>
-    </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="guide-sponsor-connection.js"></script>
-  <script src="sponsor-registration.js"></script>
+            <!-- Registration Form -->
+            <div class="form-section">
+                <form id="sponsorRegistrationForm">
+                    <!-- 基本情報セクション -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-info-circle"></i> 基本情報</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="storeName" class="form-label">店舗名 <span class="required-mark">*</span></label>
+                                <input type="text" class="form-control" id="storeName" required placeholder="例：美味しい寿司 花月">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="category" class="form-label">業種 <span class="required-mark">*</span></label>
+                                <select class="form-select" id="category" required>
+                                    <option value="">選択してください</option>
+                                    <option value="restaurant">レストラン・飲食店</option>
+                                    <option value="hotel">ホテル・宿泊施設</option>
+                                    <option value="shopping">ショッピング・小売</option>
+                                    <option value="entertainment">エンターテイメント</option>
+                                    <option value="transport">交通・レンタル</option>
+                                    <option value="service">サービス業</option>
+                                    <option value="other">その他</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">住所 <span class="required-mark">*</span></label>
+                            <input type="text" class="form-control" id="address" required placeholder="例：東京都渋谷区道玄坂1-2-3">
+                            <small class="form-text text-muted">正確な住所を入力すると地図に表示されます</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">店舗位置（地図）</label>
+                            <div class="map-container" id="mapContainer">
+                                <i class="bi bi-geo-alt fs-1"></i>
+                                <span class="ms-2">住所入力後に地図が表示されます</span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">電話番号 <span class="required-mark">*</span></label>
+                                <input type="tel" class="form-control" id="phone" required placeholder="例：03-1234-5678">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">メールアドレス <span class="required-mark">*</span></label>
+                                <input type="email" class="form-control" id="email" required placeholder="例：info@example.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 営業情報セクション -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-clock"></i> 営業情報</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="openTime" class="form-label">営業時間</label>
+                                <input type="text" class="form-control" id="openTime" placeholder="例：10:00-22:00">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="closedDays" class="form-label">定休日</label>
+                                <input type="text" class="form-control" id="closedDays" placeholder="例：毎週火曜日">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="languages" class="form-label">対応言語</label>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="langJP" value="japanese" checked disabled>
+                                        <label class="form-check-label" for="langJP">日本語</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="langEN" value="english">
+                                        <label class="form-check-label" for="langEN">English</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="langCN" value="chinese">
+                                        <label class="form-check-label" for="langCN">中文</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="langKR" value="korean">
+                                        <label class="form-check-label" for="langKR">한국어</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 特典・サービス情報 -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-gift"></i> 特典・サービス</h3>
+                        
+                        <div class="mb-3">
+                            <label for="discount" class="form-label">TomoTrip利用者向け特典</label>
+                            <textarea class="form-control" id="discount" rows="3" placeholder="例：ガイドブック提示で10%割引、外国人観光客には英語メニュー提供"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">店舗の紹介文</label>
+                            <textarea class="form-control" id="description" rows="4" placeholder="お店の特徴や魅力を自由にご記入ください（後で編集ページで詳しく設定できます）"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- ウェブ情報 -->
+                    <div class="mb-4">
+                        <h3 class="section-title"><i class="bi bi-globe"></i> ウェブ・SNS情報</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="website" class="form-label">ウェブサイト</label>
+                                <input type="url" class="form-control" id="website" placeholder="https://your-website.com">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="instagram" class="form-label">Instagram</label>
+                                <input type="text" class="form-control" id="instagram" placeholder="@your_instagram">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 利用規約 -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                <span class="required-mark">*</span> <a href="#" class="text-decoration-none">利用規約</a>および<a href="#" class="text-decoration-none">プライバシーポリシー</a>に同意します
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- ボタン -->
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary me-3" onclick="history.back()">
+                            <i class="bi bi-arrow-left"></i> 戻る
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-arrow-right"></i> 登録して編集ページへ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // フォーム送信処理
+        document.getElementById('sponsorRegistrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // 基本データ収集
+            const formData = {
+                storeName: document.getElementById('storeName').value,
+                category: document.getElementById('category').value,
+                address: document.getElementById('address').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                openTime: document.getElementById('openTime').value,
+                closedDays: document.getElementById('closedDays').value,
+                languages: getSelectedLanguages(),
+                discount: document.getElementById('discount').value,
+                description: document.getElementById('description').value,
+                website: document.getElementById('website').value,
+                instagram: document.getElementById('instagram').value,
+                registrationDate: new Date().toISOString(),
+                status: 'draft' // 下書き状態で保存
+            };
+
+            // ローカルストレージに保存（後でバックエンド連携）
+            let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            formData.id = 'sponsor_' + Date.now();
+            sponsors.push(formData);
+            localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
+
+            // 成功メッセージと編集ページへの遷移
+            alert('基本登録が完了しました！\n編集ページで詳細情報を追加してください。');
+            window.location.href = `sponsor-edit.html?id=${formData.id}`;
+        });
+
+        // 選択された言語を取得
+        function getSelectedLanguages() {
+            const languages = [];
+            if (document.getElementById('langJP').checked) languages.push('japanese');
+            if (document.getElementById('langEN').checked) languages.push('english');
+            if (document.getElementById('langCN').checked) languages.push('chinese');
+            if (document.getElementById('langKR').checked) languages.push('korean');
+            return languages;
+        }
+
+        // 住所入力時の地図更新（簡易版）
+        document.getElementById('address').addEventListener('blur', function() {
+            const address = this.value;
+            if (address) {
+                document.getElementById('mapContainer').innerHTML = `
+                    <div class="text-center">
+                        <i class="bi bi-geo-alt-fill text-success fs-1"></i>
+                        <div class="mt-2">
+                            <strong>${address}</strong>
+                            <br><small class="text-muted">地図連携は実装予定です</small>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        console.log('✅ Sponsor Registration Page Loaded');
+    </script>
 </body>
 </html>
