@@ -1064,9 +1064,13 @@
             console.log('%cSystem Status: ✅ All Features Active', 'color: #28a745; font-weight: bold;');
             console.log('%cTotal Guides: ' + guideData.length, 'color: #007bff; font-weight: bold;');
             
-            // Hide all iframe-related warnings completely - BUT PRESERVE SPONSOR DEBUG
+            // IMMEDIATE: Setup sponsor buttons BEFORE any console clearing
+            console.log('%c🚨 IMMEDIATE SPONSOR SETUP', 'color: #ff0000; font-size: 16px; font-weight: bold;');
+            setupSponsorButtons();
+            
+            // Hide all iframe-related warnings completely - BUT NO MORE CONSOLE CLEAR
             setTimeout(() => {
-                console.clear();
+                // DON'T CLEAR - just display clean status
                 console.log('%c🌴 TomoTrip - クリーンモード', 'color: #28a745; font-size: 18px; font-weight: bold;');
                 console.log('%c全機能正常動作中 ✅', 'color: #28a745; font-size: 14px;');
                 console.log('%cガイド数: ' + guideData.length + '人', 'color: #007bff; font-size: 14px;');
@@ -1074,10 +1078,6 @@
                 console.log('%cデバッグ機能:', 'color: #ffc107; font-weight: bold;');
                 console.log('%c  clearTouristData() - 登録データクリア', 'color: #6c757d;');
                 console.log('%c  checkRegistrationStatus() - 登録状態確認', 'color: #6c757d;');
-                
-                // CRITICAL: Setup sponsor buttons AFTER console clear
-                console.log('%c🚨 CALLING setupSponsorButtons...', 'color: #ff0000; font-size: 16px; font-weight: bold;');
-                setupSponsorButtons();
             }, 1000);
             
             // Display initial guides
@@ -1233,9 +1233,12 @@
                 }, 300);
             }
             
-            // EMERGENCY BACKUP: Call setupSponsorButtons immediately as well
-            console.log('%c🆘 EMERGENCY BACKUP CALL', 'color: #ff0000; font-weight: bold;');
-            setTimeout(setupSponsorButtons, 2000);
+            // MULTIPLE BACKUPS: Ensure sponsor buttons work
+            console.log('%c🆘 BACKUP SETUP #1', 'color: #ff0000; font-weight: bold;');
+            setTimeout(setupSponsorButtons, 1500);
+            
+            console.log('%c🆘 BACKUP SETUP #2', 'color: #ff0000; font-weight: bold;');
+            setTimeout(setupSponsorButtons, 3000);
             
             // Remove duplicate call - will be called after console clear
             
