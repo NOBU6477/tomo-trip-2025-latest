@@ -1075,14 +1075,22 @@
             if (touristLoginBtn) {
                 touristLoginBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    alert('観光客ログイン機能は開発中です。\n\n現在は新規登録後、すぐにガイド詳細をご覧いただけます。');
+                    console.log('Tourist login clicked - opening login modal');
+                    
+                    // Show login modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
                 });
             }
 
             if (guideLoginBtn) {
                 guideLoginBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    alert('ガイドログイン機能は開発中です。\n\n現在は新規登録後、プロフィール編集ページに移動します。');
+                    console.log('Guide login clicked - opening login modal');
+                    
+                    // Show login modal
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
                 });
             }
             
@@ -1112,6 +1120,65 @@
                 }
             };
             
+            // Login form submission
+            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            if (loginSubmitBtn) {
+                loginSubmitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('loginEmail').value.trim();
+                    const password = document.getElementById('loginPassword').value.trim();
+                    
+                    if (!email || !password) {
+                        alert('メールアドレスとパスワードを入力してください。');
+                        return;
+                    }
+                    
+                    // Simulate login process
+                    console.log('Login attempt:', email);
+                    
+                    // For development - simulate successful login
+                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    loginModal.hide();
+                    
+                    // Show success message
+                    setTimeout(() => {
+                        const successModal = document.createElement('div');
+                        successModal.className = 'modal fade';
+                        successModal.innerHTML = `
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                                        <h5 class="modal-title fw-bold">✅ ログイン成功</h5>
+                                    </div>
+                                    <div class="modal-body p-4 text-center">
+                                        <div class="mb-4">
+                                            <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                                        </div>
+                                        <h6 class="fw-bold mb-3">ログインが完了しました</h6>
+                                        <p class="text-muted mb-0">アカウント: ${email}</p>
+                                        <div class="alert alert-info mt-3" style="border-radius: 10px;">
+                                            <small>現在、ログイン機能は開発中です。実際のログイン認証は今後実装予定です。</small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-0 p-4 pt-0">
+                                        <button type="button" class="btn btn-success w-100" onclick="this.closest('.modal').remove()" style="border-radius: 25px; padding: 12px;">
+                                            OK
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        document.body.appendChild(successModal);
+                        const successModalInstance = new bootstrap.Modal(successModal);
+                        successModalInstance.show();
+                        
+                        // Clear form
+                        document.getElementById('loginForm').reset();
+                    }, 300);
+                });
+            }
+            
             console.log('✅ TomoTrip Complete Version Loaded Successfully - All Features Active');
             console.log('🔧 Debug functions available:');
             console.log('  - clearTouristData() - clears registration data for testing');
@@ -1134,6 +1201,52 @@
             }
         });
     </script>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="loginModalLabel">🔐 ログイン</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label fw-bold">メールアドレス</label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="email@example.com" style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-4">
+                            <label for="loginPassword" class="form-label fw-bold">パスワード</label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="パスワードを入力" style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">
+                                    ログイン状態を保持
+                                </label>
+                            </div>
+                            <a href="#" class="text-primary text-decoration-none">パスワードを忘れた方</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <div class="d-grid gap-2 w-100">
+                        <button type="button" class="btn btn-primary" id="loginSubmitBtn" style="border-radius: 25px; padding: 12px; background: linear-gradient(135deg, #007bff, #0056b3); border: none;">
+                            ログイン
+                        </button>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">アカウントをお持ちでない方は </small>
+                            <button type="button" class="btn btn-link p-0 text-decoration-none" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registrationModal">
+                                新規登録
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Contact Modal -->
     <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
