@@ -1068,68 +1068,118 @@
                 }
             });
             
-            // Login dropdown functionality - using event delegation for reliability
-            console.log('Setting up login buttons with event delegation...');
+            // Login functionality - comprehensive approach
+            console.log('Setting up login buttons with multiple detection methods...');
             
-            // Use event delegation on document body to catch clicks
-            document.body.addEventListener('click', function(e) {
-                const target = e.target;
-                
-                // Check if clicked element is tourist login button
-                if (target && (target.id === 'touristLoginBtn' || target.closest('#touristLoginBtn'))) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Tourist login clicked via delegation - opening login modal');
-                    
-                    // Show login modal
+            function showLoginModal() {
+                try {
                     const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
                     loginModal.show();
+                    console.log('Login modal displayed successfully');
+                } catch (error) {
+                    console.error('Error showing login modal:', error);
+                    alert('ログインモーダルを表示できませんでした。ページを再読み込みしてください。');
+                }
+            }
+            
+            // Method 1: Event delegation on document
+            document.addEventListener('click', function(e) {
+                console.log('Document click detected on:', e.target.tagName, e.target.id, e.target.className);
+                
+                if (e.target.id === 'touristLoginBtn') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Tourist login clicked via document delegation');
+                    showLoginModal();
                     return;
                 }
                 
-                // Check if clicked element is guide login button
-                if (target && (target.id === 'guideLoginBtn' || target.closest('#guideLoginBtn'))) {
+                if (e.target.id === 'guideLoginBtn') {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Guide login clicked via delegation - opening login modal');
-                    
-                    // Show login modal
-                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                    loginModal.show();
+                    console.log('🎯 Guide login clicked via document delegation');
+                    showLoginModal();
+                    return;
+                }
+                
+                // Check text content as fallback
+                if (e.target.textContent && e.target.textContent.includes('観光客としてログイン')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Tourist login clicked via text match');
+                    showLoginModal();
+                    return;
+                }
+                
+                if (e.target.textContent && e.target.textContent.includes('ガイドとしてログイン')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Guide login clicked via text match');
+                    showLoginModal();
                     return;
                 }
             });
             
-            // Also try direct event listeners as backup
+            // Method 2: Direct listeners with multiple attempts
+            function setupDirectListeners() {
+                const touristBtn = document.getElementById('touristLoginBtn');
+                const guideBtn = document.getElementById('guideLoginBtn');
+                
+                console.log('Direct setup - Tourist button:', !!touristBtn);
+                console.log('Direct setup - Guide button:', !!guideBtn);
+                
+                if (touristBtn) {
+                    touristBtn.onclick = function(e) {
+                        e.preventDefault();
+                        console.log('🎯 Tourist login clicked DIRECT onclick');
+                        showLoginModal();
+                    };
+                    
+                    touristBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('🎯 Tourist login clicked DIRECT addEventListener');
+                        showLoginModal();
+                    });
+                }
+                
+                if (guideBtn) {
+                    guideBtn.onclick = function(e) {
+                        e.preventDefault();
+                        console.log('🎯 Guide login clicked DIRECT onclick');
+                        showLoginModal();
+                    };
+                    
+                    guideBtn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        console.log('🎯 Guide login clicked DIRECT addEventListener');
+                        showLoginModal();
+                    });
+                }
+            }
+            
+            // Setup immediately and with delays
+            setupDirectListeners();
+            setTimeout(setupDirectListeners, 500);
+            setTimeout(setupDirectListeners, 1500);
+            
+            // Method 3: Query selector approach
             setTimeout(function() {
-                const touristLoginBtn = document.getElementById('touristLoginBtn');
-                const guideLoginBtn = document.getElementById('guideLoginBtn');
+                const allLoginLinks = document.querySelectorAll('a[href="#"], .dropdown-item');
+                console.log('Found dropdown items:', allLoginLinks.length);
                 
-                console.log('Backup: Tourist login button found:', !!touristLoginBtn);
-                console.log('Backup: Guide login button found:', !!guideLoginBtn);
-                
-                if (touristLoginBtn) {
-                    touristLoginBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Tourist login clicked DIRECT - opening login modal');
-                        
-                        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                        loginModal.show();
-                    });
-                }
-                
-                if (guideLoginBtn) {
-                    guideLoginBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log('Guide login clicked DIRECT - opening login modal');
-                        
-                        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-                        loginModal.show();
-                    });
-                }
-            }, 1000);
+                allLoginLinks.forEach(function(link, index) {
+                    console.log(`Dropdown item ${index}:`, link.textContent.trim(), link.id);
+                    
+                    if (link.textContent.includes('観光客') || link.textContent.includes('ガイド')) {
+                        link.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('🎯 Login clicked via querySelectorAll:', link.textContent.trim());
+                            showLoginModal();
+                        });
+                    }
+                });
+            }, 2000);
             
             // Add debug function to clear tourist data for testing - BROWSER CONSOLE ONLY
             window.clearTouristData = function() {
