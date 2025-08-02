@@ -224,6 +224,8 @@
         }
 
         function displayPreview(sponsor) {
+            console.log('🎯 Displaying preview for sponsor:', sponsor);
+            
             // 業種名マッピング
             const categoryNames = {
                 'restaurant': 'レストラン・飲食店',
@@ -236,11 +238,24 @@
             };
 
             // 基本情報表示
-            document.getElementById('previewStoreName').textContent = sponsor.storeName || '店舗名未設定';
-            document.getElementById('previewCategory').textContent = categoryNames[sponsor.category] || sponsor.category || '未分類';
-            document.getElementById('previewAddress').textContent = sponsor.address || '住所未設定';
-            document.getElementById('previewPhone').textContent = sponsor.phone || '電話番号未設定';
-            document.getElementById('previewEmail').textContent = sponsor.email || 'メール未設定';
+            const storeName = sponsor.storeName || '店舗名未設定';
+            const category = categoryNames[sponsor.category] || sponsor.category || '未分類';
+            const address = sponsor.address || '住所未設定';
+            const phone = sponsor.phone || '電話番号未設定';
+            const email = sponsor.email || 'メール未設定';
+            
+            console.log('📝 Setting basic info:');
+            console.log('  Store Name:', storeName);
+            console.log('  Category:', category);
+            console.log('  Address:', address);
+            console.log('  Phone:', phone);
+            console.log('  Email:', email);
+            
+            document.getElementById('previewStoreName').textContent = storeName;
+            document.getElementById('previewCategory').textContent = category;
+            document.getElementById('previewAddress').textContent = address;
+            document.getElementById('previewPhone').textContent = phone;
+            document.getElementById('previewEmail').textContent = email;
 
             // メイン画像
             if (sponsor.mainImage) {
@@ -260,13 +275,26 @@
                     `<p><i class="bi bi-globe"></i> <a href="${sponsor.website}" target="_blank" class="text-decoration-none">${sponsor.website}</a></p>`;
             }
 
-            // 営業時間
-            if (sponsor.openTime || sponsor.closeTime) {
-                document.getElementById('previewBusinessHours').textContent = 
-                    `${sponsor.openTime || '?'}:00 - ${sponsor.closeTime || '?'}:00`;
+            // 営業時間（修正版）
+            let businessHoursText = '';
+            if (sponsor.openTime && sponsor.openTime.includes('-')) {
+                // 15:00-1:00 形式の場合
+                businessHoursText = sponsor.openTime;
+            } else if (sponsor.openTime || sponsor.closeTime) {
+                // 別々に設定されている場合
+                businessHoursText = `${sponsor.openTime || '?'} - ${sponsor.closeTime || '?'}`;
             }
+            
+            if (businessHoursText) {
+                document.getElementById('previewBusinessHours').textContent = businessHoursText;
+            } else {
+                document.getElementById('previewBusinessHours').textContent = '営業時間未設定';
+            }
+            
             if (sponsor.holidays) {
                 document.getElementById('previewHolidays').textContent = `定休日: ${sponsor.holidays}`;
+            } else {
+                document.getElementById('previewHolidays').textContent = '定休日: 未設定';
             }
 
             // 店舗説明
@@ -433,9 +461,18 @@
 
         // ページロード時に実行
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Preview page DOM loaded');
-            console.log('URL:', window.location.href);
-            console.log('Sponsor ID from URL:', sponsorId);
+            console.log('🔍 Preview page DOM loaded');
+            console.log('📍 URL:', window.location.href);
+            console.log('🆔 Sponsor ID from URL:', sponsorId);
+            
+            // LocalStorageの詳細デバッグ
+            console.log('💾 LocalStorage Debug:');
+            const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            console.log('📋 Total registered sponsors:', registeredSponsors.length);
+            registeredSponsors.forEach((sponsor, index) => {
+                console.log(`   ${index + 1}. ID: ${sponsor.id}, Name: ${sponsor.storeName}, Status: ${sponsor.status}`);
+            });
+            
             loadPreview();
         });
     </script>
