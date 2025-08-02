@@ -1363,16 +1363,28 @@
                                 <div class="modal-body p-4">
                                     <form id="sponsorLoginForm">
                                         <div class="mb-3">
+                                            <label for="sponsorStoreName" class="form-label fw-bold">
+                                                <i class="bi bi-shop me-2"></i>店舗名
+                                            </label>
+                                            <input type="text" class="form-control" id="sponsorStoreName" placeholder="登録した店舗名を入力" required style="border-radius: 10px; padding: 12px;">
+                                        </div>
+                                        <div class="mb-3">
                                             <label for="sponsorEmail" class="form-label fw-bold">
                                                 <i class="bi bi-envelope me-2"></i>メールアドレス
                                             </label>
-                                            <input type="email" class="form-control" id="sponsorEmail" placeholder="sponsor@example.com" required style="border-radius: 10px; padding: 12px;">
+                                            <input type="email" class="form-control" id="sponsorEmail" placeholder="店舗の連絡先メールアドレス" required style="border-radius: 10px; padding: 12px;">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="sponsorPhone" class="form-label fw-bold">
+                                                <i class="bi bi-telephone me-2"></i>電話番号
+                                            </label>
+                                            <input type="tel" class="form-control" id="sponsorPhone" placeholder="店舗の電話番号（例：03-1234-5678）" required style="border-radius: 10px; padding: 12px;">
                                         </div>
                                         <div class="mb-3">
                                             <label for="sponsorPassword" class="form-label fw-bold">
                                                 <i class="bi bi-lock me-2"></i>パスワード
                                             </label>
-                                            <input type="password" class="form-control" id="sponsorPassword" placeholder="パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                                            <input type="password" class="form-control" id="sponsorPassword" placeholder="管理用パスワードを入力" required style="border-radius: 10px; padding: 12px;">
                                         </div>
                                         <div class="mb-3 form-check">
                                             <input type="checkbox" class="form-check-input" id="rememberSponsor">
@@ -1419,16 +1431,38 @@
             
             // Process sponsor login
             window.processSponsorLogin = function() {
+                const storeName = document.getElementById('sponsorStoreName').value.trim();
                 const email = document.getElementById('sponsorEmail').value.trim();
+                const phone = document.getElementById('sponsorPhone').value.trim();
                 const password = document.getElementById('sponsorPassword').value.trim();
                 
-                if (!email || !password) {
-                    alert('メールアドレスとパスワードを入力してください。');
+                if (!storeName || !email || !phone || !password) {
+                    alert('すべての項目を入力してください。');
+                    return;
+                }
+
+                // Check if sponsor exists in registered sponsors
+                const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                const sponsor = registeredSponsors.find(s => 
+                    s.storeName === storeName && 
+                    s.email === email && 
+                    s.phone === phone
+                );
+
+                if (!sponsor) {
+                    alert('店舗情報が見つかりません。登録内容をご確認ください。');
                     return;
                 }
                 
-                // For development - simulate sponsor login
-                console.log('Sponsor login attempt:', email);
+                // Store sponsor session for management access
+                sessionStorage.setItem('currentSponsor', JSON.stringify({
+                    id: sponsor.id,
+                    storeName: storeName,
+                    email: email,
+                    loginTime: new Date().toISOString()
+                }));
+                
+                console.log('Sponsor login successful:', storeName);
                 
                 // Close modal
                 const modal = bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal'));
@@ -1449,9 +1483,10 @@
                                         <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
                                     </div>
                                     <h6 class="fw-bold mb-3">協賛店管理画面にリダイレクトします</h6>
-                                    <p class="text-muted mb-0">ログインアカウント: ${email}</p>
-                                    <div class="alert alert-info mt-3" style="border-radius: 10px;">
-                                        <small>現在、ログイン機能は開発中です。協賛店管理システムは今後実装予定です。</small>
+                                    <p class="text-muted mb-0">店舗名: ${storeName}</p>
+                                    <p class="text-muted mb-0">メール: ${email}</p>
+                                    <div class="alert alert-success mt-3" style="border-radius: 10px;">
+                                        <small><i class="bi bi-check-circle me-2"></i>協賛店情報の編集・管理が可能です。</small>
                                     </div>
                                 </div>
                                 <div class="modal-footer border-0 p-4 pt-0">
@@ -1476,8 +1511,20 @@
             
             // Redirect to sponsor dashboard
             window.redirectToSponsorDashboard = function() {
-                console.log('Redirecting to sponsor dashboard (sponsor-admin.html)');
-                window.location.href = 'sponsor-admin.html';
+                const storeName = document.getElementById('sponsorStoreName').value.trim();
+                const email = document.getElementById('sponsorEmail').value.trim();
+                
+                // Find the sponsor's ID for editing
+                const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                const sponsor = registeredSponsors.find(s => s.storeName === storeName && s.email === email);
+                
+                if (sponsor) {
+                    console.log('Redirecting to sponsor edit page for:', sponsor.storeName);
+                    window.location.href = `sponsor-edit.html?id=${sponsor.id}`;
+                } else {
+                    console.log('Redirecting to sponsor admin dashboard');
+                    window.location.href = 'sponsor-admin.html';
+                }
             };
             
             // Global sponsor button handlers (PRIMARY solution)

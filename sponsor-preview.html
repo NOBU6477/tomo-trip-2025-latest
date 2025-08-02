@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>協賛店プレビュー - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+        }
+        .preview-card {
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        .store-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+        .category-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .benefit-tag {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 0.2rem;
+            display: inline-block;
+        }
+        .language-tag {
+            background: #3742fa;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            margin: 0.1rem;
+        }
+        .info-section {
+            background: #f8f9ff;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+        }
+        .contact-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="gradient-bg">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="bi bi-eye"></i> 協賛店プレビュー</h1>
+                    <p class="lead mb-0">お客様から見える店舗情報をプレビューできます</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-light me-2" onclick="history.back()">
+                        <i class="bi bi-arrow-left"></i> 戻る
+                    </button>
+                    <a href="sponsor-list.html" class="btn btn-outline-light">
+                        <i class="bi bi-list"></i> 一覧表示
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Preview Card -->
+                <div class="card preview-card" id="previewCard">
+                    <div class="position-relative">
+                        <img id="previewImage" src="" alt="店舗画像" class="store-image" style="display: none;">
+                        <div class="category-badge" id="previewCategory"></div>
+                    </div>
+                    
+                    <div class="card-body p-4">
+                        <h2 class="card-title mb-3" id="previewStoreName"></h2>
+                        
+                        <!-- Basic Info -->
+                        <div class="info-section">
+                            <h5><i class="bi bi-info-circle"></i> 基本情報</h5>
+                            <p><i class="bi bi-geo-alt"></i> <span id="previewAddress"></span></p>
+                            <p><i class="bi bi-telephone"></i> <span id="previewPhone"></span></p>
+                            <p><i class="bi bi-envelope"></i> <span id="previewEmail"></span></p>
+                            <div id="previewWebsite"></div>
+                        </div>
+
+                        <!-- Business Hours -->
+                        <div class="info-section" id="businessHoursSection">
+                            <h5><i class="bi bi-clock"></i> 営業時間</h5>
+                            <p id="previewBusinessHours"></p>
+                            <p id="previewHolidays"></p>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="info-section" id="descriptionSection">
+                            <h5><i class="bi bi-card-text"></i> 店舗紹介</h5>
+                            <p id="previewDescription"></p>
+                        </div>
+
+                        <!-- Languages -->
+                        <div class="info-section" id="languagesSection">
+                            <h5><i class="bi bi-translate"></i> 対応言語</h5>
+                            <div id="previewLanguages"></div>
+                        </div>
+
+                        <!-- TomoTrip Benefits -->
+                        <div class="info-section" id="benefitsSection">
+                            <h5><i class="bi bi-gift"></i> TomoTrip特典</h5>
+                            <div id="previewBenefits"></div>
+                        </div>
+
+                        <!-- Contact Actions -->
+                        <div class="text-center mt-4">
+                            <button class="contact-btn me-3">
+                                <i class="bi bi-telephone"></i> 電話で問い合わせ
+                            </button>
+                            <button class="contact-btn">
+                                <i class="bi bi-envelope"></i> メールで問い合わせ
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Actions -->
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary btn-lg me-3" onclick="goBackToEdit()">
+                        <i class="bi bi-pencil"></i> 編集に戻る
+                    </button>
+                    <button class="btn btn-success btn-lg" onclick="publishToList()">
+                        <i class="bi bi-check-circle"></i> 公開する
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // URLパラメータから店舗IDを取得
+        const urlParams = new URLSearchParams(window.location.search);
+        const sponsorId = urlParams.get('id');
+
+        // 店舗データを読み込んでプレビュー表示
+        function loadPreview() {
+            if (!sponsorId) {
+                alert('店舗IDが指定されていません');
+                return;
+            }
+
+            const sponsorData = localStorage.getItem(sponsorId);
+            if (!sponsorData) {
+                alert('店舗データが見つかりません');
+                return;
+            }
+
+            const sponsor = JSON.parse(sponsorData);
+            displayPreview(sponsor);
+        }
+
+        function displayPreview(sponsor) {
+            // 業種名マッピング
+            const categoryNames = {
+                'restaurant': 'レストラン・飲食店',
+                'hotel': 'ホテル・宿泊施設',
+                'shopping': 'ショッピング・小売',
+                'entertainment': 'エンターテイメント',
+                'transport': '交通・レンタル',
+                'service': 'サービス業',
+                'other': 'その他'
+            };
+
+            // 基本情報表示
+            document.getElementById('previewStoreName').textContent = sponsor.storeName || '店舗名未設定';
+            document.getElementById('previewCategory').textContent = categoryNames[sponsor.category] || sponsor.category || '未分類';
+            document.getElementById('previewAddress').textContent = sponsor.address || '住所未設定';
+            document.getElementById('previewPhone').textContent = sponsor.phone || '電話番号未設定';
+            document.getElementById('previewEmail').textContent = sponsor.email || 'メール未設定';
+
+            // メイン画像
+            if (sponsor.mainImage) {
+                const img = document.getElementById('previewImage');
+                img.src = sponsor.mainImage;
+                img.style.display = 'block';
+            }
+
+            // ウェブサイト
+            if (sponsor.website) {
+                document.getElementById('previewWebsite').innerHTML = 
+                    `<p><i class="bi bi-globe"></i> <a href="${sponsor.website}" target="_blank" class="text-decoration-none">${sponsor.website}</a></p>`;
+            }
+
+            // 営業時間
+            if (sponsor.openTime || sponsor.closeTime) {
+                document.getElementById('previewBusinessHours').textContent = 
+                    `${sponsor.openTime || '?'}:00 - ${sponsor.closeTime || '?'}:00`;
+            }
+            if (sponsor.holidays) {
+                document.getElementById('previewHolidays').textContent = `定休日: ${sponsor.holidays}`;
+            }
+
+            // 店舗説明
+            if (sponsor.detailedDescription) {
+                document.getElementById('previewDescription').textContent = sponsor.detailedDescription;
+            } else {
+                document.getElementById('descriptionSection').style.display = 'none';
+            }
+
+            // 対応言語
+            if (sponsor.languages && sponsor.languages.length > 0) {
+                const languageNames = {
+                    'english': 'English',
+                    'chinese': '中文',
+                    'korean': '한국어'
+                };
+                document.getElementById('previewLanguages').innerHTML = 
+                    sponsor.languages.map(lang => 
+                        `<span class="language-tag">${languageNames[lang] || lang}</span>`
+                    ).join('');
+            } else {
+                document.getElementById('languagesSection').style.display = 'none';
+            }
+
+            // TomoTrip特典
+            if (sponsor.tomotripBenefits) {
+                document.getElementById('previewBenefits').innerHTML = 
+                    sponsor.tomotripBenefits.split(',').map(benefit => 
+                        `<span class="benefit-tag">${benefit.trim()}</span>`
+                    ).join('');
+            } else {
+                document.getElementById('benefitsSection').style.display = 'none';
+            }
+        }
+
+        function goBackToEdit() {
+            if (sponsorId) {
+                window.location.href = `sponsor-edit.html?id=${sponsorId}`;
+            } else {
+                history.back();
+            }
+        }
+
+        function publishToList() {
+            if (confirm('この内容で協賛店一覧に公開しますか？')) {
+                // 公開フラグを設定
+                const sponsorData = localStorage.getItem(sponsorId);
+                if (sponsorData) {
+                    const sponsor = JSON.parse(sponsorData);
+                    sponsor.published = true;
+                    sponsor.publishedDate = new Date().toISOString();
+                    localStorage.setItem(sponsorId, JSON.stringify(sponsor));
+                }
+                
+                alert('協賛店一覧に公開されました！');
+                window.location.href = 'sponsor-list.html';
+            }
+        }
+
+        // ページ読み込み時にプレビューを表示
+        window.addEventListener('load', loadPreview);
+    </script>
+</body>
+</html>

@@ -12,6 +12,12 @@ User confirmed preference for production-ready solution prioritizing:
 3. Real-world deployment capability
 4. Scalable architecture for growth
 
+## Recent Updates (August 2025)
+- Comprehensive SEO optimization implemented for sponsor-list.html
+- Unified sponsor login/registration concept: login now requires store name, email, phone (matching registration form)
+- Fixed sponsor preview functionality with dedicated sponsor-preview.html page
+- Sponsor login now redirects to individual store edit page instead of admin dashboard
+
 User confirmed mobile adaptation approach: PC specifications should be fully adapted to mobile phones without losing functionality. This includes:
 - Complete PC-level functionality on mobile devices
 - Adaptive UI for different screen sizes (mobile/tablet detection)
