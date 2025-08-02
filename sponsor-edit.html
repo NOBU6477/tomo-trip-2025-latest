@@ -577,8 +577,15 @@
         function previewStore() {
             console.log('Preview clicked');
             const editData = collectFormData();
+            console.log('Collected edit data:', editData);
+            
+            // データを強制的に保存
             if (updateSponsorData(editData)) {
-                window.open(`sponsor-preview.html?id=${currentSponsorId}`, '_blank');
+                console.log('Data saved successfully, opening preview');
+                // 少し待ってからプレビューを開く
+                setTimeout(() => {
+                    window.open(`sponsor-preview.html?id=${currentSponsorId}`, '_blank');
+                }, 100);
             } else {
                 alert('データの保存に失敗したため、プレビューできません');
             }
@@ -639,12 +646,19 @@
                 let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
                 const index = sponsors.findIndex(s => s.id === currentSponsorId);
                 
+                console.log('Updating sponsor data for ID:', currentSponsorId);
+                console.log('Found index:', index);
+                console.log('Current sponsors count:', sponsors.length);
+                
                 if (index !== -1) {
+                    // 既存データを編集データで更新
                     sponsors[index] = { ...sponsors[index], ...editData };
+                    console.log('Updated sponsor data:', sponsors[index]);
                     
                     // データサイズをチェック
                     const dataString = JSON.stringify(sponsors);
                     const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
+                    console.log('Data size:', sizeInMB.toFixed(2), 'MB');
                     
                     if (sizeInMB > 4) { // 5MB制限を4MBで警告
                         alert('画像データが大きすぎます。画像を削除するか、より小さいサイズでアップロードしてください。');
@@ -653,7 +667,11 @@
                     
                     localStorage.setItem('registeredSponsors', dataString);
                     currentSponsorData = sponsors[index];
+                    console.log('Data saved successfully');
                     return true;
+                } else {
+                    console.error('Sponsor not found in array');
+                    return false;
                 }
             } catch (error) {
                 if (error.name === 'QuotaExceededError') {
