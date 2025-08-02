@@ -248,6 +248,24 @@
             </div>
         </section>
 
+        <!-- Draft Management Section -->
+        <section class="mb-4" id="draftSection" style="display: none;">
+            <div class="alert alert-info">
+                <h3 class="h5 mb-3"><i class="bi bi-file-earmark-text"></i> 下書き店舗一覧</h3>
+                <div id="draftList" class="row"></div>
+                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="toggleDraftSection()">
+                    <i class="bi bi-eye-slash"></i> 下書き一覧を非表示
+                </button>
+            </div>
+        </section>
+
+        <!-- Draft Toggle Button -->
+        <div class="mb-3">
+            <button class="btn btn-outline-info btn-sm" onclick="toggleDraftSection()" id="draftToggleBtn">
+                <i class="bi bi-file-earmark-text"></i> 下書き店舗を表示 (<span id="draftCount">0</span>)
+            </button>
+        </div>
+
         <!-- SEO optimized search and filter section -->
         <section class="filter-section" aria-labelledby="search-heading">
             <h2 id="search-heading" class="h4 mb-3">店舗検索・絞り込み</h2>
@@ -361,6 +379,7 @@
             displaySponsors();
             updateStatistics();
             setupScrollButton();
+            loadDrafts();
         });
 
         // 協賛店データの読み込み
@@ -648,6 +667,78 @@
 
         document.getElementById('categoryFilter').addEventListener('change', applyFilters);
         document.getElementById('languageFilter').addEventListener('change', applyFilters);
+
+        // 下書き管理機能
+        function loadDrafts() {
+            const drafts = JSON.parse(localStorage.getItem('sponsorDrafts') || '[]');
+            document.getElementById('draftCount').textContent = drafts.length;
+            
+            if (drafts.length === 0) {
+                document.getElementById('draftToggleBtn').style.display = 'none';
+                return;
+            }
+
+            const draftList = document.getElementById('draftList');
+            draftList.innerHTML = drafts.map(draft => `
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="bi bi-file-earmark-text text-warning"></i> 
+                                ${draft.storeName}
+                            </h5>
+                            <p class="card-text small text-muted">
+                                業種: ${getCategoryName(draft.category)}<br>
+                                保存日時: ${new Date(draft.savedAt).toLocaleDateString('ja-JP')}
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="${draft.editUrl}" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> 編集を続ける
+                                </a>
+                                <button class="btn btn-outline-danger btn-sm" onclick="deleteDraft('${draft.id}')">
+                                    <i class="bi bi-trash"></i> 削除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'restaurant': 'レストラン・飲食店',
+                'hotel': 'ホテル・宿泊施設',
+                'shopping': 'ショッピング・小売店',
+                'entertainment': 'エンターテイメント',
+                'transport': '交通・レンタルサービス',
+                'service': '各種サービス業',
+                'other': 'その他'
+            };
+            return names[category] || '未分類';
+        }
+
+        function toggleDraftSection() {
+            const section = document.getElementById('draftSection');
+            const btn = document.getElementById('draftToggleBtn');
+            
+            if (section.style.display === 'none') {
+                section.style.display = 'block';
+                btn.innerHTML = '<i class="bi bi-eye-slash"></i> 下書き一覧を非表示';
+            } else {
+                section.style.display = 'none';
+                btn.innerHTML = `<i class="bi bi-file-earmark-text"></i> 下書き店舗を表示 (<span id="draftCount">${document.getElementById('draftCount').textContent}</span>)`;
+            }
+        }
+
+        function deleteDraft(draftId) {
+            if (confirm('この下書きを削除しますか？')) {
+                let drafts = JSON.parse(localStorage.getItem('sponsorDrafts') || '[]');
+                drafts = drafts.filter(d => d.id !== draftId);
+                localStorage.setItem('sponsorDrafts', JSON.stringify(drafts));
+                loadDrafts();
+            }
+        }
 
         // ページロード完了時に構造化データを更新
         window.addEventListener('load', function() {

@@ -568,8 +568,42 @@
             console.log('Save draft clicked');
             const editData = collectFormData();
             editData.status = 'draft';
+            editData.draftSavedAt = new Date().toISOString();
+            
             if (updateSponsorData(editData)) {
-                alert('下書きを保存しました');
+                const continueUrl = `sponsor-edit.html?id=${currentSponsorId}`;
+                const message = `下書きを保存しました！\n\n編集を続ける場合は、以下のURLから再開できます：\n${window.location.origin}/${continueUrl}\n\nまたは、協賛店管理ページの「下書き一覧」からアクセスできます。`;
+                alert(message);
+                
+                // 下書き一覧への追加（管理用）
+                addToDraftList(editData);
+            }
+        }
+        
+        // 下書き一覧への追加
+        function addToDraftList(draftData) {
+            try {
+                let drafts = JSON.parse(localStorage.getItem('sponsorDrafts') || '[]');
+                const existingIndex = drafts.findIndex(d => d.id === draftData.id);
+                
+                const draftItem = {
+                    id: draftData.id,
+                    storeName: draftData.storeName || '未設定',
+                    category: draftData.category || '未分類',
+                    savedAt: draftData.draftSavedAt,
+                    editUrl: `sponsor-edit.html?id=${draftData.id}`
+                };
+                
+                if (existingIndex !== -1) {
+                    drafts[existingIndex] = draftItem;
+                } else {
+                    drafts.push(draftItem);
+                }
+                
+                localStorage.setItem('sponsorDrafts', JSON.stringify(drafts));
+                console.log('Draft added to list:', draftItem);
+            } catch (error) {
+                console.error('Failed to add to draft list:', error);
             }
         }
 
@@ -595,7 +629,20 @@
 
         // フォームデータ収集
         function collectFormData() {
+            console.log('Collecting form data...');
+            
+            // 基本データの収集
             const data = {
+                id: currentSponsorId,
+                storeName: document.getElementById('storeName')?.value || currentSponsorData?.storeName || '',
+                category: document.getElementById('category')?.value || currentSponsorData?.category || '',
+                address: document.getElementById('address')?.value || currentSponsorData?.address || '',
+                phone: document.getElementById('phone')?.value || currentSponsorData?.phone || '',
+                email: document.getElementById('email')?.value || currentSponsorData?.email || '',
+                website: document.getElementById('website')?.value || currentSponsorData?.website || '',
+                openTime: document.getElementById('openTime')?.value || currentSponsorData?.openTime || '',
+                closeTime: document.getElementById('closeTime')?.value || currentSponsorData?.closeTime || '',
+                holidays: document.getElementById('holidays')?.value || currentSponsorData?.holidays || '',
                 detailedDescription: document.getElementById('detailedDescription').value,
                 specialty: document.getElementById('specialty').value,
                 atmosphere: document.getElementById('atmosphere').value,
@@ -627,6 +674,7 @@
             });
             data.additionalImages = additionalImages;
 
+            console.log('Final collected data:', data);
             return data;
         }
 
