@@ -391,7 +391,13 @@
             currentSponsorData = sponsors.find(s => s.id === currentSponsorId);
             
             if (currentSponsorData) {
-                document.getElementById('currentStoreName').textContent = currentSponsorData.storeName;
+                console.log('✅ Found sponsor data:', currentSponsorData);
+                
+                // 店舗名を更新（「読み込み中」を解除）
+                const storeNameDisplay = document.getElementById('currentStoreName');
+                if (storeNameDisplay) {
+                    storeNameDisplay.textContent = currentSponsorData.storeName || '店舗名未設定';
+                }
                 
                 // 既存データがあれば入力フィールドに設定
                 if (currentSponsorData.detailedDescription) {
@@ -453,6 +459,14 @@
                     });
                 }
             } else {
+                console.error('❌ Sponsor data not found for ID:', currentSponsorId);
+                
+                // 「読み込み中」を「データなし」に変更
+                const storeNameDisplay = document.getElementById('currentStoreName');
+                if (storeNameDisplay) {
+                    storeNameDisplay.textContent = 'データが見つかりません';
+                }
+                
                 alert('店舗データが見つかりません');
                 window.location.href = 'index.html';
             }
@@ -848,19 +862,6 @@
                 if (error.name === 'QuotaExceededError') {
                     alert('ストレージ容量が不足しています。ブラウザのデータを整理してください。');
                 } else {
-                    alert('データの保存に失敗しました：' + error.message);
-                }
-                return false;
-            }
-        }
-                }
-            } catch (error) {
-                if (error.name === 'QuotaExceededError') {
-                    alert('保存容量が不足しています。画像の数を減らすか、より小さいサイズでアップロードしてください。');
-                    // 自動で画像数を半分に減らす
-                    reduceImageCount();
-                } else {
-                    console.error('Data update error:', error);
                     alert('データの保存に失敗しました：' + error.message);
                 }
                 return false;
