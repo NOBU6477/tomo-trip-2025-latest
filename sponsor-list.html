@@ -375,11 +375,14 @@
 
         // ページロード時に協賛店データを読み込み
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM Content Loaded - Starting initialization');
             loadSponsors();
             displaySponsors();
             updateStatistics();
             setupScrollButton();
+            console.log('📝 About to call loadDrafts()');
             loadDrafts();
+            console.log('✅ Initialization complete');
         });
 
         // 協賛店データの読み込み
@@ -670,14 +673,23 @@
 
         // 下書き管理機能（registeredSponsorsと統合）
         function loadDrafts() {
+            console.log('🔍 loadDrafts() function called');
             try {
+                console.log('🔧 Checking localStorage for registeredSponsors...');
                 const allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-                const drafts = allSponsorsData.filter(sponsor => sponsor.status === 'draft');
+                console.log('🎯 Total sponsors in storage:', allSponsorsData.length);
+                console.log('📊 All sponsors data:', allSponsorsData);
                 
-                console.log('📝 Draft loading:', drafts.length, 'drafts found');
+                const drafts = allSponsorsData.filter(sponsor => sponsor.status === 'draft');
+                console.log('📝 Draft filtering result:', drafts.length, 'drafts found');
+                console.log('📋 Draft data:', drafts);
                 
                 const draftCountElement = document.getElementById('draftCount');
                 const draftToggleBtn = document.getElementById('draftToggleBtn');
+                
+                console.log('🔍 Element check:');
+                console.log('  draftCountElement:', draftCountElement ? 'found' : 'NOT FOUND');
+                console.log('  draftToggleBtn:', draftToggleBtn ? 'found' : 'NOT FOUND');
                 
                 if (draftCountElement) {
                     draftCountElement.textContent = drafts.length;
