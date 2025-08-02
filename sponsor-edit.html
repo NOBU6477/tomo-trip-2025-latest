@@ -288,13 +288,26 @@
         let currentSponsorId = null;
         let currentSponsorData = null;
 
-        // ページロード時に店舗データを読み込み
+        // ページロード時の初期化
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
             const urlParams = new URLSearchParams(window.location.search);
             currentSponsorId = urlParams.get('id');
             
             if (currentSponsorId) {
                 loadSponsorData();
+                
+                // 画像アップロード設定
+                console.log('Setting up image uploads...');
+                setupImageUpload('mainImage', 'mainImagePreview', 1);
+                setupImageUpload('logoImage', 'logoImagePreview', 1);
+                setupImageUpload('additionalImages', 'additionalImagesPreview', 15);
+                console.log('Image upload setup complete');
+                
+                // ボタンイベント設定
+                setupButtonEvents();
+                
             } else {
                 alert('編集対象の店舗が見つかりません');
                 window.location.href = 'index.html';
@@ -399,28 +412,78 @@
             preview.appendChild(imageContainer);
         }
 
+        // 画像圧縮関数
+        function compressImage(file, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                
+                img.onload = function() {
+                    // 縦横比を保持してリサイズ
+                    const ratio = Math.min(maxWidth / img.width, maxWidth / img.height);
+                    canvas.width = img.width * ratio;
+                    canvas.height = img.height * ratio;
+                    
+                    // 画像を描画
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // 圧縮されたBase64を取得
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+                    resolve(compressedDataUrl);
+                };
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         // 画像アップロード処理
         function setupImageUpload(inputId, previewId, maxImages = 15) {
-            document.getElementById(inputId).addEventListener('change', function(e) {
+            const input = document.getElementById(inputId);
+            if (!input) {
+                console.error(`Input element not found: ${inputId}`);
+                return;
+            }
+            
+            input.addEventListener('change', async function(e) {
                 const files = e.target.files;
                 const preview = document.getElementById(previewId);
-                preview.innerHTML = '';
+                
+                if (!preview) {
+                    console.error(`Preview element not found: ${previewId}`);
+                    return;
+                }
 
                 if (files.length > maxImages) {
                     alert(`画像は最大${maxImages}枚までアップロード可能です。`);
                     return;
                 }
 
-                for (let i = 0; i < Math.min(files.length, maxImages); i++) {
+                // 既存の画像数をカウント
+                const existingImages = preview.querySelectorAll('.preview-image').length;
+                const totalImages = existingImages + files.length;
+                
+                if (totalImages > maxImages) {
+                    alert(`合計で最大${maxImages}枚までです。現在${existingImages}枚あります。`);
+                    return;
+                }
+
+                for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-                    const reader = new FileReader();
                     
-                    reader.onload = function(e) {
+                    try {
+                        // 画像を圧縮
+                        const compressedDataUrl = await compressImage(file);
+                        
                         const imageContainer = document.createElement('div');
                         imageContainer.className = 'd-inline-block position-relative m-1';
                         
                         const img = document.createElement('img');
-                        img.src = e.target.result;
+                        img.src = compressedDataUrl;
                         img.className = 'preview-image';
                         
                         const removeBtn = document.createElement('button');
@@ -428,53 +491,100 @@
                         removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0';
                         removeBtn.style.transform = 'translate(25%, -25%)';
                         removeBtn.innerHTML = '<i class="bi bi-x"></i>';
-                        removeBtn.onclick = function() {
+                        removeBtn.onclick = function(event) {
+                            event.preventDefault();
                             imageContainer.remove();
                         };
                         
                         imageContainer.appendChild(img);
                         imageContainer.appendChild(removeBtn);
+                        
+                        // 既存の画像をクリアしてから追加（単一画像の場合）
+                        if (maxImages === 1) {
+                            preview.innerHTML = '';
+                        }
+                        
                         preview.appendChild(imageContainer);
-                    };
-                    
-                    reader.readAsDataURL(file);
+                        
+                        console.log(`Image ${i + 1} processed and added to ${previewId}`);
+                    } catch (error) {
+                        console.error('Image processing error:', error);
+                        alert(`画像 ${file.name} の処理に失敗しました`);
+                    }
                 }
             });
         }
 
-        // 画像アップロード設定
-        setupImageUpload('mainImage', 'mainImagePreview', 1);
-        setupImageUpload('logoImage', 'logoImagePreview', 1);
-        setupImageUpload('additionalImages', 'additionalImagesPreview', 15);
+        // ボタンイベント設定
+        function setupButtonEvents() {
+            console.log('Setting up button events...');
+            
+            // 下書き保存ボタン
+            const draftBtn = document.querySelector('button[onclick="saveDraft()"]');
+            if (draftBtn) {
+                draftBtn.removeAttribute('onclick');
+                draftBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    saveDraft();
+                });
+                console.log('Draft button event set');
+            }
+            
+            // プレビューボタン
+            const previewBtn = document.querySelector('button[onclick="previewStore()"]');
+            if (previewBtn) {
+                previewBtn.removeAttribute('onclick');
+                previewBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    previewStore();
+                });
+                console.log('Preview button event set');
+            }
+            
+            // フォーム送信イベント
+            const form = document.getElementById('sponsorEditForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted');
+                    
+                    const editData = collectFormData();
+                    editData.status = 'published';
+                    editData.publishDate = new Date().toISOString();
+                    
+                    if (updateSponsorData(editData)) {
+                        alert('協賛店情報が公開されました！\n協賛店一覧ページでご確認いただけます。');
+                        window.location.href = 'sponsor-list.html';
+                    }
+                });
+                console.log('Form submit event set');
+            }
+            
+            console.log('Button events setup complete');
+        }
 
         // 下書き保存
         function saveDraft() {
+            console.log('Save draft clicked');
             const editData = collectFormData();
             editData.status = 'draft';
-            updateSponsorData(editData);
-            alert('下書きを保存しました');
+            if (updateSponsorData(editData)) {
+                alert('下書きを保存しました');
+            }
         }
 
         // プレビュー
         function previewStore() {
+            console.log('Preview clicked');
             const editData = collectFormData();
-            updateSponsorData(editData);
-            window.open(`sponsor-preview.html?id=${currentSponsorId}`, '_blank');
+            if (updateSponsorData(editData)) {
+                window.open(`sponsor-preview.html?id=${currentSponsorId}`, '_blank');
+            } else {
+                alert('データの保存に失敗したため、プレビューできません');
+            }
         }
 
-        // フォーム送信（公開）
-        document.getElementById('sponsorEditForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const editData = collectFormData();
-            editData.status = 'published';
-            editData.publishDate = new Date().toISOString();
-            
-            updateSponsorData(editData);
-            
-            alert('協賛店情報が公開されました！\n協賛店一覧ページでご確認いただけます。');
-            window.location.href = 'sponsor-list.html';
-        });
+
 
         // フォームデータ収集
         function collectFormData() {
@@ -523,16 +633,52 @@
             return services;
         }
 
-        // 店舗データの更新
+        // 店舗データの更新（LocalStorage容量エラー対策）
         function updateSponsorData(editData) {
-            let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-            const index = sponsors.findIndex(s => s.id === currentSponsorId);
-            
-            if (index !== -1) {
-                sponsors[index] = { ...sponsors[index], ...editData };
-                localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
-                currentSponsorData = sponsors[index];
+            try {
+                let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                const index = sponsors.findIndex(s => s.id === currentSponsorId);
+                
+                if (index !== -1) {
+                    sponsors[index] = { ...sponsors[index], ...editData };
+                    
+                    // データサイズをチェック
+                    const dataString = JSON.stringify(sponsors);
+                    const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
+                    
+                    if (sizeInMB > 4) { // 5MB制限を4MBで警告
+                        alert('画像データが大きすぎます。画像を削除するか、より小さいサイズでアップロードしてください。');
+                        return false;
+                    }
+                    
+                    localStorage.setItem('registeredSponsors', dataString);
+                    currentSponsorData = sponsors[index];
+                    return true;
+                }
+            } catch (error) {
+                if (error.name === 'QuotaExceededError') {
+                    alert('保存容量が不足しています。画像の数を減らすか、より小さいサイズでアップロードしてください。');
+                    // 自動で画像数を半分に減らす
+                    reduceImageCount();
+                } else {
+                    console.error('Data update error:', error);
+                    alert('データの保存に失敗しました：' + error.message);
+                }
+                return false;
             }
+        }
+
+        // 画像数を自動削減
+        function reduceImageCount() {
+            const additionalPreview = document.getElementById('additionalImagesPreview');
+            const images = additionalPreview.querySelectorAll('.preview-image');
+            const halfCount = Math.floor(images.length / 2);
+            
+            for (let i = halfCount; i < images.length; i++) {
+                images[i].closest('.d-inline-block').remove();
+            }
+            
+            alert(`画像数を${halfCount}枚に削減しました。再度保存してください。`);
         }
 
         console.log('✅ Sponsor Edit Page Loaded');
