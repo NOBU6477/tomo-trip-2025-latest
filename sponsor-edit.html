@@ -680,18 +680,32 @@
 
         // プレビュー
         function previewStore() {
-            console.log('Preview clicked');
-            const editData = collectFormData();
-            console.log('Collected edit data:', editData);
+            console.log('🔍 Preview button clicked');
             
-            // データを強制的に保存
-            if (updateSponsorData(editData)) {
-                console.log('Data saved successfully, opening preview');
-                // 少し待ってからプレビューを開く
-                setTimeout(() => {
-                    window.open(`sponsor-preview.html?id=${currentSponsorId}`, '_blank');
-                }, 100);
+            // フォームデータを収集
+            const editData = collectFormData();
+            if (!editData) {
+                alert('フォームデータの収集に失敗しました');
+                return;
+            }
+            
+            console.log('📋 Collected edit data:', editData);
+            
+            // データ保存前に公開ステータスを一時的に設定
+            const tempData = { ...editData };
+            tempData.status = 'published'; // プレビュー用に一時的に公開状態に
+            
+            // データを保存
+            if (updateSponsorData(tempData)) {
+                console.log('✅ Data saved successfully, opening preview');
+                // プレビューを新しいタブで開く
+                const previewWindow = window.open(`sponsor-preview.html?id=${tempData.id}`, '_blank');
+                
+                if (!previewWindow) {
+                    alert('ポップアップがブロックされました。ポップアップを許可してから再度お試しください。');
+                }
             } else {
+                console.error('❌ Failed to save data for preview');
                 alert('データの保存に失敗したため、プレビューできません');
             }
         }
