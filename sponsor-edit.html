@@ -161,7 +161,7 @@
                             <div class="image-upload-area" onclick="document.getElementById('additionalImages').click()">
                                 <i class="bi bi-images fs-1 text-muted"></i>
                                 <p class="mt-2 mb-0">複数の画像をアップロード可能</p>
-                                <small class="text-muted">最大6枚まで</small>
+                                <small class="text-muted">最大15枚まで</small>
                             </div>
                             <input type="file" id="additionalImages" class="d-none" accept="image/*" multiple>
                             <div id="additionalImagesPreview" class="mt-2"></div>
@@ -308,33 +308,133 @@
             
             if (currentSponsorData) {
                 document.getElementById('currentStoreName').textContent = currentSponsorData.storeName;
+                
                 // 既存データがあれば入力フィールドに設定
                 if (currentSponsorData.detailedDescription) {
                     document.getElementById('detailedDescription').value = currentSponsorData.detailedDescription;
                 }
-                // その他のフィールドも同様に設定...
+                if (currentSponsorData.specialty) {
+                    document.getElementById('specialty').value = currentSponsorData.specialty;
+                }
+                if (currentSponsorData.atmosphere) {
+                    document.getElementById('atmosphere').value = currentSponsorData.atmosphere;
+                }
+                if (currentSponsorData.detailedDiscount) {
+                    document.getElementById('detailedDiscount').value = currentSponsorData.detailedDiscount;
+                }
+                if (currentSponsorData.priceRange) {
+                    document.getElementById('priceRange').value = currentSponsorData.priceRange;
+                }
+                if (currentSponsorData.capacity) {
+                    document.getElementById('capacity').value = currentSponsorData.capacity;
+                }
+                if (currentSponsorData.accessInfo) {
+                    document.getElementById('accessInfo').value = currentSponsorData.accessInfo;
+                }
+                if (currentSponsorData.nearestStation) {
+                    document.getElementById('nearestStation').value = currentSponsorData.nearestStation;
+                }
+                if (currentSponsorData.parkingInfo) {
+                    document.getElementById('parkingInfo').value = currentSponsorData.parkingInfo;
+                }
+
+                // 画像の復元
+                if (currentSponsorData.mainImage) {
+                    displaySavedImage(currentSponsorData.mainImage, 'mainImagePreview');
+                }
+                if (currentSponsorData.logoImage) {
+                    displaySavedImage(currentSponsorData.logoImage, 'logoImagePreview');
+                }
+                if (currentSponsorData.additionalImages && currentSponsorData.additionalImages.length > 0) {
+                    currentSponsorData.additionalImages.forEach(imageSrc => {
+                        displaySavedImage(imageSrc, 'additionalImagesPreview');
+                    });
+                }
+
+                // サービスチェックボックスの復元
+                if (currentSponsorData.services) {
+                    currentSponsorData.services.forEach(service => {
+                        let checkboxId;
+                        switch(service) {
+                            case 'wifi': checkboxId = 'serviceWifi'; break;
+                            case 'parking': checkboxId = 'serviceParking'; break;
+                            case 'card': checkboxId = 'serviceCard'; break;
+                            case 'barrier-free': checkboxId = 'serviceBarrierFree'; break;
+                            default: checkboxId = `service${service.charAt(0).toUpperCase() + service.slice(1)}`;
+                        }
+                        const checkbox = document.getElementById(checkboxId);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
             } else {
                 alert('店舗データが見つかりません');
                 window.location.href = 'index.html';
             }
         }
 
+        // 保存済み画像を表示
+        function displaySavedImage(imageSrc, previewId) {
+            const preview = document.getElementById(previewId);
+            
+            const imageContainer = document.createElement('div');
+            imageContainer.className = 'd-inline-block position-relative m-1';
+            
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.className = 'preview-image';
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0';
+            removeBtn.style.transform = 'translate(25%, -25%)';
+            removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+            removeBtn.onclick = function() {
+                imageContainer.remove();
+            };
+            
+            imageContainer.appendChild(img);
+            imageContainer.appendChild(removeBtn);
+            preview.appendChild(imageContainer);
+        }
+
         // 画像アップロード処理
-        function setupImageUpload(inputId, previewId) {
+        function setupImageUpload(inputId, previewId, maxImages = 15) {
             document.getElementById(inputId).addEventListener('change', function(e) {
                 const files = e.target.files;
                 const preview = document.getElementById(previewId);
                 preview.innerHTML = '';
 
-                for (let i = 0; i < files.length; i++) {
+                if (files.length > maxImages) {
+                    alert(`画像は最大${maxImages}枚までアップロード可能です。`);
+                    return;
+                }
+
+                for (let i = 0; i < Math.min(files.length, maxImages); i++) {
                     const file = files[i];
                     const reader = new FileReader();
                     
                     reader.onload = function(e) {
+                        const imageContainer = document.createElement('div');
+                        imageContainer.className = 'd-inline-block position-relative m-1';
+                        
                         const img = document.createElement('img');
                         img.src = e.target.result;
                         img.className = 'preview-image';
-                        preview.appendChild(img);
+                        
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.className = 'btn btn-sm btn-danger position-absolute top-0 end-0';
+                        removeBtn.style.transform = 'translate(25%, -25%)';
+                        removeBtn.innerHTML = '<i class="bi bi-x"></i>';
+                        removeBtn.onclick = function() {
+                            imageContainer.remove();
+                        };
+                        
+                        imageContainer.appendChild(img);
+                        imageContainer.appendChild(removeBtn);
+                        preview.appendChild(imageContainer);
                     };
                     
                     reader.readAsDataURL(file);
@@ -343,9 +443,9 @@
         }
 
         // 画像アップロード設定
-        setupImageUpload('mainImage', 'mainImagePreview');
-        setupImageUpload('logoImage', 'logoImagePreview');
-        setupImageUpload('additionalImages', 'additionalImagesPreview');
+        setupImageUpload('mainImage', 'mainImagePreview', 1);
+        setupImageUpload('logoImage', 'logoImagePreview', 1);
+        setupImageUpload('additionalImages', 'additionalImagesPreview', 15);
 
         // 下書き保存
         function saveDraft() {
@@ -378,7 +478,7 @@
 
         // フォームデータ収集
         function collectFormData() {
-            return {
+            const data = {
                 detailedDescription: document.getElementById('detailedDescription').value,
                 specialty: document.getElementById('specialty').value,
                 atmosphere: document.getElementById('atmosphere').value,
@@ -391,6 +491,26 @@
                 parkingInfo: document.getElementById('parkingInfo').value,
                 lastUpdated: new Date().toISOString()
             };
+
+            // 画像データを収集
+            const mainImageEl = document.querySelector('#mainImagePreview img');
+            if (mainImageEl) {
+                data.mainImage = mainImageEl.src;
+            }
+
+            const logoImageEl = document.querySelector('#logoImagePreview img');
+            if (logoImageEl) {
+                data.logoImage = logoImageEl.src;
+            }
+
+            const additionalImages = [];
+            const additionalImagesEls = document.querySelectorAll('#additionalImagesPreview img');
+            additionalImagesEls.forEach(img => {
+                additionalImages.push(img.src);
+            });
+            data.additionalImages = additionalImages;
+
+            return data;
         }
 
         // 選択されたサービスを取得

@@ -180,13 +180,23 @@
                 return;
             }
 
-            const sponsorData = localStorage.getItem(sponsorId);
-            if (!sponsorData) {
+            // 登録済み協賛店リストから該当データを取得
+            const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            const sponsor = registeredSponsors.find(s => s.id === sponsorId);
+            
+            if (!sponsor) {
+                // 古いデータ形式も確認（下位互換性）
+                const sponsorData = localStorage.getItem(sponsorId);
+                if (sponsorData) {
+                    const sponsor = JSON.parse(sponsorData);
+                    displayPreview(sponsor);
+                    return;
+                }
                 alert('店舗データが見つかりません');
                 return;
             }
 
-            const sponsor = JSON.parse(sponsorData);
+            console.log('Preview data loaded:', sponsor);
             displayPreview(sponsor);
         }
 
@@ -214,6 +224,11 @@
                 const img = document.getElementById('previewImage');
                 img.src = sponsor.mainImage;
                 img.style.display = 'block';
+            } else if (sponsor.additionalImages && sponsor.additionalImages.length > 0) {
+                // メイン画像がない場合は追加画像の最初の画像を使用
+                const img = document.getElementById('previewImage');
+                img.src = sponsor.additionalImages[0];
+                img.style.display = 'block';
             }
 
             // ウェブサイト
@@ -238,6 +253,62 @@
                 document.getElementById('descriptionSection').style.display = 'none';
             }
 
+            // 特色・売り、雰囲気を追加
+            if (sponsor.specialty || sponsor.atmosphere) {
+                const specialSection = document.createElement('div');
+                specialSection.className = 'info-section';
+                specialSection.innerHTML = `
+                    <h5><i class="bi bi-star"></i> 店舗の特色</h5>
+                    ${sponsor.specialty ? `<p><strong>特色・売り:</strong> ${sponsor.specialty}</p>` : ''}
+                    ${sponsor.atmosphere ? `<p><strong>店内の雰囲気:</strong> ${sponsor.atmosphere}</p>` : ''}
+                `;
+                document.getElementById('descriptionSection').after(specialSection);
+            }
+
+            // 価格帯・収容人数
+            if (sponsor.priceRange || sponsor.capacity) {
+                const priceSection = document.createElement('div');
+                priceSection.className = 'info-section';
+                priceSection.innerHTML = `
+                    <h5><i class="bi bi-currency-yen"></i> 料金・収容情報</h5>
+                    ${sponsor.priceRange ? `<p><strong>価格帯:</strong> ${getPriceRangeText(sponsor.priceRange)}</p>` : ''}
+                    ${sponsor.capacity ? `<p><strong>収容人数:</strong> ${sponsor.capacity}名</p>` : ''}
+                `;
+                document.getElementById('businessHoursSection').after(priceSection);
+            }
+
+            // アクセス情報
+            if (sponsor.accessInfo || sponsor.nearestStation || sponsor.parkingInfo) {
+                const accessSection = document.createElement('div');
+                accessSection.className = 'info-section';
+                accessSection.innerHTML = `
+                    <h5><i class="bi bi-geo-alt"></i> アクセス情報</h5>
+                    ${sponsor.accessInfo ? `<p><strong>アクセス:</strong> ${sponsor.accessInfo}</p>` : ''}
+                    ${sponsor.nearestStation ? `<p><strong>最寄り駅:</strong> ${sponsor.nearestStation}</p>` : ''}
+                    ${sponsor.parkingInfo ? `<p><strong>駐車場:</strong> ${sponsor.parkingInfo}</p>` : ''}
+                `;
+                document.getElementById('businessHoursSection').after(accessSection);
+            }
+
+            // 提供サービス
+            if (sponsor.services && sponsor.services.length > 0) {
+                const serviceNames = {
+                    'wifi': 'Wi-Fi無料',
+                    'parking': '駐車場完備', 
+                    'card': 'カード決済OK',
+                    'barrier-free': 'バリアフリー'
+                };
+                const servicesSection = document.createElement('div');
+                servicesSection.className = 'info-section';
+                servicesSection.innerHTML = `
+                    <h5><i class="bi bi-check-circle"></i> 提供サービス</h5>
+                    <div>${sponsor.services.map(service => 
+                        `<span class="language-tag">${serviceNames[service] || service}</span>`
+                    ).join('')}</div>
+                `;
+                document.getElementById('languagesSection').before(servicesSection);
+            }
+
             // 対応言語
             if (sponsor.languages && sponsor.languages.length > 0) {
                 const languageNames = {
@@ -254,14 +325,63 @@
             }
 
             // TomoTrip特典
-            if (sponsor.tomotripBenefits) {
+            if (sponsor.tomotripBenefits || sponsor.detailedDiscount) {
+                const benefitText = sponsor.detailedDiscount || sponsor.tomotripBenefits || '';
                 document.getElementById('previewBenefits').innerHTML = 
-                    sponsor.tomotripBenefits.split(',').map(benefit => 
+                    benefitText.split(',').map(benefit => 
                         `<span class="benefit-tag">${benefit.trim()}</span>`
                     ).join('');
             } else {
                 document.getElementById('benefitsSection').style.display = 'none';
             }
+
+            // 追加画像ギャラリーを追加
+            if (sponsor.additionalImages && sponsor.additionalImages.length > 0) {
+                const gallerySection = document.createElement('div');
+                gallerySection.className = 'info-section';
+                gallerySection.innerHTML = `
+                    <h5><i class="bi bi-images"></i> 店舗ギャラリー</h5>
+                    <div class="row">
+                        ${sponsor.additionalImages.map(img => 
+                            `<div class="col-4 col-md-3 mb-2">
+                                <img src="${img}" class="img-fluid rounded" style="height: 120px; object-fit: cover; width: 100%; cursor: pointer;" onclick="openImageModal('${img}')">
+                            </div>`
+                        ).join('')}
+                    </div>
+                `;
+                document.getElementById('benefitsSection').after(gallerySection);
+            }
+        }
+
+        function getPriceRangeText(range) {
+            const ranges = {
+                'budget': 'リーズナブル（〜1,000円）',
+                'moderate': '中程度（1,000円〜3,000円）',
+                'upscale': '高級（3,000円〜）'
+            };
+            return ranges[range] || range;
+        }
+
+        function openImageModal(imageSrc) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">画像プレビュー</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="${imageSrc}" class="img-fluid">
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            modal.addEventListener('hidden.bs.modal', () => modal.remove());
         }
 
         function goBackToEdit() {
