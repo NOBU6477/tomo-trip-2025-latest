@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>協賛店一覧 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .header-section {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .stats-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #28a745;
+            text-align: center;
+        }
+        .sponsor-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s;
+            margin-bottom: 2rem;
+        }
+        .sponsor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .draft-button {
+            background: #ffc107;
+            border: 2px solid #ffab00;
+            color: #000;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        .draft-button:hover {
+            background: #ffab00;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        console.log('%c🚀 NEW SPONSOR LIST PAGE LOADED!', 'color: #ff0000; font-size: 24px; font-weight: bold; background: yellow;');
+        console.log('📅 Page loaded at:', new Date().toLocaleString());
+    </script>
+
+    <!-- Navigation -->
+    <nav aria-label="breadcrumb" class="container mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html" class="text-decoration-none">ホーム</a></li>
+            <li class="breadcrumb-item active" aria-current="page">協賛店一覧</li>
+        </ol>
+    </nav>
+
+    <!-- Header -->
+    <header class="header-section">
+        <div class="container">
+            <h1 class="display-4"><i class="bi bi-shop"></i> 日本全国の協賛店一覧</h1>
+            <p class="lead mb-2">TomoTripと提携している観光客歓迎の優良店舗をご紹介</p>
+            <p class="mb-0">レストラン・ホテル・ショッピング・エンターテイメント | 多言語対応・特典付き</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Statistics section -->
+        <section class="stats-section">
+            <div class="row">
+                <div class="col-md-3 col-6">
+                    <div class="stat-number" id="totalSponsors">0</div>
+                    <div>総協賛店数</div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-number" id="newThisMonth">0</div>
+                    <div>今月の新規登録</div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-number" id="restaurantCount">0</div>
+                    <div>レストラン・飲食店</div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="stat-number" id="otherCount">0</div>
+                    <div>その他サービス</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Draft Management Button -->
+        <div class="mb-4 text-center">
+            <button class="btn draft-button" onclick="toggleDraftSection()" id="draftToggleBtn">
+                <i class="bi bi-file-earmark-text"></i> 下書き店舗を表示 (<span id="draftCount">0</span>)
+            </button>
+        </div>
+
+        <!-- Draft Section -->
+        <section class="mb-4" id="draftSection" style="display: none;">
+            <div class="alert alert-warning">
+                <h3 class="h5 mb-3"><i class="bi bi-file-earmark-text"></i> 下書き店舗一覧</h3>
+                <div id="draftList" class="row"></div>
+                <button class="btn btn-outline-secondary btn-sm mt-2" onclick="toggleDraftSection()">
+                    <i class="bi bi-eye-slash"></i> 下書き一覧を非表示
+                </button>
+            </div>
+        </section>
+
+        <!-- Search and Filter section -->
+        <section class="filter-section mb-4">
+            <div class="bg-white p-3 rounded">
+                <h2 class="h4 mb-3">店舗検索・絞り込み</h2>
+                <div class="row align-items-end">
+                    <div class="col-md-3 mb-2">
+                        <label for="categoryFilter" class="form-label">業種で絞り込み</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">すべての業種</option>
+                            <option value="restaurant">レストラン・飲食店</option>
+                            <option value="hotel">ホテル・宿泊施設</option>
+                            <option value="shopping">ショッピング・小売店</option>
+                            <option value="entertainment">エンターテイメント</option>
+                            <option value="transport">交通・レンタルサービス</option>
+                            <option value="service">各種サービス業</option>
+                            <option value="other">その他</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label for="languageFilter" class="form-label">対応言語</label>
+                        <select class="form-select" id="languageFilter">
+                            <option value="">すべての言語</option>
+                            <option value="english">English（英語対応）</option>
+                            <option value="chinese">中文（中国語対応）</option>
+                            <option value="korean">한국어（韓国語対応）</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="searchInput" class="form-label">店名・キーワード検索</label>
+                        <input type="text" class="form-control" id="searchInput" 
+                               placeholder="店名、地域、料理の種類などを入力">
+                    </div>
+                    <div class="col-md-2 mb-2">
+                        <button class="btn btn-success w-100" onclick="applyFilters()">
+                            <i class="bi bi-search"></i> 検索
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sponsor List -->
+        <section id="sponsorListSection">
+            <div id="sponsorList" class="row"></div>
+            <div id="emptyState" style="display: none;" class="text-center py-5">
+                <div class="bg-white p-4 rounded">
+                    <i class="bi bi-shop display-1 text-muted"></i>
+                    <h3 class="mt-3">協賛店が見つかりません</h3>
+                    <p class="text-muted">検索条件を変更して再度お試しください。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Navigation buttons -->
+        <div class="text-center mt-4 mb-4">
+            <button class="btn btn-outline-light me-2" onclick="window.history.back()">
+                <i class="bi bi-arrow-left"></i> 戻る
+            </button>
+            <a href="index.html" class="btn btn-success">
+                <i class="bi bi-house"></i> ホームに戻る
+            </a>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        console.log('%c🔧 SCRIPT SECTION STARTING', 'color: #00ff00; font-size: 16px; font-weight: bold;');
+        
+        let allSponsors = [];
+        let filteredSponsors = [];
+
+        // Page load initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('%c🚀 DOM LOADED - INITIALIZATION START', 'color: #ff6b35; font-size: 18px; font-weight: bold;');
+            loadSponsors();
+            displaySponsors();
+            updateStatistics();
+            loadDrafts();
+            console.log('%c✅ INITIALIZATION COMPLETE', 'color: #28a745; font-size: 16px; font-weight: bold;');
+        });
+
+        // Load sponsors data
+        function loadSponsors() {
+            console.log('📋 Loading sponsors from localStorage...');
+            allSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            // Only show published sponsors
+            allSponsors = allSponsors.filter(sponsor => sponsor.status === 'published');
+            filteredSponsors = [...allSponsors];
+            console.log('📊 Loaded sponsors:', allSponsors.length);
+        }
+
+        // Display sponsors
+        function displaySponsors() {
+            console.log('🖼️ Displaying sponsors...');
+            const sponsorList = document.getElementById('sponsorList');
+            const emptyState = document.getElementById('emptyState');
+
+            if (filteredSponsors.length === 0) {
+                sponsorList.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            sponsorList.innerHTML = filteredSponsors.map(sponsor => createSponsorCard(sponsor)).join('');
+        }
+
+        // Create sponsor card
+        function createSponsorCard(sponsor) {
+            const categoryNames = {
+                'restaurant': 'レストラン・飲食店',
+                'hotel': 'ホテル・宿泊施設',
+                'shopping': 'ショッピング・小売店',
+                'entertainment': 'エンターテイメント',
+                'transport': '交通・レンタルサービス',
+                'service': '各種サービス業',
+                'other': 'その他'
+            };
+
+            const languageFlags = {
+                'english': '🇺🇸',
+                'chinese': '🇨🇳',
+                'korean': '🇰🇷'
+            };
+
+            return `
+                <div class="col-md-4 mb-4">
+                    <div class="sponsor-card">
+                        <div class="card-body">
+                            <h5 class="card-title">${sponsor.storeName}</h5>
+                            <p class="card-text">
+                                <i class="bi bi-geo-alt"></i> ${sponsor.address}<br>
+                                <i class="bi bi-telephone"></i> ${sponsor.phone}<br>
+                                <i class="bi bi-clock"></i> ${sponsor.businessHours}
+                            </p>
+                            <div class="mb-2">
+                                <span class="badge bg-success">${categoryNames[sponsor.category] || sponsor.category}</span>
+                            </div>
+                            <div class="mb-2">
+                                ${sponsor.languages ? sponsor.languages.map(lang => 
+                                    `<span class="badge bg-info me-1">${languageFlags[lang] || ''} ${lang}</span>`
+                                ).join('') : ''}
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="viewSponsorDetails('${sponsor.id}')">
+                                    <i class="bi bi-info-circle"></i> 詳細
+                                </button>
+                                <button class="btn btn-success btn-sm" onclick="contactSponsor('${sponsor.id}')">
+                                    <i class="bi bi-telephone"></i> 連絡
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            console.log('📈 Updating statistics...');
+            document.getElementById('totalSponsors').textContent = allSponsors.length;
+            document.getElementById('newThisMonth').textContent = allSponsors.filter(s => 
+                new Date(s.registrationDate || Date.now()).getMonth() === new Date().getMonth()
+            ).length;
+            document.getElementById('restaurantCount').textContent = allSponsors.filter(s => 
+                s.category === 'restaurant'
+            ).length;
+            document.getElementById('otherCount').textContent = allSponsors.filter(s => 
+                s.category !== 'restaurant'
+            ).length;
+        }
+
+        // Draft management function
+        function loadDrafts() {
+            console.log('%c🔍 LOAD DRAFTS FUNCTION CALLED', 'color: #ff0000; font-size: 18px; font-weight: bold;');
+            try {
+                console.log('🔧 Checking localStorage for registeredSponsors...');
+                const allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                console.log('🎯 Total sponsors in storage:', allSponsorsData.length);
+                console.log('📊 All sponsors data:', allSponsorsData);
+                
+                const drafts = allSponsorsData.filter(sponsor => sponsor.status === 'draft');
+                console.log('%c📝 DRAFT FILTERING RESULT:', 'color: #ff6b35; font-weight: bold;', drafts.length, 'drafts found');
+                console.log('📋 Draft data:', drafts);
+                
+                const draftCountElement = document.getElementById('draftCount');
+                const draftToggleBtn = document.getElementById('draftToggleBtn');
+                
+                console.log('🔍 Element check:');
+                console.log('  draftCountElement:', draftCountElement ? 'FOUND' : 'NOT FOUND');
+                console.log('  draftToggleBtn:', draftToggleBtn ? 'FOUND' : 'NOT FOUND');
+                
+                if (draftCountElement && draftToggleBtn) {
+                    draftCountElement.textContent = drafts.length;
+                    
+                    if (drafts.length === 0) {
+                        draftToggleBtn.innerHTML = '<i class="bi bi-file-earmark-text"></i> 下書き店舗なし (0)';
+                        draftToggleBtn.disabled = true;
+                        console.log('✅ No drafts - button disabled');
+                    } else {
+                        draftToggleBtn.innerHTML = `<i class="bi bi-file-earmark-text"></i> 下書き店舗を表示 (${drafts.length})`;
+                        draftToggleBtn.disabled = false;
+                        console.log('✅ Drafts found - button enabled');
+                    }
+                    
+                    // Store drafts globally for toggle function
+                    window.currentDrafts = drafts;
+                    console.log('%c✅ DRAFT LOADING COMPLETE', 'color: #28a745; font-weight: bold;');
+                } else {
+                    console.error('❌ Required elements not found!');
+                }
+            } catch (error) {
+                console.error('❌ Error in loadDrafts:', error);
+            }
+        }
+
+        // Toggle draft section
+        function toggleDraftSection() {
+            console.log('🔄 Toggle draft section called');
+            const draftSection = document.getElementById('draftSection');
+            const draftToggleBtn = document.getElementById('draftToggleBtn');
+            
+            if (draftSection.style.display === 'none') {
+                draftSection.style.display = 'block';
+                displayDrafts();
+                draftToggleBtn.innerHTML = '<i class="bi bi-eye-slash"></i> 下書き一覧を非表示';
+            } else {
+                draftSection.style.display = 'none';
+                draftToggleBtn.innerHTML = `<i class="bi bi-file-earmark-text"></i> 下書き店舗を表示 (${window.currentDrafts?.length || 0})`;
+            }
+        }
+
+        // Display drafts
+        function displayDrafts() {
+            console.log('📝 Displaying drafts...');
+            const draftList = document.getElementById('draftList');
+            const drafts = window.currentDrafts || [];
+            
+            if (drafts.length === 0) {
+                draftList.innerHTML = '<div class="col-12"><p class="text-center">下書き店舗はありません。</p></div>';
+                return;
+            }
+            
+            draftList.innerHTML = drafts.map(draft => `
+                <div class="col-md-6 mb-3">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h6 class="card-title">${draft.storeName}</h6>
+                            <p class="card-text small">
+                                ${draft.address}<br>
+                                ${draft.phone}
+                            </p>
+                            <div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-warning" onclick="editDraft('${draft.id}')">
+                                    <i class="bi bi-pencil"></i> 編集
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="deleteDraft('${draft.id}')">
+                                    <i class="bi bi-trash"></i> 削除
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Edit draft
+        function editDraft(draftId) {
+            console.log('✏️ Editing draft:', draftId);
+            window.location.href = `sponsor-edit.html?id=${draftId}`;
+        }
+
+        // Delete draft
+        function deleteDraft(draftId) {
+            if (confirm('この下書きを削除しますか？')) {
+                console.log('🗑️ Deleting draft:', draftId);
+                let allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                allSponsorsData = allSponsorsData.filter(sponsor => sponsor.id !== draftId);
+                localStorage.setItem('registeredSponsors', JSON.stringify(allSponsorsData));
+                loadDrafts();
+                displayDrafts();
+            }
+        }
+
+        // Apply filters
+        function applyFilters() {
+            console.log('🔍 Applying filters...');
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const languageFilter = document.getElementById('languageFilter').value;
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+            filteredSponsors = allSponsors.filter(sponsor => {
+                const matchesCategory = !categoryFilter || sponsor.category === categoryFilter;
+                const matchesLanguage = !languageFilter || (sponsor.languages && sponsor.languages.includes(languageFilter));
+                const matchesSearch = !searchInput || 
+                    sponsor.storeName.toLowerCase().includes(searchInput) ||
+                    sponsor.address.toLowerCase().includes(searchInput);
+
+                return matchesCategory && matchesLanguage && matchesSearch;
+            });
+
+            displaySponsors();
+        }
+
+        // Sponsor detail functions
+        function viewSponsorDetails(sponsorId) {
+            console.log('👁️ Viewing sponsor details:', sponsorId);
+            window.location.href = `sponsor-detail.html?id=${sponsorId}`;
+        }
+
+        function contactSponsor(sponsorId) {
+            console.log('☎️ Contacting sponsor:', sponsorId);
+            const sponsor = allSponsors.find(s => s.id === sponsorId);
+            if (sponsor) {
+                alert(`${sponsor.storeName}にお電話ください: ${sponsor.phone}`);
+            }
+        }
+
+        // Event listeners
+        document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+        document.getElementById('languageFilter').addEventListener('change', applyFilters);
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+        console.log('%c🎯 ALL FUNCTIONS LOADED SUCCESSFULLY', 'color: #28a745; font-size: 16px; font-weight: bold;');
+    </script>
+</body>
+</html>
