@@ -186,8 +186,7 @@
           <div class="card info-card mb-4">
             <div class="card-body p-4">
               <h3 class="card-title mb-4">
-                <i class="bi bi-star-fill text-warning me-2"></i
-                >おすすめポイント
+                <i class="bi bi-star-fill text-warning me-2"></i>おすすめポイント
               </h3>
               <div id="sponsor-highlights"></div>
             </div>
@@ -395,13 +394,13 @@
         // 登録済みデータを取得
         let sponsor = null;
 
-        // 1. localStorage の sponsorData から探す（最優先）
-        const sponsorDataRaw = localStorage.getItem("sponsorData");
-        console.log("localStorage raw data:", sponsorDataRaw ? "データあり" : "データなし");
+        // 1. localStorage の registeredSponsors から探す（最優先）
+        const registeredSponsorsRaw = localStorage.getItem("registeredSponsors");
+        console.log("localStorage registeredSponsors:", registeredSponsorsRaw ? "データあり" : "データなし");
         
-        if (sponsorDataRaw) {
+        if (registeredSponsorsRaw) {
           try {
-            const allStores = JSON.parse(sponsorDataRaw);
+            const allStores = JSON.parse(registeredSponsorsRaw);
             console.log(`協賛店データ総数: ${allStores.length}`);
             console.log("利用可能な店舗ID:", allStores.map(s => s.id));
             
@@ -418,25 +417,39 @@
             console.error("localStorage データ解析エラー:", e);
           }
         }
+        
+        // 1.5. 個別保存データも確認
+        if (!sponsor) {
+          const individualData = localStorage.getItem(sponsorId);
+          if (individualData) {
+            try {
+              sponsor = JSON.parse(individualData);
+              console.log("✓ 個別データから取得成功");
+            } catch (e) {
+              console.error("個別データ解析エラー:", e);
+            }
+          }
+        }
 
         // 2. デフォルトデータから取得（フォールバック）
         if (!sponsor && sponsorDetails[sponsorId]) {
-          sponsor = sponsorDetails[sponsorId];
+          const defaultData = sponsorDetails[sponsorId];
           console.log("✓ デフォルトデータから取得");
-          // sponsor-list.js形式に変換
           sponsor = {
             id: sponsorId,
-            storeName: sponsor.name,
-            storeType: 'restaurant', // デフォルト
-            description: sponsor.description,
-            benefits: sponsor.benefitDetail,
-            phone: sponsor.phone,
-            address: sponsor.address,
-            website: sponsor.website || '',
-            logo: sponsor.logo,
-            photos: sponsor.gallery ? sponsor.gallery.map(g => g.url) : [],
-            businessHours: {},
-            status: 'approved'
+            storeName: defaultData.name,
+            category: 'restaurant',
+            description: defaultData.description,
+            benefits: defaultData.benefitDetail,
+            phone: defaultData.phone,
+            address: defaultData.address,
+            website: defaultData.website || '',
+            mainImage: defaultData.logo,
+            additionalImages: defaultData.gallery ? defaultData.gallery.map(g => g.url) : [],
+            highlights: defaultData.highlights || [],
+            hours: defaultData.hours,
+            access: defaultData.access,
+            status: 'published'
           };
         }
 
@@ -460,8 +473,8 @@
           
         // ロゴの表示
         const logoElement = document.getElementById("sponsor-logo");
-        if (sponsor.logo) {
-          logoElement.src = sponsor.logo;
+        if (sponsor.mainImage || sponsor.logo) {
+          logoElement.src = sponsor.mainImage || sponsor.logo;
         } else {
           logoElement.src = `https://placehold.co/120x120/e3f2fd/1976d2/png?text=${encodeURIComponent((sponsor.storeName || sponsor.name || "S").charAt(0))}`;
         }
@@ -503,19 +516,12 @@
         document.getElementById("sponsor-benefit-detail").textContent = 
           sponsor.benefits || sponsor.benefitDetail || sponsor.benefit || "特典の詳細情報はまだ設定されていません。";
 
-          // おすすめポイントを表示
-          displayHighlights(sponsor.highlights || []);
+        // おすすめポイントを表示
+        displayHighlights(sponsor.highlights || []);
 
-          // 写真ギャラリーを表示
-          displayGallery(sponsor.gallery || []);
-        } else {
-          console.error("店舗データが見つかりません:", sponsorId);
-          document.getElementById("sponsor-name").textContent =
-            "店舗が見つかりません";
-          document.getElementById("sponsor-benefit").textContent = "";
-          document.getElementById("sponsor-description").textContent =
-            "指定された店舗IDの情報が見つかりませんでした。";
-        }
+        // 写真ギャラリーを表示
+        const galleryData = sponsor.additionalImages || sponsor.gallery || sponsor.photos || [];
+        displayGallery(galleryData);
       });
 
       // おすすめポイントを表示
@@ -545,11 +551,25 @@
           gallery.forEach((image, index) => {
             const div = document.createElement("div");
             div.className = "col-md-6 mb-3";
+            
+            // 画像データの形式を確認
+            let imageUrl, imageCaption;
+            if (typeof image === 'string') {
+              imageUrl = image;
+              imageCaption = `画像 ${index + 1}`;
+            } else if (image.url) {
+              imageUrl = image.url;
+              imageCaption = image.caption || `画像 ${index + 1}`;
+            } else {
+              imageUrl = image;
+              imageCaption = `画像 ${index + 1}`;
+            }
+            
             div.innerHTML = `
               <div class="card">
-                <img src="${image.url}" class="card-img-top" alt="${image.caption || "店舗画像"}" style="height: 200px; object-fit: cover;">
+                <img src="${imageUrl}" class="card-img-top" alt="${imageCaption}" style="height: 200px; object-fit: cover;" onclick="openImageModal('${imageUrl}', '${imageCaption}')">
                 <div class="card-body p-2">
-                  <p class="card-text small text-muted">${image.caption || `画像 ${index + 1}`}</p>
+                  <p class="card-text small text-muted">${imageCaption}</p>
                 </div>
               </div>
             `;
