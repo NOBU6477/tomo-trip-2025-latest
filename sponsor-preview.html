@@ -193,29 +193,61 @@
                 console.log(`  ${key}:`, localStorage.getItem(key).substring(0, 100) + '...');
             }
 
-            // 登録済み協賛店リストから該当データを取得
-            const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-            console.log('Registered sponsors:', registeredSponsors);
-            console.log('Looking for ID:', sponsorId);
+            // まずプレビュー用のデータを確認
+            const previewKey = `preview_${sponsorId}`;
+            let sponsor = null;
             
-            const sponsor = registeredSponsors.find(s => s.id === sponsorId);
-            console.log('Found sponsor:', sponsor);
+            // プレビュー用データを優先的に取得
+            const previewData = localStorage.getItem(previewKey);
+            if (previewData) {
+                try {
+                    sponsor = JSON.parse(previewData);
+                    console.log('✅ Found preview data:', sponsor);
+                } catch (e) {
+                    console.error('Failed to parse preview data:', e);
+                }
+            }
+            
+            // プレビューデータがない場合、registeredSponsorsから取得
+            if (!sponsor) {
+                const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                console.log('📋 Checking registered sponsors:', registeredSponsors.length, 'items');
+                sponsor = registeredSponsors.find(s => s.id === sponsorId);
+                
+                if (sponsor) {
+                    console.log('✅ Found in registered sponsors:', sponsor);
+                }
+            }
+            
+            // 最後の手段として、個別保存データを確認
+            if (!sponsor) {
+                const individualData = localStorage.getItem(sponsorId);
+                if (individualData) {
+                    try {
+                        sponsor = JSON.parse(individualData);
+                        console.log('✅ Found individual data:', sponsor);
+                    } catch (e) {
+                        console.error('Failed to parse individual data:', e);
+                    }
+                }
+            }
             
             if (!sponsor) {
-                console.error('❌ No sponsor data found for ID:', sponsorId);
-                console.log('📋 Available sponsor IDs in storage:');
-                registeredSponsors.forEach((s, index) => {
-                    console.log(`   ${index + 1}. ${s.id} (${s.storeName})`);
-                });
+                console.error('❌ No sponsor data found anywhere for ID:', sponsorId);
+                console.log('📋 Available data sources:');
+                console.log('   - Preview key:', previewKey, '→', !!localStorage.getItem(previewKey));
+                console.log('   - Individual key:', sponsorId, '→', !!localStorage.getItem(sponsorId));
+                console.log('   - RegisteredSponsors count:', JSON.parse(localStorage.getItem('registeredSponsors') || '[]').length);
                 
-                // Show user-friendly error message
+                // より詳細なエラー表示
                 document.body.innerHTML = `
                     <div class="container mt-5">
                         <div class="alert alert-warning text-center">
                             <h4><i class="bi bi-exclamation-triangle"></i> データが見つかりません</h4>
-                            <p>店舗データが見つかりません。編集ページに戻って保存してください。</p>
-                            <button class="btn btn-primary" onclick="window.history.back()">
-                                <i class="bi bi-arrow-left"></i> 戻る
+                            <p>店舗ID: ${sponsorId} のデータが見つかりません。</p>
+                            <p>編集ページに戻ってデータを保存してからプレビューしてください。</p>
+                            <button class="btn btn-primary" onclick="goBackToEdit()">
+                                <i class="bi bi-arrow-left"></i> 編集ページに戻る
                             </button>
                         </div>
                     </div>

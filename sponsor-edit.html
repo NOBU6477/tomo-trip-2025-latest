@@ -691,22 +691,40 @@
             
             console.log('📋 Collected edit data:', editData);
             
-            // データ保存前に公開ステータスを一時的に設定
-            const tempData = { ...editData };
-            tempData.status = 'published'; // プレビュー用に一時的に公開状態に
+            // プレビュー用の一時保存キーを作成
+            const previewKey = `preview_${editData.id}`;
             
-            // データを保存
-            if (updateSponsorData(tempData)) {
-                console.log('✅ Data saved successfully, opening preview');
+            try {
+                // プレビュー用のデータを直接LocalStorageに保存
+                const previewData = { ...editData, status: 'preview' };
+                localStorage.setItem(previewKey, JSON.stringify(previewData));
+                console.log('✅ Preview data saved with key:', previewKey);
+                
+                // また、registeredSponsorsにも確実に保存
+                let registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                const existingIndex = registeredSponsors.findIndex(s => s.id === editData.id);
+                
+                if (existingIndex !== -1) {
+                    // 既存データを更新
+                    registeredSponsors[existingIndex] = { ...registeredSponsors[existingIndex], ...editData };
+                } else {
+                    // 新規追加
+                    registeredSponsors.push(editData);
+                }
+                
+                localStorage.setItem('registeredSponsors', JSON.stringify(registeredSponsors));
+                console.log('✅ Data also saved to registeredSponsors');
+                
                 // プレビューを新しいタブで開く
-                const previewWindow = window.open(`sponsor-preview.html?id=${tempData.id}`, '_blank');
+                const previewWindow = window.open(`sponsor-preview.html?id=${editData.id}`, '_blank');
                 
                 if (!previewWindow) {
                     alert('ポップアップがブロックされました。ポップアップを許可してから再度お試しください。');
                 }
-            } else {
-                console.error('❌ Failed to save data for preview');
-                alert('データの保存に失敗したため、プレビューできません');
+                
+            } catch (error) {
+                console.error('❌ Failed to save preview data:', error);
+                alert('プレビューデータの保存に失敗しました：' + error.message);
             }
         }
 
@@ -777,34 +795,64 @@
         function updateSponsorData(editData) {
             try {
                 let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-                const index = sponsors.findIndex(s => s.id === currentSponsorId);
+                const targetId = editData.id || currentSponsorId;
+                const index = sponsors.findIndex(s => s.id === targetId);
                 
-                console.log('Updating sponsor data for ID:', currentSponsorId);
-                console.log('Found index:', index);
-                console.log('Current sponsors count:', sponsors.length);
+                console.log('🔄 Updating sponsor data for ID:', targetId);
+                console.log('📍 Found index:', index);
+                console.log('📊 Current sponsors count:', sponsors.length);
                 
                 if (index !== -1) {
                     // 既存データを編集データで更新
                     sponsors[index] = { ...sponsors[index], ...editData };
-                    console.log('Updated sponsor data:', sponsors[index]);
-                    
-                    // データサイズをチェック
-                    const dataString = JSON.stringify(sponsors);
-                    const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
-                    console.log('Data size:', sizeInMB.toFixed(2), 'MB');
-                    
-                    if (sizeInMB > 4) { // 5MB制限を4MBで警告
-                        alert('画像データが大きすぎます。画像を削除するか、より小さいサイズでアップロードしてください。');
-                        return false;
-                    }
-                    
-                    localStorage.setItem('registeredSponsors', dataString);
-                    currentSponsorData = sponsors[index];
-                    console.log('Data saved successfully');
+                    console.log('✅ Updated existing sponsor data');
+                } else {
+                    // 新規追加
+                    sponsors.push(editData);
+                    console.log('➕ Added new sponsor data');
+                }
+                
+                // データサイズをチェック
+                const dataString = JSON.stringify(sponsors);
+                const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
+                console.log('💾 Data size:', sizeInMB.toFixed(2), 'MB');
+                
+                if (sizeInMB > 4) { // 5MB制限を4MBで警告
+                    alert('画像データが大きすぎます。画像を削除するか、より小さいサイズでアップロードしてください。');
+                    return false;
+                }
+                
+                // 保存実行
+                localStorage.setItem('registeredSponsors', dataString);
+                
+                // 個別キーでもバックアップ保存
+                localStorage.setItem(targetId, JSON.stringify(editData));
+                
+                // 保存確認
+                const verification = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                const savedItem = verification.find(s => s.id === targetId);
+                
+                if (savedItem) {
+                    currentSponsorData = savedItem;
+                    console.log('✅ Data verified and saved successfully');
                     return true;
                 } else {
-                    console.error('Sponsor not found in array');
+                    console.error('❌ Verification failed - data not found after save');
                     return false;
+                }
+                
+            } catch (error) {
+                console.error('❌ Failed to save sponsor data:', error);
+                
+                // エラーの詳細表示
+                if (error.name === 'QuotaExceededError') {
+                    alert('ストレージ容量が不足しています。ブラウザのデータを整理してください。');
+                } else {
+                    alert('データの保存に失敗しました：' + error.message);
+                }
+                return false;
+            }
+        }
                 }
             } catch (error) {
                 if (error.name === 'QuotaExceededError') {
