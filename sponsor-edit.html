@@ -96,6 +96,44 @@
             border-color: #fd7e14;
             box-shadow: 0 0 0 0.2rem rgba(253, 126, 20, 0.25);
         }
+        .draft-management {
+            background: linear-gradient(135deg, #ffc107 0%, #ff8f00 100%);
+            color: #000;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px solid #ffab00;
+        }
+        .draft-management h4 {
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        .btn-draft {
+            background: #fff;
+            color: #ff8f00;
+            border: 2px solid #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+        }
+        .btn-draft:hover {
+            background: #ff8f00;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 143, 0, 0.3);
+        }
+        .draft-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+        .draft-timestamp {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -107,8 +145,41 @@
                 <p class="mb-0">詳細情報を追加して、魅力的な店舗ページを作成しましょう</p>
             </div>
 
-            <!-- Progress Steps -->
+            <!-- Draft Management Section -->
             <div class="form-section">
+                <div class="draft-management" id="draftManagement">
+                    <h4><i class="bi bi-file-earmark-text"></i> 下書き管理</h4>
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div id="draftStatus">
+                                <p class="mb-0">自動保存機能で作業内容を安全に保持します</p>
+                                <div class="draft-timestamp" id="lastSaved">最終保存: まだ保存されていません</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button type="button" class="btn btn-draft" onclick="saveDraft()">
+                                <i class="bi bi-cloud-arrow-up"></i> 下書き保存
+                            </button>
+                            <button type="button" class="btn btn-draft" onclick="loadDraft()" id="loadDraftBtn" style="display: none;">
+                                <i class="bi bi-cloud-arrow-down"></i> 下書き読込
+                            </button>
+                        </div>
+                    </div>
+                    <div class="draft-info" id="draftInfo" style="display: none;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small><strong>保存された項目:</strong></small>
+                                <div id="savedItems" class="draft-timestamp"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <small><strong>下書き保存日時:</strong></small>
+                                <div id="draftTimestamp" class="draft-timestamp"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Steps -->
                 <div class="progress-steps">
                     <div class="text-center">
                         <div class="step completed">
@@ -747,7 +818,192 @@
             alert(`画像数を${halfCount}枚に削減しました。再度保存してください。`);
         }
 
-        console.log('✅ Sponsor Edit Page Loaded');
+        // Draft Management Functions
+        function saveDraft() {
+            console.log('💾 Saving draft...');
+            
+            const formData = getFormData();
+            if (!formData.storeName.trim()) {
+                alert('店舗名が入力されていません。最低限店舗名を入力してから保存してください。');
+                return;
+            }
+
+            const draftKey = `draft_${sponsorId}`;
+            const draftData = {
+                ...formData,
+                status: 'draft',
+                savedAt: new Date().toISOString(),
+                savedItems: getSavedItemsList(formData)
+            };
+
+            try {
+                localStorage.setItem(draftKey, JSON.stringify(draftData));
+                updateDraftUI(draftData);
+                
+                // Show success feedback
+                const btn = event.target;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> 保存完了';
+                btn.style.background = '#28a745';
+                btn.style.color = 'white';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '#fff';
+                    btn.style.color = '#ff8f00';
+                }, 2000);
+                
+                console.log('✅ Draft saved successfully');
+            } catch (error) {
+                console.error('❌ Failed to save draft:', error);
+                alert('下書きの保存に失敗しました：' + error.message);
+            }
+        }
+
+        function loadDraft() {
+            console.log('📥 Loading draft...');
+            
+            const draftKey = `draft_${sponsorId}`;
+            const savedDraft = localStorage.getItem(draftKey);
+            
+            if (savedDraft) {
+                try {
+                    const draftData = JSON.parse(savedDraft);
+                    
+                    if (confirm('保存された下書きを読み込みますか？現在の入力内容は失われます。')) {
+                        populateFormWithData(draftData);
+                        updateDraftUI(draftData);
+                        console.log('✅ Draft loaded successfully');
+                        
+                        // Show success feedback
+                        const btn = event.target;
+                        const originalText = btn.innerHTML;
+                        btn.innerHTML = '<i class="bi bi-check-circle"></i> 読込完了';
+                        btn.style.background = '#28a745';
+                        btn.style.color = 'white';
+                        
+                        setTimeout(() => {
+                            btn.innerHTML = originalText;
+                            btn.style.background = '#fff';
+                            btn.style.color = '#ff8f00';
+                        }, 2000);
+                    }
+                } catch (error) {
+                    console.error('❌ Failed to load draft:', error);
+                    alert('下書きの読み込みに失敗しました：' + error.message);
+                }
+            } else {
+                alert('保存された下書きが見つかりません。');
+            }
+        }
+
+        function checkForExistingDraft() {
+            console.log('🔍 Checking for existing draft...');
+            
+            const draftKey = `draft_${sponsorId}`;
+            const savedDraft = localStorage.getItem(draftKey);
+            
+            if (savedDraft) {
+                try {
+                    const draftData = JSON.parse(savedDraft);
+                    document.getElementById('loadDraftBtn').style.display = 'inline-block';
+                    updateDraftUI(draftData);
+                    
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.className = 'alert alert-warning alert-dismissible fade show';
+                    notification.innerHTML = `
+                        <strong>下書きが見つかりました！</strong> 
+                        ${new Date(draftData.savedAt).toLocaleString()}に保存された下書きがあります。
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    const draftManagement = document.getElementById('draftManagement');
+                    draftManagement.insertAdjacentElement('afterend', notification);
+                    
+                    console.log('📋 Found existing draft from:', draftData.savedAt);
+                } catch (error) {
+                    console.error('❌ Error checking draft:', error);
+                }
+            }
+        }
+
+        function updateDraftUI(draftData) {
+            const lastSaved = document.getElementById('lastSaved');
+            const draftInfo = document.getElementById('draftInfo');
+            const savedItems = document.getElementById('savedItems');
+            const draftTimestamp = document.getElementById('draftTimestamp');
+
+            lastSaved.textContent = `最終保存: ${new Date(draftData.savedAt).toLocaleString()}`;
+            draftInfo.style.display = 'block';
+            savedItems.textContent = draftData.savedItems.join(', ');
+            draftTimestamp.textContent = new Date(draftData.savedAt).toLocaleString();
+        }
+
+        function getSavedItemsList(formData) {
+            const items = [];
+            if (formData.storeName) items.push('店舗名');
+            if (formData.detailedDescription) items.push('詳細説明');
+            if (formData.specialty) items.push('専門・特色');
+            if (formData.atmosphere) items.push('雰囲気');
+            if (formData.detailedDiscount) items.push('割引詳細');
+            if (formData.services && formData.services.length > 0) items.push('サービス');
+            if (formData.priceRange) items.push('価格帯');
+            if (formData.capacity) items.push('収容人数');
+            if (formData.accessInfo) items.push('アクセス情報');
+            if (formData.nearestStation) items.push('最寄り駅');
+            if (formData.parkingInfo) items.push('駐車場情報');
+            
+            return items.length > 0 ? items : ['基本情報'];
+        }
+
+        function populateFormWithData(data) {
+            // Basic fields
+            if (data.detailedDescription) document.getElementById('detailedDescription').value = data.detailedDescription;
+            if (data.specialty) document.getElementById('specialty').value = data.specialty;
+            if (data.atmosphere) document.getElementById('atmosphere').value = data.atmosphere;
+            if (data.detailedDiscount) document.getElementById('detailedDiscount').value = data.detailedDiscount;
+            if (data.priceRange) document.getElementById('priceRange').value = data.priceRange;
+            if (data.capacity) document.getElementById('capacity').value = data.capacity;
+            if (data.accessInfo) document.getElementById('accessInfo').value = data.accessInfo;
+            if (data.nearestStation) document.getElementById('nearestStation').value = data.nearestStation;
+            if (data.parkingInfo) document.getElementById('parkingInfo').value = data.parkingInfo;
+
+            // Services checkboxes
+            if (data.services && Array.isArray(data.services)) {
+                data.services.forEach(service => {
+                    const checkbox = document.querySelector(`input[name="services"][value="${service}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+            }
+        }
+
+        // Auto-save functionality
+        let autoSaveTimer;
+        function setupAutoSave() {
+            const form = document.getElementById('sponsorEditForm');
+            const inputs = form.querySelectorAll('input, textarea, select');
+            
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    clearTimeout(autoSaveTimer);
+                    autoSaveTimer = setTimeout(() => {
+                        console.log('🔄 Auto-saving...');
+                        saveDraft();
+                    }, 30000); // Auto-save after 30 seconds of inactivity
+                });
+            });
+        }
+
+        // Initialize draft management on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                checkForExistingDraft();
+                setupAutoSave();
+            }, 1000);
+        });
+
+        console.log('✅ Sponsor Edit Page with Draft Management Loaded');
     </script>
 </body>
 </html>

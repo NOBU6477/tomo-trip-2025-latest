@@ -13,6 +13,16 @@ User confirmed preference for production-ready solution prioritizing:
 4. Scalable architecture for growth
 
 ## Recent Updates (August 2025)
+- **Major Conceptual Revision**: Removed draft management from public sponsor list pages (sponsor-list.html)
+  - Public sponsor list is now exclusively for tourists/customers viewing published stores
+  - Implemented modern, stylish dark gradient design with glass morphism effects
+  - Enhanced with premium typography (Inter font) and professional card layouts
+- **Draft Management System**: Moved to individual store edit pages (sponsor-edit.html)
+  - Added prominent draft management section at top of edit pages
+  - Implemented auto-save functionality (30-second intervals)
+  - Manual save/load draft buttons with visual feedback
+  - Draft timestamp tracking and saved items overview
+  - Yellow gradient design for draft management UI to distinguish from main content
 - Comprehensive SEO optimization implemented for sponsor-list.html
 - Unified sponsor login/registration concept: login now requires store name, email, phone (matching registration form)
 - Fixed sponsor preview functionality with dedicated sponsor-preview.html page
