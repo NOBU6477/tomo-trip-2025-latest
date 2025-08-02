@@ -552,7 +552,10 @@
         // Load sponsors data (only published ones)
         function loadSponsors() {
             const allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-            allSponsors = allSponsorsData.filter(sponsor => sponsor.status === 'published');
+            // Include both published and explicitly status-less sponsors (for backward compatibility)
+            allSponsors = allSponsorsData.filter(sponsor => 
+                sponsor.status === 'published' || !sponsor.status
+            );
             filteredSponsors = [...allSponsors];
         }
 

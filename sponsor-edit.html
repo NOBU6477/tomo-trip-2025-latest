@@ -822,13 +822,21 @@
         function saveDraft() {
             console.log('💾 Saving draft...');
             
-            const formData = getFormData();
-            if (!formData.storeName.trim()) {
+            const formData = collectFormData();
+            if (!formData || !formData.storeName || !formData.storeName.trim()) {
                 alert('店舗名が入力されていません。最低限店舗名を入力してから保存してください。');
                 return;
             }
 
-            const draftKey = `draft_${sponsorId}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSponsorId = urlParams.get('id');
+            
+            if (!currentSponsorId) {
+                alert('店舗IDが見つかりません。');
+                return;
+            }
+
+            const draftKey = `draft_${currentSponsorId}`;
             const draftData = {
                 ...formData,
                 status: 'draft',
@@ -863,7 +871,15 @@
         function loadDraft() {
             console.log('📥 Loading draft...');
             
-            const draftKey = `draft_${sponsorId}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSponsorId = urlParams.get('id');
+            
+            if (!currentSponsorId) {
+                alert('店舗IDが見つかりません。');
+                return;
+            }
+            
+            const draftKey = `draft_${currentSponsorId}`;
             const savedDraft = localStorage.getItem(draftKey);
             
             if (savedDraft) {
@@ -900,7 +916,15 @@
         function checkForExistingDraft() {
             console.log('🔍 Checking for existing draft...');
             
-            const draftKey = `draft_${sponsorId}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const currentSponsorId = urlParams.get('id');
+            
+            if (!currentSponsorId) {
+                console.log('No sponsor ID found in URL');
+                return;
+            }
+            
+            const draftKey = `draft_${currentSponsorId}`;
             const savedDraft = localStorage.getItem(draftKey);
             
             if (savedDraft) {
@@ -971,8 +995,19 @@
 
             // Services checkboxes
             if (data.services && Array.isArray(data.services)) {
+                // First clear all checkboxes
+                document.querySelectorAll('input[name="services"]').forEach(cb => cb.checked = false);
+                // Then check the saved ones
                 data.services.forEach(service => {
-                    const checkbox = document.querySelector(`input[name="services"][value="${service}"]`);
+                    let checkboxId;
+                    switch(service) {
+                        case 'wifi': checkboxId = 'serviceWifi'; break;
+                        case 'parking': checkboxId = 'serviceParking'; break;
+                        case 'card': checkboxId = 'serviceCard'; break;
+                        case 'barrier-free': checkboxId = 'serviceBarrierFree'; break;
+                        default: checkboxId = `service${service.charAt(0).toUpperCase() + service.slice(1)}`;
+                    }
+                    const checkbox = document.getElementById(checkboxId);
                     if (checkbox) checkbox.checked = true;
                 });
             }
