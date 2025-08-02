@@ -249,6 +249,20 @@
                             <button class="btn btn-primary" onclick="goBackToEdit()">
                                 <i class="bi bi-arrow-left"></i> 編集ページに戻る
                             </button>
+                            <script>
+                                function goBackToEdit() {
+                                    // 新しいタブで開かれた場合は、編集ページを開く
+                                    if (window.opener) {
+                                        window.close();
+                                        if (window.opener && !window.opener.closed) {
+                                            window.opener.focus();
+                                        }
+                                    } else {
+                                        // 直接遷移の場合は編集ページに戻る
+                                        window.location.href = 'sponsor-edit.html?id=' + sponsorId;
+                                    }
+                                }
+                            </script>
                         </div>
                     </div>
                 `;
@@ -528,7 +542,7 @@
                 } else {
                     // 同じタブの場合は編集ページに戻る
                     console.log('Navigating to edit page');
-                    window.location.href = `sponsor-edit.html?id=${sponsorId}`;
+                    window.location.href = 'sponsor-edit.html?id=' + sponsorId;
                 }
             } else {
                 console.warn('No sponsor ID found, going back in history');

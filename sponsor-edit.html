@@ -911,8 +911,8 @@
                 localStorage.setItem(draftKey, JSON.stringify(draftData));
                 updateDraftUI(draftData);
                 
-                // Show success feedback
-                const btn = event.target;
+                // Show success feedback  
+                const btn = event?.target || document.querySelector('button[onclick="saveDraft()"]');
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="bi bi-check-circle"></i> 保存完了';
                 btn.style.background = '#28a745';
@@ -955,7 +955,7 @@
                         console.log('✅ Draft loaded successfully');
                         
                         // Show success feedback
-                        const btn = event.target;
+                        const btn = event?.target || document.querySelector('button[onclick="loadDraft()"]');
                         const originalText = btn.innerHTML;
                         btn.innerHTML = '<i class="bi bi-check-circle"></i> 読込完了';
                         btn.style.background = '#28a745';
