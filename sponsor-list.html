@@ -668,41 +668,52 @@
         document.getElementById('categoryFilter').addEventListener('change', applyFilters);
         document.getElementById('languageFilter').addEventListener('change', applyFilters);
 
-        // 下書き管理機能
+        // 下書き管理機能（registeredSponsorsと統合）
         function loadDrafts() {
-            const drafts = JSON.parse(localStorage.getItem('sponsorDrafts') || '[]');
-            document.getElementById('draftCount').textContent = drafts.length;
+            const allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            const drafts = allSponsorsData.filter(sponsor => sponsor.status === 'draft');
+            
+            const draftCountElement = document.getElementById('draftCount');
+            const draftToggleBtn = document.getElementById('draftToggleBtn');
+            
+            if (draftCountElement) {
+                draftCountElement.textContent = drafts.length;
+            }
             
             if (drafts.length === 0) {
-                document.getElementById('draftToggleBtn').style.display = 'none';
+                if (draftToggleBtn) {
+                    draftToggleBtn.style.display = 'none';
+                }
                 return;
             }
 
             const draftList = document.getElementById('draftList');
-            draftList.innerHTML = drafts.map(draft => `
-                <div class="col-md-6 col-lg-4 mb-3">
-                    <div class="card border-warning">
-                        <div class="card-body">
-                            <h5 class="card-title">
-                                <i class="bi bi-file-earmark-text text-warning"></i> 
-                                ${draft.storeName}
-                            </h5>
-                            <p class="card-text small text-muted">
-                                業種: ${getCategoryName(draft.category)}<br>
-                                保存日時: ${new Date(draft.savedAt).toLocaleDateString('ja-JP')}
-                            </p>
-                            <div class="d-flex gap-2">
-                                <a href="${draft.editUrl}" class="btn btn-warning btn-sm">
-                                    <i class="bi bi-pencil"></i> 編集を続ける
-                                </a>
-                                <button class="btn btn-outline-danger btn-sm" onclick="deleteDraft('${draft.id}')">
-                                    <i class="bi bi-trash"></i> 削除
-                                </button>
+            if (draftList) {
+                draftList.innerHTML = drafts.map(draft => `
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="card border-warning">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-file-earmark-text text-warning"></i> 
+                                    ${draft.storeName || '店舗名未設定'}
+                                </h5>
+                                <p class="card-text small text-muted">
+                                    業種: ${getCategoryName(draft.category)}<br>
+                                    更新日時: ${new Date(draft.lastUpdated || draft.registrationDate).toLocaleDateString('ja-JP')}
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="sponsor-edit.html?id=${draft.id}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil"></i> 編集を続ける
+                                    </a>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="deleteDraft('${draft.id}')">
+                                        <i class="bi bi-trash"></i> 削除
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
         }
 
         function getCategoryName(category) {
@@ -733,10 +744,12 @@
 
         function deleteDraft(draftId) {
             if (confirm('この下書きを削除しますか？')) {
-                let drafts = JSON.parse(localStorage.getItem('sponsorDrafts') || '[]');
-                drafts = drafts.filter(d => d.id !== draftId);
-                localStorage.setItem('sponsorDrafts', JSON.stringify(drafts));
+                let allSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                allSponsors = allSponsors.filter(s => s.id !== draftId);
+                localStorage.setItem('registeredSponsors', JSON.stringify(allSponsors));
                 loadDrafts();
+                // 統計も更新
+                updateStatistics();
             }
         }
 

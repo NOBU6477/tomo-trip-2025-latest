@@ -84,7 +84,7 @@
                     <p class="lead mb-0">お客様から見える店舗情報をプレビューできます</p>
                 </div>
                 <div class="col-md-4 text-end">
-                    <button class="btn btn-light me-2" onclick="history.back()">
+                    <button class="btn btn-light me-2" onclick="goBackToEdit()">
                         <i class="bi bi-arrow-left"></i> 戻る
                     </button>
                     <a href="sponsor-list.html" class="btn btn-outline-light">
@@ -237,7 +237,7 @@
                 'other': 'その他'
             };
 
-            // 基本情報表示
+            // 基本情報表示（強制的に要素をチェック）
             const storeName = sponsor.storeName || '店舗名未設定';
             const category = categoryNames[sponsor.category] || sponsor.category || '未分類';
             const address = sponsor.address || '住所未設定';
@@ -251,11 +251,40 @@
             console.log('  Phone:', phone);
             console.log('  Email:', email);
             
-            document.getElementById('previewStoreName').textContent = storeName;
-            document.getElementById('previewCategory').textContent = category;
-            document.getElementById('previewAddress').textContent = address;
-            document.getElementById('previewPhone').textContent = phone;
-            document.getElementById('previewEmail').textContent = email;
+            // 要素の存在確認と強制設定
+            const storeNameEl = document.getElementById('previewStoreName');
+            const categoryEl = document.getElementById('previewCategory');
+            const addressEl = document.getElementById('previewAddress');
+            const phoneEl = document.getElementById('previewPhone');
+            const emailEl = document.getElementById('previewEmail');
+            
+            console.log('🔍 Element check:');
+            console.log('  storeNameEl:', storeNameEl ? 'found' : 'NOT FOUND');
+            console.log('  categoryEl:', categoryEl ? 'found' : 'NOT FOUND');
+            console.log('  addressEl:', addressEl ? 'found' : 'NOT FOUND');
+            console.log('  phoneEl:', phoneEl ? 'found' : 'NOT FOUND');
+            console.log('  emailEl:', emailEl ? 'found' : 'NOT FOUND');
+            
+            if (storeNameEl) {
+                storeNameEl.textContent = storeName;
+                console.log('✅ Store name set to:', storeNameEl.textContent);
+            }
+            if (categoryEl) {
+                categoryEl.textContent = category;
+                console.log('✅ Category set to:', categoryEl.textContent);
+            }
+            if (addressEl) {
+                addressEl.textContent = address;
+                console.log('✅ Address set to:', addressEl.textContent);
+            }
+            if (phoneEl) {
+                phoneEl.textContent = phone;
+                console.log('✅ Phone set to:', phoneEl.textContent);
+            }
+            if (emailEl) {
+                emailEl.textContent = email;
+                console.log('✅ Email set to:', emailEl.textContent);
+            }
 
             // メイン画像
             if (sponsor.mainImage) {
@@ -285,16 +314,33 @@
                 businessHoursText = `${sponsor.openTime || '?'} - ${sponsor.closeTime || '?'}`;
             }
             
-            if (businessHoursText) {
-                document.getElementById('previewBusinessHours').textContent = businessHoursText;
-            } else {
-                document.getElementById('previewBusinessHours').textContent = '営業時間未設定';
+            const businessHoursEl = document.getElementById('previewBusinessHours');
+            const holidaysEl = document.getElementById('previewHolidays');
+            
+            console.log('🕐 Business hours check:');
+            console.log('  businessHoursEl:', businessHoursEl ? 'found' : 'NOT FOUND');
+            console.log('  holidaysEl:', holidaysEl ? 'found' : 'NOT FOUND');
+            console.log('  businessHoursText:', businessHoursText);
+            console.log('  holidays:', sponsor.holidays);
+            
+            if (businessHoursEl) {
+                if (businessHoursText) {
+                    businessHoursEl.textContent = businessHoursText;
+                    console.log('✅ Business hours set to:', businessHoursEl.textContent);
+                } else {
+                    businessHoursEl.textContent = '営業時間未設定';
+                    console.log('⚠️ Business hours set to default');
+                }
             }
             
-            if (sponsor.holidays) {
-                document.getElementById('previewHolidays').textContent = `定休日: ${sponsor.holidays}`;
-            } else {
-                document.getElementById('previewHolidays').textContent = '定休日: 未設定';
+            if (holidaysEl) {
+                if (sponsor.holidays) {
+                    holidaysEl.textContent = `定休日: ${sponsor.holidays}`;
+                    console.log('✅ Holidays set to:', holidaysEl.textContent);
+                } else {
+                    holidaysEl.textContent = '定休日: 未設定';
+                    console.log('⚠️ Holidays set to default');
+                }
             }
 
             // 店舗説明
