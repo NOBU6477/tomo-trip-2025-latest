@@ -357,6 +357,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
   <!-- ストレージ最適化システム -->
   <script src="sponsor-storage-optimization.js"></script>
+  <!-- 緊急修復システム -->
+  <script src="emergency-storage-fix.js"></script>
     <script>
         let currentSponsorId = null;
         let currentSponsorData = null;
@@ -901,17 +903,28 @@
             });
         }
 
-        // 新しいストレージシステムを使用したデータ更新
+        // 新しいストレージシステムを使用したデータ更新（緊急修復機能付き）
         async function updateSponsorData(editData) {
             try {
                 console.log('🔄 新しいストレージシステムで保存開始...');
                 
                 // スマートストレージマネージャーを使用
                 if (window.sponsorStorage) {
-                    const success = await window.sponsorStorage.saveStore(editData);
+                    let success = await window.sponsorStorage.saveStore(editData);
+                    
+                    // 保存失敗時は緊急修復を試行
+                    if (!success && window.EmergencyStorageFix) {
+                        console.log('⚠️ 通常保存失敗、緊急修復実行中...');
+                        
+                        const fixResult = await window.EmergencyStorageFix.autoFix();
+                        if (fixResult) {
+                            console.log('✅ 緊急修復完了、再保存試行');
+                            success = await window.sponsorStorage.saveStore(editData);
+                        }
+                    }
                     
                     if (success) {
-                        // 従来システムとの互換性のためのバックアップ保存
+                        // 従来システムとの互換性のためのバックアップ保存（エラーハンドリング強化）
                         try {
                             let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
                             const index = sponsors.findIndex(s => s.id === editData.id);
@@ -922,21 +935,29 @@
                                 sponsors.push(editData);
                             }
                             
+                            // 最大10件まで
+                            if (sponsors.length > 10) {
+                                sponsors = sponsors.slice(-10);
+                            }
+                            
                             // サイズチェック後に保存
                             const dataSize = new Blob([JSON.stringify(sponsors)]).size;
-                            if (dataSize < 2 * 1024 * 1024) { // 2MB未満なら保存
+                            if (dataSize < 1 * 1024 * 1024) { // 1MB未満なら保存
                                 localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
                                 console.log('✅ Legacy storage updated');
+                            } else {
+                                console.log('⚠️ Legacy storage skipped: size too large');
                             }
                         } catch (legacyError) {
-                            console.log('⚠️ Legacy storage skipped:', legacyError.message);
+                            console.log('⚠️ Legacy storage error:', legacyError.message);
                         }
                         
                         currentSponsorData = editData;
                         console.log('✅ 新しいストレージシステムで保存完了');
                         return true;
                     } else {
-                        console.error('❌ 新しいストレージシステムでの保存に失敗');
+                        console.error('❌ 緊急修復後も保存に失敗');
+                        alert('データサイズが大きすぎます。画像を削除するか、内容を簡潔にしてください。');
                         return false;
                     }
                 } else {
@@ -947,6 +968,22 @@
                 
             } catch (error) {
                 console.error('❌ ストレージシステムエラー:', error);
+                
+                // 容量エラーの場合は自動修復を提案
+                if (error.message.includes('quota') || error.message.includes('exceed')) {
+                    if (confirm('ストレージ容量が不足しています。自動修復を実行しますか？\n\n※古いデータや不要なファイルが削除されます')) {
+                        try {
+                            const fixed = await window.EmergencyStorageFix.autoFix();
+                            if (fixed) {
+                                alert('修復完了しました。再度保存してください。');
+                                return false; // 再保存が必要
+                            }
+                        } catch (fixError) {
+                            console.error('修復エラー:', fixError);
+                        }
+                    }
+                }
+                
                 alert('保存中にエラーが発生しました：' + error.message);
                 return false;
             }

@@ -336,16 +336,51 @@
                 console.log('✅ Email set to:', emailEl.textContent);
             }
 
-            // メイン画像
+            // メイン画像（エラーハンドリング強化）
             if (sponsor.mainImage) {
                 const img = document.getElementById('previewImage');
-                img.src = sponsor.mainImage;
-                img.style.display = 'block';
+                try {
+                    if (sponsor.mainImage.startsWith('data:image/')) {
+                        img.src = sponsor.mainImage;
+                    } else if (sponsor.mainImage.startsWith('http')) {
+                        img.src = sponsor.mainImage;
+                    } else if (sponsor.mainImage && sponsor.mainImage.trim() !== '') {
+                        img.src = sponsor.mainImage;
+                    } else {
+                        throw new Error('Invalid image source');
+                    }
+                    
+                    img.onerror = function() {
+                        console.log('⚠️ メイン画像読み込みエラー、プレースホルダー表示');
+                        img.style.display = 'none';
+                        const placeholder = document.createElement('div');
+                        placeholder.className = 'image-placeholder text-center p-4';
+                        placeholder.innerHTML = '<i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i><p class="mt-2 text-muted">画像を読み込めませんでした</p>';
+                        img.parentNode.insertBefore(placeholder, img);
+                    };
+                    
+                    img.style.display = 'block';
+                } catch (error) {
+                    console.error('メイン画像処理エラー:', error);
+                    img.style.display = 'none';
+                }
             } else if (sponsor.additionalImages && sponsor.additionalImages.length > 0) {
                 // メイン画像がない場合は追加画像の最初の画像を使用
                 const img = document.getElementById('previewImage');
-                img.src = sponsor.additionalImages[0];
-                img.style.display = 'block';
+                try {
+                    const firstImage = sponsor.additionalImages[0];
+                    if (firstImage && firstImage.trim() !== '') {
+                        img.src = firstImage;
+                        img.onerror = function() {
+                            console.log('⚠️ 代替画像読み込みエラー');
+                            img.style.display = 'none';
+                        };
+                        img.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('代替画像処理エラー:', error);
+                    img.style.display = 'none';
+                }
             }
 
             // ウェブサイト

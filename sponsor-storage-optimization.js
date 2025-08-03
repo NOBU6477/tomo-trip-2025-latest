@@ -107,26 +107,66 @@ class SponsorStorageManager {
     }
 
     /**
-     * 分散保存システム
+     * 分散保存システム（容量制限対応強化版）
      */
     async saveStore(storeData) {
         try {
             console.log('💾 最適化保存開始:', storeData.id);
             
-            // データ最適化
+            // 事前に容量チェック・クリーンアップ
+            const currentUsage = this.getStorageUsage();
+            if (parseFloat(currentUsage.usagePercent) > 75) {
+                console.log('⚠️ 容量75%超過、事前クリーンアップ実行');
+                await this.aggressiveCleanup();
+            }
+            
+            // データ最適化（より厳格）
             const optimized = await this.optimizeStoreData(storeData);
             
-            // サイズチェック
+            // サイズチェック（より厳格）
             const storeSize = this.calculateSize(optimized);
             console.log('📊 最適化後サイズ:', (storeSize / 1024).toFixed(2), 'KB');
             
-            if (storeSize > 500 * 1024) { // 500KB制限
-                throw new Error('データサイズが大きすぎます（500KB制限）');
+            if (storeSize > 300 * 1024) { // 300KBに制限を厳格化
+                console.log('⚠️ サイズ超過、追加最適化実行');
+                // 追加最適化
+                if (optimized.mainImage) {
+                    optimized.mainImage = await this.compressImage(optimized.mainImage, 300, 0.4);
+                }
+                if (optimized.logoImage) {
+                    optimized.logoImage = await this.compressImage(optimized.logoImage, 100, 0.5);
+                }
+                if (optimized.additionalImages) {
+                    optimized.additionalImages = optimized.additionalImages.slice(0, 1); // 1枚まで
+                    optimized.additionalImages = await Promise.all(
+                        optimized.additionalImages.map(img => this.compressImage(img, 200, 0.3))
+                    );
+                }
+                
+                const newSize = this.calculateSize(optimized);
+                console.log('🔄 追加最適化後:', (newSize / 1024).toFixed(2), 'KB');
+                
+                if (newSize > 300 * 1024) {
+                    throw new Error('データサイズを300KB以下に圧縮できませんでした');
+                }
             }
 
-            // 個別キーで保存
+            // 保存前に古いバージョンを削除
             const storeKey = `store_${optimized.id}`;
-            localStorage.setItem(storeKey, JSON.stringify(optimized));
+            if (localStorage.getItem(storeKey)) {
+                localStorage.removeItem(storeKey);
+                console.log('🗑️ 既存データ削除:', optimized.id);
+            }
+
+            // 個別キーで保存（エラーハンドリング強化）
+            try {
+                localStorage.setItem(storeKey, JSON.stringify(optimized));
+            } catch (quotaError) {
+                console.log('❌ 容量不足、緊急クリーンアップ実行');
+                await this.emergencyCleanup();
+                // 再試行
+                localStorage.setItem(storeKey, JSON.stringify(optimized));
+            }
             
             // メタデータ更新
             this.updateMetadata(optimized.id, {
@@ -134,7 +174,7 @@ class SponsorStorageManager {
                 storeName: optimized.storeName,
                 category: optimized.category,
                 status: optimized.status || 'published',
-                size: storeSize
+                size: this.calculateSize(optimized)
             });
 
             // アクティブリストに追加
@@ -145,14 +185,6 @@ class SponsorStorageManager {
             
         } catch (error) {
             console.error('❌ 保存エラー:', error.message);
-            
-            // 容量不足の場合、古いデータを削除
-            if (error.name === 'QuotaExceededError' || error.message.includes('quota')) {
-                await this.cleanupOldData();
-                // 再試行
-                return await this.saveStore(storeData);
-            }
-            
             return false;
         }
     }
@@ -217,10 +249,10 @@ class SponsorStorageManager {
     }
 
     /**
-     * 古いデータのクリーンアップ
+     * 標準クリーンアップ（7日経過データ削除）
      */
     async cleanupOldData() {
-        console.log('🧹 データクリーンアップ開始...');
+        console.log('🧹 標準クリーンアップ開始...');
         
         try {
             const metadata = this.getMetadata();
@@ -251,11 +283,93 @@ class SponsorStorageManager {
                 }
             }
             
-            console.log(`✅ クリーンアップ完了: ${cleanedCount}件削除`);
+            console.log(`✅ 標準クリーンアップ完了: ${cleanedCount}件削除`);
             return cleanedCount;
             
         } catch (error) {
             console.error('Cleanup error:', error);
+            return 0;
+        }
+    }
+
+    /**
+     * 積極的クリーンアップ（3日経過データ削除）
+     */
+    async aggressiveCleanup() {
+        console.log('🔥 積極的クリーンアップ開始...');
+        
+        try {
+            const metadata = this.getMetadata();
+            const activeStores = JSON.parse(localStorage.getItem(this.activeStoresKey) || '[]');
+            
+            // 3日以上古いデータを削除
+            const cutoffDate = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+            let cleanedCount = 0;
+            
+            Object.entries(metadata).forEach(([storeId, meta]) => {
+                const lastUpdated = new Date(meta.lastUpdated || 0);
+                if (lastUpdated < cutoffDate && !activeStores.slice(0, 20).includes(storeId)) {
+                    this.removeStore(storeId);
+                    cleanedCount++;
+                }
+            });
+            
+            console.log(`🔥 積極的クリーンアップ完了: ${cleanedCount}件削除`);
+            return cleanedCount;
+            
+        } catch (error) {
+            console.error('Aggressive cleanup error:', error);
+            return 0;
+        }
+    }
+
+    /**
+     * 緊急クリーンアップ（容量不足時の強制削除）
+     */
+    async emergencyCleanup() {
+        console.log('🆘 緊急クリーンアップ開始...');
+        
+        try {
+            let cleanedCount = 0;
+            
+            // 1. 古いregisteredSponsorsデータを削除
+            if (localStorage.getItem('registeredSponsors')) {
+                const sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                if (sponsors.length > 10) {
+                    const keepSponsors = sponsors.slice(-10); // 最新10件のみ保持
+                    localStorage.setItem('registeredSponsors', JSON.stringify(keepSponsors));
+                    cleanedCount += sponsors.length - 10;
+                }
+            }
+            
+            // 2. 全てのドラフトデータを削除
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const key = localStorage.key(i);
+                if (key && (key.startsWith('draft_') || key.includes('_timestamp'))) {
+                    localStorage.removeItem(key);
+                    cleanedCount++;
+                }
+            }
+            
+            // 3. 最古の店舗データを削除（最新20件以外）
+            const metadata = this.getMetadata();
+            const sortedStores = Object.entries(metadata).sort(
+                ([,a], [,b]) => new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0)
+            );
+            
+            if (sortedStores.length > 20) {
+                const storesToRemove = sortedStores.slice(20);
+                storesToRemove.forEach(([storeId]) => {
+                    this.removeStore(storeId);
+                    cleanedCount++;
+                });
+            }
+            
+            console.log(`🆘 緊急クリーンアップ完了: ${cleanedCount}件削除`);
+            return cleanedCount;
+            
+        } catch (error) {
+            console.error('Emergency cleanup error:', error);
             return 0;
         }
     }
