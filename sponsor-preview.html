@@ -172,7 +172,7 @@
         console.log('📍 Current URL:', window.location.href);
         console.log('🆔 Sponsor ID from URL:', sponsorId);
 
-        // 店舗データを読み込んでプレビュー表示
+        // 店舗データを読み込んでプレビュー表示（強化版）
         function loadPreview() {
             console.log('Loading preview for ID:', sponsorId);
             
@@ -196,7 +196,20 @@
                 }
             }
             
-            // 2. registeredSponsorsから取得
+            // 2. 直接IDキーでの取得
+            if (!sponsor) {
+                const directData = localStorage.getItem(sponsorId);
+                if (directData) {
+                    try {
+                        sponsor = JSON.parse(directData);
+                        console.log('✅ Found direct ID data:', sponsor);
+                    } catch (e) {
+                        console.error('Failed to parse direct data:', e);
+                    }
+                }
+            }
+            
+            // 3. registeredSponsorsから取得
             if (!sponsor) {
                 const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
                 sponsor = registeredSponsors.find(s => s.id === sponsorId);
@@ -205,7 +218,7 @@
                 }
             }
             
-            // 3. 個別保存データを確認
+            // 4. 個別保存データを確認
             if (!sponsor) {
                 const storeKey = `store_${sponsorId}`;
                 const storeData = localStorage.getItem(storeKey);
@@ -219,7 +232,30 @@
                 }
             }
             
+            // 5. 最後の手段：全てのキーをスキャン
             if (!sponsor) {
+                console.log('🔍 Scanning all localStorage keys...');
+                const allKeys = Object.keys(localStorage);
+                console.log('All available keys:', allKeys);
+                
+                for (const key of allKeys) {
+                    if (key.includes(sponsorId) || key.includes(sponsorId.replace('sponsor_', ''))) {
+                        try {
+                            const data = JSON.parse(localStorage.getItem(key));
+                            if (data && (data.id === sponsorId || data.storeName)) {
+                                sponsor = data;
+                                console.log('✅ Found via key scan:', key, sponsor);
+                                break;
+                            }
+                        } catch (e) {
+                            console.error('Failed to parse scanned data:', key, e);
+                        }
+                    }
+                }
+            }
+            
+            if (!sponsor) {
+                console.error('❌ No data found for ID:', sponsorId);
                 showError(`店舗ID: ${sponsorId} のデータが見つかりません`);
                 return;
             }
