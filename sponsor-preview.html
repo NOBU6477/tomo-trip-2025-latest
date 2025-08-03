@@ -526,9 +526,36 @@
             }
         }
 
+        // デバッグ用：手動でプレビューをリロード
+        function debugReload() {
+            console.log('🔄 Manual debug reload triggered');
+            loadPreview();
+        }
+        
+        // デバッグ用：LocalStorageの全内容を表示
+        function showAllStorage() {
+            console.log('📊 COMPLETE STORAGE DUMP:');
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                console.log(`Key: ${key}`, value);
+            }
+        }
+
         // ページロード時に実行
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🔍 Preview page DOM loaded');
+            
+            // デバッグ用のグローバル関数を追加
+            window.debugReload = debugReload;
+            window.showAllStorage = showAllStorage;
+            window.sponsorId = sponsorId;
+            
+            console.log('🔧 Preview Debug functions available:');
+            console.log('  - debugReload() - reload preview');
+            console.log('  - showAllStorage() - show all localStorage');
+            console.log('  - sponsorId - current sponsor ID:', sponsorId);
+            
             loadPreview();
         });
     </script>
