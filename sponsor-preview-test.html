@@ -23,6 +23,7 @@
                         <button class="btn btn-primary" onclick="createTestData()">テストデータ作成</button>
                         <button class="btn btn-success ms-2" onclick="checkData()">データ確認</button>
                         <button class="btn btn-warning ms-2" onclick="clearData()">データクリア</button>
+                        <button class="btn btn-info ms-2" onclick="forceCreateSpecificData()">強制修復</button>
                     </div>
                     
                     <div class="alert alert-secondary">
@@ -109,10 +110,19 @@
                 
                 testDataArray.forEach(testData => {
                     try {
-                        // 複数の場所に保存
+                        // 複数の場所に保存（より確実に）
                         localStorage.setItem(`preview_${testData.id}`, JSON.stringify(testData));
                         localStorage.setItem(`store_${testData.id}`, JSON.stringify(testData));
-                        localStorage.setItem(testData.id, JSON.stringify(testData));  // 直接IDキーでも保存
+                        localStorage.setItem(testData.id, JSON.stringify(testData));
+                        
+                        // 短縮IDでも保存（kyoto_1754228561541の場合）
+                        const shortId = testData.id.replace('sponsor_', '');
+                        if (shortId !== testData.id) {
+                            localStorage.setItem(shortId, JSON.stringify(testData));
+                            localStorage.setItem(`preview_${shortId}`, JSON.stringify(testData));
+                        }
+                        
+                        console.log(`✅ Saved test data: ${testData.storeName} with ID: ${testData.id}`);
                         successCount++;
                     } catch (error) {
                         console.error('Failed to save test data:', testData.storeName, error);
@@ -200,6 +210,53 @@
             if (!previewWindow) {
                 window.location.href = previewUrl;
             }
+        }
+        
+        function forceCreateSpecificData() {
+            // 問題のあったIDを直接修復
+            const problemId = 'kyoto_1754228561541';
+            const fullId = 'sponsor_kyoto_1754228561541';
+            
+            const fixData = {
+                id: fullId,
+                storeName: '京都伝統工芸館（修復版）',
+                category: 'shopping',
+                address: '京都府京都市東山区清水2-208',
+                phone: '075-561-1234',
+                email: 'info@kyoto-craft.jp',
+                website: 'https://kyoto-craft.jp',
+                openTime: '9:00',
+                closeTime: '18:00',
+                holidays: '月曜日',
+                detailedDescription: '京都の伝統工芸品を展示・販売。職人による実演も見学できます。',
+                detailedDiscount: 'TomoTripユーザーには15%割引＋記念品プレゼント',
+                published: true,
+                status: 'active',
+                createdAt: new Date().toISOString(),
+                lastUpdated: new Date().toISOString()
+            };
+            
+            // 複数のキーパターンで保存
+            const keys = [
+                problemId,
+                fullId,
+                `preview_${problemId}`,
+                `preview_${fullId}`,
+                `store_${problemId}`,
+                `store_${fullId}`
+            ];
+            
+            keys.forEach(key => {
+                try {
+                    localStorage.setItem(key, JSON.stringify(fixData));
+                    console.log(`Fixed data saved with key: ${key}`);
+                } catch (error) {
+                    console.error(`Failed to save with key ${key}:`, error);
+                }
+            });
+            
+            alert('強制修復完了。プレビューテストを再実行してください。');
+            updateDisplay();
         }
         
         // ページ読み込み時に表示更新

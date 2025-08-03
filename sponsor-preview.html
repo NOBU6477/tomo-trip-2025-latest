@@ -238,8 +238,9 @@
                 const allKeys = Object.keys(localStorage);
                 console.log('All available keys:', allKeys);
                 
+                // まず部分一致で検索
                 for (const key of allKeys) {
-                    if (key.includes(sponsorId) || key.includes(sponsorId.replace('sponsor_', ''))) {
+                    if (key.includes(sponsorId) || sponsorId.includes(key)) {
                         try {
                             const data = JSON.parse(localStorage.getItem(key));
                             if (data && (data.id === sponsorId || data.storeName)) {
@@ -252,11 +253,53 @@
                         }
                     }
                 }
+                
+                // さらに見つからない場合、全てのデータを確認
+                if (!sponsor) {
+                    for (const key of allKeys) {
+                        try {
+                            const data = localStorage.getItem(key);
+                            if (data && data.includes(sponsorId)) {
+                                const parsedData = JSON.parse(data);
+                                if (parsedData.id === sponsorId || 
+                                    (Array.isArray(parsedData) && parsedData.find(item => item.id === sponsorId))) {
+                                    sponsor = Array.isArray(parsedData) ? 
+                                        parsedData.find(item => item.id === sponsorId) : parsedData;
+                                    console.log('✅ Found via deep scan:', key, sponsor);
+                                    break;
+                                }
+                            }
+                        } catch (e) {
+                            // JSON以外のデータは無視
+                        }
+                    }
+                }
             }
             
             if (!sponsor) {
                 console.error('❌ No data found for ID:', sponsorId);
-                showError(`店舗ID: ${sponsorId} のデータが見つかりません`);
+                
+                // デバッグ情報を詳細に表示
+                console.log('Debug info for missing data:');
+                console.log('- Searched ID:', sponsorId);
+                console.log('- Available localStorage keys:', Object.keys(localStorage));
+                console.log('- registeredSponsors content:', localStorage.getItem('registeredSponsors'));
+                
+                // 緊急対策：類似IDでの検索
+                const allKeys = Object.keys(localStorage);
+                const possibleKeys = allKeys.filter(key => 
+                    key.includes('sponsor') || 
+                    key.includes('kyoto') || 
+                    key.includes('test') ||
+                    key.includes(sponsorId.split('_').pop())
+                );
+                
+                if (possibleKeys.length > 0) {
+                    console.log('Possible matching keys found:', possibleKeys);
+                    showError(`店舗ID: ${sponsorId} のデータが見つかりません。\n\n利用可能なデータ: ${possibleKeys.join(', ')}\n\nテストページに戻ってデータを確認してください。`);
+                } else {
+                    showError(`店舗ID: ${sponsorId} のデータが見つかりません。\n\nテストページでデータを作成してからプレビューしてください。`);
+                }
                 return;
             }
 
