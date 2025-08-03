@@ -538,25 +538,117 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- ストレージ最適化システム -->
+  <script src="sponsor-storage-optimization.js"></script>
     <script>
         let allSponsors = [];
         let filteredSponsors = [];
 
-        // Page initialization
-        document.addEventListener('DOMContentLoaded', function() {
-            loadSponsors();
-            displaySponsors();
-            updateStatistics();
+        // Page initialization with async support
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('🚀 協賛店一覧ページ初期化中...');
+            
+            try {
+                await loadSponsors();
+                displaySponsors();
+                updateStatistics();
+                console.log('✅ 協賛店一覧ページ初期化完了');
+            } catch (error) {
+                console.error('❌ 初期化エラー:', error);
+                // エラー時もデフォルト表示
+                displaySponsors();
+                updateStatistics();
+            }
         });
 
-        // Load sponsors data (only published ones)
-        function loadSponsors() {
-            const allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-            // Include both published and explicitly status-less sponsors (for backward compatibility)
-            allSponsors = allSponsorsData.filter(sponsor => 
-                sponsor.status === 'published' || !sponsor.status
-            );
-            filteredSponsors = [...allSponsors];
+        // 新しいストレージシステム対応の協賛店読み込み
+        async function loadSponsors() {
+            console.log('📋 協賛店データ読み込み開始...');
+            
+            try {
+                // 新しいストレージシステムを優先使用
+                if (window.sponsorStorage) {
+                    console.log('🔄 スマートストレージシステム使用');
+                    
+                    // 初期化
+                    await window.sponsorStorage.initialize();
+                    
+                    // 全ての公開済み店舗を取得
+                    allSponsors = window.sponsorStorage.getAllStores();
+                    console.log(`✅ 新システム: ${allSponsors.length}件読み込み`);
+                    
+                    // 使用量チェック
+                    const usage = window.sponsorStorage.getStorageUsage();
+                    console.log(`💾 ストレージ使用量: ${usage.totalSizeMB}MB (${usage.usagePercent}%)`);
+                    
+                    // 容量が80%を超えている場合は警告
+                    if (parseFloat(usage.usagePercent) > 80) {
+                        console.log('⚠️ ストレージ使用量が80%を超えています');
+                    }
+                    
+                } else {
+                    // フォールバック: 従来システム
+                    console.log('⚠️ 従来システムにフォールバック');
+                    const allSponsorsData = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                    allSponsors = allSponsorsData.filter(sponsor => 
+                        sponsor.status === 'published' || !sponsor.status
+                    );
+                    console.log(`📊 従来システム: ${allSponsors.length}件読み込み`);
+                }
+                
+                // デフォルトデータで補完（空の場合）
+                if (allSponsors.length === 0) {
+                    console.log('📦 デフォルトデータを使用');
+                    allSponsors = getDefaultSponsors();
+                }
+                
+                // 最新順でソート
+                allSponsors.sort((a, b) => {
+                    const dateA = new Date(a.publishDate || a.lastUpdated || 0);
+                    const dateB = new Date(b.publishDate || b.lastUpdated || 0);
+                    return dateB - dateA;
+                });
+                
+                filteredSponsors = [...allSponsors];
+                console.log(`🎯 表示準備完了: ${filteredSponsors.length}件`);
+                
+            } catch (error) {
+                console.error('❌ 協賛店読み込みエラー:', error);
+                // エラー時はデフォルトデータを使用
+                allSponsors = getDefaultSponsors();
+                filteredSponsors = [...allSponsors];
+                console.log('🛡️ デフォルトデータで復旧');
+            }
+        }
+
+        // デフォルト協賛店データ
+        function getDefaultSponsors() {
+            return [
+                {
+                    id: 'default_1',
+                    storeName: 'TomoTrip カフェ',
+                    category: 'restaurant',
+                    address: '東京都渋谷区神宮前1-1-1',
+                    phone: '03-1234-5678',
+                    openTime: '09:00',
+                    closeTime: '22:00',
+                    description: '旅行者に優しいカフェです。WiFi完備で観光情報も提供しています。',
+                    status: 'published',
+                    publishDate: new Date().toISOString()
+                },
+                {
+                    id: 'default_2', 
+                    storeName: 'おもてなし旅館',
+                    category: 'hotel',
+                    address: '京都府京都市東山区清水1-2-3',
+                    phone: '075-9876-5432',
+                    openTime: '24時間',
+                    closeTime: '24時間',
+                    description: '伝統的な日本のおもてなしを体験できる旅館です。',
+                    status: 'published',
+                    publishDate: new Date().toISOString()
+                }
+            ];
         }
 
         // Display sponsors

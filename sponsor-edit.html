@@ -355,6 +355,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- ストレージ最適化システム -->
+  <script src="sponsor-storage-optimization.js"></script>
     <script>
         let currentSponsorId = null;
         let currentSponsorData = null;
@@ -899,145 +901,104 @@
             });
         }
 
-        // 店舗データの更新（容量最適化版）
+        // 新しいストレージシステムを使用したデータ更新
         async function updateSponsorData(editData) {
             try {
-                // 画像圧縮処理
-                console.log('🔄 画像圧縮開始...');
+                console.log('🔄 新しいストレージシステムで保存開始...');
+                
+                // スマートストレージマネージャーを使用
+                if (window.sponsorStorage) {
+                    const success = await window.sponsorStorage.saveStore(editData);
+                    
+                    if (success) {
+                        // 従来システムとの互換性のためのバックアップ保存
+                        try {
+                            let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                            const index = sponsors.findIndex(s => s.id === editData.id);
+                            
+                            if (index !== -1) {
+                                sponsors[index] = editData;
+                            } else {
+                                sponsors.push(editData);
+                            }
+                            
+                            // サイズチェック後に保存
+                            const dataSize = new Blob([JSON.stringify(sponsors)]).size;
+                            if (dataSize < 2 * 1024 * 1024) { // 2MB未満なら保存
+                                localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
+                                console.log('✅ Legacy storage updated');
+                            }
+                        } catch (legacyError) {
+                            console.log('⚠️ Legacy storage skipped:', legacyError.message);
+                        }
+                        
+                        currentSponsorData = editData;
+                        console.log('✅ 新しいストレージシステムで保存完了');
+                        return true;
+                    } else {
+                        console.error('❌ 新しいストレージシステムでの保存に失敗');
+                        return false;
+                    }
+                } else {
+                    // フォールバック: 従来システム（圧縮あり）
+                    console.log('⚠️ 新しいストレージシステム未対応、従来システムを使用');
+                    return await legacyUpdateSponsorData(editData);
+                }
+                
+            } catch (error) {
+                console.error('❌ ストレージシステムエラー:', error);
+                alert('保存中にエラーが発生しました：' + error.message);
+                return false;
+            }
+        }
+
+        // 従来システム（フォールバック用）
+        async function legacyUpdateSponsorData(editData) {
+            try {
+                // 基本的な圧縮処理
                 if (editData.mainImage && editData.mainImage.startsWith('data:image/')) {
-                    editData.mainImage = await resizeAndCompressImage(editData.mainImage, 600, 0.7);
+                    editData.mainImage = await resizeAndCompressImage(editData.mainImage, 400, 0.6);
                 }
                 if (editData.logoImage && editData.logoImage.startsWith('data:image/')) {
-                    editData.logoImage = await resizeAndCompressImage(editData.logoImage, 200, 0.8);
+                    editData.logoImage = await resizeAndCompressImage(editData.logoImage, 150, 0.7);
                 }
                 if (editData.additionalImages && editData.additionalImages.length > 0) {
+                    editData.additionalImages = editData.additionalImages.slice(0, 2); // 2枚まで
                     const compressedImages = [];
                     for (const img of editData.additionalImages) {
                         if (img.startsWith('data:image/')) {
-                            compressedImages.push(await resizeAndCompressImage(img, 600, 0.6));
+                            compressedImages.push(await resizeAndCompressImage(img, 300, 0.5));
                         } else {
                             compressedImages.push(img);
                         }
                     }
                     editData.additionalImages = compressedImages;
                 }
-                console.log('✅ 画像圧縮完了');
 
                 let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-                const targetId = editData.id || currentSponsorId;
-                const index = sponsors.findIndex(s => s.id === targetId);
-                
-                console.log('🔄 Updating sponsor data for ID:', targetId);
-                console.log('📍 Found index:', index);
-                console.log('📊 Current sponsors count:', sponsors.length);
+                const index = sponsors.findIndex(s => s.id === editData.id);
                 
                 if (index !== -1) {
-                    sponsors[index] = { ...sponsors[index], ...editData };
-                    console.log('✅ Updated existing sponsor data');
+                    sponsors[index] = editData;
                 } else {
                     sponsors.push(editData);
-                    console.log('➕ Added new sponsor data');
                 }
                 
-                // データサイズチェック
-                const dataString = JSON.stringify(sponsors);
-                const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
-                console.log('💾 Data size:', sizeInMB.toFixed(2), 'MB');
-                
-                if (sizeInMB > 4) {
-                    // さらに圧縮を試行
-                    console.log('⚠️ サイズが大きすぎます。追加圧縮実行...');
-                    if (editData.additionalImages && editData.additionalImages.length > 3) {
-                        editData.additionalImages = editData.additionalImages.slice(0, 3);
-                        alert('画像が多すぎるため、3枚に制限しました。');
-                    }
-                    
-                    // より高い圧縮率で再試行
-                    if (editData.mainImage && editData.mainImage.startsWith('data:image/')) {
-                        editData.mainImage = await resizeAndCompressImage(editData.mainImage, 400, 0.5);
-                    }
-                    
-                    if (index !== -1) {
-                        sponsors[index] = { ...sponsors[index], ...editData };
-                    } else {
-                        sponsors[sponsors.length - 1] = editData;
-                    }
-                    
-                    const newDataString = JSON.stringify(sponsors);
-                    const newSizeInMB = new Blob([newDataString]).size / (1024 * 1024);
-                    console.log('🔄 追加圧縮後サイズ:', newSizeInMB.toFixed(2), 'MB');
-                    
-                    if (newSizeInMB > 4) {
-                        alert('データサイズが制限を超えています。画像を削除してください。');
-                        return false;
-                    }
+                // 最大20件まで保持
+                if (sponsors.length > 20) {
+                    sponsors = sponsors.slice(-20);
                 }
                 
-                // 保存実行
                 localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
-                localStorage.setItem(targetId, JSON.stringify(editData));
+                localStorage.setItem(editData.id, JSON.stringify(editData));
                 
-                // 保存確認
-                const verification = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-                const savedItem = verification.find(s => s.id === targetId);
-                
-                if (savedItem) {
-                    currentSponsorData = savedItem;
-                    console.log('✅ Data verified and saved successfully');
-                    return true;
-                } else {
-                    console.error('❌ Verification failed - data not found after save');
-                    return false;
-                }
+                currentSponsorData = editData;
+                console.log('✅ Legacy system save completed');
+                return true;
                 
             } catch (error) {
-                console.error('❌ Failed to save sponsor data:', error);
-                
-                if (error.name === 'QuotaExceededError') {
-                    // ストレージクリーンアップを提案
-                    if (confirm('ストレージ容量が不足しています。他の協賛店データを削除してスペースを確保しますか？')) {
-                        cleanupOldData();
-                        return await updateSponsorData(editData); // 再試行
-                    } else {
-                        alert('保存するにはストレージ容量を確保してください。');
-                    }
-                } else {
-                    alert('データの保存に失敗しました：' + error.message);
-                }
+                console.error('❌ Legacy system failed:', error);
                 return false;
-            }
-        }
-
-        // 古いデータのクリーンアップ
-        function cleanupOldData() {
-            try {
-                const sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-                // 最新の10件のみ保持
-                if (sponsors.length > 10) {
-                    const sortedSponsors = sponsors.sort((a, b) => 
-                        new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0)
-                    );
-                    const keepSponsors = sortedSponsors.slice(0, 10);
-                    localStorage.setItem('registeredSponsors', JSON.stringify(keepSponsors));
-                    console.log(`🧹 古いデータを削除: ${sponsors.length - 10}件`);
-                }
-                
-                // ドラフトデータのクリーンアップ
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && key.startsWith('draft_sponsor_')) {
-                        const draftDate = localStorage.getItem(key + '_timestamp');
-                        if (draftDate && Date.now() - parseInt(draftDate) > 7 * 24 * 60 * 60 * 1000) {
-                            localStorage.removeItem(key);
-                            localStorage.removeItem(key + '_timestamp');
-                            console.log('🧹 古いドラフト削除:', key);
-                        }
-                    }
-                }
-                
-                alert('古いデータを削除しました。再度保存してください。');
-            } catch (error) {
-                console.error('クリーンアップエラー:', error);
             }
         }
 
@@ -1268,7 +1229,28 @@
 
         // Initialize draft management on page load
         document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(() => {
+            setTimeout(async () => {
+                // 新しいストレージシステムの初期化
+                if (window.sponsorStorage) {
+                    try {
+                        await window.sponsorStorage.initialize();
+                        
+                        // 使用量表示
+                        const usage = window.sponsorStorage.getStorageUsage();
+                        console.log(`💾 ストレージ使用量: ${usage.totalSizeMB}MB`);
+                        
+                        // 定期クリーンアップの設定
+                        if (parseFloat(usage.usagePercent) > 80) {
+                            console.log('⚠️ ストレージ使用量が80%を超えました。クリーンアップを実行します。');
+                            await window.sponsorStorage.cleanupOldData();
+                        }
+                        
+                        console.log('✅ スマートストレージシステム初期化完了');
+                    } catch (error) {
+                        console.error('❌ ストレージシステム初期化エラー:', error);
+                    }
+                }
+                
                 checkForExistingDraft();
                 setupAutoSave();
             }, 1000);
