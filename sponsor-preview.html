@@ -218,6 +218,30 @@
                 }
             }
             
+            // 3.5. 各種セッションストレージからも検索
+            if (!sponsor) {
+                const sessionKeys = ['sponsorSession', 'sponsorAccounts', 'sponsorData', 'sponsor_1'];
+                for (const key of sessionKeys) {
+                    try {
+                        const sessionData = localStorage.getItem(key);
+                        if (sessionData) {
+                            const parsed = JSON.parse(sessionData);
+                            if (Array.isArray(parsed)) {
+                                sponsor = parsed.find(s => s && s.id === sponsorId);
+                            } else if (parsed && parsed.id === sponsorId) {
+                                sponsor = parsed;
+                            }
+                            if (sponsor) {
+                                console.log(`✅ Found in session storage ${key}:`, sponsor);
+                                break;
+                            }
+                        }
+                    } catch (e) {
+                        console.error(`Failed to parse ${key}:`, e);
+                    }
+                }
+            }
+            
             // 4. 個別保存データを確認
             if (!sponsor) {
                 const storeKey = `store_${sponsorId}`;
@@ -240,13 +264,26 @@
                 
                 // まず部分一致で検索
                 for (const key of allKeys) {
-                    if (key.includes(sponsorId) || sponsorId.includes(key)) {
+                    if (key.includes(sponsorId) || sponsorId.includes(key) || 
+                        key.includes('sponsor') || key.includes('test')) {
                         try {
                             const data = JSON.parse(localStorage.getItem(key));
-                            if (data && (data.id === sponsorId || data.storeName)) {
-                                sponsor = data;
-                                console.log('✅ Found via key scan:', key, sponsor);
-                                break;
+                            if (data) {
+                                // 単一オブジェクトの場合
+                                if (data.id === sponsorId) {
+                                    sponsor = data;
+                                    console.log('✅ Found via key scan (direct):', key, sponsor);
+                                    break;
+                                }
+                                // 配列の場合
+                                if (Array.isArray(data)) {
+                                    const found = data.find(item => item && item.id === sponsorId);
+                                    if (found) {
+                                        sponsor = found;
+                                        console.log('✅ Found via key scan (array):', key, sponsor);
+                                        break;
+                                    }
+                                }
                             }
                         } catch (e) {
                             console.error('Failed to parse scanned data:', key, e);
