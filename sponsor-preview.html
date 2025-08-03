@@ -7,150 +7,145 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .gradient-bg {
+        body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tango, Geneva, Verdana, sans-serif;
         }
+        
+        .preview-header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem 0;
+        }
+        
         .preview-card {
-            border: none;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-radius: 15px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             overflow: hidden;
-            margin-bottom: 2rem;
         }
+        
         .store-image {
             width: 100%;
             height: 300px;
             object-fit: cover;
-        }
-        .category-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255,255,255,0.9);
-            color: #333;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        .benefit-tag {
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            padding: 0.3rem 0.8rem;
             border-radius: 15px;
-            font-size: 0.8rem;
-            margin: 0.2rem;
-            display: inline-block;
         }
-        .language-tag {
-            background: #3742fa;
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            font-size: 0.75rem;
-            margin: 0.1rem;
-        }
+        
         .info-section {
-            background: #f8f9ff;
-            padding: 1.5rem;
+            background: rgba(248, 249, 250, 0.8);
             border-radius: 10px;
+            padding: 1rem;
             margin: 1rem 0;
         }
+        
         .contact-btn {
             background: linear-gradient(45deg, #667eea, #764ba2);
             border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
             color: white;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
             transition: all 0.3s ease;
         }
+        
         .contact-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
             color: white;
         }
+        
+        .image-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="gradient-bg">
+    <div class="preview-header">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h1><i class="bi bi-eye"></i> 協賛店プレビュー</h1>
-                    <p class="lead mb-0">お客様から見える店舗情報をプレビューできます</p>
-                </div>
-                <div class="col-md-4 text-end">
-                    <button class="btn btn-light me-2" onclick="goBackToEdit()">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="bi bi-eye"></i> 協賛店プレビュー</h2>
+                <div>
+                    <button class="btn btn-outline-secondary me-2" onclick="goBackToEdit()">
                         <i class="bi bi-arrow-left"></i> 戻る
                     </button>
-                    <a href="sponsor-list.html" class="btn btn-outline-light">
+                    <button class="btn btn-outline-primary" onclick="toggleListView()">
                         <i class="bi bi-list"></i> 一覧表示
-                    </a>
+                    </button>
                 </div>
             </div>
+            <p class="mb-0 text-muted">お客様が見る店舗情報をプレビューできます</p>
         </div>
     </div>
 
-    <div class="container my-5">
+    <div class="container my-4">
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Preview Card -->
-                <div class="card preview-card" id="previewCard">
-                    <div class="position-relative">
-                        <img id="previewImage" src="" alt="店舗画像" class="store-image" style="display: none;">
-                        <div class="category-badge" id="previewCategory"></div>
-                    </div>
-                    
-                    <div class="card-body p-4">
-                        <h2 class="card-title mb-3" id="previewStoreName"></h2>
+                <div class="preview-card p-4">
+                    <div class="row">
+                        <!-- Store Image -->
+                        <div class="col-md-6 mb-3">
+                            <img id="previewImage" class="store-image" style="display: none;" alt="店舗画像">
+                            <div id="imagePlaceholder" class="image-placeholder">
+                                <i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i>
+                                <p class="mt-2 text-muted">画像未設定</p>
+                            </div>
+                        </div>
                         
-                        <!-- Basic Info -->
-                        <div class="info-section">
-                            <h5><i class="bi bi-info-circle"></i> 基本情報</h5>
-                            <p><i class="bi bi-geo-alt"></i> <span id="previewAddress"></span></p>
-                            <p><i class="bi bi-telephone"></i> <span id="previewPhone"></span></p>
-                            <p><i class="bi bi-envelope"></i> <span id="previewEmail"></span></p>
+                        <!-- Store Info -->
+                        <div class="col-md-6">
+                            <h3 id="previewStoreName" class="mb-3 text-primary">店舗名</h3>
+                            <p><i class="bi bi-tag"></i> <span id="previewCategory">カテゴリ</span></p>
+                            <p><i class="bi bi-geo-alt"></i> <span id="previewAddress">住所</span></p>
+                            <p><i class="bi bi-telephone"></i> <span id="previewPhone">電話番号</span></p>
+                            <p><i class="bi bi-envelope"></i> <span id="previewEmail">メールアドレス</span></p>
                             <div id="previewWebsite"></div>
                         </div>
+                    </div>
 
-                        <!-- Business Hours -->
-                        <div class="info-section" id="businessHoursSection">
-                            <h5><i class="bi bi-clock"></i> 営業時間</h5>
-                            <p id="previewBusinessHours"></p>
-                            <p id="previewHolidays"></p>
-                        </div>
+                    <!-- Business Hours -->
+                    <div class="info-section" id="businessHoursSection">
+                        <h5><i class="bi bi-clock"></i> 営業時間</h5>
+                        <p id="previewBusinessHours">営業時間未設定</p>
+                        <p id="previewHolidays">定休日未設定</p>
+                    </div>
 
-                        <!-- Description -->
-                        <div class="info-section" id="descriptionSection">
-                            <h5><i class="bi bi-card-text"></i> 店舗紹介</h5>
-                            <p id="previewDescription"></p>
-                        </div>
+                    <!-- Description -->
+                    <div class="info-section" id="descriptionSection">
+                        <h5><i class="bi bi-card-text"></i> 店舗紹介</h5>
+                        <p id="previewDescription">店舗説明未設定</p>
+                    </div>
 
-                        <!-- Languages -->
-                        <div class="info-section" id="languagesSection">
-                            <h5><i class="bi bi-translate"></i> 対応言語</h5>
-                            <div id="previewLanguages"></div>
-                        </div>
+                    <!-- Languages -->
+                    <div class="info-section" id="languagesSection">
+                        <h5><i class="bi bi-translate"></i> 対応言語</h5>
+                        <div id="previewLanguages">対応言語未設定</div>
+                    </div>
 
-                        <!-- TomoTrip Benefits -->
-                        <div class="info-section" id="benefitsSection">
-                            <h5><i class="bi bi-gift"></i> TomoTrip特典</h5>
-                            <div id="previewBenefits"></div>
-                        </div>
+                    <!-- TomoTrip Benefits -->
+                    <div class="info-section" id="benefitsSection">
+                        <h5><i class="bi bi-gift"></i> TomoTrip特典</h5>
+                        <div id="previewBenefits">特典未設定</div>
+                    </div>
 
-                        <!-- Contact Actions -->
-                        <div class="text-center mt-4">
-                            <button class="contact-btn me-3">
-                                <i class="bi bi-telephone"></i> 電話で問い合わせ
-                            </button>
-                            <button class="contact-btn">
-                                <i class="bi bi-envelope"></i> メールで問い合わせ
-                            </button>
-                        </div>
+                    <!-- Contact Actions -->
+                    <div class="text-center mt-4">
+                        <button class="contact-btn me-3">
+                            <i class="bi bi-telephone"></i> 電話で問い合わせ
+                        </button>
+                        <button class="contact-btn">
+                            <i class="bi bi-envelope"></i> メールで問い合わせ
+                        </button>
                     </div>
                 </div>
 
@@ -182,22 +177,15 @@
             console.log('Loading preview for ID:', sponsorId);
             
             if (!sponsorId) {
-                alert('店舗IDが指定されていません');
+                showError('店舗IDが指定されていません');
                 return;
             }
 
-            // LocalStorageの内容をデバッグ表示
-            console.log('LocalStorage contents:');
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                console.log(`  ${key}:`, localStorage.getItem(key).substring(0, 100) + '...');
-            }
-
-            // まずプレビュー用のデータを確認
-            const previewKey = `preview_${sponsorId}`;
+            // データを取得（複数の場所から試行）
             let sponsor = null;
             
-            // プレビュー用データを優先的に取得
+            // 1. プレビュー用データを確認
+            const previewKey = `preview_${sponsorId}`;
             const previewData = localStorage.getItem(previewKey);
             if (previewData) {
                 try {
@@ -208,64 +196,31 @@
                 }
             }
             
-            // プレビューデータがない場合、registeredSponsorsから取得
+            // 2. registeredSponsorsから取得
             if (!sponsor) {
                 const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-                console.log('📋 Checking registered sponsors:', registeredSponsors.length, 'items');
                 sponsor = registeredSponsors.find(s => s.id === sponsorId);
-                
                 if (sponsor) {
                     console.log('✅ Found in registered sponsors:', sponsor);
                 }
             }
             
-            // 最後の手段として、個別保存データを確認
+            // 3. 個別保存データを確認
             if (!sponsor) {
-                const individualData = localStorage.getItem(sponsorId);
-                if (individualData) {
+                const storeKey = `store_${sponsorId}`;
+                const storeData = localStorage.getItem(storeKey);
+                if (storeData) {
                     try {
-                        sponsor = JSON.parse(individualData);
-                        console.log('✅ Found individual data:', sponsor);
+                        sponsor = JSON.parse(storeData);
+                        console.log('✅ Found in store data:', sponsor);
                     } catch (e) {
-                        console.error('Failed to parse individual data:', e);
+                        console.error('Failed to parse store data:', e);
                     }
                 }
             }
             
             if (!sponsor) {
-                console.error('❌ No sponsor data found anywhere for ID:', sponsorId);
-                console.log('📋 Available data sources:');
-                console.log('   - Preview key:', previewKey, '→', !!localStorage.getItem(previewKey));
-                console.log('   - Individual key:', sponsorId, '→', !!localStorage.getItem(sponsorId));
-                console.log('   - RegisteredSponsors count:', JSON.parse(localStorage.getItem('registeredSponsors') || '[]').length);
-                
-                // より詳細なエラー表示
-                document.body.innerHTML = `
-                    <div class="container mt-5">
-                        <div class="alert alert-warning text-center">
-                            <h4><i class="bi bi-exclamation-triangle"></i> データが見つかりません</h4>
-                            <p>店舗ID: ${sponsorId} のデータが見つかりません。</p>
-                            <p>編集ページに戻ってデータを保存してからプレビューしてください。</p>
-                            <button class="btn btn-primary" onclick="goBackToEdit()">
-                                <i class="bi bi-arrow-left"></i> 編集ページに戻る
-                            </button>
-                            <script>
-                                function goBackToEdit() {
-                                    // 新しいタブで開かれた場合は、編集ページを開く
-                                    if (window.opener) {
-                                        window.close();
-                                        if (window.opener && !window.opener.closed) {
-                                            window.opener.focus();
-                                        }
-                                    } else {
-                                        // 直接遷移の場合は編集ページに戻る
-                                        window.location.href = 'sponsor-edit.html?id=' + sponsorId;
-                                    }
-                                }
-                            </script>
-                        </div>
-                    </div>
-                `;
+                showError(`店舗ID: ${sponsorId} のデータが見つかりません`);
                 return;
             }
 
@@ -287,334 +242,149 @@
                 'other': 'その他'
             };
 
-            // 基本情報表示（強制的に要素をチェック）
+            // 基本情報表示
             const storeName = sponsor.storeName || '店舗名未設定';
             const category = categoryNames[sponsor.category] || sponsor.category || '未分類';
             const address = sponsor.address || '住所未設定';
             const phone = sponsor.phone || '電話番号未設定';
             const email = sponsor.email || 'メール未設定';
             
-            console.log('📝 Setting basic info:');
-            console.log('  Store Name:', storeName);
-            console.log('  Category:', category);
-            console.log('  Address:', address);
-            console.log('  Phone:', phone);
-            console.log('  Email:', email);
-            
-            // 要素の存在確認と強制設定
-            const storeNameEl = document.getElementById('previewStoreName');
-            const categoryEl = document.getElementById('previewCategory');
-            const addressEl = document.getElementById('previewAddress');
-            const phoneEl = document.getElementById('previewPhone');
-            const emailEl = document.getElementById('previewEmail');
-            
-            console.log('🔍 Element check:');
-            console.log('  storeNameEl:', storeNameEl ? 'found' : 'NOT FOUND');
-            console.log('  categoryEl:', categoryEl ? 'found' : 'NOT FOUND');
-            console.log('  addressEl:', addressEl ? 'found' : 'NOT FOUND');
-            console.log('  phoneEl:', phoneEl ? 'found' : 'NOT FOUND');
-            console.log('  emailEl:', emailEl ? 'found' : 'NOT FOUND');
-            
-            if (storeNameEl) {
-                storeNameEl.textContent = storeName;
-                console.log('✅ Store name set to:', storeNameEl.textContent);
-            }
-            if (categoryEl) {
-                categoryEl.textContent = category;
-                console.log('✅ Category set to:', categoryEl.textContent);
-            }
-            if (addressEl) {
-                addressEl.textContent = address;
-                console.log('✅ Address set to:', addressEl.textContent);
-            }
-            if (phoneEl) {
-                phoneEl.textContent = phone;
-                console.log('✅ Phone set to:', phoneEl.textContent);
-            }
-            if (emailEl) {
-                emailEl.textContent = email;
-                console.log('✅ Email set to:', emailEl.textContent);
-            }
+            // 要素に値を設定
+            document.getElementById('previewStoreName').textContent = storeName;
+            document.getElementById('previewCategory').textContent = category;
+            document.getElementById('previewAddress').textContent = address;
+            document.getElementById('previewPhone').textContent = phone;
+            document.getElementById('previewEmail').textContent = email;
 
-            // メイン画像（エラーハンドリング強化）
-            if (sponsor.mainImage) {
-                const img = document.getElementById('previewImage');
+            // 画像表示（エラーハンドリング強化）
+            const imageElement = document.getElementById('previewImage');
+            const placeholder = document.getElementById('imagePlaceholder');
+            
+            if (sponsor.mainImage && sponsor.mainImage.trim() !== '') {
                 try {
-                    if (sponsor.mainImage.startsWith('data:image/')) {
-                        img.src = sponsor.mainImage;
-                    } else if (sponsor.mainImage.startsWith('http')) {
-                        img.src = sponsor.mainImage;
-                    } else if (sponsor.mainImage && sponsor.mainImage.trim() !== '') {
-                        img.src = sponsor.mainImage;
-                    } else {
-                        throw new Error('Invalid image source');
-                    }
-                    
-                    img.onerror = function() {
-                        console.log('⚠️ メイン画像読み込みエラー、プレースホルダー表示');
-                        img.style.display = 'none';
-                        const placeholder = document.createElement('div');
-                        placeholder.className = 'image-placeholder text-center p-4';
-                        placeholder.innerHTML = '<i class="bi bi-image" style="font-size: 3rem; color: #ccc;"></i><p class="mt-2 text-muted">画像を読み込めませんでした</p>';
-                        img.parentNode.insertBefore(placeholder, img);
+                    imageElement.src = sponsor.mainImage;
+                    imageElement.onerror = function() {
+                        console.log('⚠️ 画像読み込みエラー');
+                        imageElement.style.display = 'none';
+                        placeholder.style.display = 'flex';
                     };
-                    
-                    img.style.display = 'block';
+                    imageElement.onload = function() {
+                        imageElement.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    };
                 } catch (error) {
-                    console.error('メイン画像処理エラー:', error);
-                    img.style.display = 'none';
+                    console.error('画像処理エラー:', error);
+                    imageElement.style.display = 'none';
+                    placeholder.style.display = 'flex';
                 }
-            } else if (sponsor.additionalImages && sponsor.additionalImages.length > 0) {
-                // メイン画像がない場合は追加画像の最初の画像を使用
-                const img = document.getElementById('previewImage');
-                try {
-                    const firstImage = sponsor.additionalImages[0];
-                    if (firstImage && firstImage.trim() !== '') {
-                        img.src = firstImage;
-                        img.onerror = function() {
-                            console.log('⚠️ 代替画像読み込みエラー');
-                            img.style.display = 'none';
-                        };
-                        img.style.display = 'block';
-                    }
-                } catch (error) {
-                    console.error('代替画像処理エラー:', error);
-                    img.style.display = 'none';
-                }
+            } else {
+                imageElement.style.display = 'none';
+                placeholder.style.display = 'flex';
             }
 
             // ウェブサイト
-            if (sponsor.website) {
+            if (sponsor.website && sponsor.website.trim() !== '') {
                 document.getElementById('previewWebsite').innerHTML = 
                     `<p><i class="bi bi-globe"></i> <a href="${sponsor.website}" target="_blank" class="text-decoration-none">${sponsor.website}</a></p>`;
             }
 
-            // 営業時間（修正版）
-            let businessHoursText = '';
-            if (sponsor.openTime && sponsor.openTime.includes('-')) {
-                // 15:00-1:00 形式の場合
-                businessHoursText = sponsor.openTime;
-            } else if (sponsor.openTime || sponsor.closeTime) {
-                // 別々に設定されている場合
-                businessHoursText = `${sponsor.openTime || '?'} - ${sponsor.closeTime || '?'}`;
-            }
+            // 営業時間
+            const businessHours = sponsor.openTime || '営業時間未設定';
+            const holidays = sponsor.holidays || '定休日未設定';
             
-            const businessHoursEl = document.getElementById('previewBusinessHours');
-            const holidaysEl = document.getElementById('previewHolidays');
-            
-            console.log('🕐 Business hours check:');
-            console.log('  businessHoursEl:', businessHoursEl ? 'found' : 'NOT FOUND');
-            console.log('  holidaysEl:', holidaysEl ? 'found' : 'NOT FOUND');
-            console.log('  businessHoursText:', businessHoursText);
-            console.log('  holidays:', sponsor.holidays);
-            
-            if (businessHoursEl) {
-                if (businessHoursText) {
-                    businessHoursEl.textContent = businessHoursText;
-                    console.log('✅ Business hours set to:', businessHoursEl.textContent);
-                } else {
-                    businessHoursEl.textContent = '営業時間未設定';
-                    console.log('⚠️ Business hours set to default');
-                }
-            }
-            
-            if (holidaysEl) {
-                if (sponsor.holidays) {
-                    holidaysEl.textContent = `定休日: ${sponsor.holidays}`;
-                    console.log('✅ Holidays set to:', holidaysEl.textContent);
-                } else {
-                    holidaysEl.textContent = '定休日: 未設定';
-                    console.log('⚠️ Holidays set to default');
-                }
-            }
+            document.getElementById('previewBusinessHours').textContent = businessHours;
+            document.getElementById('previewHolidays').textContent = `定休日: ${holidays}`;
 
             // 店舗説明
-            if (sponsor.detailedDescription) {
+            if (sponsor.detailedDescription && sponsor.detailedDescription.trim() !== '') {
                 document.getElementById('previewDescription').textContent = sponsor.detailedDescription;
             } else {
                 document.getElementById('descriptionSection').style.display = 'none';
             }
 
-            // 特色・売り、雰囲気を追加
-            if (sponsor.specialty || sponsor.atmosphere) {
-                const specialSection = document.createElement('div');
-                specialSection.className = 'info-section';
-                specialSection.innerHTML = `
-                    <h5><i class="bi bi-star"></i> 店舗の特色</h5>
-                    ${sponsor.specialty ? `<p><strong>特色・売り:</strong> ${sponsor.specialty}</p>` : ''}
-                    ${sponsor.atmosphere ? `<p><strong>店内の雰囲気:</strong> ${sponsor.atmosphere}</p>` : ''}
-                `;
-                document.getElementById('descriptionSection').after(specialSection);
-            }
-
-            // 価格帯・収容人数
-            if (sponsor.priceRange || sponsor.capacity) {
-                const priceSection = document.createElement('div');
-                priceSection.className = 'info-section';
-                priceSection.innerHTML = `
-                    <h5><i class="bi bi-currency-yen"></i> 料金・収容情報</h5>
-                    ${sponsor.priceRange ? `<p><strong>価格帯:</strong> ${getPriceRangeText(sponsor.priceRange)}</p>` : ''}
-                    ${sponsor.capacity ? `<p><strong>収容人数:</strong> ${sponsor.capacity}名</p>` : ''}
-                `;
-                document.getElementById('businessHoursSection').after(priceSection);
-            }
-
-            // アクセス情報
-            if (sponsor.accessInfo || sponsor.nearestStation || sponsor.parkingInfo) {
-                const accessSection = document.createElement('div');
-                accessSection.className = 'info-section';
-                accessSection.innerHTML = `
-                    <h5><i class="bi bi-geo-alt"></i> アクセス情報</h5>
-                    ${sponsor.accessInfo ? `<p><strong>アクセス:</strong> ${sponsor.accessInfo}</p>` : ''}
-                    ${sponsor.nearestStation ? `<p><strong>最寄り駅:</strong> ${sponsor.nearestStation}</p>` : ''}
-                    ${sponsor.parkingInfo ? `<p><strong>駐車場:</strong> ${sponsor.parkingInfo}</p>` : ''}
-                `;
-                document.getElementById('businessHoursSection').after(accessSection);
-            }
-
-            // 提供サービス
-            if (sponsor.services && sponsor.services.length > 0) {
-                const serviceNames = {
-                    'wifi': 'Wi-Fi無料',
-                    'parking': '駐車場完備', 
-                    'card': 'カード決済OK',
-                    'barrier-free': 'バリアフリー'
-                };
-                const servicesSection = document.createElement('div');
-                servicesSection.className = 'info-section';
-                servicesSection.innerHTML = `
-                    <h5><i class="bi bi-check-circle"></i> 提供サービス</h5>
-                    <div>${sponsor.services.map(service => 
-                        `<span class="language-tag">${serviceNames[service] || service}</span>`
-                    ).join('')}</div>
-                `;
-                document.getElementById('languagesSection').before(servicesSection);
-            }
-
             // 対応言語
             if (sponsor.languages && sponsor.languages.length > 0) {
-                const languageNames = {
-                    'english': 'English',
-                    'chinese': '中文',
-                    'korean': '한국어'
-                };
-                document.getElementById('previewLanguages').innerHTML = 
-                    sponsor.languages.map(lang => 
-                        `<span class="language-tag">${languageNames[lang] || lang}</span>`
-                    ).join('');
+                const languageText = sponsor.languages.join(', ');
+                document.getElementById('previewLanguages').textContent = languageText;
             } else {
                 document.getElementById('languagesSection').style.display = 'none';
             }
 
             // TomoTrip特典
-            if (sponsor.tomotripBenefits || sponsor.detailedDiscount) {
-                const benefitText = sponsor.detailedDiscount || sponsor.tomotripBenefits || '';
-                document.getElementById('previewBenefits').innerHTML = 
-                    benefitText.split(',').map(benefit => 
-                        `<span class="benefit-tag">${benefit.trim()}</span>`
-                    ).join('');
+            if (sponsor.detailedDiscount && sponsor.detailedDiscount.trim() !== '') {
+                document.getElementById('previewBenefits').textContent = sponsor.detailedDiscount;
             } else {
                 document.getElementById('benefitsSection').style.display = 'none';
             }
-
-            // 追加画像ギャラリーを追加
-            if (sponsor.additionalImages && sponsor.additionalImages.length > 0) {
-                const gallerySection = document.createElement('div');
-                gallerySection.className = 'info-section';
-                gallerySection.innerHTML = `
-                    <h5><i class="bi bi-images"></i> 店舗ギャラリー</h5>
-                    <div class="row">
-                        ${sponsor.additionalImages.map(img => 
-                            `<div class="col-4 col-md-3 mb-2">
-                                <img src="${img}" class="img-fluid rounded" style="height: 120px; object-fit: cover; width: 100%; cursor: pointer;" onclick="openImageModal('${img}')">
-                            </div>`
-                        ).join('')}
-                    </div>
-                `;
-                document.getElementById('benefitsSection').after(gallerySection);
-            }
         }
 
-        function getPriceRangeText(range) {
-            const ranges = {
-                'budget': 'リーズナブル（〜1,000円）',
-                'moderate': '中程度（1,000円〜3,000円）',
-                'upscale': '高級（3,000円〜）'
-            };
-            return ranges[range] || range;
-        }
-
-        function openImageModal(imageSrc) {
-            const modal = document.createElement('div');
-            modal.className = 'modal fade';
-            modal.innerHTML = `
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">画像プレビュー</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body text-center">
-                            <img src="${imageSrc}" class="img-fluid">
-                        </div>
+        function showError(message) {
+            document.body.innerHTML = `
+                <div class="container mt-5">
+                    <div class="alert alert-warning text-center">
+                        <h4><i class="bi bi-exclamation-triangle"></i> エラー</h4>
+                        <p>${message}</p>
+                        <p>編集ページに戻ってデータを保存してからプレビューしてください。</p>
+                        <button class="btn btn-primary" onclick="goBackToEdit()">
+                            <i class="bi bi-arrow-left"></i> 編集ページに戻る
+                        </button>
                     </div>
                 </div>
             `;
-            document.body.appendChild(modal);
-            const bsModal = new bootstrap.Modal(modal);
-            bsModal.show();
-            modal.addEventListener('hidden.bs.modal', () => modal.remove());
         }
 
         function goBackToEdit() {
-            console.log('Going back to edit for ID:', sponsorId);
-            
-            if (sponsorId) {
-                // プレビューページを閉じる（新しいタブで開かれた場合）
-                if (window.opener && !window.opener.closed) {
-                    console.log('Closing preview window and focusing on opener');
-                    window.close();
-                } else {
-                    // 同じタブの場合は編集ページに戻る
-                    console.log('Navigating to edit page');
-                    window.location.href = 'sponsor-edit.html?id=' + sponsorId;
-                }
+            if (window.opener && !window.opener.closed) {
+                window.close();
+                window.opener.focus();
             } else {
-                console.warn('No sponsor ID found, going back in history');
-                history.back();
+                window.location.href = `sponsor-edit.html?id=${sponsorId}`;
             }
+        }
+
+        function toggleListView() {
+            const btn = event.target;
+            btn.innerHTML = '<i class="bi bi-list"></i> 表示切替中...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = '<i class="bi bi-list"></i> 一覧表示';
+                btn.disabled = false;
+            }, 1000);
         }
 
         function publishToList() {
             if (confirm('この内容で協賛店一覧に公開しますか？')) {
-                // 公開フラグを設定
-                const sponsorData = localStorage.getItem(sponsorId);
-                if (sponsorData) {
-                    const sponsor = JSON.parse(sponsorData);
+                try {
+                    // 公開処理
+                    const sponsor = JSON.parse(localStorage.getItem(`preview_${sponsorId}`) || '{}');
                     sponsor.published = true;
                     sponsor.publishedDate = new Date().toISOString();
-                    localStorage.setItem(sponsorId, JSON.stringify(sponsor));
+                    
+                    // 複数の場所に保存
+                    localStorage.setItem(`store_${sponsorId}`, JSON.stringify(sponsor));
+                    
+                    const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                    const index = registeredSponsors.findIndex(s => s.id === sponsorId);
+                    if (index !== -1) {
+                        registeredSponsors[index] = sponsor;
+                    } else {
+                        registeredSponsors.push(sponsor);
+                    }
+                    localStorage.setItem('registeredSponsors', JSON.stringify(registeredSponsors));
+                    
+                    alert('協賛店一覧に公開されました！');
+                    window.location.href = 'sponsor-list.html';
+                } catch (error) {
+                    console.error('公開エラー:', error);
+                    alert('公開中にエラーが発生しました。');
                 }
-                
-                alert('協賛店一覧に公開されました！');
-                window.location.href = 'sponsor-list.html';
             }
         }
 
         // ページロード時に実行
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🔍 Preview page DOM loaded');
-            console.log('📍 URL:', window.location.href);
-            console.log('🆔 Sponsor ID from URL:', sponsorId);
-            
-            // LocalStorageの詳細デバッグ
-            console.log('💾 LocalStorage Debug:');
-            const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
-            console.log('📋 Total registered sponsors:', registeredSponsors.length);
-            registeredSponsors.forEach((sponsor, index) => {
-                console.log(`   ${index + 1}. ID: ${sponsor.id}, Name: ${sponsor.storeName}, Status: ${sponsor.status}`);
-            });
-            
             loadPreview();
         });
     </script>
