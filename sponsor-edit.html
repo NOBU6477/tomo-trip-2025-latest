@@ -629,17 +629,34 @@
             // フォーム送信イベント
             const form = document.getElementById('sponsorEditForm');
             if (form) {
-                form.addEventListener('submit', function(e) {
+                form.addEventListener('submit', async function(e) {
                     e.preventDefault();
                     console.log('Form submitted');
                     
-                    const editData = collectFormData();
-                    editData.status = 'published';
-                    editData.publishDate = new Date().toISOString();
+                    // 送信ボタンを無効化
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '🔄 公開中...';
                     
-                    if (updateSponsorData(editData)) {
-                        alert('協賛店情報が公開されました！\n協賛店一覧ページでご確認いただけます。');
-                        window.location.href = 'sponsor-list.html';
+                    try {
+                        const editData = collectFormData();
+                        editData.status = 'published';
+                        editData.publishDate = new Date().toISOString();
+                        
+                        const success = await updateSponsorData(editData);
+                        if (success) {
+                            alert('✅ 協賛店情報が公開されました！\n協賛店一覧ページでご確認いただけます。');
+                            window.location.href = 'sponsor-list.html';
+                        } else {
+                            alert('❌ 公開に失敗しました。画像サイズを確認してもう一度お試しください。');
+                        }
+                    } catch (error) {
+                        console.error('Publication error:', error);
+                        alert('公開中にエラーが発生しました：' + error.message);
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
                     }
                 });
                 console.log('Form submit event set');
@@ -692,11 +709,10 @@
             }
         }
 
-        // プレビュー
-        function previewStore() {
+        // プレビュー（軽量化版）
+        async function previewStore() {
             console.log('🔍 Preview button clicked');
             
-            // フォームデータを収集
             const editData = collectFormData();
             if (!editData) {
                 alert('フォームデータの収集に失敗しました');
@@ -705,29 +721,66 @@
             
             console.log('📋 Collected edit data:', editData);
             
-            // プレビュー用の一時保存キーを作成
-            const previewKey = `preview_${editData.id}`;
-            
             try {
-                // プレビュー用のデータを直接LocalStorageに保存
-                const previewData = { ...editData, status: 'preview' };
-                localStorage.setItem(previewKey, JSON.stringify(previewData));
-                console.log('✅ Preview data saved with key:', previewKey);
+                // プレビュー用に軽量化
+                const lightPreviewData = {
+                    id: editData.id,
+                    storeName: editData.storeName,
+                    category: editData.category,
+                    address: editData.address,
+                    phone: editData.phone,
+                    email: editData.email,
+                    website: editData.website,
+                    openTime: editData.openTime,
+                    closeTime: editData.closeTime,
+                    holidays: editData.holidays,
+                    detailedDescription: editData.detailedDescription,
+                    specialty: editData.specialty,
+                    atmosphere: editData.atmosphere,
+                    detailedDiscount: editData.detailedDiscount,
+                    services: editData.services,
+                    priceRange: editData.priceRange,
+                    capacity: editData.capacity,
+                    accessInfo: editData.accessInfo,
+                    nearestStation: editData.nearestStation,
+                    parkingInfo: editData.parkingInfo,
+                    // 画像は圧縮版を使用
+                    mainImage: editData.mainImage ? await resizeAndCompressImage(editData.mainImage, 300, 0.6) : null,
+                    logoImage: editData.logoImage ? await resizeAndCompressImage(editData.logoImage, 100, 0.7) : null,
+                    additionalImages: editData.additionalImages ? (await Promise.all(
+                        editData.additionalImages.slice(0, 2).map(img => 
+                            img.startsWith('data:image/') ? resizeAndCompressImage(img, 300, 0.5) : Promise.resolve(img)
+                        )
+                    )) : [],
+                    lastUpdated: editData.lastUpdated,
+                    status: 'preview'
+                };
                 
-                // また、registeredSponsorsにも確実に保存
+                const previewKey = `preview_${editData.id}`;
+                localStorage.setItem(previewKey, JSON.stringify(lightPreviewData));
+                console.log('✅ Lightweight preview data saved');
+                
+                // registeredSponsorsにも軽量版で保存
                 let registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
                 const existingIndex = registeredSponsors.findIndex(s => s.id === editData.id);
                 
                 if (existingIndex !== -1) {
-                    // 既存データを更新
-                    registeredSponsors[existingIndex] = { ...registeredSponsors[existingIndex], ...editData };
+                    registeredSponsors[existingIndex] = { ...registeredSponsors[existingIndex], ...lightPreviewData };
                 } else {
-                    // 新規追加
-                    registeredSponsors.push(editData);
+                    registeredSponsors.push(lightPreviewData);
                 }
                 
-                localStorage.setItem('registeredSponsors', JSON.stringify(registeredSponsors));
-                console.log('✅ Data also saved to registeredSponsors');
+                // サイズチェックして保存
+                const dataString = JSON.stringify(registeredSponsors);
+                const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
+                console.log('💾 Total size:', sizeInMB.toFixed(2), 'MB');
+                
+                if (sizeInMB < 4) {
+                    localStorage.setItem('registeredSponsors', dataString);
+                    console.log('✅ Data saved to registeredSponsors');
+                } else {
+                    console.log('⚠️ サイズ超過のため registeredSponsors への保存をスキップ');
+                }
                 
                 // プレビューを新しいタブで開く
                 const previewWindow = window.open(`sponsor-preview.html?id=${editData.id}`, '_blank');
@@ -738,7 +791,11 @@
                 
             } catch (error) {
                 console.error('❌ Failed to save preview data:', error);
-                alert('プレビューデータの保存に失敗しました：' + error.message);
+                if (error.name === 'QuotaExceededError') {
+                    alert('ストレージ容量が不足しています。画像を削除するか、ブラウザデータを整理してください。');
+                } else {
+                    alert('プレビューデータの保存に失敗しました：' + error.message);
+                }
             }
         }
 
@@ -805,9 +862,67 @@
             return services;
         }
 
-        // 店舗データの更新（LocalStorage容量エラー対策）
-        function updateSponsorData(editData) {
+        // 画像圧縮機能
+        function compressImage(canvas, quality = 0.6) {
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result);
+                    reader.readAsDataURL(blob);
+                }, 'image/jpeg', quality);
+            });
+        }
+
+        // 画像リサイズと圧縮
+        function resizeAndCompressImage(base64, maxWidth = 800, quality = 0.6) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = async () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // サイズ計算
+                    let { width, height } = img;
+                    if (width > maxWidth) {
+                        height = (height * maxWidth) / width;
+                        width = maxWidth;
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const compressed = await compressImage(canvas, quality);
+                    resolve(compressed);
+                };
+                img.src = base64;
+            });
+        }
+
+        // 店舗データの更新（容量最適化版）
+        async function updateSponsorData(editData) {
             try {
+                // 画像圧縮処理
+                console.log('🔄 画像圧縮開始...');
+                if (editData.mainImage && editData.mainImage.startsWith('data:image/')) {
+                    editData.mainImage = await resizeAndCompressImage(editData.mainImage, 600, 0.7);
+                }
+                if (editData.logoImage && editData.logoImage.startsWith('data:image/')) {
+                    editData.logoImage = await resizeAndCompressImage(editData.logoImage, 200, 0.8);
+                }
+                if (editData.additionalImages && editData.additionalImages.length > 0) {
+                    const compressedImages = [];
+                    for (const img of editData.additionalImages) {
+                        if (img.startsWith('data:image/')) {
+                            compressedImages.push(await resizeAndCompressImage(img, 600, 0.6));
+                        } else {
+                            compressedImages.push(img);
+                        }
+                    }
+                    editData.additionalImages = compressedImages;
+                }
+                console.log('✅ 画像圧縮完了');
+
                 let sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
                 const targetId = editData.id || currentSponsorId;
                 const index = sponsors.findIndex(s => s.id === targetId);
@@ -817,29 +932,49 @@
                 console.log('📊 Current sponsors count:', sponsors.length);
                 
                 if (index !== -1) {
-                    // 既存データを編集データで更新
                     sponsors[index] = { ...sponsors[index], ...editData };
                     console.log('✅ Updated existing sponsor data');
                 } else {
-                    // 新規追加
                     sponsors.push(editData);
                     console.log('➕ Added new sponsor data');
                 }
                 
-                // データサイズをチェック
+                // データサイズチェック
                 const dataString = JSON.stringify(sponsors);
                 const sizeInMB = new Blob([dataString]).size / (1024 * 1024);
                 console.log('💾 Data size:', sizeInMB.toFixed(2), 'MB');
                 
-                if (sizeInMB > 4) { // 5MB制限を4MBで警告
-                    alert('画像データが大きすぎます。画像を削除するか、より小さいサイズでアップロードしてください。');
-                    return false;
+                if (sizeInMB > 4) {
+                    // さらに圧縮を試行
+                    console.log('⚠️ サイズが大きすぎます。追加圧縮実行...');
+                    if (editData.additionalImages && editData.additionalImages.length > 3) {
+                        editData.additionalImages = editData.additionalImages.slice(0, 3);
+                        alert('画像が多すぎるため、3枚に制限しました。');
+                    }
+                    
+                    // より高い圧縮率で再試行
+                    if (editData.mainImage && editData.mainImage.startsWith('data:image/')) {
+                        editData.mainImage = await resizeAndCompressImage(editData.mainImage, 400, 0.5);
+                    }
+                    
+                    if (index !== -1) {
+                        sponsors[index] = { ...sponsors[index], ...editData };
+                    } else {
+                        sponsors[sponsors.length - 1] = editData;
+                    }
+                    
+                    const newDataString = JSON.stringify(sponsors);
+                    const newSizeInMB = new Blob([newDataString]).size / (1024 * 1024);
+                    console.log('🔄 追加圧縮後サイズ:', newSizeInMB.toFixed(2), 'MB');
+                    
+                    if (newSizeInMB > 4) {
+                        alert('データサイズが制限を超えています。画像を削除してください。');
+                        return false;
+                    }
                 }
                 
                 // 保存実行
-                localStorage.setItem('registeredSponsors', dataString);
-                
-                // 個別キーでもバックアップ保存
+                localStorage.setItem('registeredSponsors', JSON.stringify(sponsors));
                 localStorage.setItem(targetId, JSON.stringify(editData));
                 
                 // 保存確認
@@ -858,13 +993,51 @@
             } catch (error) {
                 console.error('❌ Failed to save sponsor data:', error);
                 
-                // エラーの詳細表示
                 if (error.name === 'QuotaExceededError') {
-                    alert('ストレージ容量が不足しています。ブラウザのデータを整理してください。');
+                    // ストレージクリーンアップを提案
+                    if (confirm('ストレージ容量が不足しています。他の協賛店データを削除してスペースを確保しますか？')) {
+                        cleanupOldData();
+                        return await updateSponsorData(editData); // 再試行
+                    } else {
+                        alert('保存するにはストレージ容量を確保してください。');
+                    }
                 } else {
                     alert('データの保存に失敗しました：' + error.message);
                 }
                 return false;
+            }
+        }
+
+        // 古いデータのクリーンアップ
+        function cleanupOldData() {
+            try {
+                const sponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+                // 最新の10件のみ保持
+                if (sponsors.length > 10) {
+                    const sortedSponsors = sponsors.sort((a, b) => 
+                        new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0)
+                    );
+                    const keepSponsors = sortedSponsors.slice(0, 10);
+                    localStorage.setItem('registeredSponsors', JSON.stringify(keepSponsors));
+                    console.log(`🧹 古いデータを削除: ${sponsors.length - 10}件`);
+                }
+                
+                // ドラフトデータのクリーンアップ
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('draft_sponsor_')) {
+                        const draftDate = localStorage.getItem(key + '_timestamp');
+                        if (draftDate && Date.now() - parseInt(draftDate) > 7 * 24 * 60 * 60 * 1000) {
+                            localStorage.removeItem(key);
+                            localStorage.removeItem(key + '_timestamp');
+                            console.log('🧹 古いドラフト削除:', key);
+                        }
+                    }
+                }
+                
+                alert('古いデータを削除しました。再度保存してください。');
+            } catch (error) {
+                console.error('クリーンアップエラー:', error);
             }
         }
 
