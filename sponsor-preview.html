@@ -174,38 +174,66 @@
 
         // 店舗データを読み込んでプレビュー表示（強化版）
         function loadPreview() {
-            console.log('Loading preview for ID:', sponsorId);
+            console.log('🔍 Loading preview for ID:', sponsorId);
             
             if (!sponsorId) {
                 showError('店舗IDが指定されていません');
                 return;
             }
 
+            // デバッグ：全てのストレージキーと内容を出力
+            console.log('📊 ALL LOCALSTORAGE DEBUGGING:');
+            const allKeys = Object.keys(localStorage);
+            allKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                console.log(`🔑 Key: ${key} | Length: ${value ? value.length : 0}`);
+                if (key.includes('sponsor') || key.includes('test')) {
+                    try {
+                        const parsed = JSON.parse(value);
+                        if (Array.isArray(parsed)) {
+                            console.log(`  📋 Array with ${parsed.length} items:`, parsed.map(item => item?.id || 'no-id'));
+                        } else {
+                            console.log(`  📄 Object ID: ${parsed?.id || 'no-id'}`);
+                        }
+                    } catch (e) {
+                        console.log(`  ❌ Not JSON: ${value?.substring(0, 50)}...`);
+                    }
+                }
+            });
+
             // データを取得（複数の場所から試行）
             let sponsor = null;
             
             // 1. プレビュー用データを確認
+            console.log('🔍 Step 1: Checking preview data...');
             const previewKey = `preview_${sponsorId}`;
+            console.log(`  Looking for key: ${previewKey}`);
             const previewData = localStorage.getItem(previewKey);
             if (previewData) {
                 try {
                     sponsor = JSON.parse(previewData);
-                    console.log('✅ Found preview data:', sponsor);
+                    console.log('✅ Step 1 SUCCESS: Found preview data:', sponsor);
                 } catch (e) {
-                    console.error('Failed to parse preview data:', e);
+                    console.error('❌ Step 1 FAILED: Parse error:', e);
                 }
+            } else {
+                console.log('❌ Step 1 FAILED: No preview data found');
             }
             
             // 2. 直接IDキーでの取得
             if (!sponsor) {
+                console.log('🔍 Step 2: Checking direct ID...');
+                console.log(`  Looking for key: ${sponsorId}`);
                 const directData = localStorage.getItem(sponsorId);
                 if (directData) {
                     try {
                         sponsor = JSON.parse(directData);
-                        console.log('✅ Found direct ID data:', sponsor);
+                        console.log('✅ Step 2 SUCCESS: Found direct ID data:', sponsor);
                     } catch (e) {
-                        console.error('Failed to parse direct data:', e);
+                        console.error('❌ Step 2 FAILED: Parse error:', e);
                     }
+                } else {
+                    console.log('❌ Step 2 FAILED: No direct data found');
                 }
             }
             
