@@ -955,15 +955,17 @@
             }
         });
 
-        // Sponsor functions
+        // Sponsor functions - Fixed for English version
         function handleSponsorRegistration() {
-            console.log('Sponsor registration clicked');
-            window.location.href = 'sponsor-registration.html';
+            console.log('Sponsor registration clicked (English)');
+            // Stay on same language by going to English sponsor registration
+            window.location.href = 'sponsor-registration-en.html';
         }
 
         function handleSponsorLogin() {
-            console.log('Sponsor login clicked');
-            window.location.href = 'sponsor-login.html';
+            console.log('Sponsor login clicked (English)');
+            // For now, show alert - we'll create proper modal later
+            alert('Sponsor login functionality coming soon!\n\nPlease use the Japanese version for now.');
         }
 
         // Initialize page
@@ -973,6 +975,11 @@
             // Event listeners
             document.getElementById('searchBtn').addEventListener('click', filterGuides);
             document.getElementById('resetBtn').addEventListener('click', resetFilters);
+            
+            // Registration button event
+            document.getElementById('registerBtn').addEventListener('click', function() {
+                alert('Registration functionality coming soon!\n\nThis will open the tourist registration modal.');
+            });
             
             document.getElementById('prevPageBtn').addEventListener('click', () => {
                 if (currentPage > 1) {
