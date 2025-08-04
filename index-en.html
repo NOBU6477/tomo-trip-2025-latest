@@ -634,6 +634,284 @@
         </div>
     </section>
 
+    <!-- Guide Registration Modal -->
+    <div class="modal fade" id="guideRegistrationModal" tabindex="-1" aria-labelledby="guideRegistrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold" id="guideRegistrationModalLabel">
+                        <i class="bi bi-person-plus-fill me-2"></i>Guide Registration
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="guideRegistrationForm">
+                        <!-- Basic Information -->
+                        <h6 class="fw-bold mb-3 text-primary">Basic Information</h6>
+                        
+                        <!-- Profile Photo -->
+                        <div class="mb-4 text-center">
+                            <div class="position-relative d-inline-block">
+                                <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" 
+                                     style="width: 120px; height: 120px; border: 3px dashed #ddd; cursor: pointer;" 
+                                     onclick="document.getElementById('guideProfilePhoto').click();">
+                                    <div id="guidePhotoPlaceholder">
+                                        <i class="bi bi-camera text-muted" style="font-size: 2rem;"></i>
+                                        <p class="text-muted small mt-2">Profile Photo</p>
+                                    </div>
+                                    <img id="guideProfilePreview" src="" alt="Profile Preview" 
+                                         style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none;">
+                                </div>
+                                <input type="file" class="form-control d-none" id="guideProfilePhoto" accept="image/*">
+                                <div class="position-absolute bottom-0 end-0">
+                                    <span class="badge bg-primary rounded-circle p-2">
+                                        <i class="bi bi-plus"></i>
+                                    </span>
+                                </div>
+                            </div>
+                            <small class="text-muted d-block mt-2">Click to upload profile photo (optional)</small>
+                        </div>
+
+                        <!-- Name Fields -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="guideFirstName" class="form-label fw-bold">
+                                        <i class="bi bi-person me-2"></i>First Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="guideFirstName" placeholder="Your first name" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="guideLastName" class="form-label fw-bold">
+                                        <i class="bi bi-person me-2"></i>Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="guideLastName" placeholder="Your last name" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Display Name (Optional) -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="guideDisplayFirstName" class="form-label fw-bold">Display First Name (Optional)</label>
+                                    <input type="text" class="form-control" id="guideDisplayFirstName" placeholder="For guide cards" style="border-radius: 10px; padding: 12px;">
+                                    <small class="text-muted">Leave empty to use real name</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="guideDisplayLastName" class="form-label fw-bold">Display Last Name (Optional)</label>
+                                    <input type="text" class="form-control" id="guideDisplayLastName" placeholder="For guide cards" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="mb-3">
+                            <label for="guideEmail" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-2"></i>Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="guideEmail" placeholder="your.email@example.com" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="guidePhone" class="form-label fw-bold">
+                                        <i class="bi bi-telephone me-2"></i>Phone Number <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" class="form-control" id="guidePhone" placeholder="+81-90-1234-5678" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">&nbsp;</label>
+                                    <button type="button" class="btn btn-success w-100" id="guideSendVerificationBtn" style="border-radius: 10px; padding: 12px;">
+                                        Send Code
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="guideVerificationCodeSection" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="mb-3">
+                                        <label for="guideVerificationCode" class="form-label fw-bold">Verification Code</label>
+                                        <input type="text" class="form-control" id="guideVerificationCode" placeholder="Enter 6-digit code" maxlength="6" style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">&nbsp;</label>
+                                        <button type="button" class="btn btn-success w-100" id="guideVerifyCodeBtn" style="border-radius: 10px; padding: 12px;">
+                                            Verify
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guide Professional Information -->
+                        <h6 class="fw-bold mb-3 text-success">Guide Information</h6>
+
+                        <div class="mb-3">
+                            <label for="guideLocation" class="form-label fw-bold">Service Area <span class="text-danger">*</span></label>
+                            <select class="form-select" id="guideLocation" required style="border-radius: 10px; padding: 12px;">
+                                <option value="">Select your area</option>
+                                <optgroup label="Hokkaido & Tohoku">
+                                    <option value="hokkaido">Hokkaido</option>
+                                    <option value="aomori">Aomori</option>
+                                    <option value="iwate">Iwate</option>
+                                    <option value="miyagi">Miyagi</option>
+                                    <option value="akita">Akita</option>
+                                    <option value="yamagata">Yamagata</option>
+                                    <option value="fukushima">Fukushima</option>
+                                </optgroup>
+                                <optgroup label="Kanto">
+                                    <option value="ibaraki">Ibaraki</option>
+                                    <option value="tochigi">Tochigi</option>
+                                    <option value="gunma">Gunma</option>
+                                    <option value="saitama">Saitama</option>
+                                    <option value="chiba">Chiba</option>
+                                    <option value="tokyo">Tokyo</option>
+                                    <option value="kanagawa">Kanagawa</option>
+                                </optgroup>
+                                <optgroup label="Chubu">
+                                    <option value="niigata">Niigata</option>
+                                    <option value="toyama">Toyama</option>
+                                    <option value="ishikawa">Ishikawa</option>
+                                    <option value="fukui">Fukui</option>
+                                    <option value="yamanashi">Yamanashi</option>
+                                    <option value="nagano">Nagano</option>
+                                    <option value="gifu">Gifu</option>
+                                    <option value="shizuoka">Shizuoka</option>
+                                    <option value="aichi">Aichi</option>
+                                </optgroup>
+                                <optgroup label="Kansai">
+                                    <option value="mie">Mie</option>
+                                    <option value="shiga">Shiga</option>
+                                    <option value="kyoto">Kyoto</option>
+                                    <option value="osaka">Osaka</option>
+                                    <option value="hyogo">Hyogo</option>
+                                    <option value="nara">Nara</option>
+                                    <option value="wakayama">Wakayama</option>
+                                </optgroup>
+                                <optgroup label="Chugoku & Shikoku">
+                                    <option value="tottori">Tottori</option>
+                                    <option value="shimane">Shimane</option>
+                                    <option value="okayama">Okayama</option>
+                                    <option value="hiroshima">Hiroshima</option>
+                                    <option value="yamaguchi">Yamaguchi</option>
+                                    <option value="tokushima">Tokushima</option>
+                                    <option value="kagawa">Kagawa</option>
+                                    <option value="ehime">Ehime</option>
+                                    <option value="kochi">Kochi</option>
+                                </optgroup>
+                                <optgroup label="Kyushu & Okinawa">
+                                    <option value="fukuoka">Fukuoka</option>
+                                    <option value="saga">Saga</option>
+                                    <option value="nagasaki">Nagasaki</option>
+                                    <option value="kumamoto">Kumamoto</option>
+                                    <option value="oita">Oita</option>
+                                    <option value="miyazaki">Miyazaki</option>
+                                    <option value="kagoshima">Kagoshima</option>
+                                    <option value="okinawa">Okinawa</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="guideLanguages" class="form-label fw-bold">Languages Spoken <span class="text-danger">*</span></label>
+                            <select class="form-select" id="guideLanguages" multiple required style="border-radius: 10px; padding: 12px; min-height: 120px;">
+                                <optgroup label="Asian Languages">
+                                    <option value="japanese">Japanese</option>
+                                    <option value="english">English</option>
+                                    <option value="chinese">Chinese (Simplified)</option>
+                                    <option value="chinese_traditional">Chinese (Traditional)</option>
+                                    <option value="korean">Korean</option>
+                                    <option value="thai">Thai</option>
+                                    <option value="vietnamese">Vietnamese</option>
+                                    <option value="indonesian">Indonesian</option>
+                                    <option value="tagalog">Tagalog (Filipino)</option>
+                                    <option value="hindi">Hindi</option>
+                                </optgroup>
+                                <optgroup label="European Languages">
+                                    <option value="spanish">Spanish</option>
+                                    <option value="french">French</option>
+                                    <option value="german">German</option>
+                                    <option value="italian">Italian</option>
+                                    <option value="portuguese">Portuguese</option>
+                                    <option value="russian">Russian</option>
+                                    <option value="dutch">Dutch</option>
+                                    <option value="swedish">Swedish</option>
+                                </optgroup>
+                                <optgroup label="Other Languages">
+                                    <option value="arabic">Arabic</option>
+                                    <option value="hebrew">Hebrew</option>
+                                    <option value="turkish">Turkish</option>
+                                    <option value="swahili">Swahili</option>
+                                </optgroup>
+                            </select>
+                            <small class="text-muted">Hold Ctrl+Click to select multiple languages</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="guideSpecialty" class="form-label fw-bold">Specialty (Optional)</label>
+                            <input type="text" class="form-control" id="guideSpecialty" placeholder="History & Culture, Food Tours, Nature, etc." style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">Enter your area of expertise or tour specialties</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="guidePrice" class="form-label fw-bold">Daily Guide Fee <span class="text-danger">*</span></label>
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <span class="input-group-text">¥</span>
+                                        <input type="number" class="form-control" id="guidePriceInput" placeholder="6000" min="6000" step="1000" style="border-radius: 0 10px 10px 0; padding: 12px;">
+                                    </div>
+                                    <small class="text-muted">Minimum ¥6,000, in ¥1,000 increments</small>
+                                </div>
+                                <div class="col-md-4">
+                                    <select class="form-select" id="guidePriceRange" style="border-radius: 10px; padding: 12px;">
+                                        <option value="">Or select range</option>
+                                        <option value="6000-10000">¥6,000～¥10,000</option>
+                                        <option value="10000-15000">¥10,000～¥15,000</option>
+                                        <option value="15000-20000">¥15,000～¥20,000</option>
+                                        <option value="20000-25000">¥20,000～¥25,000</option>
+                                        <option value="25000-30000">¥25,000～¥30,000</option>
+                                        <option value="30000+">¥30,000+</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="guideDescription" class="form-label fw-bold">Self Introduction (Optional)</label>
+                            <textarea class="form-control" id="guideDescription" rows="3" placeholder="Describe your experience and guiding style..." style="border-radius: 10px; padding: 12px;"></textarea>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="guideAgreeTerms" required>
+                            <label class="form-check-label" for="guideAgreeTerms">
+                                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and <a href="#" class="text-decoration-none">Privacy Policy</a> <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">Cancel</button>
+                    <button type="button" class="btn btn-success" id="guideRegistrationSubmitBtn" style="border-radius: 25px; padding: 10px 20px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                        <i class="bi bi-check-circle me-2"></i>Register as Guide
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Registration Modal -->
     <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -1368,6 +1646,96 @@
             });
         }
 
+        // Show registration choice modal
+        function showRegistrationChoice() {
+            const choiceModal = document.createElement('div');
+            choiceModal.className = 'modal fade';
+            choiceModal.innerHTML = `
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
+                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
+                            <h5 class="modal-title fw-bold">
+                                <i class="bi bi-person-plus me-2"></i>Choose Registration Type
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-primary" style="cursor: pointer; border-radius: 15px; border-width: 2px;" onclick="openTouristRegistration()">
+                                        <div class="card-body text-center p-4">
+                                            <i class="bi bi-camera-fill text-primary mb-3" style="font-size: 3rem;"></i>
+                                            <h6 class="fw-bold text-primary mb-2">Tourist Registration</h6>
+                                            <p class="text-muted small mb-0">Register as a tourist to browse guides and book tours</p>
+                                            <div class="mt-3">
+                                                <span class="badge bg-primary">Quick & Easy</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-success" style="cursor: pointer; border-radius: 15px; border-width: 2px;" onclick="openGuideRegistration()">
+                                        <div class="card-body text-center p-4">
+                                            <i class="bi bi-person-badge-fill text-success mb-3" style="font-size: 3rem;"></i>
+                                            <h6 class="fw-bold text-success mb-2">Guide Registration</h6>
+                                            <p class="text-muted small mb-0">Register as a local guide to offer tours and earn income</p>
+                                            <div class="mt-3">
+                                                <span class="badge bg-success">Professional</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <small class="text-muted">Choose the option that best fits your needs</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(choiceModal);
+            const modal = new bootstrap.Modal(choiceModal);
+            modal.show();
+            
+            // Clean up
+            choiceModal.addEventListener('hidden.bs.modal', function() {
+                choiceModal.remove();
+            });
+        }
+
+        // Open tourist registration
+        window.openTouristRegistration = function() {
+            // Close choice modal
+            const choiceModal = document.querySelector('.modal.show');
+            if (choiceModal) {
+                const modal = bootstrap.Modal.getInstance(choiceModal);
+                modal.hide();
+            }
+            
+            // Open tourist registration modal
+            setTimeout(() => {
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                registrationModal.show();
+            }, 300);
+        }
+
+        // Open guide registration
+        window.openGuideRegistration = function() {
+            // Close choice modal
+            const choiceModal = document.querySelector('.modal.show');
+            if (choiceModal) {
+                const modal = bootstrap.Modal.getInstance(choiceModal);
+                modal.hide();
+            }
+            
+            // Open guide registration modal
+            setTimeout(() => {
+                const guideModal = new bootstrap.Modal(document.getElementById('guideRegistrationModal'));
+                guideModal.show();
+            }, 300);
+        }
+
         // Setup dropdown listeners
         function setupCustomDropdownListeners() {
             const touristBtn = document.getElementById('directTouristLoginBtn');
@@ -1390,18 +1758,48 @@
             }
         }
 
+        // Get price from range selection
+        function getPriceFromRange(rangeValue) {
+            if (!rangeValue) return null;
+            
+            const rangeMap = {
+                '6000-10000': 8000,
+                '10000-15000': 12500,
+                '15000-20000': 17500,
+                '20000-25000': 22500,
+                '25000-30000': 27500,
+                '30000+': 35000
+            };
+            
+            return rangeMap[rangeValue] || null;
+        }
+
+        // Update guide display with registered guides
+        function updateGuideDisplay() {
+            const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+            
+            // Combine default guides with registered guides
+            currentGuides = [...defaultGuides, ...registeredGuides];
+            guideData = currentGuides;
+            
+            // Re-display guides
+            displayGuides(currentGuides);
+            
+            console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${currentGuides.length} total`);
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
-            displayGuides(guideData);
+            // Load registered guides and combine with default guides
+            updateGuideDisplay();
             
             // Event listeners
             document.getElementById('searchBtn').addEventListener('click', filterGuides);
             document.getElementById('resetBtn').addEventListener('click', resetFilters);
             
-            // Registration button event - open modal
+            // Registration button event - show choice modal
             document.getElementById('registerBtn').addEventListener('click', function() {
-                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                registrationModal.show();
+                showRegistrationChoice();
             });
             
             // Registration form submission
@@ -1497,6 +1895,147 @@
                 setTimeout(() => {
                     alert('Thank you for your message!\n\nWe will respond to your inquiry within 24 hours.');
                 }, 500);
+            });
+
+            // Guide Registration Functions
+            let isGuidePhoneVerified = false;
+
+            // Profile photo preview for guide
+            document.getElementById('guideProfilePhoto').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                const preview = document.getElementById('guideProfilePreview');
+                const placeholder = document.getElementById('guidePhotoPlaceholder');
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                        placeholder.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Guide phone verification
+            document.getElementById('guideSendVerificationBtn').addEventListener('click', function() {
+                const phone = document.getElementById('guidePhone').value;
+                if (phone.match(/^[0-9+\-()]+$/)) {
+                    document.getElementById('guideVerificationCodeSection').style.display = 'block';
+                    this.disabled = true;
+                    this.textContent = 'Sent';
+                    
+                    // Simulate SMS sending
+                    alert('Verification code sent! (Demo: enter "123456")');
+                } else {
+                    alert('Please enter a valid phone number');
+                }
+            });
+
+            document.getElementById('guideVerifyCodeBtn').addEventListener('click', function() {
+                const code = document.getElementById('guideVerificationCode').value;
+                if (code === '123456') {
+                    isGuidePhoneVerified = true;
+                    this.textContent = 'Verified';
+                    this.disabled = true;
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-outline-success');
+                    document.getElementById('guideVerificationCode').disabled = true;
+                    alert('Phone verification completed!');
+                } else {
+                    alert('Invalid verification code');
+                }
+            });
+
+            // Guide price handling
+            document.getElementById('guidePriceRange').addEventListener('change', function() {
+                const priceInput = document.getElementById('guidePriceInput');
+                if (this.value) {
+                    priceInput.value = '';
+                    priceInput.disabled = true;
+                } else {
+                    priceInput.disabled = false;
+                }
+            });
+
+            document.getElementById('guidePriceInput').addEventListener('input', function() {
+                const priceRange = document.getElementById('guidePriceRange');
+                if (this.value) {
+                    priceRange.value = '';
+                    priceRange.disabled = true;
+                } else {
+                    priceRange.disabled = false;
+                }
+            });
+
+            // Guide registration form submission
+            document.getElementById('guideRegistrationSubmitBtn').addEventListener('click', function() {
+                const formData = {
+                    firstName: document.getElementById('guideFirstName').value.trim(),
+                    lastName: document.getElementById('guideLastName').value.trim(),
+                    displayFirstName: document.getElementById('guideDisplayFirstName').value.trim(),
+                    displayLastName: document.getElementById('guideDisplayLastName').value.trim(),
+                    email: document.getElementById('guideEmail').value.trim(),
+                    phone: document.getElementById('guidePhone').value.trim(),
+                    location: document.getElementById('guideLocation').value,
+                    languages: Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value),
+                    specialty: document.getElementById('guideSpecialty').value.trim(),
+                    price: document.getElementById('guidePriceInput').value || getPriceFromRange(document.getElementById('guidePriceRange').value),
+                    description: document.getElementById('guideDescription').value.trim(),
+                    agreeTerms: document.getElementById('guideAgreeTerms').checked,
+                    profilePhoto: document.getElementById('guideProfilePreview').src
+                };
+
+                // Validate required fields
+                if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || 
+                    !formData.location || formData.languages.length === 0 || !formData.price) {
+                    alert('Please fill in all required fields (marked with *)');
+                    return;
+                }
+
+                if (!formData.agreeTerms) {
+                    alert('Please agree to the Terms of Service and Privacy Policy');
+                    return;
+                }
+
+                if (!isGuidePhoneVerified) {
+                    alert('Please verify your phone number before registering');
+                    return;
+                }
+
+                // Save guide data
+                try {
+                    const guideData = {
+                        ...formData,
+                        id: Date.now(),
+                        registrationDate: new Date().toISOString(),
+                        type: 'guide',
+                        rating: 4.5 + (Math.random() * 0.5), // Random rating between 4.5-5.0
+                        name: `${formData.displayFirstName || formData.firstName} ${formData.displayLastName || formData.lastName}`,
+                        image: formData.profilePhoto || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+                    };
+
+                    // Get existing registered guides
+                    let registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+                    registeredGuides.push(guideData);
+                    localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+
+                    // Update guide data for display
+                    updateGuideDisplay();
+
+                    // Close modal
+                    const guideModal = bootstrap.Modal.getInstance(document.getElementById('guideRegistrationModal'));
+                    guideModal.hide();
+
+                    // Show success message
+                    setTimeout(() => {
+                        alert('Guide registration completed successfully!\n\nYour profile will be reviewed and activated within 24 hours.');
+                    }, 500);
+
+                } catch (error) {
+                    console.error('Guide registration error:', error);
+                    alert('An error occurred during registration. Please try again.');
+                }
             });
 
             // Setup dropdown listeners
