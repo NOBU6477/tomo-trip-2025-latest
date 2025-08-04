@@ -1345,7 +1345,7 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location}</span>
+                                <span class="badge bg-primary me-1">${locationNames && locationNames[guide.location] ? locationNames[guide.location] : (guide.location || 'Unknown')}</span>
                                 <span class="badge bg-secondary">${guide.specialty}</span>
                             </div>
                             <p class="card-text text-muted small mb-2">${guide.description}</p>
@@ -1439,10 +1439,7 @@
             });
         }
 
-        // View guide detail
-        function viewGuideDetail(guideId) {
-            console.log('View guide detail:', guideId);
-        }
+        // Removed empty viewGuideDetail function - full implementation exists later
 
         // Add to bookmarks
         function addToBookmarks(guideId) {
@@ -1548,7 +1545,10 @@
 
         // View guide detail with access control
         function viewGuideDetail(guideId) {
-            const guide = currentGuides.find(g => g.id == guideId);
+            console.log('Opening guide detail modal for guide:', guideId);
+            const allGuides = loadAllGuides();
+            const guide = allGuides.find(g => g.id == guideId);
+            console.log('Opening guide detail modal for guide:', guide);
             if (!guide) return;
 
             // Check if user is registered
@@ -1593,7 +1593,7 @@
                                     <h6 class="text-primary mb-3">Basic Information</h6>
                                     <div class="row mb-3">
                                         <div class="col-sm-4"><strong>Location:</strong></div>
-                                        <div class="col-sm-8">${locationNames[guide.location] || guide.location}</div>
+                                        <div class="col-sm-8">${locationNames && locationNames[guide.location] ? locationNames[guide.location] : (guide.location || 'Unknown Location')}</div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-sm-4"><strong>Specialty:</strong></div>
@@ -2653,23 +2653,16 @@
 
             // Management Center Button Event Listener
             const managementBtn = document.getElementById('managementBtn');
-            console.log('Looking for managementBtn:', managementBtn);
             if (managementBtn) {
-                console.log('✅ Management button found, adding event listener');
                 managementBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('🏆 Management Center button clicked!');
                     try {
                         showManagementCenter();
                     } catch (error) {
                         console.error('Error opening management center:', error);
-                        alert('Error opening management center: ' + error.message);
                     }
                 });
-                console.log('✅ Management button event listener added successfully');
-            } else {
-                console.error('❌ Management button not found!');
             }
 
             // Initialize on page load
@@ -2978,38 +2971,53 @@
         // Management Center Functions
         function showManagementCenter() {
             console.log('Opening Management Center...');
-            loadManagementData();
-            const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
-            managementModal.show();
+            try {
+                loadManagementData();
+                const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
+                managementModal.show();
+                console.log('✅ Management Center opened successfully');
+            } catch (error) {
+                console.error('❌ Error showing management center:', error);
+                alert('Error opening management center: ' + error.message);
+            }
         }
         
         function loadManagementData() {
-            loadBookmarksList();
-            loadComparisonList();
-            loadBookingsList();
-            loadSettingsData();
+            console.log('📊 Loading management data...');
+            try {
+                loadBookmarksList();
+                loadComparisonList();
+                loadBookingsList();
+                loadSettingsData();
+                console.log('✅ Management data loaded successfully');
+            } catch (error) {
+                console.error('❌ Error loading management data:', error);
+            }
         }
         
         function loadBookmarksList() {
-            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-            const bookmarksList = document.getElementById('bookmarksList');
-            
-            if (bookmarkedGuides.length === 0) {
-                bookmarksList.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-bookmark text-muted" style="font-size: 3rem;"></i>
-                        <p class="text-muted mt-3">No saved guides</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const allGuides = loadAllGuides();
-            bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
-                const guide = allGuides.find(g => g.id == guideId);
-                if (!guide) return '';
+            try {
+                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+                const bookmarksList = document.getElementById('bookmarksList');
                 
-                return `
+                if (!bookmarksList) return;
+                
+                if (bookmarkedGuides.length === 0) {
+                    bookmarksList.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-bookmark text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No saved guides</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const allGuides = loadAllGuides();
+                bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
+                    const guide = allGuides.find(g => g.id == guideId);
+                    if (!guide) return '';
+                    
+                    return `
                     <div class="col-md-6 mb-3">
                         <div class="card h-100">
                             <div class="row g-0">
@@ -3019,7 +3027,7 @@
                                 <div class="col-8">
                                     <div class="card-body p-3">
                                         <h6 class="card-title mb-1">${guide.name}</h6>
-                                        <p class="card-text small text-muted mb-2">${locationNames[guide.location] || guide.location}</p>
+                                        <p class="card-text small text-muted mb-2">${locationNames && locationNames[guide.location] ? locationNames[guide.location] : (guide.location || 'Unknown Location')}</p>
                                         <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                         <div class="d-flex gap-2">
                                             <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">Details</button>
@@ -3030,25 +3038,40 @@
                             </div>
                         </div>
                     </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error loading bookmarks:', error);
+                const bookmarksList = document.getElementById('bookmarksList');
+                if (bookmarksList) {
+                    bookmarksList.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">Error loading bookmarks</p>
+                        </div>
+                    `;
+                }
+            }
         }
         
         function loadComparisonList() {
-            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-            const comparisonList = document.getElementById('comparisonList');
-            
-            if (comparisonGuides.length === 0) {
-                comparisonList.innerHTML = `
-                    <div class="col-12 text-center py-5">
-                        <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
-                        <p class="text-muted mt-3">No guides in comparison</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const allGuides = loadAllGuides();
+            try {
+                const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+                const comparisonList = document.getElementById('comparisonList');
+                
+                if (!comparisonList) return;
+                
+                if (comparisonGuides.length === 0) {
+                    comparisonList.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">No guides in comparison</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                const allGuides = loadAllGuides();
             comparisonList.innerHTML = comparisonGuides.map(guideId => {
                 const guide = allGuides.find(g => g.id == guideId);
                 if (!guide) return '';
@@ -3059,7 +3082,7 @@
                             <img src="${guide.image}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="${guide.name}">
                             <div class="card-body p-3 d-flex flex-column">
                                 <h6 class="card-title mb-1">${guide.name}</h6>
-                                <p class="card-text small text-muted mb-1">${locationNames[guide.location] || guide.location}</p>
+                                <p class="card-text small text-muted mb-1">${locationNames && locationNames[guide.location] ? locationNames[guide.location] : (guide.location || 'Unknown Location')}</p>
                                 <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
                                 <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                 <div class="mt-auto">
@@ -3077,11 +3100,26 @@
                     </div>
                 `;
             }).join('');
+            } catch (error) {
+                console.error('Error loading comparison list:', error);
+                const comparisonList = document.getElementById('comparisonList');
+                if (comparisonList) {
+                    comparisonList.innerHTML = `
+                        <div class="col-12 text-center py-5">
+                            <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">Error loading comparison list</p>
+                        </div>
+                    `;
+                }
+            }
         }
         
         function loadBookingsList() {
-            const userBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-            const bookingsList = document.getElementById('bookingsList');
+            try {
+                const userBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+                const bookingsList = document.getElementById('bookingsList');
+                
+                if (!bookingsList) return;
             
             if (userBookings.length === 0) {
                 bookingsList.innerHTML = `
@@ -3127,16 +3165,34 @@
                     </div>
                 `;
             }).join('');
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                const bookingsList = document.getElementById('bookingsList');
+                if (bookingsList) {
+                    bookingsList.innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-3">Error loading booking history</p>
+                        </div>
+                    `;
+                }
+            }
         }
         
         function loadSettingsData() {
-            // Load saved language preference
-            const savedLang = localStorage.getItem('preferredLanguage') || 'en';
-            document.getElementById('defaultLanguageSetting').value = savedLang;
-            
-            // Load notification setting
-            const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
-            document.getElementById('notificationsEnabled').checked = notificationsEnabled;
+            try {
+                // Load saved language preference
+                const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+                const langSetting = document.getElementById('defaultLanguageSetting');
+                if (langSetting) langSetting.value = savedLang;
+                
+                    // Load notification setting
+                const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
+                const notificationSetting = document.getElementById('notificationsEnabled');
+                if (notificationSetting) notificationSetting.checked = notificationsEnabled;
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
             
             // Add event listeners for management actions
             document.getElementById('clearBookmarksBtn').addEventListener('click', function() {
