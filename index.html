@@ -3227,19 +3227,30 @@
             const summary = document.getElementById('bookingSummary');
             const totalElement = document.getElementById('bookingTotal');
             
+            console.log('Booking calculation debug:', {
+                guide: currentBookingGuide.name,
+                price: currentBookingGuide.price,
+                priceType: typeof currentBookingGuide.price,
+                date, time, duration, participants
+            });
+            
             if (date && time && duration && participants) {
-                // Extract price - handle both string and number formats
-                let basePrice;
-                if (typeof currentBookingGuide.price === 'string') {
-                    basePrice = parseInt(currentBookingGuide.price.replace(/[^\d]/g, ''));
-                } else {
-                    basePrice = parseInt(currentBookingGuide.price) || 5000; // fallback
+                // Extract price - handle multiple formats
+                let basePrice = 5000; // default fallback
+                
+                if (currentBookingGuide.price) {
+                    if (typeof currentBookingGuide.price === 'string') {
+                        // Handle string formats like "¥7000/時間" or "7000"
+                        const priceMatch = currentBookingGuide.price.match(/\d+/);
+                        if (priceMatch) {
+                            basePrice = parseInt(priceMatch[0]);
+                        }
+                    } else if (typeof currentBookingGuide.price === 'number') {
+                        basePrice = currentBookingGuide.price;
+                    }
                 }
                 
-                // If no valid price found, use a default
-                if (isNaN(basePrice) || basePrice === 0) {
-                    basePrice = 5000;
-                }
+                console.log('Extracted base price:', basePrice);
                 
                 const durationMultiplier = duration === '2' ? 1.5 : duration === '4' ? 2.5 : duration === '8' ? 4 : 1;
                 const total = Math.round(basePrice * durationMultiplier * parseInt(participants));
