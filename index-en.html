@@ -634,6 +634,267 @@
         </div>
     </section>
 
+    <!-- Registration Modal -->
+    <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold" id="registrationModalLabel">
+                        <i class="bi bi-person-plus me-2"></i>Tourist Registration
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="registrationForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="realFirstName" class="form-label fw-bold">
+                                        <i class="bi bi-person me-2"></i>First Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="realFirstName" placeholder="John" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="realLastName" class="form-label fw-bold">
+                                        <i class="bi bi-person me-2"></i>Last Name <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="realLastName" placeholder="Smith" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-2"></i>Email Address <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" class="form-control" id="email" placeholder="john.smith@example.com" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="country" class="form-label fw-bold">
+                                        <i class="bi bi-globe me-2"></i>Country <span class="text-danger">*</span>
+                                    </label>
+                                    <select class="form-select" id="country" required style="border-radius: 10px; padding: 12px;">
+                                        <option value="">Select your country</option>
+                                        <option value="usa">United States</option>
+                                        <option value="uk">United Kingdom</option>
+                                        <option value="canada">Canada</option>
+                                        <option value="australia">Australia</option>
+                                        <option value="germany">Germany</option>
+                                        <option value="france">France</option>
+                                        <option value="china">China</option>
+                                        <option value="korea">South Korea</option>
+                                        <option value="taiwan">Taiwan</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label fw-bold">
+                                        <i class="bi bi-telephone me-2"></i>Phone Number
+                                    </label>
+                                    <input type="tel" class="form-control" id="phone" placeholder="+1-234-567-8900" style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="visitPurpose" class="form-label fw-bold">
+                                <i class="bi bi-map me-2"></i>Purpose of Visit
+                            </label>
+                            <select class="form-select" id="visitPurpose" style="border-radius: 10px; padding: 12px;">
+                                <option value="">Select purpose</option>
+                                <option value="tourism">Tourism/Sightseeing</option>
+                                <option value="business">Business</option>
+                                <option value="study">Study/Education</option>
+                                <option value="family">Family Visit</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="visitDuration" class="form-label fw-bold">
+                                        <i class="bi bi-calendar me-2"></i>Duration of Stay
+                                    </label>
+                                    <select class="form-select" id="visitDuration" style="border-radius: 10px; padding: 12px;">
+                                        <option value="">Select duration</option>
+                                        <option value="1-3days">1-3 days</option>
+                                        <option value="4-7days">4-7 days</option>
+                                        <option value="1-2weeks">1-2 weeks</option>
+                                        <option value="3-4weeks">3-4 weeks</option>
+                                        <option value="1month+">1 month or more</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="preferredLanguage" class="form-label fw-bold">
+                                        <i class="bi bi-translate me-2"></i>Guide Language Preference
+                                    </label>
+                                    <select class="form-select" id="preferredLanguage" style="border-radius: 10px; padding: 12px;">
+                                        <option value="">Select language</option>
+                                        <option value="english">English</option>
+                                        <option value="chinese">Chinese</option>
+                                        <option value="korean">Korean</option>
+                                        <option value="japanese">Japanese</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="interests" class="form-label fw-bold">
+                                <i class="bi bi-heart me-2"></i>Interests/Preferences
+                            </label>
+                            <textarea class="form-control" id="interests" rows="3" placeholder="Tell us about your interests, places you'd like to visit, activities you enjoy..." style="border-radius: 10px; padding: 12px;"></textarea>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a> <span class="text-danger">*</span>
+                            </label>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="receiveUpdates">
+                            <label class="form-check-label" for="receiveUpdates">
+                                I would like to receive updates about new guides and special offers
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="registerSubmitBtn" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #007bff, #0056b3); border: none;">
+                        <i class="bi bi-check-circle me-2"></i>Register
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #6f42c1, #5a32a3); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="loginModalLabel">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="login-type-indicator" id="loginTypeIndicator">
+                            <span class="badge bg-primary fs-6" id="loginTypeBadge">Tourist Login</span>
+                        </div>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-2"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control" id="loginEmail" placeholder="Enter your email" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label fw-bold">
+                                <i class="bi bi-lock me-2"></i>Password
+                            </label>
+                            <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe">
+                            <label class="form-check-label" for="rememberMe">
+                                Remember me
+                            </label>
+                        </div>
+                    </form>
+                    
+                    <div class="alert alert-info" style="border-radius: 10px;">
+                        <small><i class="bi bi-info-circle me-2"></i>For first-time users, please register as a tourist first to access guide details and booking features.</small>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="loginSubmitBtn" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #6f42c1, #5a32a3); border: none;">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #20c997, #17a2b8); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="contactModalLabel">
+                        <i class="bi bi-envelope me-2"></i>Contact Us
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="contactForm">
+                        <div class="mb-3">
+                            <label for="contactName" class="form-label fw-bold">
+                                <i class="bi bi-person me-2"></i>Name
+                            </label>
+                            <input type="text" class="form-control" id="contactName" placeholder="Your name" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactEmail" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-2"></i>Email
+                            </label>
+                            <input type="email" class="form-control" id="contactEmail" placeholder="your.email@example.com" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactSubject" class="form-label fw-bold">
+                                <i class="bi bi-chat-dots me-2"></i>Subject
+                            </label>
+                            <select class="form-select" id="contactSubject" required style="border-radius: 10px; padding: 12px;">
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="guide">Guide Registration</option>
+                                <option value="sponsor">Sponsor Partnership</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="feedback">Feedback</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="contactMessage" class="form-label fw-bold">
+                                <i class="bi bi-chat-text me-2"></i>Message
+                            </label>
+                            <textarea class="form-control" id="contactMessage" rows="4" placeholder="Please describe your inquiry or feedback..." required style="border-radius: 10px; padding: 12px;"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="contactSubmitBtn" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #20c997, #17a2b8); border: none;">
+                        <i class="bi bi-send me-2"></i>Send Message
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Complete English version with all Japanese functionality
@@ -968,6 +1229,167 @@
             alert('Sponsor login functionality coming soon!\n\nPlease use the Japanese version for now.');
         }
 
+        // View guide detail with access control
+        function viewGuideDetail(guideId) {
+            const guide = currentGuides.find(g => g.id == guideId);
+            if (!guide) return;
+
+            // Check if user is registered
+            const touristData = localStorage.getItem('touristData');
+            
+            if (!touristData) {
+                // Show registration modal for unregistered users
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                registrationModal.show();
+                return;
+            }
+
+            // Show guide details for registered users
+            showGuideDetailModal(guide);
+        }
+
+        // Show guide detail modal
+        function showGuideDetailModal(guide) {
+            const detailModal = document.createElement('div');
+            detailModal.className = 'modal fade';
+            detailModal.innerHTML = `
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
+                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 15px 15px 0 0;">
+                            <h5 class="modal-title fw-bold">
+                                <i class="bi bi-person-circle me-2"></i>Guide Details
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="${guide.image}" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                                    <div class="text-center">
+                                        <span class="text-warning">★</span>
+                                        <span class="fw-bold">${guide.rating}</span>
+                                    </div>
+                                    <div class="fw-bold text-primary fs-4">¥${(guide.price || 0).toLocaleString()}</div>
+                                    <small class="text-muted">per day</small>
+                                </div>
+                                <div class="col-md-8">
+                                    <h6 class="text-primary mb-3">Basic Information</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Location:</strong></div>
+                                        <div class="col-sm-8">${locationNames[guide.location] || guide.location}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Specialty:</strong></div>
+                                        <div class="col-sm-8">${guide.specialty}</div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-4"><strong>Languages:</strong></div>
+                                        <div class="col-sm-8">
+                                            ${guide.languages.map(lang => lang.charAt(0).toUpperCase() + lang.slice(1)).join(', ')}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Guide Introduction</h6>
+                                        <p class="text-muted">${guide.description}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <h6 class="text-primary">Service Details</h6>
+                                        <ul class="text-muted">
+                                            <li>Professional guide service</li>
+                                            <li>Safe local support</li>
+                                            <li>Photography service</li>
+                                            <li>Recommended spot guidance</li>
+                                            <li>Cultural and historical explanations</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-success" onclick="bookGuide(${guide.id})">
+                                <i class="bi bi-calendar-check me-2"></i>Book Now
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" onclick="contactGuide(${guide.id})">
+                                <i class="bi bi-chat-dots me-2"></i>Message
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(detailModal);
+            const modal = new bootstrap.Modal(detailModal);
+            modal.show();
+            
+            // Clean up modal after hiding
+            detailModal.addEventListener('hidden.bs.modal', function() {
+                detailModal.remove();
+            });
+        }
+
+        // Booking and contact functions
+        window.bookGuide = function(guideId) {
+            alert(`Booking functionality for Guide ID: ${guideId} is under development.\n\nA detailed booking system will be implemented soon.`);
+        }
+
+        window.contactGuide = function(guideId) {
+            alert(`Messaging functionality for Guide ID: ${guideId} is under development.\n\nA chat feature will be implemented soon.`);
+        }
+
+        // Login functionality
+        function showLoginModal(loginType) {
+            return new Promise((resolve) => {
+                try {
+                    const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+                    loginModal.show();
+                    document.getElementById('loginModal').setAttribute('data-login-type', loginType);
+                    
+                    // Update modal content based on login type
+                    const badge = document.getElementById('loginTypeBadge');
+                    if (loginType === 'tourist') {
+                        badge.textContent = 'Tourist Login';
+                        badge.className = 'badge bg-primary fs-6';
+                    } else if (loginType === 'guide') {
+                        badge.textContent = 'Guide Login';
+                        badge.className = 'badge bg-success fs-6';
+                    }
+                    
+                    resolve(true);
+                } catch (error) {
+                    const modalElement = document.getElementById('loginModal');
+                    if (modalElement) {
+                        modalElement.style.display = 'block';
+                        modalElement.classList.add('show');
+                        modalElement.style.backgroundColor = 'rgba(0,0,0,0.5)';
+                    }
+                    resolve(false);
+                }
+            });
+        }
+
+        // Setup dropdown listeners
+        function setupCustomDropdownListeners() {
+            const touristBtn = document.getElementById('directTouristLoginBtn');
+            const guideBtn = document.getElementById('directGuideLoginBtn');
+            
+            if (touristBtn) {
+                touristBtn.onclick = function() {
+                    showLoginModal('tourist').catch(() => {});
+                    document.getElementById('customLoginDropdown').style.display = 'none';
+                    return false;
+                };
+            }
+            
+            if (guideBtn) {
+                guideBtn.onclick = function() {
+                    showLoginModal('guide').catch(() => {});
+                    document.getElementById('customLoginDropdown').style.display = 'none';
+                    return false;
+                };
+            }
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             displayGuides(guideData);
@@ -976,10 +1398,109 @@
             document.getElementById('searchBtn').addEventListener('click', filterGuides);
             document.getElementById('resetBtn').addEventListener('click', resetFilters);
             
-            // Registration button event
+            // Registration button event - open modal
             document.getElementById('registerBtn').addEventListener('click', function() {
-                alert('Registration functionality coming soon!\n\nThis will open the tourist registration modal.');
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                registrationModal.show();
             });
+            
+            // Registration form submission
+            document.getElementById('registerSubmitBtn').addEventListener('click', function() {
+                const form = document.getElementById('registrationForm');
+                const formData = {
+                    realName: {
+                        first: document.getElementById('realFirstName').value.trim(),
+                        last: document.getElementById('realLastName').value.trim()
+                    },
+                    email: document.getElementById('email').value.trim(),
+                    country: document.getElementById('country').value,
+                    phone: document.getElementById('phone').value.trim(),
+                    visitPurpose: document.getElementById('visitPurpose').value,
+                    visitDuration: document.getElementById('visitDuration').value,
+                    preferredLanguage: document.getElementById('preferredLanguage').value,
+                    interests: document.getElementById('interests').value.trim(),
+                    agreeTerms: document.getElementById('agreeTerms').checked,
+                    receiveUpdates: document.getElementById('receiveUpdates').checked
+                };
+
+                // Validate required fields
+                if (!formData.realName.first || !formData.realName.last || !formData.email || !formData.country) {
+                    alert('Please fill in all required fields (marked with *)');
+                    return;
+                }
+
+                if (!formData.agreeTerms) {
+                    alert('Please agree to the Terms of Service and Privacy Policy');
+                    return;
+                }
+
+                // Save tourist data
+                try {
+                    const touristData = {
+                        ...formData,
+                        registrationDate: new Date().toISOString(),
+                        id: Date.now()
+                    };
+                    
+                    localStorage.setItem('touristData', JSON.stringify(touristData));
+                    
+                    // Close modal
+                    const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                    registrationModal.hide();
+                    
+                    // Show success message
+                    setTimeout(() => {
+                        alert('Registration completed successfully!\n\nYou can now view guide details and book tours.');
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    alert('An error occurred during registration. Please try again.');
+                }
+            });
+
+            // Login form submission
+            document.getElementById('loginSubmitBtn').addEventListener('click', function() {
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+                
+                if (!email || !password) {
+                    alert('Please enter both email and password.');
+                    return;
+                }
+                
+                // For development - simulate successful login
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+                
+                setTimeout(() => {
+                    alert('Login successful!\n\nNote: Login functionality is currently under development. Actual authentication will be implemented soon.');
+                }, 500);
+            });
+
+            // Contact form submission
+            document.getElementById('contactSubmitBtn').addEventListener('click', function() {
+                const name = document.getElementById('contactName').value.trim();
+                const email = document.getElementById('contactEmail').value.trim();
+                const subject = document.getElementById('contactSubject').value;
+                const message = document.getElementById('contactMessage').value.trim();
+                
+                if (!name || !email || !subject || !message) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+                
+                // Close modal
+                const contactModal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
+                contactModal.hide();
+                
+                setTimeout(() => {
+                    alert('Thank you for your message!\n\nWe will respond to your inquiry within 24 hours.');
+                }, 500);
+            });
+
+            // Setup dropdown listeners
+            setupCustomDropdownListeners();
             
             document.getElementById('prevPageBtn').addEventListener('click', () => {
                 if (currentPage > 1) {
