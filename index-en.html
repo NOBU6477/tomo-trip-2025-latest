@@ -1481,24 +1481,7 @@
             return priceRanges[rangeValue] || '';
         }
 
-        // Update guide display after registration
-        function updateGuideDisplay() {
-            // Get all guides (default + registered)
-            const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-            const allGuides = [...defaultGuides, ...registeredGuides];
-            
-            console.log(`📊 Loaded ${registeredGuides.length} registered guides`);
-            console.log(`📊 Total guides: ${allGuides.length} (${defaultGuides.length} default + ${registeredGuides.length} registered)`);
-            
-            // Update global guide data
-            guideData = allGuides;
-            currentGuides = allGuides;
-            
-            // Re-display guides
-            displayGuides(allGuides, 1);
-            
-            console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${allGuides.length} total`);
-        }
+
 
         // Language switching functions
         function switchToJapanese() {
@@ -2044,7 +2027,12 @@
                     localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
 
                     // Update guide data for display
-                    updateGuideDisplay();
+                    try {
+                        updateGuideDisplay();
+                    } catch (error) {
+                        console.error('Error updating guide display after registration:', error);
+                        // Continue anyway as the registration was successful
+                    }
 
                     // Close modal
                     const guideModal = bootstrap.Modal.getInstance(document.getElementById('guideRegistrationModal'));
