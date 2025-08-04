@@ -230,7 +230,7 @@
                     <button class="btn btn-outline-light btn-sm me-2" onclick="showBookingInfo()">
                         <i class="bi bi-info-circle"></i> 予約詳細
                     </button>
-                    <button class="btn btn-outline-light btn-sm" onclick="goBack()">
+                    <button class="btn btn-outline-light btn-sm" id="backButton">
                         <i class="bi bi-arrow-left"></i> 戻る
                     </button>
                 </div>
@@ -294,8 +294,10 @@
         let messages = [];
         
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Chat page loaded');
             loadChatData();
             setupEventListeners();
+            setupBackButton();
         });
         
         function loadChatData() {
@@ -391,6 +393,20 @@
             messageInput.addEventListener('input', function() {
                 sendBtn.disabled = this.value.trim() === '';
             });
+        }
+        
+        function setupBackButton() {
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Back button clicked');
+                    goBack();
+                });
+                console.log('Back button event listener added');
+            } else {
+                console.error('Back button not found');
+            }
         }
         
         function handleKeyPress(event) {
@@ -499,20 +515,36 @@
         }
         
         function goBack() {
-            // URLパラメータから予約IDを取得
-            const urlParams = new URLSearchParams(window.location.search);
-            const bookingId = urlParams.get('bookingId');
+            console.log('goBack function called');
             
-            // 予約確認ページに戻る
-            if (bookingId) {
-                window.location.href = `booking-confirmation.html?id=${bookingId}`;
-            } else {
-                // 予約IDがない場合は前のページまたはホームに戻る
-                if (document.referrer && document.referrer.includes(window.location.origin)) {
-                    window.history.back();
+            try {
+                // URLパラメータから予約IDを取得
+                const urlParams = new URLSearchParams(window.location.search);
+                const bookingId = urlParams.get('bookingId');
+                
+                console.log('Current URL:', window.location.href);
+                console.log('Booking ID:', bookingId);
+                
+                // 予約確認ページに戻る
+                if (bookingId) {
+                    const targetUrl = `booking-confirmation.html?id=${bookingId}`;
+                    console.log('Redirecting to:', targetUrl);
+                    window.location.href = targetUrl;
                 } else {
-                    window.location.href = 'index.html';
+                    // 予約IDがない場合は前のページまたはホームに戻る
+                    console.log('No booking ID, checking referrer:', document.referrer);
+                    if (document.referrer && document.referrer.includes(window.location.origin)) {
+                        console.log('Going back in history');
+                        window.history.back();
+                    } else {
+                        console.log('Redirecting to home page');
+                        window.location.href = 'index.html';
+                    }
                 }
+            } catch (error) {
+                console.error('Error in goBack function:', error);
+                // エラーが発生した場合は強制的にホームページに戻る
+                window.location.href = 'index.html';
             }
         }
     </script>
