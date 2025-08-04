@@ -3284,6 +3284,8 @@
                 id: Date.now(),
                 guideId: currentBookingGuide.id,
                 guideName: currentBookingGuide.name,
+                guideImage: currentBookingGuide.image,
+                guideRate: currentBookingGuide.price,
                 date: formData.get('date'),
                 time: formData.get('time'),
                 duration: formData.get('duration'),
@@ -3294,15 +3296,15 @@
                 bookingDate: new Date().toISOString()
             };
             
-            // Save booking
-            saveBooking(booking);
-            
-            // Show confirmation
-            showBookingConfirmation(booking);
+            // Save as temporary booking data for payment
+            localStorage.setItem('tempBookingData', JSON.stringify(booking));
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
             modal.hide();
+            
+            // Redirect to payment page
+            window.location.href = 'payment.html';
         }
 
         function saveBooking(booking) {

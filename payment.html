@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>決済 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .payment-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .payment-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .payment-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .booking-summary {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .payment-method {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: #28a745;
+            transform: translateY(-2px);
+        }
+        
+        .payment-method.selected {
+            border-color: #28a745;
+            background: #d4edda;
+        }
+        
+        .card-form {
+            display: none;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .card-form.show {
+            display: block;
+        }
+        
+        .security-info {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .commission-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        
+        .btn-pay {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            border-radius: 25px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-pay:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        .processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .processing-content {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #28a745;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <div class="payment-card">
+            <div class="payment-header">
+                <h2><i class="bi bi-credit-card me-2"></i>お支払い</h2>
+                <p class="mb-0">安全で確実な決済システム</p>
+            </div>
+            
+            <div class="p-4">
+                <!-- 予約内容確認 -->
+                <div class="booking-summary">
+                    <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2"></i>予約内容</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center mb-3">
+                                <img id="paymentGuideImage" src="" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-1 fw-bold" id="paymentGuideName">ガイド名</h6>
+                                    <small class="text-muted" id="paymentGuideRate">時給</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="paymentBookingDetails">
+                                <!-- 予約詳細がここに表示されます -->
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">合計金額:</h5>
+                        <h4 class="text-success fw-bold mb-0" id="paymentTotal">¥0</h4>
+                    </div>
+                </div>
+                
+                <!-- 決済手順説明 -->
+                <div class="commission-info">
+                    <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>決済・支払いについて</h6>
+                    <ul class="mb-0">
+                        <li>お客様からの全額を弊社が一旦お預かりします</li>
+                        <li>ガイドサービス完了後、手数料（15%）を差し引いた金額をガイドにお支払いします</li>
+                        <li>万が一のキャンセルやトラブルの際も安心保証いたします</li>
+                        <li>決済完了と同時にガイドに通知が送信されます</li>
+                    </ul>
+                </div>
+                
+                <!-- 決済方法選択 -->
+                <h5 class="fw-bold mb-3"><i class="bi bi-wallet me-2"></i>決済方法を選択</h5>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="card">
+                        <i class="bi bi-credit-card fs-2 text-primary mb-2"></i>
+                        <h6>クレジットカード</h6>
+                        <small class="text-muted">Visa, MasterCard, JCB</small>
+                    </div>
+                    <div class="payment-method" data-method="bank">
+                        <i class="bi bi-bank fs-2 text-success mb-2"></i>
+                        <h6>銀行振込</h6>
+                        <small class="text-muted">即座に確認</small>
+                    </div>
+                    <div class="payment-method" data-method="paypal">
+                        <i class="bi bi-paypal fs-2 text-info mb-2"></i>
+                        <h6>PayPal</h6>
+                        <small class="text-muted">安全・簡単</small>
+                    </div>
+                </div>
+                
+                <!-- クレジットカードフォーム -->
+                <div class="card-form" id="cardForm">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>カード情報入力</h6>
+                    <form id="paymentForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">カード番号</label>
+                                <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">カード名義</label>
+                                <input type="text" class="form-control" id="cardName" placeholder="TARO YAMADA" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">有効期限</label>
+                                <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY" maxlength="5" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">セキュリティコード</label>
+                                <input type="text" class="form-control" id="cardCvv" placeholder="123" maxlength="4" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- セキュリティ情報 -->
+                <div class="security-info">
+                    <h6 class="fw-bold"><i class="bi bi-shield-lock me-2"></i>セキュリティ保証</h6>
+                    <p class="mb-0">SSL暗号化通信により、お客様の決済情報は完全に保護されています。クレジットカード情報は弊社サーバーに保存されません。</p>
+                </div>
+                
+                <!-- 決済ボタン -->
+                <button type="button" class="btn btn-pay" id="submitPayment" disabled>
+                    <i class="bi bi-lock-fill me-2"></i>安全に決済する
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 処理中オーバーレイ -->
+    <div class="processing-overlay" id="processingOverlay">
+        <div class="processing-content">
+            <div class="spinner"></div>
+            <h5>決済処理中...</h5>
+            <p class="text-muted">しばらくお待ちください</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let bookingData = null;
+        let selectedPaymentMethod = null;
+        
+        // ページ読み込み時に予約データを取得
+        document.addEventListener('DOMContentLoaded', function() {
+            loadBookingData();
+            setupEventListeners();
+        });
+        
+        function loadBookingData() {
+            // URLパラメータまたはLocalStorageから予約データを取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const bookingId = urlParams.get('booking');
+            
+            if (bookingId) {
+                // LocalStorageから一時的な予約データを取得
+                bookingData = JSON.parse(localStorage.getItem('tempBookingData') || '{}');
+            } else {
+                // 最新の予約データを取得
+                const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+                bookingData = bookings[bookings.length - 1];
+            }
+            
+            if (bookingData) {
+                displayBookingData();
+            } else {
+                alert('予約データが見つかりません。');
+                window.location.href = 'index.html';
+            }
+        }
+        
+        function displayBookingData() {
+            document.getElementById('paymentGuideName').textContent = bookingData.guideName;
+            document.getElementById('paymentGuideImage').src = bookingData.guideImage || '';
+            document.getElementById('paymentGuideRate').textContent = bookingData.guideRate || '';
+            document.getElementById('paymentTotal').textContent = bookingData.totalPrice;
+            
+            const detailsHTML = `
+                <div><strong>日付:</strong> ${bookingData.date}</div>
+                <div><strong>時間:</strong> ${bookingData.time}</div>
+                <div><strong>時間:</strong> ${bookingData.duration}時間</div>
+                <div><strong>参加者:</strong> ${bookingData.participants}名</div>
+            `;
+            document.getElementById('paymentBookingDetails').innerHTML = detailsHTML;
+        }
+        
+        function setupEventListeners() {
+            // 決済方法選択
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedPaymentMethod = this.dataset.method;
+                    
+                    // カードフォームの表示/非表示
+                    const cardForm = document.getElementById('cardForm');
+                    if (selectedPaymentMethod === 'card') {
+                        cardForm.classList.add('show');
+                    } else {
+                        cardForm.classList.remove('show');
+                    }
+                    
+                    updatePayButton();
+                });
+            });
+            
+            // カード番号フォーマット
+            document.getElementById('cardNumber').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s/g, '');
+                let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
+                e.target.value = formattedValue;
+                updatePayButton();
+            });
+            
+            // 有効期限フォーマット
+            document.getElementById('cardExpiry').addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                }
+                e.target.value = value;
+                updatePayButton();
+            });
+            
+            // CVVは数字のみ
+            document.getElementById('cardCvv').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '');
+                updatePayButton();
+            });
+            
+            // カード名義入力
+            document.getElementById('cardName').addEventListener('input', updatePayButton);
+            
+            // 決済ボタン
+            document.getElementById('submitPayment').addEventListener('click', processPayment);
+        }
+        
+        function updatePayButton() {
+            const submitBtn = document.getElementById('submitPayment');
+            
+            if (selectedPaymentMethod === 'card') {
+                const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, '');
+                const cardName = document.getElementById('cardName').value;
+                const cardExpiry = document.getElementById('cardExpiry').value;
+                const cardCvv = document.getElementById('cardCvv').value;
+                
+                const isValid = cardNumber.length >= 13 && cardName.length > 0 && 
+                               cardExpiry.length === 5 && cardCvv.length >= 3;
+                
+                submitBtn.disabled = !isValid;
+            } else if (selectedPaymentMethod) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+        
+        function processPayment() {
+            // 処理中オーバーレイ表示
+            document.getElementById('processingOverlay').style.display = 'flex';
+            
+            // 決済処理をシミュレート
+            setTimeout(() => {
+                // 決済成功
+                completePayment();
+            }, 3000);
+        }
+        
+        function completePayment() {
+            // 予約データを正式に保存
+            if (bookingData) {
+                bookingData.paymentStatus = 'completed';
+                bookingData.paymentMethod = selectedPaymentMethod;
+                bookingData.paymentDate = new Date().toISOString();
+                bookingData.status = 'confirmed';
+                
+                // 予約データを保存
+                const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+                bookings.push(bookingData);
+                localStorage.setItem('userBookings', JSON.stringify(bookings));
+                
+                // ガイドに通知を送信
+                sendGuideNotification(bookingData);
+                
+                // 一時データを削除
+                localStorage.removeItem('tempBookingData');
+                
+                // 成功ページにリダイレクト
+                window.location.href = `booking-confirmation.html?id=${bookingData.id}`;
+            }
+        }
+        
+        function sendGuideNotification(booking) {
+            // ガイド通知システム（実装は後で詳細化）
+            const notification = {
+                id: Date.now(),
+                guideId: booking.guideId,
+                type: 'new_booking',
+                title: '新しい予約が入りました',
+                message: `${booking.date} ${booking.time}からの予約が確定しました。詳細をご確認ください。`,
+                bookingId: booking.id,
+                amount: booking.totalPrice,
+                commission: calculateCommission(booking.totalPrice),
+                payoutAmount: calculatePayout(booking.totalPrice),
+                timestamp: new Date().toISOString(),
+                read: false
+            };
+            
+            // ガイド通知を保存
+            const guideNotifications = JSON.parse(localStorage.getItem(`guideNotifications_${booking.guideId}`) || '[]');
+            guideNotifications.push(notification);
+            localStorage.setItem(`guideNotifications_${booking.guideId}`, JSON.stringify(guideNotifications));
+            
+            console.log('Guide notification sent:', notification);
+        }
+        
+        function calculateCommission(totalAmount) {
+            const amount = parseInt(totalAmount.replace(/[^\d]/g, ''));
+            return Math.round(amount * 0.15); // 15%手数料
+        }
+        
+        function calculatePayout(totalAmount) {
+            const amount = parseInt(totalAmount.replace(/[^\d]/g, ''));
+            return Math.round(amount * 0.85); // 85%をガイドに支払い
+        }
+    </script>
+</body>
+</html>
