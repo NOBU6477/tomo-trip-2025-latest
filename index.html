@@ -69,30 +69,34 @@
         .navbar-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             font-weight: bold;
             font-size: 1.5rem;
+            color: white !important;
+            text-decoration: none;
         }
 
         .logo-container {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            background: linear-gradient(135deg, #ff6b6b, #4287f5);
-            padding: 2px;
+            background: white;
+            padding: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
         
         .logo-container img {
-            width: 40px;
-            height: 40px;
-            object-fit: cover;
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
             border-radius: 50%;
             background: white;
-            padding: 2px;
+            display: block;
         }
 
         /* Hero Section */
@@ -320,7 +324,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="logo-container">
-                    <img src="TomoTripロゴ.png" alt="TomoTrip Logo" style="width: 100%; height: 100%; object-fit: cover; display: block;" onload="console.log('✅ Logo loaded successfully')" onerror="console.error('❌ Logo load failed:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>🌴</span>';" />
+                    <img src="TomoTripロゴ.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); console.log('❌ Image dimensions:', this.naturalWidth, 'x', this.naturalHeight); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
                 </div>
                 TomoTrip
             </a>
@@ -848,15 +852,35 @@
             
             const t = translations[lang];
             if (t) {
+                // Fix DOM selectors for language switching
                 const heroTitle = document.querySelector('.hero-content h1');
                 const heroSubtitle = document.querySelector('.hero-content p');
                 const findGuideBtn = document.getElementById('findGuideBtn');
                 const contactBtn = document.getElementById('contactBtn');
                 
-                if (heroTitle) heroTitle.textContent = t.hero_title;
-                if (heroSubtitle) heroSubtitle.textContent = t.hero_subtitle;
-                if (findGuideBtn) findGuideBtn.textContent = t.find_guide_btn;
-                if (contactBtn) contactBtn.textContent = t.contact_btn;
+                console.log('Language switch elements check:', {
+                    heroTitle: !!heroTitle,
+                    heroSubtitle: !!heroSubtitle,
+                    findGuideBtn: !!findGuideBtn,
+                    contactBtn: !!contactBtn
+                });
+                
+                if (heroTitle) {
+                    heroTitle.textContent = t.hero_title;
+                    console.log('✅ Hero title updated:', t.hero_title);
+                }
+                if (heroSubtitle) {
+                    heroSubtitle.textContent = t.hero_subtitle;
+                    console.log('✅ Hero subtitle updated:', t.hero_subtitle);
+                }
+                if (findGuideBtn) {
+                    findGuideBtn.textContent = t.find_guide_btn;
+                    console.log('✅ Find guide button updated:', t.find_guide_btn);
+                }
+                if (contactBtn) {
+                    contactBtn.textContent = t.contact_btn;
+                    console.log('✅ Contact button updated:', t.contact_btn);
+                }
                 
                 localStorage.setItem('preferredLanguage', lang);
                 console.log(`✅ Language switched to: ${lang}`);
