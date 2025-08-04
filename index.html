@@ -720,6 +720,18 @@
 
         // Generate guide card HTML
         function createGuideCard(guide) {
+            // Check current bookmark and comparison status
+            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            const isBookmarked = bookmarkedGuides.includes(guide.id.toString());
+            const isInComparison = comparisonGuides.includes(guide.id.toString());
+            
+            // Set button states based on saved data
+            const bookmarkBtnClass = isBookmarked ? 'btn btn-sm btn-warning' : 'btn btn-sm btn-outline-warning';
+            const bookmarkIcon = isBookmarked ? '★' : '⭐';
+            const compareBtnClass = isInComparison ? 'btn btn-sm btn-success' : 'btn btn-sm btn-outline-success';
+            const compareIcon = isInComparison ? '✓' : '+';
+            
             return `
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card h-100 guide-card" style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
@@ -728,8 +740,8 @@
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="card-title mb-1">${guide.name}</h5>
                                 <div class="d-flex gap-1">
-                                    <button class="btn btn-sm btn-outline-warning bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク">⭐</button>
-                                    <button class="btn btn-sm btn-outline-success compare-btn" data-guide-id="${guide.id}" title="比較リストに追加">✓</button>
+                                    <button class="${bookmarkBtnClass} bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク">${bookmarkIcon}</button>
+                                    <button class="${compareBtnClass} compare-btn" data-guide-id="${guide.id}" title="比較リストに追加">${compareIcon}</button>
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -772,6 +784,12 @@
             updateCounter();
             updatePaginationControls(allGuides.length);
             addCardEventListeners();
+            
+            // Update button states after rendering
+            setTimeout(() => {
+                updateBookmarkButtons();
+                updateComparisonButtons();
+            }, 100);
         }
         
         // Update pagination controls
@@ -848,6 +866,87 @@
             displayGuides(filtered, 1);
         }
 
+        // Bookmark and comparison functionality
+        function toggleBookmark(guideId) {
+            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            const isBookmarked = bookmarkedGuides.includes(guideId);
+            
+            if (isBookmarked) {
+                // Remove bookmark
+                const updatedBookmarks = bookmarkedGuides.filter(id => id != guideId);
+                localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+                console.log('Removed bookmark for guide:', guideId);
+            } else {
+                // Add bookmark
+                bookmarkedGuides.push(guideId);
+                localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+                console.log('Bookmarked guide:', guideId);
+            }
+            
+            // Update button appearance
+            updateBookmarkButtons();
+        }
+        
+        function toggleComparison(guideId) {
+            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            const isInComparison = comparisonGuides.includes(guideId);
+            
+            if (isInComparison) {
+                // Remove from comparison
+                const updatedComparison = comparisonGuides.filter(id => id != guideId);
+                localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
+                console.log('Removed from comparison:', guideId);
+            } else {
+                // Add to comparison (limit to 3)
+                if (comparisonGuides.length >= 3) {
+                    alert('比較リストは最大3件までです。他のガイドを削除してから追加してください。');
+                    return;
+                }
+                comparisonGuides.push(guideId);
+                localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+                console.log('Added to comparison:', guideId);
+            }
+            
+            // Update button appearance
+            updateComparisonButtons();
+        }
+        
+        function updateBookmarkButtons() {
+            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            document.querySelectorAll('.bookmark-btn').forEach(btn => {
+                const guideId = btn.getAttribute('data-guide-id');
+                const isBookmarked = bookmarkedGuides.includes(guideId);
+                
+                if (isBookmarked) {
+                    btn.classList.remove('btn-outline-warning');
+                    btn.classList.add('btn-warning');
+                    btn.innerHTML = '★';
+                } else {
+                    btn.classList.remove('btn-warning');
+                    btn.classList.add('btn-outline-warning');
+                    btn.innerHTML = '⭐';
+                }
+            });
+        }
+        
+        function updateComparisonButtons() {
+            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            document.querySelectorAll('.compare-btn').forEach(btn => {
+                const guideId = btn.getAttribute('data-guide-id');
+                const isInComparison = comparisonGuides.includes(guideId);
+                
+                if (isInComparison) {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-success');
+                    btn.innerHTML = '✓';
+                } else {
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-success');
+                    btn.innerHTML = '+';
+                }
+            });
+        }
+
         // Add event listeners to guide cards
         function addCardEventListeners() {
             // Bookmark buttons
@@ -855,9 +954,7 @@
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const guideId = this.getAttribute('data-guide-id');
-                    console.log('Bookmarked guide:', guideId);
-                    this.classList.toggle('btn-warning');
-                    this.classList.toggle('btn-outline-warning');
+                    toggleBookmark(guideId);
                 });
             });
 
@@ -866,9 +963,7 @@
                 btn.addEventListener('click', function(e) {
                     e.stopPropagation();
                     const guideId = this.getAttribute('data-guide-id');
-                    console.log('Added to comparison:', guideId);
-                    this.classList.toggle('btn-success');
-                    this.classList.toggle('btn-outline-success');
+                    toggleComparison(guideId);
                 });
             });
 
