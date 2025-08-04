@@ -2056,6 +2056,196 @@
 
             console.log('✅ TomoTrip English Version Loaded Successfully - All Features Active');
         });
+
+        // Sponsor Registration and Login Functions
+        function handleSponsorRegistration() {
+            console.log('Sponsor registration clicked');
+            window.location.href = 'sponsor-registration-en.html';
+        }
+
+        function handleSponsorLogin() {
+            console.log('Sponsor login clicked');
+            showSponsorLoginModal();
+        }
+
+        // Show sponsor login modal
+        function showSponsorLoginModal() {
+            const modalHtml = `
+                <div class="modal fade" id="sponsorLoginModal" tabindex="-1" aria-labelledby="sponsorLoginModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                            <div class="modal-header border-0" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border-radius: 15px 15px 0 0;">
+                                <h5 class="modal-title fw-bold" id="sponsorLoginModalLabel">
+                                    <i class="bi bi-shop me-2"></i>Store Login
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <form id="sponsorLoginForm">
+                                    <div class="mb-3">
+                                        <label for="sponsorStoreName" class="form-label fw-bold">
+                                            <i class="bi bi-shop me-2"></i>Store Name
+                                        </label>
+                                        <input type="text" class="form-control" id="sponsorStoreName" placeholder="Enter your store name" required style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sponsorEmail" class="form-label fw-bold">
+                                            <i class="bi bi-envelope me-2"></i>Email Address
+                                        </label>
+                                        <input type="email" class="form-control" id="sponsorEmail" placeholder="Store contact email" required style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sponsorPhone" class="form-label fw-bold">
+                                            <i class="bi bi-telephone me-2"></i>Phone Number
+                                        </label>
+                                        <input type="tel" class="form-control" id="sponsorPhone" placeholder="Store phone number (e.g., 03-1234-5678)" required style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sponsorPassword" class="form-label fw-bold">
+                                            <i class="bi bi-lock me-2"></i>Password
+                                        </label>
+                                        <input type="password" class="form-control" id="sponsorPassword" placeholder="Enter management password" required style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input" id="rememberSponsor">
+                                        <label class="form-check-label" for="rememberSponsor">
+                                            Remember login status
+                                        </label>
+                                    </div>
+                                </form>
+                                <div class="alert alert-info" style="border-radius: 10px;">
+                                    <small><i class="bi bi-info-circle me-2"></i>First time using as a sponsor store? Please register from "Store Registration".</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 p-4 pt-0">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
+                                    Cancel
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="processSponsorLogin()" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #4ecdc4, #44a08d); border: none;">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('sponsorLoginModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('sponsorLoginModal'));
+            modal.show();
+            
+            // Clean up when modal is hidden
+            document.getElementById('sponsorLoginModal').addEventListener('hidden.bs.modal', function() {
+                this.remove();
+            });
+        }
+
+        // Process sponsor login
+        function processSponsorLogin() {
+            const storeName = document.getElementById('sponsorStoreName').value.trim();
+            const email = document.getElementById('sponsorEmail').value.trim();
+            const phone = document.getElementById('sponsorPhone').value.trim();
+            const password = document.getElementById('sponsorPassword').value.trim();
+            
+            if (!storeName || !email || !phone || !password) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // Check if sponsor exists in registered sponsors
+            const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            const sponsor = registeredSponsors.find(s => 
+                s.storeName === storeName && 
+                s.email === email && 
+                s.phone === phone
+            );
+
+            if (!sponsor) {
+                alert('Store information not found. Please check your registration details.');
+                return;
+            }
+            
+            // Store sponsor session for management access
+            sessionStorage.setItem('currentSponsor', JSON.stringify({
+                id: sponsor.id,
+                storeName: storeName,
+                email: email,
+                loginTime: new Date().toISOString()
+            }));
+            
+            console.log('Sponsor login successful:', storeName);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal'));
+            modal.hide();
+            
+            // Show success and redirect
+            setTimeout(() => {
+                const successModal = document.createElement('div');
+                successModal.className = 'modal fade';
+                successModal.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                            <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                                <h5 class="modal-title fw-bold">✅ Store Login Successful</h5>
+                            </div>
+                            <div class="modal-body p-4 text-center">
+                                <div class="mb-4">
+                                    <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                                </div>
+                                <h6 class="fw-bold mb-3">Redirecting to Store Management Dashboard</h6>
+                                <p class="text-muted mb-0">Store Name: ${storeName}</p>
+                                <p class="text-muted mb-0">Email: ${email}</p>
+                                <div class="alert alert-success mt-3" style="border-radius: 10px;">
+                                    <small><i class="bi bi-check-circle me-2"></i>You can edit and manage your store information.</small>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 p-4 pt-0">
+                                <button type="button" class="btn btn-success w-100" onclick="redirectToSponsorDashboard()" style="border-radius: 25px; padding: 12px;">
+                                    Go to Management Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(successModal);
+                const modal = new bootstrap.Modal(successModal);
+                modal.show();
+                
+                // Clean up
+                successModal.addEventListener('hidden.bs.modal', function() {
+                    successModal.remove();
+                });
+            }, 500);
+        }
+
+        // Redirect to sponsor dashboard
+        function redirectToSponsorDashboard() {
+            const storeName = document.getElementById('sponsorStoreName').value.trim();
+            const email = document.getElementById('sponsorEmail').value.trim();
+            
+            // Find the sponsor's ID for editing
+            const registeredSponsors = JSON.parse(localStorage.getItem('registeredSponsors') || '[]');
+            const sponsor = registeredSponsors.find(s => s.storeName === storeName && s.email === email);
+            
+            if (sponsor) {
+                console.log('Redirecting to sponsor edit page for:', sponsor.storeName);
+                window.location.href = `sponsor-edit.html?id=${sponsor.id}`;
+            } else {
+                console.error('Sponsor not found for redirect');
+                alert('Error: Store information not found for redirection.');
+            }
+        }
     </script>
 </body>
 </html>
