@@ -3296,15 +3296,16 @@
                 bookingDate: new Date().toISOString()
             };
             
-            // Save as temporary booking data for payment
+            // Save as temporary booking data for payment with language info
+            booking.language = 'ja'; // Mark as Japanese booking
             localStorage.setItem('tempBookingData', JSON.stringify(booking));
             
             // Close modal
             const modal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
             modal.hide();
             
-            // Redirect to payment page
-            window.location.href = 'payment.html';
+            // Redirect to payment page with language parameter
+            window.location.href = 'payment.html?lang=ja';
         }
 
         function saveBooking(booking) {

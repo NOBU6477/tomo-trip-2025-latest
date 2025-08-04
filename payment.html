@@ -181,14 +181,14 @@
                 <a href="#" class="back-button" id="backToBooking">
                     <i class="bi bi-arrow-left"></i>
                 </a>
-                <h2><i class="bi bi-credit-card me-2"></i>お支払い</h2>
-                <p class="mb-0">安全で確実な決済システム</p>
+                <h2 id="paymentHeaderTitle"><i class="bi bi-credit-card me-2"></i>お支払い</h2>
+                <p class="mb-0" id="paymentHeaderSubtitle">安全で確実な決済システム</p>
             </div>
             
             <div class="p-4">
                 <!-- 予約内容確認 -->
                 <div class="booking-summary">
-                    <h5 class="fw-bold mb-3"><i class="bi bi-receipt me-2"></i>予約内容</h5>
+                    <h5 class="fw-bold mb-3" id="bookingDetailsTitle"><i class="bi bi-receipt me-2"></i>予約内容</h5>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="d-flex align-items-center mb-3">
@@ -236,7 +236,7 @@
                 </div>
                 
                 <!-- 決済方法選択 -->
-                <h5 class="fw-bold mb-3"><i class="bi bi-wallet me-2"></i>決済方法を選択</h5>
+                <h5 class="fw-bold mb-3" id="paymentMethodTitle"><i class="bi bi-wallet me-2"></i>決済方法を選択</h5>
                 <div class="payment-methods">
                     <div class="payment-method" data-method="card">
                         <i class="bi bi-credit-card fs-2 text-primary mb-2"></i>
@@ -309,13 +309,188 @@
     <script>
         let bookingData = null;
         let selectedPaymentMethod = null;
+        let currentLanguage = 'ja'; // Default to Japanese
+        
+        // Translation object
+        const translations = {
+            ja: {
+                title: '決済 - TomoTrip',
+                paymentTitle: '決済',
+                bookingDetails: '予約内容',
+                date: '日付',
+                time: '時間',
+                duration: '時間',
+                participants: '参加者',
+                serviceAmount: 'サービス料金',
+                cardFee: 'カード決済手数料 (3.6%)',
+                totalAmount: 'お支払い総額',
+                paymentMethod: '決済方法を選択',
+                creditCard: 'クレジットカード',
+                creditCardDesc: 'Visa, MasterCard, JCB',
+                bankTransfer: '銀行振込',
+                bankTransferDesc: '即座に確認',
+                paypal: 'PayPal',
+                paypalDesc: '安全・簡単',
+                securityTitle: 'セキュリティ保証',
+                securityDesc: 'SSL暗号化通信により、お客様の決済情報は完全に保護されています。クレジットカード情報は弊社サーバーに保存されません。',
+                payButton: '安全に決済する',
+                paymentInfo: '決済・支払いについて',
+                paymentNote1: 'お客様から全額をガイド代わりします',
+                paymentNote2: 'ガイド出し、サービス完了後、手数料（20%）を差し引いた金額をガイドにお支払いします',
+                paymentNote3: 'お支払いは原則として営業日3日以内に完了いたします'
+            },
+            en: {
+                title: 'Payment - TomoTrip',
+                paymentTitle: 'Payment',
+                bookingDetails: 'Booking Details',
+                date: 'Date',
+                time: 'Time',
+                duration: 'Duration',
+                participants: 'Participants',
+                serviceAmount: 'Service Amount',
+                cardFee: 'Card Processing Fee (3.6%)',
+                totalAmount: 'Total Amount',
+                paymentMethod: 'Select Payment Method',
+                creditCard: 'Credit Card',
+                creditCardDesc: 'Visa, MasterCard, JCB',
+                bankTransfer: 'Bank Transfer',
+                bankTransferDesc: 'Instant Confirmation',
+                paypal: 'PayPal',
+                paypalDesc: 'Safe & Simple',
+                securityTitle: 'Security Guarantee',
+                securityDesc: 'Your payment information is fully protected by SSL encryption. Credit card information is not stored on our servers.',
+                payButton: 'Pay Securely',
+                paymentInfo: 'Payment Information',
+                paymentNote1: 'We receive full payment from customers on behalf of guides',
+                paymentNote2: 'After service completion, we pay guides minus 20% commission',
+                paymentNote3: 'Payment is completed within 3 business days'
+            }
+        };
         
         // ページ読み込み時に予約データを取得
         document.addEventListener('DOMContentLoaded', function() {
+            detectLanguage();
             loadBookingData();
             setupEventListeners();
             setupBackButton();
         });
+        
+        function detectLanguage() {
+            // Check URL parameter first
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+            
+            if (langParam && (langParam === 'en' || langParam === 'ja')) {
+                currentLanguage = langParam;
+            } else {
+                // Check booking data for language info
+                const tempBookingStr = localStorage.getItem('tempBookingData');
+                if (tempBookingStr) {
+                    try {
+                        const tempBooking = JSON.parse(tempBookingStr);
+                        if (tempBooking.language) {
+                            currentLanguage = tempBooking.language;
+                        }
+                    } catch (e) {
+                        console.error('Error parsing booking data for language:', e);
+                    }
+                }
+            }
+            
+            console.log('Detected language:', currentLanguage);
+            updatePageLanguage();
+        }
+        
+        function updatePageLanguage() {
+            const t = translations[currentLanguage];
+            
+            // Update document title
+            document.title = t.title;
+            
+            // Update page content - wait for DOM to be ready
+            setTimeout(() => {
+                updateTextContent(t);
+            }, 100);
+        }
+        
+        function updateTextContent(t) {
+            // Update header
+            const headerTitle = document.getElementById('paymentHeaderTitle');
+            if (headerTitle) headerTitle.innerHTML = `<i class="bi bi-credit-card me-2"></i>${t.paymentTitle}`;
+            
+            const headerSubtitle = document.getElementById('paymentHeaderSubtitle');
+            if (headerSubtitle) headerSubtitle.textContent = currentLanguage === 'en' ? 'Secure and reliable payment system' : '安全で確実な決済システム';
+            
+            // Update booking details section
+            const bookingTitle = document.getElementById('bookingDetailsTitle');
+            if (bookingTitle) bookingTitle.innerHTML = `<i class="bi bi-receipt me-2"></i>${t.bookingDetails}`;
+            
+            // Update payment method section title
+            const methodTitle = document.getElementById('paymentMethodTitle');
+            if (methodTitle) methodTitle.innerHTML = `<i class="bi bi-wallet me-2"></i>${t.paymentMethod}`;
+            
+            // Update payment method cards
+            updatePaymentMethodCards(t);
+            
+            // Update security section
+            const securityTitle = document.querySelector('.security-info h6');
+            if (securityTitle) securityTitle.innerHTML = `<i class="bi bi-shield-lock me-2"></i>${t.securityTitle}`;
+            
+            const securityDesc = document.querySelector('.security-info p');
+            if (securityDesc) securityDesc.textContent = t.securityDesc;
+            
+            // Update payment button
+            const payButton = document.querySelector('.btn-pay');
+            if (payButton) payButton.innerHTML = `<i class="bi bi-lock-fill me-2"></i>${t.payButton}`;
+            
+            // Update commission info section
+            updateCommissionInfo(t);
+            
+            // Update labels in booking details dynamically
+            updateBookingLabels(t);
+        }
+        
+        function updateCommissionInfo(t) {
+            const commissionTitle = document.querySelector('.commission-info h6');
+            if (commissionTitle) commissionTitle.innerHTML = `<i class="bi bi-info-circle me-2"></i>${t.paymentInfo}`;
+            
+            // Update commission info list for English
+            if (currentLanguage === 'en') {
+                const commissionList = document.querySelector('.commission-info ul');
+                if (commissionList) {
+                    commissionList.innerHTML = `
+                        <li>We receive full payment from customers on behalf of guides</li>
+                        <li>After service completion, we pay guides minus 20% commission</li>
+                        <li>For credit card payments, card processing fee (3.6%) is charged to customers</li>
+                        <li>We provide security guarantee for cancellations or issues</li>
+                        <li>Guide notification is sent immediately upon payment completion</li>
+                    `;
+                }
+            }
+        }
+        
+        function updatePaymentMethodCards(t) {
+            const creditCardTitle = document.querySelector('[data-method="credit"] .method-title');
+            const creditCardDesc = document.querySelector('[data-method="credit"] .method-description');
+            if (creditCardTitle) creditCardTitle.textContent = t.creditCard;
+            if (creditCardDesc) creditCardDesc.textContent = t.creditCardDesc;
+            
+            const bankTitle = document.querySelector('[data-method="bank"] .method-title');
+            const bankDesc = document.querySelector('[data-method="bank"] .method-description');
+            if (bankTitle) bankTitle.textContent = t.bankTransfer;
+            if (bankDesc) bankDesc.textContent = t.bankTransferDesc;
+            
+            const paypalTitle = document.querySelector('[data-method="paypal"] .method-title');
+            const paypalDesc = document.querySelector('[data-method="paypal"] .method-description');
+            if (paypalTitle) paypalTitle.textContent = t.paypal;
+            if (paypalDesc) paypalDesc.textContent = t.paypalDesc;
+        }
+        
+        function updateBookingLabels(t) {
+            // These will be updated when displayBookingData is called
+            // Store translations for later use
+            window.currentTranslations = t;
+        }
         
         function setupBackButton() {
             const backButton = document.getElementById('backToBooking');
@@ -328,11 +503,13 @@
                     const savedBookingData = localStorage.getItem('tempBookingData');
                     
                     if (savedBookingData) {
-                        // 予約データが存在する場合は、メインページの予約モーダルに戻る
-                        window.location.href = 'index.html?returnToBooking=true';
+                        // 言語に応じた適切なページに戻る
+                        const returnUrl = currentLanguage === 'en' ? 'index-en.html?returnToBooking=true' : 'index.html?returnToBooking=true';
+                        window.location.href = returnUrl;
                     } else {
-                        // 予約データがない場合はメインページに戻る
-                        window.location.href = 'index.html';
+                        // 予約データがない場合は言語に応じたメインページに戻る
+                        const homeUrl = currentLanguage === 'en' ? 'index-en.html' : 'index.html';
+                        window.location.href = homeUrl;
                     }
                 });
             }
@@ -379,12 +556,13 @@
                 };
             }
             
-            // ガイド料金の表示形式を統一
+            // ガイド料金の表示形式を統一（多言語対応）
             if (bookingData.guideRate) {
+                const hourText = currentLanguage === 'en' ? '/hour' : '/時間';
                 if (typeof bookingData.guideRate === 'number') {
-                    bookingData.guideRate = `¥${bookingData.guideRate.toLocaleString()}/時間`;
+                    bookingData.guideRate = `¥${bookingData.guideRate.toLocaleString()}${hourText}`;
                 } else if (typeof bookingData.guideRate === 'string' && !bookingData.guideRate.includes('/')) {
-                    bookingData.guideRate = bookingData.guideRate + '/時間';
+                    bookingData.guideRate = bookingData.guideRate + hourText;
                 }
             }
             
@@ -393,6 +571,8 @@
         }
         
         function displayBookingData() {
+            const t = translations[currentLanguage];
+            
             document.getElementById('paymentGuideName').textContent = bookingData.guideName;
             document.getElementById('paymentGuideImage').src = bookingData.guideImage || '';
             document.getElementById('paymentGuideRate').textContent = bookingData.guideRate || '';
@@ -405,13 +585,27 @@
             document.getElementById('cardFeeRow').style.display = 'none';
             updatePaymentTotal(false);
             
+            // 多言語対応した詳細表示
+            const durationText = currentLanguage === 'en' ? `${bookingData.duration} hour${bookingData.duration > 1 ? 's' : ''}` : `${bookingData.duration}時間`;
+            const participantsText = currentLanguage === 'en' ? `${bookingData.participants} person${bookingData.participants > 1 ? 's' : ''}` : `${bookingData.participants}名`;
+            
             const detailsHTML = `
-                <div><strong>日付:</strong> ${bookingData.date}</div>
-                <div><strong>時間:</strong> ${bookingData.time}</div>
-                <div><strong>時間:</strong> ${bookingData.duration}時間</div>
-                <div><strong>参加者:</strong> ${bookingData.participants}名</div>
+                <div><strong>${t.date}:</strong> ${bookingData.date}</div>
+                <div><strong>${t.time}:</strong> ${bookingData.time}</div>
+                <div><strong>${t.duration}:</strong> ${durationText}</div>
+                <div><strong>${t.participants}:</strong> ${participantsText}</div>
             `;
             document.getElementById('paymentBookingDetails').innerHTML = detailsHTML;
+            
+            // Update amount labels
+            const serviceAmountLabel = document.querySelector('tr:first-child td:first-child');
+            if (serviceAmountLabel) serviceAmountLabel.textContent = t.serviceAmount;
+            
+            const cardFeeLabel = document.querySelector('#cardFeeRow td:first-child');
+            if (cardFeeLabel) cardFeeLabel.textContent = t.cardFee;
+            
+            const totalLabel = document.querySelector('.table tbody tr:last-child td:first-child strong');
+            if (totalLabel) totalLabel.textContent = t.totalAmount;
         }
         
         function setupEventListeners() {
