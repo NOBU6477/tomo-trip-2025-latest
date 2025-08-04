@@ -1279,7 +1279,7 @@
                         alert('モーダル表示に失敗しました');
                     }
                 },
-                managementBtn: () => console.log('Management center clicked'),
+                managementBtn: () => showManagementCenter(),
                 searchBtn: filterGuides,
                 resetBtn: () => {
                     document.getElementById('locationFilter').value = '';
@@ -3562,6 +3562,436 @@
             </div>
         </div>
     </div>
+
+    <!-- Management Center Modal -->
+    <div class="modal fade" id="managementModal" tabindex="-1" aria-labelledby="managementModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content" style="border-radius: 15px;">
+                <div class="modal-header bg-warning text-dark" style="border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="managementModalLabel">
+                        <i class="bi bi-gear me-2"></i>管理センター
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <!-- Navigation Tabs -->
+                    <ul class="nav nav-pills nav-fill" id="managementTabs" role="tablist" style="background: #f8f9fa; margin: 0; border-radius: 0;">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks" type="button" role="tab">
+                                <i class="bi bi-bookmark me-2"></i>ブックマーク
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="comparison-tab" data-bs-toggle="pill" data-bs-target="#comparison" type="button" role="tab">
+                                <i class="bi bi-graph-up me-2"></i>比較リスト
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="bookings-tab" data-bs-toggle="pill" data-bs-target="#bookings" type="button" role="tab">
+                                <i class="bi bi-calendar3 me-2"></i>予約履歴
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab">
+                                <i class="bi bi-sliders me-2"></i>設定
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content p-4" id="managementTabContent">
+                        <!-- Bookmarks Tab -->
+                        <div class="tab-pane fade show active" id="bookmarks" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">保存されたガイド</h6>
+                                <button class="btn btn-outline-danger btn-sm" id="clearBookmarksBtn">
+                                    <i class="bi bi-trash me-1"></i>すべてクリア
+                                </button>
+                            </div>
+                            <div id="bookmarksList" class="row">
+                                <!-- Bookmarked guides will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Comparison Tab -->
+                        <div class="tab-pane fade" id="comparison" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">比較中のガイド</h6>
+                                <button class="btn btn-outline-danger btn-sm" id="clearComparisonBtn">
+                                    <i class="bi bi-trash me-1"></i>すべてクリア
+                                </button>
+                            </div>
+                            <div id="comparisonList" class="row">
+                                <!-- Comparison guides will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Bookings Tab -->
+                        <div class="tab-pane fade" id="bookings" role="tabpanel">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">予約履歴</h6>
+                                <button class="btn btn-outline-danger btn-sm" id="clearBookingsBtn">
+                                    <i class="bi bi-trash me-1"></i>履歴クリア
+                                </button>
+                            </div>
+                            <div id="bookingsList">
+                                <!-- User bookings will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Settings Tab -->
+                        <div class="tab-pane fade" id="settings" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="mb-3">個人設定</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label">デフォルト言語</label>
+                                        <select class="form-select" id="defaultLanguageSetting">
+                                            <option value="ja">日本語</option>
+                                            <option value="en">English</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">通知設定</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="notificationsEnabled" checked>
+                                            <label class="form-check-label" for="notificationsEnabled">
+                                                新しいガイド登録の通知を受け取る
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-3">データ管理</h6>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary" id="exportDataBtn">
+                                            <i class="bi bi-download me-2"></i>データをエクスポート
+                                        </button>
+                                        <button class="btn btn-outline-warning" id="clearAllDataBtn">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>全データクリア
+                                        </button>
+                                        <button class="btn btn-outline-info" id="dataStatsBtn">
+                                            <i class="bi bi-bar-chart me-2"></i>ストレージ使用量
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Management Center Functions
+        function showManagementCenter() {
+            console.log('Opening Management Center...');
+            loadManagementData();
+            const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
+            managementModal.show();
+        }
+        
+        function loadManagementData() {
+            loadBookmarksList();
+            loadComparisonList();
+            loadBookingsList();
+            loadSettingsData();
+        }
+        
+        function loadBookmarksList() {
+            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            const bookmarksList = document.getElementById('bookmarksList');
+            
+            if (bookmarkedGuides.length === 0) {
+                bookmarksList.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-bookmark text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">保存されたガイドはありません</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const allGuides = loadAllGuides();
+            bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
+                const guide = allGuides.find(g => g.id == guideId);
+                if (!guide) return '';
+                
+                return `
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <img src="${guide.image}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="${guide.name}">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body p-3">
+                                        <h6 class="card-title mb-1">${guide.name}</h6>
+                                        <p class="card-text small text-muted mb-2">${locationNames[guide.location] || guide.location}</p>
+                                        <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
+                                        <div class="d-flex gap-2">
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">詳細</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="removeBookmark(${guide.id})">削除</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadComparisonList() {
+            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            const comparisonList = document.getElementById('comparisonList');
+            
+            if (comparisonGuides.length === 0) {
+                comparisonList.innerHTML = `
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">比較中のガイドはありません</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const allGuides = loadAllGuides();
+            comparisonList.innerHTML = comparisonGuides.map(guideId => {
+                const guide = allGuides.find(g => g.id == guideId);
+                if (!guide) return '';
+                
+                return `
+                    <div class="col-md-4 mb-3">
+                        <div class="card h-100 border-success">
+                            <img src="${guide.image}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="${guide.name}">
+                            <div class="card-body p-3">
+                                <h6 class="card-title mb-1">${guide.name}</h6>
+                                <p class="card-text small text-muted mb-1">${locationNames[guide.location] || guide.location}</p>
+                                <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
+                                <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
+                                <button class="btn btn-outline-danger btn-sm w-100" onclick="removeFromComparison(${guide.id})">
+                                    <i class="bi bi-x me-1"></i>比較から除外
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadBookingsList() {
+            const userBookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+            const bookingsList = document.getElementById('bookingsList');
+            
+            if (userBookings.length === 0) {
+                bookingsList.innerHTML = `
+                    <div class="text-center py-5">
+                        <i class="bi bi-calendar3 text-muted" style="font-size: 3rem;"></i>
+                        <p class="text-muted mt-3">予約履歴はありません</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort bookings by date (newest first)
+            const sortedBookings = userBookings.sort((a, b) => new Date(b.bookingDate) - new Date(a.bookingDate));
+            
+            bookingsList.innerHTML = sortedBookings.map(booking => {
+                const statusBadge = {
+                    'pending': '<span class="badge bg-warning">予約中</span>',
+                    'confirmed': '<span class="badge bg-success">確定</span>',
+                    'completed': '<span class="badge bg-info">完了</span>',
+                    'cancelled': '<span class="badge bg-danger">キャンセル</span>'
+                };
+                
+                return `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="${booking.guideImage}" class="img-fluid rounded-circle" style="width: 60px; height: 60px; object-fit: cover;" alt="${booking.guideName}">
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="mb-1">${booking.guideName}</h6>
+                                    <p class="mb-1 text-muted small">予約ID: #${booking.id}</p>
+                                    <p class="mb-0 small">日時: ${booking.date} ${booking.time} (${booking.duration}時間)</p>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <strong>${booking.totalPrice}</strong>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    ${statusBadge[booking.status] || statusBadge['pending']}
+                                    <div class="mt-2">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="viewBookingDetails(${booking.id})">詳細</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function loadSettingsData() {
+            // Load saved language preference
+            const savedLang = localStorage.getItem('preferredLanguage') || 'ja';
+            document.getElementById('defaultLanguageSetting').value = savedLang;
+            
+            // Load notification setting
+            const notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
+            document.getElementById('notificationsEnabled').checked = notificationsEnabled;
+        }
+        
+        // Management functions
+        function removeBookmark(guideId) {
+            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            const updatedBookmarks = bookmarkedGuides.filter(id => id != guideId);
+            localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+            loadBookmarksList();
+            
+            // Update bookmark button in main page
+            const bookmarkBtn = document.querySelector(`[onclick="toggleBookmark(${guideId})"]`);
+            if (bookmarkBtn) {
+                bookmarkBtn.innerHTML = '<i class="bi bi-bookmark"></i>';
+                bookmarkBtn.classList.remove('btn-warning');
+                bookmarkBtn.classList.add('btn-outline-secondary');
+            }
+        }
+        
+        function removeFromComparison(guideId) {
+            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            const updatedComparison = comparisonGuides.filter(id => id != guideId);
+            localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
+            loadComparisonList();
+            
+            // Update comparison button in main page
+            const compareBtn = document.querySelector(`[onclick="toggleComparison(${guideId})"]`);
+            if (compareBtn) {
+                compareBtn.innerHTML = '<i class="bi bi-graph-up"></i>';
+                compareBtn.classList.remove('btn-success');
+                compareBtn.classList.add('btn-outline-secondary');
+            }
+        }
+        
+        function viewBookingDetails(bookingId) {
+            window.location.href = `booking-confirmation.html?id=${bookingId}`;
+        }
+        
+        // Clear functions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clear bookmarks
+            document.getElementById('clearBookmarksBtn').addEventListener('click', function() {
+                if (confirm('すべてのブックマークを削除しますか？')) {
+                    localStorage.removeItem('bookmarkedGuides');
+                    loadBookmarksList();
+                    
+                    // Update all bookmark buttons in main page
+                    document.querySelectorAll('[onclick*="toggleBookmark"]').forEach(btn => {
+                        btn.innerHTML = '<i class="bi bi-bookmark"></i>';
+                        btn.classList.remove('btn-warning');
+                        btn.classList.add('btn-outline-secondary');
+                    });
+                }
+            });
+            
+            // Clear comparison
+            document.getElementById('clearComparisonBtn').addEventListener('click', function() {
+                if (confirm('すべての比較リストを削除しますか？')) {
+                    localStorage.removeItem('comparisonGuides');
+                    loadComparisonList();
+                    
+                    // Update all comparison buttons in main page
+                    document.querySelectorAll('[onclick*="toggleComparison"]').forEach(btn => {
+                        btn.innerHTML = '<i class="bi bi-graph-up"></i>';
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-outline-secondary');
+                    });
+                }
+            });
+            
+            // Clear bookings
+            document.getElementById('clearBookingsBtn').addEventListener('click', function() {
+                if (confirm('すべての予約履歴を削除しますか？この操作は取り消せません。')) {
+                    localStorage.removeItem('userBookings');
+                    loadBookingsList();
+                }
+            });
+            
+            // Clear all data
+            document.getElementById('clearAllDataBtn').addEventListener('click', function() {
+                if (confirm('すべてのデータを削除しますか？この操作は取り消せません。')) {
+                    if (confirm('本当にすべてのデータ（ブックマーク、比較リスト、予約履歴、設定）を削除しますか？')) {
+                        localStorage.clear();
+                        alert('すべてのデータが削除されました。ページをリロードします。');
+                        window.location.reload();
+                    }
+                }
+            });
+            
+            // Export data
+            document.getElementById('exportDataBtn').addEventListener('click', function() {
+                const userData = {
+                    bookmarks: JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]'),
+                    comparison: JSON.parse(localStorage.getItem('comparisonGuides') || '[]'),
+                    bookings: JSON.parse(localStorage.getItem('userBookings') || '[]'),
+                    touristData: JSON.parse(localStorage.getItem('touristRegistrationData') || 'null'),
+                    settings: {
+                        language: localStorage.getItem('preferredLanguage') || 'ja',
+                        notifications: localStorage.getItem('notificationsEnabled') !== 'false'
+                    },
+                    exportDate: new Date().toISOString()
+                };
+                
+                const dataBlob = new Blob([JSON.stringify(userData, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `TomoTrip_data_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // Data stats
+            document.getElementById('dataStatsBtn').addEventListener('click', function() {
+                const stats = {
+                    bookmarks: JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]').length,
+                    comparison: JSON.parse(localStorage.getItem('comparisonGuides') || '[]').length,
+                    bookings: JSON.parse(localStorage.getItem('userBookings') || '[]').length,
+                    registeredGuides: JSON.parse(localStorage.getItem('registeredGuides') || '[]').length
+                };
+                
+                let storageUsed = 0;
+                for (let key in localStorage) {
+                    if (localStorage.hasOwnProperty(key)) {
+                        storageUsed += localStorage[key].length;
+                    }
+                }
+                
+                alert(`ストレージ使用量統計:
+・ブックマーク: ${stats.bookmarks}件
+・比較リスト: ${stats.comparison}件
+・予約履歴: ${stats.bookings}件
+・登録ガイド: ${stats.registeredGuides}件
+・使用容量: ${(storageUsed / 1024).toFixed(1)} KB`);
+            });
+            
+            // Save settings
+            document.getElementById('defaultLanguageSetting').addEventListener('change', function() {
+                localStorage.setItem('preferredLanguage', this.value);
+            });
+            
+            document.getElementById('notificationsEnabled').addEventListener('change', function() {
+                localStorage.setItem('notificationsEnabled', this.checked);
+            });
+        });
+    </script>
 
 </body>
 </html>
