@@ -1468,14 +1468,48 @@
             displayGuides(guideData, 1);
         }
 
+        // Price conversion function
+        function getPriceFromRange(rangeValue) {
+            const priceRanges = {
+                '¥6,000~¥10,000': '¥8,000',
+                '¥10,000~¥15,000': '¥12,500',
+                '¥15,000~¥20,000': '¥17,500',
+                '¥20,000~¥30,000': '¥25,000',
+                '¥30,000~¥50,000': '¥40,000',
+                '¥50,000+': '¥60,000'
+            };
+            return priceRanges[rangeValue] || '';
+        }
+
+        // Update guide display after registration
+        function updateGuideDisplay() {
+            // Get all guides (default + registered)
+            const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+            const allGuides = [...defaultGuides, ...registeredGuides];
+            
+            console.log(`📊 Loaded ${registeredGuides.length} registered guides`);
+            console.log(`📊 Total guides: ${allGuides.length} (${defaultGuides.length} default + ${registeredGuides.length} registered)`);
+            
+            // Update global guide data
+            guideData = allGuides;
+            currentGuides = allGuides;
+            
+            // Re-display guides
+            displayGuides(allGuides, 1);
+            
+            console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${allGuides.length} total`);
+        }
+
         // Language switching functions
         function switchToJapanese() {
-            console.log('🇯🇵 Switching to Japanese');
+            console.log('🇯🇵 Japanese selected - switching to Japanese page');
+            console.log('Language switched to Japanese');
             window.location.href = 'index.html';
         }
 
         function switchToEnglish() {
-            console.log('🇺🇸 Already in English');
+            console.log('🇺🇸 English selected - already on English page');
+            console.log('Language switched to English');
         }
 
         // Login dropdown toggle
@@ -1494,18 +1528,7 @@
             }
         });
 
-        // Sponsor functions - Fixed for English version
-        function handleSponsorRegistration() {
-            console.log('Sponsor registration clicked (English)');
-            // Stay on same language by going to English sponsor registration
-            window.location.href = 'sponsor-registration-en.html';
-        }
 
-        function handleSponsorLogin() {
-            console.log('Sponsor login clicked (English)');
-            // For now, show alert - we'll create proper modal later
-            alert('Sponsor login functionality coming soon!\n\nPlease use the Japanese version for now.');
-        }
 
         // View guide detail with access control
         function viewGuideDetail(guideId) {
