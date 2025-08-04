@@ -339,22 +339,31 @@
         }
         
         function loadBookingData() {
-            // URLパラメータまたはLocalStorageから予約データを取得
-            const urlParams = new URLSearchParams(window.location.search);
-            const bookingId = urlParams.get('booking');
+            console.log('Loading booking data...');
             
-            if (bookingId) {
-                // LocalStorageから一時的な予約データを取得
-                bookingData = JSON.parse(localStorage.getItem('tempBookingData') || '{}');
-            } else {
-                // 最新の予約データを取得
-                const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
-                bookingData = bookings[bookings.length - 1];
+            // まず一時的な予約データを確認
+            const tempBookingStr = localStorage.getItem('tempBookingData');
+            console.log('tempBookingData found:', tempBookingStr);
+            
+            if (tempBookingStr) {
+                try {
+                    bookingData = JSON.parse(tempBookingStr);
+                    console.log('Parsed booking data:', bookingData);
+                } catch (e) {
+                    console.error('Error parsing tempBookingData:', e);
+                }
             }
             
-            // データが見つからない場合はデモデータを使用
+            // tempBookingDataが無い場合は最新の予約データを取得
             if (!bookingData || Object.keys(bookingData).length === 0) {
-                console.log('予約データが見つからないため、デモデータを使用します');
+                const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+                bookingData = bookings[bookings.length - 1];
+                console.log('Using latest booking from userBookings:', bookingData);
+            }
+            
+            // それでもデータが見つからない場合のみデモデータを使用
+            if (!bookingData || Object.keys(bookingData).length === 0) {
+                console.log('No booking data found, using demo data');
                 bookingData = {
                     id: 'demo-' + Date.now(),
                     guideName: '森田 健',
@@ -370,6 +379,16 @@
                 };
             }
             
+            // ガイド料金の表示形式を統一
+            if (bookingData.guideRate) {
+                if (typeof bookingData.guideRate === 'number') {
+                    bookingData.guideRate = `¥${bookingData.guideRate.toLocaleString()}/時間`;
+                } else if (typeof bookingData.guideRate === 'string' && !bookingData.guideRate.includes('/')) {
+                    bookingData.guideRate = bookingData.guideRate + '/時間';
+                }
+            }
+            
+            console.log('Final booking data for display:', bookingData);
             displayBookingData();
         }
         
