@@ -2653,11 +2653,23 @@
 
             // Management Center Button Event Listener
             const managementBtn = document.getElementById('managementBtn');
+            console.log('Looking for managementBtn:', managementBtn);
             if (managementBtn) {
-                managementBtn.addEventListener('click', function() {
-                    console.log('Management Center button clicked');
-                    showManagementCenter();
+                console.log('✅ Management button found, adding event listener');
+                managementBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🏆 Management Center button clicked!');
+                    try {
+                        showManagementCenter();
+                    } catch (error) {
+                        console.error('Error opening management center:', error);
+                        alert('Error opening management center: ' + error.message);
+                    }
                 });
+                console.log('✅ Management button event listener added successfully');
+            } else {
+                console.error('❌ Management button not found!');
             }
 
             // Initialize on page load
