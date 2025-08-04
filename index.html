@@ -47,6 +47,39 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        /* Chat message styling */
+        .max-width-70 {
+            max-width: 70%;
+        }
+        
+        #chatMessages {
+            min-height: 300px;
+        }
+        
+        #chatMessages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
     
     <style>
         /* Clear any cached styles */
@@ -1140,7 +1173,7 @@
             }
             
             window.contactGuide = function(guideId) {
-                alert(`ガイドID: ${guideId} へのメッセージ機能は開発中です。\n\n今後、チャット機能を実装予定です。`);
+                showChatModal(guideId);
             }
             
             // Clear any existing intervals/timeouts to prevent conflicts
@@ -2981,6 +3014,217 @@
                 console.error('Language buttons not found: jpBtn=' + !!jpBtn + ', enBtn=' + !!enBtn);
             }
         });
+
+        // Chat functionality
+        let currentChatGuide = null;
+
+        function showChatModal(guideId) {
+            console.log('ガイドID: ' + guideId + ' へのメッセージ機能は開発中です。');
+            
+            // Find guide data
+            const guide = currentGuides.find(g => g.id == guideId);
+            if (!guide) {
+                console.error('Guide not found for chat:', guideId);
+                return;
+            }
+
+            currentChatGuide = guide;
+            
+            // Update modal with guide info
+            document.getElementById('chatGuideName').textContent = guide.name;
+            document.getElementById('chatGuideImage').src = guide.image;
+            
+            // Load chat history
+            loadChatHistory(guideId);
+            
+            // Show modal
+            const chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+            chatModal.show();
+            
+            // Show development notice
+            setTimeout(() => {
+                addSystemMessage('今後、チャット機能を本装予定です。');
+            }, 500);
+            
+            console.log('Chat modal opened for guide:', guide.name);
+        }
+
+        function loadChatHistory(guideId) {
+            const chatMessages = document.getElementById('chatMessages');
+            const chatKey = `chat_${guideId}`;
+            const savedMessages = JSON.parse(localStorage.getItem(chatKey) || '[]');
+            
+            // Clear current messages
+            chatMessages.innerHTML = '';
+            
+            // Display saved messages
+            savedMessages.forEach(message => {
+                displayMessage(message.text, message.sender, message.timestamp, false);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('chatMessageInput');
+            const messageText = messageInput.value.trim();
+            
+            if (!messageText || !currentChatGuide) return;
+            
+            // Display user message
+            const timestamp = new Date();
+            displayMessage(messageText, 'user', timestamp);
+            
+            // Save message
+            saveChatMessage(currentChatGuide.id, messageText, 'user', timestamp);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Simulate guide response (for demonstration)
+            setTimeout(() => {
+                const responses = [
+                    'ありがとうございます！お手伝いできて嬉しいです。',
+                    'ご質問にお答えします。詳細はお気軽にお聞きください。',
+                    'お客様のご希望に合わせてプランを提案させていただきます。',
+                    'ご旅行の計画についてサポートいたします。'
+                ];
+                const response = responses[Math.floor(Math.random() * responses.length)];
+                const responseTime = new Date();
+                displayMessage(response, 'guide', responseTime);
+                saveChatMessage(currentChatGuide.id, response, 'guide', responseTime);
+            }, 1000 + Math.random() * 2000);
+        }
+
+        function displayMessage(text, sender, timestamp, saveMessage = true) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            const isUser = sender === 'user';
+            
+            messageDiv.className = `mb-3 d-flex ${isUser ? 'justify-content-end' : 'justify-content-start'}`;
+            
+            const timeStr = timestamp.toLocaleTimeString('ja-JP', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            messageDiv.innerHTML = `
+                <div class="max-width-70 ${isUser ? 'text-end' : 'text-start'}">
+                    <div class="p-3 rounded-3 ${isUser ? 'bg-primary text-white ms-5' : 'bg-white border me-5'}" 
+                         style="border-radius: ${isUser ? '20px 20px 5px 20px' : '20px 20px 20px 5px'} !important;">
+                        <p class="mb-1">${text}</p>
+                        <small class="opacity-75">${timeStr}</small>
+                    </div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addSystemMessage(text) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = 'mb-3 text-center';
+            messageDiv.innerHTML = `
+                <div class="badge bg-secondary p-2">
+                    <i class="bi bi-info-circle me-1"></i>${text}
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function saveChatMessage(guideId, text, sender, timestamp) {
+            const chatKey = `chat_${guideId}`;
+            const savedMessages = JSON.parse(localStorage.getItem(chatKey) || '[]');
+            
+            savedMessages.push({
+                text: text,
+                sender: sender,
+                timestamp: timestamp
+            });
+            
+            // Keep only last 100 messages
+            if (savedMessages.length > 100) {
+                savedMessages.splice(0, savedMessages.length - 100);
+            }
+            
+            localStorage.setItem(chatKey, JSON.stringify(savedMessages));
+        }
+
+        // Event listeners for chat
+        document.addEventListener('DOMContentLoaded', function() {
+            const sendBtn = document.getElementById('sendMessageBtn');
+            const messageInput = document.getElementById('chatMessageInput');
+            
+            if (sendBtn) {
+                sendBtn.addEventListener('click', sendMessage);
+            }
+            
+            if (messageInput) {
+                messageInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
     </script>
+
+    <!-- Chat Modal -->
+    <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); height: 600px;">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #17a2b8, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="chatModalLabel">
+                        <i class="bi bi-chat-dots me-2"></i>ガイドとチャット
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0 d-flex flex-column" style="height: 500px;">
+                    <!-- Guide info header -->
+                    <div class="bg-light border-bottom p-3">
+                        <div class="d-flex align-items-center">
+                            <img id="chatGuideImage" src="" class="rounded-circle me-3" style="width: 50px; height: 50px; object-fit: cover;" alt="ガイド画像">
+                            <div>
+                                <h6 class="mb-0 fw-bold" id="chatGuideName">ガイド名</h6>
+                                <small class="text-muted">
+                                    <i class="bi bi-circle-fill text-success me-1" style="font-size: 8px;"></i>オンライン
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat messages area -->
+                    <div class="flex-grow-1 p-3 overflow-auto" id="chatMessages" style="background-color: #f8f9fa;">
+                        <!-- Messages will be added here -->
+                    </div>
+                    
+                    <!-- Message input area -->
+                    <div class="border-top p-3 bg-white">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="chatMessageInput" 
+                                   placeholder="メッセージを入力..." 
+                                   style="border-radius: 25px 0 0 25px; border: 2px solid #e9ecef;">
+                            <button class="btn btn-primary" type="button" id="sendMessageBtn" 
+                                    style="border-radius: 0 25px 25px 0; background: linear-gradient(135deg, #17a2b8, #20c997); border: none;">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>Enter キーでメッセージを送信
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
