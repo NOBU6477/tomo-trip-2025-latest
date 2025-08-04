@@ -317,7 +317,10 @@
             // サービス料金を表示
             const serviceAmount = parseInt(bookingData.totalPrice.replace(/[^\d]/g, ''));
             document.getElementById('serviceAmount').textContent = `¥${serviceAmount.toLocaleString()}`;
-            document.getElementById('paymentTotal').textContent = bookingData.totalPrice; // 初期値
+            
+            // 初期状態では手数料なしで表示（カード手数料行も非表示）
+            document.getElementById('cardFeeRow').style.display = 'none';
+            updatePaymentTotal(false);
             
             const detailsHTML = `
                 <div><strong>日付:</strong> ${bookingData.date}</div>
