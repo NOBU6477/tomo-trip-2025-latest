@@ -869,16 +869,18 @@
         // Bookmark and comparison functionality
         function toggleBookmark(guideId) {
             const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-            const isBookmarked = bookmarkedGuides.includes(guideId);
+            // Convert to string for consistent comparison
+            const guideIdStr = guideId.toString();
+            const isBookmarked = bookmarkedGuides.includes(guideIdStr) || bookmarkedGuides.includes(parseInt(guideId));
             
             if (isBookmarked) {
-                // Remove bookmark
-                const updatedBookmarks = bookmarkedGuides.filter(id => id != guideId);
+                // Remove bookmark - handle both string and number formats
+                const updatedBookmarks = bookmarkedGuides.filter(id => id != guideIdStr && id != parseInt(guideId));
                 localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
                 console.log('Removed bookmark for guide:', guideId);
             } else {
-                // Add bookmark
-                bookmarkedGuides.push(guideId);
+                // Add bookmark as string
+                bookmarkedGuides.push(guideIdStr);
                 localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
                 console.log('Bookmarked guide:', guideId);
             }
@@ -889,11 +891,13 @@
         
         function toggleComparison(guideId) {
             const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-            const isInComparison = comparisonGuides.includes(guideId);
+            // Convert to string for consistent comparison
+            const guideIdStr = guideId.toString();
+            const isInComparison = comparisonGuides.includes(guideIdStr) || comparisonGuides.includes(parseInt(guideId));
             
             if (isInComparison) {
-                // Remove from comparison
-                const updatedComparison = comparisonGuides.filter(id => id != guideId);
+                // Remove from comparison - handle both string and number formats
+                const updatedComparison = comparisonGuides.filter(id => id != guideIdStr && id != parseInt(guideId));
                 localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
                 console.log('Removed from comparison:', guideId);
             } else {
@@ -902,7 +906,7 @@
                     alert('比較リストは最大3件までです。他のガイドを削除してから追加してください。');
                     return;
                 }
-                comparisonGuides.push(guideId);
+                comparisonGuides.push(guideIdStr);
                 localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
                 console.log('Added to comparison:', guideId);
             }
@@ -915,7 +919,8 @@
             const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
             document.querySelectorAll('.bookmark-btn').forEach(btn => {
                 const guideId = btn.getAttribute('data-guide-id');
-                const isBookmarked = bookmarkedGuides.includes(guideId);
+                // Check both string and number formats for compatibility
+                const isBookmarked = bookmarkedGuides.includes(guideId) || bookmarkedGuides.includes(parseInt(guideId));
                 
                 if (isBookmarked) {
                     btn.classList.remove('btn-outline-warning');
@@ -933,7 +938,8 @@
             const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
             document.querySelectorAll('.compare-btn').forEach(btn => {
                 const guideId = btn.getAttribute('data-guide-id');
-                const isInComparison = comparisonGuides.includes(guideId);
+                // Check both string and number formats for compatibility
+                const isInComparison = comparisonGuides.includes(guideId) || comparisonGuides.includes(parseInt(guideId));
                 
                 if (isInComparison) {
                     btn.classList.remove('btn-outline-success');
@@ -3956,13 +3962,9 @@
             localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
             loadBookmarksList();
             
-            // Update bookmark button in main page
-            const bookmarkBtn = document.querySelector(`[onclick="toggleBookmark(${guideId})"]`);
-            if (bookmarkBtn) {
-                bookmarkBtn.innerHTML = '<i class="bi bi-bookmark"></i>';
-                bookmarkBtn.classList.remove('btn-warning');
-                bookmarkBtn.classList.add('btn-outline-secondary');
-            }
+            // Update bookmark buttons throughout the page
+            updateBookmarkButtons();
+            console.log('Removed bookmark for guide:', guideId);
         }
         
         function removeFromComparison(guideId) {
@@ -3971,13 +3973,9 @@
             localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
             loadComparisonList();
             
-            // Update comparison button in main page
-            const compareBtn = document.querySelector(`[onclick="toggleComparison(${guideId})"]`);
-            if (compareBtn) {
-                compareBtn.innerHTML = '<i class="bi bi-graph-up"></i>';
-                compareBtn.classList.remove('btn-success');
-                compareBtn.classList.add('btn-outline-secondary');
-            }
+            // Update comparison buttons throughout the page
+            updateComparisonButtons();
+            console.log('Removed from comparison:', guideId);
         }
         
         function viewBookingDetails(bookingId) {
@@ -4006,12 +4004,8 @@
                     localStorage.removeItem('bookmarkedGuides');
                     loadBookmarksList();
                     
-                    // Update all bookmark buttons in main page
-                    document.querySelectorAll('[onclick*="toggleBookmark"]').forEach(btn => {
-                        btn.innerHTML = '<i class="bi bi-bookmark"></i>';
-                        btn.classList.remove('btn-warning');
-                        btn.classList.add('btn-outline-secondary');
-                    });
+                    // Update all bookmark buttons throughout the page
+                    updateBookmarkButtons();
                 }
             });
             
@@ -4021,12 +4015,8 @@
                     localStorage.removeItem('comparisonGuides');
                     loadComparisonList();
                     
-                    // Update all comparison buttons in main page
-                    document.querySelectorAll('[onclick*="toggleComparison"]').forEach(btn => {
-                        btn.innerHTML = '<i class="bi bi-graph-up"></i>';
-                        btn.classList.remove('btn-success');
-                        btn.classList.add('btn-outline-secondary');
-                    });
+                    // Update all comparison buttons throughout the page
+                    updateComparisonButtons();
                 }
             });
             
