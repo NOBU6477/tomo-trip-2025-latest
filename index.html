@@ -82,12 +82,16 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            background: linear-gradient(135deg, #ff6b6b, #4287f5);
+            padding: 5px;
         }
         
         .logo-container img {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            border-radius: 5px;
+            background: white;
         }
 
         /* Hero Section */
@@ -2821,6 +2825,43 @@
                 document.head.appendChild(style);
                 
                 console.log('Page unfreeze mechanism activated');
+            });
+            
+            // Language switching functionality
+            document.getElementById('jpBtn').addEventListener('click', function() {
+                // Add active state for Japanese button
+                document.getElementById('jpBtn').style.background = 'linear-gradient(135deg, #ff5252, #ff7979)';
+                document.getElementById('enBtn').style.background = 'linear-gradient(135deg, #4287f5, #64a8ff)';
+                
+                // Update text content to Japanese
+                document.querySelector('.hero-content h1').textContent = 'あなただけの特別な旅を';
+                document.querySelector('.hero-content p').textContent = '地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう';
+                document.getElementById('findGuideBtn').textContent = 'ガイドを探す';
+                document.getElementById('contactBtn').textContent = 'お問い合わせ';
+                document.getElementById('loginDropdown').textContent = 'ログイン';
+                document.getElementById('registerBtn').textContent = '新規登録';
+                document.getElementById('sponsorRegBtn').textContent = '協賛店登録';
+                document.getElementById('sponsorLoginBtn').textContent = 'ログイン';
+                
+                console.log('Language switched to Japanese');
+            });
+            
+            document.getElementById('enBtn').addEventListener('click', function() {
+                // Add active state for English button
+                document.getElementById('enBtn').style.background = 'linear-gradient(135deg, #3b78e7, #5a9cff)';
+                document.getElementById('jpBtn').style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e8e)';
+                
+                // Update text content to English
+                document.querySelector('.hero-content h1').textContent = 'Your Special Journey Awaits';
+                document.querySelector('.hero-content p').textContent = 'Experience hidden charms that tourism can\'t find with local guides';
+                document.getElementById('findGuideBtn').textContent = 'Find Guide';
+                document.getElementById('contactBtn').textContent = 'Contact';
+                document.getElementById('loginDropdown').textContent = 'Login';
+                document.getElementById('registerBtn').textContent = 'Register';
+                document.getElementById('sponsorRegBtn').textContent = 'Sponsor Registration';
+                document.getElementById('sponsorLoginBtn').textContent = 'Login';
+                
+                console.log('Language switched to English');
             });
         });
     </script>
