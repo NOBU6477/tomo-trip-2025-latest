@@ -3864,14 +3864,21 @@
                     <div class="col-md-4 mb-3">
                         <div class="card h-100 border-success">
                             <img src="${guide.image}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="${guide.name}">
-                            <div class="card-body p-3">
+                            <div class="card-body p-3 d-flex flex-column">
                                 <h6 class="card-title mb-1">${guide.name}</h6>
                                 <p class="card-text small text-muted mb-1">${locationNames[guide.location] || guide.location}</p>
                                 <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
-                                <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
-                                <button class="btn btn-outline-danger btn-sm w-100" onclick="removeFromComparison(${guide.id})">
-                                    <i class="bi bi-x me-1"></i>比較から除外
-                                </button>
+                                <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
+                                <div class="mt-auto">
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">
+                                            <i class="bi bi-info-circle me-1"></i>詳細
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" onclick="removeFromComparison(${guide.id})">
+                                            <i class="bi bi-x me-1"></i>比較から除外
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -3975,6 +3982,20 @@
         
         function viewBookingDetails(bookingId) {
             window.location.href = `booking-confirmation.html?id=${bookingId}`;
+        }
+        
+        // Show guide detail modal from management center
+        function showGuideDetailModal(guideId) {
+            console.log('Opening guide detail modal for guide:', guideId);
+            // Use existing viewGuideDetail function if available
+            if (window.viewGuideDetail) {
+                const fakeEvent = { preventDefault: () => {}, stopPropagation: () => {} };
+                window.viewGuideDetail(guideId, fakeEvent);
+            } else {
+                // Fallback: redirect to main page with guide detail
+                alert('ガイド詳細を表示するため、メインページに移動します。');
+                window.location.href = `/?guideId=${guideId}`;
+            }
         }
         
         // Clear functions
