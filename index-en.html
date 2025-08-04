@@ -2504,7 +2504,19 @@
             const totalElement = document.getElementById('bookingTotal');
             
             if (date && time && duration && participants) {
-                const basePrice = parseInt(currentBookingGuide.price.replace(/[^\d]/g, ''));
+                // Extract price - handle both string and number formats
+                let basePrice;
+                if (typeof currentBookingGuide.price === 'string') {
+                    basePrice = parseInt(currentBookingGuide.price.replace(/[^\d]/g, ''));
+                } else {
+                    basePrice = parseInt(currentBookingGuide.price) || 5000; // fallback
+                }
+                
+                // If no valid price found, use a default
+                if (isNaN(basePrice) || basePrice === 0) {
+                    basePrice = 5000;
+                }
+                
                 const durationMultiplier = duration === '2' ? 1.5 : duration === '4' ? 2.5 : duration === '8' ? 4 : 1;
                 const total = Math.round(basePrice * durationMultiplier * parseInt(participants));
                 
