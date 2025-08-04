@@ -528,23 +528,21 @@
                 // 予約確認ページに戻る
                 if (bookingId) {
                     const targetUrl = `booking-confirmation.html?id=${bookingId}`;
-                    console.log('Redirecting to:', targetUrl);
+                    console.log('Redirecting to booking confirmation with ID:', targetUrl);
                     window.location.href = targetUrl;
                 } else {
-                    // 予約IDがない場合は前のページまたはホームに戻る
-                    console.log('No booking ID, checking referrer:', document.referrer);
-                    if (document.referrer && document.referrer.includes(window.location.origin)) {
-                        console.log('Going back in history');
-                        window.history.back();
-                    } else {
-                        console.log('Redirecting to home page');
-                        window.location.href = 'index.html';
-                    }
+                    // 予約IDがない場合は、デフォルトのデモ予約IDで予約確認ページに戻る
+                    console.log('No booking ID found, using default demo booking');
+                    const demoBookingId = 'demo-' + Date.now();
+                    const targetUrl = `booking-confirmation.html?id=${demoBookingId}`;
+                    console.log('Redirecting to:', targetUrl);
+                    window.location.href = targetUrl;
                 }
             } catch (error) {
                 console.error('Error in goBack function:', error);
-                // エラーが発生した場合は強制的にホームページに戻る
-                window.location.href = 'index.html';
+                // エラーが発生した場合は予約確認ページに戻る
+                console.log('Error occurred, redirecting to booking confirmation');
+                window.location.href = 'booking-confirmation.html';
             }
         }
     </script>
