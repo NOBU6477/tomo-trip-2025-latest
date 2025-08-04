@@ -31,6 +31,32 @@
             color: white;
             padding: 2rem;
             text-align: center;
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .back-button:hover {
+            background: white;
+            color: #28a745;
+            transform: translateY(-50%) scale(1.1);
         }
         
         .booking-summary {
@@ -152,6 +178,9 @@
     <div class="payment-container">
         <div class="payment-card">
             <div class="payment-header">
+                <a href="#" class="back-button" id="backToBooking">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
                 <h2><i class="bi bi-credit-card me-2"></i>お支払い</h2>
                 <p class="mb-0">安全で確実な決済システム</p>
             </div>
@@ -285,7 +314,29 @@
         document.addEventListener('DOMContentLoaded', function() {
             loadBookingData();
             setupEventListeners();
+            setupBackButton();
         });
+        
+        function setupBackButton() {
+            const backButton = document.getElementById('backToBooking');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Back to booking button clicked');
+                    
+                    // LocalStorageから予約データを取得
+                    const savedBookingData = localStorage.getItem('tempBookingData');
+                    
+                    if (savedBookingData) {
+                        // 予約データが存在する場合は、メインページの予約モーダルに戻る
+                        window.location.href = 'index.html?returnToBooking=true';
+                    } else {
+                        // 予約データがない場合はメインページに戻る
+                        window.location.href = 'index.html';
+                    }
+                });
+            }
+        }
         
         function loadBookingData() {
             // URLパラメータまたはLocalStorageから予約データを取得
