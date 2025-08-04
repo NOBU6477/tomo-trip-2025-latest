@@ -237,11 +237,18 @@
         }
         
         function openChat() {
-            if (bookingData && bookingData.guideId) {
-                // チャット機能を開く（既存のチャット機能を使用）
-                alert('チャット機能を開きます（実装済みの機能と連携）');
-                // 実際の実装では既存のチャット機能を呼び出し
-                window.location.href = `index.html#chat-${bookingData.guideId}`;
+            if (bookingData) {
+                // ガイドIDがない場合はガイド名から生成
+                const guideId = bookingData.guideId || bookingData.guideName.replace(/\s+/g, '');
+                console.log(`Opening chat for guide: ${bookingData.guideName} (ID: ${guideId})`);
+                
+                // 既存のチャット機能を呼び出し
+                alert(`${bookingData.guideName}さんとのチャットを開きます`);
+                
+                // メインページのチャット機能にリダイレクト
+                window.location.href = `index.html?openChat=${guideId}&guideName=${encodeURIComponent(bookingData.guideName)}`;
+            } else {
+                alert('予約データが見つかりません。');
             }
         }
         
