@@ -410,6 +410,9 @@
                 const cardFee = Math.round(serviceAmount * 0.036); // 3.6%
                 document.getElementById('cardFeeAmount').textContent = `¥${cardFee.toLocaleString()}`;
                 total = serviceAmount + cardFee;
+            } else {
+                // カード以外の場合は手数料をリセット
+                document.getElementById('cardFeeAmount').textContent = `¥0`;
             }
             
             document.getElementById('paymentTotal').textContent = `¥${total.toLocaleString()}`;
