@@ -324,7 +324,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="logo-container">
-                    <img src="TomoTripロゴ.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); console.log('❌ Image dimensions:', this.naturalWidth, 'x', this.naturalHeight); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
+                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); console.log('❌ Image dimensions:', this.naturalWidth, 'x', this.naturalHeight); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
                 </div>
                 TomoTrip
             </a>
@@ -1156,12 +1156,11 @@
             // Button event listeners
             const buttons = {
                 jpBtn: () => {
-                    console.log('🇯🇵 日本語 selected');
-                    switchLanguage('ja');
+                    console.log('🇯🇵 日本語 selected - staying on Japanese page');
                 },
                 enBtn: () => {
-                    console.log('🇺🇸 English selected');
-                    switchLanguage('en');
+                    console.log('🇺🇸 English selected - switching to English page');
+                    window.location.href = 'index-en.html';
                 },
                 registerBtn: () => console.log('Register clicked'),
                 findGuideBtn: () => {

@@ -1,1586 +1,532 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TomoTrip - Connect with Local Guides</title>
-  
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-  
-  <style>
-    /* Hero Section */
-    .hero-section {
-      background: linear-gradient(rgba(66, 135, 245, 0.4), rgba(224, 79, 158, 0.4)), 
-                  url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=800&fit=crop') center/cover;
-      min-height: 60vh;
-      display: flex;
-      align-items: center;
-      position: relative;
-    }
-    
-    .guide-card {
-      transition: transform 0.3s;
-      height: 100%;
-    }
-    
-    .guide-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    /* Sponsor Banner */
-    .sponsor-banner {
-      background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-      border-bottom: 2px solid #dee2e6;
-      padding: 10px 0;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TomoTrip - Discover Japan with Local Guides</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+        }
 
-    .sponsor-scroll {
-      display: flex;
-      animation: scrollRight 30s linear infinite;
-      white-space: nowrap;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .sponsor-item {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 40px;
-      padding: 8px 15px;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      min-width: 200px;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
 
-    .sponsor-logo {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin-right: 10px;
-      object-fit: cover;
-    }
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
 
-    .sponsor-text {
-      color: #333;
-      font-weight: 600;
-      font-size: 14px;
-    }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #333 !important;
+            text-decoration: none;
+        }
 
-    .sponsor-offer {
-      background: #ff6b6b;
-      color: white;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      margin-left: 8px;
-      font-weight: bold;
-    }
+        .logo-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: white;
+            padding: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        
+        .logo-container img {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
+            display: block;
+        }
 
-    @keyframes scrollRight {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
-    }
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    /* 右側固定ボタンスタイル（日本語サイトと同じ楕円形） */
-    .sponsor-mini-buttons {
-      position: fixed;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 1000;
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
+        /* Language Switcher - Center Position */
+        .language-switcher-center {
+            position: absolute;
+            top: 25%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 0;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            border-radius: 25px;
+            overflow: hidden;
+        }
 
-    .sponsor-mini-btn {
-      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-      color: white;
-      border: none;
-      border-radius: 35px;
-      padding: 15px 25px;
-      font-size: 14px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      min-width: 180px;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-      text-decoration: none;
-    }
+        .lang-btn-jp, .lang-btn-en {
+            padding: 15px 30px;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            color: white;
+        }
 
-    .sponsor-mini-btn.sponsor-login {
-      background: linear-gradient(135deg, #4ecdc4, #44a08d);
-      box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
-    }
+        .lang-btn-jp {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
 
-    .sponsor-mini-btn:hover {
-      transform: translateX(-8px) translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-    }
+        .lang-btn-en {
+            background: linear-gradient(135deg, #4287f5, #64a8ff);
+        }
 
-    .sponsor-mini-btn.sponsor-register:hover {
-      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
-    }
+        .lang-btn-jp:hover {
+            background: linear-gradient(135deg, #ff5252, #ff7979);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,107,107,0.4);
+        }
 
-    .sponsor-mini-btn.sponsor-login:hover {
-      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
-    }
+        .lang-btn-en:hover {
+            background: linear-gradient(135deg, #3367d6, #5a9cff);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(66,135,245,0.4);
+        }
 
-    .sponsor-mini-btn.filter-guide-btn {
-      background: linear-gradient(135deg, #17a2b8, #138496);
-    }
+        /* Hero Content */
+        .hero-content {
+            text-align: center;
+            color: white;
+            z-index: 50;
+        }
 
-    .sponsor-mini-btn.filter-guide-btn:hover {
-      box-shadow: 0 8px 25px rgba(23, 162, 184, 0.4);
-    }
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
 
-    /* Sponsor Mini Buttons Positioning (日本語サイトと同じ配置) */
-    .sponsor-mini-buttons {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      z-index: 1040 !important;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: -80px;
-      margin-right: 20px;
-      pointer-events: auto !important;
-    }
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
-    .sponsor-mini-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-    .sponsor-mini-btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border: none;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 35px;
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      cursor: pointer !important;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-      text-align: center;
-      white-space: nowrap;
-      min-width: 180px;
-      pointer-events: auto !important;
-      z-index: 1040 !important;
-      position: relative !important;
-    }
+        .btn-hero {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 35px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
 
-    .sponsor-mini-btn i {
-      margin-right: 8px;
-      font-size: 16px;
-    }
+        .btn-primary-hero {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
 
-    .sponsor-mini-btn:hover {
-      transform: translateX(-8px) translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-    }
+        .btn-primary-hero:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,123,255,0.4);
+        }
 
-    .sponsor-mini-btn.sponsor-register {
-      background: linear-gradient(135deg, #ff6b9d, #c44569);
-    }
+        .btn-outline-hero {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
 
-    .sponsor-mini-btn.sponsor-login {
-      background: linear-gradient(135deg, #4ecdc4, #44a08d);
-    }
+        .btn-outline-hero:hover {
+            background: white;
+            color: #333;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.3);
+        }
 
-    .sponsor-mini-btn.sponsor-register:hover {
-      box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
-    }
+        /* Guide Cards */
+        .guide-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
 
-    .sponsor-mini-btn.sponsor-login:hover {
-      box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
-    }
+        .guide-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
 
+        .guide-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
 
+        .guide-card-body {
+            padding: 1.5rem;
+        }
 
-    /* Floating Toolbar Styles (日本語サイトから完全コピー) */
-    .floating-toolbar {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(10px);
-      border: 1px solid #dee2e6;
-      border-radius: 15px;
-      padding: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      z-index: 1050;
-      max-width: 400px;
-      transform: translateY(100px);
-      animation: slideUp 0.5s ease-out forwards;
-    }
-    
-    @keyframes slideUp {
-      to {
-        transform: translateY(0);
-      }
-    }
-    
-    .toolbar-content {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-    
-    .toolbar-section {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    
-    .toolbar-label {
-      font-weight: 500;
-      color: #6c757d;
-    }
-    
-    .guide-card.bookmarked {
-      border: 2px solid #ffc107;
-      box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
-    }
-    
-    .guide-card.recently-viewed {
-      border-left: 4px solid #17a2b8;
-    }
+        .guide-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
 
-    @media (max-width: 768px) {
-      .floating-toolbar {
-        bottom: 10px;
-        right: 10px;
-        left: 10px;
-        max-width: none;
-      }
-      
-      .toolbar-content {
-        justify-content: space-between;
-      }
-    }
+        .guide-location {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    /* Filter Button Style */
-    #filterToggleBtn {
-      background: linear-gradient(135deg, #17a2b8, #138496);
-      border: none;
-      color: white;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      border-radius: 25px;
-      padding: 10px 20px;
-    }
+        .guide-languages {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
 
-    #filterToggleBtn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(23, 162, 184, 0.3);
-    }
-  </style>
+        .language-badge {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            color: #1976d2;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .guide-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .stars {
+            color: #ffc107;
+        }
+
+        .guide-price {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .guide-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-guide {
+            flex: 1;
+            padding: 0.8rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            transform: translateY(-2px);
+        }
+
+        .btn-bookmark {
+            background: linear-gradient(135deg, #ffc107, #ffb300);
+            color: white;
+        }
+
+        .btn-bookmark:hover {
+            background: linear-gradient(135deg, #ffb300, #ff8f00);
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn-hero {
+                width: 250px;
+            }
+            
+            .language-switcher-center {
+                flex-direction: row;
+                justify-content: center;
+                margin-top: 2rem;
+            }
+            
+            .language-switcher-center {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                margin: 2rem 0;
+            }
+        }
+    </style>
 </head>
-
 <body>
-  <!-- Navigation (日本語サイトと同じ構造) -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
-    <div class="container">
-      <a class="navbar-brand fw-bold text-white" href="/">
-        <img src="TomoTripロゴ.png" alt="TomoTrip" style="height: 30px; width: auto; margin-right: 8px;">
-        TomoTrip
-      </a>
-      
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item"><a class="nav-link text-white" href="/">Home</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#guides">Find Guides</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="#benefits">How to Use</a></li>
-        </ul>
-        
-        <!-- Language Switcher (中央配置) -->
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <div class="logo-container">
+                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: #333;&quot;>T</span>';" />
+                </div>
+                TomoTrip
+            </a>
+            
+            <div class="d-flex">
+                <div class="dropdown me-2" style="position: relative;">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" onclick="toggleLoginDropdown()" aria-expanded="false">
+                        Login
+                    </button>
+                    <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">Tourist Login</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">Guide Login</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="registerBtn">Register</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Language Switcher - Center -->
         <div class="language-switcher-center">
-          <button class="btn lang-btn-jp" id="switchToJapaneseBtn" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border: none; border-radius: 25px 0 0 25px; padding: 8px 20px; font-weight: bold;">
-            🇯🇵 日本語
-          </button>
-          <button class="btn lang-btn-en active" style="background: linear-gradient(135deg, #4287f5, #64a8ff); color: white; border: none; border-radius: 0 25px 25px 0; padding: 8px 20px; font-weight: bold; transform: scale(1.05);">
-            🇺🇸 English
-          </button>
+            <button class="lang-btn-jp" id="jpBtn" onclick="switchToJapanese()">🇯🇵 日本語</button>
+            <button class="lang-btn-en" id="enBtn" onclick="switchToEnglish()">🇺🇸 English</button>
         </div>
-        
-        <!-- Login/Register Buttons (右端配置) -->
-        <div id="navbar-user-area" class="ms-3">
-          <button class="btn btn-outline-light me-2" id="loginBtn" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
-          <button class="btn btn-light" id="signUpBtn" style="border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#registerModal">Sign Up</button>
-        </div>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Hero Section (日本語サイトと同じ構造) -->
-  <section id="top" class="hero-section text-center text-white py-5">
-    <!-- TomoTrip Logo (左上配置) -->
-    <div style="position: absolute; top: 20px; left: 20px; z-index: 20;">
-      <div style="width: 140px; height: 140px; background: rgba(255, 255, 255, 0.95); border-radius: 15px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15); backdrop-filter: blur(10px); border: 4px solid rgba(255, 255, 255, 0.3);">
-        <img src="TomoTripロゴ.png" alt="TomoTrip" style="width: 130px; height: 130px; object-fit: cover; border-radius: 10px;">
-      </div>
-    </div>
-    
-    <div class="container position-relative">
-      <h1 class="display-4 fw-bold mb-3" id="hero-title">Your Special Journey Awaits</h1>
-      <p class="lead mb-4" id="hero-subtitle">Discover hidden gems with local guides that tourism can't reveal</p>
-      <div class="position-relative">
-        <a href="#guides" class="btn btn-light btn-lg" id="find-guide-btn">Find a Guide</a>
-        <button class="btn btn-outline-light btn-lg ms-2" data-bs-toggle="modal" data-bs-target="#contactModal" id="contact-btn">Contact Us</button>
-        
-        <!-- Sponsor Registration & Login Buttons + Filter Guide Button (日本語サイトと同じ配置) -->
-        <div class="sponsor-mini-buttons">
-          <div class="sponsor-mini-wrapper">
-            <button class="sponsor-mini-btn sponsor-register" id="sponsorRegisterBtn" title="Sponsor Registration">
-              <i class="bi bi-shop"></i>
-              <span>Sponsor Registration 🚀</span>
-            </button>
-            <button class="sponsor-mini-btn sponsor-login" id="sponsorLoginBtn" title="Sponsor Login">
-              <i class="bi bi-box-arrow-in-right"></i>
-              <span>Login ✨</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Sponsor Advertisement Banner -->
-  <div class="sponsor-banner">
-    <div class="sponsor-scroll">
-      <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100&h=60&fit=crop" alt="Beachside Restaurant" class="sponsor-logo">
-        <span class="sponsor-text">Beachside Restaurant</span>
-        <span class="sponsor-offer">20% OFF</span>
-      </div>
-      <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=100&h=60&fit=crop" alt="Mountain Hotel" class="sponsor-logo">
-        <span class="sponsor-text">Mountain Hotel</span>
-        <span class="sponsor-offer">Special Price</span>
-      </div>
-      <div class="sponsor-item">
-        <img src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=100&h=60&fit=crop" alt="Tour Bus" class="sponsor-logo">
-        <span class="sponsor-text">Tour Bus</span>
-        <span class="sponsor-offer">Free Pickup</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content -->
-  <div class="container py-5">
-    <!-- Popular Guides -->
-    <section id="guides" class="mb-5">
-      <h2 class="text-center mb-4">Popular Guides</h2>
-      <div class="mb-4">
-        <div class="text-center mb-3">
-          <div id="guides-count" class="guide-counter text-primary fw-bold fs-5 mb-3">
-            <i class="bi bi-people-fill me-2"></i><span id="guide-count-number">5</span> guides found
-          </div>
-          <button type="button" class="btn btn-outline-primary" id="filterToggleBtn">
-            <i class="bi bi-funnel"></i> Open Filter
-          </button>
-        </div>
-        
-        <div class="row justify-content-center">
-          <div class="col-md-10 col-lg-8">
-            <div class="card shadow-sm d-none" id="filter-card">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Filter Guides</h5>
-                <form id="guide-filter-form">
-                  <!-- Real-time search filter form -->
-                  <div class="row g-3">
-                    <div class="col-md-4">
-                      <label for="location-filter" class="form-label">Location</label>
-                      <select class="form-select" id="location-filter">
-                        <option value="">All</option>
-                        <optgroup label="Prefectures">
-                          <option value="Hokkaido">Hokkaido</option>
-                          <option value="Aomori">Aomori</option>
-                          <option value="Iwate">Iwate</option>
-                          <option value="Miyagi">Miyagi</option>
-                          <option value="Akita">Akita</option>
-                          <option value="Yamagata">Yamagata</option>
-                          <option value="Fukushima">Fukushima</option>
-                          <option value="Ibaraki">Ibaraki</option>
-                          <option value="Tochigi">Tochigi</option>
-                          <option value="Gunma">Gunma</option>
-                          <option value="Saitama">Saitama</option>
-                          <option value="Chiba">Chiba</option>
-                          <option value="Tokyo">Tokyo</option>
-                          <option value="Kanagawa">Kanagawa</option>
-                          <option value="Niigata">Niigata</option>
-                          <option value="Toyama">Toyama</option>
-                          <option value="Ishikawa">Ishikawa</option>
-                          <option value="Fukui">Fukui</option>
-                          <option value="Yamanashi">Yamanashi</option>
-                          <option value="Nagano">Nagano</option>
-                          <option value="Gifu">Gifu</option>
-                          <option value="Shizuoka">Shizuoka</option>
-                          <option value="Aichi">Aichi</option>
-                          <option value="Mie">Mie</option>
-                          <option value="Shiga">Shiga</option>
-                          <option value="Kyoto">Kyoto</option>
-                          <option value="Osaka">Osaka</option>
-                          <option value="Hyogo">Hyogo</option>
-                          <option value="Nara">Nara</option>
-                          <option value="Wakayama">Wakayama</option>
-                          <option value="Tottori">Tottori</option>
-                          <option value="Shimane">Shimane</option>
-                          <option value="Okayama">Okayama</option>
-                          <option value="Hiroshima">Hiroshima</option>
-                          <option value="Yamaguchi">Yamaguchi</option>
-                          <option value="Tokushima">Tokushima</option>
-                          <option value="Kagawa">Kagawa</option>
-                          <option value="Ehime">Ehime</option>
-                          <option value="Kochi">Kochi</option>
-                          <option value="Fukuoka">Fukuoka</option>
-                          <option value="Saga">Saga</option>
-                          <option value="Nagasaki">Nagasaki</option>
-                          <option value="Kumamoto">Kumamoto</option>
-                          <option value="Oita">Oita</option>
-                          <option value="Miyazaki">Miyazaki</option>
-                          <option value="Kagoshima">Kagoshima</option>
-                          <option value="Okinawa">Okinawa</option>
-                        </optgroup>
-                        <optgroup label="Remote Islands">
-                          <option value="Yakushima">Yakushima</option>
-                          <option value="Tanegashima">Tanegashima</option>
-                          <option value="Amami Oshima">Amami Oshima</option>
-                          <option value="Miyakojima">Miyakojima</option>
-                          <option value="Ishigaki">Ishigaki</option>
-                          <option value="Taketomi">Taketomi</option>
-                          <option value="Iriomote">Iriomote</option>
-                          <option value="Yonaguni">Yonaguni</option>
-                          <option value="Sado">Sado</option>
-                          <option value="Oki Islands">Oki Islands</option>
-                          <option value="Iki">Iki</option>
-                          <option value="Tsushima">Tsushima</option>
-                          <option value="Goto Islands">Goto Islands</option>
-                          <option value="Ogasawara Islands">Ogasawara Islands</option>
-                        </optgroup>
-                      </select>
-                    </div>
-                    <div class="col-md-4">
-                      <label for="language-filter" class="form-label">Language</label>
-                      <select class="form-select" id="language-filter">
-                        <option value="">All</option>
-                        <option value="Japanese">Japanese</option>
-                        <option value="English">English</option>
-                        <option value="Chinese">Chinese</option>
-                        <option value="Korean">Korean</option>
-                        <option value="French">French</option>
-                      </select>
-                    </div>
-                    <div class="col-md-4">
-                      <label for="price-filter" class="form-label">Price</label>
-                      <select class="form-select" id="price-filter">
-                        <option value="">All</option>
-                        <option value="under-6000">Under ¥6,000/hour</option>
-                        <option value="6000-10000">¥6,000-10,000/hour</option>
-                        <option value="over-10000">Over ¥10,000/hour</option>
-                      </select>
-                    </div>
-                    <div class="col-12">
-                      <label class="form-label">Keywords</label>
-                      <div class="d-flex flex-wrap" id="keyword-filter-group">
-                        <div class="form-check me-3 mb-2">
-                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Night Tour" id="keyword-night">
-                          <label class="form-check-label" for="keyword-night">Night Tour</label>
-                        </div>
-                        <div class="form-check me-3 mb-2">
-                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Gourmet" id="keyword-food">
-                          <label class="form-check-label" for="keyword-food">Gourmet</label>
-                        </div>
-                        <div class="form-check me-3 mb-2">
-                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Photo Spots" id="keyword-photo">
-                          <label class="form-check-label" for="keyword-photo">Photo Spots</label>
-                        </div>
-                        <div class="form-check me-3 mb-2">
-                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Cuisine" id="keyword-cooking">
-                          <label class="form-check-label" for="keyword-cooking">Cuisine</label>
-                        </div>
-                        <div class="form-check me-3 mb-2">
-                          <input class="form-check-input keyword-checkbox" type="checkbox" value="Activities" id="keyword-activity">
-                          <label class="form-check-label" for="keyword-activity">Activities</label>
-                        </div>
-                      </div>
-                      <input type="text" class="form-control mt-2" id="custom-keywords" placeholder="Enter other keywords (comma-separated)">
-                      <small class="text-muted mt-1 d-block">
-                        <i class="bi bi-info-circle"></i> Use checkboxes or input field for keywords. For multiple keywords, separate with commas. Example: "hot springs, hiking, temples"
-                      </small>
-                    </div>
-                    <div class="col-12 d-flex justify-content-end">
-                      <button type="button" class="btn btn-secondary me-2" onclick="resetFilters()">Reset</button>
-                      <button type="button" class="btn btn-primary" onclick="searchGuides()">
-                        <i class="bi bi-search"></i> Search
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              </div>
+        <!-- Hero Content -->
+        <div class="hero-content">
+            <h1>Your Special Journey Awaits</h1>
+            <p>Discover hidden gems with local guides that tourists never find</p>
+            <div class="hero-buttons">
+                <button class="btn-hero btn-primary-hero" id="findGuideBtn">Find Guide</button>
+                <button class="btn-hero btn-outline-hero" id="contactBtn">Contact Us</button>
             </div>
-          </div>
         </div>
-      </div>
-      
-
-
-      <!-- Guide Cards Container (12枚のガイドカード表示) -->
-      <div class="row" id="guides-container">
-        <!-- 1行目 -->
-        <div class="col-md-4 mb-4">
-          <div class="card guide-card shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=250&fit=crop" class="card-img-top" alt="Tokyo Guide">
-            <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">Taro Tanaka</h5>
-                <span class="badge bg-primary">4.5★</span>
-              </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Tokyo, Shibuya</p>
-              <p class="card-text mb-3 flex-grow-1">Born and raised in Tokyo local guide. I will guide you to hidden famous shops and cultural spots.</p>
-              <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">Japanese</span>
-                <span class="badge bg-light text-dark me-1">English</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/session</span>
-                <button class="btn btn-primary btn-sm">View Details</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 mb-4">
-          <div class="card guide-card shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop" class="card-img-top" alt="Osaka Guide">
-            <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">Hanako Sato</h5>
-                <span class="badge bg-primary">4.8★</span>
-              </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Osaka, Osaka</p>
-              <p class="card-text mb-3 flex-grow-1">Guide knowledgeable about Osaka's food culture and history. I guide you through authentic takoyaki and okonomiyaki experiences.</p>
-              <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">Japanese</span>
-                <span class="badge bg-light text-dark me-1">English</span>
-                <span class="badge bg-light text-dark me-1">Chinese</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/session</span>
-                <button class="btn btn-primary btn-sm">View Details</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="col-md-4 mb-4">
-          <div class="card guide-card shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=250&fit=crop" class="card-img-top" alt="Kyoto Guide">
-            <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">Jiro Yamada</h5>
-                <span class="badge bg-primary">4.7★</span>
-              </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Kyoto, Kyoto</p>
-              <p class="card-text mb-3 flex-grow-1">Specialist guide for Kyoto's traditional culture and temple tours. I'll take you to special places where you can feel the beauty of the seasons.</p>
-              <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">Japanese</span>
-                <span class="badge bg-light text-dark me-1">English</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/session</span>
-                <button class="btn btn-primary btn-sm">View Details</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 2行目 -->
-        <div class="col-md-4 mb-4">
-          <div class="card guide-card shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=400&h=250&fit=crop" class="card-img-top" alt="Hokkaido Guide">
-            <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">Sarah Johnson</h5>
-                <span class="badge bg-primary">4.9★</span>
-              </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Hokkaido, Sapporo</p>
-              <p class="card-text mb-3 flex-grow-1">Explore Hokkaido's pristine nature and fresh seafood. I'll guide you to breathtaking seasonal spots.</p>
-              <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">Japanese</span>
-                <span class="badge bg-light text-dark me-1">English</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/session</span>
-                <button class="btn btn-primary btn-sm">View Details</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 残り8枚のガイドカード -->
-        <div class="col-md-4 mb-4">
-          <div class="card guide-card shadow-sm h-100">
-            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=250&fit=crop" class="card-img-top" alt="Nagoya Guide">
-            <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">Michael Chen</h5>
-                <span class="badge bg-primary">4.6★</span>
-              </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> Aichi, Nagoya</p>
-              <p class="card-text mb-3 flex-grow-1">Discover Nagoya's industrial culture and local specialties like miso katsu with a knowledgeable local guide.</p>
-              <div class="mb-3">
-                <span class="badge bg-light text-dark me-1">Japanese</span>
-                <span class="badge bg-light text-dark me-1">English</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">¥6,000/session</span>
-                <button class="btn btn-primary btn-sm">View Details</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- 続いて他のガイドカードも追加... (スペースの関係で省略) -->
-        
-      </div>
-      
-      <!-- Show More Button -->
-      <div class="text-center mt-4">
-        <button class="btn btn-primary btn-lg load-more-button" id="show-more-btn">Show More</button>
-      </div>
     </section>
-  </div>
 
-  <!-- Floating Toolbar will be created by ultimate-english-icons.js -->
-
-  <!-- Contact Modal -->
-  <div class="modal fade" id="contactModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Contact Us</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="contact-form">
-            <div class="mb-3">
-              <label for="contact-name" class="form-label">Name</label>
-              <input type="text" class="form-control" id="contact-name" required>
-            </div>
-            <div class="mb-3">
-              <label for="contact-email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="contact-email" required>
-            </div>
-            <div class="mb-3">
-              <label for="contact-message" class="form-label">Message</label>
-              <textarea class="form-control" id="contact-message" rows="4" required></textarea>
-            </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">Send Message</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Login Modal -->
-  <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Login</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="login-form">
-            <div class="mb-3">
-              <label for="login-email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="login-email" required>
-            </div>
-            <div class="mb-3">
-              <label for="login-password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="login-password" required>
-            </div>
-            <div class="d-grid mb-3">
-              <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-            <div class="text-center">
-              <p class="mb-0">Don't have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#registerModal">Register here</a></p>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Register Modal -->
-  <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Register</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="register-form">
-            <div class="mb-3">
-              <label for="register-name" class="form-label">Full Name</label>
-              <input type="text" class="form-control" id="register-name" required>
-            </div>
-            <div class="mb-3">
-              <label for="register-email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="register-email" required>
-            </div>
-            <div class="mb-3">
-              <label for="register-password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="register-password" required>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Registration Type</label>
-              <div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="userType" id="tourist" value="tourist" checked>
-                  <label class="form-check-label" for="tourist">Tourist</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="userType" id="guide" value="guide">
-                  <label class="form-check-label" for="guide">Guide</label>
-                </div>
-              </div>
-            </div>
-            <div class="d-grid mb-3">
-              <button type="submit" class="btn btn-primary">Register</button>
-            </div>
-            <div class="text-center">
-              <p class="mb-0">Already have an account? <a href="#" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#loginModal">Login here</a></p>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  
-
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <!-- Debug Script (Disabled to prevent auto-redirect) -->
-  <!-- <script src="test-english-buttons.js"></script> -->
-  
-  <!-- Nuclear English Protection (Load First) -->
-  <script src="nuclear-english-protection.js"></script>
-  
-  <!-- Anti Auto-Switch Protection -->
-  <script src="anti-auto-switch-protection.js"></script>
-  
-  <!-- Emergency Button Fix -->
-  <script src="emergency-button-fix.js"></script>
-  
-  <!-- English Filter Fix (Disabled - Conflicts with new system) -->
-  <!-- <script src="english-filter-fix.js"></script> -->
-  
-  <!-- Filter Debug System (Disabled - Conflicts with new system) -->
-  <!-- <script src="filter-debug-system.js"></script> -->
-  
-  <!-- Nuclear Filter Fix (Disabled - Conflicts with new system) -->
-  <!-- <script src="nuclear-filter-fix.js"></script> -->
-  
-  <!-- Emergency Filter Override (Disabled) -->
-  <!-- <script src="emergency-filter-override.js"></script> -->
-  
-  <!-- English Filter Correct (Replaced with Ultimate Fix) -->
-  <!-- <script src="english-filter-correct.js"></script> -->
-  
-  <!-- Ultimate English Filter Fix -->
-  <script src="ultimate-english-filter-fix.js"></script>
-  
-  <!-- English Guide Card Converter -->
-  <script src="english-guide-card-converter.js"></script>
-  
-  <!-- English Button Fix (Same structure as Japanese site) -->
-  <script src="english-button-fix.js"></script>
-  
-  <!-- Bookmark & Comparison System (Always visible icons) -->
-  <script src="bookmark-comparison-system.js"></script>
-  <!-- Icon Display Fix System -->
-  <script src="icon-display-fix.js"></script>
-  <!-- English Comparison System (Same as Japanese version) -->
-  <script src="english-comparison-system.js"></script>
-  <!-- Complete English Comparison (Japanese version copy) -->
-  <script src="complete-english-comparison.js"></script>
-  <!-- Ultimate English Icons System (Complete Japanese version copy) -->
-  <script src="ultimate-english-icons.js"></script>
-  <!-- Japanese Floating Toolbar Copy -->
-  <script src="japanese-floating-toolbar-copy.js"></script>
-  <!-- Unified Management Modal -->
-  <script src="unified-management-modal.js"></script>
-  <!-- English Display Cleanup -->
-  <script src="english-display-cleanup.js"></script>
-  <!-- Real Guide Data System -->
-  <script src="real-guide-data-system.js"></script>
-  <!-- Guide Card Mapper -->
-  <script src="guide-card-mapper.js"></script>
-  <!-- Selection Mapping Fix -->
-  <script src="selection-mapping-fix.js"></script>
-  <!-- Guide Count Fix System -->
-  <script src="guide-count-fix-en.js"></script>
-  <!-- English Pagination System -->
-  <script src="pagination-system-en.js"></script>
-  <!-- English Layout Fix -->
-  <script src="english-layout-fix.js"></script>
-  <!-- Button Cleanup Fix -->
-  <script src="button-cleanup-fix.js"></script>
-  <!-- Bookmark System Test -->
-  <script src="bookmark-system-test.js"></script>
-  <!-- Guide Selection Manager -->
-  <script src="guide-selection-manager.js"></script>
-  
-
-
-  <!-- Filter Help Modal (English Version) -->
-  <div class="modal fade" id="filter-help-modal" tabindex="-1" style="z-index: 1055 !important;">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header bg-info text-white">
-          <h5 class="modal-title">
-            <i class="bi bi-question-circle-fill me-2"></i>Filter Features & New Toolbar User Guide
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          
-          <!-- New Feature Introduction -->
-          <div class="alert alert-primary d-flex align-items-start mb-4">
-            <i class="bi bi-stars fs-4 me-3"></i>
-            <div>
-              <h6 class="alert-heading">✨ New Feature: Advanced Pagination System Added</h6>
-              <p class="mb-1">The toolbar displayed at the bottom right is a new feature for efficiently comparing and managing guides.</p>
-              <p class="mb-0 small text-muted">We've evolved from the traditional "Show More" approach to a more user-friendly pagination system.</p>
-            </div>
-          </div>
-
-          <div class="row">
-            
-            <!-- Bookmark Feature -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-warning h-100">
-                <div class="card-header bg-warning text-dark d-flex align-items-center">
-                  <i class="bi bi-bookmark-star fs-5 me-2"></i>
-                  <h6 class="mb-0">Bookmark Feature</h6>
-                </div>
-                <div class="card-body">
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-warning text-dark me-2">1</span>
-                    <div>
-                      <strong>Click the star icon on the top left of guide cards</strong>
-                      <br><small class="text-muted">Save guides of interest</small>
+    <!-- Main Content Section -->
+    <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center mb-5">
+                        <h2 style="font-size: 2.5rem; font-weight: 700; color: #333; margin-bottom: 1rem;">Featured Local Guides</h2>
+                        <p style="font-size: 1.2rem; color: #6c757d; max-width: 600px; margin: 0 auto;">Connect with experienced local guides who know the authentic Japan beyond tourist attractions</p>
                     </div>
-                  </div>
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-warning text-dark me-2">2</span>
-                    <div>
-                      <strong>Saved cards display with a yellow border</strong>
-                      <br><small class="text-muted">Easily identify bookmarked guides</small>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-start">
-                    <span class="badge bg-warning text-dark me-2">3</span>
-                    <div>
-                      <strong>View saved guides from the bottom toolbar</strong>
-                      <br><small class="text-muted">Access all saved guides at once</small>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
 
-            <!-- Comparison Feature -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-success h-100">
-                <div class="card-header bg-success text-white d-flex align-items-center">
-                  <i class="bi bi-check-circle fs-5 me-2"></i>
-                  <h6 class="mb-0">Comparison Feature (Max 3)</h6>
-                </div>
-                <div class="card-body">
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-success me-2">1</span>
-                    <div>
-                      <strong>Click the check icon on the top left of guide cards</strong>
-                      <br><small class="text-muted">Select guides to compare</small>
+            <!-- Sample Guide Cards -->
+            <div class="row" id="guidesContainer">
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="guide-card">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=200&fit=crop" alt="Guide Hiroshi">
+                        <div class="guide-card-body">
+                            <div class="guide-name">Hiroshi Tanaka</div>
+                            <div class="guide-location">
+                                <i class="bi bi-geo-alt"></i>
+                                Tokyo, Japan
+                            </div>
+                            <div class="guide-languages">
+                                <span class="language-badge">English</span>
+                                <span class="language-badge">Japanese</span>
+                            </div>
+                            <div class="guide-rating">
+                                <div class="stars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <span>(124 reviews)</span>
+                            </div>
+                            <div class="guide-price">¥8,000/day</div>
+                            <div class="guide-actions">
+                                <button class="btn-guide btn-view">View Details</button>
+                                <button class="btn-guide btn-bookmark">Bookmark</button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="d-flex align-items-start mb-3">
-                    <span class="badge bg-success me-2">2</span>
-                    <div>
-                      <strong>Selected cards display with a green border</strong>
-                      <br><small class="text-muted">Max 3 guides can be selected for comparison</small>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="guide-card">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b829?w=400&h=200&fit=crop" alt="Guide Yuki">
+                        <div class="guide-card-body">
+                            <div class="guide-name">Yuki Sato</div>
+                            <div class="guide-location">
+                                <i class="bi bi-geo-alt"></i>
+                                Kyoto, Japan
+                            </div>
+                            <div class="guide-languages">
+                                <span class="language-badge">English</span>
+                                <span class="language-badge">Japanese</span>
+                                <span class="language-badge">Chinese</span>
+                            </div>
+                            <div class="guide-rating">
+                                <div class="stars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <span>(89 reviews)</span>
+                            </div>
+                            <div class="guide-price">¥7,500/day</div>
+                            <div class="guide-actions">
+                                <button class="btn-guide btn-view">View Details</button>
+                                <button class="btn-guide btn-bookmark">Bookmark</button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="d-flex align-items-start">
-                    <span class="badge bg-success me-2">3</span>
-                    <div>
-                      <strong>Click "Compare" in the bottom toolbar for detailed comparison</strong>
-                      <br><small class="text-muted">Compare fees, ratings, styles, and more</small>
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="guide-card">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=200&fit=crop" alt="Guide Kenji">
+                        <div class="guide-card-body">
+                            <div class="guide-name">Kenji Yamamoto</div>
+                            <div class="guide-location">
+                                <i class="bi bi-geo-alt"></i>
+                                Osaka, Japan
+                            </div>
+                            <div class="guide-languages">
+                                <span class="language-badge">English</span>
+                                <span class="language-badge">Japanese</span>
+                            </div>
+                            <div class="guide-rating">
+                                <div class="stars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                                <span>(156 reviews)</span>
+                            </div>
+                            <div class="guide-price">¥9,000/day</div>
+                            <div class="guide-actions">
+                                <button class="btn-guide btn-view">View Details</button>
+                                <button class="btn-guide btn-bookmark">Bookmark</button>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-
-          </div>
-
-          <div class="row">
-            
-            <!-- Keyboard Shortcuts -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-secondary h-100">
-                <div class="card-header bg-secondary text-white d-flex align-items-center">
-                  <i class="bi bi-keyboard fs-5 me-2"></i>
-                  <h6 class="mb-0">Keyboard Shortcuts</h6>
-                </div>
-                <div class="card-body">
-                  <div class="d-flex justify-content-between mb-2">
-                    <kbd>←</kbd>
-                    <span>Previous Page</span>
-                  </div>
-                  <div class="d-flex justify-content-between mb-2">
-                    <kbd>→</kbd>
-                    <span>Next Page</span>
-                  </div>
-                  <div class="d-flex justify-content-between mb-2">
-                    <kbd>Home</kbd>
-                    <span>First Page</span>
-                  </div>
-                  <div class="d-flex justify-content-between">
-                    <kbd>End</kbd>
-                    <span>Last Page</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Other Useful Features -->
-            <div class="col-md-6 mb-4">
-              <div class="card border-primary h-100">
-                <div class="card-header bg-primary text-white d-flex align-items-center">
-                  <i class="bi bi-gear fs-5 me-2"></i>
-                  <h6 class="mb-0">Other Useful Features</h6>
-                </div>
-                <div class="card-body">
-                  <div class="mb-3">
-                    <strong><i class="bi bi-clock-history"></i> Browsing History</strong>
-                    <br><small class="text-muted">Automatically tracks recently viewed guides</small>
-                  </div>
-                  <div class="mb-3">
-                    <strong><i class="bi bi-arrow-up-circle"></i> Quick Page Jump</strong>
-                    <br><small class="text-muted">Jump directly to any page number</small>
-                  </div>
-                  <div>
-                    <strong><i class="bi bi-sort-alpha-down"></i> Sort Options</strong>
-                    <br><small class="text-muted">Sort by rating, price, or name</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="alert alert-success">
-            <h6><i class="bi bi-lightbulb"></i> Pro Tips:</h6>
-            <ul class="mb-0">
-              <li>Use bookmarks to save interesting guides for later review</li>
-              <li>Compare up to 3 guides to find the perfect match</li>
-              <li>Use keyboard shortcuts for faster navigation</li>
-              <li>Your browsing history helps you revisit guides you've seen before</li>
-            </ul>
-          </div>
-
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-success" data-bs-dismiss="modal">
-            <i class="bi bi-check-lg"></i> Got it!
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- 英語サイト専用JavaScript -->
-  <script>
-    console.log('English site loaded successfully');
-
-    // Toolbar functionality
-    let comparisonCount = 0;
-    let bookmarkCount = 0;
-    let selectedGuides = [];
-    let bookmarkedGuides = [];
-
-    // Filter functionality handled by ultimate-english-filter-fix.js
-    console.log('Filter system managed by external script');
-
-    // Navigation functions for sponsor buttons
-    function navigateToSponsorRegistration() {
-      // Temporarily show alert, will be replaced with actual page navigation
-      alert('Navigating to Sponsor Registration (English) - Coming Soon!\n\nスポンサー登録（英語版）へ移動 - 準備中！');
-      // Future: window.location.href = 'sponsor-registration-en.html';
-    }
-
-    function navigateToSponsorLogin() {
-      // Temporarily show alert, will be replaced with actual page navigation
-      alert('Navigating to Sponsor Dashboard (English) - Coming Soon!\n\nスポンサーダッシュボード（英語版）へ移動 - 準備中！');
-      // Future: window.location.href = 'sponsor-login-en.html';
-    }
-
-    // Floating Toolbar Functions (日本語サイトと同じ機能)
-    function showComparison() {
-      if (comparisonCount > 0) {
-        alert(`Comparing ${comparisonCount} guides - feature coming soon!`);
-      } else {
-        alert('Please select guides to compare first.');
-      }
-    }
-
-    function showBookmarks() {
-      alert(`Viewing ${bookmarkCount} bookmarked guides - feature coming soon!`);
-    }
-
-    function showHistory() {
-      alert('Viewing browsing history - feature coming soon!');
-    }
-
-    function quickJump(page) {
-      if (page && page !== '') {
-        alert(`Jumping to page ${page} - feature coming soon!`);
-        document.getElementById('quick-jump').value = '';
-      }
-    }
-
-    // Initialize Quick Jump Options
-    function updateQuickJump() {
-      const select = document.getElementById('quick-jump');
-      if (select) {
-        select.innerHTML = '<option value="">Page Jump</option>';
-        const totalPages = Math.ceil(24 / 12); // 24 total guides, 12 per page
-        for (let i = 1; i <= totalPages; i++) {
-          const option = document.createElement('option');
-          option.value = i;
-          option.textContent = `Page ${i}`;
-          select.appendChild(option);
-        }
-      }
-    }
-
-    // 右側ボタンホバーエフェクト（日本語サイトと同じ動作）
-    document.querySelectorAll('.sponsor-mini-btn').forEach(btn => {
-      btn.addEventListener('mouseover', function() {
-        this.style.transform = 'translateX(-8px) translateY(-2px)';
-      });
-      
-      btn.addEventListener('mouseout', function() {
-        this.style.transform = 'translateX(0) translateY(0)';
-      });
-    });
-
-    // フィルターガイドボタンホバーエフェクト
-    const filterBtn = document.querySelector('.filter-guide-btn');
-    if (filterBtn) {
-      filterBtn.addEventListener('mouseover', function() {
-        this.style.transform = 'translateX(-8px) translateY(-2px)';
-      });
-      
-      filterBtn.addEventListener('mouseout', function() {
-        this.style.transform = 'translateX(0) translateY(0)';
-      });
-    }
-
-    // Emergency button fix with multiple approaches
-    function forceButtonSetup() {
-      console.log('Setting up buttons with multiple approaches...');
-      
-      // Approach 1: Direct event listeners
-      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
-      if (sponsorRegisterBtn) {
-        console.log('Found sponsor register button');
-        sponsorRegisterBtn.onclick = function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          alert('🚀 Sponsor Registration System\n\nThank you for your interest in becoming a sponsor!');
-          return false;
-        };
-        sponsorRegisterBtn.style.pointerEvents = 'auto';
-        sponsorRegisterBtn.style.zIndex = '1040';
-      } else {
-        console.log('Sponsor register button NOT found');
-      }
-
-      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
-      if (sponsorLoginBtn) {
-        console.log('Found sponsor login button');
-        sponsorLoginBtn.onclick = function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          alert('✨ Sponsor Login System\n\nAccess your sponsor dashboard!');
-          return false;
-        };
-        sponsorLoginBtn.style.pointerEvents = 'auto';
-        sponsorLoginBtn.style.zIndex = '1040';
-      } else {
-        console.log('Sponsor login button NOT found');
-      }
-
-      // Header buttons
-      const loginBtn = document.getElementById('loginBtn');
-      if (loginBtn) {
-        console.log('Found login button');
-        loginBtn.onclick = function(e) {
-          e.preventDefault();
-          alert('🔐 User Login\n\nAccess your account!');
-          return false;
-        };
-      }
-
-      const signUpBtn = document.getElementById('signUpBtn');
-      if (signUpBtn) {
-        console.log('Found sign up button');
-        signUpBtn.onclick = function(e) {
-          e.preventDefault();
-          alert('🎯 Registration Options\n\n1. Tourist Registration\n2. Guide Registration');
-          return false;
-        };
-      }
-
-      // Language switching functionality will be handled in setupAllEventListeners
-
-      // Also handle center language button
-      const centerSwitchToJapaneseBtn = document.getElementById('centerSwitchToJapaneseBtn');
-      if (centerSwitchToJapaneseBtn) {
-        console.log('Found center Japanese switch button');
-        centerSwitchToJapaneseBtn.onclick = function(e) {
-          e.preventDefault();
-          if (confirm('Switch to Japanese version?\n日本語版に切り替えますか？')) {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Language switching functions
+        function switchToJapanese() {
+            console.log('🇯🇵 Switching to Japanese');
             window.location.href = 'index.html';
-          }
-          return false;
-        };
-      }
-
-      // Fix sponsor button positioning and interaction
-      const sponsorButtons = document.querySelectorAll('.sponsor-mini-btn');
-      sponsorButtons.forEach(function(btn, index) {
-        console.log('Fixing button ' + index, btn);
-        btn.style.pointerEvents = 'auto';
-        btn.style.position = 'relative';
-        btn.style.zIndex = '1040';
-        btn.style.cursor = 'pointer';
-      });
-    }
-
-    // Multiple initialization attempts
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('English site DOM loaded');
-      forceButtonSetup();
-      
-      // Update guide counter
-      updateGuideCounter();
-      
-      // Initialize floating toolbar  
-      updateQuickJump();
-    });
-
-    // Backup initialization
-    window.addEventListener('load', function() {
-      console.log('Window loaded, setting up buttons again');
-      setTimeout(forceButtonSetup, 100);
-    });
-
-    // Emergency setup
-    setTimeout(forceButtonSetup, 500);
-    setTimeout(forceButtonSetup, 1000);
-
-    // Force English content system
-    function forceEnglishContent() {
-      console.log('Forcing English content display...');
-      
-      // Replace common Japanese text with English
-      const replacements = {
-        '特別な旅が待っています': 'Your Special Journey Awaits',
-        '観光では発見できない隠れた名所を地元ガイドと一緒に発見しましょう': 'Discover hidden gems with local guides that tourism can\'t reveal',
-        'ガイドを探す': 'Find a Guide',
-        'お問い合わせ': 'Contact Us',
-        '人気のガイド': 'Popular Guides',
-        '詳細を見る': 'View Details',
-        '日本語': 'Japanese',
-        '英語': 'English',
-        '回': 'session',
-        'スポンサー登録': 'Sponsor Registration',
-        'ログイン': 'Login',
-        'フィルター機能と新しいツールバーのユーザーガイド': 'Filter Features & New Toolbar User Guide'
-      };
-
-      // Text node replacement function
-      function replaceTextNodes(element) {
-        if (element.nodeType === 3) { // Text node
-          let text = element.textContent;
-          for (const [japanese, english] of Object.entries(replacements)) {
-            text = text.replace(new RegExp(japanese, 'g'), english);
-          }
-          if (text !== element.textContent) {
-            element.textContent = text;
-          }
-        } else if (element.nodeType === 1) { // Element node
-          for (let child of element.childNodes) {
-            replaceTextNodes(child);
-          }
         }
-      }
 
-      // Apply replacements to entire document
-      replaceTextNodes(document.body);
-
-      // Force specific elements to English
-      const elements = {
-        'hero-title': 'Your Special Journey Awaits',
-        'hero-subtitle': 'Discover hidden gems with local guides that tourism can\'t reveal',
-        'find-guide-btn': 'Find a Guide',
-        'contact-btn': 'Contact Us',
-        'show-more-btn': 'Show More (12 more guides)'
-      };
-
-      for (const [id, text] of Object.entries(elements)) {
-        const element = document.getElementById(id);
-        if (element) {
-          element.textContent = text;
+        function switchToEnglish() {
+            console.log('🇺🇸 Already in English');
         }
-      }
 
-      // Language switching functionality (disabled for protection)
-      window.switchToJapanese = function() {
-        console.log('Auto-switch to Japanese blocked by protection system');
-        return false;
-      };
-
-      window.switchToEnglish = function() {
-        console.log('Already on English version');
-        // Already on English version, no action needed
-      };
-
-      // Disabled monitoring to prevent conflicts with anti-auto-switch protection
-      console.log('English content monitoring disabled to prevent auto-switch conflicts');
-    }
-
-    // Disabled automatic English content forcing to prevent conflicts
-    console.log('Automatic English content forcing disabled');
-
-    // Show More button functionality (copied from Japanese version)
-    function setupShowMoreButton() {
-      console.log('Setting up Show More button functionality...');
-      
-      // Find the show more button
-      const showMoreBtn = document.querySelector('.load-more-button');
-      if (showMoreBtn) {
-        console.log('Found Show More button, adding functionality');
-        
-        showMoreBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          console.log('Show More button clicked');
-          
-          // Simulate loading more guides
-          const guidesContainer = document.getElementById('guide-cards-container') || 
-                                document.querySelector('.guides-container') ||
-                                document.querySelector('.row');
-          
-          if (guidesContainer) {
-            // Create additional guide cards
-            const additionalGuides = createAdditionalGuides();
-            
-            // Add them to the container
-            additionalGuides.forEach(guide => {
-              guidesContainer.appendChild(guide);
-            });
-            
-            // Update button text and disable after showing more
-            showMoreBtn.textContent = 'More guides loaded!';
-            showMoreBtn.disabled = true;
-            
-            // Hide button after 2 seconds
-            setTimeout(() => {
-              showMoreBtn.style.display = 'none';
-            }, 2000);
-            
-            console.log('Additional guides loaded successfully');
-          } else {
-            console.error('Guides container not found');
-            alert('Unable to load more guides at this time.');
-          }
-        });
-      } else {
-        console.error('Show More button not found');
-      }
-    }
-    
-    function createAdditionalGuides() {
-      const additionalGuidesData = [
-        {
-          name: "Emma Williams",
-          location: "Tokyo, Shibuya", 
-          rating: "4.8★",
-          description: "Experience Tokyo's vibrant youth culture and cutting-edge fashion in Shibuya and Harajuku.",
-          languages: ["Japanese", "English"],
-          price: "¥6,000/session",
-          image: "https://images.unsplash.com/photo-1494790108755-2616c04fc7d5?w=400&h=250&fit=crop"
-        },
-        {
-          name: "David Park",
-          location: "Kyoto, Gion",
-          rating: "4.7★", 
-          description: "Discover traditional Japanese culture in historic Kyoto with tea ceremonies and temple visits.",
-          languages: ["Japanese", "English", "Korean"],
-          price: "¥6,500/session",
-          image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=250&fit=crop"
-        },
-        {
-          name: "Lisa Chen",
-          location: "Osaka, Dotonbori",
-          rating: "4.9★",
-          description: "Explore Osaka's famous food scene and learn about the city's merchant culture.",
-          languages: ["Japanese", "English", "Mandarin"],
-          price: "¥5,800/session", 
-          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=250&fit=crop"
+        // Login dropdown toggle
+        function toggleLoginDropdown() {
+            const dropdown = document.getElementById('customLoginDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         }
-      ];
-      
-      return additionalGuidesData.map(guide => {
-        const col = document.createElement('div');
-        col.className = 'col-md-4 mb-4';
-        
-        col.innerHTML = `
-          <div class="card guide-card shadow-sm h-100">
-            <img src="${guide.image}" class="card-img-top" alt="${guide.name}">
-            <div class="card-body d-flex flex-column">
-              <div class="d-flex justify-content-between align-items-start mb-2">
-                <h5 class="card-title mb-0">${guide.name}</h5>
-                <span class="badge bg-primary">${guide.rating}</span>
-              </div>
-              <p class="text-muted mb-2"><i class="bi bi-geo-alt"></i> ${guide.location}</p>
-              <p class="card-text mb-3 flex-grow-1">${guide.description}</p>
-              <div class="mb-3">
-                ${guide.languages.map(lang => `<span class="badge bg-light text-dark me-1">${lang}</span>`).join('')}
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-auto">
-                <span class="fw-bold text-primary">${guide.price}</span>
-                <button class="btn btn-primary btn-sm">View Details</button>
-              </div>
-            </div>
-          </div>
-        `;
-        
-        return col;
-      });
-    }
-    
-    // Initialize Show More functionality after DOM loads
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setupShowMoreButton);
-    } else {
-      setupShowMoreButton();
-    }
-    
-    // Also setup after a delay to ensure all elements are ready
-    setTimeout(setupShowMoreButton, 1000);
 
-    // Unified event listener setup
-    function setupAllEventListeners() {
-      console.log('Setting up all event listeners...');
-      
-      // Contact form functionality
-      const contactForm = document.getElementById('contact-form');
-      if (contactForm) {
-        console.log('Setting up contact form');
-        contactForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert('Thank you for your message! We will get back to you soon.');
-          const modal = bootstrap.Modal.getInstance(document.getElementById('contactModal'));
-          if (modal) modal.hide();
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('customLoginDropdown');
+            const button = document.getElementById('loginDropdown');
+            
+            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
         });
-      }
 
-      // Login form functionality
-      const loginForm = document.getElementById('login-form');
-      if (loginForm) {
-        console.log('Setting up login form');
-        loginForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert('Login functionality coming soon!');
-          const modal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
-          if (modal) modal.hide();
-        });
-      }
-
-      // Register form functionality
-      const registerForm = document.getElementById('register-form');
-      if (registerForm) {
-        console.log('Setting up register form');
-        registerForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert('Registration functionality coming soon!');
-          const modal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
-          if (modal) modal.hide();
-        });
-      }
-
-      // Language switch buttons
-      const switchToJapaneseBtn = document.getElementById('switchToJapaneseBtn');
-      if (switchToJapaneseBtn) {
-        console.log('Setting up Japanese switch button');
-        // Remove any existing listeners first
-        switchToJapaneseBtn.replaceWith(switchToJapaneseBtn.cloneNode(true));
-        const newSwitchBtn = document.getElementById('switchToJapaneseBtn');
-        newSwitchBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Japanese switch button clicked - direct switch');
-          window.location.href = 'index.html';
-        });
-      } else {
-        console.log('Japanese switch button not found');
-      }
-
-      // Sponsor buttons
-      const sponsorRegisterBtn = document.getElementById('sponsorRegisterBtn');
-      if (sponsorRegisterBtn) {
-        console.log('Setting up sponsor register button');
-        // Remove any existing listeners first
-        sponsorRegisterBtn.replaceWith(sponsorRegisterBtn.cloneNode(true));
-        const newSponsorRegBtn = document.getElementById('sponsorRegisterBtn');
-        newSponsorRegBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Sponsor register clicked - direct navigation');
-          window.location.href = 'sponsor-register.html';
-        });
-      }
-
-      const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
-      if (sponsorLoginBtn) {
-        console.log('Setting up sponsor login button');
-        // Remove any existing listeners first
-        sponsorLoginBtn.replaceWith(sponsorLoginBtn.cloneNode(true));
-        const newSponsorLoginBtn = document.getElementById('sponsorLoginBtn');
-        newSponsorLoginBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log('Sponsor login clicked - direct navigation');
-          window.location.href = 'sponsor-login.html';
-        });
-      }
-
-      // Header login/signup buttons (already have data-bs-toggle, so they work automatically)
-      const loginBtn = document.getElementById('loginBtn');
-      const signUpBtn = document.getElementById('signUpBtn');
-      
-      if (loginBtn) {
-        console.log('Login button found with data-bs-toggle, will work automatically');
-      }
-
-      if (signUpBtn) {
-        console.log('Sign up button found with data-bs-toggle, will work automatically');
-      }
-
-      console.log('All event listeners setup complete');
-    }
-
-    // Setup event listeners when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', setupAllEventListeners);
-    } else {
-      setupAllEventListeners();
-    }
-
-    // Also setup after a delay to ensure all elements are ready
-    setTimeout(setupAllEventListeners, 1000);
-
-    // Header button functions
-    function showRegisterOptions() {
-      alert('🎯 Registration Options\n\n1. Tourist Registration\n2. Guide Registration\n\nChoose your preferred registration type.');
-      console.log('Showing registration options');
-    }
-
-    // Floating toolbar functions
-    function showComparison() {
-      alert('📊 Guide Comparison\n\nCompare selected guides side by side.');
-      console.log('Showing guide comparison');
-    }
-
-    function showBookmarks() {
-      alert('⭐ Bookmarked Guides\n\nView your saved favorite guides.');
-      console.log('Showing bookmarks');
-    }
-
-    function showHistory() {
-      alert('📅 Browsing History\n\nView recently visited guide profiles.');
-      console.log('Showing browsing history');
-    }
-
-    function quickJump(page) {
-      if (page) {
-        alert(`🚀 Quick Jump\n\nJumping to page ${page}`);
-        console.log(`Quick jump to page: ${page}`);
-      }
-    }
-
-    // Additional function for complete Japanese version compatibility
-    function enableScrolling() {
-      document.body.style.overflow = 'auto';
-      document.documentElement.style.overflow = 'auto';
-    }
-
-    // Immediate scroll fix (copied from Japanese version)
-    enableScrolling();
-      
-    // Ensure all buttons are clickable
-    console.log('All buttons initialized successfully');
-
-    // ガイドカウンター表示
-    function updateGuideCounter() {
-      const displayedGuides = document.querySelectorAll('#guide-cards-container .col-md-4').length;
-      const totalGuides = 24; // 総ガイド数
-      
-      const counterElement = document.getElementById('guide-count-number');
-      const totalCountElement = document.getElementById('total-guide-count');
-      
-      if (counterElement) counterElement.textContent = displayedGuides;
-      if (totalCountElement) totalCountElement.textContent = totalGuides;
-
-      // Update page info
-      const pageInfo = document.getElementById('current-page-info');
-      if (pageInfo) {
-        pageInfo.textContent = `Page 1 (1-${displayedGuides} people)`;
-      }
-    }
-  </script>
-  
-  <!-- English Site Direct HTML Fix -->
-  <script src="direct-html-fix.js"></script>
+        console.log('✅ TomoTrip English Version Loaded Successfully');
+    </script>
 </body>
 </html>
