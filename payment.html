@@ -208,16 +208,16 @@
                     <hr>
                     <div id="paymentBreakdown">
                         <div class="d-flex justify-content-between">
-                            <span>サービス料金:</span>
+                            <span id="serviceAmountLabel">サービス料金:</span>
                             <span id="serviceAmount">¥0</span>
                         </div>
                         <div class="d-flex justify-content-between" id="cardFeeRow" style="display: none;">
-                            <span>カード決済手数料 (3.6%):</span>
+                            <span id="cardFeeLabel">カード決済手数料 (3.6%):</span>
                             <span class="text-warning" id="cardFeeAmount">¥0</span>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">お支払い総額:</h5>
+                            <h5 class="mb-0" id="totalAmountLabel">お支払い総額:</h5>
                             <h4 class="text-success fw-bold mb-0" id="paymentTotal">¥0</h4>
                         </div>
                     </div>
@@ -240,42 +240,42 @@
                 <div class="payment-methods">
                     <div class="payment-method" data-method="card">
                         <i class="bi bi-credit-card fs-2 text-primary mb-2"></i>
-                        <h6>クレジットカード</h6>
-                        <small class="text-muted">Visa, MasterCard, JCB</small>
+                        <h6 class="method-title">クレジットカード</h6>
+                        <small class="text-muted method-description">Visa, MasterCard, JCB</small>
                     </div>
                     <div class="payment-method" data-method="bank">
                         <i class="bi bi-bank fs-2 text-success mb-2"></i>
-                        <h6>銀行振込</h6>
-                        <small class="text-muted">即座に確認</small>
+                        <h6 class="method-title">銀行振込</h6>
+                        <small class="text-muted method-description">即座に確認</small>
                     </div>
                     <div class="payment-method" data-method="paypal">
                         <i class="bi bi-paypal fs-2 text-info mb-2"></i>
-                        <h6>PayPal</h6>
-                        <small class="text-muted">安全・簡単</small>
+                        <h6 class="method-title">PayPal</h6>
+                        <small class="text-muted method-description">安全・簡単</small>
                     </div>
                 </div>
                 
                 <!-- クレジットカードフォーム -->
                 <div class="card-form" id="cardForm">
-                    <h6 class="fw-bold mb-3"><i class="bi bi-shield-check me-2"></i>カード情報入力</h6>
+                    <h6 class="fw-bold mb-3" id="cardFormTitle"><i class="bi bi-shield-check me-2"></i>カード情報入力</h6>
                     <form id="paymentForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">カード番号</label>
+                                <label class="form-label" id="cardNumberLabel">カード番号</label>
                                 <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">カード名義</label>
+                                <label class="form-label" id="cardNameLabel">カード名義</label>
                                 <input type="text" class="form-control" id="cardName" placeholder="TARO YAMADA" required>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">有効期限</label>
+                                <label class="form-label" id="cardExpiryLabel">有効期限</label>
                                 <input type="text" class="form-control" id="cardExpiry" placeholder="MM/YY" maxlength="5" required>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">セキュリティコード</label>
+                                <label class="form-label" id="cardCvvLabel">セキュリティコード</label>
                                 <input type="text" class="form-control" id="cardCvv" placeholder="123" maxlength="4" required>
                             </div>
                         </div>
@@ -331,6 +331,11 @@
                 bankTransferDesc: '即座に確認',
                 paypal: 'PayPal',
                 paypalDesc: '安全・簡単',
+                cardInfo: 'カード情報入力',
+                cardNumber: 'カード番号',
+                cardName: 'カード名義',
+                cardExpiry: '有効期限',
+                cardCvv: 'セキュリティコード',
                 securityTitle: 'セキュリティ保証',
                 securityDesc: 'SSL暗号化通信により、お客様の決済情報は完全に保護されています。クレジットカード情報は弊社サーバーに保存されません。',
                 payButton: '安全に決済する',
@@ -357,6 +362,11 @@
                 bankTransferDesc: 'Instant Confirmation',
                 paypal: 'PayPal',
                 paypalDesc: 'Safe & Simple',
+                cardInfo: 'Card Information',
+                cardNumber: 'Card Number',
+                cardName: 'Cardholder Name',
+                cardExpiry: 'Expiry Date',
+                cardCvv: 'Security Code',
                 securityTitle: 'Security Guarantee',
                 securityDesc: 'Your payment information is fully protected by SSL encryption. Credit card information is not stored on our servers.',
                 payButton: 'Pay Securely',
@@ -446,6 +456,9 @@
             // Update commission info section
             updateCommissionInfo(t);
             
+            // Update card form labels
+            updateCardFormLabels(t);
+            
             // Update labels in booking details dynamically
             updateBookingLabels(t);
         }
@@ -469,9 +482,32 @@
             }
         }
         
+        function updateCardFormLabels(t) {
+            const cardFormTitle = document.getElementById('cardFormTitle');
+            if (cardFormTitle) cardFormTitle.innerHTML = `<i class="bi bi-shield-check me-2"></i>${t.cardInfo}`;
+            
+            const cardNumberLabel = document.getElementById('cardNumberLabel');
+            if (cardNumberLabel) cardNumberLabel.textContent = t.cardNumber;
+            
+            const cardNameLabel = document.getElementById('cardNameLabel');
+            if (cardNameLabel) cardNameLabel.textContent = t.cardName;
+            
+            const cardExpiryLabel = document.getElementById('cardExpiryLabel');
+            if (cardExpiryLabel) cardExpiryLabel.textContent = t.cardExpiry;
+            
+            const cardCvvLabel = document.getElementById('cardCvvLabel');
+            if (cardCvvLabel) cardCvvLabel.textContent = t.cardCvv;
+            
+            // Update placeholders based on language
+            if (currentLanguage === 'en') {
+                const cardNameInput = document.getElementById('cardName');
+                if (cardNameInput) cardNameInput.placeholder = 'JOHN SMITH';
+            }
+        }
+        
         function updatePaymentMethodCards(t) {
-            const creditCardTitle = document.querySelector('[data-method="credit"] .method-title');
-            const creditCardDesc = document.querySelector('[data-method="credit"] .method-description');
+            const creditCardTitle = document.querySelector('[data-method="card"] .method-title');
+            const creditCardDesc = document.querySelector('[data-method="card"] .method-description');
             if (creditCardTitle) creditCardTitle.textContent = t.creditCard;
             if (creditCardDesc) creditCardDesc.textContent = t.creditCardDesc;
             
@@ -598,14 +634,14 @@
             document.getElementById('paymentBookingDetails').innerHTML = detailsHTML;
             
             // Update amount labels
-            const serviceAmountLabel = document.querySelector('tr:first-child td:first-child');
-            if (serviceAmountLabel) serviceAmountLabel.textContent = t.serviceAmount;
+            const serviceAmountLabel = document.getElementById('serviceAmountLabel');
+            if (serviceAmountLabel) serviceAmountLabel.textContent = t.serviceAmount + ':';
             
-            const cardFeeLabel = document.querySelector('#cardFeeRow td:first-child');
-            if (cardFeeLabel) cardFeeLabel.textContent = t.cardFee;
+            const cardFeeLabel = document.getElementById('cardFeeLabel');
+            if (cardFeeLabel) cardFeeLabel.textContent = t.cardFee + ':';
             
-            const totalLabel = document.querySelector('.table tbody tr:last-child td:first-child strong');
-            if (totalLabel) totalLabel.textContent = t.totalAmount;
+            const totalAmountLabel = document.getElementById('totalAmountLabel');
+            if (totalAmountLabel) totalAmountLabel.textContent = t.totalAmount + ':';
         }
         
         function setupEventListeners() {
