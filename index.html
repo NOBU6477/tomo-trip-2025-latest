@@ -1169,7 +1169,19 @@
             
             // Booking and contact functions
             window.bookGuide = function(guideId) {
-                alert(`ガイドID: ${guideId} の予約機能は開発中です。\n\n今後、詳細な予約システムを実装予定です。`);
+                // Close the guide detail modal first
+                const openModal = document.querySelector('.modal.show');
+                if (openModal) {
+                    const modalInstance = bootstrap.Modal.getInstance(openModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                }
+                
+                // Wait a moment for the modal to close, then open booking
+                setTimeout(() => {
+                    showBookingModal(guideId);
+                }, 300);
             }
             
             window.contactGuide = function(guideId) {
@@ -3168,6 +3180,159 @@
             localStorage.setItem(chatKey, JSON.stringify(savedMessages));
         }
 
+        // Booking functionality
+        let currentBookingGuide = null;
+
+        function showBookingModal(guideId) {
+            console.log('予約機能を開始: ガイドID ' + guideId);
+            
+            // Find guide data
+            const guide = currentGuides.find(g => g.id == guideId);
+            if (!guide) {
+                console.error('Guide not found for booking:', guideId);
+                return;
+            }
+
+            currentBookingGuide = guide;
+            
+            // Update modal with guide info
+            document.getElementById('bookingGuideName').textContent = guide.name;
+            document.getElementById('bookingGuideImage').src = guide.image;
+            document.getElementById('bookingGuidePrice').textContent = guide.price;
+            
+            // Reset form
+            document.getElementById('bookingForm').reset();
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').min = today;
+            
+            updateBookingSummary();
+            
+            // Show modal
+            const bookingModal = new bootstrap.Modal(document.getElementById('bookingModal'));
+            bookingModal.show();
+            
+            console.log('Booking modal opened for guide:', guide.name);
+        }
+
+        function updateBookingSummary() {
+            if (!currentBookingGuide) return;
+            
+            const date = document.getElementById('bookingDate').value;
+            const time = document.getElementById('bookingTime').value;
+            const duration = document.getElementById('bookingDuration').value;
+            const participants = document.getElementById('bookingParticipants').value;
+            
+            const summary = document.getElementById('bookingSummary');
+            const totalElement = document.getElementById('bookingTotal');
+            
+            if (date && time && duration && participants) {
+                const basePrice = parseInt(currentBookingGuide.price.replace(/[^\d]/g, ''));
+                const durationMultiplier = duration === '2' ? 1.5 : duration === '4' ? 2.5 : duration === '8' ? 4 : 1;
+                const total = Math.round(basePrice * durationMultiplier * parseInt(participants));
+                
+                summary.innerHTML = `
+                    <div class="mb-2"><strong>ガイド:</strong> ${currentBookingGuide.name}</div>
+                    <div class="mb-2"><strong>日時:</strong> ${date} ${time}</div>
+                    <div class="mb-2"><strong>時間:</strong> ${duration}時間</div>
+                    <div class="mb-2"><strong>参加者:</strong> ${participants}名</div>
+                    <div class="mb-2"><strong>基本料金:</strong> ${currentBookingGuide.price}/時間</div>
+                `;
+                totalElement.textContent = `¥${total.toLocaleString()}`;
+            } else {
+                summary.innerHTML = '<p class="text-muted">詳細を入力してください</p>';
+                totalElement.textContent = '¥0';
+            }
+        }
+
+        function submitBooking() {
+            const form = document.getElementById('bookingForm');
+            const formData = new FormData(form);
+            
+            // Validate form
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // Create booking object
+            const booking = {
+                id: Date.now(),
+                guideId: currentBookingGuide.id,
+                guideName: currentBookingGuide.name,
+                date: formData.get('date'),
+                time: formData.get('time'),
+                duration: formData.get('duration'),
+                participants: formData.get('participants'),
+                specialRequests: formData.get('specialRequests'),
+                totalPrice: document.getElementById('bookingTotal').textContent,
+                status: 'pending',
+                bookingDate: new Date().toISOString()
+            };
+            
+            // Save booking
+            saveBooking(booking);
+            
+            // Show confirmation
+            showBookingConfirmation(booking);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
+            modal.hide();
+        }
+
+        function saveBooking(booking) {
+            const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+            bookings.push(booking);
+            localStorage.setItem('userBookings', JSON.stringify(bookings));
+        }
+
+        function showBookingConfirmation(booking) {
+            const confirmationHtml = `
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <i class="bi bi-check-circle-fill me-3" style="font-size: 2rem;"></i>
+                    <div>
+                        <h5 class="alert-heading mb-2">予約が完了しました！</h5>
+                        <p class="mb-1"><strong>予約番号:</strong> #${booking.id}</p>
+                        <p class="mb-1"><strong>ガイド:</strong> ${booking.guideName}</p>
+                        <p class="mb-1"><strong>日時:</strong> ${booking.date} ${booking.time}</p>
+                        <p class="mb-0"><strong>合計金額:</strong> ${booking.totalPrice}</p>
+                        <hr>
+                        <p class="mb-0 small">ガイドからの確認メッセージをお待ちください。</p>
+                    </div>
+                </div>
+            `;
+            
+            // Show toast notification
+            const toastContainer = document.querySelector('.toast-container') || (() => {
+                const container = document.createElement('div');
+                container.className = 'toast-container position-fixed top-0 end-0 p-3';
+                document.body.appendChild(container);
+                return container;
+            })();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast show';
+            toast.innerHTML = `
+                <div class="toast-header bg-success text-white">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <strong class="me-auto">予約完了</strong>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                </div>
+                <div class="toast-body">
+                    予約番号 #${booking.id} で予約が完了しました！
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto-remove toast after 5 seconds
+            setTimeout(() => {
+                toast.remove();
+            }, 5000);
+        }
+
         // Event listeners for chat
         document.addEventListener('DOMContentLoaded', function() {
             const sendBtn = document.getElementById('sendMessageBtn');
@@ -3183,6 +3348,20 @@
                         sendMessage();
                     }
                 });
+            }
+
+            // Booking form event listeners
+            const bookingForm = document.getElementById('bookingForm');
+            if (bookingForm) {
+                const formInputs = bookingForm.querySelectorAll('input, select');
+                formInputs.forEach(input => {
+                    input.addEventListener('change', updateBookingSummary);
+                });
+            }
+
+            const submitBookingBtn = document.getElementById('submitBookingBtn');
+            if (submitBookingBtn) {
+                submitBookingBtn.addEventListener('click', submitBooking);
             }
         });
     </script>
@@ -3233,6 +3412,126 @@
                             </small>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true" style="z-index: 2100;">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="bookingModalLabel">
+                        <i class="bi bi-calendar-check me-2"></i>ガイド予約
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row">
+                        <!-- Left Column: Guide Info -->
+                        <div class="col-md-4 mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body text-center">
+                                    <img id="bookingGuideImage" src="" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;" alt="Guide Image">
+                                    <h5 id="bookingGuideName" class="fw-bold">ガイド名</h5>
+                                    <p class="text-primary fw-bold mb-0">
+                                        <i class="bi bi-currency-yen me-1"></i>
+                                        <span id="bookingGuidePrice">¥0</span>/時間
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Middle Column: Booking Form -->
+                        <div class="col-md-5 mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-calendar3 me-2"></i>予約詳細
+                            </h6>
+                            
+                            <form id="bookingForm">
+                                <div class="mb-3">
+                                    <label for="bookingDate" class="form-label fw-bold">日付</label>
+                                    <input type="date" class="form-control" id="bookingDate" name="date" required style="border-radius: 10px;">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="bookingTime" class="form-label fw-bold">開始時間</label>
+                                    <select class="form-select" id="bookingTime" name="time" required style="border-radius: 10px;">
+                                        <option value="">時間を選択</option>
+                                        <option value="09:00">09:00</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="bookingDuration" class="form-label fw-bold">時間</label>
+                                    <select class="form-select" id="bookingDuration" name="duration" required style="border-radius: 10px;">
+                                        <option value="">時間を選択</option>
+                                        <option value="1">1時間</option>
+                                        <option value="2">2時間（1.5倍料金）</option>
+                                        <option value="4">4時間（2.5倍料金）</option>
+                                        <option value="8">8時間（4倍料金）</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="bookingParticipants" class="form-label fw-bold">参加者数</label>
+                                    <select class="form-select" id="bookingParticipants" name="participants" required style="border-radius: 10px;">
+                                        <option value="">人数を選択</option>
+                                        <option value="1">1名</option>
+                                        <option value="2">2名</option>
+                                        <option value="3">3名</option>
+                                        <option value="4">4名</option>
+                                        <option value="5">5名</option>
+                                        <option value="6">6名以上</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="specialRequests" class="form-label fw-bold">特別なリクエスト</label>
+                                    <textarea class="form-control" id="specialRequests" name="specialRequests" rows="3" 
+                                              placeholder="アレルギー、アクセシビリティ、特別な興味など" 
+                                              style="border-radius: 10px;"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Right Column: Booking Summary -->
+                        <div class="col-md-3">
+                            <h6 class="fw-bold mb-3">
+                                <i class="bi bi-receipt me-2"></i>予約内容
+                            </h6>
+                            
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <div id="bookingSummary" class="mb-3">
+                                        <p class="text-muted">詳細を入力してください</p>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong>合計金額:</strong>
+                                        <span class="text-success fw-bold fs-5" id="bookingTotal">¥0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 15px 15px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                    <button type="button" class="btn btn-success" id="submitBookingBtn" 
+                            style="background: linear-gradient(135deg, #28a745, #20c997); border: none; border-radius: 25px; padding: 10px 30px;">
+                        <i class="bi bi-calendar-check me-2"></i>予約確定
+                    </button>
                 </div>
             </div>
         </div>
