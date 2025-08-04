@@ -77,20 +77,20 @@
         .logo-container {
             width: 50px;
             height: 50px;
-            border-radius: 10px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
             background: linear-gradient(135deg, #ff6b6b, #4287f5);
-            padding: 5px;
+            padding: 2px;
         }
         
         .logo-container img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            border-radius: 5px;
+            object-fit: cover;
+            border-radius: 50%;
             background: white;
         }
 
@@ -319,7 +319,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="logo-container">
-                    <img src="TomoTripロゴ.png" alt="TomoTrip" style="width: 100%; height: 100%; object-fit: contain;" onerror="console.log('Logo load error'); this.style.display='none'; this.parentElement.innerHTML='🌴';" />
+                    <img src="TomoTripロゴ.png" alt="TomoTrip" style="width: 100%; height: 100%; object-fit: cover;" onerror="console.log('Logo load error'); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px;&quot;>🌴</span>';" />
                 </div>
                 TomoTrip
             </a>
@@ -1098,7 +1098,7 @@
             const buttons = {
                 jpBtn: () => console.log('🇯🇵 日本語 selected'),
                 enBtn: () => console.log('🇺🇸 English selected'),
-                loginBtn: () => {
+                loginButton: () => {
                     console.log('Login clicked');
                     // This is now handled by the dropdown menu
                 },
@@ -2827,42 +2827,67 @@
                 console.log('Page unfreeze mechanism activated');
             });
             
-            // Language switching functionality
-            document.getElementById('jpBtn').addEventListener('click', function() {
-                // Add active state for Japanese button
-                document.getElementById('jpBtn').style.background = 'linear-gradient(135deg, #ff5252, #ff7979)';
-                document.getElementById('enBtn').style.background = 'linear-gradient(135deg, #4287f5, #64a8ff)';
-                
-                // Update text content to Japanese
-                document.querySelector('.hero-content h1').textContent = 'あなただけの特別な旅を';
-                document.querySelector('.hero-content p').textContent = '地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう';
-                document.getElementById('findGuideBtn').textContent = 'ガイドを探す';
-                document.getElementById('contactBtn').textContent = 'お問い合わせ';
-                document.getElementById('loginDropdown').textContent = 'ログイン';
-                document.getElementById('registerBtn').textContent = '新規登録';
-                document.getElementById('sponsorRegBtn').textContent = '協賛店登録';
-                document.getElementById('sponsorLoginBtn').textContent = 'ログイン';
-                
-                console.log('Language switched to Japanese');
-            });
+            // Language switching functionality - with safety checks
+            const jpBtn = document.getElementById('jpBtn');
+            const enBtn = document.getElementById('enBtn');
             
-            document.getElementById('enBtn').addEventListener('click', function() {
-                // Add active state for English button
-                document.getElementById('enBtn').style.background = 'linear-gradient(135deg, #3b78e7, #5a9cff)';
-                document.getElementById('jpBtn').style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e8e)';
+            if (jpBtn && enBtn) {
+                jpBtn.addEventListener('click', function() {
+                    // Add active state for Japanese button
+                    jpBtn.style.background = 'linear-gradient(135deg, #ff5252, #ff7979)';
+                    enBtn.style.background = 'linear-gradient(135deg, #4287f5, #64a8ff)';
+                    
+                    // Update text content to Japanese - with safety checks
+                    const heroTitle = document.querySelector('.hero-content h1');
+                    const heroText = document.querySelector('.hero-content p');
+                    const findGuideBtn = document.getElementById('findGuideBtn');
+                    const contactBtn = document.getElementById('contactBtn');
+                    const loginDropdown = document.getElementById('loginDropdown');
+                    const registerBtn = document.getElementById('registerBtn');
+                    const sponsorRegBtn = document.getElementById('sponsorRegBtn');
+                    const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+                    
+                    if (heroTitle) heroTitle.textContent = 'あなただけの特別な旅を';
+                    if (heroText) heroText.textContent = '地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう';
+                    if (findGuideBtn) findGuideBtn.textContent = 'ガイドを探す';
+                    if (contactBtn) contactBtn.textContent = 'お問い合わせ';
+                    if (loginDropdown) loginDropdown.textContent = 'ログイン';
+                    if (registerBtn) registerBtn.textContent = '新規登録';
+                    if (sponsorRegBtn) sponsorRegBtn.textContent = '協賛店登録';
+                    if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'ログイン';
+                    
+                    console.log('Language switched to Japanese');
+                });
                 
-                // Update text content to English
-                document.querySelector('.hero-content h1').textContent = 'Your Special Journey Awaits';
-                document.querySelector('.hero-content p').textContent = 'Experience hidden charms that tourism can\'t find with local guides';
-                document.getElementById('findGuideBtn').textContent = 'Find Guide';
-                document.getElementById('contactBtn').textContent = 'Contact';
-                document.getElementById('loginDropdown').textContent = 'Login';
-                document.getElementById('registerBtn').textContent = 'Register';
-                document.getElementById('sponsorRegBtn').textContent = 'Sponsor Registration';
-                document.getElementById('sponsorLoginBtn').textContent = 'Login';
-                
-                console.log('Language switched to English');
-            });
+                enBtn.addEventListener('click', function() {
+                    // Add active state for English button
+                    enBtn.style.background = 'linear-gradient(135deg, #3b78e7, #5a9cff)';
+                    jpBtn.style.background = 'linear-gradient(135deg, #ff6b6b, #ff8e8e)';
+                    
+                    // Update text content to English - with safety checks
+                    const heroTitle = document.querySelector('.hero-content h1');
+                    const heroText = document.querySelector('.hero-content p');
+                    const findGuideBtn = document.getElementById('findGuideBtn');
+                    const contactBtn = document.getElementById('contactBtn');
+                    const loginDropdown = document.getElementById('loginDropdown');
+                    const registerBtn = document.getElementById('registerBtn');
+                    const sponsorRegBtn = document.getElementById('sponsorRegBtn');
+                    const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+                    
+                    if (heroTitle) heroTitle.textContent = 'Your Special Journey Awaits';
+                    if (heroText) heroText.textContent = 'Experience hidden charms that tourism can\'t find with local guides';
+                    if (findGuideBtn) findGuideBtn.textContent = 'Find Guide';
+                    if (contactBtn) contactBtn.textContent = 'Contact';
+                    if (loginDropdown) loginDropdown.textContent = 'Login';
+                    if (registerBtn) registerBtn.textContent = 'Register';
+                    if (sponsorRegBtn) sponsorRegBtn.textContent = 'Sponsor Registration';
+                    if (sponsorLoginBtn) sponsorLoginBtn.textContent = 'Login';
+                    
+                    console.log('Language switched to English');
+                });
+            } else {
+                console.error('Language buttons not found: jpBtn=' + !!jpBtn + ', enBtn=' + !!enBtn);
+            }
         });
     </script>
 </body>
