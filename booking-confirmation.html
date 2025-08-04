@@ -242,11 +242,9 @@
                 const guideId = bookingData.guideId || bookingData.guideName.replace(/\s+/g, '');
                 console.log(`Opening chat for guide: ${bookingData.guideName} (ID: ${guideId})`);
                 
-                // 既存のチャット機能を呼び出し
-                alert(`${bookingData.guideName}さんとのチャットを開きます`);
-                
-                // メインページのチャット機能にリダイレクト
-                window.location.href = `index.html?openChat=${guideId}&guideName=${encodeURIComponent(bookingData.guideName)}`;
+                // 専用チャットページにリダイレクト
+                const chatUrl = `chat.html?guideId=${guideId}&guideName=${encodeURIComponent(bookingData.guideName)}&bookingId=${bookingData.id}`;
+                window.location.href = chatUrl;
             } else {
                 alert('予約データが見つかりません。');
             }

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>チャット - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .chat-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            height: calc(100vh - 4rem);
+        }
+        
+        .chat-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .guide-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .guide-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            margin-right: 1rem;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message-bubble {
+            max-width: 70%;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .message.guide .message-bubble {
+            background: white;
+            border: 1px solid #e0e0e0;
+            margin-left: 0.5rem;
+        }
+        
+        .message.user .message-bubble {
+            background: #007bff;
+            color: white;
+            margin-right: 0.5rem;
+        }
+        
+        .message-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        
+        .message.guide .message-time {
+            color: #666;
+        }
+        
+        .message.user .message-time {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .chat-input {
+            padding: 1.5rem 2rem;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .input-group {
+            position: relative;
+        }
+        
+        .form-control {
+            border-radius: 25px;
+            padding: 1rem 1.5rem;
+            border: 1px solid #e0e0e0;
+            resize: none;
+        }
+        
+        .send-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #007bff;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn:hover {
+            background: #0056b3;
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: translateY(-50%);
+        }
+        
+        .booking-info {
+            background: #e7f3ff;
+            border-left: 4px solid #007bff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border-radius: 50%;
+            margin-left: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-action-btn {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        
+        .quick-action-btn:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        @media (max-width: 768px) {
+            .chat-container {
+                margin: 1rem auto;
+                height: calc(100vh - 2rem);
+            }
+            
+            .message-bubble {
+                max-width: 85%;
+            }
+            
+            .chat-header {
+                padding: 1rem;
+            }
+            
+            .chat-messages, .chat-input {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-card">
+            <!-- チャットヘッダー -->
+            <div class="chat-header">
+                <div class="guide-info">
+                    <img id="guideAvatar" src="https://via.placeholder.com/50x50" alt="ガイド" class="guide-avatar">
+                    <div>
+                        <h5 class="mb-0" id="guideName">ガイド名</h5>
+                        <small id="guideStatus">オンライン <span class="status-indicator"></span></small>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn btn-outline-light btn-sm me-2" onclick="showBookingInfo()">
+                        <i class="bi bi-info-circle"></i> 予約詳細
+                    </button>
+                    <button class="btn btn-outline-light btn-sm" onclick="goBack()">
+                        <i class="bi bi-arrow-left"></i> 戻る
+                    </button>
+                </div>
+            </div>
+            
+            <!-- チャットメッセージエリア -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- 予約情報表示 -->
+                <div class="booking-info" id="bookingInfo" style="display: none;">
+                    <h6><i class="bi bi-calendar3 me-2"></i>予約情報</h6>
+                    <div id="bookingDetails">
+                        <!-- 予約詳細がここに表示されます -->
+                    </div>
+                </div>
+                
+                <!-- クイックアクション -->
+                <div class="quick-actions">
+                    <div class="quick-action-btn" onclick="sendQuickMessage('こんにちは！よろしくお願いします。')">
+                        こんにちは
+                    </div>
+                    <div class="quick-action-btn" onclick="sendQuickMessage('待ち合わせ場所を教えてください。')">
+                        待ち合わせ場所
+                    </div>
+                    <div class="quick-action-btn" onclick="sendQuickMessage('当日の連絡先を教えてください。')">
+                        連絡先確認
+                    </div>
+                </div>
+                
+                <!-- メッセージがここに表示されます -->
+                <div class="message guide">
+                    <div class="message-bubble">
+                        <div>こんにちは！ご予約いただきありがとうございます。当日のご案内を楽しみにしております。何かご質問がございましたらお気軽にお聞きください。</div>
+                        <div class="message-time">今日 14:30</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- メッセージ入力エリア -->
+            <div class="chat-input">
+                <div class="input-group">
+                    <textarea 
+                        class="form-control" 
+                        id="messageInput" 
+                        placeholder="メッセージを入力してください..."
+                        rows="1"
+                        onkeypress="handleKeyPress(event)"
+                        oninput="autoResize(this)"
+                    ></textarea>
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let guideData = null;
+        let bookingData = null;
+        let messages = [];
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadChatData();
+            setupEventListeners();
+        });
+        
+        function loadChatData() {
+            // URLパラメータからガイド情報を取得
+            const urlParams = new URLSearchParams(window.location.search);
+            const guideId = urlParams.get('guideId');
+            const guideName = decodeURIComponent(urlParams.get('guideName') || 'ガイド');
+            const bookingId = urlParams.get('bookingId');
+            
+            // ガイド情報を設定
+            document.getElementById('guideName').textContent = guideName;
+            
+            // 予約情報があれば表示
+            if (bookingId) {
+                loadBookingInfo(bookingId);
+            }
+            
+            // チャット履歴を読み込み
+            loadChatHistory(guideId);
+        }
+        
+        function loadBookingInfo(bookingId) {
+            // LocalStorageから予約データを取得
+            const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
+            bookingData = bookings.find(b => b.id == bookingId);
+            
+            if (bookingData) {
+                const bookingDetailsHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>日付:</strong> ${bookingData.date}<br>
+                            <strong>時間:</strong> ${bookingData.time}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>時間:</strong> ${bookingData.duration}時間<br>
+                            <strong>参加者:</strong> ${bookingData.participants}名
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <strong>予約番号:</strong> #${bookingData.id}
+                    </div>
+                `;
+                document.getElementById('bookingDetails').innerHTML = bookingDetailsHTML;
+            }
+        }
+        
+        function loadChatHistory(guideId) {
+            // LocalStorageからチャット履歴を読み込み
+            const chatKey = `chat_${guideId}`;
+            const savedMessages = JSON.parse(localStorage.getItem(chatKey) || '[]');
+            
+            messages = savedMessages;
+            displayMessages();
+        }
+        
+        function displayMessages() {
+            const messagesContainer = document.getElementById('chatMessages');
+            
+            // 既存のメッセージを保持しつつ、新しいメッセージを追加
+            const existingContent = messagesContainer.innerHTML;
+            
+            messages.forEach(msg => {
+                if (!document.querySelector(`[data-message-id="${msg.id}"]`)) {
+                    const messageHTML = createMessageHTML(msg);
+                    messagesContainer.insertAdjacentHTML('beforeend', messageHTML);
+                }
+            });
+            
+            // 最新メッセージまでスクロール
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function createMessageHTML(message) {
+            const time = new Date(message.timestamp).toLocaleTimeString('ja-JP', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            return `
+                <div class="message ${message.sender}" data-message-id="${message.id}">
+                    <div class="message-bubble">
+                        <div>${message.text}</div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function setupEventListeners() {
+            const messageInput = document.getElementById('messageInput');
+            const sendBtn = document.getElementById('sendBtn');
+            
+            messageInput.addEventListener('input', function() {
+                sendBtn.disabled = this.value.trim() === '';
+            });
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+        
+        function autoResize(textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
+        }
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const text = messageInput.value.trim();
+            
+            if (text === '') return;
+            
+            const message = {
+                id: Date.now(),
+                sender: 'user',
+                text: text,
+                timestamp: new Date().toISOString()
+            };
+            
+            messages.push(message);
+            saveChatHistory();
+            
+            // メッセージを表示
+            const messageHTML = createMessageHTML(message);
+            document.getElementById('chatMessages').insertAdjacentHTML('beforeend', messageHTML);
+            
+            // 入力欄をクリア
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            document.getElementById('sendBtn').disabled = true;
+            
+            // スクロール
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // ガイドからの自動返信をシミュレート
+            setTimeout(() => {
+                simulateGuideResponse(text);
+            }, 1000);
+        }
+        
+        function sendQuickMessage(text) {
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+        
+        function simulateGuideResponse(userMessage) {
+            let response = '';
+            
+            if (userMessage.includes('こんにちは') || userMessage.includes('はじめまして')) {
+                response = 'こんにちは！よろしくお願いいたします。当日のご案内を楽しみにしております。';
+            } else if (userMessage.includes('待ち合わせ') || userMessage.includes('集合')) {
+                response = '待ち合わせ場所は○○駅の改札前（中央改札）でいかがでしょうか。目印として、TomoTripのプレートを持っております。';
+            } else if (userMessage.includes('連絡先') || userMessage.includes('電話')) {
+                response = '当日の緊急連絡先は 090-1234-5678 です。何かございましたらお気軽にご連絡ください。';
+            } else if (userMessage.includes('ありがとう')) {
+                response = 'こちらこそ、ありがとうございます！当日お会いできるのを楽しみにしております。';
+            } else {
+                response = 'ご連絡ありがとうございます。承知いたしました。他にもご質問がございましたらお気軽にお聞きください。';
+            }
+            
+            const message = {
+                id: Date.now(),
+                sender: 'guide',
+                text: response,
+                timestamp: new Date().toISOString()
+            };
+            
+            messages.push(message);
+            saveChatHistory();
+            
+            // メッセージを表示
+            const messageHTML = createMessageHTML(message);
+            document.getElementById('chatMessages').insertAdjacentHTML('beforeend', messageHTML);
+            
+            // スクロール
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+        
+        function saveChatHistory() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const guideId = urlParams.get('guideId');
+            
+            if (guideId) {
+                const chatKey = `chat_${guideId}`;
+                localStorage.setItem(chatKey, JSON.stringify(messages));
+            }
+        }
+        
+        function showBookingInfo() {
+            const bookingInfo = document.getElementById('bookingInfo');
+            if (bookingInfo.style.display === 'none') {
+                bookingInfo.style.display = 'block';
+            } else {
+                bookingInfo.style.display = 'none';
+            }
+        }
+        
+        function goBack() {
+            // 前のページに戻る、または予約確認ページに戻る
+            if (document.referrer) {
+                window.history.back();
+            } else {
+                window.location.href = 'booking-confirmation.html';
+            }
+        }
+    </script>
+</body>
+</html>
