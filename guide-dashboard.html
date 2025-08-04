@@ -194,7 +194,7 @@
                         </div>
                         <div class="mb-2">
                             <strong>ガイド報酬:</strong><br>
-                            サービス完了後、手数料15%を差し引いて支払い
+                            サービス完了後、手数料20%を差し引いて支払い
                         </div>
                         <div class="mb-2">
                             <strong>支払いタイミング:</strong><br>
@@ -216,7 +216,7 @@
                             <strong id="monthlyGross">¥0</strong>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <span>手数料 (15%):</span>
+                            <span>手数料 (20%):</span>
                             <strong class="text-danger" id="monthlyCommission">-¥0</strong>
                         </div>
                         <hr>
@@ -362,7 +362,7 @@
             // 収益計算
             const totalEarnings = guideBookings.reduce((sum, booking) => {
                 const amount = parseInt(booking.totalPrice.replace(/[^\d]/g, ''));
-                return sum + (amount * 0.85); // 85%がガイドの取り分
+                return sum + (amount * 0.80); // 80%がガイドの取り分
             }, 0);
             
             document.getElementById('totalEarnings').textContent = `¥${totalEarnings.toLocaleString()}`;
@@ -385,7 +385,7 @@
                 return sum + parseInt(booking.totalPrice.replace(/[^\d]/g, ''));
             }, 0);
             
-            const monthlyCommission = Math.round(monthlyGross * 0.15);
+            const monthlyCommission = Math.round(monthlyGross * 0.20);
             const monthlyPayout = monthlyGross - monthlyCommission;
             
             document.getElementById('monthlyGross').textContent = `¥${monthlyGross.toLocaleString()}`;

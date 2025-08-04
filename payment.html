@@ -177,9 +177,20 @@
                         </div>
                     </div>
                     <hr>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">合計金額:</h5>
-                        <h4 class="text-success fw-bold mb-0" id="paymentTotal">¥0</h4>
+                    <div id="paymentBreakdown">
+                        <div class="d-flex justify-content-between">
+                            <span>サービス料金:</span>
+                            <span id="serviceAmount">¥0</span>
+                        </div>
+                        <div class="d-flex justify-content-between" id="cardFeeRow" style="display: none;">
+                            <span>カード決済手数料 (3.6%):</span>
+                            <span class="text-warning" id="cardFeeAmount">¥0</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">お支払い総額:</h5>
+                            <h4 class="text-success fw-bold mb-0" id="paymentTotal">¥0</h4>
+                        </div>
                     </div>
                 </div>
                 
@@ -188,7 +199,8 @@
                     <h6 class="fw-bold"><i class="bi bi-info-circle me-2"></i>決済・支払いについて</h6>
                     <ul class="mb-0">
                         <li>お客様からの全額を弊社が一旦お預かりします</li>
-                        <li>ガイドサービス完了後、手数料（15%）を差し引いた金額をガイドにお支払いします</li>
+                        <li>ガイドサービス完了後、手数料（20%）を差し引いた金額をガイドにお支払いします</li>
+                        <li>クレジットカード決済の場合、カード会社手数料（3.6%）はお客様のご負担となります</li>
                         <li>万が一のキャンセルやトラブルの際も安心保証いたします</li>
                         <li>決済完了と同時にガイドに通知が送信されます</li>
                     </ul>
@@ -301,7 +313,11 @@
             document.getElementById('paymentGuideName').textContent = bookingData.guideName;
             document.getElementById('paymentGuideImage').src = bookingData.guideImage || '';
             document.getElementById('paymentGuideRate').textContent = bookingData.guideRate || '';
-            document.getElementById('paymentTotal').textContent = bookingData.totalPrice;
+            
+            // サービス料金を表示
+            const serviceAmount = parseInt(bookingData.totalPrice.replace(/[^\d]/g, ''));
+            document.getElementById('serviceAmount').textContent = `¥${serviceAmount.toLocaleString()}`;
+            document.getElementById('paymentTotal').textContent = bookingData.totalPrice; // 初期値
             
             const detailsHTML = `
                 <div><strong>日付:</strong> ${bookingData.date}</div>
@@ -322,10 +338,16 @@
                     
                     // カードフォームの表示/非表示
                     const cardForm = document.getElementById('cardForm');
+                    const cardFeeRow = document.getElementById('cardFeeRow');
+                    
                     if (selectedPaymentMethod === 'card') {
                         cardForm.classList.add('show');
+                        cardFeeRow.style.display = 'flex';
+                        updatePaymentTotal(true);
                     } else {
                         cardForm.classList.remove('show');
+                        cardFeeRow.style.display = 'none';
+                        updatePaymentTotal(false);
                     }
                     
                     updatePayButton();
@@ -361,6 +383,25 @@
             
             // 決済ボタン
             document.getElementById('submitPayment').addEventListener('click', processPayment);
+        }
+        
+        function updatePaymentTotal(includeCardFee = false) {
+            if (!bookingData) return;
+            
+            const serviceAmount = parseInt(bookingData.totalPrice.replace(/[^\d]/g, ''));
+            let total = serviceAmount;
+            
+            if (includeCardFee) {
+                const cardFee = Math.round(serviceAmount * 0.036); // 3.6%
+                document.getElementById('cardFeeAmount').textContent = `¥${cardFee.toLocaleString()}`;
+                total = serviceAmount + cardFee;
+            }
+            
+            document.getElementById('paymentTotal').textContent = `¥${total.toLocaleString()}`;
+            
+            // Update booking data with final amount for payment
+            bookingData.finalPaymentAmount = total;
+            bookingData.cardFee = includeCardFee ? Math.round(serviceAmount * 0.036) : 0;
         }
         
         function updatePayButton() {
@@ -444,12 +485,12 @@
         
         function calculateCommission(totalAmount) {
             const amount = parseInt(totalAmount.replace(/[^\d]/g, ''));
-            return Math.round(amount * 0.15); // 15%手数料
+            return Math.round(amount * 0.20); // 20%手数料
         }
         
         function calculatePayout(totalAmount) {
             const amount = parseInt(totalAmount.replace(/[^\d]/g, ''));
-            return Math.round(amount * 0.85); // 85%をガイドに支払い
+            return Math.round(amount * 0.80); // 80%をガイドに支払い
         }
     </script>
 </body>
