@@ -4791,28 +4791,110 @@
 
     <!-- Critical Footer Fix Script -->
     <script>
-        console.log('🔍 FOOTER DEBUG SCRIPT LOADED');
+        console.log('🔍 FOOTER DEBUG SCRIPT LOADED - EMERGENCY MODE');
         
         // Immediate footer check
         function checkFooterImmediately() {
-            const footer = document.querySelector('footer');
+            const footer = document.querySelector('footer#main-footer');
             console.log('🔍 Immediate footer check:', !!footer);
             if (footer) {
-                console.log('✅ Footer element found - applying styles');
-                footer.style.display = 'block !important';
-                footer.style.visibility = 'visible !important';
-                footer.style.opacity = '1 !important';
-                footer.style.position = 'relative !important';
-                footer.style.zIndex = '1000 !important';
+                console.log('✅ Footer element found - applying comprehensive styles');
+                
+                // Force footer container styles
+                footer.style.backgroundColor = '#212529';
+                footer.style.color = 'white';
+                footer.style.padding = '3rem 0';
+                footer.style.marginTop = '2rem';
+                footer.style.position = 'relative';
+                footer.style.zIndex = '100';
+                footer.style.width = '100%';
+                footer.style.clear = 'both';
+                footer.style.display = 'block';
+                footer.style.visibility = 'visible';
+                footer.style.opacity = '1';
                 footer.classList.add('footer-forced-visible');
-                console.log('✅ Footer styles applied');
+                
+                // Force container and row visibility
+                const container = footer.querySelector('.container');
+                if (container) {
+                    container.style.display = 'block';
+                    container.style.visibility = 'visible';
+                    container.style.opacity = '1';
+                    container.style.maxWidth = '1200px';
+                    container.style.margin = '0 auto';
+                    container.style.padding = '0 15px';
+                }
+                
+                const row = footer.querySelector('.row');
+                if (row) {
+                    row.style.display = 'flex';
+                    row.style.flexWrap = 'wrap';
+                    row.style.margin = '0 -15px';
+                    row.style.visibility = 'visible';
+                    row.style.opacity = '1';
+                }
+                
+                // Force all columns to be visible
+                const columns = footer.querySelectorAll('[class*="col-"]');
+                columns.forEach((col, index) => {
+                    console.log(`✅ Fixing column ${index + 1}`);
+                    col.style.display = 'block';
+                    col.style.visibility = 'visible';
+                    col.style.opacity = '1';
+                    col.style.padding = '0 15px';
+                    col.style.marginBottom = '2rem';
+                    col.style.flex = '1 1 auto';
+                    col.style.minWidth = '200px';
+                });
+                
+                // Force all text elements to be visible with proper colors
+                const headings = footer.querySelectorAll('h5, h6');
+                headings.forEach((h, index) => {
+                    console.log(`✅ Fixing heading ${index + 1}: ${h.textContent}`);
+                    h.style.color = 'white';
+                    h.style.fontWeight = 'bold';
+                    h.style.marginBottom = '1rem';
+                    h.style.display = 'block';
+                    h.style.visibility = 'visible';
+                    h.style.opacity = '1';
+                });
+                
+                const textElements = footer.querySelectorAll('p, li, a');
+                textElements.forEach((el, index) => {
+                    if (index < 10) console.log(`✅ Fixing text element ${index + 1}: ${el.textContent.substring(0, 30)}...`);
+                    el.style.color = '#adb5bd';
+                    el.style.fontSize = '14px';
+                    el.style.display = 'block';
+                    el.style.visibility = 'visible';
+                    el.style.opacity = '1';
+                });
+                
+                const lists = footer.querySelectorAll('ul');
+                lists.forEach((ul, index) => {
+                    console.log(`✅ Fixing list ${index + 1}`);
+                    ul.style.listStyle = 'none';
+                    ul.style.padding = '0';
+                    ul.style.margin = '0';
+                    ul.style.display = 'block';
+                    ul.style.visibility = 'visible';
+                    ul.style.opacity = '1';
+                });
+                
+                console.log('✅ Footer comprehensive styling complete');
             } else {
                 console.error('❌ Footer element not found immediately');
             }
         }
         
-        // Run immediately
+        // Emergency: Force run immediately multiple times
+        console.log('🚨 EMERGENCY: Running footer fix immediately');
         checkFooterImmediately();
+        
+        // Force run after short delay
+        setTimeout(function() {
+            console.log('🚨 EMERGENCY: 100ms delay footer fix');
+            checkFooterImmediately();
+        }, 100);
         
         // Also run on DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -4820,11 +4902,27 @@
             checkFooterImmediately();
         });
         
-        // Fallback with timeout
+        // Run on window load
+        window.addEventListener('load', function() {
+            console.log('🔍 Window loaded - final footer check');
+            checkFooterImmediately();
+        });
+        
+        // Multiple fallback timeouts
         setTimeout(function() {
-            console.log('🔍 Timeout fallback - checking footer');
+            console.log('🔍 500ms timeout fallback - checking footer');
+            checkFooterImmediately();
+        }, 500);
+        
+        setTimeout(function() {
+            console.log('🔍 1000ms timeout fallback - checking footer');
             checkFooterImmediately();
         }, 1000);
+        
+        setTimeout(function() {
+            console.log('🔍 2000ms timeout fallback - checking footer');
+            checkFooterImmediately();
+        }, 2000);
     </script>
     
     <!-- Footer Force CSS -->
@@ -4837,10 +4935,82 @@
             z-index: 1000 !important;
             min-height: 400px !important;
         }
+        
+        /* Footer Emergency Fix */
+        #main-footer {
+            background-color: #212529 !important;
+            color: white !important;
+            padding: 3rem 0 !important;
+            margin-top: 2rem !important;
+            position: relative !important;
+            z-index: 100 !important;
+            width: 100% !important;
+            clear: both !important;
+        }
+        
+        #main-footer .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 15px !important;
+        }
+        
+        #main-footer .row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            margin: 0 -15px !important;
+        }
+        
+        #main-footer .col-lg-3,
+        #main-footer .col-lg-2,
+        #main-footer .col-md-6 {
+            padding: 0 15px !important;
+            margin-bottom: 2rem !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            flex: 1 1 auto !important;
+            min-width: 200px !important;
+        }
+        
+        #main-footer h5,
+        #main-footer h6 {
+            color: white !important;
+            font-weight: bold !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        #main-footer p,
+        #main-footer li,
+        #main-footer a {
+            color: #adb5bd !important;
+            font-size: 14px !important;
+        }
+        
+        #main-footer a:hover {
+            color: #4ecdc4 !important;
+        }
+        
+        #main-footer .text-white {
+            color: white !important;
+        }
+        
+        #main-footer .text-muted {
+            color: #adb5bd !important;
+        }
+        
+        #main-footer ul {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        #main-footer li {
+            margin-bottom: 0.5rem !important;
+        }
     </style>
 
     <!-- Footer -->
-    <footer id="main-footer" class="bg-dark text-light py-5 mt-5" style="min-height: 400px !important; display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 1000 !important; clear: both !important;">
+    <footer id="main-footer" style="background-color: #212529 !important; color: white !important; padding: 3rem 0 !important; margin-top: 2rem !important; position: relative !important; z-index: 100 !important; width: 100% !important; clear: both !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
         <div class="container">
             <div class="row">
                 <!-- Company Info -->
