@@ -1383,7 +1383,13 @@
             
             updateCounter();
             updatePaginationControls(allGuides.length);
-            addCardEventListeners();
+            
+            // Critical: Re-add event listeners after DOM update
+            console.log('🔧 Re-adding card event listeners after guide display');
+            setTimeout(() => {
+                addCardEventListeners();
+                console.log('✅ Card event listeners added');
+            }, 100);
         }
         
         // Update pagination controls
@@ -1415,9 +1421,22 @@
 
         // Add event listeners to cards
         function addCardEventListeners() {
-            document.querySelectorAll('.view-detail-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const guideId = this.getAttribute('data-guide-id');
+            console.log('🔧 Adding event listeners to View Details buttons...');
+            const viewDetailButtons = document.querySelectorAll('.view-detail-btn');
+            console.log(`Found ${viewDetailButtons.length} View Details buttons`);
+            
+            viewDetailButtons.forEach((btn, index) => {
+                const guideId = btn.getAttribute('data-guide-id');
+                console.log(`Setting up button ${index + 1} for guide ID: ${guideId}`);
+                
+                // Remove existing listeners
+                btn.replaceWith(btn.cloneNode(true));
+                const newBtn = document.querySelectorAll('.view-detail-btn')[index];
+                
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔥 View Details button clicked for guide:', guideId);
                     viewGuideDetail(guideId);
                 });
             });
