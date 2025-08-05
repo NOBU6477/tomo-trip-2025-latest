@@ -4252,17 +4252,23 @@
         }
 
         function createFooterModal() {
+            // Remove existing modal if present
+            const existingModal = document.getElementById('footerModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
             const modalHTML = `
                 <div class="modal fade" id="footerModal" tabindex="-1">
                     <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="footerModalTitle"></h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <div class="modal-content" style="border-radius: 15px;">
+                            <div class="modal-header border-0" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border-radius: 15px 15px 0 0;">
+                                <h5 class="modal-title fw-bold" id="footerModalTitle"></h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                             </div>
-                            <div class="modal-body" id="footerModalBody"></div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+                            <div class="modal-body p-4" id="footerModalBody" style="max-height: 70vh; overflow-y: auto;"></div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px;">閉じる</button>
                             </div>
                         </div>
                     </div>
@@ -4270,6 +4276,516 @@
             `;
             document.body.insertAdjacentHTML('beforeend', modalHTML);
             return document.getElementById('footerModal');
+        }
+        
+        // Footer link functions
+        function scrollToGuides() {
+            const guidesContainer = document.getElementById('guides-container') || document.querySelector('.guides-section');
+            if (guidesContainer) {
+                guidesContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // If no guides section, scroll to the main content area
+                window.scrollTo({ top: 800, behavior: 'smooth' });
+            }
+        }
+        
+        function showGuideRegistrationModal() {
+            // Use existing registration modal but pre-select guide type
+            const existingModal = document.getElementById('registrationModal');
+            if (existingModal) {
+                const modal = new bootstrap.Modal(existingModal);
+                modal.show();
+                
+                // Auto-select guide registration after modal opens
+                setTimeout(() => {
+                    const guideCard = document.getElementById('guideCard');
+                    if (guideCard) {
+                        guideCard.click();
+                    }
+                }, 500);
+            }
+        }
+        
+        function showTouristRegistrationModal() {
+            // Use existing registration modal but pre-select tourist type
+            const existingModal = document.getElementById('registrationModal');
+            if (existingModal) {
+                const modal = new bootstrap.Modal(existingModal);
+                modal.show();
+                
+                // Auto-select tourist registration after modal opens
+                setTimeout(() => {
+                    const touristCard = document.getElementById('touristCard');
+                    if (touristCard) {
+                        touristCard.click();
+                    }
+                }, 500);
+            }
+        }
+        
+        function showHelp() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'ヘルプセンター';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-question-circle me-2 text-primary"></i>よくある質問</h6>
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showFAQ()">
+                                <i class="bi bi-chevron-right me-2"></i>ガイド予約について
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showCancellation()">
+                                <i class="bi bi-chevron-right me-2"></i>キャンセル規定
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showSafety()">
+                                <i class="bi bi-chevron-right me-2"></i>安全について
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3"><i class="bi bi-headset me-2 text-success"></i>サポート</h6>
+                        <div class="mb-3">
+                            <p class="mb-2"><i class="bi bi-envelope me-2"></i><a href="mailto:support@tomotrip.com">support@tomotrip.com</a></p>
+                            <p class="mb-2"><i class="bi bi-telephone me-2"></i><a href="tel:03-1234-5678">03-1234-5678</a></p>
+                            <p class="mb-2"><i class="bi bi-chat-dots me-2"></i><a href="chat.html">チャットサポート</a></p>
+                        </div>
+                        <div class="alert alert-info">
+                            <small><i class="bi bi-info-circle me-2"></i>緊急時は24時間サポート: <a href="tel:080-9999-8888">080-9999-8888</a></small>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showCompliance() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = '法的遵守';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-3">コンプライアンス体制</h6>
+                    <p>TomoTripは、以下の法規制を遵守し、適切な事業運営を行っています。</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">旅行業法遵守</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-check-circle text-success me-2"></i>第二種旅行業者登録済み</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>営業保証金供託済み</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>旅行業務取扱管理者配置</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary">個人情報保護</h6>
+                        <ul class="list-unstyled">
+                            <li><i class="bi bi-check-circle text-success me-2"></i>プライバシーマーク取得</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>GDPR対応済み</li>
+                            <li><i class="bi bi-check-circle text-success me-2"></i>データ暗号化実装</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold text-primary">資格・許可</h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <td><strong>旅行業登録番号</strong></td>
+                                    <td>第2-1234号</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>所属団体</strong></td>
+                                    <td>一般社団法人日本旅行業協会（JATA）</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>旅行業務取扱管理者</strong></td>
+                                    <td>田中太郎（総合旅行業務取扱管理者）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        // More footer functions
+        function showFAQ() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'よくある質問';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                ガイドを予約するにはどうすればよいですか？
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>1. 観光客として登録 → 2. ガイドを検索・選択 → 3. 詳細を確認 → 4. 予約・決済の流れです。</p>
+                                <p>ガイド詳細の確認には観光客登録が必要です。安全な取引のための身元確認となります。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                料金にはどのような費用が含まれますか？
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p><strong>含まれるもの：</strong>ガイド料金、基本的な案内サービス</p>
+                                <p><strong>含まれないもの：</strong>交通費、入場料、食事代、お土産代</p>
+                                <p>※クレジットカード決済の場合、3.6%の決済手数料が追加されます</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                ガイドとして登録するには？
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                <p>1. ガイド登録フォームに必要事項を入力</p>
+                                <p>2. 身分証明書のアップロード</p>
+                                <p>3. 審査（通常2-3営業日）</p>
+                                <p>4. 承認後、ガイド活動開始可能</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showSafety() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = '安全について';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="alert alert-success">
+                            <i class="bi bi-shield-check me-2"></i>
+                            <strong>TomoTripの安全管理システム</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">ガイドの安全管理</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>身元確認・審査制度</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>評価・レビューシステム</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>24時間緊急サポート</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>保険加入義務</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">観光客の安全管理</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>本人確認済みガイドのみ</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>リアルタイム位置共有</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>緊急連絡システム</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>トラブル時の仲裁サービス</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <h6 class="card-title text-warning"><i class="bi bi-exclamation-triangle me-2"></i>緊急時の対応</h6>
+                            <p class="card-text mb-0">緊急時は直ちに <strong>080-9999-8888</strong> にお電話ください。24時間対応でサポートいたします。</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showCancellation() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'キャンセル規定';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        キャンセル料は予約時刻からの時間により決定されます
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>キャンセル時期</th>
+                                <th>キャンセル料</th>
+                                <th>返金額</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>7日前まで</td>
+                                <td class="text-success">0%</td>
+                                <td class="text-success">100%返金</td>
+                            </tr>
+                            <tr>
+                                <td>3-6日前</td>
+                                <td class="text-warning">30%</td>
+                                <td class="text-warning">70%返金</td>
+                            </tr>
+                            <tr>
+                                <td>1-2日前</td>
+                                <td class="text-danger">50%</td>
+                                <td class="text-danger">50%返金</td>
+                            </tr>
+                            <tr>
+                                <td>当日</td>
+                                <td class="text-danger">100%</td>
+                                <td class="text-danger">返金なし</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">免責事項</h6>
+                        <ul class="list-unstyled small">
+                            <li>• 天候による中止：全額返金</li>
+                            <li>• ガイド都合の中止：全額返金</li>
+                            <li>• 交通機関遅延：個別対応</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold">返金方法</h6>
+                        <ul class="list-unstyled small">
+                            <li>• クレジットカード：5-7営業日</li>
+                            <li>• デビットカード：3-5営業日</li>
+                            <li>• 銀行振込：3営業日以内</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showAbout() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = '会社概要';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="text-center mb-4">
+                            <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip" style="height: 60px;" class="mb-3">
+                            <h5 class="fw-bold">株式会社TomoTrip</h5>
+                            <p class="text-muted">地域と旅行者をつなぐ、新しいガイドマッチングプラットフォーム</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">会社情報</h6>
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr><td><strong>会社名</strong></td><td>株式会社TomoTrip</td></tr>
+                                <tr><td><strong>設立</strong></td><td>2023年4月1日</td></tr>
+                                <tr><td><strong>代表取締役</strong></td><td>山田太郎</td></tr>
+                                <tr><td><strong>資本金</strong></td><td>1億円</td></tr>
+                                <tr><td><strong>従業員数</strong></td><td>25名</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold mb-3">所在地・連絡先</h6>
+                        <address class="small">
+                            <strong>本社</strong><br>
+                            〒100-0001<br>
+                            東京都千代田区千代田1-1<br>
+                            TomoTripビル 8F<br><br>
+                            
+                            <strong>TEL:</strong> 03-1234-5678<br>
+                            <strong>FAX:</strong> 03-1234-5679<br>
+                            <strong>Email:</strong> info@tomotrip.com
+                        </address>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold mb-3">ミッション</h6>
+                    <blockquote class="blockquote text-center">
+                        <p class="mb-0">"地域の魅力を最大限に伝える、信頼できるガイドと旅行者をつなぎ、忘れられない旅行体験を創造する"</p>
+                    </blockquote>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showTerms() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = '利用規約';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-3">
+                    <small class="text-muted">最終更新：2025年4月1日</small>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">第1条（適用）</h6>
+                    <p class="small">本規約は、株式会社TomoTrip（以下「当社」）が提供するサービス「TomoTrip」の利用に関し、利用者と当社との間の権利義務関係を定めるものです。</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">第2条（利用登録）</h6>
+                    <p class="small">サービスの利用を希望する者は、本規約に同意の上、当社の定める方法によって利用登録を申請し、当社がこれを承認することによって、利用登録が完了します。</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">第3条（禁止事項）</h6>
+                    <p class="small">利用者は、サービスの利用にあたり、以下の行為をしてはなりません：</p>
+                    <ul class="small">
+                        <li>法令または公序良俗に違反する行為</li>
+                        <li>犯罪行為に関連する行為</li>
+                        <li>他の利用者、第三者または当社の権利を侵害する行為</li>
+                        <li>虚偽の情報を登録する行為</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">第4条（サービス料金）</h6>
+                    <p class="small">利用者は、ガイドサービスの利用にあたり、当社が定める料金を支払うものとします。クレジットカード決済の場合、3.6%の決済手数料が加算されます。</p>
+                </div>
+                
+                <div class="alert alert-info">
+                    <small><i class="bi bi-info-circle me-2"></i>完全版の利用規約は、サービス利用時に詳細をご確認いただけます。</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showPrivacy() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'プライバシーポリシー';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-3">
+                    <small class="text-muted">最終更新：2025年4月1日</small>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">個人情報の取得</h6>
+                    <p class="small">当社は、以下の個人情報を取得いたします：</p>
+                    <ul class="small">
+                        <li>氏名、住所、電話番号、メールアドレス</li>
+                        <li>プロフィール写真、身分証明書画像</li>
+                        <li>クレジットカード情報（決済代行会社経由）</li>
+                        <li>サービス利用履歴、位置情報</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">利用目的</h6>
+                    <p class="small">取得した個人情報は以下の目的で利用します：</p>
+                    <ul class="small">
+                        <li>サービスの提供および運営</li>
+                        <li>利用者の身元確認</li>
+                        <li>料金の請求および決済</li>
+                        <li>カスタマーサポート</li>
+                        <li>サービス改善のための分析</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">第三者提供</h6>
+                    <p class="small">個人情報は、法令に基づく場合を除き、本人の同意なく第三者に提供することはありません。ただし、以下の場合は除きます：</p>
+                    <ul class="small">
+                        <li>決済処理のための決済代行業者への提供</li>
+                        <li>緊急時の安全確保のための関係機関への提供</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">セキュリティ</h6>
+                    <p class="small">当社は、個人情報の漏洩、滅失または毀損の防止その他の個人情報の安全管理のために、SSL暗号化通信、データベース暗号化等の必要かつ適切な措置を講じます。</p>
+                </div>
+                
+                <div class="alert alert-success">
+                    <small><i class="bi bi-shield-check me-2"></i>当社はプライバシーマーク認定企業です（P123456789）</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showCookies() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Cookie規定';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <h6 class="fw-bold">Cookieとは</h6>
+                    <p class="small">Cookieとは、ウェブサイトがユーザーのコンピューターに保存する小さなテキストファイルです。サイトの利便性向上や利用状況の分析に使用されます。</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">使用するCookieの種類</h6>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">必須Cookie</h6>
+                                    <p class="card-text small">サービスの基本機能に必要</p>
+                                    <ul class="small">
+                                        <li>ログイン状態の保持</li>
+                                        <li>セキュリティ</li>
+                                        <li>設定の保存</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info">分析Cookie</h6>
+                                    <p class="card-text small">サービス改善のための分析</p>
+                                    <ul class="small">
+                                        <li>Google Analytics</li>
+                                        <li>利用統計</li>
+                                        <li>パフォーマンス測定</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Cookie設定の管理</h6>
+                    <p class="small">ブラウザの設定により、Cookieの受け入れを拒否することができます。ただし、必須Cookieを無効にすると、サービスの一部が正常に機能しない場合があります。</p>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="alert('Cookie設定画面は開発中です')">Cookie設定</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="alert('Cookie削除機能は開発中です')">全Cookie削除</button>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <small><i class="bi bi-exclamation-triangle me-2"></i>分析Cookieの使用には同意が必要です。同意しない場合でも基本機能はご利用いただけます。</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showManagementCenter() {
+            alert('予約管理センターは開発中です。現在の予約状況は個別にお問い合わせください。');
         }
     </script>
 
@@ -4335,10 +4851,18 @@
                     </div>
                     <p class="text-muted small">地域の専門ガイドと観光客をつなぐプラットフォーム。安全で信頼できる旅行体験をご提供します。</p>
                     <div class="d-flex gap-3">
-                        <a href="#" class="text-muted"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-youtube"></i></a>
+                        <a href="https://facebook.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Facebook">
+                            <i class="bi bi-facebook fs-5"></i>
+                        </a>
+                        <a href="https://twitter.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Twitter">
+                            <i class="bi bi-twitter fs-5"></i>
+                        </a>
+                        <a href="https://instagram.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Instagram">
+                            <i class="bi bi-instagram fs-5"></i>
+                        </a>
+                        <a href="https://youtube.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="YouTube">
+                            <i class="bi bi-youtube fs-5"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -4346,10 +4870,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サービス</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showGuideSearch()">ガイド検索</a></li>
-                        <li class="mb-2"><a href="guide-registration-form.html" class="text-muted text-decoration-none">ガイド登録</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showTouristRegistration()">観光客登録</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="openManagementCenter()">予約管理</a></li>
+                        <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">ガイド検索</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">ガイド登録</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showManagementCenter()">予約管理</a></li>
+                        <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
                     </ul>
                 </div>
 
@@ -4357,10 +4882,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サポート</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showFAQ()">よくある質問</a></li>
-                        <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none">お問い合わせ</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showSafety()">安全について</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showCancellation()">キャンセル規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showFAQ()">よくある質問</a></li>
+                        <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none hover-link">お問い合わせ</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showSafety()">安全について</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCancellation()">キャンセル規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showHelp()">ヘルプセンター</a></li>
                     </ul>
                 </div>
 
@@ -4368,10 +4894,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">法的事項</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showAbout()">会社概要</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showTerms()">利用規約</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showPrivacy()">プライバシーポリシー</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showCookies()">Cookie規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showAbout()">会社概要</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTerms()">利用規約</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showPrivacy()">プライバシーポリシー</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCookies()">Cookie規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCompliance()">法的遵守</a></li>
                     </ul>
                 </div>
 
@@ -4379,11 +4906,29 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="text-white mb-3">お問い合わせ</h6>
                     <div class="mb-3">
-                        <p class="text-muted small mb-1"><i class="bi bi-envelope me-2"></i>info@tomotrip.com</p>
-                        <p class="text-muted small mb-1"><i class="bi bi-telephone me-2"></i>03-1234-5678</p>
-                        <p class="text-muted small mb-3"><i class="bi bi-clock me-2"></i>平日 9:00-18:00</p>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:info@tomotrip.com" class="text-muted text-decoration-none hover-link">info@tomotrip.com</a>
+                        </p>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:03-1234-5678" class="text-muted text-decoration-none hover-link">03-1234-5678</a>
+                        </p>
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-clock me-2"></i>平日 9:00-18:00（土日祝休）
+                        </p>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt me-2"></i>〒100-0001 東京都千代田区千代田1-1
+                        </p>
                     </div>
-
+                    <div class="mt-3">
+                        <p class="text-muted small mb-2">緊急時サポート:</p>
+                        <p class="text-muted small mb-0">
+                            <i class="bi bi-telephone-fill me-2 text-warning"></i>
+                            <a href="tel:080-9999-8888" class="text-warning text-decoration-none hover-link">080-9999-8888</a>
+                            <small class="d-block text-muted">（24時間対応）</small>
+                        </p>
+                    </div>
                 </div>
             </div>
 
@@ -4488,6 +5033,22 @@
         
         body {
             padding-bottom: 0 !important;
+        }
+        
+        /* Footer hover effects */
+        .hover-link:hover {
+            color: #4ecdc4 !important;
+            transition: color 0.3s ease;
+        }
+        
+        .hover-social:hover {
+            color: #4ecdc4 !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .hover-social:hover i {
+            transform: scale(1.1);
         }
     </style>
 
