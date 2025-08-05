@@ -1553,15 +1553,18 @@
 
             // Check if user is registered
             const touristData = localStorage.getItem('touristData');
+            console.log('Tourist registration status:', touristData ? 'REGISTERED' : 'NOT REGISTERED');
             
             if (!touristData) {
                 // Show registration modal for unregistered users
+                console.log('Showing registration modal for unregistered user');
                 const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
                 registrationModal.show();
                 return;
             }
 
             // Show guide details for registered users
+            console.log('Showing guide detail modal for registered user');
             showGuideDetailModal(guide);
         }
 
