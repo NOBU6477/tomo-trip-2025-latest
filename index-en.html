@@ -3575,8 +3575,1093 @@
         }
     </script>
 
+    <!-- Footer Modal Functions -->
+    <script>
+        // Enhanced footer modal creation function
+        function createFooterModal() {
+            // Remove existing modal
+            const existingModal = document.getElementById('footerModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'footerModal';
+            modal.setAttribute('tabindex', '-1');
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                    <div class="modal-content bg-dark text-light">
+                        <div class="modal-header border-secondary">
+                            <h5 class="modal-title text-white" id="footerModalTitle"></h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body" id="footerModalBody">
+                        </div>
+                        <div class="modal-footer border-secondary">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            return modal;
+        }
+        
+        function showAbout() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'About TomoTrip';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip" style="height: 50px;" class="me-3">
+                        <h4 class="text-primary mb-0">TomoTrip</h4>
+                    </div>
+                    <p class="lead">Connecting travelers with trusted local guides for authentic and safe travel experiences across Japan.</p>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card bg-gradient h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-body text-white">
+                                <h5 class="card-title"><i class="bi bi-globe me-2"></i>Our Mission</h5>
+                                <p class="card-text">To bridge cultures and create meaningful connections between travelers and local communities through authentic experiences.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card bg-gradient h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <div class="card-body text-white">
+                                <h5 class="card-title"><i class="bi bi-shield-check me-2"></i>Our Promise</h5>
+                                <p class="card-text">Safe, reliable, and enriching travel experiences with vetted guides who are passionate about sharing their culture.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold">Company Information</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <small class="text-muted">Founded</small>
+                            <p class="mb-0">2024</p>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Headquarters</small>
+                            <p class="mb-0">Tokyo, Japan</p>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Languages</small>
+                            <p class="mb-0">Japanese, English</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showTerms() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Terms of Service';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Last Updated:</strong> January 2025
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">1. Service Overview</h6>
+                    <p class="small">TomoTrip is a platform connecting tourists with local guides in Japan. By using our service, you agree to these terms and conditions.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">2. User Responsibilities</h6>
+                    <ul class="small">
+                        <li>Provide accurate registration information</li>
+                        <li>Respect local customs and guidelines</li>
+                        <li>Follow safety instructions from guides</li>
+                        <li>Make payments as agreed</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">3. Guide Requirements</h6>
+                    <ul class="small">
+                        <li>Valid identification and certification</li>
+                        <li>Comprehensive local knowledge</li>
+                        <li>Professional conduct at all times</li>
+                        <li>Insurance coverage compliance</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">4. Payment Terms</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">Tourist Payments</h6>
+                                    <ul class="card-text small">
+                                        <li>Full payment required at booking</li>
+                                        <li>Credit card fees (3.6%) apply</li>
+                                        <li>Debit card processing (2.1%)</li>
+                                        <li>Secure payment processing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info">Guide Compensation</h6>
+                                    <ul class="card-text small">
+                                        <li>80% of tour fee after completion</li>
+                                        <li>20% platform service fee</li>
+                                        <li>Payment within 5 business days</li>
+                                        <li>Direct bank transfer</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <small><i class="bi bi-exclamation-triangle me-2"></i>These terms are subject to Japanese law. For disputes, Tokyo District Court has jurisdiction.</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showPrivacy() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Privacy Policy';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="alert alert-primary">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        <strong>Your privacy is our priority.</strong> This policy explains how we collect, use, and protect your personal information.
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Information We Collect</h6>
+                    
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">Personal Information</h6>
+                                    <ul class="card-text small">
+                                        <li>Name and contact details</li>
+                                        <li>Profile photos</li>
+                                        <li>Identity verification documents</li>
+                                        <li>Payment information</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">Usage Data</h6>
+                                    <ul class="card-text small">
+                                        <li>Website interaction data</li>
+                                        <li>Search preferences</li>
+                                        <li>Booking history</li>
+                                        <li>Communication records</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">How We Use Your Information</h6>
+                    <ul class="small">
+                        <li>Facilitate connections between tourists and guides</li>
+                        <li>Process payments and bookings</li>
+                        <li>Improve our service quality</li>
+                        <li>Ensure safety and security</li>
+                        <li>Comply with legal requirements</li>
+                    </ul>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Data Protection Rights</h6>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="card bg-light text-dark">
+                                <div class="card-body p-2">
+                                    <small class="fw-bold">Access</small>
+                                    <br><small>View your data</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light text-dark">
+                                <div class="card-body p-2">
+                                    <small class="fw-bold">Correction</small>
+                                    <br><small>Update incorrect information</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light text-dark">
+                                <div class="card-body p-2">
+                                    <small class="fw-bold">Deletion</small>
+                                    <br><small>Request data removal</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="card bg-light text-dark">
+                                <div class="card-body p-2">
+                                    <small class="fw-bold">Portability</small>
+                                    <br><small>Export your data</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <small><i class="bi bi-envelope me-2"></i>For privacy-related inquiries, contact us at privacy@tomotrip.com</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showFAQ() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Frequently Asked Questions';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <p class="lead">Find answers to common questions about using TomoTrip.</p>
+                </div>
+                
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item bg-dark border-secondary">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button bg-dark text-light border-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                <i class="bi bi-person-check me-2"></i>How do I book a guide?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-light">
+                                <p>Booking a guide is simple:</p>
+                                <ol>
+                                    <li>Browse available guides in your desired location</li>
+                                    <li>Check their profiles, reviews, and availability</li>
+                                    <li>Register as a tourist (one-time process)</li>
+                                    <li>Select your preferred guide and time slot</li>
+                                    <li>Complete payment to confirm your booking</li>
+                                </ol>
+                                <div class="alert alert-info mt-3">
+                                    <small><i class="bi bi-lightbulb me-2"></i>Tip: Book in advance, especially during peak seasons!</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item bg-dark border-secondary">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-dark text-light border-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                <i class="bi bi-credit-card me-2"></i>What payment methods do you accept?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-light">
+                                <p>We accept various payment methods for your convenience:</p>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-success">Credit Cards</h6>
+                                                <ul class="small">
+                                                    <li>Visa, Mastercard, JCB</li>
+                                                    <li>3.6% processing fee</li>
+                                                    <li>Instant confirmation</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6 class="card-title text-info">Debit Cards</h6>
+                                                <ul class="small">
+                                                    <li>All major debit cards</li>
+                                                    <li>2.1% processing fee</li>
+                                                    <li>Direct bank deduction</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item bg-dark border-secondary">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed bg-dark text-light border-0" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                <i class="bi bi-calendar-x me-2"></i>What is your cancellation policy?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-light">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="card border-success">
+                                            <div class="card-body text-center">
+                                                <div class="text-success h4">48+ hours</div>
+                                                <small>Full refund</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card border-warning">
+                                            <div class="card-body text-center">
+                                                <div class="text-warning h4">24-48 hours</div>
+                                                <small>50% refund</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card border-danger">
+                                            <div class="card-body text-center">
+                                                <div class="text-danger h4">&lt;24 hours</div>
+                                                <small>No refund</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="mt-3 small">Refunds are processed within 5-7 business days to your original payment method.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showSafety() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Safety & Insurance';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="alert alert-success">
+                        <i class="bi bi-shield-check me-2"></i>
+                        <strong>Your safety is our top priority.</strong> We implement multiple layers of protection for all users.
+                    </div>
+                </div>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-body text-white">
+                                <h5 class="card-title"><i class="bi bi-person-check me-2"></i>Guide Verification</h5>
+                                <ul class="card-text">
+                                    <li>Identity verification required</li>
+                                    <li>Background checks conducted</li>
+                                    <li>Local certification validation</li>
+                                    <li>Regular performance reviews</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <div class="card-body text-white">
+                                <h5 class="card-title"><i class="bi bi-shield-lock me-2"></i>Insurance Coverage</h5>
+                                <ul class="card-text">
+                                    <li>Comprehensive liability insurance</li>
+                                    <li>Medical emergency coverage</li>
+                                    <li>Activity-specific protection</li>
+                                    <li>24/7 emergency support</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Safety Guidelines</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">For Tourists</h6>
+                                    <ul class="card-text small">
+                                        <li>Share your itinerary with someone</li>
+                                        <li>Keep emergency contacts handy</li>
+                                        <li>Follow guide instructions</li>
+                                        <li>Stay aware of your surroundings</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">For Guides</h6>
+                                    <ul class="card-text small">
+                                        <li>Conduct safety briefings</li>
+                                        <li>Monitor group dynamics</li>
+                                        <li>Maintain first aid certification</li>
+                                        <li>Report incidents immediately</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <small><i class="bi bi-telephone me-2"></i><strong>Emergency Contact:</strong> 080-9999-8888 (24/7 Support)</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showCancellation() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Cancellation Policy';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Flexible cancellation options</strong> designed to accommodate unexpected changes while protecting both tourists and guides.
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Cancellation Timeline</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card border-success h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-success display-6 mb-2"><i class="bi bi-check-circle"></i></div>
+                                    <h6 class="card-title text-success">48+ Hours Before</h6>
+                                    <p class="card-text">
+                                        <strong>100% Refund</strong><br>
+                                        <small class="text-muted">Full amount returned to original payment method</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card border-warning h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-warning display-6 mb-2"><i class="bi bi-exclamation-circle"></i></div>
+                                    <h6 class="card-title text-warning">24-48 Hours Before</h6>
+                                    <p class="card-text">
+                                        <strong>50% Refund</strong><br>
+                                        <small class="text-muted">Partial compensation for guide preparation</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card border-danger h-100">
+                                <div class="card-body text-center">
+                                    <div class="text-danger display-6 mb-2"><i class="bi bi-x-circle"></i></div>
+                                    <h6 class="card-title text-danger">Less than 24 Hours</h6>
+                                    <p class="card-text">
+                                        <strong>No Refund</strong><br>
+                                        <small class="text-muted">Guide compensation protection</small>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Special Circumstances</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info">Weather Conditions</h6>
+                                    <ul class="card-text small">
+                                        <li>Typhoon/severe weather warnings</li>
+                                        <li>Government-issued travel advisories</li>
+                                        <li>Full refund provided</li>
+                                        <li>Rescheduling options available</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">Medical Emergencies</h6>
+                                    <ul class="card-text small">
+                                        <li>Tourist illness or injury</li>
+                                        <li>Guide inability to conduct tour</li>
+                                        <li>Medical documentation required</li>
+                                        <li>Case-by-case evaluation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">How to Cancel</h6>
+                    <ol class="small">
+                        <li>Log into your account or use booking confirmation email</li>
+                        <li>Navigate to "My Bookings" section</li>
+                        <li>Select the booking you wish to cancel</li>
+                        <li>Click "Cancel Booking" and confirm</li>
+                        <li>Receive cancellation confirmation and refund timeline</li>
+                    </ol>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <small><i class="bi bi-clock me-2"></i>Refunds are processed within 5-7 business days. For urgent cancellations, contact our support team.</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showHelp() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Help Center';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <p class="lead">Need assistance? We're here to help you make the most of your TomoTrip experience.</p>
+                </div>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                            <div class="card-body text-white">
+                                <h5 class="card-title"><i class="bi bi-headset me-2"></i>Live Chat Support</h5>
+                                <p class="card-text">Get instant help from our support team during business hours.</p>
+                                <button class="btn btn-light" onclick="window.open('chat.html', '_blank')">
+                                    <i class="bi bi-chat-dots me-2"></i>Start Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <div class="card-body text-white">
+                                <h5 class="card-title"><i class="bi bi-envelope me-2"></i>Email Support</h5>
+                                <p class="card-text">Send us detailed questions and we'll respond within 24 hours.</p>
+                                <button class="btn btn-light" onclick="window.location.href='mailto:support@tomotrip.com'">
+                                    <i class="bi bi-envelope me-2"></i>Send Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Quick Help Topics</h6>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="list-group">
+                                <div class="list-group-item bg-dark text-light border-secondary">
+                                    <h6 class="mb-1">For Tourists</h6>
+                                    <small>
+                                        <a href="#" class="text-info text-decoration-none d-block" onclick="showFAQ()">How to book a guide</a>
+                                        <a href="#" class="text-info text-decoration-none d-block" onclick="showCancellation()">Cancellation policy</a>
+                                        <a href="#" class="text-info text-decoration-none d-block" onclick="showSafety()">Safety guidelines</a>
+                                        <a href="#" class="text-info text-decoration-none d-block" onclick="alert('Payment help coming soon')">Payment issues</a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="list-group">
+                                <div class="list-group-item bg-dark text-light border-secondary">
+                                    <h6 class="mb-1">For Guides</h6>
+                                    <small>
+                                        <a href="#" class="text-success text-decoration-none d-block" onclick="alert('Guide registration help coming soon')">Registration process</a>
+                                        <a href="#" class="text-success text-decoration-none d-block" onclick="alert('Profile optimization tips coming soon')">Profile optimization</a>
+                                        <a href="#" class="text-success text-decoration-none d-block" onclick="alert('Earnings dashboard coming soon')">Payment schedule</a>
+                                        <a href="#" class="text-success text-decoration-none d-block" onclick="alert('Guide resources coming soon')">Best practices</a>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Contact Information</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-telephone text-primary fs-4"></i>
+                                    <h6 class="mt-2">Phone Support</h6>
+                                    <small>+81-3-1234-5678<br>Mon-Fri 9:00-18:00 JST</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-envelope text-success fs-4"></i>
+                                    <h6 class="mt-2">Email</h6>
+                                    <small>support@tomotrip.com<br>24h response time</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-exclamation-triangle text-warning fs-4"></i>
+                                    <h6 class="mt-2">Emergency</h6>
+                                    <small>080-9999-8888<br>24/7 Support</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showCompliance() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Legal Compliance';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <div class="alert alert-success">
+                        <i class="bi bi-shield-check me-2"></i>
+                        <strong>Full Legal Compliance</strong> - TomoTrip operates in accordance with Japanese and international laws.
+                    </div>
+                </div>
+                
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary"><i class="bi bi-building me-2"></i>Business Registration</h5>
+                                <ul class="card-text small">
+                                    <li>Registered in Tokyo, Japan</li>
+                                    <li>Business License: TK-2024-001</li>
+                                    <li>Tourism Agency Registration</li>
+                                    <li>Regular compliance audits</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title text-success"><i class="bi bi-shield-lock me-2"></i>Data Protection</h5>
+                                <ul class="card-text small">
+                                    <li>GDPR compliance (EU users)</li>
+                                    <li>Japanese Personal Information Protection Act</li>
+                                    <li>Secure data encryption</li>
+                                    <li>Regular security assessments</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Industry Certifications</h6>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="card border-success">
+                                <div class="card-body text-center">
+                                    <div class="text-success h4"><i class="bi bi-award"></i></div>
+                                    <h6>Tourism Quality</h6>
+                                    <small>Certified by Japan Tourism Agency</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card border-info">
+                                <div class="card-body text-center">
+                                    <div class="text-info h4"><i class="bi bi-lock"></i></div>
+                                    <h6>Security Standards</h6>
+                                    <small>ISO 27001 Certified</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card border-warning">
+                                <div class="card-body text-center">
+                                    <div class="text-warning h4"><i class="bi bi-credit-card"></i></div>
+                                    <h6>Payment Security</h6>
+                                    <small>PCI DSS Compliant</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Legal Framework</h6>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Law/Regulation</th>
+                                    <th>Compliance Status</th>
+                                    <th>Last Audit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tourism Business Act</td>
+                                    <td><span class="badge bg-success">Compliant</span></td>
+                                    <td>Jan 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>Consumer Protection Act</td>
+                                    <td><span class="badge bg-success">Compliant</span></td>
+                                    <td>Jan 2025</td>
+                                </tr>
+                                <tr>
+                                    <td>Data Protection Laws</td>
+                                    <td><span class="badge bg-success">Compliant</span></td>
+                                    <td>Dec 2024</td>
+                                </tr>
+                                <tr>
+                                    <td>Payment Services Act</td>
+                                    <td><span class="badge bg-success">Compliant</span></td>
+                                    <td>Jan 2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <small><i class="bi bi-info-circle me-2"></i>For legal inquiries or compliance questions, contact our legal team at legal@tomotrip.com</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showCookies() {
+            const modal = createFooterModal();
+            document.getElementById('footerModalTitle').textContent = 'Cookie Policy';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="mb-4">
+                    <h6 class="fw-bold">What are Cookies?</h6>
+                    <p class="small">Cookies are small text files that websites store on your computer to improve your browsing experience and provide better services.</p>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Types of Cookies We Use</h6>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-success">Essential Cookies</h6>
+                                    <p class="card-text small">Required for basic website functionality</p>
+                                    <ul class="small">
+                                        <li>Login session management</li>
+                                        <li>Security features</li>
+                                        <li>Settings preservation</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h6 class="card-title text-info">Analytics Cookies</h6>
+                                    <p class="card-text small">Help us improve our services</p>
+                                    <ul class="small">
+                                        <li>Google Analytics</li>
+                                        <li>Usage statistics</li>
+                                        <li>Performance monitoring</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h6 class="fw-bold">Managing Cookie Settings</h6>
+                    <p class="small">You can control cookie acceptance through your browser settings. However, disabling essential cookies may affect website functionality.</p>
+                    
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="alert('Cookie settings panel under development')">Cookie Settings</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="alert('Cookie deletion feature under development')">Clear All Cookies</button>
+                    </div>
+                </div>
+                
+                <div class="alert alert-warning">
+                    <small><i class="bi bi-exclamation-triangle me-2"></i>Analytics cookies require your consent. You can use our basic features without accepting analytics cookies.</small>
+                </div>
+            `;
+            new bootstrap.Modal(modal).show();
+        }
+        
+        function showManagementCenter() {
+            alert('Booking Management Center is under development. Please contact us directly for current booking inquiries.');
+        }
+    </script>
+
+    <!-- Critical Footer Fix Script -->
+    <script>
+        console.log('🔍 FOOTER DEBUG SCRIPT LOADED - EMERGENCY MODE (EN)');
+        
+        // Immediate footer check
+        function checkFooterImmediately() {
+            const footer = document.querySelector('footer#main-footer');
+            console.log('🔍 Immediate footer check (EN):', !!footer);
+            if (footer) {
+                console.log('✅ Footer element found - applying comprehensive styles (EN)');
+                
+                // Force footer container styles
+                footer.style.backgroundColor = '#212529';
+                footer.style.color = 'white';
+                footer.style.padding = '3rem 0';
+                footer.style.marginTop = '2rem';
+                footer.style.position = 'relative';
+                footer.style.zIndex = '100';
+                footer.style.width = '100%';
+                footer.style.clear = 'both';
+                footer.style.display = 'block';
+                footer.style.visibility = 'visible';
+                footer.style.opacity = '1';
+                footer.classList.add('footer-forced-visible');
+                
+                // Force container and row visibility
+                const container = footer.querySelector('.container');
+                if (container) {
+                    container.style.display = 'block';
+                    container.style.visibility = 'visible';
+                    container.style.opacity = '1';
+                    container.style.maxWidth = '1200px';
+                    container.style.margin = '0 auto';
+                    container.style.padding = '0 15px';
+                }
+                
+                const row = footer.querySelector('.row');
+                if (row) {
+                    row.style.display = 'flex';
+                    row.style.flexWrap = 'wrap';
+                    row.style.margin = '0 -15px';
+                    row.style.visibility = 'visible';
+                    row.style.opacity = '1';
+                }
+                
+                // Force all columns to be visible
+                const columns = footer.querySelectorAll('[class*="col-"]');
+                columns.forEach((col, index) => {
+                    console.log(`✅ Fixing column ${index + 1} (EN)`);
+                    col.style.display = 'block';
+                    col.style.visibility = 'visible';
+                    col.style.opacity = '1';
+                    col.style.padding = '0 15px';
+                    col.style.marginBottom = '2rem';
+                    col.style.flex = '1 1 auto';
+                    col.style.minWidth = '200px';
+                });
+                
+                // Force all text elements to be visible with proper colors
+                const headings = footer.querySelectorAll('h5, h6');
+                headings.forEach((h, index) => {
+                    console.log(`✅ Fixing heading ${index + 1} (EN): ${h.textContent}`);
+                    h.style.color = 'white';
+                    h.style.fontWeight = 'bold';
+                    h.style.marginBottom = '1rem';
+                    h.style.display = 'block';
+                    h.style.visibility = 'visible';
+                    h.style.opacity = '1';
+                });
+                
+                const textElements = footer.querySelectorAll('p, li, a');
+                textElements.forEach((el, index) => {
+                    if (index < 10) console.log(`✅ Fixing text element ${index + 1} (EN): ${el.textContent.substring(0, 30)}...`);
+                    el.style.color = '#adb5bd';
+                    el.style.fontSize = '14px';
+                    el.style.display = 'block';
+                    el.style.visibility = 'visible';
+                    el.style.opacity = '1';
+                });
+                
+                const lists = footer.querySelectorAll('ul');
+                lists.forEach((ul, index) => {
+                    console.log(`✅ Fixing list ${index + 1} (EN)`);
+                    ul.style.listStyle = 'none';
+                    ul.style.padding = '0';
+                    ul.style.margin = '0';
+                    ul.style.display = 'block';
+                    ul.style.visibility = 'visible';
+                    ul.style.opacity = '1';
+                });
+                
+                console.log('✅ Footer comprehensive styling complete (EN)');
+            } else {
+                console.error('❌ Footer element not found immediately (EN)');
+            }
+        }
+        
+        // Emergency: Force run immediately multiple times
+        console.log('🚨 EMERGENCY: Running footer fix immediately (EN)');
+        checkFooterImmediately();
+        
+        // Force run after short delay
+        setTimeout(function() {
+            console.log('🚨 EMERGENCY: 100ms delay footer fix (EN)');
+            checkFooterImmediately();
+        }, 100);
+        
+        // Also run on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DOMContentLoaded - checking footer again (EN)');
+            checkFooterImmediately();
+        });
+        
+        // Run on window load
+        window.addEventListener('load', function() {
+            console.log('🔍 Window loaded - final footer check (EN)');
+            checkFooterImmediately();
+        });
+        
+        // Multiple fallback timeouts
+        setTimeout(function() {
+            console.log('🔍 500ms timeout fallback - checking footer (EN)');
+            checkFooterImmediately();
+        }, 500);
+        
+        setTimeout(function() {
+            console.log('🔍 1000ms timeout fallback - checking footer (EN)');
+            checkFooterImmediately();
+        }, 1000);
+        
+        setTimeout(function() {
+            console.log('🔍 2000ms timeout fallback - checking footer (EN)');
+            checkFooterImmediately();
+        }, 2000);
+    </script>
+    
+    <!-- Footer Force CSS -->
+    <style>
+        .footer-forced-visible {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1000 !important;
+            min-height: 400px !important;
+        }
+        
+        /* Footer Emergency Fix */
+        #main-footer {
+            background-color: #212529 !important;
+            color: white !important;
+            padding: 3rem 0 !important;
+            margin-top: 2rem !important;
+            position: relative !important;
+            z-index: 100 !important;
+            width: 100% !important;
+            clear: both !important;
+        }
+        
+        #main-footer .container {
+            max-width: 1200px !important;
+            margin: 0 auto !important;
+            padding: 0 15px !important;
+        }
+        
+        #main-footer .row {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            margin: 0 -15px !important;
+        }
+        
+        #main-footer .col-lg-3,
+        #main-footer .col-lg-2,
+        #main-footer .col-md-6 {
+            padding: 0 15px !important;
+            margin-bottom: 2rem !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            flex: 1 1 auto !important;
+            min-width: 200px !important;
+        }
+        
+        #main-footer h5,
+        #main-footer h6 {
+            color: white !important;
+            font-weight: bold !important;
+            margin-bottom: 1rem !important;
+        }
+        
+        #main-footer p,
+        #main-footer li,
+        #main-footer a {
+            color: #adb5bd !important;
+            font-size: 14px !important;
+        }
+        
+        #main-footer a:hover {
+            color: #4ecdc4 !important;
+        }
+        
+        #main-footer .text-white {
+            color: white !important;
+        }
+        
+        #main-footer .text-muted {
+            color: #adb5bd !important;
+        }
+        
+        #main-footer ul {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        #main-footer li {
+            margin-bottom: 0.5rem !important;
+        }
+        
+        .hover-social:hover {
+            color: #4ecdc4 !important;
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .hover-link:hover {
+            color: #4ecdc4 !important;
+            text-decoration: underline !important;
+        }
+    </style>
+
     <!-- Footer -->
-    <footer class="bg-dark text-light py-5 mt-5">
+    <footer id="main-footer" style="background-color: #212529 !important; color: white !important; padding: 3rem 0 !important; margin-top: 2rem !important; position: relative !important; z-index: 100 !important; width: 100% !important; clear: both !important; display: block !important; visibility: visible !important; opacity: 1 !important;">
         <div class="container">
             <div class="row">
                 <!-- Company Info -->
@@ -3587,10 +4672,18 @@
                     </div>
                     <p class="text-muted small">Connecting travelers with trusted local guides for authentic and safe travel experiences across Japan.</p>
                     <div class="d-flex gap-3">
-                        <a href="#" class="text-muted"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="text-muted"><i class="bi bi-youtube"></i></a>
+                        <a href="https://facebook.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Facebook">
+                            <i class="bi bi-facebook fs-5"></i>
+                        </a>
+                        <a href="https://twitter.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Twitter">
+                            <i class="bi bi-twitter fs-5"></i>
+                        </a>
+                        <a href="https://instagram.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Instagram">
+                            <i class="bi bi-instagram fs-5"></i>
+                        </a>
+                        <a href="https://youtube.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="YouTube">
+                            <i class="bi bi-youtube fs-5"></i>
+                        </a>
                     </div>
                 </div>
 
@@ -3598,10 +4691,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">Services</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showGuideSearch()">Find Guides</a></li>
-                        <li class="mb-2"><a href="guide-registration-form.html" class="text-muted text-decoration-none">Become a Guide</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showTouristRegistration()">Tourist Registration</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="openManagementCenter()">Booking Management</a></li>
+                        <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">Find Guides</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">Become a Guide</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTouristRegistrationModal()">Tourist Registration</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showManagementCenter()">Booking Management</a></li>
+                        <li class="mb-2"><a href="sponsor-registration-en.html" class="text-muted text-decoration-none hover-link">Sponsor Registration</a></li>
                     </ul>
                 </div>
 
@@ -3609,10 +4703,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">Support</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showFAQ()">FAQ</a></li>
-                        <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none">Contact Us</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showSafety()">Safety & Insurance</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showCancellation()">Cancellation Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showFAQ()">FAQ</a></li>
+                        <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none hover-link">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showSafety()">Safety & Insurance</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCancellation()">Cancellation Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showHelp()">Help Center</a></li>
                     </ul>
                 </div>
 
@@ -3620,10 +4715,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">Legal</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showAbout()">About Us</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showTerms()">Terms of Service</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showPrivacy()">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showCookies()">Cookie Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showAbout()">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTerms()">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showPrivacy()">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCookies()">Cookie Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCompliance()">Legal Compliance</a></li>
                     </ul>
                 </div>
 
@@ -3631,11 +4727,29 @@
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="text-white mb-3">Contact Info</h6>
                     <div class="mb-3">
-                        <p class="text-muted small mb-1"><i class="bi bi-envelope me-2"></i>info@tomotrip.com</p>
-                        <p class="text-muted small mb-1"><i class="bi bi-telephone me-2"></i>+81-3-1234-5678</p>
-                        <p class="text-muted small mb-3"><i class="bi bi-clock me-2"></i>Mon-Fri 9:00-18:00 JST</p>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:info@tomotrip.com" class="text-muted text-decoration-none hover-link">info@tomotrip.com</a>
+                        </p>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-telephone me-2"></i>
+                            <a href="tel:+81-3-1234-5678" class="text-muted text-decoration-none hover-link">+81-3-1234-5678</a>
+                        </p>
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-clock me-2"></i>Mon-Fri 9:00-18:00 JST
+                        </p>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt me-2"></i>〒100-0001 Tokyo, Chiyoda, Chiyoda 1-1
+                        </p>
                     </div>
-
+                    <div class="mt-3">
+                        <p class="text-muted small mb-2">Emergency Support:</p>
+                        <p class="text-warning small">
+                            <i class="bi bi-telephone-fill me-2"></i>
+                            <a href="tel:080-9999-8888" class="text-warning text-decoration-none hover-link">080-9999-8888</a>
+                            <br><small class="text-muted">(24/7 Available)</small>
+                        </p>
+                    </div>
                 </div>
             </div>
 
