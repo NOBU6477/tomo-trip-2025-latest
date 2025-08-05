@@ -1589,9 +1589,11 @@
 
         // Show guide detail modal
         function showGuideDetailModal(guide) {
-            const detailModal = document.createElement('div');
-            detailModal.className = 'modal fade';
-            detailModal.innerHTML = `
+            console.log('🔧 Creating guide detail modal for:', guide.name);
+            try {
+                const detailModal = document.createElement('div');
+                detailModal.className = 'modal fade';
+                detailModal.innerHTML = `
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                     <div class="modal-content" style="border-radius: 15px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
                         <div class="modal-header border-0" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 15px 15px 0 0;">
@@ -1657,14 +1659,27 @@
                 </div>
             `;
             
+            console.log('📱 Appending modal to DOM...');
             document.body.appendChild(detailModal);
+            
+            console.log('🔧 Creating Bootstrap modal instance...');
             const modal = new bootstrap.Modal(detailModal);
+            
+            console.log('🚀 Showing modal...');
             modal.show();
+            
+            console.log('✅ Modal shown successfully');
             
             // Clean up modal after hiding
             detailModal.addEventListener('hidden.bs.modal', function() {
+                console.log('🗑️ Cleaning up modal...');
                 detailModal.remove();
             });
+            
+            } catch (error) {
+                console.error('❌ Error creating guide detail modal:', error);
+                alert('Error showing guide details: ' + error.message);
+            }
         }
 
         // Booking and contact functions
