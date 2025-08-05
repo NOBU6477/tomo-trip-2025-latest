@@ -961,7 +961,7 @@
                     e.stopPropagation();
                     const guideId = this.getAttribute('data-guide-id');
                     toggleBookmark(guideId);
-                });
+                }, { passive: false });
             });
 
             // Compare buttons
@@ -970,7 +970,7 @@
                     e.stopPropagation();
                     const guideId = this.getAttribute('data-guide-id');
                     toggleComparison(guideId);
-                });
+                }, { passive: false });
             });
 
             // View detail buttons
@@ -992,10 +992,10 @@
             document.querySelectorAll('.guide-card').forEach(card => {
                 card.addEventListener('mouseenter', function() {
                     this.style.transform = 'translateY(-5px)';
-                });
+                }, { passive: true });
                 card.addEventListener('mouseleave', function() {
                     this.style.transform = 'translateY(0)';
-                });
+                }, { passive: true });
             });
         }
 
@@ -4273,23 +4273,58 @@
         }
     </script>
 
-    <!-- Debug Footer Visibility -->
+    <!-- Critical Footer Fix Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ensure footer is visible
+        console.log('🔍 FOOTER DEBUG SCRIPT LOADED');
+        
+        // Immediate footer check
+        function checkFooterImmediately() {
             const footer = document.querySelector('footer');
+            console.log('🔍 Immediate footer check:', !!footer);
             if (footer) {
-                console.log('✅ Footer element found');
-                footer.style.display = 'block';
-                footer.style.visibility = 'visible';
+                console.log('✅ Footer element found - applying styles');
+                footer.style.display = 'block !important';
+                footer.style.visibility = 'visible !important';
+                footer.style.opacity = '1 !important';
+                footer.style.position = 'relative !important';
+                footer.style.zIndex = '1000 !important';
+                footer.classList.add('footer-forced-visible');
+                console.log('✅ Footer styles applied');
             } else {
-                console.error('❌ Footer element not found');
+                console.error('❌ Footer element not found immediately');
             }
+        }
+        
+        // Run immediately
+        checkFooterImmediately();
+        
+        // Also run on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔍 DOMContentLoaded - checking footer again');
+            checkFooterImmediately();
         });
+        
+        // Fallback with timeout
+        setTimeout(function() {
+            console.log('🔍 Timeout fallback - checking footer');
+            checkFooterImmediately();
+        }, 1000);
     </script>
+    
+    <!-- Footer Force CSS -->
+    <style>
+        .footer-forced-visible {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 1000 !important;
+            min-height: 400px !important;
+        }
+    </style>
 
     <!-- Footer -->
-    <footer class="bg-dark text-light py-5 mt-5" style="min-height: 400px; display: block !important; visibility: visible !important;">
+    <footer id="main-footer" class="bg-dark text-light py-5 mt-5" style="min-height: 400px !important; display: block !important; visibility: visible !important; opacity: 1 !important; position: relative !important; z-index: 1000 !important; clear: both !important;">
         <div class="container">
             <div class="row">
                 <!-- Company Info -->
@@ -4363,6 +4398,98 @@
             </div>
         </div>
     </footer>
+
+    <!-- Final Footer Force Script - Must be last -->
+    <script>
+        console.log('🚨 FINAL FOOTER FORCE SCRIPT EXECUTING');
+        
+        // Absolutely force footer visibility
+        const forceFooterVisible = function() {
+            const footer = document.getElementById('main-footer') || document.querySelector('footer');
+            console.log('🔍 Final footer check:', !!footer);
+            
+            if (footer) {
+                // Apply multiple layers of forced visibility
+                footer.style.cssText = `
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    position: relative !important;
+                    z-index: 9999 !important;
+                    min-height: 400px !important;
+                    background-color: #212529 !important;
+                    color: #f8f9fa !important;
+                    padding: 3rem 0 !important;
+                    margin-top: 3rem !important;
+                    clear: both !important;
+                    width: 100% !important;
+                `;
+                
+                footer.classList.add('footer-force-visible');
+                
+                // Force parent containers to be visible too
+                let parent = footer.parentElement;
+                while (parent && parent !== document.body) {
+                    parent.style.display = 'block';
+                    parent.style.visibility = 'visible';
+                    parent = parent.parentElement;
+                }
+                
+                console.log('✅ FOOTER FORCED VISIBLE WITH EXTREME MEASURES');
+                console.log('Footer computed styles:', window.getComputedStyle(footer).display);
+                
+                return true;
+            } else {
+                console.error('❌ FOOTER ELEMENT COMPLETELY MISSING FROM DOM');
+                return false;
+            }
+        };
+        
+        // Execute immediately
+        forceFooterVisible();
+        
+        // Execute after a delay
+        setTimeout(forceFooterVisible, 100);
+        setTimeout(forceFooterVisible, 500);
+        setTimeout(forceFooterVisible, 1000);
+        
+        // Add to window load event as final fallback
+        window.addEventListener('load', function() {
+            console.log('🔍 Window load - final footer force attempt');
+            forceFooterVisible();
+        });
+        
+        console.log('🚨 FINAL FOOTER FORCE SCRIPT COMPLETE');
+    </script>
+
+    <!-- Additional CSS Force -->
+    <style>
+        #main-footer,
+        footer {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            position: relative !important;
+            z-index: 9999 !important;
+            min-height: 400px !important;
+            background-color: #212529 !important;
+            color: #f8f9fa !important;
+            padding: 3rem 0 !important;
+            margin-top: 3rem !important;
+            clear: both !important;
+            width: 100% !important;
+        }
+        
+        .footer-force-visible {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
+        body {
+            padding-bottom: 0 !important;
+        }
+    </style>
 
 </body>
 </html>
