@@ -3399,7 +3399,263 @@
                 window.location.href = `/?guideId=${guideId}`;
             }
         }
+
+        // Footer Functions
+        function showAbout() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'About Us';
+            document.getElementById('footerModalBody').innerHTML = `
+                <h6>About TomoTrip</h6>
+                <p>TomoTrip is an innovative platform connecting travelers with trusted local guides across Japan.</p>
+                <h6>Our Mission</h6>
+                <ul>
+                    <li>Discover and nurture specialized local guides who showcase regional attractions</li>
+                    <li>Provide safe and enriching travel experiences for tourists</li>
+                    <li>Promote local economic development and cultural exchange</li>
+                    <li>contribute to sustainable tourism industry growth</li>
+                </ul>
+                <h6>Service Launch</h6>
+                <p>Operating nationwide across all 47 prefectures since 2025</p>
+            `;
+            modal.show();
+        }
+
+        function showTerms() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'Terms of Service';
+            document.getElementById('footerModalBody').innerHTML = `
+                <h6>Article 1: Service Overview</h6>
+                <p>This service is a matching platform between guides and tourists.</p>
+                <h6>Article 2: User Responsibilities</h6>
+                <ul>
+                    <li>Provide accurate information during registration</li>
+                    <li>Show consideration for other users</li>
+                    <li>Comply with applicable laws and regulations</li>
+                </ul>
+                <h6>Article 3: Prohibited Activities</h6>
+                <ul>
+                    <li>Providing false information</li>
+                    <li>Business interference activities</li>
+                    <li>Activities that cause inconvenience to third parties</li>
+                </ul>
+                <p class="text-muted small">Last updated: January 1, 2025</p>
+            `;
+            modal.show();
+        }
+
+        function showPrivacy() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'Privacy Policy';
+            document.getElementById('footerModalBody').innerHTML = `
+                <h6>Personal Information Handling</h6>
+                <p>TomoTrip uses your personal information for the following purposes:</p>
+                <ul>
+                    <li>Service provision and operation</li>
+                    <li>Customer support</li>
+                    <li>Safety and security</li>
+                    <li>Service improvement analysis</li>
+                </ul>
+                <h6>Third Party Disclosure</h6>
+                <p>We do not provide personal information to third parties without your consent, except as required by law.</p>
+                <h6>Contact</h6>
+                <p>For privacy-related inquiries: privacy@tomotrip.com</p>
+            `;
+            modal.show();
+        }
+
+        function showFAQ() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'Frequently Asked Questions';
+            document.getElementById('footerModalBody').innerHTML = `
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq1">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
+                                Is guide registration free?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, guide registration is completely free. Commission is only 20% upon successful booking.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
+                                When do cancellation fees apply?
+                            </button>
+                        </h2>
+                        <div id="faqCollapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Up to 7 days before: Free<br>
+                                3-6 days before: 50%<br>
+                                2 days or less: 100%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            modal.show();
+        }
+
+        function showSafety() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'Safety & Insurance';
+            document.getElementById('footerModalBody').innerHTML = `
+                <h6>Safety Measures</h6>
+                <ul>
+                    <li>Identity verification for all guides</li>
+                    <li>24/7 emergency support system</li>
+                    <li>GPS location sharing feature</li>
+                    <li>Guide rating and review system</li>
+                </ul>
+                <h6>Insurance Coverage</h6>
+                <p>Travel accident insurance applies to all tours.</p>
+                <h6>Emergency Contact</h6>
+                <p>24-hour support: +81-80-1234-5678</p>
+            `;
+            modal.show();
+        }
+
+        function showCancellation() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'Cancellation Policy';
+            document.getElementById('footerModalBody').innerHTML = `
+                <h6>Cancellation Fees</h6>
+                <table class="table table-sm">
+                    <tr><td>Up to 7 days before</td><td>Free</td></tr>
+                    <tr><td>3-6 days before</td><td>50% of fee</td></tr>
+                    <tr><td>1-2 days before / Same day</td><td>100% of fee</td></tr>
+                </table>
+                <h6>Weather Cancellations</h6>
+                <p>Full refund provided for weather-related cancellations.</p>
+                <h6>Refund Method</h6>
+                <p>Credit card refunds are processed within 5-7 business days.</p>
+            `;
+            modal.show();
+        }
+
+        function showCookies() {
+            const modal = new bootstrap.Modal(document.getElementById('footerModal') || createFooterModal());
+            document.getElementById('footerModalTitle').textContent = 'Cookie Policy';
+            document.getElementById('footerModalBody').innerHTML = `
+                <h6>Cookie Usage</h6>
+                <ul>
+                    <li>Save user preferences</li>
+                    <li>Maintain login status</li>
+                    <li>Analyze site usage</li>
+                    <li>Provide personalized experiences</li>
+                </ul>
+                <h6>Changing Cookie Settings</h6>
+                <p>You can disable cookies in your browser settings, but some features may be limited.</p>
+            `;
+            modal.show();
+        }
+
+        function createFooterModal() {
+            const modalHTML = `
+                <div class="modal fade" id="footerModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="footerModalTitle"></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="footerModalBody"></div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            return document.getElementById('footerModal');
+        }
     </script>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <!-- Company Info -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip" style="height: 40px;" class="me-2">
+                        <h5 class="mb-0">TomoTrip</h5>
+                    </div>
+                    <p class="text-muted small">Connecting travelers with trusted local guides for authentic and safe travel experiences across Japan.</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-twitter"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-muted"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Services -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Services</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showGuideSearch()">Find Guides</a></li>
+                        <li class="mb-2"><a href="guide-registration-form.html" class="text-muted text-decoration-none">Become a Guide</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showTouristRegistration()">Tourist Registration</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="openManagementCenter()">Booking Management</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Support</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showFAQ()">FAQ</a></li>
+                        <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none">Contact Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showSafety()">Safety & Insurance</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showCancellation()">Cancellation Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Legal</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showAbout()">About Us</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showTerms()">Terms of Service</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showPrivacy()">Privacy Policy</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none" onclick="showCookies()">Cookie Policy</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact & Language -->
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Contact Info</h6>
+                    <div class="mb-3">
+                        <p class="text-muted small mb-1"><i class="bi bi-envelope me-2"></i>info@tomotrip.com</p>
+                        <p class="text-muted small mb-1"><i class="bi bi-telephone me-2"></i>+81-3-1234-5678</p>
+                        <p class="text-muted small mb-3"><i class="bi bi-clock me-2"></i>Mon-Fri 9:00-18:00 JST</p>
+                    </div>
+                    <div class="mb-3">
+                        <h6 class="text-white mb-2">Language</h6>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-light btn-sm" onclick="window.location.href='index.html'">日本語</button>
+                            <button class="btn btn-outline-light btn-sm" onclick="window.location.href='index-en.html'">English</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4 border-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="text-muted small mb-0">&copy; 2025 TomoTrip. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted small mb-0">Made with ❤️ for travelers and local guides</p>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
