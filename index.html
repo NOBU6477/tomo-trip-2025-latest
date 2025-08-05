@@ -985,7 +985,7 @@
                     } else {
                         console.error('viewGuideDetail function not found');
                     }
-                });
+                }, { passive: false });
             });
 
             // Card hover effects
@@ -4273,8 +4273,23 @@
         }
     </script>
 
+    <!-- Debug Footer Visibility -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure footer is visible
+            const footer = document.querySelector('footer');
+            if (footer) {
+                console.log('✅ Footer element found');
+                footer.style.display = 'block';
+                footer.style.visibility = 'visible';
+            } else {
+                console.error('❌ Footer element not found');
+            }
+        });
+    </script>
+
     <!-- Footer -->
-    <footer class="bg-dark text-light py-5 mt-5">
+    <footer class="bg-dark text-light py-5 mt-5" style="min-height: 400px; display: block !important; visibility: visible !important;">
         <div class="container">
             <div class="row">
                 <!-- Company Info -->
