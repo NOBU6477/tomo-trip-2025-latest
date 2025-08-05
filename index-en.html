@@ -1584,7 +1584,13 @@
 
             // Show guide details for registered users
             console.log('Showing guide detail modal for registered user');
-            showGuideDetailModal(guide);
+            console.log('About to call showGuideDetailModal with guide:', guide);
+            try {
+                showGuideDetailModal(guide);
+            } catch (error) {
+                console.error('❌ Error calling showGuideDetailModal:', error);
+                alert('Error showing guide details: ' + error.message);
+            }
         }
 
         // Show guide detail modal
@@ -3067,7 +3073,7 @@
                                         <p class="card-text small text-muted mb-2">${locationNames && locationNames[guide.location] ? locationNames[guide.location] : (guide.location || 'Unknown Location')}</p>
                                         <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                         <div class="d-flex gap-2">
-                                            <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">Details</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModalById(${guide.id})">Details</button>
                                             <button class="btn btn-outline-danger btn-sm" onclick="removeBookmark(${guide.id})">Remove</button>
                                         </div>
                                     </div>
@@ -3124,7 +3130,7 @@
                                 <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                 <div class="mt-auto">
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModalById(${guide.id})">
                                             <i class="bi bi-info-circle me-1"></i>Details
                                         </button>
                                         <button class="btn btn-outline-danger btn-sm" onclick="removeFromComparison(${guide.id})">
@@ -3381,7 +3387,7 @@
         }
         
         // Show guide detail modal from management center
-        function showGuideDetailModal(guideId) {
+        function showGuideDetailModalById(guideId) {
             console.log('Opening guide detail modal for guide:', guideId);
             // Use existing viewGuideDetail function if available
             if (window.viewGuideDetail) {
