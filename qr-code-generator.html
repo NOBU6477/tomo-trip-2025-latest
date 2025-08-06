@@ -87,10 +87,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌐 TomoTrip ローカルサーバー QRコード</h1>
+        <h1>🌐 TomoTrip サーバー QRコード (ポート5001)</h1>
         
         <div class="url-display">
-            http://localhost:5000
+            http://localhost:5001
         </div>
         
         <div id="qrcode"></div>
@@ -99,7 +99,7 @@
         
         <div class="info">
             <strong>使用方法:</strong><br>
-            スマートフォンのカメラでQRコードをスキャンすると、TomoTripローカルサーバー（ポート5000）に直接アクセスできます。<br>
+            スマートフォンのカメラでQRコードをスキャンすると、TomoTripサーバー（ポート5001）に直接アクセスできます。<br>
             <small>※ 同じWi-Fiネットワーク上でのみアクセス可能</small>
         </div>
     </div>
@@ -109,7 +109,7 @@
     
     <script>
         // QRコード生成
-        const url = 'http://localhost:5000';
+        const url = 'http://localhost:5001';
         
         // QRコードを生成して表示
         QRCode.toCanvas(document.getElementById('qrcode'), url, {
