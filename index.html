@@ -353,29 +353,119 @@
                 font-size: 1.1rem;
             }
             
-            .sponsor-buttons {
-                position: relative;
-                right: auto;
-                top: auto;
-                transform: none;
-                flex-direction: row;
-                justify-content: center;
-                margin-top: 2rem;
-            }
-            
+            /* 言語切り替えボタン統一 */
             .language-switcher-center {
                 position: relative;
                 top: auto;
                 left: auto;
                 transform: none;
                 margin: 2rem 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
             }
             
+            .lang-btn-jp, .lang-btn-en {
+                width: 80%;
+                max-width: 300px;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* 協賛店ボタン配置改善 */
+            .sponsor-buttons {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: center;
+                margin: 20px auto;
+                padding: 0 20px;
+                gap: 12px;
+                max-width: 300px;
+            }
+            
+            .sponsor-btn {
+                width: 100%;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* ヒーローボタン改善 */
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                margin: 20px auto;
+                padding: 0 20px;
+                max-width: 300px;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* ナビゲーションボタン改善 */
+            .navbar .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .navbar .btn {
+                width: 100%;
+                font-size: 14px;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            
+            /* フィルター改善 */
+            .filter-section .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .filter-section .form-select,
+            .filter-section .form-control {
+                width: 100% !important;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* 管理センターボタン */
             .management-center {
                 position: fixed;
                 bottom: 20px;
                 right: 20px;
                 transform: none;
+            }
+            
+            /* モーダル改善 */
+            .modal-dialog {
+                margin: 10px;
+                max-width: calc(100vw - 20px);
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .modal-body .form-control,
+            .modal-body .form-select {
+                font-size: 16px;
+                padding: 12px;
             }
         }
     </style>

@@ -438,7 +438,7 @@
             box-shadow: 0 6px 25px rgba(255, 193, 7, 0.5);
         }
 
-        /* Responsive Design */
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .hero-content h1 {
                 font-size: 2.5rem;
@@ -448,31 +448,119 @@
                 font-size: 1.1rem;
             }
             
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .btn-hero {
-                width: 250px;
-            }
-            
-            .sponsor-buttons {
-                position: relative;
-                right: auto;
-                top: auto;
-                transform: none;
-                flex-direction: row;
-                justify-content: center;
-                margin: 20px 0;
-            }
-            
+            /* Language switcher unified */
             .language-switcher-center {
                 position: relative;
                 top: auto;
                 left: auto;
                 transform: none;
                 margin: 2rem 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                width: 80%;
+                max-width: 300px;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* Sponsor buttons improved layout */
+            .sponsor-buttons {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                flex-direction: column;
+                align-items: stretch;
+                justify-content: center;
+                margin: 20px auto;
+                padding: 0 20px;
+                gap: 12px;
+                max-width: 300px;
+            }
+            
+            .sponsor-btn {
+                width: 100%;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* Hero buttons improved */
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                margin: 20px auto;
+                padding: 0 20px;
+                max-width: 300px;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* Navigation buttons improved */
+            .navbar .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .navbar .btn {
+                width: 100%;
+                font-size: 14px;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            
+            /* Filter improvements */
+            .filter-section .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            
+            .filter-section .form-select,
+            .filter-section .form-control {
+                width: 100% !important;
+                font-size: 16px;
+                padding: 12px;
+                box-sizing: border-box;
+            }
+            
+            /* Management center button */
+            .management-center {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                transform: none;
+            }
+            
+            /* Modal improvements */
+            .modal-dialog {
+                margin: 10px;
+                max-width: calc(100vw - 20px);
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .modal-body .form-control,
+            .modal-body .form-select {
+                font-size: 16px;
+                padding: 12px;
             }
         }
     </style>
