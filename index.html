@@ -37,6 +37,12 @@
                     message.includes('workspace') ||
                     message.includes('iframe') ||
                     message.includes('404') ||
+                    message.includes('WebSocket') ||
+                    message.includes('stalwart') ||
+                    message.includes('ping') ||
+                    message.includes('eval.kirk') ||
+                    message.includes('replit.com') ||
+                    message.includes('attached_assets') ||
                     message.includes('Failed to load resource')) {
                     return; // Block noise
                 }
@@ -134,11 +140,7 @@
 
         /* Hero Section */
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
-                        url('ChatGPT Image 2025年8月5日 21_41_02.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             height: 100vh;
             position: relative;
             display: flex;
@@ -597,7 +599,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="logo-container">
-                    <img src="TomoTripロゴ.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); console.log('❌ Image dimensions:', this.naturalWidth, 'x', this.naturalHeight); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
+                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); console.log('❌ Image dimensions:', this.naturalWidth, 'x', this.naturalHeight); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
                 </div>
                 TomoTrip
             </a>
@@ -629,7 +631,7 @@
         <div class="hero-content">
             <div class="hero-title-container">
                 <div class="hero-logo">
-                    <img src="TomoTripロゴ.png" alt="TomoTrip Logo" />
+                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" />
                 </div>
                 <h1>あなただけの特別な旅を</h1>
             </div>
