@@ -10,11 +10,16 @@ console.log('🌐 TomoTrip Node.js Bridge - Starting Python Server');
 try {
   const { spawn } = require('child_process');
   
-  // Start Python server with proper error handling
-  const pythonProcess = spawn('python3', ['main.py'], {
+  // Start Python server with proper error handling and path resolution
+  const pythonCommand = process.env.PYTHON_CMD || 'python3';
+  const pythonProcess = spawn(pythonCommand, ['main.py'], {
     stdio: 'inherit',
     cwd: process.cwd(),
-    env: { ...process.env, PORT: '5000' }
+    env: { 
+      ...process.env, 
+      PORT: '5000',
+      PATH: process.env.PATH + ':/usr/bin:/bin'
+    }
   });
 
   pythonProcess.on('error', (error) => {

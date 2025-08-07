@@ -26,7 +26,7 @@ waitForPort = 5000
 
 [nix]
 channel = "stable-25_05"
-packages = ["nodejs"]
+packages = ["python3"]
 
 [[ports]]
 localPort = 5000
