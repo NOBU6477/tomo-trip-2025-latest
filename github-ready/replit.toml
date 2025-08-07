@@ -1,0 +1,36 @@
+[run]
+run = "python3 main.py"
+
+[deployment]
+run = ["python3", "main.py"]
+deploymentTarget = "cloudrun"
+ignorePorts = false
+
+[nix]
+channel = "stable-24_05"
+packages = ["python3", "python3Packages.pip", "nodejs-20_x"]
+
+[env]
+PYTHONPATH = "."
+PORT = "5000"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+exposeLocalhost = true
+
+[web]
+run = "python3 main.py"
+
+[entrypoint]
+file = "main.py"
+
+[languages.python3]
+pattern = "**/*.py"
+syntax = "python"
+
+[packager]
+language = "python3"
+
+[debugger]
+support = true
