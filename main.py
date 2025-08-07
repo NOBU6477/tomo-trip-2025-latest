@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3
 """
 TomoTrip - Production HTTP Server
 Production-ready web server for TomoTrip tourism platform

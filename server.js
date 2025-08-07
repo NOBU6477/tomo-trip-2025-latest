@@ -1,19 +1,29 @@
 #!/usr/bin/env node
 /**
  * TomoTrip - Node.js to Python Bridge
- * Emergency fallback to Python server for deployment compatibility
+ * Immediate redirect to Python server
  */
 
-// Emergency fallback: If Node.js fails, redirect to Python
-if (!process.env.NODE_PATH) {
-  console.log('⚠️  Node.js environment not fully initialized');
-  console.log('🔄 Redirecting to Python server...');
-  const { spawn } = require('child_process');
-  const pythonProcess = spawn('python3', ['main.py'], { stdio: 'inherit' });
-  process.exit(0);
-}
-
 console.log('🌐 TomoTrip Node.js Bridge - Starting Python Server');
+
+const { spawn } = require('child_process');
+
+// Start Python server immediately
+const pythonProcess = spawn('python3', ['main.py'], { 
+  stdio: 'inherit',
+  detached: true 
+});
+
+pythonProcess.on('error', (err) => {
+  console.error('Failed to start Python server:', err);
+  process.exit(1);
+});
+
+// Keep Node.js process alive
+process.on('SIGINT', () => {
+  pythonProcess.kill();
+  process.exit(0);
+});
 
 // Check if Node.js child_process is available
 try {
