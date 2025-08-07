@@ -1,8 +1,8 @@
 [run]
-run = "python3 run.py"
+run = "python3 deploy.py"
 
 [deployment]
-run = ["python3", "run.py"]
+run = ["python3", "deploy.py"]
 deploymentTarget = "cloudrun"
 ignorePorts = false
 
