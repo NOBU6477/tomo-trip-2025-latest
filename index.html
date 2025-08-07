@@ -874,6 +874,11 @@
         function loadAllGuides() {
             const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
             console.log('Loading registered guides:', registeredGuides.length);
+            if (registeredGuides.length === 0) {
+                console.log('⚠️ No registered guides found - initializing default dataset');
+                // Force load default guides if none exist
+                loadDefaultGuides();
+            }
             
             // Merge registered guides with default guides
             return [...defaultGuideData, ...registeredGuides.map(guide => ({
