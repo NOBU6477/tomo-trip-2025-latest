@@ -5886,5 +5886,31 @@
         };
     </script>
 
+    <!-- EMERGENCY SCRIPT TEST - Place just before closing body -->
+    <script>
+        console.log('🚨 EMERGENCY SCRIPT TEST - This should appear in console!');
+        console.log('📍 Time:', new Date().toLocaleTimeString());
+        
+        // Force immediate background fix
+        setTimeout(() => {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                console.log('🛠️ EMERGENCY: Applying background directly');
+                heroSection.style.cssText = `
+                    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                               url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                    background-size: cover !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-attachment: scroll !important;
+                    min-height: 100vh !important;
+                `;
+                console.log('✅ EMERGENCY: Background applied via direct style');
+            } else {
+                console.log('❌ EMERGENCY: hero-section not found');
+            }
+        }, 100);
+    </script>
+
 </body>
 </html>
