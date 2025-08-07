@@ -13,102 +13,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "TomoTrip"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "SimpleServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "CleanServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "MainServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "StableServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "TestServer"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
 args = "Port5001Server"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Mobile-Test-Server"
-
-[[workflows.workflow]]
-name = "Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 simple_server.py"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "TomoTrip"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 simple_server.py"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "SimpleServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 simple_server.py"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "CleanServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 simple_server.py"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "MainServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 simple_server.py"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "StableServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 simple_server.py"
-waitForPort = 5000
-
-[[workflows.workflow]]
-name = "TestServer"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python3 test_server.py"
-waitForPort = 5000
 
 [[workflows.workflow]]
 name = "Port5001Server"
