@@ -5667,6 +5667,10 @@
     </style>
 
     <script>
+        // IMMEDIATE CONSOLE TEST
+        console.log('🚨 SCRIPT BLOCK EXECUTING - Background fix system loading...');
+        console.log('🕐 Script execution time:', new Date().toLocaleTimeString());
+        
         // REPLIT EDITOR SPECIFIC BACKGROUND FIX
         function forceBackgroundImage() {
             console.log('🔧 REPLIT EDITOR FIX: Diagnosing and applying background');
@@ -5780,6 +5784,8 @@
 
         // IMMEDIATE EXECUTION - No waiting for events
         console.log('🚀 STARTING BACKGROUND SYSTEM IMMEDIATELY');
+        console.log('📋 DOM ready state:', document.readyState);
+        console.log('🌐 Window loaded:', document.readyState === 'complete');
         
         // Execute immediately without any delays
         try {
