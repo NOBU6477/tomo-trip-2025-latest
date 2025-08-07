@@ -55,8 +55,11 @@
                     message.includes('software WebGL') ||
                     message.includes('enable-unsafe-swiftshader') ||
                     message.includes('webglcontextlost') ||
-                    message.includes('webglcontextrestored')) {
-                    return; // Block noise
+                    message.includes('webglcontextrestored') ||
+                    message.includes('Could not find run command') ||
+                    message.includes('LaunchDarkly') ||
+                    message.includes('run command')) {
+                    return; // Block all noise including error messages
                 }
                 originalError.apply(console, args);
             };
