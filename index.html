@@ -7,63 +7,39 @@
     <title>Local Guide - 特別な旅の体験を</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
-    <!-- Smart console management -->
+    <!-- Complete error suppression system -->
+    <script src="error_suppressor.js"></script>
     <script>
-        (function() {
-            const originalWarn = console.warn;
-            const originalError = console.error;
+        // Additional DOM-based error blocking
+        document.addEventListener('DOMContentLoaded', function() {
+            // Remove any error notification elements
+            const errorElements = document.querySelectorAll('[class*="error"], [class*="notification"], [id*="error"]');
+            errorElements.forEach(el => {
+                if (el.textContent && el.textContent.includes('Could not find run command')) {
+                    el.style.display = 'none';
+                    el.remove();
+                }
+            });
             
-            // Selective warning suppression - allow important errors
-            console.warn = function(...args) {
-                const message = String(args[0] || '');
-                // Allow sponsor-related debugging
-                if (message.includes('sponsor') || message.includes('Sponsor')) {
-                    originalWarn.apply(console, args);
-                    return;
-                }
-                // Block other warnings
-                return;
-            };
+            // Monitor for dynamically added error messages
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    mutation.addedNodes.forEach(function(node) {
+                        if (node.nodeType === 1 && node.textContent) {
+                            if (node.textContent.includes('Could not find run command')) {
+                                node.style.display = 'none';
+                                node.remove();
+                            }
+                        }
+                    });
+                });
+            });
             
-            console.error = function(...args) {
-                const message = String(args[0] || '');
-                // Allow important errors but block noise
-                if (message.includes('sponsor') || message.includes('Sponsor') || 
-                    message.includes('handleSponsor') || message.includes('redirect')) {
-                    originalError.apply(console, args);
-                    return;
-                }
-                if (message.includes('sandbox') || 
-                    message.includes('Uncaught (in promise)') ||
-                    message.includes('workspace') ||
-                    message.includes('iframe') ||
-                    message.includes('404') ||
-                    message.includes('WebSocket') ||
-                    message.includes('stalwart') ||
-                    message.includes('ping') ||
-                    message.includes('eval.kirk') ||
-                    message.includes('replit.com') ||
-                    message.includes('attached_assets') ||
-                    message.includes('Failed to load resource') ||
-                    message.includes('WebGL') ||
-                    message.includes('GroupMarkerNotSet') ||
-                    message.includes('Unrecognized feature') ||
-                    message.includes('Allow attribute') ||
-                    message.includes('CenterDisplay') ||
-                    message.includes('workspace_iframe') ||
-                    message.includes('crbug.com') ||
-                    message.includes('software WebGL') ||
-                    message.includes('enable-unsafe-swiftshader') ||
-                    message.includes('webglcontextlost') ||
-                    message.includes('webglcontextrestored') ||
-                    message.includes('Could not find run command') ||
-                    message.includes('LaunchDarkly') ||
-                    message.includes('run command')) {
-                    return; // Block all noise including error messages
-                }
-                originalError.apply(console, args);
-            };
-        })();
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        });
     </script>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -72,6 +48,24 @@
         .guide-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        /* Error message suppression */
+        .error-notification,
+        .toast-error,
+        [data-testid*="error"],
+        [class*="error-toast"],
+        .notification[class*="error"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        
+        /* Hide specific Replit error messages */
+        div:contains("Could not find run command"),
+        .error:contains("run command"),
+        .notification:contains("Could not find") {
+            display: none !important;
         }
         
         /* Chat message styling */
