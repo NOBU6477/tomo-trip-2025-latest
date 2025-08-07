@@ -5670,6 +5670,7 @@
         // REPLIT EDITOR SPECIFIC BACKGROUND FIX
         function forceBackgroundImage() {
             console.log('🔧 REPLIT EDITOR FIX: Diagnosing and applying background');
+            console.log('📍 Function execution started at:', new Date().toLocaleTimeString());
             
             const heroSection = document.querySelector('.hero-section');
             if (heroSection) {
@@ -5777,21 +5778,53 @@
             }
         }
 
-        // Apply background on multiple events with aggressive timing
-        document.addEventListener('DOMContentLoaded', forceBackgroundImage);
-        window.addEventListener('load', forceBackgroundImage);
+        // IMMEDIATE EXECUTION - No waiting for events
+        console.log('🚀 STARTING BACKGROUND SYSTEM IMMEDIATELY');
         
-        // Immediate execution for Replit environment
-        forceBackgroundImage(); // Execute immediately
+        // Execute immediately without any delays
+        try {
+            forceBackgroundImage();
+            console.log('✅ First execution completed');
+        } catch (error) {
+            console.error('❌ Immediate execution failed:', error);
+        }
         
-        setTimeout(forceBackgroundImage, 10);
-        setTimeout(forceBackgroundImage, 50);
-        setTimeout(forceBackgroundImage, 100);
-        setTimeout(forceBackgroundImage, 200);
-        setTimeout(forceBackgroundImage, 500);
-        setTimeout(forceBackgroundImage, 1000);
-        setTimeout(forceBackgroundImage, 1500);
-        setTimeout(forceBackgroundImage, 2000);
+        // Backup event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📋 DOMContentLoaded - executing forceBackgroundImage');
+            forceBackgroundImage();
+        });
+        
+        window.addEventListener('load', () => {
+            console.log('🌐 Window load - executing forceBackgroundImage');
+            forceBackgroundImage();
+        });
+        
+        // Aggressive timeout execution
+        setTimeout(() => {
+            console.log('⏰ Timeout 10ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 10);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 50ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 50);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 100ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 100);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 500ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 500);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 1000ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 1000);
         
         // Debug function to check current background
         window.checkBackground = function() {
