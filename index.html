@@ -147,19 +147,57 @@
             display: block;
         }
 
-        /* Hero Section */
+        /* Hero Section - Force Background Image */
         .hero-section {
             background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
-                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
             height: 100vh;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+        }
+
+        /* Backup Background System with Multiple Fallbacks */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            z-index: -2;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)) !important;
+            z-index: -1;
+        }
+
+        /* Additional CSS enforcement for Replit environment */
+        .hero-section,
+        .hero-section.force-ocean-background {
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
         }
 
         /* Language Switcher - Center Position */
@@ -5574,6 +5612,86 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Force Background Image System for Replit Environment
+        function forceBackgroundImage() {
+            console.log('🏖️ Forcing background image to display');
+            
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                // Multiple backup methods
+                const imageUrl = 'attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png';
+                
+                // Method 1: Direct style application with !important
+                heroSection.style.cssText = `
+                    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}') !important;
+                    background-size: cover !important;
+                    background-position: center !important;
+                    background-repeat: no-repeat !important;
+                    background-attachment: fixed !important;
+                    height: 100vh !important;
+                    position: relative !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    overflow: hidden !important;
+                `;
+                
+                // Method 2: Create image element to preload
+                const img = new Image();
+                img.onload = function() {
+                    console.log('✅ Background image loaded successfully');
+                    heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}')`;
+                };
+                img.onerror = function() {
+                    console.log('❌ Background image failed to load, using ocean gradient fallback');
+                    heroSection.style.background = 'linear-gradient(135deg, #4A90E2 0%, #7BA7E4 25%, #A8C8E8 50%, #D6E8F5 75%, #F0F8FF 100%)';
+                };
+                img.src = imageUrl;
+                
+                // Method 3: Add CSS class dynamically
+                const style = document.createElement('style');
+                style.textContent = `
+                    .force-ocean-background {
+                        background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}') !important;
+                        background-size: cover !important;
+                        background-position: center !important;
+                        background-repeat: no-repeat !important;
+                        background-attachment: fixed !important;
+                    }
+                `;
+                document.head.appendChild(style);
+                heroSection.classList.add('force-ocean-background');
+                
+                console.log('🌊 Background force applied to hero section');
+            }
+        }
+
+        // Apply background on multiple events for maximum compatibility
+        document.addEventListener('DOMContentLoaded', forceBackgroundImage);
+        window.addEventListener('load', forceBackgroundImage);
+        
+        // Additional delays for Replit environment rendering
+        setTimeout(forceBackgroundImage, 100);
+        setTimeout(forceBackgroundImage, 500);
+        setTimeout(forceBackgroundImage, 1500);
+        
+        // Admin debug functions
+        window.clearTouristData = function() {
+            localStorage.removeItem('touristRegistration');
+            console.log('Tourist registration data cleared');
+            location.reload();
+        };
+        
+        window.checkRegistrationStatus = function() {
+            const data = localStorage.getItem('touristRegistration');
+            console.log('Registration status:', data ? 'Registered' : 'Not registered');
+            if (data) {
+                console.log('Data:', JSON.parse(data));
+            }
+        };
+    </script>
 
 </body>
 </html>
