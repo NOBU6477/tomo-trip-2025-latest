@@ -1,36 +1,45 @@
-// TomoTrip Server Bridge
-// This Node.js file bridges .replit configuration to Python server
+#!/usr/bin/env node
+/**
+ * TomoTrip - Node.js to Python Bridge
+ * Fallback execution for .replit compatibility
+ */
 
-const { spawn } = require('child_process');
+console.log('🌐 TomoTrip Node.js Bridge - Starting Python Server');
 
-console.log('🌐 TomoTrip Server Bridge starting...');
+// Check if Node.js child_process is available
+try {
+  const { spawn } = require('child_process');
+  
+  // Start Python server with proper error handling
+  const pythonProcess = spawn('python3', ['main.py'], {
+    stdio: 'inherit',
+    cwd: process.cwd(),
+    env: { ...process.env, PORT: '5000' }
+  });
 
-// Start the Python server
-const pythonProcess = spawn('python3', ['main.py'], {
-  stdio: 'inherit',
-  cwd: process.cwd()
-});
+  pythonProcess.on('error', (error) => {
+    console.error('❌ Bridge error:', error.message);
+    console.log('🔄 Falling back to direct Python execution...');
+    process.exit(1);
+  });
 
-// Handle process events
-pythonProcess.on('error', (error) => {
-  console.error('❌ Python server error:', error.message);
+  pythonProcess.on('exit', (code) => {
+    console.log(`🛑 Python server exited with code ${code}`);
+    process.exit(code || 0);
+  });
+
+  // Signal handling
+  ['SIGINT', 'SIGTERM'].forEach(signal => {
+    process.on(signal, () => {
+      console.log(`\n🛑 Received ${signal} - shutting down...`);
+      pythonProcess.kill(signal);
+    });
+  });
+
+  console.log('✅ Bridge established - Python server starting on port 5000');
+  
+} catch (error) {
+  console.error('❌ Node.js bridge failed:', error.message);
+  console.log('🔄 Please run: python3 main.py');
   process.exit(1);
-});
-
-pythonProcess.on('exit', (code, signal) => {
-  console.log(`🛑 Python server exited with code ${code}, signal ${signal}`);
-  process.exit(code || 0);
-});
-
-// Handle termination signals
-process.on('SIGINT', () => {
-  console.log('\n🛑 Shutting down TomoTrip server...');
-  pythonProcess.kill('SIGINT');
-});
-
-process.on('SIGTERM', () => {
-  console.log('\n🛑 Terminating TomoTrip server...');
-  pythonProcess.kill('SIGTERM');
-});
-
-console.log('✅ Server bridge established, Python server starting on port 5000');
+}
