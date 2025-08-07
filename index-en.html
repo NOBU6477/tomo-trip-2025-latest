@@ -144,6 +144,38 @@
             color: white;
         }
 
+        /* レスポンシブデザイン - モバイル対応 */
+        @media (max-width: 768px) {
+            .language-switcher-center {
+                top: 20%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 320px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 100px;
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-switcher-center {
+                top: 18%;
+                width: 95%;
+                max-width: 280px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 10px 15px;
+                font-size: 13px;
+                min-width: 80px;
+            }
+        }
+
         .lang-btn-jp {
             background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
         }
