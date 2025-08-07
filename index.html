@@ -189,34 +189,37 @@
             z-index: -1;
         }
 
-        /* MAXIMUM CSS enforcement for Replit environment */
+        /* REPLIT IFRAME FIX - Ultimate override for all environments */
         .hero-section,
         .hero-section.force-ocean-background,
         div.hero-section,
-        section.hero-section {
+        section.hero-section,
+        body .hero-section,
+        html .hero-section {
             background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
-                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
             background-size: cover !important;
             background-position: center center !important;
             background-repeat: no-repeat !important;
             background-attachment: scroll !important;
         }
 
-        /* Emergency fallback with ocean gradient if image fails */
-        @supports not (background-image: url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png')) {
-            .hero-section {
-                background: linear-gradient(135deg, #4A90E2 0%, #7BA7E4 25%, #A8C8E8 50%, #D6E8F5 75%, #F0F8FF 100%) !important;
-            }
-        }
-
-        /* Replit editor specific override */
-        .repl-it .hero-section,
-        [data-replit] .hero-section {
+        /* Replit preview iframe specific targeting */
+        iframe .hero-section,
+        .repl-preview .hero-section,
+        .workspace-preview .hero-section,
+        [class*="preview"] .hero-section,
+        [id*="preview"] .hero-section {
             background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
-                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
             background-size: cover !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
+        }
+
+        /* Base64 encoded fallback */
+        .hero-section.base64-fallback {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%) !important;
         }
 
         /* Language Switcher - Center Position */
@@ -5632,11 +5635,12 @@
         </div>
     </footer>
 
-    <!-- Inline emergency CSS for immediate application -->
+    <!-- EMERGENCY REPLIT EDITOR FIX - Multiple fallback methods -->
     <style id="emergency-background-css">
+        /* Method 1: Direct file reference */
         .hero-section {
             background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
-                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
             background-size: cover !important;
             background-position: center !important;
             background-repeat: no-repeat !important;
@@ -5644,82 +5648,132 @@
             height: 100vh !important;
             min-height: 100vh !important;
         }
+        
+        /* Method 2: Replit iframe override */
+        iframe .hero-section,
+        .repl-preview .hero-section,
+        .workspace-preview .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
+        }
+        
+        /* Method 3: Fallback ocean gradient for failed image loads */
+        .hero-section.fallback-ocean {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%) !important;
+        }
     </style>
 
     <script>
-        // Ultra Force Background Image System for Replit Environment
+        // REPLIT EDITOR SPECIFIC BACKGROUND FIX
         function forceBackgroundImage() {
-            console.log('🏖️ ULTRA FORCE: Applying background image with extreme measures');
+            console.log('🔧 REPLIT EDITOR FIX: Diagnosing and applying background');
             
             const heroSection = document.querySelector('.hero-section');
             if (heroSection) {
-                const imageUrl = 'attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png';
+                // Try multiple image path formats
+                const imagePaths = [
+                    './attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png',
+                    'attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png',
+                    '/attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png'
+                ];
                 
-                // Method 1: Remove existing styles completely
-                heroSection.removeAttribute('style');
-                heroSection.className = 'hero-section force-ocean-background';
+                // Test image accessibility
+                function testImagePath(path, callback) {
+                    const img = new Image();
+                    img.onload = () => callback(true, path);
+                    img.onerror = () => callback(false, path);
+                    img.src = path;
+                }
                 
-                // Method 2: Extreme CSS override
-                const ultraStyle = document.createElement('style');
-                ultraStyle.id = 'ultra-background-force';
-                ultraStyle.textContent = `
-                    .hero-section.force-ocean-background,
-                    .hero-section,
-                    div.hero-section {
-                        background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}') !important;
-                        background-size: cover !important;
-                        background-position: center center !important;
-                        background-repeat: no-repeat !important;
-                        background-attachment: scroll !important;
-                        height: 100vh !important;
-                        min-height: 100vh !important;
-                        position: relative !important;
-                        display: flex !important;
-                        align-items: center !important;
-                        justify-content: center !important;
-                        overflow: hidden !important;
+                // Try each path
+                let pathIndex = 0;
+                function tryNextPath() {
+                    if (pathIndex >= imagePaths.length) {
+                        console.log('❌ All image paths failed - using ocean gradient fallback');
+                        heroSection.className = 'hero-section fallback-ocean';
+                        heroSection.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%)';
+                        return;
                     }
                     
-                    /* Override any conflicting styles */
-                    .hero-section * {
-                        z-index: 10 !important;
-                        position: relative !important;
-                    }
-                `;
+                    const currentPath = imagePaths[pathIndex];
+                    console.log(`🔍 Testing image path ${pathIndex + 1}: ${currentPath}`);
+                    
+                    testImagePath(currentPath, (success, path) => {
+                        if (success) {
+                            console.log(`✅ SUCCESS: Image loaded from ${path}`);
+                            
+                            // Apply successful path with multiple methods
+                            heroSection.style.background = `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${path}')`;
+                            heroSection.style.backgroundSize = 'cover';
+                            heroSection.style.backgroundPosition = 'center';
+                            heroSection.style.backgroundRepeat = 'no-repeat';
+                            heroSection.style.backgroundAttachment = 'scroll';
+                            
+                            // Create dynamic CSS
+                            const dynamicStyle = document.createElement('style');
+                            dynamicStyle.id = 'working-background-path';
+                            dynamicStyle.textContent = `
+                                .hero-section {
+                                    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${path}') !important;
+                                    background-size: cover !important;
+                                    background-position: center !important;
+                                    background-repeat: no-repeat !important;
+                                    background-attachment: scroll !important;
+                                }
+                            `;
+                            
+                            const existing = document.getElementById('working-background-path');
+                            if (existing) existing.remove();
+                            document.head.appendChild(dynamicStyle);
+                            
+                        } else {
+                            console.log(`❌ FAILED: ${path}`);
+                            pathIndex++;
+                            tryNextPath();
+                        }
+                    });
+                }
                 
-                // Remove existing ultra style and add new one
-                const existing = document.getElementById('ultra-background-force');
-                if (existing) existing.remove();
-                document.head.appendChild(ultraStyle);
+                tryNextPath();
                 
-                // Method 3: Direct inline styles with maximum priority
+                // Additional iframe detection and fix
                 setTimeout(() => {
-                    heroSection.style.setProperty('background', `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}')`, 'important');
-                    heroSection.style.setProperty('background-size', 'cover', 'important');
-                    heroSection.style.setProperty('background-position', 'center', 'important');
-                    heroSection.style.setProperty('background-repeat', 'no-repeat', 'important');
-                    heroSection.style.setProperty('background-attachment', 'scroll', 'important');
-                    console.log('✅ ULTRA FORCE: Direct style properties applied');
-                }, 100);
+                    if (window.frameElement || window !== window.parent) {
+                        console.log('🖼️ IFRAME DETECTED: Applying iframe-specific fixes');
+                        
+                        // Create iframe-specific style
+                        const iframeStyle = document.createElement('style');
+                        iframeStyle.id = 'iframe-background-fix';
+                        iframeStyle.textContent = `
+                            .hero-section {
+                                background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                                            url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                                background-size: cover !important;
+                                background-position: center !important;
+                                background-repeat: no-repeat !important;
+                                background-attachment: scroll !important;
+                                min-height: 100vh !important;
+                                position: relative !important;
+                            }
+                        `;
+                        document.head.appendChild(iframeStyle);
+                        
+                        // Force style application
+                        heroSection.style.cssText = `
+                            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                                       url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                            background-size: cover !important;
+                            background-position: center !important;
+                            background-repeat: no-repeat !important;
+                            background-attachment: scroll !important;
+                        `;
+                    }
+                }, 500);
                 
-                // Method 4: Image preload with extreme fallback
-                const img = new Image();
-                img.onload = function() {
-                    console.log('✅ Background image confirmed loaded');
-                    heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}')`;
-                    
-                    // Additional force after load
-                    setTimeout(() => {
-                        heroSection.style.background = `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${imageUrl}')`;
-                    }, 50);
-                };
-                img.onerror = function() {
-                    console.log('❌ Background image load failed - applying ocean gradient');
-                    heroSection.style.background = 'linear-gradient(135deg, #4A90E2 0%, #7BA7E4 25%, #A8C8E8 50%, #D6E8F5 75%, #F0F8FF 100%)';
-                };
-                img.src = imageUrl;
-                
-                console.log('🌊 ULTRA FORCE: All background methods applied');
+                console.log('🌊 Background path testing and iframe detection initiated');
             }
         }
 
