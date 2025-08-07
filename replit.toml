@@ -2,12 +2,13 @@
 run = "python3 main.py"
 
 [deployment]
-run = ["sh", "-c", "python3 main.py"]
+run = ["python3", "main.py"]
 deploymentTarget = "cloudrun"
+ignorePorts = false
 
 [nix]
 channel = "stable-24_05"
-packages = ["python3", "python3Packages.pip", "git"]
+packages = ["python3", "python3Packages.pip"]
 
 [env]
 PYTHONPATH = "."
@@ -21,9 +22,6 @@ exposeLocalhost = true
 [web]
 run = "python3 main.py"
 
-[gitHubImport]
-requiredFiles = [".replit", "replit.toml"]
-
 [entrypoint]
 file = "main.py"
 
@@ -33,10 +31,6 @@ syntax = "python"
 
 [packager]
 language = "python3"
-ignoredPackages = ["unit_tests"]
 
 [debugger]
 support = true
-
-[interpreter]
-command = ["python3", "main.py"]

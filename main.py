@@ -15,39 +15,67 @@ import time
 import logging
 
 class TomoTripHandler(http.server.SimpleHTTPRequestHandler):
-    """Production-ready HTTP request handler with enhanced features"""
+    """Production-ready HTTP request handler with BrokenPipe error handling"""
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=os.getcwd(), **kwargs)
     
+    def finish(self):
+        """Override finish to handle BrokenPipeError gracefully"""
+        try:
+            super().finish()
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            # Client disconnected - ignore silently
+            pass
+    
+    def copyfile(self, source, outputfile):
+        """Override copyfile to handle client disconnections"""
+        try:
+            super().copyfile(source, outputfile)
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            # Client disconnected during file transfer - handle gracefully
+            pass
+    
     def end_headers(self):
         """Add comprehensive security and performance headers"""
-        # Security headers
-        self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('X-Frame-Options', 'SAMEORIGIN')  # Less restrictive for deployment
-        self.send_header('X-XSS-Protection', '1; mode=block')
-        self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
-        
-        # Performance headers
-        self.send_header('Cache-Control', 'public, max-age=31536000')
-        
-        # CORS headers for deployment
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
-        
-        super().end_headers()
+        try:
+            # Security headers
+            self.send_header('X-Content-Type-Options', 'nosniff')
+            self.send_header('X-Frame-Options', 'SAMEORIGIN')
+            self.send_header('X-XSS-Protection', '1; mode=block')
+            self.send_header('Referrer-Policy', 'strict-origin-when-cross-origin')
+            
+            # Performance headers - more conservative caching for development
+            self.send_header('Cache-Control', 'public, max-age=300')
+            
+            # CORS headers for deployment
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+            self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+            
+            super().end_headers()
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            # Client disconnected - ignore header errors
+            pass
     
     def do_OPTIONS(self):
         """Handle preflight requests"""
-        self.send_response(200)
-        self.end_headers()
+        try:
+            self.send_response(200)
+            self.end_headers()
+        except (BrokenPipeError, ConnectionResetError, OSError):
+            pass
     
     def log_message(self, format, *args):
-        """Enhanced logging for production"""
+        """Enhanced logging for production - suppress connection errors"""
+        # Don't log BrokenPipe and connection reset errors
+        message = format % args
+        if 'Broken pipe' in message or 'Connection reset' in message:
+            return
+        
         timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
-        message = f"[{timestamp}] {format % args}"
-        print(message)
+        formatted_message = f"[{timestamp}] {message}"
+        print(formatted_message)
 
 def setup_logging():
     """Configure production logging"""
@@ -93,11 +121,26 @@ def start_server(port=None):
     signal.signal(signal.SIGINT, signal_handler)
     
     try:
-        # Configure TCP server
+        # Configure TCP server with enhanced error handling
         socketserver.TCPServer.allow_reuse_address = True
         
+        # Custom TCP Server class to handle connection errors
+        class RobustTCPServer(socketserver.TCPServer):
+            def handle_error(self, request, client_address):
+                """Handle request errors gracefully"""
+                import traceback
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                
+                # Ignore common client disconnection errors
+                if isinstance(exc_value, (BrokenPipeError, ConnectionResetError, OSError)):
+                    return
+                
+                # Log other errors normally
+                logging.error(f"Request error from {client_address}: {exc_value}")
+                traceback.print_exc()
+        
         # Create and configure server
-        with socketserver.TCPServer(('0.0.0.0', port), TomoTripHandler) as httpd:
+        with RobustTCPServer(('0.0.0.0', port), TomoTripHandler) as httpd:
             print("=" * 60)
             print("🌴 TomoTrip Production Server")
             print("=" * 60)
