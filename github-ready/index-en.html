@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TomoTrip - Discover Japan with Local Guides</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -142,6 +143,38 @@
             transition: all 0.3s ease;
             min-width: 140px;
             color: white;
+        }
+
+        /* レスポンシブデザイン - モバイル対応 */
+        @media (max-width: 768px) {
+            .language-switcher-center {
+                top: 20%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 320px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 100px;
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-switcher-center {
+                top: 18%;
+                width: 95%;
+                max-width: 280px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 10px 15px;
+                font-size: 13px;
+                min-width: 80px;
+            }
         }
 
         .lang-btn-jp {
@@ -438,41 +471,250 @@
             box-shadow: 0 6px 25px rgba(255, 193, 7, 0.5);
         }
 
-        /* Responsive Design */
+        /* Mobile Responsive - Complete Version */
         @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
+            /* Basic structure adjustments */
+            body {
+                overflow-x: hidden;
             }
             
-            .hero-content p {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            /* Navigation adjustments */
+            .navbar {
+                padding: 8px 0;
+            }
+            
+            .navbar-brand {
                 font-size: 1.1rem;
             }
             
-            .hero-buttons {
+            .navbar .d-flex {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+                width: auto;
+            }
+            
+            .navbar .btn {
+                font-size: 12px;
+                padding: 6px 12px;
+                white-space: nowrap;
+            }
+            
+            .dropdown-menu {
+                min-width: 140px !important;
+                right: 0;
+                left: auto;
+            }
+            
+            /* Hero section adjustments */
+            .hero-section {
+                min-height: 100vh;
+                padding: 20px 0;
+                display: flex;
                 flex-direction: column;
+                justify-content: center;
                 align-items: center;
             }
             
-            .btn-hero {
-                width: 250px;
+            .hero-content {
+                text-align: center;
+                padding: 0 20px;
+                max-width: 100%;
             }
             
-            .sponsor-buttons {
-                position: relative;
-                right: auto;
-                top: auto;
-                transform: none;
-                flex-direction: row;
-                justify-content: center;
-                margin: 20px 0;
+            .hero-content h1 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
             }
             
+            .hero-content p {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+                line-height: 1.6;
+            }
+            
+            /* Language switcher */
             .language-switcher-center {
                 position: relative;
                 top: auto;
                 left: auto;
                 transform: none;
-                margin: 2rem 0;
+                margin: 0 auto 2rem auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                width: 100%;
+                max-width: 280px;
+                font-size: 14px;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 25px;
+            }
+            
+            /* Hero buttons */
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                margin: 0 auto;
+                padding: 0 20px;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                font-size: 14px;
+                padding: 12px 20px;
+                box-sizing: border-box;
+                border-radius: 25px;
+            }
+            
+            /* Sponsor buttons */
+            .sponsor-buttons {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 20px auto;
+                padding: 0 20px;
+                gap: 10px;
+                max-width: 280px;
+                width: 100%;
+            }
+            
+            .sponsor-btn {
+                width: 100%;
+                font-size: 14px;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 20px;
+            }
+            
+            /* Main content */
+            .main-content {
+                padding: 40px 0 !important;
+            }
+            
+            .filter-section {
+                padding: 20px !important;
+                margin: 0 10px;
+            }
+            
+            .filter-section .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .filter-section .form-select,
+            .filter-section .form-control {
+                width: 100% !important;
+                min-width: auto !important;
+                font-size: 14px;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            
+            /* Guide cards */
+            .guide-card {
+                margin-bottom: 15px;
+            }
+            
+            .guide-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn-guide {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            /* Management center button */
+            .management-center {
+                position: fixed;
+                bottom: 15px;
+                right: 15px;
+                transform: none;
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+            
+            /* Modals */
+            .modal-dialog {
+                margin: 5px;
+                max-width: calc(100vw - 10px);
+                height: calc(100vh - 10px);
+            }
+            
+            .modal-content {
+                height: 100%;
+                border-radius: 10px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            .modal-body .form-control,
+            .modal-body .form-select {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .modal-body .btn {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+            
+            /* Footer adjustments */
+            .footer {
+                padding: 20px 0;
+            }
+            
+            .footer .row > .col-md-2,
+            .footer .row > .col-md-3 {
+                margin-bottom: 15px;
+            }
+            
+            /* Tables */
+            .table-responsive {
+                font-size: 12px;
+            }
+            
+            /* Search results */
+            .search-results {
+                padding: 10px;
+            }
+            
+            /* Pagination */
+            .pagination {
+                justify-content: center;
+            }
+            
+            .page-link {
+                font-size: 12px;
+                padding: 6px 10px;
             }
         }
     </style>
@@ -483,7 +725,7 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="logo-container">
-                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: #333;&quot;>T</span>';" />
+                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
                 </div>
                 TomoTrip
             </a>

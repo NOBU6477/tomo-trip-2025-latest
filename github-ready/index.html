@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     <title>Local Guide - 特別な旅の体験を</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
     <!-- Smart console management -->
     <script>
@@ -37,7 +38,24 @@
                     message.includes('workspace') ||
                     message.includes('iframe') ||
                     message.includes('404') ||
-                    message.includes('Failed to load resource')) {
+                    message.includes('WebSocket') ||
+                    message.includes('stalwart') ||
+                    message.includes('ping') ||
+                    message.includes('eval.kirk') ||
+                    message.includes('replit.com') ||
+                    message.includes('attached_assets') ||
+                    message.includes('Failed to load resource') ||
+                    message.includes('WebGL') ||
+                    message.includes('GroupMarkerNotSet') ||
+                    message.includes('Unrecognized feature') ||
+                    message.includes('Allow attribute') ||
+                    message.includes('CenterDisplay') ||
+                    message.includes('workspace_iframe') ||
+                    message.includes('crbug.com') ||
+                    message.includes('software WebGL') ||
+                    message.includes('enable-unsafe-swiftshader') ||
+                    message.includes('webglcontextlost') ||
+                    message.includes('webglcontextrestored')) {
                     return; // Block noise
                 }
                 originalError.apply(console, args);
@@ -170,6 +188,38 @@
             transition: all 0.3s ease;
             min-width: 140px;
             color: white;
+        }
+
+        /* レスポンシブデザイン - モバイル対応 */
+        @media (max-width: 768px) {
+            .language-switcher-center {
+                top: 20%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 90%;
+                max-width: 320px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 100px;
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-switcher-center {
+                top: 18%;
+                width: 95%;
+                max-width: 280px;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 10px 15px;
+                font-size: 13px;
+                min-width: 80px;
+            }
         }
 
         .lang-btn-jp {
@@ -343,39 +393,250 @@
             box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
         }
 
-        /* Mobile Responsive */
+        /* Mobile Responsive - 完全版 */
         @media (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 2.5rem;
+            /* 基本構造調整 */
+            body {
+                overflow-x: hidden;
             }
             
-            .hero-content p {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            /* ナビゲーション調整 */
+            .navbar {
+                padding: 8px 0;
+            }
+            
+            .navbar-brand {
                 font-size: 1.1rem;
             }
             
-            .sponsor-buttons {
-                position: relative;
-                right: auto;
-                top: auto;
-                transform: none;
+            .navbar .d-flex {
                 flex-direction: row;
-                justify-content: center;
-                margin-top: 2rem;
+                align-items: center;
+                gap: 8px;
+                width: auto;
             }
             
+            .navbar .btn {
+                font-size: 12px;
+                padding: 6px 12px;
+                white-space: nowrap;
+            }
+            
+            .dropdown-menu {
+                min-width: 140px !important;
+                right: 0;
+                left: auto;
+            }
+            
+            /* ヒーローセクション調整 */
+            .hero-section {
+                min-height: 100vh;
+                padding: 20px 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .hero-content {
+                text-align: center;
+                padding: 0 20px;
+                max-width: 100%;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+                line-height: 1.6;
+            }
+            
+            /* 言語切り替えボタン */
             .language-switcher-center {
                 position: relative;
                 top: auto;
                 left: auto;
                 transform: none;
-                margin: 2rem 0;
+                margin: 0 auto 2rem auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
             }
             
+            .lang-btn-jp, .lang-btn-en {
+                width: 100%;
+                max-width: 280px;
+                font-size: 14px;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 25px;
+            }
+            
+            /* ヒーローボタン */
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                margin: 0 auto;
+                padding: 0 20px;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                font-size: 14px;
+                padding: 12px 20px;
+                box-sizing: border-box;
+                border-radius: 25px;
+            }
+            
+            /* 協賛店ボタン */
+            .sponsor-buttons {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 20px auto;
+                padding: 0 20px;
+                gap: 10px;
+                max-width: 280px;
+                width: 100%;
+            }
+            
+            .sponsor-btn {
+                width: 100%;
+                font-size: 14px;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 20px;
+            }
+            
+            /* メインコンテンツ */
+            .main-content {
+                padding: 40px 0 !important;
+            }
+            
+            .filter-section {
+                padding: 20px !important;
+                margin: 0 10px;
+            }
+            
+            .filter-section .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .filter-section .form-select,
+            .filter-section .form-control {
+                width: 100% !important;
+                min-width: auto !important;
+                font-size: 14px;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            
+            /* ガイドカード */
+            .guide-card {
+                margin-bottom: 15px;
+            }
+            
+            .guide-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn-guide {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            /* 管理センターボタン */
             .management-center {
                 position: fixed;
-                bottom: 20px;
-                right: 20px;
+                bottom: 15px;
+                right: 15px;
                 transform: none;
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+            
+            /* モーダル */
+            .modal-dialog {
+                margin: 5px;
+                max-width: calc(100vw - 10px);
+                height: calc(100vh - 10px);
+            }
+            
+            .modal-content {
+                height: 100%;
+                border-radius: 10px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            .modal-body .form-control,
+            .modal-body .form-select {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .modal-body .btn {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+            
+            /* フッター調整 */
+            .footer {
+                padding: 20px 0;
+            }
+            
+            .footer .row > .col-md-2,
+            .footer .row > .col-md-3 {
+                margin-bottom: 15px;
+            }
+            
+            /* テーブル */
+            .table-responsive {
+                font-size: 12px;
+            }
+            
+            /* 検索結果 */
+            .search-results {
+                padding: 10px;
+            }
+            
+            /* ペジネーション */
+            .pagination {
+                justify-content: center;
+            }
+            
+            .page-link {
+                font-size: 12px;
+                padding: 6px 10px;
             }
         }
     </style>
@@ -5223,6 +5484,94 @@
             transform: scale(1.1);
         }
     </style>
+
+    <!-- ========================================
+         FOOTER SECTION - COMPLETE IMPLEMENTATION
+         ======================================== -->
+    <footer id="main-footer" class="bg-dark text-white py-5 mt-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- 会社情報 -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="fw-bold mb-3">会社情報</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showAbout()">私たちについて</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showTerms()">利用規約</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showPrivacy()">プライバシーポリシー</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCompliance()">法的遵守</a></li>
+                    </ul>
+                </div>
+                
+                <!-- サービス -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">サービス</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="scrollToGuides()">ガイド検索</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showGuideRegistrationModal()">ガイド登録</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showManagementCenter()">予約管理</a></li>
+                    </ul>
+                </div>
+                
+                <!-- サポート -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">サポート</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showFAQ()">よくある質問</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showSafety()">安全について</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCancellation()">キャンセル規定</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showHelp()">ヘルプセンター</a></li>
+                    </ul>
+                </div>
+                
+                <!-- 法的事項 -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="fw-bold mb-3">法的事項</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCookies()">Cookie規定</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link">特定商取引法</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link">資金決済法</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link">旅行業法</a></li>
+                    </ul>
+                </div>
+                
+                <!-- お問い合わせ -->
+                <div class="col-lg-3 col-md-12">
+                    <h5 class="fw-bold mb-3">お問い合わせ</h5>
+                    <div class="mb-3">
+                        <p class="mb-1"><i class="bi bi-envelope me-2"></i>support@tomotrip.com</p>
+                        <p class="mb-1"><i class="bi bi-telephone me-2"></i>03-1234-5678</p>
+                        <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>〒100-0001 東京都千代田区</p>
+                        <p class="small text-muted">営業時間: 平日 9:00-18:00</p>
+                    </div>
+                    
+                    <!-- ソーシャルメディア -->
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-light hover-social"><i class="bi bi-facebook fs-4"></i></a>
+                        <a href="#" class="text-light hover-social"><i class="bi bi-twitter fs-4"></i></a>
+                        <a href="#" class="text-light hover-social"><i class="bi bi-instagram fs-4"></i></a>
+                        <a href="#" class="text-light hover-social"><i class="bi bi-youtube fs-4"></i></a>
+                        <a href="#" class="text-light hover-social"><i class="bi bi-line fs-4"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- コピーライト -->
+            <hr class="my-4 border-secondary">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted">&copy; 2025 TomoTrip. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="d-flex justify-content-md-end gap-3 mt-2 mt-md-0">
+                        <small class="text-muted">旅行業登録番号: 第2-1234号</small>
+                        <small class="text-muted">|</small>
+                        <small class="text-muted">JATA会員</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
 
 </body>
 </html>
