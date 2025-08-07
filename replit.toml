@@ -6,5 +6,4 @@ run = ["sh", "-c", "python3 main.py"]
 
 [nix]
 channel = "stable-23.11"
-packages = ["python3"]
-channel = "stable-23.11"
+packages = ["python3", "nodejs-18"]
