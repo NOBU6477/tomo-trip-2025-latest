@@ -1600,7 +1600,7 @@
             
             // Booking and contact functions
             window.bookGuide = function(guideId) {
-                // Close the guide detail modal first
+                // Close the guide detail modal first and force cleanup
                 const openModal = document.querySelector('.modal.show');
                 if (openModal) {
                     const modalInstance = bootstrap.Modal.getInstance(openModal);
@@ -1608,6 +1608,15 @@
                         modalInstance.hide();
                     }
                 }
+                
+                // Force remove any existing modal backdrops
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                    backdrop.remove();
+                });
+                
+                // Remove modal-open class from body
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('padding-right');
                 
                 // Wait a moment for the modal to close, then open booking
                 setTimeout(() => {
@@ -3862,9 +3871,29 @@
                 </div>
             `;
             
-            // Show payment modal
-            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            // Ensure no conflicts with existing modals
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.remove();
+            });
+            
+            // Show payment modal with higher z-index
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
             paymentModal.show();
+            
+            // Force z-index after modal is shown
+            setTimeout(() => {
+                const modalElement = document.getElementById('paymentModal');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (modalElement) {
+                    modalElement.style.zIndex = '2050';
+                }
+                if (backdrop) {
+                    backdrop.style.zIndex = '2040';
+                }
+            }, 100);
             
             // Add payment method selection handlers
             document.querySelectorAll('.payment-option').forEach(option => {
@@ -4235,7 +4264,7 @@
     </div>
 
     <!-- Payment Modal -->
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true" style="z-index: 2050;">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
