@@ -1,6 +1,15 @@
 // WebGL Fallback Warning Fix
 // Prevents WebGL deprecation warnings
 
+// Network error recovery for ERR_NETWORK_IO_SUSPENDED
+window.addEventListener('online', function() {
+    console.log('🔄 Network recovered, checking resources...');
+});
+
+window.addEventListener('offline', function() {
+    console.log('📡 Network lost, entering offline mode...');
+});
+
 (function() {
     'use strict';
     

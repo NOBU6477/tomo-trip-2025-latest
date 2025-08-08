@@ -32,7 +32,6 @@ window.addEventListener('error', function(e) {
         'sandbox',
         'iframe',
         'replit.com',
-
         'stalwart',
         'WebGL',
         'GroupMarkerNotSet',
@@ -42,8 +41,33 @@ window.addEventListener('error', function(e) {
         'webglcontextlost',
         'enable-unsafe-swiftshader',
         'software WebGL',
-        'Unrecognized feature',
-        'allow-downloads-without-user-activation'
+        'allow-downloads-without-user-activation',
+        'WebSocket connection to',
+        'net::ERR_NETWORK_IO_SUSPENDED',
+        'Uncaught (in promise) Timeout',
+        'Allow attribute will take precedence',
+        'Automatic fallback to software WebGL',
+        'A0203000D4200000',
+        'A0F02F00D4200000',
+        'A0502F00D4200000',
+        'eval.kirk.platform.replit.com',
+        'graphql_subscriptions',
+        'events.launchdarkly',
+        'sp.replit.com/v1/isi',
+        'stallwart: failed ping',
+        'ambient-light-sensor',
+        'battery',
+        'execution-while-not-rendered',
+        'execution-while-out-of-viewport',
+        'layout-animations',
+        'legacy-image-formats',
+        'navigation-override',
+        'oversized-images',
+        'publickey-credentials',
+        'speaker-selection',
+        'unoptimized-images',
+        'unsized-media',
+        'pointer-lock'
     ];
     
     function shouldSuppress(message) {
