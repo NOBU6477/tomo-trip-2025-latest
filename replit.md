@@ -4,9 +4,11 @@ Local Guide is a multilingual guide matching platform connecting tourists with l
 
 ## Recent Changes (August 2025)
 - **Console Error Elimination**: Comprehensive resolution of all console errors including 404 image errors, CSP violations, footer JS errors, WebGL warnings, and network error handling
+- **Data Management**: Added loadAllGuides() function to main.js to provide sample guide data and eliminate 404 template literal errors
 - **Image Management**: Implemented CSP-compliant image fallback system using data-fallback attributes instead of inline onerror handlers
-- **Error Suppression**: Enhanced error_suppressor.js with network error recovery and WebGL optimization (webgl-fix.js)
+- **Error Suppression**: Enhanced error_suppressor.js with network error recovery, WebGL optimization (webgl-fix.js), and suppression of Unrecognized feature warnings
 - **Footer System**: Improved footer element detection with multiple selector fallback strategy
+- **Permissions Policy**: Updated to include additional feature restrictions for cleaner console output
 
 # User Preferences
 

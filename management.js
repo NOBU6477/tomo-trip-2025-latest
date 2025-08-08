@@ -192,18 +192,20 @@ function setupManagementEventListeners() {
     });
     
     // Setup image error handling for CSP compliance
-    const images = document.querySelectorAll('img[data-fallback]');
-    images.forEach(img => {
-        img.addEventListener('error', function() {
-            if (this.src !== this.dataset.fallback) {
-                this.src = this.dataset.fallback;
-                console.log('Image fallback applied');
-            }
+    setTimeout(() => {
+        const images = document.querySelectorAll('img[data-fallback]');
+        images.forEach(img => {
+            img.addEventListener('error', function() {
+                if (this.src !== this.dataset.fallback) {
+                    this.src = this.dataset.fallback;
+                    console.log('Image fallback applied');
+                }
+            });
+            img.addEventListener('load', function() {
+                console.log('Image loaded successfully');
+            });
         });
-        img.addEventListener('load', function() {
-            console.log('Image loaded successfully');
-        });
-    });
+    }, 100);
 }
 
 // Handle management center button actions

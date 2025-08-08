@@ -41,7 +41,9 @@ window.addEventListener('error', function(e) {
         'crbug.com',
         'webglcontextlost',
         'enable-unsafe-swiftshader',
-        'software WebGL'
+        'software WebGL',
+        'Unrecognized feature',
+        'allow-downloads-without-user-activation'
     ];
     
     function shouldSuppress(message) {

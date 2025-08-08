@@ -87,6 +87,47 @@ function handleBgError(img) {
     img.style.display = 'none';
 }
 
+// Load all guides data for management functions
+function loadAllGuides() {
+    const sampleGuides = [
+        {
+            id: 1,
+            name: "田中太郎",
+            location: "tokyo",
+            rating: 4.8,
+            price: 8000,
+            image: "attached_assets/image_1754398586272.png",
+            languages: ["ja", "en"],
+            specialties: ["history", "culture"]
+        },
+        {
+            id: 2,
+            name: "佐藤花子", 
+            location: "osaka",
+            rating: 4.9,
+            price: 7500,
+            image: "attached_assets/image_1754398970075.png",
+            languages: ["ja", "en", "ko"],
+            specialties: ["food", "shopping"]
+        },
+        {
+            id: 3,
+            name: "鈴木一郎",
+            location: "kyoto",
+            rating: 4.7,
+            price: 9000,
+            image: "attached_assets/image_1754399234136.png",
+            languages: ["ja", "en"],
+            specialties: ["temples", "traditional"]
+        }
+    ];
+    
+    // Get additional guides from localStorage if available
+    const additionalGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+    
+    return [...sampleGuides, ...additionalGuides];
+}
+
 // Setup all event listeners
 function setupEventListeners() {
     // Login dropdown
