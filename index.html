@@ -868,13 +868,22 @@
             ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
         };
 
+        // Initialize default guide data
+        function loadDefaultGuides() {
+            console.log('🔧 Loading default guide dataset...');
+            const existingGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+            if (existingGuides.length === 0) {
+                localStorage.setItem('registeredGuides', JSON.stringify([]));
+                console.log('✅ Default guides storage initialized');
+            }
+        }
+
         // Load registered guides from localStorage and merge with default data
         function loadAllGuides() {
             const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
             console.log('Loading registered guides:', registeredGuides.length);
             if (registeredGuides.length === 0) {
                 console.log('⚠️ No registered guides found - initializing default dataset');
-                // Force load default guides if none exist
                 loadDefaultGuides();
             }
             
@@ -974,12 +983,24 @@
             }
         ];
 
-        // Initialize guides with registered guides included
-        let guideData = loadAllGuides();
-        let currentGuides = guideData;
+        // Initialize guides with registered guides included - FIXED
+        let guideData = [];
+        let currentGuides = [];
         let displayedGuides = [];
         let currentPage = 1;
         const guidesPerPage = 12;
+        
+        // Initialize guide data immediately after definition
+        console.log('🔧 Initializing guide system...');
+        try {
+            guideData = loadAllGuides();
+            currentGuides = guideData;
+            console.log('✅ Guide data loaded:', guideData.length, 'guides');
+        } catch (error) {
+            console.error('❌ Error loading guide data:', error);
+            guideData = defaultGuideData || [];
+            currentGuides = guideData;
+        }
 
         // Generate guide card HTML
         function createGuideCard(guide) {
@@ -1316,9 +1337,53 @@
             }
         }
 
-        // Main initialization
+        // Main initialization - FIXED VERSION
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🌴 TomoTrip Complete Version Loading...');
+            
+            // FIRST: Initialize guide data and display - ENHANCED
+            console.log('📋 Initializing guide system...');
+            try {
+                // Ensure guide data is loaded
+                if (!guideData || guideData.length === 0) {
+                    console.log('🔄 Reloading guide data...');
+                    guideData = loadAllGuides();
+                    currentGuides = guideData;
+                }
+                
+                console.log('✅ Loaded guides:', guideData.length);
+                
+                if (guideData.length > 0) {
+                    // Force display guides immediately
+                    displayGuides(guideData, 1);
+                    console.log('✅ Guide cards displayed successfully');
+                    
+                    // Verify container has content
+                    setTimeout(() => {
+                        const container = document.getElementById('guideCardsContainer');
+                        if (container) {
+                            console.log('📊 Guide container check:', {
+                                hasContent: container.innerHTML.length > 0,
+                                childCount: container.children.length,
+                                innerHTML: container.innerHTML.substring(0, 100) + '...'
+                            });
+                        }
+                    }, 100);
+                } else {
+                    console.error('❌ No guides found in data - using fallback');
+                    // Force display default guides
+                    displayGuides(defaultGuideData, 1);
+                }
+            } catch (error) {
+                console.error('❌ Error loading guides:', error);
+                // Emergency fallback
+                try {
+                    displayGuides(defaultGuideData, 1);
+                    console.log('🆘 Emergency fallback: displayed default guides');
+                } catch (fallbackError) {
+                    console.error('❌ Even fallback failed:', fallbackError);
+                }
+            }
             
             // Define tourist registration functions in global scope
             window.checkTouristRegistration = function() {
