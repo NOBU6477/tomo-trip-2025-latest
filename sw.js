@@ -1,20 +1,9 @@
-// Service Worker - Basic Implementation
-// Prevents 404 error for sw.js
+// Service Worker Disabled for CSP Compliance
+// This service worker intentionally does nothing
 
-self.addEventListener('install', function(event) {
-    // Skip waiting to activate immediately
-    self.skipWaiting();
-});
+console.log('Service Worker disabled - CSP compliant mode');
 
-self.addEventListener('activate', function(event) {
-    // Take control of all pages immediately
-    event.waitUntil(self.clients.claim());
-});
-
-// Basic fetch handler - pass through all requests
-self.addEventListener('fetch', function(event) {
-    // Let the browser handle all fetch requests normally
-    return;
-});
-
-console.log('Service Worker registered successfully');
+// No-op event listeners
+self.addEventListener('install', () => {});
+self.addEventListener('activate', () => {});
+self.addEventListener('fetch', () => {});
