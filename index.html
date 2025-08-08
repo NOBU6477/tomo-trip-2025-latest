@@ -148,32 +148,14 @@
             display: block;
         }
 
-        /* Hero Section - Replaced with OCEAN YACHT definition below */
-
-        /* Backup Background System with Multiple Fallbacks */
-        /* Disable conflicting pseudo-elements */
-        .hero-section::before,
-        .hero-section::after {
-            display: none !important;
-        }
-
-        /* OCEAN YACHT BACKGROUND - Single authoritative definition */
+        /* Hero Section - Basic layout only, background handled below */
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5)), 
-                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
-            background-size: cover !important;
-            background-position: center center !important;
-            background-repeat: no-repeat !important;
-            background-attachment: scroll !important;
-            min-height: 100vh !important;
-            height: 100vh !important;
-            position: relative !important;
-        }
-
-        /* Ensure content visibility */
-        .hero-section > * {
-            position: relative !important;
-            z-index: 10 !important;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         /* Language Switcher - Center Position */
@@ -5589,12 +5571,18 @@
         </div>
     </footer>
 
-    <!-- FINAL OCEAN YACHT BACKGROUND OVERRIDE -->
-    <style id="final-ocean-override">
-        /* Final authoritative background definition */
+    <!-- OCEAN YACHT BACKGROUND - ABSOLUTE FINAL VERSION -->
+    <style>
+        /* Complete override - disable all previous styles */
+        .hero-section * {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Force ocean yacht background with absolute path */
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5)), 
-                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+            background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
+                        url('/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png') !important;
             background-size: cover !important;
             background-position: center center !important;
             background-repeat: no-repeat !important;
@@ -5605,6 +5593,16 @@
             align-items: center !important;
             justify-content: center !important;
             position: relative !important;
+            overflow: hidden !important;
+        }
+        
+        /* Ensure UI elements are visible */
+        .hero-section .container,
+        .hero-section .row,
+        .hero-section .col-12,
+        .hero-section .text-center {
+            position: relative !important;
+            z-index: 20 !important;
         }
     </style>
 
@@ -5833,14 +5831,18 @@
         console.log('🚨 EMERGENCY SCRIPT TEST - This should appear in console!');
         console.log('📍 Time:', new Date().toLocaleTimeString());
         
-        // Force beautiful ocean yacht background with content visibility
-        setTimeout(() => {
+        // Force beautiful ocean yacht background with encoded URL
+        function applyOceanBackground() {
             const heroSection = document.querySelector('.hero-section');
             if (heroSection) {
-                console.log('🌊 OCEAN YACHT: Applying beautiful ocean background directly');
+                console.log('🌊 OCEAN YACHT: Applying beautiful ocean background with encoded URL');
+                
+                // Use URL encoded path for compatibility
+                const encodedImageUrl = '/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png';
+                
                 heroSection.style.cssText = `
-                    background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.5)), 
-                               url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
+                               url('${encodedImageUrl}') !important;
                     background-size: cover !important;
                     background-position: center center !important;
                     background-repeat: no-repeat !important;
@@ -5851,29 +5853,38 @@
                     align-items: center !important;
                     justify-content: center !important;
                     position: relative !important;
+                    overflow: hidden !important;
                 `;
                 
-                // Ensure all child content is visible
-                const children = heroSection.querySelectorAll('*');
-                children.forEach(child => {
-                    child.style.position = 'relative';
-                    child.style.zIndex = '10';
+                // Ensure all content is visible with proper z-index
+                const allElements = heroSection.querySelectorAll('*');
+                allElements.forEach(element => {
+                    if (!element.style.position || element.style.position === 'static') {
+                        element.style.position = 'relative';
+                    }
+                    element.style.zIndex = '20';
                 });
                 
-                console.log('✅ OCEAN YACHT: Beautiful sea and yacht background applied with content visibility');
+                console.log('✅ OCEAN YACHT: Beautiful sea and yacht background applied successfully');
                 
-                // Verify the background is applied
-                const computedStyle = getComputedStyle(heroSection);
-                const bgImage = computedStyle.backgroundImage;
-                if (bgImage && bgImage.includes('ChatGPT')) {
-                    console.log('🎯 SUCCESS: Ocean yacht image confirmed in styles');
-                } else {
-                    console.log('⚠️ WARNING: Ocean yacht image may not be loading properly');
-                }
+                // Test background image loading
+                const testImage = new Image();
+                testImage.onload = () => {
+                    console.log('🎯 SUCCESS: Ocean yacht image loaded successfully');
+                };
+                testImage.onerror = () => {
+                    console.log('❌ ERROR: Ocean yacht image failed to load');
+                };
+                testImage.src = encodedImageUrl;
+                
             } else {
                 console.log('❌ ERROR: hero-section not found');
             }
-        }, 50);
+        }
+        
+        // Apply immediately and on DOM ready
+        setTimeout(applyOceanBackground, 50);
+        document.addEventListener('DOMContentLoaded', applyOceanBackground);
     </script>
 
 </body>
