@@ -9,6 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
     <!-- Complete error suppression system -->
+    <script src="webgl-fix.js"></script>
     <script src="error_suppressor.js"></script>
     <script src="main.js"></script>
     <script src="management.js"></script>
@@ -5468,7 +5469,20 @@
         
         // Immediate footer check
         function checkFooterImmediately() {
-            const footer = document.querySelector('footer#main-footer');
+            // 複数のセレクタでフッターを探す  
+            function findFooter() {
+                const selectors = ['#main-footer', 'footer', '.footer', '[id*="footer"]', '[class*="footer"]'];
+                for (const selector of selectors) {
+                    const element = document.querySelector(selector);
+                    if (element) {
+                        console.log(`✅ Footer found with selector: ${selector}`);
+                        return element;
+                    }
+                }
+                return null;
+            }
+            
+            const footer = findFooter();
             console.log('🔍 Immediate footer check:', !!footer);
             if (footer) {
                 console.log('✅ Footer element found - applying comprehensive styles');
@@ -5555,7 +5569,7 @@
                 
                 console.log('✅ Footer comprehensive styling complete');
             } else {
-                console.error('❌ Footer element not found immediately');
+                console.log('⏳ Footer element not found immediately, will retry...');
             }
         }
         

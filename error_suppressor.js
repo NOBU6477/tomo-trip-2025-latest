@@ -1,4 +1,17 @@
 // Complete error suppression for Replit interface errors
+// Network error handling for ERR_NETWORK_CHANGED
+window.addEventListener('error', function(e) {
+    if (e.message && e.message.includes('ERR_NETWORK_CHANGED')) {
+        console.log('🔄 Network changed, implementing retry logic...');
+        setTimeout(() => {
+            if (window.location.pathname === '/') {
+                window.location.reload();
+            }
+        }, 2000);
+        return;
+    }
+});
+
 (function() {
     'use strict';
     
