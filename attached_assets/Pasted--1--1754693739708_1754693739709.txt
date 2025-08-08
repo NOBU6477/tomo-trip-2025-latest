@@ -1,0 +1,70 @@
+【目的】フッター二重表示の解消＆コンソールエラー削減
+
+■ やること（必ず全部）
+1) 「フッター強制・緊急モード」系スクリプトを完全停止
+   - プロジェクト内で次の文字列を検索し、該当コードを削除/無効化してください。
+     - "FOOTER DEBUG SCRIPT"
+     - "EMERGENCY MODE"
+     - "FOOTER FORCED VISIBLE WITH EXTREME MEASURES"
+     - "Footer element not found immediately"
+   - これらは footer を挿入/複製/強制可視化する処理です。複製発生の原因なので一切行わないようにしてください。
+   - もし footer を JS で生成しているコードがあれば削除し、HTMLの `<footer id="main-footer">` だけを使います。
+
+2) main.js を DOM 構築後に一度だけ実行（挿入はしない）
+   - main.js のフッター処理を以下に置き換え、 `<script src="/js/main.js" defer>` で読み込んでください。
+
+----- main.js（置き換え）-----
+document.addEventListener('DOMContentLoaded', () => {
+  const list = document.querySelectorAll('footer#main-footer');
+  if (list.length === 0) {
+    console.warn('[Footer] not found after DOMContentLoaded');
+    return;
+  }
+  // 万一重複していたら先頭以外を削除（保険）
+  for (let i = 1; i < list.length; i++) list[i].remove();
+
+  const footer = list[0];
+  footer.style.display = 'block';
+  footer.style.visibility = 'visible';
+});
+--------------------------------
+
+3) index.html のフッターは HTML だけにして、インライン style を排除（CSP対応）
+   - `<footer id="main-footer" class="footer-dark">` に変え、インラインstyleは削除。
+   - CSS は /assets/css/footer.css に下記を追加して読み込み。
+
+----- /assets/css/footer.css（新規 or 追記）-----
+.footer-dark{
+  background:#212529; color:#fff; padding:3rem 0; margin-top:2rem;
+  position:relative; z-index:100; width:100%; clear:both; display:block;
+  visibility:visible; opacity:1;
+}
+.footer-dark .hover-link:hover{ text-decoration:underline; }
+.footer-dark .hover-social:hover{ opacity:.85; }
+.footer-dark .text-muted{ color:#adb5bd !important; }
+---------------------------------------------------
+
+4) 404 の修正（画像/リソースの実体とパス一致）
+   - 404 になっている `attached_assets/imag---*.png` 等の参照を全修正。
+   - ロゴは `/assets/images/tomotrip-logo.png` に保存し、index.html の `<img src="/assets/images/tomotrip-logo.png">` に統一。
+   - 404 が 0 件になるまで実体とパスを確認。
+
+5) sandbox 属性エラーの除去
+   - すべての `<iframe>` から `allow-downloads-without-user-activation` を削除。
+
+6) eval / ServiceWorker / inline script の排除（CSP対策）
+   - `eval(...)` / `new Function(...)` / `navigator.serviceWorker.register(...)` / `new Worker(...)` 等があれば削除。
+   - すべての自作 JS は外部ファイル化し、`defer` で読み込む。
+
+■ これは無視でOK（原因調査不要）
+- `Unrecognized feature: ...`（ブラウザ警告）
+- WebGL fallback 警告
+- LaunchDarkly / Replit WebSocket 一時エラー（ネットワーク起因）
+
+■ 受け入れ条件（完了判定）
+- フッターが **1つだけ** 表示される（全画面幅、レスポンシブOK）
+- コンソールから以下が消える：
+  - 「FOOTER DEBUG...」「EMERGENCY MODE」「FORCED VISIBLE...」
+  - sandbox invalid flag
+  - 画像/リソース 404
+  - CSP（inline/eval/worker）関連エラー

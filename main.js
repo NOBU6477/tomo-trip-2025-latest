@@ -1,20 +1,22 @@
 // TomoTrip Main JavaScript - CSP Compliant
 // All inline scripts moved to external file
 
-// Error suppression and DOM handling
-document.addEventListener('DOMContentLoaded', function() {
-    // Setup event listeners
-    setupEventListeners();
-    
-    // Footer visibility enforcement
-    const footer = document.getElementById('main-footer');
-    if (footer) {
-        footer.style.display = 'block';
-        footer.style.visibility = 'visible';
-        console.log('✅ Footer forced visible after DOMContentLoaded');
-    } else {
-        console.warn('⚠️ Footer not found after DOMContentLoaded');
-    }
+// Main application initialization
+document.addEventListener('DOMContentLoaded', () => {
+  const list = document.querySelectorAll('footer#main-footer');
+  if (list.length === 0) {
+    console.warn('[Footer] not found after DOMContentLoaded');
+    return;
+  }
+  // 万一重複していたら先頭以外を削除（保険）
+  for (let i = 1; i < list.length; i++) list[i].remove();
+
+  const footer = list[0];
+  footer.style.display = 'block';
+  footer.style.visibility = 'visible';
+  
+  // Setup event listeners
+  setupEventListeners();
     
     // Remove any error notification elements
     const errorElements = document.querySelectorAll('[class*="error"], [class*="notification"], [id*="error"]');
