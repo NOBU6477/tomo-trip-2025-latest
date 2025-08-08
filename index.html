@@ -5981,21 +5981,45 @@
             z-index: 10 !important;
         }
         
-        /* Force ocean yacht background with absolute path */
+        /* Force ocean yacht background with bright, cheerful appearance */
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
-                        url('/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png') !important;
-            background-size: cover !important;
-            background-position: center center !important;
-            background-repeat: no-repeat !important;
-            background-attachment: scroll !important;
+            position: relative !important;
             height: 100vh !important;
             min-height: 100vh !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            position: relative !important;
             overflow: hidden !important;
+        }
+        
+        /* Background image layer with brightness filter */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+            /* Bright, cheerful filters */
+            filter: brightness(1.4) contrast(1.1) saturate(1.2);
+            z-index: -2;
+        }
+        
+        /* Soft overlay for text readability */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(0,100,200,0.15));
+            z-index: -1;
         }
         
         /* Ensure UI elements are visible */
@@ -6277,18 +6301,12 @@
                     testImg.onload = () => {
                         console.log(`✅ SUCCESS: Image loaded from path ${pathIndex + 1}`);
                         heroSection.style.cssText = `
-                            background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
-                                       url('${currentPath}') !important;
-                            background-size: cover !important;
-                            background-position: center center !important;
-                            background-repeat: no-repeat !important;
-                            background-attachment: scroll !important;
+                            position: relative !important;
                             min-height: 100vh !important;
                             height: 100vh !important;
                             display: flex !important;
                             align-items: center !important;
                             justify-content: center !important;
-                            position: relative !important;
                             overflow: hidden !important;
                         `;
                         imageLoadSuccess = true;
