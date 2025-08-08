@@ -1,0 +1,155 @@
+【依頼内容】
+以下の修正を一括でお願いします。
+
+1. **CSPエラーの解消**
+   - index.html のフッター部分にあるインラインstyleをすべて削除し、CSSクラス化してください。
+   - eval / inline script / Service Worker登録があれば削除または外部JSファイル化し、<script>タグには defer を付けてください。
+
+2. **404エラーの修正**
+   - attached_assets/imag---*.png などの存在しない画像参照を全て修正してください。
+   - フッターロゴは `/assets/images/tomotrip-logo.png` に置き、参照も更新してください。
+
+3. **sandboxエラーの解消**
+   - <iframe> から `allow-downloads-without-user-activation` を削除してください。
+
+4. **Footer取得エラー修正**
+   - main.js のフッター関連処理は DOMContentLoaded 後に実行してください。
+
+5. **警告の整理（優先度低）**
+   - Unrecognized feature の警告は可能ならライブラリアップデートで減らす。
+   - WebGL fallback の警告は影響軽微なので優先度低。
+
+-------------------------------------------------
+【修正版コード】
+
+--- index.html（フッター部分） ---
+<footer id="main-footer" class="footer-dark">
+    <div class="container">
+        <div class="row">
+            <!-- Company Info -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <img src="/assets/images/tomotrip-logo.png" alt="TomoTrip" style="height: 40px;" class="me-2">
+                    <h5 class="mb-0">TomoTrip</h5>
+                </div>
+                <p class="text-muted small">地域の専門ガイドと観光客をつなぐプラットフォーム。安全で信頼できる旅行体験をご提供します。</p>
+                <div class="d-flex gap-3">
+                    <a href="https://facebook.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Facebook">
+                        <i class="bi bi-facebook fs-5"></i>
+                    </a>
+                    <a href="https://twitter.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Twitter">
+                        <i class="bi bi-twitter fs-5"></i>
+                    </a>
+                    <a href="https://instagram.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Instagram">
+                        <i class="bi bi-instagram fs-5"></i>
+                    </a>
+                    <a href="https://youtube.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="YouTube">
+                        <i class="bi bi-youtube fs-5"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="text-white mb-3">サービス</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link">ガイド検索</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">ガイド登録</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">観光客登録</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">予約管理</a></li>
+                    <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
+                </ul>
+            </div>
+
+            <!-- Support -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="text-white mb-3">サポート</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">ヘルプセンター</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">よくある質問</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">お問い合わせ</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">安全ガイド</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">コミュニティ</a></li>
+                </ul>
+            </div>
+
+            <!-- Legal -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h6 class="text-white mb-3">法的情報</h6>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">利用規約</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">プライバシーポリシー</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">Cookie設定</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">免責事項</a></li>
+                    <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">著作権</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h6 class="text-white mb-3">お問い合わせ</h6>
+                <div class="mb-3">
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-envelope me-2"></i>
+                        <a href="mailto:info@tomotrip.com" class="text-muted text-decoration-none hover-link">info@tomotrip.com</a>
+                    </p>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-telephone me-2"></i>
+                        <a href="tel:03-1234-5678" class="text-muted text-decoration-none hover-link">03-1234-5678</a>
+                    </p>
+                    <p class="text-muted small mb-3">
+                        <i class="bi bi-clock me-2"></i>平日 9:00-18:00（土日祝休）
+                    </p>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-geo-alt me-2"></i>〒100-0001 東京都千代田区千代田1-1
+                    </p>
+                </div>
+                <div class="mt-3">
+                    <p class="text-muted small mb-2">緊急時サポート:</p>
+                    <p class="text-muted small mb-0">
+                        <i class="bi bi-telephone-fill me-2 text-warning"></i>
+                        <a href="tel:080-9999-8888" class="text-warning text-decoration-none hover-link">080-9999-8888</a>
+                        <small class="d-block text-muted">（24時間対応）</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4 border-secondary">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="text-muted small mb-0">&copy; 2025 TomoTrip. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end"></div>
+        </div>
+    </div>
+</footer>
+
+--- ocean_background.css または footer.css に追加 ---
+.footer-dark {
+    background-color: #212529;
+    color: white;
+    padding: 3rem 0;
+    margin-top: 2rem;
+    position: relative;
+    z-index: 100;
+    width: 100%;
+    clear: both;
+    display: block;
+    visibility: visible;
+    opacity: 1;
+}
+.footer-dark .hover-link:hover { text-decoration: underline; }
+.footer-dark .hover-social:hover { opacity: 0.8; }
+.footer-dark .text-muted { color: #adb5bd !important; }
+
+--- main.js 修正版 ---
+document.addEventListener('DOMContentLoaded', () => {
+    const footer = document.getElementById('main-footer');
+    if (!footer) {
+        console.warn('Footer not found after DOMContentLoaded');
+        return;
+    }
+    footer.style.display = 'block';
+    footer.style.visibility = 'visible';
+});

@@ -5,6 +5,17 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Setup event listeners
     setupEventListeners();
+    
+    // Footer visibility enforcement
+    const footer = document.getElementById('main-footer');
+    if (footer) {
+        footer.style.display = 'block';
+        footer.style.visibility = 'visible';
+        console.log('✅ Footer forced visible after DOMContentLoaded');
+    } else {
+        console.warn('⚠️ Footer not found after DOMContentLoaded');
+    }
+    
     // Remove any error notification elements
     const errorElements = document.querySelectorAll('[class*="error"], [class*="notification"], [id*="error"]');
     errorElements.forEach(el => {
