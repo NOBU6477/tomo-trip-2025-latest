@@ -45,6 +45,9 @@
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
     <link rel="stylesheet" href="ocean_background.css">
     <style>
@@ -5556,43 +5559,33 @@
             }
         }
         
-        // Emergency: Force run immediately multiple times
-        console.log('🚨 EMERGENCY: Running footer fix immediately');
-        checkFooterImmediately();
+        // Optimized footer initialization with proper timing
+        function initializeFooter() {
+            const footer = document.querySelector('.footer-section');
+            if (footer) {
+                console.log('🔍 Footer found - applying styles');
+                checkFooterImmediately();
+                return true;
+            } else {
+                console.log('🔍 Footer not found - waiting...');
+                return false;
+            }
+        }
         
-        // Force run after short delay
-        setTimeout(function() {
-            console.log('🚨 EMERGENCY: 100ms delay footer fix');
-            checkFooterImmediately();
-        }, 100);
-        
-        // Also run on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔍 DOMContentLoaded - checking footer again');
-            checkFooterImmediately();
-        });
-        
-        // Run on window load
-        window.addEventListener('load', function() {
-            console.log('🔍 Window loaded - final footer check');
-            checkFooterImmediately();
-        });
-        
-        // Multiple fallback timeouts
-        setTimeout(function() {
-            console.log('🔍 500ms timeout fallback - checking footer');
-            checkFooterImmediately();
-        }, 500);
-        
-        setTimeout(function() {
-            console.log('🔍 1000ms timeout fallback - checking footer');
-            checkFooterImmediately();
-        }, 1000);
-        
-        setTimeout(function() {
-            console.log('🔍 2000ms timeout fallback - checking footer');
-            checkFooterImmediately();
-        }, 2000);
+        // Try immediate initialization first
+        if (!initializeFooter()) {
+            // If footer not found, use DOMContentLoaded
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('🔍 DOMContentLoaded - checking footer');
+                if (!initializeFooter()) {
+                    // Final fallback with timeout
+                    setTimeout(function() {
+                        console.log('🔍 Final timeout - checking footer');
+                        initializeFooter();
+                    }, 100);
+                }
+            });
+        }
     </script>
     
     <!-- Footer Force CSS -->
@@ -6240,13 +6233,16 @@
         console.log('🚨 EMERGENCY SCRIPT TEST - This should appear in console!');
         console.log('📍 Time:', new Date().toLocaleTimeString());
         
-        // Force beautiful ocean yacht background with encoded URL - DEBUGGING VERSION
+        // Force beautiful ocean yacht background - FIXED VERSION
         function applyOceanBackground() {
             console.log('🔍 BACKGROUND DEBUG: Function called at', new Date().toLocaleTimeString());
             const heroSection = document.querySelector('.hero-section');
             console.log('🔍 HERO SECTION FOUND:', !!heroSection);
             if (heroSection) {
-                console.log('🌊 OCEAN YACHT: Applying beautiful ocean background with encoded URL');
+                console.log('🌊 OCEAN YACHT: Applying beautiful ocean background');
+                
+                // Define encodedImageUrl properly for any future use
+                const encodedImageUrl = '/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png';
                 
                 // Try multiple image paths to solve loading issues
                 const imagePaths = [
@@ -6328,13 +6324,27 @@
             }
         }
         
-        // Apply multiple times to ensure it works
-        applyOceanBackground();
-        setTimeout(applyOceanBackground, 50);
-        setTimeout(applyOceanBackground, 200);
-        setTimeout(applyOceanBackground, 500);
-        document.addEventListener('DOMContentLoaded', applyOceanBackground);
-        window.addEventListener('load', applyOceanBackground);
+        // Optimized background application with proper timing
+        function initializeBackground() {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                applyOceanBackground();
+                return true;
+            }
+            return false;
+        }
+        
+        // Try immediate initialization
+        if (!initializeBackground()) {
+            // Use DOMContentLoaded if hero section not ready
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('🔍 DOMContentLoaded - initializing background');
+                if (!initializeBackground()) {
+                    // Final fallback
+                    setTimeout(initializeBackground, 100);
+                }
+            });
+        }
     </script>
 
 </body>
