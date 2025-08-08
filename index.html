@@ -152,26 +152,30 @@
 
         /* Hero Section - Basic layout only, background handled below */
         .hero-section {
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            padding: 100px 0 80px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: auto;
+                padding: 120px 0 60px 0;
+            }
         }
 
         /* Language Switcher - Center Position */
         .language-switcher-center {
-            position: absolute;
-            top: 25%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             display: flex;
-            gap: 0;
+            justify-content: center;
+            gap: 15px;
             z-index: 100;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border-radius: 25px;
-            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .lang-btn-jp, .lang-btn-en {
@@ -188,32 +192,29 @@
         /* レスポンシブデザイン - モバイル対応 */
         @media (max-width: 768px) {
             .language-switcher-center {
-                top: 20%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 90%;
-                max-width: 320px;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 1.5rem;
             }
             
             .lang-btn-jp, .lang-btn-en {
                 padding: 12px 20px;
                 font-size: 14px;
-                min-width: 100px;
+                min-width: 150px;
                 flex: 1;
             }
         }
 
         @media (max-width: 480px) {
             .language-switcher-center {
-                top: 18%;
-                width: 95%;
-                max-width: 280px;
+                gap: 8px;
+                margin-bottom: 1rem;
             }
             
             .lang-btn-jp, .lang-btn-en {
                 padding: 10px 15px;
                 font-size: 13px;
-                min-width: 80px;
+                min-width: 120px;
             }
         }
 
@@ -388,6 +389,38 @@
             box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
         }
 
+        /* Payment Modal Mobile Styles */
+        @media (max-width: 768px) {
+            #paymentModal .modal-dialog {
+                margin: 0;
+                max-width: 100%;
+                height: 100vh;
+            }
+            
+            #paymentModal .modal-content {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            #paymentModal .modal-body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            #paymentModal .payment-option {
+                margin-bottom: 10px;
+            }
+            
+            #paymentModal .payment-option .card-body {
+                padding: 15px;
+            }
+            
+            #paymentModal .btn-lg {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
         /* Mobile Responsive - 完全版 */
         @media (max-width: 768px) {
             /* 基本構造調整 */
@@ -430,8 +463,8 @@
             
             /* ヒーローセクション調整 */
             .hero-section {
-                min-height: 100vh;
-                padding: 20px 0;
+                min-height: auto;
+                padding: 120px 0 60px 0;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -461,7 +494,7 @@
                 top: auto;
                 left: auto;
                 transform: none;
-                margin: 0 auto 2rem auto;
+                margin: 0 auto 1.5rem auto;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -664,36 +697,57 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <!-- Language Switcher - Center -->
-        <div class="language-switcher-center">
-            <button class="lang-btn-jp" id="jpBtn">🇯🇵 日本語</button>
-            <button class="lang-btn-en" id="enBtn">🇺🇸 English</button>
-        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-md-12">
+                    <!-- Language Switcher - Center -->
+                    <div class="language-switcher-center text-center mb-4">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px;">🇯🇵 日本語</button>
+                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px;">🇺🇸 English</button>
+                        </div>
+                    </div>
 
-        <!-- Hero Content -->
-        <div class="hero-content">
-            <div class="hero-title-container">
-                <div class="hero-logo">
-                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" />
+                    <!-- Hero Content -->
+                    <div class="hero-content text-center">
+                        <div class="hero-title-container mb-4">
+                            <div class="hero-logo mb-3">
+                                <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" style="width: 80px; height: 80px;" />
+                            </div>
+                            <h1 class="display-4 fw-bold text-dark">あなただけの特別な旅を</h1>
+                        </div>
+                        <p class="lead text-muted mb-5">地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう</p>
+                        <div class="hero-buttons">
+                            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                                <button class="btn-hero btn-primary-hero btn" id="findGuideBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">ガイドを探す</button>
+                                <button class="btn-hero btn-outline-hero btn" id="contactBtn" style="background: linear-gradient(135deg, #f093fb, #f5576c); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">お問い合わせ</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1>あなただけの特別な旅を</h1>
-            </div>
-            <p>地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう</p>
-            <div class="hero-buttons">
-                <button class="btn-hero btn-primary-hero" id="findGuideBtn">ガイドを探す</button>
-                <button class="btn-hero btn-outline-hero" id="contactBtn">お問い合わせ</button>
             </div>
         </div>
     </section>
 
-    <!-- Right Side Buttons -->
-    <div class="sponsor-buttons">
-        <button class="sponsor-btn" id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" onclick="handleSponsorLogin()">ログイン</button>
+    <!-- Desktop Right Side Buttons -->
+    <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
+        <button class="sponsor-btn" id="sponsorRegBtn" onclick="handleSponsorRegistration()" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">協賛店登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" onclick="handleSponsorLogin()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
     </div>
 
-    <!-- Management Center Button -->
-    <button class="management-center" id="managementBtn" title="管理センター">🏆</button>
+    <!-- Mobile Bottom Buttons -->
+    <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
+        <div class="d-flex gap-2">
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" onclick="handleSponsorRegistration()" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">協賛店登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" onclick="handleSponsorLogin()" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
+        </div>
+    </div>
+
+    <!-- Management Center Button - Desktop -->
+    <button class="management-center d-none d-lg-block" id="managementBtn" title="管理センター" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+    
+    <!-- Management Center Button - Mobile -->
+    <button class="management-center-mobile d-lg-none position-fixed" id="managementBtnMobile" title="管理センター" style="bottom: 80px; right: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
 
     <!-- Main Content Section -->
     <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
@@ -3759,7 +3813,7 @@
             paymentContent.innerHTML = `
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-lg-8 col-md-12">
                             <h6 class="text-primary mb-3">お支払い方法を選択</h6>
                             
                             <div class="mb-4">
@@ -3802,7 +3856,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-12 mt-md-3 mt-lg-0">
                             <div class="card">
                                 <div class="card-header">
                                     <h6 class="mb-0">予約詳細</h6>
@@ -3858,11 +3912,11 @@
                     
                     <div class="row mt-4">
                         <div class="col-12">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between gap-3">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="bi bi-arrow-left me-2"></i>戻る
                                 </button>
-                                <button type="button" class="btn btn-success btn-lg" onclick="processPayment('${booking.id}')">
+                                <button type="button" class="btn btn-success btn-lg w-sm-auto w-100" onclick="processPayment('${booking.id}')">
                                     <i class="bi bi-shield-check me-2"></i>安全に支払う
                                 </button>
                             </div>
@@ -4265,7 +4319,7 @@
 
     <!-- Payment Modal -->
     <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true" style="z-index: 2050;">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold" id="paymentModalLabel">
