@@ -40,7 +40,7 @@ function loadBookmarksList() {
                 <div class="card h-100">
                     <div class="row g-0">
                         <div class="col-4">
-                            <img src="${guide.image || 'attached_assets/image_1754398586272.png'}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="${guide.name}" data-fallback="attached_assets/image_1754398586272.png">
+                            <img src="attached_assets/image_1754398586272.png" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="ガイド">
                         </div>
                         <div class="col-8">
                             <div class="card-body p-3">
@@ -85,7 +85,7 @@ function loadComparisonList() {
         return `
             <div class="col-md-4 mb-3">
                 <div class="card h-100 border-success">
-                    <img src="${guide.image || 'attached_assets/image_1754398586272.png'}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="${guide.name}" data-fallback="attached_assets/image_1754398586272.png">
+                    <img src="attached_assets/image_1754398586272.png" class="card-img-top" style="height: 120px; object-fit: cover;" alt="ガイド">
                     <div class="card-body p-3 d-flex flex-column">
                         <h6 class="card-title mb-1">${guide.name}</h6>
                         <p class="card-text small text-muted mb-1">${locationNames[guide.location] || guide.location}</p>
@@ -141,12 +141,12 @@ function loadBookingsList() {
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-2">
-                            <img src="${booking.guideImage || 'attached_assets/image_1754398586272.png'}" class="img-fluid rounded-circle" style="width: 60px; height: 60px; object-fit: cover;" alt="${booking.guideName}" data-fallback="attached_assets/image_1754398586272.png">
+                            <img src="attached_assets/image_1754398586272.png" class="img-fluid rounded-circle" style="width: 60px; height: 60px; object-fit: cover;" alt="ガイド">
                         </div>
                         <div class="col-md-6">
-                            <h6 class="mb-1">${booking.guideName}</h6>
-                            <p class="mb-1 text-muted small">予約ID: #${booking.id}</p>
-                            <p class="mb-0 small">日時: ${booking.date} ${booking.time} (${booking.duration}時間)</p>
+                            <h6 class="mb-1">${booking.guideName || 'ガイド名'}</h6>
+                            <p class="mb-1 text-muted small">予約ID: #${booking.id || 'N/A'}</p>
+                            <p class="mb-0 small">日時: ${booking.date || ''} ${booking.time || ''} (${booking.duration || 0}時間)</p>
                         </div>
                         <div class="col-md-2 text-center">
                             <strong>${booking.totalPrice}</strong>

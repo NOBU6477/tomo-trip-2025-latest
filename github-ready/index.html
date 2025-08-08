@@ -5469,20 +5469,7 @@
         
         // Immediate footer check
         function checkFooterImmediately() {
-            // 複数のセレクタでフッターを探す  
-            function findFooter() {
-                const selectors = ['#main-footer', 'footer', '.footer', '[id*="footer"]', '[class*="footer"]'];
-                for (const selector of selectors) {
-                    const element = document.querySelector(selector);
-                    if (element) {
-                        console.log(`✅ Footer found with selector: ${selector}`);
-                        return element;
-                    }
-                }
-                return null;
-            }
-            
-            const footer = findFooter();
+            const footer = document.querySelector('#main-footer');
             console.log('🔍 Immediate footer check:', !!footer);
             if (footer) {
                 console.log('✅ Footer element found - applying comprehensive styles');
