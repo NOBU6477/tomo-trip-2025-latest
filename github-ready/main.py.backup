@@ -109,12 +109,9 @@ def start_server(port=None):
     """
     Production-ready server startup with comprehensive error handling
     """
-    # Get port from environment or default - flexible for deployment
+    # Get port from environment or default
     if port is None:
-        # Try multiple environment variables for maximum compatibility
-        port = int(os.environ.get('PORT', 
-                  os.environ.get('REPLIT_PORT', 
-                  os.environ.get('HTTP_PORT', 5000))))
+        port = int(os.environ.get('PORT', 5000))
     
     # Setup logging
     setup_logging()

@@ -1,4 +1,4 @@
-#!/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3
+#!/usr/bin/env python3
 """
 TomoTrip - Production HTTP Server
 Production-ready web server for TomoTrip tourism platform
@@ -109,9 +109,12 @@ def start_server(port=None):
     """
     Production-ready server startup with comprehensive error handling
     """
-    # Get port from environment or default
+    # Get port from environment or default - flexible for deployment
     if port is None:
-        port = int(os.environ.get('PORT', 5000))
+        # Try multiple environment variables for maximum compatibility
+        port = int(os.environ.get('PORT', 
+                  os.environ.get('REPLIT_PORT', 
+                  os.environ.get('HTTP_PORT', 5000))))
     
     # Setup logging
     setup_logging()
