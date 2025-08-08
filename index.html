@@ -3897,16 +3897,16 @@
                                         <span>¥${booking.guideRate.toLocaleString()}</span>
                                     </div>
                                     
-                                    <div class="d-flex justify-content-between mb-2">
+                                    <div class="d-flex justify-content-between mb-2" id="serviceFeeRow">
                                         <span>サービス料</span>
-                                        <span>¥${Math.round(booking.guideRate * 0.1).toLocaleString()}</span>
+                                        <span id="serviceFeeAmount">¥${Math.round(booking.guideRate * 0.1).toLocaleString()}</span>
                                     </div>
                                     
                                     <hr>
                                     
                                     <div class="d-flex justify-content-between fw-bold">
                                         <span>合計</span>
-                                        <span class="text-primary">¥${Math.round(booking.guideRate * 1.1).toLocaleString()}</span>
+                                        <span class="text-primary" id="totalAmount">¥${Math.round(booking.guideRate * 1.1).toLocaleString()}</span>
                                     </div>
                                 </div>
                             </div>
@@ -3958,11 +3958,31 @@
                     const method = this.dataset.method;
                     this.querySelector('input[type="radio"]').checked = true;
                     showPaymentDetails(method);
+                    updatePaymentSummary(method, booking);
                 });
             });
             
             // Show initial payment details
             showPaymentDetails('credit');
+            updatePaymentSummary('credit', booking);
+        }
+        
+        function updatePaymentSummary(method, booking) {
+            const serviceFeeRow = document.getElementById('serviceFeeRow');
+            const serviceFeeAmount = document.getElementById('serviceFeeAmount');
+            const totalAmount = document.getElementById('totalAmount');
+            
+            if (method === 'credit') {
+                // クレジットカードの場合：サービス料を表示
+                serviceFeeRow.style.display = 'flex';
+                const serviceFee = Math.round(booking.guideRate * 0.1);
+                serviceFeeAmount.textContent = `¥${serviceFee.toLocaleString()}`;
+                totalAmount.textContent = `¥${Math.round(booking.guideRate * 1.1).toLocaleString()}`;
+            } else {
+                // 銀行振込・デジタル決済の場合：サービス料を非表示
+                serviceFeeRow.style.display = 'none';
+                totalAmount.textContent = `¥${booking.guideRate.toLocaleString()}`;
+            }
         }
         
         function showPaymentDetails(method) {
