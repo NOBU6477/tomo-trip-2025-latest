@@ -14,26 +14,37 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class ProductionHandler(http.server.SimpleHTTPRequestHandler):
+    def guess_type(self, path):
+        """Override to ensure correct MIME types"""
+        if path.endswith('.css'):
+            return 'text/css', None
+        elif path.endswith('.png'):
+            return 'image/png', None
+        elif path.endswith('.jpg') or path.endswith('.jpeg'):
+            return 'image/jpeg', None
+        elif path.endswith('.js'):
+            return 'application/javascript', None
+        return super().guess_type(path)
+    
     def do_GET(self):
-        # Add security headers
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.send_header('X-Frame-Options', 'SAMEORIGIN')
-        self.send_header('X-Content-Type-Options', 'nosniff')
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        
-        # Serve index.html for root
+        # Handle root path
         if self.path == '/' or self.path == '/index.html':
             try:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html; charset=utf-8')
+                self.send_header('X-Frame-Options', 'SAMEORIGIN')
+                self.send_header('X-Content-Type-Options', 'nosniff')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                
                 with open('index.html', 'rb') as f:
                     self.wfile.write(f.read())
                 logger.info(f"✅ Served index.html successfully")
             except Exception as e:
                 logger.error(f"❌ Error serving index.html: {e}")
-                self.wfile.write(b"Error loading page")
+                self.send_error(500, "Error loading page")
         else:
-            # Handle other files
+            # Handle other files with correct MIME types
             super().do_GET()
 
 def start_emergency_server():

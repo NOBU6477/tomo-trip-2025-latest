@@ -5841,24 +5841,63 @@
             if (heroSection) {
                 console.log('🌊 OCEAN YACHT: Applying beautiful ocean background with encoded URL');
                 
-                // Use URL encoded path for compatibility
-                const encodedImageUrl = '/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png';
+                // Try multiple image paths to solve loading issues
+                const imagePaths = [
+                    './attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png',
+                    '/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png',
+                    'attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png'
+                ];
                 
-                heroSection.style.cssText = `
-                    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
-                               url('${encodedImageUrl}') !important;
-                    background-size: cover !important;
-                    background-position: center center !important;
-                    background-repeat: no-repeat !important;
-                    background-attachment: scroll !important;
-                    min-height: 100vh !important;
-                    height: 100vh !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    position: relative !important;
-                    overflow: hidden !important;
-                `;
+                let imageLoadSuccess = false;
+                
+                // Try each image path until one works
+                function tryImagePath(pathIndex) {
+                    if (pathIndex >= imagePaths.length) {
+                        console.log('❌ All paths failed - using ocean gradient');
+                        heroSection.style.cssText = `
+                            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%) !important;
+                            min-height: 100vh !important;
+                            height: 100vh !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                        `;
+                        return;
+                    }
+                    
+                    const currentPath = imagePaths[pathIndex];
+                    console.log(`🔍 Testing image path ${pathIndex + 1}: ${currentPath}`);
+                    
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        console.log(`✅ SUCCESS: Image loaded from path ${pathIndex + 1}`);
+                        heroSection.style.cssText = `
+                            background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
+                                       url('${currentPath}') !important;
+                            background-size: cover !important;
+                            background-position: center center !important;
+                            background-repeat: no-repeat !important;
+                            background-attachment: scroll !important;
+                            min-height: 100vh !important;
+                            height: 100vh !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                        `;
+                        imageLoadSuccess = true;
+                    };
+                    testImg.onerror = () => {
+                        console.log(`❌ FAILED: Path ${pathIndex + 1} failed to load`);
+                        tryImagePath(pathIndex + 1);
+                    };
+                    testImg.src = currentPath;
+                }
+                
+                tryImagePath(0);
                 
                 // Ensure all content is visible with proper z-index
                 const allElements = heroSection.querySelectorAll('*');
