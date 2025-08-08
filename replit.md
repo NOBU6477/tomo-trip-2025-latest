@@ -6,6 +6,8 @@ Local Guide is a multilingual guide matching platform connecting tourists with l
 
 Preferred communication style: Simple, everyday language.
 
+**GitHub Integration**: User wants to sync current project work with GitHub repository for backup and version control. GitHub-ready files organized in `github-ready` folder for easy deployment.
+
 User confirmed preference for production-ready solution prioritizing:
 1. Operational speed and performance
 2. Long-term durability and stability
