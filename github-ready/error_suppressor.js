@@ -19,7 +19,7 @@
         'sandbox',
         'iframe',
         'replit.com',
-        'eval.kirk',
+
         'stalwart',
         'WebGL',
         'GroupMarkerNotSet',
