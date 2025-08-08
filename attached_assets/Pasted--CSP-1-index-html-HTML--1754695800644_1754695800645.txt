@@ -1,0 +1,45 @@
+【目的】消えたフッターを確実に表示させ、CSPに準拠したまま再発を防止する
+
+■ 対応手順（必須）
+
+1) index.html のフッターを「静的HTML」で末尾に残す
+   - 下記の <footer> を </body> 直前に置く（IDは main-footer を維持）。
+   - JSで新規生成・強制挿入はしない。
+
+----- index.html（末尾の <footer> 差し替え）-----
+<footer id="main-footer" class="footer-dark">
+  <div class="container">
+    <div class="row">
+      <!-- 会社情報 -->
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="d-flex align-items-center mb-3">
+          <img src="/assets/images/tomotrip-logo.png" alt="TomoTrip" class="me-2 footer-logo">
+          <h5 class="mb-0">TomoTrip</h5>
+        </div>
+        <p class="text-muted small">地域の専門ガイドと観光客をつなぐプラットフォーム。安全で信頼できる旅行体験をご提供します。</p>
+        <div class="d-flex gap-3">
+          <a href="https://facebook.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Facebook"><i class="bi bi-facebook fs-5"></i></a>
+          <a href="https://twitter.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Twitter"><i class="bi bi-twitter fs-5"></i></a>
+          <a href="https://instagram.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Instagram"><i class="bi bi-instagram fs-5"></i></a>
+          <a href="https://youtube.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="YouTube"><i class="bi bi-youtube fs-5"></i></a>
+        </div>
+      </div>
+      <!-- サービス -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h6 class="text-white mb-3">サービス</h6>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link">ガイド検索</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">ガイド登録</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">観光客登録</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">予約管理</a></li>
+          <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
+        </ul>
+      </div>
+      <!-- サポート -->
+      <div class="col-lg-2 col-md-6 mb-4">
+        <h6 class="text-white mb-3">サポート</h6>
+        <ul class="list-unstyled">
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">ヘルプセンター</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">よくある質問</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">お問い合わせ</a></li>
+          <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">安全ガイド</a></li>
