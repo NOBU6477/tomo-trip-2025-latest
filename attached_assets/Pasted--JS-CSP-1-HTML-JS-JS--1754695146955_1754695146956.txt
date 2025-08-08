@@ -1,0 +1,83 @@
+【目的】画面にJSコードが表示される問題／背景画像が出ない／CSPエラーを一括で解消
+
+■ 対応方針（必須）
+1) HTMLに混入した「JSの中身」を完全撤去して、JSは外部ファイルに集約
+   - index.html 全体を検索し、<script> タグ無しで生の JS が書かれている箇所をすべて削除。
+   - そのロジックを /assets/js/app-init.js に移動し、<script src="/assets/js/app-init.js" defer></script> で読み込む。
+   - 文字として残っているコード例（画面に出てしまっているもの）
+     例）resetRegistrationForm(){ ... }, loadAllGuides(), guideData などの関数本体
+   - 以降、**HTML内にJS本文を置かない**（CSP対策）。
+
+2) タグ崩れの修復（JSが本文化する原因）
+   - index.html をフォーマッタで整形 → 「未閉じタグ・誤ったコメント」を修正。
+   - 該当しやすい箇所：ページング周辺～フッター直前（現在そこにコード文字列が出ている）
+   - 必須：開閉タグの対応数を一致させる（</div> / </section> / </main> の抜けを解消）。
+
+3) インラインスクリプトをゼロに（CSP対応）
+   - src の無い <script> を全面廃止。外部JS化して defer で読み込む。
+   - eval/new Function/ServiceWorker/new Worker を使っていれば削除。
+   - ブラウザDevToolsで表示される 888行/2709行 の inline script エラーが消えることを受け入れ条件とする。
+
+4) 背景画像の復旧
+   - /assets/css/ocean_background.css を「Bootstrap CSSのあと」に読み込む。
+   - 画像実体を /assets/images/ocean-bg.jpg（または既存名）に保存し、CSSのパスを存在する実ファイルに合わせる。
+   - body に class="theme-ocean" を付与し、次のCSSを追加（存在すれば上書き）：
+
+----- 追加CSS（ocean_background.css） -----
+.theme-ocean{
+  background-image:url("/assets/images/ocean-bg.jpg");
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-position:center center;
+}
+#main-footer img{ max-height:40px; height:auto; width:auto; } /* ロゴ暴走防止 */
+-------------------------------------------
+
+5) スクリプト読込の最終形
+   - head 内の順序：Bootstrap CSS → Bootstrap Icons → ocean_background.css → footer.css（任意）
+   - body 終端直前に以下の 2 行のみ（自作JSを集約）：
+     <script src="/assets/js/app-init.js" defer></script>
+     <script src="/assets/js/main.js" defer></script>
+
+6) main.js の内容（DOM後に一度だけ初期化、フッター多重保険）
+----- /assets/js/main.js（置き換え） -----
+document.addEventListener('DOMContentLoaded', () => {
+  // footer が複数あれば先頭以外を削除（保険）
+  const footers = document.querySelectorAll('footer#main-footer');
+  for (let i=1;i<footers.length;i++) footers[i].remove();
+  const footer = footers[0];
+  if (footer){ footer.style.display='block'; footer.style.visibility='visible'; }
+
+  // ここに旧インラインでやっていた初期化関数を呼び出すだけ
+  if (typeof appInit === 'function') appInit();
+});
+------------------------------------------
+
+7) app-init.js の雛形（元のインライン初期化をここへ移す）
+----- /assets/js/app-init.js（新規） -----
+/** 画面の初期化一式：旧インラインJSをここに集約して関数化 */
+function appInit(){
+  // 例：
+  // setupLanguageSwitcher();
+  // loadAllGuides();
+  // resetRegistrationForm();
+  // fixHeaderShadowOnScroll();
+  // sizeHeroSection();
+}
+------------------------------------------
+
+8) 404をゼロに
+   - 画像/JS/CSSで404が出ている参照をすべて修正（実体とパスを一致）。
+   - ロゴは /assets/images/tomotrip-logo.png に置き、HTMLの参照を同じに統一。
+
+9) Service Workerの不活性化（表示差異の根絶）
+   - navigator.serviceWorker.register(...) があれば削除。
+   - 以後SWを使わない前提。ブラウザ側はDevTools→Application→Service Workers→Unregisterで指示。
+
+■ 受け入れ条件
+- 画面下部に出ていた「JSの生文字列」が完全に消える（= HTMLにコードが混在しない）。
+- 背景画像が正しく表示される（theme-oceanが当たり、coverで描画）。
+- DevToolsコンソールからCSPエラー（inline）が消える。
+- 404が0件。
+- フッターは1つだけ表示。

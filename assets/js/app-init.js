@@ -1,8 +1,16 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-// Location mapping for display
-const locationNames = {
+/** Main application initialization function */
+function appInit() {
+    console.log('🌴 TomoTrip Application Starting...');
+    setupEventListeners();
+    initializeGuidePagination();
+    console.log('✅ Application initialized successfully');
+}
+
+// Location mapping for display (check if already exists)
+const locationNames = window.locationNames || {
     hokkaido: "北海道", aomori: "青森県", iwate: "岩手県", miyagi: "宮城県", akita: "秋田県", yamagata: "山形県", fukushima: "福島県",
     ibaraki: "茨城県", tochigi: "栃木県", gunma: "群馬県", saitama: "埼玉県", chiba: "千葉県", tokyo: "東京都", kanagawa: "神奈川県",
     niigata: "新潟県", toyama: "富山県", ishikawa: "石川県", fukui: "福井県", yamanashi: "山梨県", nagano: "長野県", gifu: "岐阜県", shizuoka: "静岡県", aichi: "愛知県",
@@ -11,6 +19,7 @@ const locationNames = {
     fukuoka: "福岡県", saga: "佐賀県", nagasaki: "長崎県", kumamoto: "熊本県", oita: "大分県", miyazaki: "宮崎県", kagoshima: "鹿児島県", okinawa: "沖縄県",
     ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
 };
+window.locationNames = locationNames;
 
 // Global guide data
 let globalCurrentPage = 1;
