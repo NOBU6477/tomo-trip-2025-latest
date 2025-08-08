@@ -3735,14 +3735,254 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
             modal.hide();
             
-            // Redirect to payment page with language parameter
-            window.location.href = 'payment.html?lang=ja';
+            // Show payment modal instead of redirecting
+            showPaymentModal(booking);
         }
 
         function saveBooking(booking) {
             const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
             bookings.push(booking);
             localStorage.setItem('userBookings', JSON.stringify(bookings));
+        }
+
+        function showPaymentModal(booking) {
+            const paymentContent = document.getElementById('paymentContent');
+            paymentContent.innerHTML = `
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="text-primary mb-3">お支払い方法を選択</h6>
+                            
+                            <div class="mb-4">
+                                <div class="card mb-3 payment-option" data-method="credit">
+                                    <div class="card-body d-flex align-items-center">
+                                        <input type="radio" name="paymentMethod" value="credit" checked class="me-3">
+                                        <i class="bi bi-credit-card me-3 text-primary" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <h6 class="mb-1">クレジットカード</h6>
+                                            <small class="text-muted">VISA、MasterCard、JCB対応</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3 payment-option" data-method="bank">
+                                    <div class="card-body d-flex align-items-center">
+                                        <input type="radio" name="paymentMethod" value="bank" class="me-3">
+                                        <i class="bi bi-bank me-3 text-success" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <h6 class="mb-1">銀行振込</h6>
+                                            <small class="text-muted">3営業日以内にお振込みください</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3 payment-option" data-method="digital">
+                                    <div class="card-body d-flex align-items-center">
+                                        <input type="radio" name="paymentMethod" value="digital" class="me-3">
+                                        <i class="bi bi-phone me-3 text-warning" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <h6 class="mb-1">デジタル決済</h6>
+                                            <small class="text-muted">PayPay、LINE Pay対応</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="paymentDetails" class="mb-4">
+                                <!-- Payment details form will appear here -->
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">予約詳細</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="${booking.guideImage}" class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="mb-1">${booking.guideName}</h6>
+                                            <small class="text-muted">${locationNames[guideData.find(g => g.id == booking.guideId)?.location] || ''}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="mb-2">
+                                        <small class="text-muted">日時</small>
+                                        <div>${booking.date} ${booking.time}</div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <small class="text-muted">所要時間</small>
+                                        <div>${booking.duration}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">参加人数</small>
+                                        <div>${booking.participants}名</div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>ガイド料金</span>
+                                        <span>¥${booking.guideRate.toLocaleString()}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>サービス料</span>
+                                        <span>¥${Math.round(booking.guideRate * 0.1).toLocaleString()}</span>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>合計</span>
+                                        <span class="text-primary">¥${Math.round(booking.guideRate * 1.1).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="bi bi-arrow-left me-2"></i>戻る
+                                </button>
+                                <button type="button" class="btn btn-success btn-lg" onclick="processPayment('${booking.id}')">
+                                    <i class="bi bi-shield-check me-2"></i>安全に支払う
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Show payment modal
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+            paymentModal.show();
+            
+            // Add payment method selection handlers
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const method = this.dataset.method;
+                    this.querySelector('input[type="radio"]').checked = true;
+                    showPaymentDetails(method);
+                });
+            });
+            
+            // Show initial payment details
+            showPaymentDetails('credit');
+        }
+        
+        function showPaymentDetails(method) {
+            const detailsContainer = document.getElementById('paymentDetails');
+            
+            switch(method) {
+                case 'credit':
+                    detailsContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">クレジットカード情報</h6>
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label">カード番号</label>
+                                        <input type="text" class="form-control" placeholder="**** **** **** ****">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label">有効期限</label>
+                                            <input type="text" class="form-control" placeholder="MM/YY">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label">セキュリティコード</label>
+                                            <input type="text" class="form-control" placeholder="***">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'bank':
+                    detailsContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">銀行振込情報</h6>
+                                <div class="alert alert-info">
+                                    <h6>振込先</h6>
+                                    <p class="mb-1"><strong>銀行名:</strong> TomoTrip銀行</p>
+                                    <p class="mb-1"><strong>支店名:</strong> 本店</p>
+                                    <p class="mb-1"><strong>口座番号:</strong> 1234567</p>
+                                    <p class="mb-0"><strong>口座名義:</strong> TomoTrip株式会社</p>
+                                </div>
+                                <small class="text-muted">※振込手数料はお客様負担となります</small>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'digital':
+                    detailsContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">デジタル決済</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-danger w-100">
+                                            <i class="bi bi-phone me-2"></i>PayPay
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-success w-100">
+                                            <i class="bi bi-chat-fill me-2"></i>LINE Pay
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+        
+        function processPayment(bookingId) {
+            // Simulate payment processing
+            const loadingHtml = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">決済処理中...</span>
+                    </div>
+                    <h5>決済処理中です...</h5>
+                    <p class="text-muted">少々お待ちください</p>
+                </div>
+            `;
+            
+            document.getElementById('paymentContent').innerHTML = loadingHtml;
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                // Get the booking from localStorage
+                const tempBooking = JSON.parse(localStorage.getItem('tempBookingData') || '{}');
+                tempBooking.status = 'confirmed';
+                tempBooking.paymentDate = new Date().toISOString();
+                
+                // Save to bookings
+                saveBooking(tempBooking);
+                
+                // Clear temp data
+                localStorage.removeItem('tempBookingData');
+                
+                // Close payment modal
+                const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+                paymentModal.hide();
+                
+                // Show success confirmation
+                showBookingConfirmation(tempBooking);
+            }, 2000);
         }
 
         function showBookingConfirmation(booking) {
@@ -3989,6 +4229,25 @@
                             style="background: linear-gradient(135deg, #28a745, #20c997); border: none; border-radius: 25px; padding: 10px 30px;">
                         <i class="bi bi-calendar-check me-2"></i>予約確定
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="paymentModalLabel">
+                        <i class="bi bi-credit-card me-2"></i>お支払い
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="paymentContent">
+                        <!-- Payment content will be loaded here -->
+                    </div>
                 </div>
             </div>
         </div>
