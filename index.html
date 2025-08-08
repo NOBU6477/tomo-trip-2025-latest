@@ -5636,34 +5636,45 @@
         </div>
     </footer>
 
-    <!-- EMERGENCY REPLIT EDITOR FIX - Multiple fallback methods -->
-    <style id="emergency-background-css">
-        /* Method 1: Direct file reference */
-        .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+    <!-- UNIVERSAL OCEAN YACHT BACKGROUND FIX - For both editor and separate tabs -->
+    <style id="universal-background-css">
+        /* Universal override for all contexts */
+        .hero-section,
+        body .hero-section,
+        html .hero-section,
+        section.hero-section,
+        div.hero-section {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), 
                         url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
             background-size: cover !important;
-            background-position: center !important;
+            background-position: center center !important;
             background-repeat: no-repeat !important;
             background-attachment: scroll !important;
             height: 100vh !important;
             min-height: 100vh !important;
         }
         
-        /* Method 2: Replit iframe override */
+        /* Force for any iframe or preview contexts */
         iframe .hero-section,
         .repl-preview .hero-section,
-        .workspace-preview .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+        .workspace-preview .hero-section,
+        [class*="preview"] .hero-section,
+        [class*="iframe"] .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), 
                         url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
             background-size: cover !important;
-            background-position: center !important;
+            background-position: center center !important;
             background-repeat: no-repeat !important;
         }
         
-        /* Method 3: Fallback ocean gradient for failed image loads */
-        .hero-section.fallback-ocean {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%) !important;
+        /* Additional coverage for any potential container */
+        * .hero-section,
+        *[id*="hero"] {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), 
+                        url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
         }
     </style>
 
@@ -5892,25 +5903,38 @@
         console.log('🚨 EMERGENCY SCRIPT TEST - This should appear in console!');
         console.log('📍 Time:', new Date().toLocaleTimeString());
         
-        // Force immediate background fix
+        // Force immediate ocean yacht background fix
         setTimeout(() => {
             const heroSection = document.querySelector('.hero-section');
             if (heroSection) {
-                console.log('🛠️ EMERGENCY: Applying background directly');
+                console.log('🌊 OCEAN YACHT: Applying beautiful ocean background directly');
                 heroSection.style.cssText = `
-                    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.4)), 
                                url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
                     background-size: cover !important;
-                    background-position: center !important;
+                    background-position: center center !important;
                     background-repeat: no-repeat !important;
                     background-attachment: scroll !important;
                     min-height: 100vh !important;
+                    height: 100vh !important;
                 `;
-                console.log('✅ EMERGENCY: Background applied via direct style');
+                console.log('✅ OCEAN YACHT: Beautiful sea and yacht background applied');
+                
+                // Force refresh any cached styles
+                heroSection.offsetHeight; // trigger reflow
+                
+                // Verify the background is applied
+                const computedStyle = getComputedStyle(heroSection);
+                const bgImage = computedStyle.backgroundImage;
+                if (bgImage && bgImage.includes('ChatGPT')) {
+                    console.log('🎯 SUCCESS: Ocean yacht image confirmed in styles');
+                } else {
+                    console.log('⚠️ WARNING: Ocean yacht image may not be loading properly');
+                }
             } else {
-                console.log('❌ EMERGENCY: hero-section not found');
+                console.log('❌ ERROR: hero-section not found');
             }
-        }, 100);
+        }, 50);
     </script>
 
 </body>
