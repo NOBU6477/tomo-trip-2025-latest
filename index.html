@@ -5833,9 +5833,11 @@
         console.log('🚨 EMERGENCY SCRIPT TEST - This should appear in console!');
         console.log('📍 Time:', new Date().toLocaleTimeString());
         
-        // Force beautiful ocean yacht background with encoded URL
+        // Force beautiful ocean yacht background with encoded URL - DEBUGGING VERSION
         function applyOceanBackground() {
+            console.log('🔍 BACKGROUND DEBUG: Function called at', new Date().toLocaleTimeString());
             const heroSection = document.querySelector('.hero-section');
+            console.log('🔍 HERO SECTION FOUND:', !!heroSection);
             if (heroSection) {
                 console.log('🌊 OCEAN YACHT: Applying beautiful ocean background with encoded URL');
                 
@@ -5881,6 +5883,12 @@
                 
             } else {
                 console.log('❌ ERROR: hero-section not found');
+                console.log('🔍 Available elements:');
+                const allSections = document.querySelectorAll('section');
+                console.log('🔍 Sections count:', allSections.length);
+                allSections.forEach((section, index) => {
+                    console.log(`🔍 Section ${index}:`, section.className);
+                });
             }
         }
         
