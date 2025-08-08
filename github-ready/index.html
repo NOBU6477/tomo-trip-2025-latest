@@ -3,47 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; img-src 'self' data: blob: https:; script-src 'self' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; connect-src 'self' https:;">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     <title>Local Guide - 特別な旅の体験を</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
     <!-- Complete error suppression system -->
     <script src="error_suppressor.js"></script>
-    <script>
-        // Additional DOM-based error blocking
-        document.addEventListener('DOMContentLoaded', function() {
-            // Remove any error notification elements
-            const errorElements = document.querySelectorAll('[class*="error"], [class*="notification"], [id*="error"]');
-            errorElements.forEach(el => {
-                if (el.textContent && el.textContent.includes('Could not find run command')) {
-                    el.style.display = 'none';
-                    el.remove();
-                }
-            });
-            
-            // Monitor for dynamically added error messages
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    mutation.addedNodes.forEach(function(node) {
-                        if (node.nodeType === 1 && node.textContent) {
-                            if (node.textContent.includes('Could not find run command')) {
-                                node.style.display = 'none';
-                                node.remove();
-                            }
-                        }
-                    });
-                });
-            });
-            
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
-        });
-    </script>
+    <script src="main.js"></script>
+    <script src="management.js"></script>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    <link rel="stylesheet" href="ocean_background.css">
     <style>
         .guide-card:hover {
             transform: translateY(-5px);
@@ -147,33 +123,32 @@
             display: block;
         }
 
-        /* Hero Section */
+        /* Hero Section - Basic layout only, background handled below */
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
-                        url('attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            height: 100vh;
+            min-height: 100vh;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            padding: 100px 0 80px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: auto;
+                padding: 120px 0 60px 0;
+            }
         }
 
         /* Language Switcher - Center Position */
         .language-switcher-center {
-            position: absolute;
-            top: 25%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            position: relative;
             display: flex;
-            gap: 0;
+            justify-content: center;
+            gap: 15px;
             z-index: 100;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            border-radius: 25px;
-            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .lang-btn-jp, .lang-btn-en {
@@ -190,32 +165,29 @@
         /* レスポンシブデザイン - モバイル対応 */
         @media (max-width: 768px) {
             .language-switcher-center {
-                top: 20%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                width: 90%;
-                max-width: 320px;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 1.5rem;
             }
             
             .lang-btn-jp, .lang-btn-en {
                 padding: 12px 20px;
                 font-size: 14px;
-                min-width: 100px;
+                min-width: 150px;
                 flex: 1;
             }
         }
 
         @media (max-width: 480px) {
             .language-switcher-center {
-                top: 18%;
-                width: 95%;
-                max-width: 280px;
+                gap: 8px;
+                margin-bottom: 1rem;
             }
             
             .lang-btn-jp, .lang-btn-en {
                 padding: 10px 15px;
                 font-size: 13px;
-                min-width: 80px;
+                min-width: 120px;
             }
         }
 
@@ -390,6 +362,38 @@
             box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
         }
 
+        /* Payment Modal Mobile Styles */
+        @media (max-width: 768px) {
+            #paymentModal .modal-dialog {
+                margin: 0;
+                max-width: 100%;
+                height: 100vh;
+            }
+            
+            #paymentModal .modal-content {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            #paymentModal .modal-body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            #paymentModal .payment-option {
+                margin-bottom: 10px;
+            }
+            
+            #paymentModal .payment-option .card-body {
+                padding: 15px;
+            }
+            
+            #paymentModal .btn-lg {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
         /* Mobile Responsive - 完全版 */
         @media (max-width: 768px) {
             /* 基本構造調整 */
@@ -432,8 +436,8 @@
             
             /* ヒーローセクション調整 */
             .hero-section {
-                min-height: 100vh;
-                padding: 20px 0;
+                min-height: auto;
+                padding: 120px 0 60px 0;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -463,7 +467,7 @@
                 top: auto;
                 left: auto;
                 transform: none;
-                margin: 0 auto 2rem auto;
+                margin: 0 auto 1.5rem auto;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -644,19 +648,19 @@
         <div class="container">
             <a class="navbar-brand" href="/">
                 <div class="logo-container">
-                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" onload="console.log('✅ Logo loaded successfully from:', this.src)" onerror="console.error('❌ Logo load failed:', this.src); console.log('❌ Image dimensions:', this.naturalWidth, 'x', this.naturalHeight); this.style.display='none'; this.parentElement.innerHTML='<span style=&quot;font-size: 24px; color: white;&quot;>T</span>';" />
+                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" id="logoImg" />
                 </div>
                 TomoTrip
             </a>
             
             <div class="d-flex">
                 <div class="dropdown me-2" style="position: relative;">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" onclick="toggleLoginDropdown()" aria-expanded="false">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" aria-expanded="false">
                         ログイン
                     </button>
                     <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
-                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">観光客ログイン</button>
-                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">ガイドログイン</button>
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -666,36 +670,57 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <!-- Language Switcher - Center -->
-        <div class="language-switcher-center">
-            <button class="lang-btn-jp" id="jpBtn">🇯🇵 日本語</button>
-            <button class="lang-btn-en" id="enBtn">🇺🇸 English</button>
-        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-md-12">
+                    <!-- Language Switcher - Center -->
+                    <div class="language-switcher-center text-center mb-4">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px;">🇯🇵 日本語</button>
+                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px;">🇺🇸 English</button>
+                        </div>
+                    </div>
 
-        <!-- Hero Content -->
-        <div class="hero-content">
-            <div class="hero-title-container">
-                <div class="hero-logo">
-                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" />
+                    <!-- Hero Content -->
+                    <div class="hero-content text-center">
+                        <div class="hero-title-container mb-4">
+                            <div class="hero-logo mb-3">
+                                <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" style="width: 80px; height: 80px;" />
+                            </div>
+                            <h1 class="display-4 fw-bold text-white">あなただけの特別な旅を</h1>
+                        </div>
+                        <p class="lead text-white mb-5">地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう</p>
+                        <div class="hero-buttons">
+                            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                                <button class="btn-hero btn-primary-hero btn" id="findGuideBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">ガイドを探す</button>
+                                <button class="btn-hero btn-outline-hero btn" id="contactBtn" style="background: linear-gradient(135deg, #f093fb, #f5576c); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">お問い合わせ</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1>あなただけの特別な旅を</h1>
-            </div>
-            <p>地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう</p>
-            <div class="hero-buttons">
-                <button class="btn-hero btn-primary-hero" id="findGuideBtn">ガイドを探す</button>
-                <button class="btn-hero btn-outline-hero" id="contactBtn">お問い合わせ</button>
             </div>
         </div>
     </section>
 
-    <!-- Right Side Buttons -->
-    <div class="sponsor-buttons">
-        <button class="sponsor-btn" id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" onclick="handleSponsorLogin()">ログイン</button>
+    <!-- Desktop Right Side Buttons -->
+    <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">協賛店登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
     </div>
 
-    <!-- Management Center Button -->
-    <button class="management-center" id="managementBtn" title="管理センター">🏆</button>
+    <!-- Mobile Bottom Buttons -->
+    <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
+        <div class="d-flex gap-2">
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">協賛店登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
+        </div>
+    </div>
+
+    <!-- Management Center Button - Desktop -->
+    <button class="management-center d-none d-lg-block" id="managementBtn" title="管理センター" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+    
+    <!-- Management Center Button - Mobile -->
+    <button class="management-center-mobile d-lg-none position-fixed" id="managementBtnMobile" title="管理センター" style="bottom: 80px; right: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
 
     <!-- Main Content Section -->
     <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
@@ -826,8 +851,8 @@
                         </div>
                         
                         <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="text-muted" id="guideCounter">12人のガイドが見つかりました（全12人中）</small>
-                            <small class="text-info" id="totalGuideCounter">登録ガイド総数: 12人</small>
+                            <small class="text-muted" id="guideCounter">12人のガイドが見つかりました（全15人中）</small>
+                            <small class="text-info" id="totalGuideCounter">登録ガイド総数: 15人</small>
                         </div>
                     </div>
                 </div>
@@ -870,13 +895,22 @@
             ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
         };
 
+        // Initialize default guide data
+        function loadDefaultGuides() {
+            console.log('🔧 Loading default guide dataset...');
+            const existingGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
+            if (existingGuides.length === 0) {
+                localStorage.setItem('registeredGuides', JSON.stringify([]));
+                console.log('✅ Default guides storage initialized');
+            }
+        }
+
         // Load registered guides from localStorage and merge with default data
         function loadAllGuides() {
             const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
             console.log('Loading registered guides:', registeredGuides.length);
             if (registeredGuides.length === 0) {
                 console.log('⚠️ No registered guides found - initializing default dataset');
-                // Force load default guides if none exist
                 loadDefaultGuides();
             }
             
@@ -976,12 +1010,24 @@
             }
         ];
 
-        // Initialize guides with registered guides included
-        let guideData = loadAllGuides();
-        let currentGuides = guideData;
+        // Initialize guides with registered guides included - FIXED
+        let guideData = [];
+        let currentGuides = [];
         let displayedGuides = [];
         let currentPage = 1;
         const guidesPerPage = 12;
+        
+        // Initialize guide data immediately after definition
+        console.log('🔧 Initializing guide system...');
+        try {
+            guideData = loadAllGuides();
+            currentGuides = guideData;
+            console.log('✅ Guide data loaded:', guideData.length, 'guides');
+        } catch (error) {
+            console.error('❌ Error loading guide data:', error);
+            guideData = defaultGuideData || [];
+            currentGuides = guideData;
+        }
 
         // Generate guide card HTML
         function createGuideCard(guide) {
@@ -1089,14 +1135,16 @@
             }
         }
 
-        // Update counter
+        // Update counter - FIXED CONSISTENT DISPLAY
         function updateCounter() {
             const counter = document.getElementById('guideCounter');
             const totalCounter = document.getElementById('totalGuideCounter');
             if (counter) {
-                counter.textContent = `${displayedGuides.length}人のガイドが見つかりました（全${currentGuides.length}人中）`;
+                // Show currently displayed guides vs total guides in dataset
+                counter.textContent = `${displayedGuides.length}人のガイドが見つかりました（全${guideData.length}人中）`;
             }
             if (totalCounter) {
+                // Show the same total for consistency
                 totalCounter.textContent = `登録ガイド総数: ${guideData.length}人`;
             }
         }
@@ -1318,9 +1366,53 @@
             }
         }
 
-        // Main initialization
+        // Main initialization - FIXED VERSION
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🌴 TomoTrip Complete Version Loading...');
+            
+            // FIRST: Initialize guide data and display - ENHANCED
+            console.log('📋 Initializing guide system...');
+            try {
+                // Ensure guide data is loaded
+                if (!guideData || guideData.length === 0) {
+                    console.log('🔄 Reloading guide data...');
+                    guideData = loadAllGuides();
+                    currentGuides = guideData;
+                }
+                
+                console.log('✅ Loaded guides:', guideData.length);
+                
+                if (guideData.length > 0) {
+                    // Force display guides immediately
+                    displayGuides(guideData, 1);
+                    console.log('✅ Guide cards displayed successfully');
+                    
+                    // Verify container has content
+                    setTimeout(() => {
+                        const container = document.getElementById('guideCardsContainer');
+                        if (container) {
+                            console.log('📊 Guide container check:', {
+                                hasContent: container.innerHTML.length > 0,
+                                childCount: container.children.length,
+                                innerHTML: container.innerHTML.substring(0, 100) + '...'
+                            });
+                        }
+                    }, 100);
+                } else {
+                    console.error('❌ No guides found in data - using fallback');
+                    // Force display default guides
+                    displayGuides(defaultGuideData, 1);
+                }
+            } catch (error) {
+                console.error('❌ Error loading guides:', error);
+                // Emergency fallback
+                try {
+                    displayGuides(defaultGuideData, 1);
+                    console.log('🆘 Emergency fallback: displayed default guides');
+                } catch (fallbackError) {
+                    console.error('❌ Even fallback failed:', fallbackError);
+                }
+            }
             
             // Define tourist registration functions in global scope
             window.checkTouristRegistration = function() {
@@ -1512,10 +1604,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                                <button type="button" class="btn btn-success" onclick="bookGuide(${guide.id})">
+                                <button type="button" class="btn btn-success" >
                                     <i class="bi bi-calendar-check me-2"></i>予約する
                                 </button>
-                                <button type="button" class="btn btn-outline-primary" onclick="contactGuide(${guide.id})">
+                                <button type="button" class="btn btn-outline-primary" >
                                     <i class="bi bi-chat-dots me-2"></i>メッセージ
                                 </button>
                             </div>
@@ -1535,7 +1627,7 @@
             
             // Booking and contact functions
             window.bookGuide = function(guideId) {
-                // Close the guide detail modal first
+                // Close the guide detail modal first and force cleanup
                 const openModal = document.querySelector('.modal.show');
                 if (openModal) {
                     const modalInstance = bootstrap.Modal.getInstance(openModal);
@@ -1543,6 +1635,15 @@
                         modalInstance.hide();
                     }
                 }
+                
+                // Force remove any existing modal backdrops
+                document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                    backdrop.remove();
+                });
+                
+                // Remove modal-open class from body
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('padding-right');
                 
                 // Wait a moment for the modal to close, then open booking
                 setTimeout(() => {
@@ -1925,7 +2026,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
                                         キャンセル
                                     </button>
-                                    <button type="button" class="btn btn-primary" onclick="processSponsorLogin()" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #4ecdc4, #44a08d); border: none;">
+                                    <button type="button" class="btn btn-primary"  style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #4ecdc4, #44a08d); border: none;">
                                         <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
                                     </button>
                                 </div>
@@ -2014,7 +2115,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer border-0 p-4 pt-0">
-                                    <button type="button" class="btn btn-success w-100" onclick="redirectToSponsorDashboard()" style="border-radius: 25px; padding: 12px;">
+                                    <button type="button" class="btn btn-success w-100"  style="border-radius: 25px; padding: 12px;">
                                         管理画面へ進む
                                     </button>
                                 </div>
@@ -2145,7 +2246,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer border-0 p-4 pt-0">
-                                        <button type="button" class="btn btn-success w-100" onclick="this.closest('.modal').remove()" style="border-radius: 25px; padding: 12px;">
+                                        <button type="button" class="btn btn-success w-100"  style="border-radius: 25px; padding: 12px;">
                                             OK
                                         </button>
                                     </div>
@@ -2989,7 +3090,7 @@
                                             <p class="text-muted mb-0">お気に入りのガイドを見つけて、特別な旅をお楽しみください！</p>
                                         </div>
                                         <div class="modal-footer border-0 p-4 pt-0">
-                                            <button type="button" class="btn btn-success w-100" onclick="this.closest('.modal').remove()" style="border-radius: 25px; padding: 12px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                                            <button type="button" class="btn btn-success w-100"  style="border-radius: 25px; padding: 12px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
                                                 ガイドを探す
                                             </button>
                                         </div>
@@ -3670,14 +3771,320 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('bookingModal'));
             modal.hide();
             
-            // Redirect to payment page with language parameter
-            window.location.href = 'payment.html?lang=ja';
+            // Show payment modal instead of redirecting
+            showPaymentModal(booking);
         }
 
         function saveBooking(booking) {
             const bookings = JSON.parse(localStorage.getItem('userBookings') || '[]');
             bookings.push(booking);
             localStorage.setItem('userBookings', JSON.stringify(bookings));
+        }
+
+        function showPaymentModal(booking) {
+            const paymentContent = document.getElementById('paymentContent');
+            paymentContent.innerHTML = `
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-12">
+                            <h6 class="text-primary mb-3">お支払い方法を選択</h6>
+                            
+                            <div class="mb-4">
+                                <div class="card mb-3 payment-option" data-method="credit">
+                                    <div class="card-body d-flex align-items-center">
+                                        <input type="radio" name="paymentMethod" value="credit" checked class="me-3">
+                                        <i class="bi bi-credit-card me-3 text-primary" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <h6 class="mb-1">クレジットカード</h6>
+                                            <small class="text-muted">VISA、MasterCard、JCB対応</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3 payment-option" data-method="bank">
+                                    <div class="card-body d-flex align-items-center">
+                                        <input type="radio" name="paymentMethod" value="bank" class="me-3">
+                                        <i class="bi bi-bank me-3 text-success" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <h6 class="mb-1">銀行振込</h6>
+                                            <small class="text-muted">3営業日以内にお振込みください</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mb-3 payment-option" data-method="digital">
+                                    <div class="card-body d-flex align-items-center">
+                                        <input type="radio" name="paymentMethod" value="digital" class="me-3">
+                                        <i class="bi bi-phone me-3 text-warning" style="font-size: 1.5rem;"></i>
+                                        <div>
+                                            <h6 class="mb-1">デジタル決済</h6>
+                                            <small class="text-muted">PayPay、LINE Pay対応</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="paymentDetails" class="mb-4">
+                                <!-- Payment details form will appear here -->
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4 col-md-12 mt-md-3 mt-lg-0">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0">予約詳細</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="${booking.guideImage}" class="rounded-circle me-3" width="50" height="50" style="object-fit: cover;">
+                                        <div>
+                                            <h6 class="mb-1">${booking.guideName}</h6>
+                                            <small class="text-muted">${locationNames[guideData.find(g => g.id == booking.guideId)?.location] || ''}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="mb-2">
+                                        <small class="text-muted">日時</small>
+                                        <div>${booking.date} ${booking.time}</div>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <small class="text-muted">所要時間</small>
+                                        <div>${booking.duration}</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <small class="text-muted">参加人数</small>
+                                        <div>${booking.participants}名</div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <span>ガイド料金</span>
+                                        <span>¥${booking.guideRate.toLocaleString()}</span>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between mb-2" id="serviceFeeRow">
+                                        <span>サービス料</span>
+                                        <span id="serviceFeeAmount">¥${Math.round(booking.guideRate * 0.1).toLocaleString()}</span>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>合計</span>
+                                        <span class="text-primary" id="totalAmount">¥${Math.round(booking.guideRate * 1.1).toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex flex-column flex-sm-row justify-content-between gap-3">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="bi bi-arrow-left me-2"></i>戻る
+                                </button>
+                                <button type="button" class="btn btn-success btn-lg w-sm-auto w-100" >
+                                    <i class="bi bi-shield-check me-2"></i>安全に支払う
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Ensure no conflicts with existing modals
+            document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+                backdrop.remove();
+            });
+            
+            // Show payment modal with higher z-index
+            const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            paymentModal.show();
+            
+            // Force z-index after modal is shown
+            setTimeout(() => {
+                const modalElement = document.getElementById('paymentModal');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (modalElement) {
+                    modalElement.style.zIndex = '2050';
+                }
+                if (backdrop) {
+                    backdrop.style.zIndex = '2040';
+                }
+            }, 100);
+            
+            // Add payment method selection handlers
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const method = this.dataset.method;
+                    this.querySelector('input[type="radio"]').checked = true;
+                    showPaymentDetails(method);
+                    updatePaymentSummary(method, booking);
+                });
+            });
+            
+            // Also add handlers to radio buttons directly
+            document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const method = this.value;
+                        showPaymentDetails(method);
+                        updatePaymentSummary(method, booking);
+                    }
+                });
+            });
+            
+            // Show initial payment details
+            showPaymentDetails('credit');
+            
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                updatePaymentSummary('credit', booking);
+            }, 100);
+        }
+        
+        function updatePaymentSummary(method, booking) {
+            console.log('🔄 updatePaymentSummary called with method:', method);
+            const serviceFeeRow = document.getElementById('serviceFeeRow');
+            const serviceFeeAmount = document.getElementById('serviceFeeAmount');
+            const totalAmount = document.getElementById('totalAmount');
+            
+            console.log('🔍 Elements found:', {
+                serviceFeeRow: !!serviceFeeRow,
+                serviceFeeAmount: !!serviceFeeAmount,
+                totalAmount: !!totalAmount
+            });
+            
+            if (method === 'credit') {
+                // クレジットカードの場合：サービス料を表示
+                console.log('💳 Credit card selected - showing service fee');
+                if (serviceFeeRow) serviceFeeRow.style.display = 'flex';
+                const serviceFee = Math.round(booking.guideRate * 0.1);
+                if (serviceFeeAmount) serviceFeeAmount.textContent = `¥${serviceFee.toLocaleString()}`;
+                if (totalAmount) totalAmount.textContent = `¥${Math.round(booking.guideRate * 1.1).toLocaleString()}`;
+            } else {
+                // 銀行振込・デジタル決済の場合：サービス料を非表示
+                console.log('🏦 Non-credit payment selected - hiding service fee');
+                if (serviceFeeRow) serviceFeeRow.style.display = 'none';
+                if (totalAmount) totalAmount.textContent = `¥${booking.guideRate.toLocaleString()}`;
+            }
+            
+            console.log('✅ Payment summary updated for method:', method);
+        }
+        
+        function showPaymentDetails(method) {
+            const detailsContainer = document.getElementById('paymentDetails');
+            
+            switch(method) {
+                case 'credit':
+                    detailsContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">クレジットカード情報</h6>
+                                <form>
+                                    <div class="mb-3">
+                                        <label class="form-label">カード番号</label>
+                                        <input type="text" class="form-control" placeholder="**** **** **** ****">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <label class="form-label">有効期限</label>
+                                            <input type="text" class="form-control" placeholder="MM/YY">
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="form-label">セキュリティコード</label>
+                                            <input type="text" class="form-control" placeholder="***">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'bank':
+                    detailsContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">銀行振込情報</h6>
+                                <div class="alert alert-info">
+                                    <h6>振込先</h6>
+                                    <p class="mb-1"><strong>銀行名:</strong> TomoTrip銀行</p>
+                                    <p class="mb-1"><strong>支店名:</strong> 本店</p>
+                                    <p class="mb-1"><strong>口座番号:</strong> 1234567</p>
+                                    <p class="mb-0"><strong>口座名義:</strong> TomoTrip株式会社</p>
+                                </div>
+                                <small class="text-muted">※振込手数料はお客様負担となります</small>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                case 'digital':
+                    detailsContainer.innerHTML = `
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="card-title">デジタル決済</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-danger w-100">
+                                            <i class="bi bi-phone me-2"></i>PayPay
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-success w-100">
+                                            <i class="bi bi-chat-fill me-2"></i>LINE Pay
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+        }
+        
+        function processPayment(bookingId) {
+            // Simulate payment processing
+            const loadingHtml = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">決済処理中...</span>
+                    </div>
+                    <h5>決済処理中です...</h5>
+                    <p class="text-muted">少々お待ちください</p>
+                </div>
+            `;
+            
+            document.getElementById('paymentContent').innerHTML = loadingHtml;
+            
+            // Simulate processing delay
+            setTimeout(() => {
+                // Get the booking from localStorage
+                const tempBooking = JSON.parse(localStorage.getItem('tempBookingData') || '{}');
+                tempBooking.status = 'confirmed';
+                tempBooking.paymentDate = new Date().toISOString();
+                
+                // Save to bookings
+                saveBooking(tempBooking);
+                
+                // Clear temp data
+                localStorage.removeItem('tempBookingData');
+                
+                // Close payment modal
+                const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+                paymentModal.hide();
+                
+                // Show success confirmation
+                showBookingConfirmation(tempBooking);
+            }, 2000);
         }
 
         function showBookingConfirmation(booking) {
@@ -3929,6 +4336,25 @@
         </div>
     </div>
 
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true" style="z-index: 2050;">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="paymentModalLabel">
+                        <i class="bi bi-credit-card me-2"></i>お支払い
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="paymentContent">
+                        <!-- Payment content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Management Center Modal -->
     <div class="modal fade" id="managementModal" tabindex="-1" aria-labelledby="managementModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
@@ -4052,24 +4478,8 @@
         </div>
     </div>
 
-    <script>
-        // Management Center Functions
-        function showManagementCenter() {
-            console.log('Opening Management Center...');
-            loadManagementData();
-            const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
-            managementModal.show();
-        }
-        
-        function loadManagementData() {
-            loadBookmarksList();
-            loadComparisonList();
-            loadBookingsList();
-            loadSettingsData();
-        }
-        
-        function loadBookmarksList() {
-            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    </body>
+</html>
             const bookmarksList = document.getElementById('bookmarksList');
             
             if (bookmarkedGuides.length === 0) {
@@ -4100,8 +4510,8 @@
                                         <p class="card-text small text-muted mb-2">${locationNames[guide.location] || guide.location}</p>
                                         <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                         <div class="d-flex gap-2">
-                                            <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">詳細</button>
-                                            <button class="btn btn-outline-danger btn-sm" onclick="removeBookmark(${guide.id})">削除</button>
+                                            <button class="btn btn-outline-primary btn-sm" >詳細</button>
+                                            <button class="btn btn-outline-danger btn-sm" >削除</button>
                                         </div>
                                     </div>
                                 </div>
@@ -4142,10 +4552,10 @@
                                 <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                 <div class="mt-auto">
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">
+                                        <button class="btn btn-outline-primary btn-sm" >
                                             <i class="bi bi-info-circle me-1"></i>詳細
                                         </button>
-                                        <button class="btn btn-outline-danger btn-sm" onclick="removeFromComparison(${guide.id})">
+                                        <button class="btn btn-outline-danger btn-sm" >
                                             <i class="bi bi-x me-1"></i>比較から除外
                                         </button>
                                     </div>
@@ -4200,7 +4610,7 @@
                                 <div class="col-md-2 text-center">
                                     ${statusBadge[booking.status] || statusBadge['pending']}
                                     <div class="mt-2">
-                                        <button class="btn btn-outline-primary btn-sm" onclick="viewBookingDetails(${booking.id})">詳細</button>
+                                        <button class="btn btn-outline-primary btn-sm" >詳細</button>
                                     </div>
                                 </div>
                             </div>
@@ -4596,13 +5006,13 @@
                     <div class="col-md-6">
                         <h6 class="fw-bold mb-3"><i class="bi bi-question-circle me-2 text-primary"></i>よくある質問</h6>
                         <div class="list-group list-group-flush">
-                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showFAQ()">
+                            <a href="#" class="list-group-item list-group-item-action border-0" >
                                 <i class="bi bi-chevron-right me-2"></i>ガイド予約について
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showCancellation()">
+                            <a href="#" class="list-group-item list-group-item-action border-0" >
                                 <i class="bi bi-chevron-right me-2"></i>キャンセル規定
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showSafety()">
+                            <a href="#" class="list-group-item list-group-item-action border-0" >
                                 <i class="bi bi-chevron-right me-2"></i>安全について
                             </a>
                         </div>
@@ -5037,8 +5447,8 @@
                     <p class="small">ブラウザの設定により、Cookieの受け入れを拒否することができます。ただし、必須Cookieを無効にすると、サービスの一部が正常に機能しない場合があります。</p>
                     
                     <div class="mt-3">
-                        <button class="btn btn-outline-primary btn-sm me-2" onclick="alert('Cookie設定画面は開発中です')">Cookie設定</button>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="alert('Cookie削除機能は開発中です')">全Cookie削除</button>
+                        <button class="btn btn-outline-primary btn-sm me-2" >Cookie設定</button>
+                        <button class="btn btn-outline-secondary btn-sm" >全Cookie削除</button>
                     </div>
                 </div>
                 
@@ -5049,9 +5459,7 @@
             new bootstrap.Modal(modal).show();
         }
         
-        function showManagementCenter() {
-            alert('予約管理センターは開発中です。現在の予約状況は個別にお問い合わせください。');
-        }
+        // Removed duplicate function - using the main version above
     </script>
 
     <!-- Critical Footer Fix Script -->
@@ -5151,43 +5559,33 @@
             }
         }
         
-        // Emergency: Force run immediately multiple times
-        console.log('🚨 EMERGENCY: Running footer fix immediately');
-        checkFooterImmediately();
+        // Optimized footer initialization with proper timing
+        function initializeFooter() {
+            const footer = document.querySelector('.footer-section');
+            if (footer) {
+                console.log('🔍 Footer found - applying styles');
+                checkFooterImmediately();
+                return true;
+            } else {
+                console.log('🔍 Footer not found - waiting...');
+                return false;
+            }
+        }
         
-        // Force run after short delay
-        setTimeout(function() {
-            console.log('🚨 EMERGENCY: 100ms delay footer fix');
-            checkFooterImmediately();
-        }, 100);
-        
-        // Also run on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔍 DOMContentLoaded - checking footer again');
-            checkFooterImmediately();
-        });
-        
-        // Run on window load
-        window.addEventListener('load', function() {
-            console.log('🔍 Window loaded - final footer check');
-            checkFooterImmediately();
-        });
-        
-        // Multiple fallback timeouts
-        setTimeout(function() {
-            console.log('🔍 500ms timeout fallback - checking footer');
-            checkFooterImmediately();
-        }, 500);
-        
-        setTimeout(function() {
-            console.log('🔍 1000ms timeout fallback - checking footer');
-            checkFooterImmediately();
-        }, 1000);
-        
-        setTimeout(function() {
-            console.log('🔍 2000ms timeout fallback - checking footer');
-            checkFooterImmediately();
-        }, 2000);
+        // Try immediate initialization first
+        if (!initializeFooter()) {
+            // If footer not found, use DOMContentLoaded
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('🔍 DOMContentLoaded - checking footer');
+                if (!initializeFooter()) {
+                    // Final fallback with timeout
+                    setTimeout(function() {
+                        console.log('🔍 Final timeout - checking footer');
+                        initializeFooter();
+                    }, 100);
+                }
+            });
+        }
     </script>
     
     <!-- Footer Force CSS -->
@@ -5305,10 +5703,10 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サービス</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">ガイド検索</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">ガイド登録</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showManagementCenter()">予約管理</a></li>
+                        <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" >ガイド検索</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >ガイド登録</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >観光客登録</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >予約管理</a></li>
                         <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
                     </ul>
                 </div>
@@ -5317,11 +5715,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サポート</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showFAQ()">よくある質問</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >よくある質問</a></li>
                         <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none hover-link">お問い合わせ</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showSafety()">安全について</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCancellation()">キャンセル規定</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showHelp()">ヘルプセンター</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >安全について</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >キャンセル規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >ヘルプセンター</a></li>
                     </ul>
                 </div>
 
@@ -5329,11 +5727,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">法的事項</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showAbout()">会社概要</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTerms()">利用規約</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showPrivacy()">プライバシーポリシー</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCookies()">Cookie規定</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCompliance()">法的遵守</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >会社概要</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >利用規約</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >プライバシーポリシー</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >Cookie規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >法的遵守</a></li>
                     </ul>
                 </div>
 
@@ -5497,10 +5895,10 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="fw-bold mb-3">会社情報</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showAbout()">私たちについて</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showTerms()">利用規約</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showPrivacy()">プライバシーポリシー</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCompliance()">法的遵守</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >私たちについて</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >利用規約</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >プライバシーポリシー</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >法的遵守</a></li>
                     </ul>
                 </div>
                 
@@ -5508,10 +5906,10 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="fw-bold mb-3">サービス</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="scrollToGuides()">ガイド検索</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showGuideRegistrationModal()">ガイド登録</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showManagementCenter()">予約管理</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >ガイド検索</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >ガイド登録</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >観光客登録</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >予約管理</a></li>
                     </ul>
                 </div>
                 
@@ -5519,10 +5917,10 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="fw-bold mb-3">サポート</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showFAQ()">よくある質問</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showSafety()">安全について</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCancellation()">キャンセル規定</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showHelp()">ヘルプセンター</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >よくある質問</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >安全について</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >キャンセル規定</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >ヘルプセンター</a></li>
                     </ul>
                 </div>
                 
@@ -5530,7 +5928,7 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="fw-bold mb-3">法的事項</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCookies()">Cookie規定</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" >Cookie規定</a></li>
                         <li><a href="#" class="text-decoration-none text-light hover-link">特定商取引法</a></li>
                         <li><a href="#" class="text-decoration-none text-light hover-link">資金決済法</a></li>
                         <li><a href="#" class="text-decoration-none text-light hover-link">旅行業法</a></li>
@@ -5574,6 +5972,398 @@
             </div>
         </div>
     </footer>
+
+    <!-- OCEAN YACHT BACKGROUND - ABSOLUTE FINAL VERSION -->
+    <style>
+        /* Complete override - disable all previous styles */
+        .hero-section * {
+            position: relative !important;
+            z-index: 10 !important;
+        }
+        
+        /* Force ocean yacht background with bright, cheerful appearance */
+        .hero-section {
+            position: relative !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            overflow: hidden !important;
+        }
+        
+        /* Background image layer with brightness filter */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: scroll;
+            /* Moderately bright, natural filters */
+            filter: brightness(1.2) contrast(1.05) saturate(1.1);
+            z-index: -2;
+        }
+        
+        /* Soft overlay for text readability */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.05), rgba(0,100,200,0.1));
+            z-index: -1;
+        }
+        
+        /* Ensure UI elements are visible */
+        .hero-section .container,
+        .hero-section .row,
+        .hero-section .col-12,
+        .hero-section .text-center {
+            position: relative !important;
+            z-index: 20 !important;
+        }
+    </style>
+
+    <script>
+        // IMMEDIATE CONSOLE TEST
+        console.log('🚨 SCRIPT BLOCK EXECUTING - Background fix system loading...');
+        console.log('🕐 Script execution time:', new Date().toLocaleTimeString());
+        
+        // REPLIT EDITOR SPECIFIC BACKGROUND FIX
+        function forceBackgroundImage() {
+            console.log('🔧 REPLIT EDITOR FIX: Diagnosing and applying background');
+            console.log('📍 Function execution started at:', new Date().toLocaleTimeString());
+            
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                // Try multiple image path formats
+                const imagePaths = [
+                    './attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png',
+                    'attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png',
+                    '/attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png'
+                ];
+                
+                // Test image accessibility
+                function testImagePath(path, callback) {
+                    const img = new Image();
+                    img.onload = () => callback(true, path);
+                    img.onerror = () => callback(false, path);
+                    img.src = path;
+                }
+                
+                // Try each path
+                let pathIndex = 0;
+                function tryNextPath() {
+                    if (pathIndex >= imagePaths.length) {
+                        console.log('❌ All image paths failed - using ocean gradient fallback');
+                        heroSection.className = 'hero-section fallback-ocean';
+                        heroSection.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%)';
+                        return;
+                    }
+                    
+                    const currentPath = imagePaths[pathIndex];
+                    console.log(`🔍 Testing image path ${pathIndex + 1}: ${currentPath}`);
+                    
+                    testImagePath(currentPath, (success, path) => {
+                        if (success) {
+                            console.log(`✅ SUCCESS: Image loaded from ${path}`);
+                            
+                            // Apply successful path with multiple methods
+                            heroSection.style.background = `linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${path}')`;
+                            heroSection.style.backgroundSize = 'cover';
+                            heroSection.style.backgroundPosition = 'center';
+                            heroSection.style.backgroundRepeat = 'no-repeat';
+                            heroSection.style.backgroundAttachment = 'scroll';
+                            
+                            // Create dynamic CSS
+                            const dynamicStyle = document.createElement('style');
+                            dynamicStyle.id = 'working-background-path';
+                            dynamicStyle.textContent = `
+                                .hero-section {
+                                    background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), url('${path}') !important;
+                                    background-size: cover !important;
+                                    background-position: center !important;
+                                    background-repeat: no-repeat !important;
+                                    background-attachment: scroll !important;
+                                }
+                            `;
+                            
+                            const existing = document.getElementById('working-background-path');
+                            if (existing) existing.remove();
+                            document.head.appendChild(dynamicStyle);
+                            
+                        } else {
+                            console.log(`❌ FAILED: ${path}`);
+                            pathIndex++;
+                            tryNextPath();
+                        }
+                    });
+                }
+                
+                tryNextPath();
+                
+                // Additional iframe detection and fix
+                setTimeout(() => {
+                    if (window.frameElement || window !== window.parent) {
+                        console.log('🖼️ IFRAME DETECTED: Applying iframe-specific fixes');
+                        
+                        // Create iframe-specific style
+                        const iframeStyle = document.createElement('style');
+                        iframeStyle.id = 'iframe-background-fix';
+                        iframeStyle.textContent = `
+                            .hero-section {
+                                background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                                            url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                                background-size: cover !important;
+                                background-position: center !important;
+                                background-repeat: no-repeat !important;
+                                background-attachment: scroll !important;
+                                min-height: 100vh !important;
+                                position: relative !important;
+                            }
+                        `;
+                        document.head.appendChild(iframeStyle);
+                        
+                        // Force style application
+                        heroSection.style.cssText = `
+                            background: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.35)), 
+                                       url('./attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png') !important;
+                            background-size: cover !important;
+                            background-position: center !important;
+                            background-repeat: no-repeat !important;
+                            background-attachment: scroll !important;
+                        `;
+                    }
+                }, 500);
+                
+                console.log('🌊 Background path testing and iframe detection initiated');
+            }
+        }
+
+        // IMMEDIATE EXECUTION - No waiting for events
+        console.log('🚀 STARTING BACKGROUND SYSTEM IMMEDIATELY');
+        console.log('📋 DOM ready state:', document.readyState);
+        console.log('🌐 Window loaded:', document.readyState === 'complete');
+        
+        // Execute immediately without any delays
+        try {
+            forceBackgroundImage();
+            console.log('✅ First execution completed');
+        } catch (error) {
+            console.error('❌ Immediate execution failed:', error);
+        }
+        
+        // Backup event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('📋 DOMContentLoaded - executing forceBackgroundImage');
+            forceBackgroundImage();
+        });
+        
+        window.addEventListener('load', () => {
+            console.log('🌐 Window load - executing forceBackgroundImage');
+            forceBackgroundImage();
+        });
+        
+        // Aggressive timeout execution
+        setTimeout(() => {
+            console.log('⏰ Timeout 10ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 10);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 50ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 50);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 100ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 100);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 500ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 500);
+        
+        setTimeout(() => {
+            console.log('⏰ Timeout 1000ms - executing forceBackgroundImage');
+            forceBackgroundImage();
+        }, 1000);
+        
+        // Debug function to check current background
+        window.checkBackground = function() {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                const computed = getComputedStyle(heroSection);
+                console.log('🔍 Current background-image:', computed.backgroundImage);
+                console.log('🔍 Current background:', computed.background);
+                console.log('🔍 Element classes:', heroSection.className);
+                console.log('🔍 Inline styles:', heroSection.style.cssText);
+            }
+        };
+        
+        // Emergency manual fix function
+        window.fixBackground = function() {
+            console.log('🚨 MANUAL BACKGROUND FIX ACTIVATED');
+            forceBackgroundImage();
+        };
+        
+        // Continuous monitoring and reapplication
+        let backgroundCheck = setInterval(() => {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                const computed = getComputedStyle(heroSection);
+                const bgImage = computed.backgroundImage;
+                
+                if (!bgImage || bgImage === 'none' || !bgImage.includes('ChatGPT')) {
+                    console.log('🔄 Background lost - reapplying force');
+                    forceBackgroundImage();
+                }
+            }
+        }, 3000);
+        
+        // Stop monitoring after 30 seconds
+        setTimeout(() => {
+            clearInterval(backgroundCheck);
+            console.log('🛑 Background monitoring stopped');
+        }, 30000);
+        
+        // Admin debug functions
+        window.clearTouristData = function() {
+            localStorage.removeItem('touristRegistration');
+            console.log('Tourist registration data cleared');
+            location.reload();
+        };
+        
+        window.checkRegistrationStatus = function() {
+            const data = localStorage.getItem('touristRegistration');
+            console.log('Registration status:', data ? 'Registered' : 'Not registered');
+            if (data) {
+                console.log('Data:', JSON.parse(data));
+            }
+        };
+    </script>
+
+    <!-- EMERGENCY SCRIPT TEST - Place just before closing body -->
+    <script>
+        console.log('🚨 EMERGENCY SCRIPT TEST - This should appear in console!');
+        console.log('📍 Time:', new Date().toLocaleTimeString());
+        
+        // Force beautiful ocean yacht background - FIXED VERSION
+        function applyOceanBackground() {
+            console.log('🔍 BACKGROUND DEBUG: Function called at', new Date().toLocaleTimeString());
+            const heroSection = document.querySelector('.hero-section');
+            console.log('🔍 HERO SECTION FOUND:', !!heroSection);
+            if (heroSection) {
+                console.log('🌊 OCEAN YACHT: Applying beautiful ocean background');
+                
+                // Define encodedImageUrl properly for any future use
+                const encodedImageUrl = '/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png';
+                
+                // Try multiple image paths to solve loading issues
+                const imagePaths = [
+                    './attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png',
+                    '/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png',
+                    'attached_assets/ChatGPT Image 2025年8月5日 21_41_02_1754397710711.png'
+                ];
+                
+                let imageLoadSuccess = false;
+                
+                // Try each image path until one works
+                function tryImagePath(pathIndex) {
+                    if (pathIndex >= imagePaths.length) {
+                        console.log('❌ All paths failed - using ocean gradient');
+                        heroSection.style.cssText = `
+                            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%) !important;
+                            min-height: 100vh !important;
+                            height: 100vh !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            position: relative !important;
+                            overflow: hidden !important;
+                        `;
+                        return;
+                    }
+                    
+                    const currentPath = imagePaths[pathIndex];
+                    console.log(`🔍 Testing image path ${pathIndex + 1}: ${currentPath}`);
+                    
+                    const testImg = new Image();
+                    testImg.onload = () => {
+                        console.log(`✅ SUCCESS: Image loaded from path ${pathIndex + 1}`);
+                        heroSection.style.cssText = `
+                            position: relative !important;
+                            min-height: 100vh !important;
+                            height: 100vh !important;
+                            display: flex !important;
+                            align-items: center !important;
+                            justify-content: center !important;
+                            overflow: hidden !important;
+                        `;
+                        imageLoadSuccess = true;
+                    };
+                    testImg.onerror = () => {
+                        console.log(`❌ FAILED: Path ${pathIndex + 1} failed to load`);
+                        tryImagePath(pathIndex + 1);
+                    };
+                    testImg.src = currentPath;
+                }
+                
+                tryImagePath(0);
+                
+                // Ensure all content is visible with proper z-index
+                const allElements = heroSection.querySelectorAll('*');
+                allElements.forEach(element => {
+                    if (!element.style.position || element.style.position === 'static') {
+                        element.style.position = 'relative';
+                    }
+                    element.style.zIndex = '20';
+                });
+                
+                console.log('✅ OCEAN YACHT: Beautiful sea and yacht background applied successfully');
+                
+            } else {
+                console.log('❌ ERROR: hero-section not found');
+                console.log('🔍 Available elements:');
+                const allSections = document.querySelectorAll('section');
+                console.log('🔍 Sections count:', allSections.length);
+                allSections.forEach((section, index) => {
+                    console.log(`🔍 Section ${index}:`, section.className);
+                });
+            }
+        }
+        
+        // Optimized background application with proper timing
+        function initializeBackground() {
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection) {
+                applyOceanBackground();
+                return true;
+            }
+            return false;
+        }
+        
+        // Try immediate initialization
+        if (!initializeBackground()) {
+            // Use DOMContentLoaded if hero section not ready
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('🔍 DOMContentLoaded - initializing background');
+                if (!initializeBackground()) {
+                    // Final fallback
+                    setTimeout(initializeBackground, 100);
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>

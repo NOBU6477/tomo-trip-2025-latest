@@ -1604,10 +1604,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
-                                <button type="button" class="btn btn-success" >
+                                <button type="button" class="btn btn-success" onclick="bookGuide(${guide.id})">
                                     <i class="bi bi-calendar-check me-2"></i>予約する
                                 </button>
-                                <button type="button" class="btn btn-outline-primary" >
+                                <button type="button" class="btn btn-outline-primary" onclick="contactGuide(${guide.id})">
                                     <i class="bi bi-chat-dots me-2"></i>メッセージ
                                 </button>
                             </div>
@@ -2026,7 +2026,7 @@
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">
                                         キャンセル
                                     </button>
-                                    <button type="button" class="btn btn-primary"  style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #4ecdc4, #44a08d); border: none;">
+                                    <button type="button" class="btn btn-primary" onclick="processSponsorLogin()" style="border-radius: 25px; padding: 10px 30px; background: linear-gradient(135deg, #4ecdc4, #44a08d); border: none;">
                                         <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
                                     </button>
                                 </div>
@@ -2115,7 +2115,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer border-0 p-4 pt-0">
-                                    <button type="button" class="btn btn-success w-100"  style="border-radius: 25px; padding: 12px;">
+                                    <button type="button" class="btn btn-success w-100" onclick="redirectToSponsorDashboard()" style="border-radius: 25px; padding: 12px;">
                                         管理画面へ進む
                                     </button>
                                 </div>
@@ -2246,7 +2246,7 @@
                                         </div>
                                     </div>
                                     <div class="modal-footer border-0 p-4 pt-0">
-                                        <button type="button" class="btn btn-success w-100"  style="border-radius: 25px; padding: 12px;">
+                                        <button type="button" class="btn btn-success w-100" onclick="this.closest('.modal').remove()" style="border-radius: 25px; padding: 12px;">
                                             OK
                                         </button>
                                     </div>
@@ -3090,7 +3090,7 @@
                                             <p class="text-muted mb-0">お気に入りのガイドを見つけて、特別な旅をお楽しみください！</p>
                                         </div>
                                         <div class="modal-footer border-0 p-4 pt-0">
-                                            <button type="button" class="btn btn-success w-100"  style="border-radius: 25px; padding: 12px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                                            <button type="button" class="btn btn-success w-100" onclick="this.closest('.modal').remove()" style="border-radius: 25px; padding: 12px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
                                                 ガイドを探す
                                             </button>
                                         </div>
@@ -3889,7 +3889,7 @@
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                     <i class="bi bi-arrow-left me-2"></i>戻る
                                 </button>
-                                <button type="button" class="btn btn-success btn-lg w-sm-auto w-100" >
+                                <button type="button" class="btn btn-success btn-lg w-sm-auto w-100" onclick="processPayment('${booking.id}')">
                                     <i class="bi bi-shield-check me-2"></i>安全に支払う
                                 </button>
                             </div>
@@ -4510,8 +4510,8 @@
                                         <p class="card-text small text-muted mb-2">${locationNames[guide.location] || guide.location}</p>
                                         <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                         <div class="d-flex gap-2">
-                                            <button class="btn btn-outline-primary btn-sm" >詳細</button>
-                                            <button class="btn btn-outline-danger btn-sm" >削除</button>
+                                            <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">詳細</button>
+                                            <button class="btn btn-outline-danger btn-sm" onclick="removeBookmark(${guide.id})">削除</button>
                                         </div>
                                     </div>
                                 </div>
@@ -4552,10 +4552,10 @@
                                 <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                 <div class="mt-auto">
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-outline-primary btn-sm" >
+                                        <button class="btn btn-outline-primary btn-sm" onclick="showGuideDetailModal(${guide.id})">
                                             <i class="bi bi-info-circle me-1"></i>詳細
                                         </button>
-                                        <button class="btn btn-outline-danger btn-sm" >
+                                        <button class="btn btn-outline-danger btn-sm" onclick="removeFromComparison(${guide.id})">
                                             <i class="bi bi-x me-1"></i>比較から除外
                                         </button>
                                     </div>
@@ -4610,7 +4610,7 @@
                                 <div class="col-md-2 text-center">
                                     ${statusBadge[booking.status] || statusBadge['pending']}
                                     <div class="mt-2">
-                                        <button class="btn btn-outline-primary btn-sm" >詳細</button>
+                                        <button class="btn btn-outline-primary btn-sm" onclick="viewBookingDetails(${booking.id})">詳細</button>
                                     </div>
                                 </div>
                             </div>
@@ -5006,13 +5006,13 @@
                     <div class="col-md-6">
                         <h6 class="fw-bold mb-3"><i class="bi bi-question-circle me-2 text-primary"></i>よくある質問</h6>
                         <div class="list-group list-group-flush">
-                            <a href="#" class="list-group-item list-group-item-action border-0" >
+                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showFAQ()">
                                 <i class="bi bi-chevron-right me-2"></i>ガイド予約について
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action border-0" >
+                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showCancellation()">
                                 <i class="bi bi-chevron-right me-2"></i>キャンセル規定
                             </a>
-                            <a href="#" class="list-group-item list-group-item-action border-0" >
+                            <a href="#" class="list-group-item list-group-item-action border-0" onclick="showSafety()">
                                 <i class="bi bi-chevron-right me-2"></i>安全について
                             </a>
                         </div>
@@ -5447,8 +5447,8 @@
                     <p class="small">ブラウザの設定により、Cookieの受け入れを拒否することができます。ただし、必須Cookieを無効にすると、サービスの一部が正常に機能しない場合があります。</p>
                     
                     <div class="mt-3">
-                        <button class="btn btn-outline-primary btn-sm me-2" >Cookie設定</button>
-                        <button class="btn btn-outline-secondary btn-sm" >全Cookie削除</button>
+                        <button class="btn btn-outline-primary btn-sm me-2" onclick="alert('Cookie設定画面は開発中です')">Cookie設定</button>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="alert('Cookie削除機能は開発中です')">全Cookie削除</button>
                     </div>
                 </div>
                 
@@ -5703,10 +5703,10 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サービス</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" >ガイド検索</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >ガイド登録</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >観光客登録</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >予約管理</a></li>
+                        <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">ガイド検索</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">ガイド登録</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showManagementCenter()">予約管理</a></li>
                         <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
                     </ul>
                 </div>
@@ -5715,11 +5715,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サポート</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >よくある質問</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showFAQ()">よくある質問</a></li>
                         <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none hover-link">お問い合わせ</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >安全について</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >キャンセル規定</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >ヘルプセンター</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showSafety()">安全について</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCancellation()">キャンセル規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showHelp()">ヘルプセンター</a></li>
                     </ul>
                 </div>
 
@@ -5727,11 +5727,11 @@
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">法的事項</h6>
                     <ul class="list-unstyled">
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >会社概要</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >利用規約</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >プライバシーポリシー</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >Cookie規定</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" >法的遵守</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showAbout()">会社概要</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTerms()">利用規約</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showPrivacy()">プライバシーポリシー</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCookies()">Cookie規定</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showCompliance()">法的遵守</a></li>
                     </ul>
                 </div>
 
@@ -5895,10 +5895,10 @@
                 <div class="col-lg-3 col-md-6">
                     <h5 class="fw-bold mb-3">会社情報</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >私たちについて</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >利用規約</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >プライバシーポリシー</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >法的遵守</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showAbout()">私たちについて</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showTerms()">利用規約</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showPrivacy()">プライバシーポリシー</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCompliance()">法的遵守</a></li>
                     </ul>
                 </div>
                 
@@ -5906,10 +5906,10 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="fw-bold mb-3">サービス</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >ガイド検索</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >ガイド登録</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >観光客登録</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >予約管理</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="scrollToGuides()">ガイド検索</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showGuideRegistrationModal()">ガイド登録</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showManagementCenter()">予約管理</a></li>
                     </ul>
                 </div>
                 
@@ -5917,10 +5917,10 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="fw-bold mb-3">サポート</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >よくある質問</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >安全について</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >キャンセル規定</a></li>
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >ヘルプセンター</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showFAQ()">よくある質問</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showSafety()">安全について</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCancellation()">キャンセル規定</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showHelp()">ヘルプセンター</a></li>
                     </ul>
                 </div>
                 
@@ -5928,7 +5928,7 @@
                 <div class="col-lg-2 col-md-6">
                     <h5 class="fw-bold mb-3">法的事項</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#" class="text-decoration-none text-light hover-link" >Cookie規定</a></li>
+                        <li><a href="#" class="text-decoration-none text-light hover-link" onclick="showCookies()">Cookie規定</a></li>
                         <li><a href="#" class="text-decoration-none text-light hover-link">特定商取引法</a></li>
                         <li><a href="#" class="text-decoration-none text-light hover-link">資金決済法</a></li>
                         <li><a href="#" class="text-decoration-none text-light hover-link">旅行業法</a></li>

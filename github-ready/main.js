@@ -116,4 +116,15 @@ function setupEventListeners() {
             this.style.backgroundColor = 'transparent';
         });
     });
+    
+    // Setup logo image handlers
+    const logoImg = document.getElementById('logoImg');
+    if (logoImg) {
+        logoImg.addEventListener('load', function() {
+            handleLogoLoad(this);
+        });
+        logoImg.addEventListener('error', function() {
+            handleLogoError(this);
+        });
+    }
 }
