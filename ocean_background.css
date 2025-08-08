@@ -1,0 +1,36 @@
+/* OCEAN YACHT BACKGROUND - EXTERNAL CSS FILE */
+/* Force beautiful ocean yacht background for all contexts */
+.hero-section {
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.45)), 
+                url('/attached_assets/ChatGPT%20Image%202025%E5%B9%B48%E6%9C%885%E6%97%A5%2021_41_02_1754397710711.png') !important;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: scroll !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+/* Ensure all content is visible */
+.hero-section * {
+    position: relative !important;
+    z-index: 20 !important;
+}
+
+/* Override any conflicting styles */
+.hero-section::before,
+.hero-section::after {
+    display: none !important;
+}
+
+/* Fallback with ocean colors if image fails */
+@media (max-width: 0px) {
+    .hero-section {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #4a90e2 50%, #7bb3f0 75%, #a8d8ea 100%) !important;
+    }
+}
