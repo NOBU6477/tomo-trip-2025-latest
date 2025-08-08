@@ -3962,27 +3962,53 @@
                 });
             });
             
+            // Also add handlers to radio buttons directly
+            document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const method = this.value;
+                        showPaymentDetails(method);
+                        updatePaymentSummary(method, booking);
+                    }
+                });
+            });
+            
             // Show initial payment details
             showPaymentDetails('credit');
-            updatePaymentSummary('credit', booking);
+            
+            // Add a small delay to ensure DOM is ready
+            setTimeout(() => {
+                updatePaymentSummary('credit', booking);
+            }, 100);
         }
         
         function updatePaymentSummary(method, booking) {
+            console.log('🔄 updatePaymentSummary called with method:', method);
             const serviceFeeRow = document.getElementById('serviceFeeRow');
             const serviceFeeAmount = document.getElementById('serviceFeeAmount');
             const totalAmount = document.getElementById('totalAmount');
             
+            console.log('🔍 Elements found:', {
+                serviceFeeRow: !!serviceFeeRow,
+                serviceFeeAmount: !!serviceFeeAmount,
+                totalAmount: !!totalAmount
+            });
+            
             if (method === 'credit') {
                 // クレジットカードの場合：サービス料を表示
-                serviceFeeRow.style.display = 'flex';
+                console.log('💳 Credit card selected - showing service fee');
+                if (serviceFeeRow) serviceFeeRow.style.display = 'flex';
                 const serviceFee = Math.round(booking.guideRate * 0.1);
-                serviceFeeAmount.textContent = `¥${serviceFee.toLocaleString()}`;
-                totalAmount.textContent = `¥${Math.round(booking.guideRate * 1.1).toLocaleString()}`;
+                if (serviceFeeAmount) serviceFeeAmount.textContent = `¥${serviceFee.toLocaleString()}`;
+                if (totalAmount) totalAmount.textContent = `¥${Math.round(booking.guideRate * 1.1).toLocaleString()}`;
             } else {
                 // 銀行振込・デジタル決済の場合：サービス料を非表示
-                serviceFeeRow.style.display = 'none';
-                totalAmount.textContent = `¥${booking.guideRate.toLocaleString()}`;
+                console.log('🏦 Non-credit payment selected - hiding service fee');
+                if (serviceFeeRow) serviceFeeRow.style.display = 'none';
+                if (totalAmount) totalAmount.textContent = `¥${booking.guideRate.toLocaleString()}`;
             }
+            
+            console.log('✅ Payment summary updated for method:', method);
         }
         
         function showPaymentDetails(method) {
