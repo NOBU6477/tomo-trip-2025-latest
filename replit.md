@@ -38,6 +38,7 @@ User confirmed correct understanding of guide display system:
 - **Framework**: Vanilla JavaScript with Bootstrap 5.3.
 - **Styling**: Bootstrap CSS with custom CSS modules, responsive design with mobile-first approach.
 - **UI Components**: Responsive navigation, modal-based workflows, toast notifications, loading states, adaptive UI, touch-friendly interactions, swipe gestures.
+- **Security**: CSP-compliant architecture with all inline scripts moved to external files, no unsafe-eval usage.
 - **Language Support**: Dynamic translation system with Japanese/English switching, language preference persistence, region-based detection.
 - **UI/UX Decisions**: Consistent modal designs, unified oval button styling, enhanced hover effects, dynamic content translation, dynamic guide card rendering with individual bookmark/compare buttons, visual feedback systems.
 - **Pagination**: "Show More" button (transitioning to traditional pagination), advanced UI with progress bars, page previews, quick jump, smart page number display, floating toolbar with bookmark system, comparison tool (3-guide limit), browsing history, quick page access, keyboard navigation, sort functionality (rating, price, name), memory efficiency (12 guides in DOM).

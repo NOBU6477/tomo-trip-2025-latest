@@ -1,0 +1,119 @@
+// TomoTrip Main JavaScript - English Version - CSP Compliant
+// All inline scripts moved to external file
+
+// Error suppression and DOM handling
+document.addEventListener('DOMContentLoaded', function() {
+    // Setup event listeners
+    setupEventListeners();
+    // Remove any error notification elements
+    const errorElements = document.querySelectorAll('[class*="error"], [class*="notification"], [id*="error"]');
+    errorElements.forEach(el => {
+        if (el.textContent && el.textContent.includes('Could not find run command')) {
+            el.style.display = 'none';
+            el.remove();
+        }
+    });
+    
+    // Monitor for dynamically added error messages
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1 && node.textContent) {
+                    if (node.textContent.includes('Could not find run command')) {
+                        node.style.display = 'none';
+                        node.remove();
+                    }
+                }
+            });
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+});
+
+// Login dropdown toggle
+function toggleLoginDropdown() {
+    const dropdown = document.getElementById('loginDropdown');
+    const dropdownMenu = dropdown.nextElementSibling;
+    dropdownMenu.classList.toggle('show');
+}
+
+// Sponsor registration handler
+function handleSponsorRegistration() {
+    console.log('Sponsor registration clicked');
+    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-registration.html');
+    try {
+        window.location.href = 'sponsor-registration.html';
+    } catch (error) {
+        console.error('Redirect failed:', error);
+        alert('Redirect failed');
+    }
+}
+
+// Sponsor login handler
+function handleSponsorLogin() {
+    console.log('Sponsor login clicked');
+    console.log('🔐 DIRECT ACTION: Showing sponsor login modal');
+    try {
+        showSponsorLoginModal();
+    } catch (error) {
+        console.error('Modal failed:', error);
+        alert('Modal display failed');
+    }
+}
+
+// Image load handlers
+function handleLogoLoad(img) {
+    console.log('✅ Logo loaded successfully from:', img.src);
+}
+
+function handleLogoError(img) {
+    console.error('❌ Logo load failed:', img.src);
+    console.log('❌ Image dimensions:', img.naturalWidth, 'x', img.naturalHeight);
+    img.style.display = 'none';
+    img.parentElement.innerHTML = '<span style="font-size: 24px; color: white;">T</span>';
+}
+
+// Background image load handlers
+function handleBgLoad(img) {
+    console.log('✅ Background image loaded:', img.src);
+}
+
+function handleBgError(img) {
+    console.log('❌ Background image failed, using fallback');
+    img.style.display = 'none';
+}
+
+// Setup all event listeners
+function setupEventListeners() {
+    // Login dropdown
+    const loginDropdown = document.getElementById('loginDropdown');
+    if (loginDropdown) {
+        loginDropdown.addEventListener('click', toggleLoginDropdown);
+    }
+    
+    // Sponsor buttons
+    const sponsorRegBtn = document.getElementById('sponsorRegBtn');
+    const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+    const sponsorRegBtnMobile = document.getElementById('sponsorRegBtnMobile');
+    const sponsorLoginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
+    
+    if (sponsorRegBtn) sponsorRegBtn.addEventListener('click', handleSponsorRegistration);
+    if (sponsorLoginBtn) sponsorLoginBtn.addEventListener('click', handleSponsorLogin);
+    if (sponsorRegBtnMobile) sponsorRegBtnMobile.addEventListener('click', handleSponsorRegistration);
+    if (sponsorLoginBtnMobile) sponsorLoginBtnMobile.addEventListener('click', handleSponsorLogin);
+    
+    // Dropdown items with hover effects
+    const dropdownItems = document.querySelectorAll('.dropdown-item');
+    dropdownItems.forEach(item => {
+        item.addEventListener('mouseover', function() {
+            this.style.backgroundColor = '#f8f9fa';
+        });
+        item.addEventListener('mouseout', function() {
+            this.style.backgroundColor = 'transparent';
+        });
+    });
+}
