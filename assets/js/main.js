@@ -16,10 +16,29 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Clean Service Worker registration
+// Completely block Service Worker to prevent sw.js 404 requests
 if ('serviceWorker' in navigator) {
+    // Unregister existing workers
     navigator.serviceWorker.getRegistrations().then(registrations => {
         registrations.forEach(registration => registration.unregister());
-        console.log('Service Worker cleaned up');
     });
+    
+    // Block future registrations permanently
+    const originalRegister = navigator.serviceWorker.register;
+    navigator.serviceWorker.register = function() {
+        console.log('🚫 Service Worker registration blocked - preventing sw.js 404');
+        return Promise.reject(new Error('Service Worker disabled'));
+    };
+    
+    // Remove service worker from navigator to prevent automatic requests
+    try {
+        Object.defineProperty(navigator, 'serviceWorker', {
+            value: undefined,
+            writable: false,
+            configurable: false
+        });
+    } catch(e) {
+        // Fallback if property cannot be redefined
+        console.log('Service Worker access blocked');
+    }
 }

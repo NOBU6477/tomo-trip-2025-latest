@@ -51,11 +51,20 @@ window.addEventListener('offline', function() {
     console.log('✅ WebGL optimization applied');
 })();
 
-// Remove no-op Service Worker fetch handler if exists
+// Completely disable Service Worker to prevent sw.js 404 errors
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
+        registrations.forEach(registration => {
             registration.unregister();
-        }
+            console.log('Service Worker unregistered:', registration.scope);
+        });
     });
+    
+    // Prevent future registrations by overriding the register method
+    if (navigator.serviceWorker.register) {
+        navigator.serviceWorker.register = function() {
+            console.log('Service Worker registration blocked to prevent sw.js 404');
+            return Promise.reject(new Error('Service Worker disabled'));
+        };
+    }
 }

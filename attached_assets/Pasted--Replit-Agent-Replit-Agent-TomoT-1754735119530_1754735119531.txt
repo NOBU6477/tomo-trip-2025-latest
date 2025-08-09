@@ -1,0 +1,87 @@
+ノブさん、いまのスクショ用に**一回コピペで出せる完全指示文**を用意しました。そのままReplitのAgentに貼ってください👇
+
+---
+
+【Replit Agent一括指示｜TomoTrip コンソールエラー修正】
+
+目的：以下のエラー/警告を解消し、トップページを正常表示させる。
+
+* `Uncaught SyntaxError: Identifier 'locationNames' has already been declared (app-init.js:1)`
+* `No guides available for display`（空状態でUIが出ない）
+* `Fetch event handler is recognized as no-op …`（webgl-fix.js:51 の警告）
+
+### 作業手順（順番厳守）
+
+1. 重複宣言エラーの解消（locationNames）
+
+* リポジトリ全体で `locationNames` の **宣言（let/const/var）** を検索。
+* 宣言は **1か所に集約**。他のファイルは **参照のみ** にする。
+
+  * 例：`src/constants/locations.js` を新規作成し一次定義：
+
+    ```js
+    // src/constants/locations.js
+    export const locationNames = [/* 既存値を移動 */];
+    ```
+  * 使用側はすべて：
+
+    ```js
+    import { locationNames } from '../constants/locations.js'; // パス調整
+    ```
+* `index.html` で同じJSを二重読み込みしていないか確認。重複 `<script>` を削除。
+* もしESMとグローバルの混在で再宣言が起きている場合は **ESMに統一**。一時回避が必要なら、グローバルはガード付きに変更：
+
+  ```js
+  window.locationNames = window.locationNames ?? [/* 既存値 */];
+  ```
+
+  （ただし最終形はESM一元化）
+
+2. ガイド0件時のフォールバック＋初期データの確実読み込み
+
+* 初期データ取得（例：`loadDefaultGuides()`）で **パス実在** と **HTTP 200**、**JSON妥当性**を検証。失敗時に例外を握りつぶさない。
+* 0件または取得失敗時は **プレースホルダー** を描画：
+
+  ```js
+  const ensureGuides = (arr) => (Array.isArray(arr) && arr.length) ? arr : [{
+    id:'placeholder-1', name:'準備中のガイド', area:'Okinawa', languages:['JA'], rating:0, isPlaceholder:true
+  }];
+  // レンダ直前
+  const guides = ensureGuides(loadedGuides);
+  renderGuides(guides);
+  ```
+* 初期化順序を見直し、データロード完了後に `renderGuides` を呼ぶ（`await`/`then` の抜け漏れを解消）。
+
+3. no-op fetch 警告の解消（webgl-fix.js:51 付近）
+
+* `webgl-fix.js` もしくは `sw.js` の **空の fetch ハンドラ** を削除：
+
+  ```js
+  // ❌ 空のfetchハンドラは削除
+  // self.addEventListener('fetch', () => {});
+  ```
+* Service Workerを使う場合は、実処理（キャッシュ戦略）を書くか、不要なら登録自体を外す。
+
+### 受け入れ基準
+
+* ブラウザのコンソールに `locationNames … already been declared` が出ない。
+* 初期表示でガイドカード（実データまたはプレースホルダー）が表示される。
+* `no-op fetch` 警告が消える。
+* キャッシュ削除＆ハードリロード後も同じ結果。
+
+### 確認・後処理
+
+1. 変更後、Service Worker を更新または一時無効化→再登録。
+2. ブラウザでキャッシュ削除 → **ハードリロード（Ctrl/Cmd+Shift+R）**。
+3. 受け入れ基準を満たすことを確認。
+4. コミットメッセージ：`fix: dedupe locationNames, solid empty-state, remove no-op fetch`。
+
+### メモ/アドバイス（作業者向け）
+
+* 同名変数の再宣言は「**宣言1か所＋import参照**」「**同一スクリプトの多重読み込み禁止**」で根絶できます。
+* 空状態は仕様です。**空状態UI**（プレースホルダー＋次アクション）を必ず用意してください。
+* SWのno-opはブラウザにオーバーヘッド。**消すか、ちゃんと使う**の二択です。
+
+---
+
+足りない情報があれば、どのファイルで再宣言されていたか・初期データの実パスをレポートしてください。
