@@ -1,4 +1,4 @@
-// Event handlers - centralized setup
+// Event handlers - centralized setup with NO TOP-LEVEL DATA REFERENCES
 export function setupEventListeners() {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     
@@ -51,7 +51,7 @@ function setupFilterEvents() {
 }
 
 function setupPaginationEvents() {
-    // Pagination handlers
+    // Pagination handlers - safe function-scoped only
     const prevBtn = document.getElementById('prevPageBtn');
     const nextBtn = document.getElementById('nextPageBtn');
     

@@ -1,0 +1,95 @@
+了解。スクショの赤エラーは引き続き **「`globalAllGuides` を初期化前に参照」** していることが原因です。主犯は ①`app-init.mjs` 内の呼び出し順、②`events/*.mjs` での**トップレベル参照 or import での循環**のどちらか（または両方）です。下の指示で “データ確定 → windowに公開 → 関数は引数で受け取る → トップレベル副作用なし” に統一してください。
+
+---
+
+# 修正指示（コピペで実施）
+
+## 1) `events/event-handlers.mjs` から **値のimport/トップレベル参照を禁止**
+
+* 先頭にある以下を必ず削除：
+
+```js
+// ❌ NG
+import { globalAllGuides } from '../app-init.mjs';
+const g = window.globalAllGuides; // ← トップレベル参照もNG
+```
+
+* すべて**関数内**で参照し、**引数で受け取る**形に統一：
+
+```js
+export function loadAllGuides(guides) {
+  const data = Array.isArray(guides) ? guides : (window.globalAllGuides || []);
+  // …描画処理
+}
+export function initializeGuidePagination(guides) {
+  const data = Array.isArray(guides) ? guides : (window.globalAllGuides || []);
+  // …ページネーション初期化
+}
+export function setupEventListeners() {
+  // データが必要なら関数内で window.globalAllGuides を読む
+}
+```
+
+> 重要：**ファイル読み込み時（トップレベル）にデータへ触れない**。必ず関数の中だけで触れる。
+
+---
+
+## 2) `app-init.mjs` を「宣言→公開→呼び出し」の順に並べ替え
+
+```diff
+-import { defaultGuides } from './data/default-guides.mjs';
+-import { setupEventListeners, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
++import { defaultGuides } from './data/default-guides.mjs';
++import { setupEventListeners, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
+
+-// ❌ これより上で initializeGuidePagination()/loadAllGuides() を呼ばない
+-// ❌ globalAllGuides を後ろで宣言しているのに先に参照している可能性
+
++// 1) データを確定（LS > default）
++const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
++const initialGuides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
+
++// 2) グローバルへ公開（循環を断つ・他モジュールは import しない）
++window.globalAllGuides = initialGuides;
+
++// 3) その後に“引数で”初期化
++loadAllGuides(initialGuides);
++initializeGuidePagination(initialGuides);
++setupEventListeners();
+```
+
+> ポイント：**この3行（公開→呼び出し）は常に上からこの順**。このブロックより前に `loadAllGuides()` / `initializeGuidePagination()` を書かない。
+
+---
+
+## 3) そのほかのファイルでのチェック
+
+* プロジェクト全文検索で次を確認：
+
+  * `globalAllGuides` の **宣言が複数**ないか（`let/const globalAllGuides = …` は **禁止**。宣言元は`app-init.mjs`の `window.globalAllGuides = …` のみ）
+  * `events/*`, `components/*` で **トップレベルに `window.globalAllGuides` を読むコード**がないか（関数内へ移動）
+  * `export const globalAllGuides = …` といった **値のexport/import** をしていないか（循環の温床）
+
+---
+
+## 4) 確認手順
+
+1. Replit 右上の Preview ではなく **`.replit.dev` を別タブ**で開く
+2. DevTools → Network → **Disable cache** をON
+3. **ハードリロード**（Cmd/Ctrl+Shift+R）
+4. Console で
+
+   * 赤エラー「**Cannot access 'globalAllGuides' before initialization**」が消える
+   * `globalAllGuides?.length` が数値を返す
+   * 初期レンダリングが正常に完了する
+5. まだ出る場合は、**どこかのモジュールがトップレベルで参照**しています。スタックの一番上のファイルを開き、トップレベル参照を関数内へ移してください。
+
+---
+
+## 5) 黄色の `Emergency: Using hard-coded fallback data`
+
+これは `webgl-fix.js` の警告ログで、WebGL フォールバック通知です。アプリ動作に致命的ではありません（必要なら後でログレベルを `console.debug` に下げられます）。
+
+---
+
+これで今回の赤エラーは止まるはずです。直したらもう一度スクショ送ってください。
