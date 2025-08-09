@@ -1,0 +1,103 @@
+見え方どおり“要修正の赤エラー”が2つあります。
+
+1. **CSPで外部画像がブロック**
+2. **`globalAllGuides` を初期化前に参照（TDZ/順序・循環エラー）**
+
+下の指示文をそのまま実施してください。
+
+---
+
+# 修正指示
+
+## ① 画像のCSP違反（Unsplash）
+
+コンソール：
+`Refused to load the image 'https://images.unsplash.com/...' because it violates Content Security Policy: "img-src 'self' data: blob:"`
+
+### 直し方（どれか1つ）
+
+**A. 開発用にCSPを緩める（最短）**
+CSPの `img-src` に Unsplash を許可します。
+
+* サーバーヘッダで付与している場合（例：`deployment_test_server.py`）：
+
+```python
+# CSP 生成箇所を修正
+csp = (
+  "default-src 'self'; "
+  "script-src 'self'; "
+  "style-src 'self' 'unsafe-inline'; "
+  "img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; "
+  "font-src 'self' https://fonts.gstatic.com; "
+  "connect-src 'self'; "
+  "object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
+)
+```
+
+* `<meta http-equiv="Content-Security-Policy">` で設定している場合も同様に `img-src` へ
+  `https://images.unsplash.com https://*.unsplash.com` を追加。
+
+**B. 本番向け：画像をローカルに置く**
+Unsplash画像を `assets/img/` に保存し、JSONやHTMLのURLを相対パスに変更。
+この場合、`img-src` は `img-src 'self' data: blob:` のままでOK。
+
+**受け入れ基準**：ページ読込直後、Unsplash由来の赤エラーが0になる。
+
+---
+
+## ② `globalAllGuides` の初期化前参照
+
+コンソール：
+`Uncaught ReferenceError: Cannot access 'globalAllGuides' before initialization`
+（`loadAllGuides` → `app-init.mjs` 95行付近）
+
+### 原因
+
+`let/const` 宣言より前に参照、または **ESMの循環import** で未初期化のまま読んでいる。
+
+### 直し方（順序を保証／循環を断つ）
+
+* **データ決定 → window公開 → それを引数で渡して初期化** の順に統一。
+* `event-handlers.mjs` 等から **値をimportしない**（循環の種）。必要な配列は **引数**でもらうか `window.` 経由で読む。
+
+#### 例（置き換え用）
+
+```js
+// app-init.mjs
+import { defaultGuides } from './data/default-guides.mjs';
+import { setupEventListeners, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
+
+// 1) まずデータを確定
+const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+const allGuides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
+
+// 2) 必要ならグローバル公開（循環回避のためwindow経由）
+window.globalAllGuides = allGuides;
+
+// 3) その後に“引数で”初期化関数を呼ぶ（宣言後のみ）
+loadAllGuides(window.globalAllGuides);
+initializeGuidePagination(window.globalAllGuides);
+setupEventListeners();
+```
+
+> 補足
+>
+> * `event-handlers.mjs` 側で `import { globalAllGuides } from './app-init.mjs'` のような**値のimport**があれば削除し、上記のように**引数**で受け取るか `window.globalAllGuides` を読む形に変更。
+> * 同ファイル内でも、`initializeGuidePagination()` などの呼び出しが **`allGuides` の宣言より上**に来ないよう並び替え。
+
+**受け入れ基準**：読み込み直後に ReferenceError が出ない。`Default Guides Loaded: 12 guides available` の後、ガイド表示/ページネーションが正常。
+
+---
+
+## 確認手順
+
+1. `.replit.dev` を **別タブ**で開く（IDE内プレビューではなく）。
+2. DevTools → Network「Disable cache」をON → **ハードリロード**（Cmd/Ctrl+Shift+R）。
+3. Console の**赤エラーがゼロ**になることを確認。
+
+---
+
+### これでOKなら？
+
+* 上記2点を反映後、**赤エラーが消えたらそのまま進んで大丈夫**です。
+* もしまだ出る場合は、該当行（ファイル名＋行番号）が分かるスクショをもう一度ください。

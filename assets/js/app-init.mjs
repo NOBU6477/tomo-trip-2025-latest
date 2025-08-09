@@ -21,15 +21,16 @@ function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
     // 1) First ensure all data is loaded and available globally
-    loadAllGuides();
+    const allGuides = loadAllGuides();
+    window.globalAllGuides = allGuides;
     
-    // 2) Then setup event handlers
+    // 2) Then setup event handlers with data available
     setupEventListeners();
     wireSponsorButtons();
     wireLanguageSwitcher();
     
-    // 3) Finally initialize pagination with loaded data
-    initializeGuidePagination();
+    // 3) Finally initialize pagination with loaded data passed as argument
+    initializeGuidePagination(allGuides);
     
     log.ok('✅ Application initialized successfully');
 }
@@ -101,17 +102,16 @@ function loadAllGuides() {
 }
 
 // Initialize pagination and guide display with comprehensive fallback
-function initializeGuidePagination() {
-    // Ensure global data is already loaded by loadAllGuides() in appInit()
-    if (!globalAllGuides || globalAllGuides.length === 0) {
-        console.warn('Emergency: Global guides not loaded, loading now');
-        globalAllGuides = loadAllGuides();
-    }
+function initializeGuidePagination(allGuides) {
+    // Use passed guides or fallback to window global
+    const guidesToUse = allGuides || window.globalAllGuides || [];
     
     // Final safety check - should not be needed due to loadAllGuides() fallback
-    if (!globalAllGuides || globalAllGuides.length === 0) {
+    if (!guidesToUse || guidesToUse.length === 0) {
         console.warn('Emergency: Using hard-coded fallback data');
         globalAllGuides = defaultGuideData;
+    } else {
+        globalAllGuides = guidesToUse;
     }
     displayGuides(globalCurrentPage);
 }
