@@ -1,0 +1,167 @@
+了解です。下の文を**そのまま1回コピペ**でReplitのAgentに渡してください。
+（今回の赤ログ：`sandbox` 無効フラグ、インライン `onclick`、非常用フッタースクリプト常時実行、CSP整備を一括で直します。Replit起因のWebSocket/LaunchDarkly/GroupMarker…は評価除外。）
+
+---
+
+【TomoTrip｜コンソール赤ログの実アプリ起因だけを根治して .replit.dev をクリーンにする】
+
+### 目的
+
+* `.replit.dev` 直アクセス時の**赤エラー0**（当アプリ由来のみ対象）
+* 無効な `iframe sandbox/allow` の除去
+* すべての **インラインイベント（`onclick` 等）禁止**→外部JSへ
+* “非常用フッター”の本番実行を停止しログ抑制
+* 最小権限のCSPを適用（scriptのinline/eval禁止）
+
+---
+
+## 1) 無効な iframe 属性の全廃
+
+**やること**
+
+* プロジェクト全体を検索し、**自前の** `<iframe …>` を修正（Replitのワークスペースiframeは対象外）
+
+  * `sandbox` から `allow-downloads-without-user-activation` を **削除**
+  * `allow` 属性から **未対応トークンを全削除**：
+    `ambient-light-sensor, battery, execution-while-not-rendered, execution-while-out-of-viewport, layout-animations, legacy-image-formats, navigation-override, oversized-images, publickey-credentials, speaker-selection, unoptimized-images, unsized-media, pointer-lock`
+  * 必要最小だけ残す例（YouTube等を埋める場合）：
+
+    ```html
+    <iframe … sandbox="allow-forms allow-modals allow-same-origin allow-scripts allow-popups allow-presentation"
+            allow="fullscreen; encrypted-media"></iframe>
+    ```
+
+**受入**：`Error while parsing the 'sandbox' attribute…` が 0 件。
+
+---
+
+## 2) インラインイベントを全面撤去（CSP準拠）
+
+**やること**
+
+* HTML内の `onclick=""`, `onchange=""`, `onload=""` など**全廃**。
+  スクショにあるスポンサー用ボタン例：
+
+  ```html
+  <!-- 修正前 -->
+  <button id="sponsorRegBtn"    class="sponsor-btn"        onclick="handleSponsorRegistration()">協賛店登録</button>
+  <button id="sponsorLoginBtn"  class="sponsor-btn login-btn" onclick="handleSponsorLogin()">ログイン</button>
+  ```
+
+  を
+
+  ```html
+  <!-- 修正後（HTMLからイベント除去） -->
+  <button id="sponsorRegBtn"   class="sponsor-btn">協賛店登録</button>
+  <button id="sponsorLoginBtn" class="sponsor-btn login-btn">ログイン</button>
+  ```
+* 代わりに外部モジュールでバインド（`/assets/js/events/event-handlers.mjs` 等）：
+
+  ```js
+  // events/event-handlers.mjs
+  export function wireSponsorButtons() {
+    const reg   = document.getElementById('sponsorRegBtn');
+    const login = document.getElementById('sponsorLoginBtn');
+    if (reg)   reg.addEventListener('click', handleSponsorRegistration);
+    if (login) login.addEventListener('click', handleSponsorLogin);
+  }
+  // 既存のハンドラはそのまま利用。未定義なら実装を追加。
+  ```
+
+  ```js
+  // app-init.mjs
+  import { wireSponsorButtons } from './events/event-handlers.mjs';
+  document.addEventListener('DOMContentLoaded', () => {
+    wireSponsorButtons();
+  });
+  ```
+
+**受入**：`Console.js:61` で出ているボタンHTML出力ログの後も、CSPの \[Report Only] inline-script/elem/eval 系が**当アプリ分は0**。
+
+---
+
+## 3) “非常用フッター”スクリプトを本番で無効化
+
+**やること**
+
+* `FOOTER DEBUG SCRIPT LOADED – EMERGENCY MODE` など大量ログを出す非常用処理は**開発専用**に切替：
+
+  ```js
+  // console/console.js など非常用起動箇所
+  const isDev = location.hostname === 'localhost';
+  const EMERGENCY_FLAG = false; // デフォルトOFF（本番では必ずfalse）
+  if (isDev && EMERGENCY_FLAG) {
+    runFooterEmergencyFix(); // 既存の非常用関数
+  }
+  ```
+* フッターは**静的HTML**として `</body>` 直前に常設。JSで「強制表示」を行わない。
+* デバッグログは `console.debug` に変更。必要なら本番で抑止：
+
+  ```js
+  if (!isDev) console.debug = () => {};
+  ```
+
+**受入**：本番(.replit.dev)で非常用フッター関連ログが一切出ない。
+
+---
+
+## 4) CSP（最小権限）をページに適用
+
+**やること**
+
+* `public/index.html`（および他の表示入口）`<head>` に以下を追加し、実際に使うドメインだけ残す：
+
+  ```html
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+    style-src  'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
+    img-src    'self' data: blob:;
+    font-src   'self' https://fonts.gstatic.com;
+    connect-src 'self';
+    frame-src  https://www.youtube-nocookie.com https://www.youtube.com;
+    object-src 'none'; base-uri 'self'; form-action 'self';
+  ">
+  ```
+* `eval/new Function/setTimeout('string')/setInterval('string')` を使っていれば**関数参照**に書換。
+
+**受入**：`.replit.dev` 直アクセスで、**当アプリ由来**の CSP Report-Only 警告が 0。
+
+---
+
+## 5) ルーティングと配信の確認（念押し）
+
+* すべてのHTMLは `<base href="/">` を持ち、JS/CSS/画像は**絶対パス** `/assets/...` で参照。
+* `app-init.mjs` は `<script type="module" src="/assets/js/app-init.mjs" defer>` の**1本のみ**（二重読み込み禁止）。
+* サーバ（使っている場合）は `.mjs` を `text/javascript` で返す設定を維持。
+
+---
+
+## 6) 検証手順
+
+1. 変更後、DevTools → Application → **Unregister Service Workers** → **Clear site data** → **ハードリロード**。
+2. `.replit.dev` 直アクセスで以下を確認：
+
+   * `sandbox` 無効フラグの赤ログ 0
+   * インラインイベント由来のCSP警告 0
+   * 非常用フッター系ログ 0
+3. UI の各ボタン（協賛店登録/ログイン等）が問題なく動作。
+
+---
+
+## 注意（評価の切り分け）
+
+* スクショに出る以下は**Replitワークスペース由来**で対象外：
+
+  * `LaunchDarkly` / `stallwart.*` / `wss://replit.com/graphql_subscriptions` / `events.launchdarkly…` / `GroupMarkerNotSet(crbug.com/242999)` / `workspace_iframe.html` / `framework-*.js`
+* これらはIDE側ネットワーク・WebGLのノイズで、**本番ページ(.replit.dev)の品質判定から除外**してください。
+
+---
+
+## コミットメッセージ
+
+`fix(security,ui): remove invalid iframe flags; migrate inline events to JS; disable footer emergency in prod; enforce minimal CSP`
+
+---
+
+この指示で、今回スクショに残っている**実アプリ起因の赤ログ**は消えるはずです。必要なら、該当HTML/JSファイル名をこちらに貼ってくれれば、ピンポイントの差分パッチも書きます。
