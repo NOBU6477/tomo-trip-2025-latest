@@ -1,8 +1,9 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
+import { initAppState } from './state/app-state.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
 import { APP_CONFIG } from '../../env/app-config.mjs';
 
@@ -16,27 +17,25 @@ if (isReplitIframe) {
     log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
 }
 
-/** Main application initialization function - safe order guaranteed */
+/** Main application initialization function - TDZ safe with AppState */
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
     // 1) First determine final guide data (localStorage priority, then default)
     const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-    const finalGuideData = (Array.isArray(storedGuides) && storedGuides.length) ? 
-        [...defaultGuideData, ...storedGuides] : defaultGuideData;
+    const guides = (Array.isArray(storedGuides) && storedGuides.length) ? storedGuides : defaultGuideData;
 
-    // 2) Make available globally BEFORE any function calls
-    window.globalAllGuides = finalGuideData;
-    window.defaultGuideData = defaultGuideData;
+    // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
+    const state = initAppState({ guides, pageSize: 12, currentPage: 1 });
 
-    // 3) Only after global assignment, call functions with arguments
-    loadAllGuides(finalGuideData);
-    initializeGuidePagination(finalGuideData);
-    setupEventListeners();
+    // 3) Pass state to functions to prevent global variable TDZ issues
+    loadAllGuides(state.guides);
+    initializeGuidePagination(state);
+    setupEventListeners(state);
     wireSponsorButtons();
     wireLanguageSwitcher();
     
-    log.ok('✅ Application initialized successfully');
+    log.ok('✅ Application initialized successfully with AppState');
 }
 
 // Call initialization when module loads
@@ -60,54 +59,11 @@ if (!window.locationNames) {
     console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
 }
 
-// Global guide data - NO early initialization to prevent TDZ
-let globalCurrentPage = 1;
-let globalGuidesPerPage = 12;
+// Remove all global state variables - managed by AppState now
 
 // Remove all top-level initialization - move to function
 
-// Utility function to ensure safe guide data (no longer used for initialization)
-function loadAllGuides(guidesData) {
-    const guides = guidesData || window.globalAllGuides || defaultGuideData;
-    
-    // Ensure guides with robust fallback system
-    const ensureGuides = (guides) => {
-        if (Array.isArray(guides) && guides.length > 0) return guides;
-        
-        // Use imported default guides as fallback
-        return defaultGuideData || [{
-            id: 'placeholder-1',
-            name: '準備中のガイド',
-            location: 'tokyo',
-            languages: ['ja'],
-            price: 8000,
-            rating: 4.5,
-            image: 'attached_assets/image_1754399234136.png',
-            specialties: ['preparation'],
-            isPlaceholder: true
-        }];
-    };
-    
-    const safeGuides = ensureGuides(guides);
-    log.ok('🎯 Guide Data Validated:', safeGuides.length, 'guides');
-    
-    return safeGuides;
-}
-
-// Initialize pagination and guide display with comprehensive fallback
-function initializeGuidePagination(allGuides) {
-    // Use passed guides or fallback to window global
-    const guidesToUse = allGuides || window.globalAllGuides || [];
-    
-    // Final safety check - should not be needed due to loadAllGuides() fallback
-    if (!guidesToUse || guidesToUse.length === 0) {
-        console.warn('Emergency: Using hard-coded fallback data');
-        globalAllGuides = defaultGuideData;
-    } else {
-        globalAllGuides = guidesToUse;
-    }
-    displayGuides(globalCurrentPage);
-}
+// Functions moved to event-handlers.mjs - no global state here
 
 // Display guides for current page
 function displayGuides(page) {
@@ -191,10 +147,10 @@ function updatePaginationInfo(page) {
     }
 }
 
-// View guide details function
-function viewGuideDetails(guideId) {
+// View guide details function - moved to global scope for onclick compatibility
+window.viewGuideDetails = function(guideId) {
     alert(`ガイド詳細表示機能は開発中です。ガイドID: ${guideId}`);
-}
+};
 
 // Safe initialization - no early calls to prevent TDZ
 function startApp() {

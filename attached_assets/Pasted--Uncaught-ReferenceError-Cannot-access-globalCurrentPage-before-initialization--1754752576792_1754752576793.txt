@@ -1,0 +1,154 @@
+はい、それは**エラー**です。
+`Uncaught ReferenceError: Cannot access 'globalCurrentPage' before initialization` は、\*\*TDZ（Temporal Dead Zone）\*\*に入っている `let/const globalCurrentPage` を、**初期化より前に参照**している（または循環参照で早く評価されている）時に出ます。
+
+下記の手順で「状態は一箇所で初期化 → それを引数または `window` 経由で読む → トップレベルで触らない」に統一してください。
+
+---
+
+# 修正指示書（コピペ実装OK）
+
+## 1) グローバル散在をやめて、状態を一元化
+
+**新規:** `assets/js/state/app-state.mjs`
+
+```js
+// 単一ソースの状態。トップレベルで安全に宣言だけする
+export function initAppState({ guides, pageSize = 12, currentPage = 1 } = {}) {
+  const state = {
+    guides: Array.isArray(guides) ? guides : [],
+    pageSize,
+    currentPage,
+    get totalPages() {
+      return Math.max(1, Math.ceil(this.guides.length / this.pageSize));
+    }
+  };
+  // どこからでも読めるように window に公開（再代入禁止）
+  Object.defineProperty(window, 'AppState', { value: state, writable: false });
+  return state;
+}
+```
+
+> 以後、**`globalCurrentPage` / `globalAllGuides` といった散在変数は廃止**し、`window.AppState.currentPage` / `window.AppState.guides` を使います。
+
+---
+
+## 2) `app-init.mjs` の実行順を固定（宣言→初期化→公開→呼び出し）
+
+```js
+// app-init.mjs
+import { defaultGuides } from './data/default-guides.mjs';
+import { initAppState } from './state/app-state.mjs';
+import {
+  setupEventListeners,
+  loadAllGuides,
+  initializeGuidePagination
+} from './events/event-handlers.mjs';
+
+function startApp() {
+  // 1) データ確定
+  const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+  const guides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
+
+  // 2) 状態を一元初期化（ここで currentPage も同時に作る）
+  const state = initAppState({ guides, pageSize: 12, currentPage: 1 });
+
+  // 3) 状態を“引数”で渡して初期化関数を実行（※公開後）
+  loadAllGuides(state.guides);
+  initializeGuidePagination(state);        // ← stateを渡す形に変更
+  setupEventListeners(state);              // ← 必要なら引数に
+}
+
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', startApp, { once: true });
+} else {
+  startApp();
+}
+```
+
+---
+
+## 3) `events/event-handlers.mjs` を「引数 or AppState参照」に変更
+
+**トップレベルで状態に触らない**（import 時点で実行させない）。
+
+```js
+// events/event-handlers.mjs
+
+// ❌ NG: トップレベルで let/const globalCurrentPage を参照/代入しない
+// let current = globalCurrentPage; // これがTDZ原因
+
+export function initializeGuidePagination(stateOrNothing) {
+  const state = stateOrNothing || window.AppState;
+  if (!state) return;
+
+  // 以後は state.currentPage / state.pageSize / state.guides を使用
+  state.currentPage = Number(state.currentPage) || 1;
+
+  // …ページボタン生成・イベント付与など
+}
+
+export function loadAllGuides(guidesOrNothing) {
+  const state = window.AppState;
+  const guides = guidesOrNothing || (state ? state.guides : []);
+  // …描画
+}
+
+export function setupEventListeners(stateOrNothing) {
+  const state = stateOrNothing || window.AppState;
+  // …クリック時に state.currentPage を更新
+  // next: () => { state.currentPage = Math.min(state.currentPage+1, state.totalPages); render(); }
+}
+```
+
+---
+
+## 4) 既存の散在参照を一括置換
+
+プロジェクト全体を検索して、下記を**全置換**します。
+
+* `globalCurrentPage` → `AppState.currentPage`
+* `globalAllGuides` → `AppState.guides`
+* `globalPageSize` → `AppState.pageSize`
+
+> ただし **宣言（`let/const globalCurrentPage` など）は削除**。
+> 参照だけ置換して、宣言は残さないでください。
+
+---
+
+## 5) 循環参照を断つ
+
+* `events/*` から **`app-init.mjs` を import しない**（循環で早期評価→TDZ化します）
+* `state/app-state.mjs` は **どこから import してもOK**（副作用なし）
+
+---
+
+## 6) 防御的ガード（任意）
+
+どこかで直接 `window.AppState` を触る場合はガードを入れておくと安心です。
+
+```js
+const S = window.AppState;
+if (!S || !Array.isArray(S.guides)) return;
+```
+
+---
+
+## 7) 動作確認
+
+1. Replit のプレビューではなく **`.replit.dev` を別タブ**で開く
+2. DevTools → Network → **Disable cache** → **ハードリロード**
+3. Console の赤エラーが消え、`AppState.currentPage` と `AppState.guides.length` が期待値になっていることを確認
+
+---
+
+### よくある落とし穴
+
+* `const globalCurrentPage = 1;` を**下の方に置き**、上の関数で読んでいる
+  → TDZ。**宣言自体を撤去**し、`AppState` に統合。
+* `events/*` のファイル**先頭**で `const { currentPage } = AppState;` と**即時評価**
+  → import 時に実行されるのでNG。**関数内で読む**。
+
+---
+
+これで今回の `globalCurrentPage` の TDZ エラーは解消できます。
+実装後も残る場合は、**どこかのモジュールがトップレベルで `AppState` を読み取っている**はずなので、その行を**関数内へ移動**してください。
