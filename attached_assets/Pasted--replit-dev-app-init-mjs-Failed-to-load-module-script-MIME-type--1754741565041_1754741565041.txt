@@ -1,0 +1,100 @@
+了解。今の状態だと
+
+* **別タブ(.replit.dev)**：`app-init.mjs` が \*\*「Failed to load module script … MIME type」\*\*でロード失敗
+* **エディターのプレビュー**：起動はしているが、Replit の iframe 起因の警告が大量（これはアプリ外）
+
+\= ルート直アクセス時だけ `app-init.mjs` の**取得が失敗**しています。典型的には **配信パス/ルーティングのズレ or 実体がJSでない（HTML/404）** が原因です。
+下を**そのままコピペ**でAgentに渡してください。
+
+---
+
+【Replit Agent 指示｜別タブで `app-init.mjs` が読めない問題の根本修正】
+
+目的：
+
+* `.replit.dev` とエディタープレビューで**同じ資産**を取得し、`app-init.mjs` の **MIME/ルーティング問題**を完全に解消する。
+* Replit 由来の iframe 警告は無視し、**アプリ原因のエラーゼロ**を目指す。
+
+やること（順番厳守）
+
+### 1) 事実確認（Network必須）
+
+* 別タブ(.replit.dev)で DevTools → **Network** を開き、`app-init.mjs` をクリック。
+  次をスクリーンショットに残す（内部メモ用でOK）：
+
+  * **Status**（200 以外なら直ちにルーティング修正対象）
+  * **Content-Type**（厳密に `text/javascript` になっているか）
+  * **Response** 先頭行（**HTML/404文言**が返っていないか）
+* 同様に `assets/js/ping.mjs` も確認。**ping は成功、app-init だけ失敗**なら app-init の**パス/依存の問題**。**両方失敗**なら**静的配信/ルート設定**の問題。
+
+### 2) ルートと実体の整合（最優先）
+
+* `index.html` の宣言を **絶対パス**で固定し、`<base href="/">` を維持：
+
+  ```html
+  <base href="/">
+  <script type="module" src="/assets/js/app-init.mjs?v={{BUILD_ID}}" defer></script>
+  ```
+* 実際の配信ルート（`public/` など）直下に **`/assets/js/app-init.mjs` が実在**することを確認。
+  もし `assets/js/` が別階層なら、**src の絶対パスを実体に一致**させる（相対に戻さない）。
+* `.replit.dev/assets/js/app-init.mjs` に**直接アクセス**して、**JS本文が表示**されることを確認（HTMLならまだズレ）。
+
+### 3) サーバ設定：`.mjs` の MIME を強制
+
+（Node/Express を使っている場合）
+
+```js
+// server.js / index.js
+app.use((req, res, next) => {
+  if (req.path.endsWith('.mjs') || req.path.endsWith('.js')) {
+    res.type('text/javascript'); // ESMはtext/javascript必須
+  }
+  next();
+});
+app.use(express.static('public')); // 配信ディレクトリを1つに集約
+```
+
+（Python サーバなら）`.mjs` → `text/javascript` に確実にマップ。
+※ Gzip/圧縮の有無に関わらず Content-Type が JS のままか確認。
+
+### 4) import 連鎖の拡張子・パスを厳密化
+
+* `app-init.mjs` 内の import を**拡張子付き**で統一・絶対化しない（モジュールは相対でOK）：
+
+  ```js
+  import { setupEventListeners } from './events/event-handlers.mjs';
+  import { defaultGuideData }   from './data/default-guides.mjs';
+  ```
+* **同名JSの二重読み込み**を撤去。`type="module"` と `nomodule` の**混在同一ファイル禁止**。
+
+### 5) 切り分け：最小モジュールでロード可否を確認
+
+* 既存の `assets/js/ping.mjs` を **index.html に一時的に残し**、別タブでも `[PING] ok` が出ることを担保。
+
+  * `ping` **OK / app-init NG** → app-init の**パス or 依存**が原因。
+  * `ping` **NG** → **静的配信/ルート**の問題に戻って再点検。
+
+### 6) キャッシュ掃除＆差異対策
+
+* Application → **Clear site data** → ハードリロード（Ctrl/Cmd+Shift+R）。
+* BUILD\_ID ログが**両環境で一致**していることを確認。
+
+### 7) エディター側の大量警告について
+
+* `Unrecognized feature: 'battery'` や `sandbox attribute … invalid` は**Replitのワークスペース iframe 由来**であり、アプリの不具合ではないため**無視**する。
+* 当面、私たちの受け入れ対象は **アプリ直アクセス(.replit.dev)** のコンソールが**エラー0**であること。
+
+### 受け入れ条件
+
+* `.replit.dev` の Network で `app-init.mjs` が **Status 200 / Content-Type: text/javascript / JS本文** を返す。
+* コンソールから **「Failed to load module script … MIME type」** が完全消失。
+* `ping.mjs` を外しても正常起動。
+* プレビューと別タブで UI・ログ（BUILD\_ID）が一致。
+
+### コミットメッセージ
+
+`fix: serve app-init.mjs correctly (route+mime), enforce absolute module path, and align static root`
+
+---
+
+補足：今回の赤ログは**MIME文言でも、実体はHTML/404が返っている**ケースでよく出ます。**Network→Response**を見れば一発で特定できます。まずは**絶対パス + 配信ルート1本化 + .mjsのMIME強制**で根治します。

@@ -12,6 +12,9 @@ function appInit() {
     console.log('✅ Application initialized successfully');
 }
 
+// Call initialization when module loads
+document.addEventListener('DOMContentLoaded', appInit);
+
 // Location mapping for display - unified to prevent conflicts
 if (!window.locationNames) {
     window.locationNames = {

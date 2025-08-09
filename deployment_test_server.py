@@ -14,6 +14,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class ProductionHandler(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        """Override to ensure CORS and proper headers"""
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        super().end_headers()
+    
     def guess_type(self, path):
         """Override to ensure correct MIME types - ESM requires text/javascript"""
         if path.endswith('.css'):
@@ -44,27 +51,8 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
                 logger.error(f"❌ Error serving index.html: {e}")
                 self.send_error(500, "Error loading page")
         else:
-            # Handle other files with correct MIME types, especially ESM modules
-            if self.path.endswith('.mjs') or self.path.endswith('.js'):
-                # Force text/javascript for ESM compatibility
-                try:
-                    local_path = self.path.lstrip('/')
-                    if os.path.exists(local_path):
-                        self.send_response(200)
-                        self.send_header('Content-Type', 'text/javascript; charset=utf-8')
-                        self.send_header('Access-Control-Allow-Origin', '*')
-                        self.send_header('Cache-Control', 'no-cache')
-                        self.end_headers()
-                        with open(local_path, 'rb') as f:
-                            self.wfile.write(f.read())
-                    else:
-                        self.send_error(404, "File not found")
-                except Exception as e:
-                    logger.error(f"Error serving {self.path}: {e}")
-                    self.send_error(500, "Server error")
-            else:
-                # Handle other files with default handling
-                super().do_GET()
+            # Use default handling with proper MIME types
+            super().do_GET()
 
 def start_emergency_server():
     PORT = 5000
