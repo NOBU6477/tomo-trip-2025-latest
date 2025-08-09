@@ -161,9 +161,14 @@ function startApp() {
     appInit();
 }
 
-// Initialize after DOM load - with environment safety
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', startApp, { once: true });
-} else {
-    startApp();
+// Boot guard to prevent double initialization
+if (!window.__APP_BOOTED__) {
+    window.__APP_BOOTED__ = true;
+    
+    // Initialize after DOM load - with environment safety
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', startApp, { once: true });
+    } else {
+        startApp();
+    }
 }

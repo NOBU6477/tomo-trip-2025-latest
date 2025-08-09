@@ -1,0 +1,126 @@
+了解。今出ている赤エラーはこれです👇
+**`Uncaught TypeError: Cannot redefine property: AppState (app-state.mjs:15)`**
+原因は **`AppState` を `Object.defineProperty` でグローバル(window)に再定義している** ためです（初回で `configurable:false` になると2回目で必ず落ちます）。加えて、ESMを **異なるURL** で二重読み込み（例: クエリ違い）しても同じ事象が起きがちです。
+
+下の手順で「再定義しない」「二重起動しない」に直してください。
+
+---
+
+# 修正指示書（AppState再定義エラー対策）
+
+## 1) `app-state.mjs` を「シングルトン + 非グローバル」に変更
+
+* `window` に `defineProperty` しない
+* モジュール内に 1 つだけ保持し、**同じインスタンスを返す** 形に
+
+```js
+// assets/js/state/app-state.mjs
+let _appState = null;
+
+export function initAppState({ guides = [], pageSize = 12, currentPage = 1 } = {}) {
+  // 既に作っていればそれを返す（再初期化しない）
+  if (_appState) return _appState;
+
+  const state = {
+    guides,
+    pageSize,
+    currentPage,
+    locationNames: [],
+    // ほか状態...
+  };
+
+  _appState = state;
+  return _appState;
+}
+
+export function getAppState() {
+  return _appState;
+}
+```
+
+> もしデバッグ用に `window.AppState` を見たい場合は**読むだけ**にし、定義は1回限りに：
+
+```js
+if (!('AppState' in window)) {
+  Object.defineProperty(window, 'AppState', {
+    get: () => _appState,
+    configurable: true   // 万一でも再定義できるよう保険
+  });
+}
+```
+
+> すでに `Object.defineProperty(window,'AppState',{value:...})` している行は削除。
+
+---
+
+## 2) `app-init.mjs` の起動を**一度だけ**にガード
+
+DOM が複数イベントで起動/再読込されると二重初期化になります。フラグで防止。
+
+```js
+// assets/js/app-init.mjs
+import { initAppState } from './state/app-state.mjs';
+import { defaultGuides } from './data/default-guides.mjs';
+import { setupLocationNames } from './locations/location-setup.mjs';
+import { setupEventListeners, initializeGuidePagination } from './events/event-handlers.mjs';
+
+if (!window.__APP_BOOTED__) {
+  window.__APP_BOOTED__ = true;
+  startApp();
+}
+
+function startApp() {
+  const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+  const guides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
+
+  const state = initAppState({ guides, pageSize: 12, currentPage: 1 });
+
+  setupLocationNames(state);
+  initializeGuidePagination(state);
+  setupEventListeners(state);
+}
+```
+
+> もし他ファイルでも `startApp()` を触っている箇所があれば **削除 or フラグ付きで呼び出し** に統一。
+
+---
+
+## 3) **ESMの読み口を統一**（二重ロード防止）
+
+* **同じモジュールを違うURL**（例：`./state/app-state.mjs` と `./state/app-state.mjs?v=2025...`）で import すると、ブラウザは**別物として両方ロード**→初期化が2回走ります。
+* すべての `import` パスを **同一表記** に揃えてください（**クエリ付与はしない**か、**全ファイルで同一クエリ**に統一）。
+
+チェック例：
+
+* `app-init.mjs` / `event-handlers.mjs` / 他の `.mjs` 内の
+
+  ```js
+  import { initAppState } from './state/app-state.mjs'; // ←これに統一
+  ```
+* `index.html` の `<script type="module" src="assets/js/app-init.mjs">` も **クエリ無し**に。
+
+---
+
+## 4) 既存グローバルの掃除
+
+* `window.AppState = ...` や `Object.defineProperty(window,'AppState', { value: ... })` が残っていれば**削除**。
+* もし外部で `window.AppState` を参照している箇所があるなら、`getAppState()` を import して使う形に移行：
+
+  ```js
+  import { getAppState } from './state/app-state.mjs';
+  const state = getAppState();
+  ```
+
+---
+
+## 5) 動作確認
+
+1. 別タブ（`.replit.dev`）で開く → DevTools → **Disable cache** → ハードリロード
+2. コンソールに **`Cannot redefine property: AppState`** が出ない
+3. `AppState initialized: Object` のログが**一度だけ**出る
+4. 以降のログ（LocationNames / Pagination / Event listeners）が正常に続く
+
+---
+
+これで今回のエラーは消えます。
+もしまだ再現する場合は、**どこかで別名クエリ付き import が混じっている**か、**`startApp` が二重で呼ばれている**のがほぼ原因です。その時は、発火元ファイル名（行番号と一緒に）を教えてください。最小差分の追加パッチを作ります。
