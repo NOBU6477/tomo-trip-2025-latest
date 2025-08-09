@@ -15,15 +15,15 @@ logger = logging.getLogger(__name__)
 
 class ProductionHandler(http.server.SimpleHTTPRequestHandler):
     def guess_type(self, path):
-        """Override to ensure correct MIME types"""
+        """Override to ensure correct MIME types - ESM requires text/javascript"""
         if path.endswith('.css'):
             return 'text/css', None
         elif path.endswith('.png'):
             return 'image/png', None
         elif path.endswith('.jpg') or path.endswith('.jpeg'):
             return 'image/jpeg', None
-        elif path.endswith('.js'):
-            return 'application/javascript', None
+        elif path.endswith('.js') or path.endswith('.mjs'):
+            return 'text/javascript', None  # ESM modules require text/javascript
         return super().guess_type(path)
     
     def do_GET(self):
@@ -44,8 +44,21 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
                 logger.error(f"❌ Error serving index.html: {e}")
                 self.send_error(500, "Error loading page")
         else:
-            # Handle other files with correct MIME types
-            super().do_GET()
+            # Handle other files with correct MIME types, especially ESM modules
+            if self.path.endswith('.mjs') or self.path.endswith('.js'):
+                # Force text/javascript for ESM compatibility
+                self.send_response(200)
+                self.send_header('Content-type', 'text/javascript')
+                self.send_header('Access-Control-Allow-Origin', '*')
+                self.end_headers()
+                try:
+                    with open(self.path.lstrip('/'), 'rb') as f:
+                        self.wfile.write(f.read())
+                except FileNotFoundError:
+                    self.send_error(404, "File not found")
+            else:
+                # Handle other files with default handling
+                super().do_GET()
 
 def start_emergency_server():
     PORT = 5000

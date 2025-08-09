@@ -1,0 +1,78 @@
+ノブさん、残っているのは
+
+> **Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of “application/javascript”.**
+
+\= **ESM（`type="module"`）で読み込んでいるのに、サーバが `application/javascript` を返していて弾かれている**のが原因です。
+**`type="module"` は `Content-Type: text/javascript` が必須**です。
+
+下をそのまま**1回コピペ**でReplit Agentに出してください👇
+
+---
+
+【Replit Agent一括指示｜ESMのMIME不一致を解消】
+
+目的：
+
+* `type="module"` で読み込む全JSが **Content-Type: text/javascript** で配信されるようにし、`Failed to load module script … MIME type "application/javascript"` を完全解消する。
+
+手順（順番厳守）
+
+1. クライアント側の宣言を正しくする
+
+* `index.html`（および他HTML）の **モジュール読み込み**を確認：
+
+  ```html
+  <!-- モジュールは必ず type="module" -->
+  <script type="module" src="/src/app-init.mjs?v={{BUILD_ID}}"></script>
+  ```
+* **ESMのファイル拡張子を `.mjs` に統一**（推奨）。
+
+  * `src/*.js` のうち import/export を使うものは **`.mjs` にリネーム**。
+  * すべての `import` パスも拡張子を `.mjs` に更新。
+  * 旧来のグローバルスクリプトは **`<script nomodule src="...js">`** に分離。
+
+2. サーバのContent-Typeを上書き（Express/Nodeの場合）
+
+* 静的配信の前段で **`.js`/`.mjs` を `text/javascript` に強制**：
+
+  ```js
+  // server.js / index.js など
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.js') || req.path.endsWith('.mjs')) {
+      res.type('text/javascript'); // ★ ESMはtext/javascript必須
+    }
+    next();
+  });
+
+  // 静的配信
+  app.use(express.static('public', { extensions: ['html'] }));
+  ```
+* ミドルウェアや独自レスポンスで `application/javascript` を明示している箇所があれば **すべて削除/修正**。
+
+（もしサーバを触れない Replit 静的ホスティングを使用中なら）
+
+* **手順1の `.mjs` への統一**だけで多くの環境が `text/javascript` で返します。
+* それでも直らない場合、\*\*ビルド1本化（Vite/webpackで`/public`配信）\*\*に切替えて、出力資産はモジュール1本にしてください。
+
+3. `type="module"` と通常 `<script>` の混在を解消
+
+* 同じファイルを `type="module"` と通常 `<script>` の**両方で読み込まない**。
+* ESM同士のみで依存を完結させる（グローバル依存を残さない）。
+
+4. 検証・後処理
+
+* ブラウザの Application → **Clear site data** → **ハードリロード（Ctrl/Cmd+Shift+R）**。
+* コンソールに **MIMEエラーが出ない**ことを確認。
+* Networkタブで `app-init.mjs` などの **Headers → Content-Type が `text/javascript`** になっていることを確認。
+* プレビュー(.replit.dev) とエディタープレビュー **両方で同じ挙動**であることを確認。
+* コミット: `fix: enforce text/javascript for ESM; rename modules to .mjs; unify module loading`
+
+受け入れ条件
+
+* `Failed to load module script … MIME type` が完全に消える。
+* Networkタブで対象モジュールの `Content-Type: text/javascript` を確認できる。
+* 画面が通常起動し、他のコンソールエラーが増えていない。
+
+---
+
+これで“最後の1個”を仕留められるはず。進めてみて、まだ赤いログが出たらスクショ送ってください。

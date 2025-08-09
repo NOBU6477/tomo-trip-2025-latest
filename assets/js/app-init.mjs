@@ -1,8 +1,8 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-import { setupEventListeners } from './events/event-handlers.js';
-import { defaultGuideData } from './data/default-guides.js';
+import { setupEventListeners } from './events/event-handlers.mjs';
+import { defaultGuideData } from './data/default-guides.mjs';
 
 /** Main application initialization function */
 function appInit() {
