@@ -4914,34 +4914,6 @@
     </footer>
 
     <!-- Emergency button handlers for new tab compatibility -->
-    <script type="module">
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Emergency button setup started (English)');
-            
-            // Language switcher buttons
-            const jpBtn = document.getElementById('jpBtn');
-            const enBtn = document.getElementById('enBtn');
-            
-            if (jpBtn && !jpBtn.hasAttribute('data-listener-added')) {
-                jpBtn.addEventListener('click', function() {
-                    console.log('🇯🇵 Japanese selected - switching to Japanese page');
-                    window.location.href = 'index.html';
-                });
-                jpBtn.setAttribute('data-listener-added', 'true');
-                console.log('✅ Japanese button setup complete');
-            }
-            
-            if (enBtn && !enBtn.hasAttribute('data-listener-added')) {
-                enBtn.addEventListener('click', function() {
-                    console.log('🇺🇸 English selected - staying on current page');
-                    alert('Already displaying English version');
-                });
-                enBtn.setAttribute('data-listener-added', 'true');
-                console.log('✅ English button setup complete');
-            }
-            
-            console.log('🎯 Emergency button setup finished (English)');
-        });
-    </script>
+    <script type="module" src="/assets/js/emergency-buttons-en.mjs"></script>
 </body>
 </html>
