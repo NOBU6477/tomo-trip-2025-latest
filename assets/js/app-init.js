@@ -21,7 +21,7 @@ if (!window.locationNames) {
     ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
     };
 }
-const locationNames = window.locationNames;
+// Global reference to locationNames - do not redeclare
 
 // Default guide data for initial display
 const defaultGuideData = [
@@ -65,30 +65,44 @@ let globalAllGuides = [];
 // Make defaultGuideData available globally  
 window.defaultGuideData = defaultGuideData;
 
-// Load all guides and populate display
+// Load all guides and populate display with robust fallback
 function loadAllGuides() {
-    const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
-    console.log('Loading registered guides:', registeredGuides.length);
+    const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
     
-    // Always ensure default data is available for UI display
+    // Ensure guides with robust fallback system
+    const ensureGuides = (guides) => {
+        if (Array.isArray(guides) && guides.length > 0) return guides;
+        
+        // Emergency placeholder data to prevent UI breakage
+        return [{
+            id: 'placeholder-1',
+            name: '準備中のガイド',
+            location: 'tokyo',
+            languages: ['ja'],
+            price: 8000,
+            rating: 4.5,
+            image: 'attached_assets/image_1754399234136.png',
+            specialties: ['preparation'],
+            isPlaceholder: true
+        }];
+    };
+    
+    // Combine default data with registered guides
     const allGuides = [...defaultGuideData, ...registeredGuides];
+    const safeGuides = ensureGuides(allGuides);
     
-    if (allGuides.length === 0) {
-        console.log('⚠️ Fallback: Using emergency default dataset');
-        return defaultGuideData;
-    }
+    console.log('Total guides loaded:', safeGuides.length, '| Placeholders:', safeGuides.filter(g => g.isPlaceholder).length);
     
-    return allGuides;
+    return safeGuides;
 }
 
-// Initialize pagination and guide display
+// Initialize pagination and guide display with comprehensive fallback
 function initializeGuidePagination() {
     globalAllGuides = loadAllGuides();
-    console.log('Total guides loaded:', globalAllGuides.length);
     
-    // Ensure UI displays even with minimal data
-    if (globalAllGuides.length === 0) {
-        console.warn('Using emergency fallback data');
+    // Final safety check - should not be needed due to loadAllGuides() fallback
+    if (!globalAllGuides || globalAllGuides.length === 0) {
+        console.warn('Emergency: Using hard-coded fallback data');
         globalAllGuides = defaultGuideData;
     }
     displayGuides(globalCurrentPage);
@@ -123,7 +137,7 @@ function createGuideCard(guide) {
             <img src="${guide.image || 'assets/images/default-guide.jpg'}" class="card-img-top" alt="${guide.name}" style="height: 200px; object-fit: cover;">
             <div class="card-body d-flex flex-column">
                 <h5 class="card-title">${guide.name}</h5>
-                <p class="card-text text-muted small">${locationNames[guide.location] || guide.location}</p>
+                <p class="card-text text-muted small">${window.locationNames[guide.location] || guide.location}</p>
                 <div class="mb-2">
                     <span class="badge bg-primary me-1">⭐ ${guide.rating}</span>
                     <span class="text-success fw-bold">¥${guide.price?.toLocaleString() || 'N/A'}/時間</span>

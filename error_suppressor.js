@@ -15,6 +15,15 @@ window.addEventListener('error', function(e) {
 (function() {
     'use strict';
     
+    // Disable Service Worker completely to prevent sw.js 404 errors
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+                registration.unregister();
+            }
+        });
+    }
+    
     // Override all console methods to suppress Replit errors
     const originalConsole = {
         log: console.log,

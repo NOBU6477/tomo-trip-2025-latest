@@ -1,0 +1,102 @@
+ノブさん、そのまま**一回コピペ**でReplitのAgentに渡せる指示文です。
+（スクショに写っているエラー/警告専用：`locationNames` の重複宣言、ガイド0件フォールバック）
+
+---
+
+**【Replit Agent 指示文｜TomoTrip – コンソールエラー修正】**
+
+次の2点を必ず解消し、トップページを正常表示にしてください。
+
+* `Uncaught SyntaxError: Identifier 'locationNames' has already been declared (app-init.js:1)`
+* 「No registered guides…」「No guides available for display」系ログが出続け、UIが空状態になる
+
+### 1) `locationNames` 重複宣言の解消（最優先）
+
+**目的**: 変数の二重定義を排除してビルド不要で動く構成にする。
+**手順**
+
+1. プロジェクト全体を検索し、`locationNames` の **宣言（let/const/var）箇所**と **同名の再宣言** を洗い出す。
+2. 宣言は **1か所に集約** し、他ファイルは **参照のみ** に統一する。
+
+   * 例：`/src/constants/locations.js` を新規作成し、そこに一次定義
+
+     ```js
+     // src/constants/locations.js
+     export const locationNames = [/* 既存の配列 */];
+     ```
+   * 参照側はすべて次の形に変更（相対パスは実際に合わせる）
+
+     ```js
+     // 参照側
+     import { locationNames } from './constants/locations.js';
+     ```
+3. **index.html** を確認し、同じスクリプトが **二重で読み込まれていないか** をチェック。
+
+   * `app-init.js` や `locations.js` の `<script>` が重複していたら片方を削除。
+   * ES Modules を使う場合、読み込みは **一度だけ**、`type="module"` を付与：
+
+     ```html
+     <script type="module" src="/src/app-init.js"></script>
+     ```
+4. もしビルドなしの素の `<script>` 構成でESMが使いにくい場合は、**グローバル一回定義**に切替：
+
+   ```html
+   <script>
+     window.locationNames = window.locationNames || [/* 配列 */];
+   </script>
+   ```
+
+   以降は `window.locationNames` を参照（再宣言不可）。
+
+**アドバイス**: 「同名の変数を別ファイルで再宣言」「同じJSを2回読み込み」が最頻出原因です。**宣言は1か所・読み込みは1回**を原則にしてください。
+
+---
+
+### 2) ガイド0件時のフォールバックと初期データ読み込み
+
+**目的**: データが0件でもUIが崩れず、最低限のプレースホルダーが表示されること。
+**手順**
+
+1. 初期データの取得処理（例：`loadDefaultGuides()`）で、**パスが実在**するか、JSONの**妥当性**を確認。
+
+   * 例：`/data/default-guides.json` が存在し、`fetch` が 200 を返すこと。
+2. 取得失敗・0件のときは **プレースホルダーを注入**：
+
+   ```js
+   const ensureGuides = (guides) => {
+     if (Array.isArray(guides) && guides.length > 0) return guides;
+     return [{
+       id: 'placeholder-1',
+       name: '準備中のガイド',
+       area: 'Okinawa',
+       languages: ['JA'],
+       rating: 0,
+       isPlaceholder: true
+     }];
+   };
+   // レンダリング直前
+   const safeGuides = ensureGuides(loadedGuides);
+   renderGuides(safeGuides);
+   ```
+3. ログの出力レベルを調整し、通常動作時に**黄色警告が出ない**ようにする（`console.warn` → 初回のみ、または`debug`へ）。
+4. 可能なら **空状態UI**（「ガイド募集」「検索条件を緩める」などのCTA）を追加。
+
+**アドバイス**: 「空配列=バグ」ではありません。**空状態デザイン**を用意しておくと、実データがない段階でもUIが安定します。
+
+---
+
+### 受け入れ条件（必須）
+
+* コンソールに `locationNames has already been declared` が出ない。
+* 初期ロード後、ガイドカード（実データまたはプレースホルダー）が表示され、**「No guides available…」** が通常状態で出ない。
+* ハードリロード後も同じ結果（キャッシュに依存しない）。
+
+### 動作確認
+
+1. 変更を適用 → ブラウザでキャッシュ削除 → **ハードリロード（Cmd/Ctrl+Shift+R）**。
+2. コンソールにエラーなし・UI表示OKを確認。
+3. コミット: `fix: dedupe locationNames & add empty-state fallback for guides`
+
+---
+
+必要に応じて、実際のファイルパスで `import` の相対パスだけ調整してください。

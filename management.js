@@ -1,8 +1,7 @@
 // Management Center Functions - CSP Compliant
 // All management-related inline scripts moved to external file
 
-// Use global locationNames (defined in app-init.js)
-const locationNames = window.locationNames || {};
+// Use global locationNames (defined in app-init.js) - no local declaration
 
 // Management Center Functions
 function showManagementCenter() {
@@ -48,7 +47,7 @@ function loadBookmarksList() {
                         <div class="col-8">
                             <div class="card-body p-3">
                                 <h6 class="card-title mb-1">${guide.name}</h6>
-                                <p class="card-text small text-muted mb-2">${locationNames[guide.location] || guide.location}</p>
+                                <p class="card-text small text-muted mb-2">${window.locationNames[guide.location] || guide.location}</p>
                                 <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">詳細</button>
@@ -91,7 +90,7 @@ function loadComparisonList() {
                     <img src="attached_assets/image_1754398586272.png" class="card-img-top" style="height: 120px; object-fit: cover;" alt="ガイド">
                     <div class="card-body p-3 d-flex flex-column">
                         <h6 class="card-title mb-1">${guide.name}</h6>
-                        <p class="card-text small text-muted mb-1">${locationNames[guide.location] || guide.location}</p>
+                        <p class="card-text small text-muted mb-1">${window.locationNames[guide.location] || guide.location}</p>
                         <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
                         <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
                         <div class="mt-auto">
