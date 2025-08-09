@@ -44,15 +44,53 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 
-                with open('index.html', 'rb') as f:
-                    self.wfile.write(f.read())
-                logger.info(f"✅ Served index.html successfully")
+                # Try public/index.html first, then fallback
+                try:
+                    with open('public/index.html', 'rb') as f:
+                        self.wfile.write(f.read())
+                    logger.info(f"✅ Served public/index.html successfully")
+                except FileNotFoundError:
+                    with open('index.html', 'rb') as f:
+                        self.wfile.write(f.read())
+                    logger.info(f"✅ Served fallback index.html successfully")
             except Exception as e:
                 logger.error(f"❌ Error serving index.html: {e}")
                 self.send_error(500, "Error loading page")
         else:
-            # Use default handling with proper MIME types
-            super().do_GET()
+            # Try serving from public/ first, then fallback to root
+            requested_path = self.path.lstrip('/')
+            public_file_path = os.path.join('public', requested_path)
+            
+            if os.path.exists(public_file_path) and os.path.isfile(public_file_path):
+                try:
+                    self.send_response(200)
+                    
+                    # Force correct MIME types for ESM modules
+                    if public_file_path.endswith('.mjs') or public_file_path.endswith('.js'):
+                        self.send_header('Content-Type', 'text/javascript; charset=utf-8')
+                    elif public_file_path.endswith('.css'):
+                        self.send_header('Content-Type', 'text/css; charset=utf-8')
+                    elif public_file_path.endswith('.png'):
+                        self.send_header('Content-Type', 'image/png')
+                    elif public_file_path.endswith(('.jpg', '.jpeg')):
+                        self.send_header('Content-Type', 'image/jpeg')
+                    else:
+                        content_type = self.guess_type(public_file_path)
+                        if content_type:
+                            self.send_header('Content-Type', content_type)
+                    
+                    self.send_header('Access-Control-Allow-Origin', '*')
+                    self.end_headers()
+                    
+                    with open(public_file_path, 'rb') as f:
+                        self.wfile.write(f.read())
+                    logger.info(f"✅ Served {public_file_path} from public/")
+                except Exception as e:
+                    logger.error(f"❌ Error serving {public_file_path}: {e}")
+                    self.send_error(500, "Error loading file")
+            else:
+                # Fallback to default handling
+                super().do_GET()
 
 def start_emergency_server():
     PORT = 5000

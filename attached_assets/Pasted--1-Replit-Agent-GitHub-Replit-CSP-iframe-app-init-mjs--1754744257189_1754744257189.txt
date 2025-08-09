@@ -1,0 +1,174 @@
+了解。下を**そのまま1回コピペ**でReplitのAgentに渡してください。
+（GitHub → Replit同期／ビルド／CSP＆iframe整備／`app-init.mjs`エラー根治 まで一気通貫）
+
+---
+
+【Replit Agent一括指示｜GitHub同期→ビルド→エラー根治（.replit.dev とプレビューを完全一致）】
+
+### 目的
+
+* GitHubの`main`（または指定ブランチ）を**唯一の真実**としてReplitへ完全同期
+* ビルド&配置を\*\*1つの配信ルート（public/）\*\*に統一
+* `.replit.dev`直アクセスで**赤エラー0**、プレビューと**完全一致**
+* 既知の実アプリ起因エラー（ESM/MIME、CSP、iframe、非常用フッター）を根本修正
+
+---
+
+## 0) 事前
+
+* 対象ブランチ：`main`（変更がある場合は同等のブランチ名に置換）
+
+---
+
+## 1) GitHub → Replit 完全同期（片方向・強制）
+
+1. Replitファイルを**フルバックアップ**後、Gitの`main`でReplit作業ツリーを**強制同期**。
+
+   * Replit上の**不要ファイル**（過去の`.js`/`.mjs`/`index*.html`/`dist`/`build`/`public_old` 等）は**削除**（重複読み込みを防ぐ）。
+2. `.replit` / `replit.nix` / `requirements.txt` / `package.json` がある場合は**最新を採用**（片方のみのスタックに統一：Node or Python）。
+
+   * 今回は**静的配信 or Express/Python 単一**にする。**両方は使わない**。
+
+---
+
+## 2) 配信ルート統一 & 参照を絶対パス化
+
+1. **配信ディレクトリを `public/` に一本化**。
+
+   * HTML：`public/index.html`（日本語版）、必要なら`public/index-en.html`
+   * JS/CSS/画像：`public/assets/**`
+   * 既存の `dist/` `build/` `static/` などは**撤去か移設**
+2. HTMLの先頭に**必ず**入れる：
+
+   ```html
+   <base href="/">
+   ```
+3. すべての読み込みを**絶対パス**で統一：
+
+   ```html
+   <script type="module" src="/assets/js/app-init.mjs?v={{BUILD_ID}}" defer></script>
+   <link rel="stylesheet" href="/assets/css/main.css?v={{BUILD_ID}}">
+   <img src="/assets/img/logo.png" alt="">
+   ```
+4. `.replit.dev/assets/js/app-init.mjs` に**直アクセス**して**JS本文**が返ることを後で確認する。
+
+---
+
+## 3) ESM/MIME エラー根治（`app-init.mjs`）
+
+1. **モジュール拡張子**は `.mjs` に統一。
+
+   * `app-init.mjs` 内の import は**拡張子つき相対**：
+
+     ```js
+     import { setupEventListeners } from './events/event-handlers.mjs';
+     import { defaultGuideData } from './data/default-guides.mjs';
+     ```
+2. HTMLは**モジュール1本**に集約。**同ファイルの二重読み込み禁止**：
+
+   ```html
+   <!-- ✅ -->
+   <script type="module" src="/assets/js/app-init.mjs?v={{BUILD_ID}}" defer></script>
+   <!-- ❌ 同じファイルの nomodule 併用は禁止 -->
+   ```
+3. \*\*サーバ経由の場合（Node/Express or Python）\*\*は `.mjs` を `text/javascript` で返す：
+
+   * **Express例**
+
+     ```js
+     app.use((req, res, next) => {
+       if (req.path.endsWith('.mjs') || req.path.endsWith('.js')) res.type('text/javascript');
+       next();
+     });
+     app.use(express.static('public'));
+     ```
+   * **Pythonカスタムサーバ**なら MIME を `.mjs → text/javascript` に確実にマップ
+4. **検証**：Networkパネルで `app-init.mjs` の **Status=200 / Content-Type=text/javascript / Response=JS本文** を確認。
+   1つでも違えば**ルートorMIME設定のやり直し**。
+
+---
+
+## 4) CSP準拠（インライン/評価/Worker禁止）
+
+1. **インラインJS廃止**：`<script>…</script>` 本体・`onclick=""` 等の属性イベントを**ゼロ**にし、JS側で `addEventListener` に置換。
+2. **評価系禁止**：`eval/new Function/setTimeout('string')/setInterval('string')` → 関数参照に置換。
+3. **開発環境のService Worker/Web Workerは使わない**（登録コードを確実に無効化）。
+4. HTMLに**最小権限CSP（必要ドメインだけ残す）**：
+
+   ```html
+   <meta http-equiv="Content-Security-Policy" content="
+     default-src 'self';
+     script-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+     style-src  'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net;
+     img-src    'self' data: blob:;
+     font-src   'self' https://fonts.gstatic.com;
+     connect-src 'self';
+     frame-src  https://www.youtube-nocookie.com https://www.youtube.com;
+     object-src 'none'; base-uri 'self'; form-action 'self';
+   ">
+   ```
+
+   * 実際に使っていないドメインは**削除**。
+
+---
+
+## 5) iframeの無効属性を削除
+
+1. プロジェクトの**自前の `<iframe>`** を全文検索。
+2. `sandbox` から **`allow-downloads-without-user-activation` を削除**。
+3. `allow`（Permissions-Policy）から**未対応トークン**（`ambient-light-sensor`, `battery`, `navigation-override` など）を削除し、必要なものだけ残す（例：`fullscreen; geolocation; microphone; camera`）。
+
+---
+
+## 6) “非常用フッター”スクリプトを本番停止
+
+1. `Console.js` 等の非常用分岐（`FOOTER DEBUG SCRIPT LOADED – EMERGENCY MODE` ログ）を**開発のみ**実行に変更：
+
+   ```js
+   const isDev = location.hostname === 'localhost';
+   const EMERGENCY_FLAG = false; // デフォルトOFF
+   if (isDev && EMERGENCY_FLAG) runFooterEmergencyFix();
+   ```
+2. フッターは**静的HTMLで常設**（`</body>`直前）。JS強制はデバッグ時のみ。
+
+---
+
+## 7) キャッシュ/Service Workerの完全除去
+
+1. DevTools → Application → **Unregister Service Workers**（全て）
+2. Application → Storage → **Clear site data**
+3. ハードリロード（`Ctrl/Cmd+Shift+R`）
+
+---
+
+## 8) 受け入れ基準（この4点が満たされること）
+
+* `.replit.dev` 直アクセスで**赤エラー0**（Replitワークスペース起因は除外）
+* Networkで `app-init.mjs` が **200 / text/javascript / JS本文**
+* 自前の `iframe` で**無効属性の赤ログ0**
+* プレビューと `.replit.dev` の **BUILD\_ID とUIが一致**
+
+---
+
+## 9) 動作確認チェックリスト
+
+* 初期表示でガイドカードが表示され、フィルタ/モーダル/ボタンが動作
+* フッターが自然表示、非常用ログが**出ない**
+* 開発ログは `console.debug` レベルで抑制（本番では`console.debug = ()=>{}`でも可）
+
+---
+
+## 10) コミットメッセージ
+
+```
+chore: sync from GitHub and unify deploy root; fix ESM delivery and CSP; remove invalid iframe flags; disable footer emergency in prod
+```
+
+---
+
+### 注意（評価基準の切り分け）
+
+* **Replitエディターのiframe由来**のログ（`sp.replit.com` の 400、`workspace_iframe.html`、`framework-*.js`、`GroupMarkerNotSet` など）は**無関係**。
+* 以降、**.replit.dev直アクセス**のコンソールのみを合否判定に使用すること。
+
+---
