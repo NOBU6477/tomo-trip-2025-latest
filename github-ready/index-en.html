@@ -4673,11 +4673,12 @@
         }
     </script>
 
-    <!-- Critical Footer Fix Script -->
+    <!-- Critical Footer Fix Script - DISABLED FOR PRODUCTION -->
     <script>
-        console.log('🔍 FOOTER DEBUG SCRIPT LOADED - EMERGENCY MODE (EN)');
+        // Footer emergency script disabled for production CSP compliance
+        console.log('🔇 Footer emergency script disabled for production');
         
-        // Immediate footer check
+        // Disabled function - no-op in production
         function checkFooterImmediately() {
             const footer = document.querySelector('footer#main-footer');
             console.log('🔍 Immediate footer check (EN):', !!footer);
@@ -4770,43 +4771,11 @@
             }
         }
         
-        // Emergency: Force run immediately multiple times
-        console.log('🚨 EMERGENCY: Running footer fix immediately (EN)');
-        checkFooterImmediately();
-        
-        // Force run after short delay
-        setTimeout(function() {
-            console.log('🚨 EMERGENCY: 100ms delay footer fix (EN)');
+        // All footer emergency scripts disabled for production CSP compliance
+        // Emergency functions removed to eliminate console noise
+        if (false) { // Disabled block
             checkFooterImmediately();
-        }, 100);
-        
-        // Also run on DOMContentLoaded
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔍 DOMContentLoaded - checking footer again (EN)');
-            checkFooterImmediately();
-        });
-        
-        // Run on window load
-        window.addEventListener('load', function() {
-            // Footer emergency script disabled for production
-            checkFooterImmediately();
-        });
-        
-        // Multiple fallback timeouts
-        setTimeout(function() {
-            console.log('🔍 500ms timeout fallback - checking footer (EN)');
-            checkFooterImmediately();
-        }, 500);
-        
-        setTimeout(function() {
-            console.log('🔍 1000ms timeout fallback - checking footer (EN)');
-            checkFooterImmediately();
-        }, 1000);
-        
-        setTimeout(function() {
-            console.log('🔍 2000ms timeout fallback - checking footer (EN)');
-            checkFooterImmediately();
-        }, 2000);
+        }
     </script>
     
     <!-- Footer Force CSS -->

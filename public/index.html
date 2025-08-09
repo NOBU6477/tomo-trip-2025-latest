@@ -15,17 +15,20 @@
         base-uri 'self';
         form-action 'self';
     ">
-    <title>TomoTrip - 地元ガイドと観光客をつなぐプラットフォーム</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <title>Local Guide - 特別な旅の体験を</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    
+    <!-- Environment configuration - must be first -->
+    <script type="module" src="env/app-config.mjs"></script>
     
     <!-- Build ID and cache cleanup for consistency - CSP compliant -->
-    <script src="/env/build-id.js"></script>
-    <script src="/sw-unregister.js"></script>
+    <script src="env/build-id.js"></script>
+    <script src="sw-unregister.js"></script>
     
     <!-- Complete error suppression system -->
-    <script src="/webgl-fix.js" defer></script>
-    <script src="/error_suppressor.js" defer></script>
-    <script src="/management.js" defer></script>
+    <script src="webgl-fix.js" defer></script>
+    <script src="error_suppressor.js" defer></script>
+    <script src="management.js" defer></script>
     
     <!-- CSS Load Order: Bootstrap CSS → Bootstrap Icons → Custom CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -33,9 +36,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/ocean_background.css">
-    <link rel="stylesheet" href="/assets/css/footer.css">
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+    <link rel="stylesheet" href="ocean_background.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
     <style>
         .guide-card:hover {
             transform: translateY(-5px);
@@ -52,95 +55,830 @@
             visibility: hidden !important;
             opacity: 0 !important;
         }
+        
+        /* Hide specific Replit error messages */
+        div:contains("Could not find run command"),
+        .error:contains("run command"),
+        .notification:contains("Could not find") {
+            display: none !important;
+        }
+        
+        /* Chat message styling */
+        .max-width-70 {
+            max-width: 70%;
+        }
+        
+        #chatMessages {
+            min-height: 300px;
+        }
+        
+        #chatMessages::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+    
+    <style>
+        /* Clear any cached styles */
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+            text-decoration: none;
+        }
+
+        .logo-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: white;
+            padding: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+        }
+        
+        .logo-container img {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
+            display: block;
+        }
+
+        /* Hero Section - Basic layout only, background handled below */
+        .hero-section {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 100px 0 80px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: auto;
+                padding: 120px 0 60px 0;
+            }
+        }
+
+        /* Language Switcher - Center Position */
+        .language-switcher-center {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 100;
+            margin-bottom: 2rem;
+        }
+
+        .lang-btn-jp, .lang-btn-en {
+            padding: 15px 30px;
+            border: none;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 140px;
+            color: white;
+        }
+
+        /* レスポンシブデザイン - モバイル対応 */
+        @media (max-width: 768px) {
+            .language-switcher-center {
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 1.5rem;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 150px;
+                flex: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-switcher-center {
+                gap: 8px;
+                margin-bottom: 1rem;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                padding: 10px 15px;
+                font-size: 13px;
+                min-width: 120px;
+            }
+        }
+
+        .lang-btn-jp {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+        }
+
+        .lang-btn-en {
+            background: linear-gradient(135deg, #4287f5, #64a8ff);
+        }
+
+        .lang-btn-jp:hover {
+            background: linear-gradient(135deg, #ff5252, #ff7979);
+            transform: translateY(-2px);
+        }
+
+        .lang-btn-en:hover {
+            background: linear-gradient(135deg, #3b78e7, #5a9cff);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Content */
+        .hero-content {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 0 20px;
+            margin-top: 150px;
+        }
+
+        .hero-title-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            padding: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-logo img {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            line-height: 1.6;
+        }
+
+        /* Action Buttons */
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 15px 35px;
+            border-radius: 35px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-outline-hero {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Right Side Sponsor Buttons */
+        .sponsor-buttons {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .sponsor-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 35px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .sponsor-btn:hover {
+            transform: translateX(-8px) translateY(-3px);
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+            background: linear-gradient(135deg, #218838, #1e7e34);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(135deg, #0056b3, #004085);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.4);
+        }
+
+        /* Management Center Button */
+        .management-center {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(100px);
+            background: linear-gradient(135deg, #ffc107, #ff8800);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 1000;
+            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .management-center:hover {
+            transform: translateY(100px) scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 193, 7, 0.5);
+        }
+
+        /* Payment Modal Mobile Styles */
+        @media (max-width: 768px) {
+            #paymentModal .modal-dialog {
+                margin: 0;
+                max-width: 100%;
+                height: 100vh;
+            }
+            
+            #paymentModal .modal-content {
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            #paymentModal .modal-body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            #paymentModal .payment-option {
+                margin-bottom: 10px;
+            }
+            
+            #paymentModal .payment-option .card-body {
+                padding: 15px;
+            }
+            
+            #paymentModal .btn-lg {
+                padding: 12px 20px;
+                font-size: 16px;
+            }
+        }
+
+        /* Mobile Responsive - 完全版 */
+        @media (max-width: 768px) {
+            /* 基本構造調整 */
+            body {
+                overflow-x: hidden;
+            }
+            
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            
+            /* ナビゲーション調整 */
+            .navbar {
+                padding: 8px 0;
+            }
+            
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+            
+            .navbar .d-flex {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+                width: auto;
+            }
+            
+            .navbar .btn {
+                font-size: 12px;
+                padding: 6px 12px;
+                white-space: nowrap;
+            }
+            
+            .dropdown-menu {
+                min-width: 140px !important;
+                right: 0;
+                left: auto;
+            }
+            
+            /* ヒーローセクション調整 */
+            .hero-section {
+                min-height: auto;
+                padding: 120px 0 60px 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .hero-content {
+                text-align: center;
+                padding: 0 20px;
+                max-width: 100%;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+                line-height: 1.6;
+            }
+            
+            /* 言語切り替えボタン */
+            .language-switcher-center {
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                margin: 0 auto 1.5rem auto;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                width: 100%;
+                padding: 0 20px;
+                box-sizing: border-box;
+            }
+            
+            .lang-btn-jp, .lang-btn-en {
+                width: 100%;
+                max-width: 280px;
+                font-size: 14px;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 25px;
+            }
+            
+            /* ヒーローボタン */
+            .hero-buttons {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                margin: 0 auto;
+                padding: 0 20px;
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .btn-hero {
+                width: 100%;
+                font-size: 14px;
+                padding: 12px 20px;
+                box-sizing: border-box;
+                border-radius: 25px;
+            }
+            
+            /* 協賛店ボタン */
+            .sponsor-buttons {
+                position: relative;
+                right: auto;
+                top: auto;
+                transform: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                margin: 20px auto;
+                padding: 0 20px;
+                gap: 10px;
+                max-width: 280px;
+                width: 100%;
+            }
+            
+            .sponsor-btn {
+                width: 100%;
+                font-size: 14px;
+                padding: 10px 16px;
+                box-sizing: border-box;
+                border-radius: 20px;
+            }
+            
+            /* メインコンテンツ */
+            .main-content {
+                padding: 40px 0 !important;
+            }
+            
+            .filter-section {
+                padding: 20px !important;
+                margin: 0 10px;
+            }
+            
+            .filter-section .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            
+            .filter-section .form-select,
+            .filter-section .form-control {
+                width: 100% !important;
+                min-width: auto !important;
+                font-size: 14px;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+            
+            /* ガイドカード */
+            .guide-card {
+                margin-bottom: 15px;
+            }
+            
+            .guide-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn-guide {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+            
+            /* 管理センターボタン */
+            .management-center {
+                position: fixed;
+                bottom: 15px;
+                right: 15px;
+                transform: none;
+                width: 50px;
+                height: 50px;
+                font-size: 18px;
+            }
+            
+            /* モーダル */
+            .modal-dialog {
+                margin: 5px;
+                max-width: calc(100vw - 10px);
+                height: calc(100vh - 10px);
+            }
+            
+            .modal-content {
+                height: 100%;
+                border-radius: 10px;
+            }
+            
+            .modal-body {
+                padding: 15px;
+                overflow-y: auto;
+            }
+            
+            .modal-body .form-control,
+            .modal-body .form-select {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .modal-body .btn {
+                font-size: 14px;
+                padding: 10px 16px;
+            }
+            
+            /* フッター調整 */
+            .footer {
+                padding: 20px 0;
+            }
+            
+            .footer .row > .col-md-2,
+            .footer .row > .col-md-3 {
+                margin-bottom: 15px;
+            }
+            
+            /* テーブル */
+            .table-responsive {
+                font-size: 12px;
+            }
+            
+            /* 検索結果 */
+            .search-results {
+                padding: 10px;
+            }
+            
+            /* ペジネーション */
+            .pagination {
+                justify-content: center;
+            }
+            
+            .page-link {
+                font-size: 12px;
+                padding: 6px 10px;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="theme-ocean">
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
-                <img src="/assets/images/tomotrip-logo.png" alt="TomoTrip" height="40" class="me-2">
+            <a class="navbar-brand" href="/">
+                <div class="logo-container">
+                    <img src="assets/images/tomotrip-logo.png" alt="TomoTrip Logo" id="logoImg" />
+                </div>
                 TomoTrip
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#guides-section">ガイド検索</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-type="guide">ガイド登録</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-login-type="tourist">観光客登録</a>
-                    </li>
-                </ul>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" id="sponsorLoginBtn">協賛店ログイン</button>
-                    <button class="btn btn-primary" id="sponsorRegBtn">協賛店登録</button>
+            
+            <div class="d-flex">
+                <div class="dropdown me-2" style="position: relative;">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" aria-expanded="false">
+                        ログイン
+                    </button>
+                    <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
+                    </div>
                 </div>
+                <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section py-5 mt-5">
+    <section class="hero-section">
         <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">地元の魅力を<br>世界へ届ける</h1>
-                    <p class="lead mb-4">TomoTripは、地元を愛するガイドと冒険を求める旅行者をつなぐプラットフォームです。</p>
-                    <div class="d-flex gap-3">
-                        <button class="btn btn-primary btn-lg">ガイドを探す</button>
-                        <button class="btn btn-outline-primary btn-lg">ガイドになる</button>
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-md-12">
+                    <!-- Language Switcher - Center -->
+                    <div class="language-switcher-center text-center mb-4">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px;">🇯🇵 日本語</button>
+                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px;">🇺🇸 English</button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-6">
-                    <img src="/assets/images/hero-image.jpg" alt="TomoTrip Hero" class="img-fluid rounded shadow">
-                </div>
-            </div>
-        </div>
-    </section>
 
-    <!-- Guides Section -->
-    <section id="guides-section" class="py-5">
-        <div class="container">
-            <h2 class="text-center mb-5">登録ガイド一覧</h2>
-            
-            <!-- Filter Section -->
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card p-3">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <select class="form-select" id="locationFilter">
-                                    <option value="">すべての地域</option>
-                                </select>
+                    <!-- Hero Content -->
+                    <div class="hero-content text-center">
+                        <div class="hero-title-container mb-4">
+                            <div class="hero-logo mb-3">
+                                <img src="assets/images/tomotrip-logo.png" alt="TomoTrip Logo" class="modal-logo" />
                             </div>
-                            <div class="col-md-3">
-                                <select class="form-select" id="languageFilter">
-                                    <option value="">対応言語</option>
-                                    <option value="japanese">日本語</option>
-                                    <option value="english">英語</option>
-                                    <option value="chinese">中国語</option>
-                                    <option value="korean">韓国語</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number" class="form-control" id="priceFilter" placeholder="最大料金（円）">
-                            </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-primary w-100" id="applyFilters">フィルター適用</button>
+                            <h1 class="display-4 fw-bold text-white">あなただけの特別な旅を</h1>
+                        </div>
+                        <p class="lead text-white mb-5">地元ガイドと一緒に、観光では見つからない隠れた魅力を体験しましょう</p>
+                        <div class="hero-buttons">
+                            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                                <button class="btn-hero btn-primary-hero btn" id="findGuideBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">ガイドを探す</button>
+                                <button class="btn-hero btn-outline-hero btn" id="contactBtn" style="background: linear-gradient(135deg, #f093fb, #f5576c); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">お問い合わせ</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Guide Cards -->
-            <div class="row" id="guideCards">
+        </div>
+    </section>
+
+    <!-- Desktop Right Side Buttons -->
+    <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">協賛店登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
+    </div>
+
+    <!-- Mobile Bottom Buttons -->
+    <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
+        <div class="d-flex gap-2">
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">協賛店登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
+        </div>
+    </div>
+
+    <!-- Management Center Button - Desktop -->
+    <button class="management-center d-none d-lg-block" id="managementBtn" title="管理センター" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+    
+    <!-- Management Center Button - Mobile -->
+    <button class="management-center-mobile d-lg-none position-fixed" id="managementBtnMobile" title="管理センター" style="bottom: 80px; right: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+
+    <!-- Main Content Section -->
+    <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
+        <div class="container">
+            <!-- Filter Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="filter-section" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                        <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                            <div class="d-flex flex-wrap gap-3">
+                                <select class="form-select" style="width: auto; min-width: 180px;" id="locationFilter">
+                                    <option value="">すべての地域</option>
+                                    <optgroup label="北海道・東北">
+                                        <option value="hokkaido">北海道</option>
+                                        <option value="aomori">青森県</option>
+                                        <option value="iwate">岩手県</option>
+                                        <option value="miyagi">宮城県</option>
+                                        <option value="akita">秋田県</option>
+                                        <option value="yamagata">山形県</option>
+                                        <option value="fukushima">福島県</option>
+                                    </optgroup>
+                                    <optgroup label="関東">
+                                        <option value="ibaraki">茨城県</option>
+                                        <option value="tochigi">栃木県</option>
+                                        <option value="gunma">群馬県</option>
+                                        <option value="saitama">埼玉県</option>
+                                        <option value="chiba">千葉県</option>
+                                        <option value="tokyo">東京都</option>
+                                        <option value="kanagawa">神奈川県</option>
+                                    </optgroup>
+                                    <optgroup label="中部">
+                                        <option value="niigata">新潟県</option>
+                                        <option value="toyama">富山県</option>
+                                        <option value="ishikawa">石川県</option>
+                                        <option value="fukui">福井県</option>
+                                        <option value="yamanashi">山梨県</option>
+                                        <option value="nagano">長野県</option>
+                                        <option value="gifu">岐阜県</option>
+                                        <option value="shizuoka">静岡県</option>
+                                        <option value="aichi">愛知県</option>
+                                    </optgroup>
+                                    <optgroup label="近畿">
+                                        <option value="mie">三重県</option>
+                                        <option value="shiga">滋賀県</option>
+                                        <option value="kyoto">京都府</option>
+                                        <option value="osaka">大阪府</option>
+                                        <option value="hyogo">兵庫県</option>
+                                        <option value="nara">奈良県</option>
+                                        <option value="wakayama">和歌山県</option>
+                                    </optgroup>
+                                    <optgroup label="中国・四国">
+                                        <option value="tottori">鳥取県</option>
+                                        <option value="shimane">島根県</option>
+                                        <option value="okayama">岡山県</option>
+                                        <option value="hiroshima">広島県</option>
+                                        <option value="yamaguchi">山口県</option>
+                                        <option value="tokushima">徳島県</option>
+                                        <option value="kagawa">香川県</option>
+                                        <option value="ehime">愛媛県</option>
+                                        <option value="kochi">高知県</option>
+                                    </optgroup>
+                                    <optgroup label="九州・沖縄">
+                                        <option value="fukuoka">福岡県</option>
+                                        <option value="saga">佐賀県</option>
+                                        <option value="nagasaki">長崎県</option>
+                                        <option value="kumamoto">熊本県</option>
+                                        <option value="oita">大分県</option>
+                                        <option value="miyazaki">宮崎県</option>
+                                        <option value="kagoshima">鹿児島県</option>
+                                        <option value="okinawa">沖縄県</option>
+                                    </optgroup>
+                                    <optgroup label="離島特別地域">
+                                        <option value="ogasawara">小笠原諸島</option>
+                                        <option value="izu">伊豆諸島</option>
+                                        <option value="sado">佐渡島</option>
+                                        <option value="awaji">淡路島</option>
+                                        <option value="yakushima">屋久島</option>
+                                        <option value="amami">奄美大島</option>
+                                        <option value="ishigaki">石垣島</option>
+                                        <option value="miyako">宮古島</option>
+                                    </optgroup>
+                                </select>
+                                
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
+                                    <option value="">すべての言語</option>
+                                    <optgroup label="アジア言語">
+                                        <option value="japanese">日本語</option>
+                                        <option value="english">英語</option>
+                                        <option value="chinese">中国語（簡体字）</option>
+                                        <option value="chinese_traditional">中国語（繁体字）</option>
+                                        <option value="korean">韓国語</option>
+                                        <option value="thai">タイ語</option>
+                                        <option value="vietnamese">ベトナム語</option>
+                                        <option value="indonesian">インドネシア語</option>
+                                        <option value="tagalog">タガログ語（フィリピン）</option>
+                                        <option value="hindi">ヒンディー語</option>
+                                    </optgroup>
+                                    <optgroup label="ヨーロッパ言語">
+                                        <option value="spanish">スペイン語</option>
+                                        <option value="french">フランス語</option>
+                                        <option value="german">ドイツ語</option>
+                                        <option value="italian">イタリア語</option>
+                                        <option value="portuguese">ポルトガル語</option>
+                                        <option value="russian">ロシア語</option>
+                                        <option value="dutch">オランダ語</option>
+                                        <option value="swedish">スウェーデン語</option>
+                                    </optgroup>
+                                    <optgroup label="その他">
+                                        <option value="arabic">アラビア語</option>
+                                        <option value="hebrew">ヘブライ語</option>
+                                        <option value="turkish">トルコ語</option>
+                                        <option value="swahili">スワヒリ語</option>
+                                    </optgroup>
+                                </select>
+                                
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter">
+                                    <option value="">すべての価格</option>
+                                    <option value="budget">¥6,000～¥10,000</option>
+                                    <option value="premium">¥10,001～¥20,000</option>
+                                    <option value="luxury">¥20,001以上</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" id="searchBtn">検索</button>
+                                <button class="btn btn-outline-secondary" id="resetBtn">リセット</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <small class="text-muted" id="guideCounter">12人のガイドが見つかりました（全15人中）</small>
+                            <small class="text-info" id="totalGuideCounter">登録ガイド総数: 15人</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guide Cards Section -->
+            <div class="row" id="guideCardsContainer">
                 <!-- Guide cards will be populated here -->
             </div>
             
@@ -160,25 +898,343 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer-dark bg-dark text-white py-5 mt-5" id="main-footer">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Base href for absolute paths -->
+    <base href="/">
+    
+    <!-- ESM Module Testing (temporary for debugging) -->
+    <!-- <script type="module" src="/assets/js/ping.mjs"></script> -->
+    
+    <!-- External JavaScript Files - ESM modules -->
+    <script type="module" src="/assets/js/app-init.mjs?v=2025.08.09-unified"></script>
+    <script nomodule src="/assets/js/modal-handlers.js?v=2025.08.09-unified" defer></script>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true" data-login-type="tourist" style="display: none;">
+        <div class="modal-dialog modal-dialog-centered">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card h-100 text-center p-3" style="border: 2px solid #e9ecef; border-radius: 10px; cursor: pointer;" id="guideCard">
+                                    <div class="card-body">
+                                        <i class="bi bi-person-badge fs-1 text-success mb-2"></i>
+                                        <h6 class="fw-bold">ガイドとして登録</h6>
+                                        <small class="text-muted">地元の魅力を観光客に伝える</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Registration Form (Initially Hidden) -->
+                    <div id="registrationForm" style="display: none;">
+                        <form id="userRegistrationForm">
+                            <!-- Profile Photo Upload -->
+                            <div class="mb-4 text-center">
+                                <label class="form-label fw-bold">プロフィール写真</label>
+                                <div class="d-flex flex-column align-items-center">
+                                    <div class="profile-photo-preview mb-3" style="width: 120px; height: 120px; border: 3px dashed #ddd; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                                        <img id="profilePreview" src="" alt="プロフィール写真" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none;">
+                                        <span id="photoPlaceholder" class="text-muted">写真を選択</span>
+                                    </div>
+                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*" style="border-radius: 10px;">
+                                </div>
+                            </div>
+
+                            <!-- Basic Information -->
+                            <h6 class="fw-bold mb-3 text-primary">基本情報</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="regFirstName" class="form-label fw-bold">名前（本名）<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="regFirstName" placeholder="太郎" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="regLastName" class="form-label fw-bold">苗字（本名）<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="regLastName" placeholder="田中" required style="border-radius: 10px; padding: 12px;">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="regEmail" class="form-label fw-bold">メールアドレス<span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="regEmail" placeholder="email@example.com" required style="border-radius: 10px; padding: 12px;">
+                            </div>
+                            
+                            <!-- Password Fields -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="regPassword" class="form-label fw-bold">パスワード<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="regPassword" placeholder="8文字以上のパスワード" required style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword1" style="border-radius: 0 10px 10px 0;">
+                                            <i class="bi bi-eye" id="eyeIcon1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="regPasswordConfirm" class="form-label fw-bold">パスワード確認<span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="regPasswordConfirm" placeholder="パスワード再入力" required style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2" style="border-radius: 0 10px 10px 0;">
+                                            <i class="bi bi-eye" id="eyeIcon2"></i>
+                                        </button>
+                                    </div>
+                                    <div class="invalid-feedback" id="passwordMismatch"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Phone Verification -->
+                            <div class="mb-3">
+                                <label for="regPhone" class="form-label fw-bold">電話番号<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="tel" class="form-control" id="regPhone" placeholder="090-1234-5678" required style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                    <button class="btn btn-primary" type="button" id="sendVerificationBtn" style="border-radius: 0 10px 10px 0;">認証コード送信</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Verification Code (Initially Hidden) -->
+                            <div class="mb-3" id="verificationCodeSection" style="display: none;">
+                                <label for="verificationCode" class="form-label fw-bold">認証コード<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="verificationCode" placeholder="6桁の認証コード" maxlength="6" style="border-radius: 10px 0 0 10px; padding: 12px;">
+                                    <button class="btn btn-success" type="button" id="verifyCodeBtn" style="border-radius: 0 10px 10px 0;">認証</button>
+                                </div>
+                                <small class="text-muted">SMSで送信された6桁のコードを入力してください</small>
+                            </div>
+
+                            <!-- ID Document Verification -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3 text-primary">身分証明書確認<span class="text-danger">*</span></h6>
+                                <div class="mb-3">
+                                    <label for="idDocumentType" class="form-label fw-bold">書類の種類</label>
+                                    <select class="form-select" id="idDocumentType" required style="border-radius: 10px; padding: 12px;">
+                                        <option value="">選択してください</option>
+                                        <option value="drivers_license">運転免許証</option>
+                                        <option value="passport">パスポート</option>
+                                        <option value="residence_card">在留カード</option>
+                                        <option value="mynumber">マイナンバーカード</option>
+                                    </select>
+                                </div>
+                                <div class="row" id="idDocumentUpload">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="idDocumentFront" class="form-label fw-bold">表面</label>
+                                        <input type="file" class="form-control" id="idDocumentFront" accept="image/*" required style="border-radius: 10px;">
+                                        <div id="idDocumentFrontPreview" class="mt-2" style="display: none;">
+                                            <img id="idDocumentFrontImg" src="" alt="身分証明書（表面）" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                                            <p class="small text-muted mt-1">身分証明書（表面）</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3" id="idDocumentBackSection" style="display: none;">
+                                        <label for="idDocumentBack" class="form-label fw-bold">裏面</label>
+                                        <input type="file" class="form-control" id="idDocumentBack" accept="image/*" style="border-radius: 10px;">
+                                        <div id="idDocumentBackPreview" class="mt-2" style="display: none;">
+                                            <img id="idDocumentBackImg" src="" alt="身分証明書（裏面）" style="max-width: 100%; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                                            <p class="small text-muted mt-1">身分証明書（裏面）</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Guide-specific fields (Initially Hidden) -->
+                            <div id="guideSpecificFields" style="display: none;">
+                                <h6 class="fw-bold mb-3 text-success">ガイド情報</h6>
+                                
+                                <!-- Display Name for Guide Cards -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="guideDisplayFirstName" class="form-label fw-bold">表示用名前（任意）</label>
+                                        <input type="text" class="form-control" id="guideDisplayFirstName" placeholder="ガイドカード表示用" style="border-radius: 10px; padding: 12px;">
+                                        <small class="text-muted">空欄の場合は本名が使用されます</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="guideDisplayLastName" class="form-label fw-bold">表示用苗字（任意）</label>
+                                        <input type="text" class="form-control" id="guideDisplayLastName" placeholder="ガイドカード表示用" style="border-radius: 10px; padding: 12px;">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="guideLocation" class="form-label fw-bold">活動エリア<span class="text-danger">*</span></label>
+                                    <select class="form-select" id="guideLocation" required style="border-radius: 10px; padding: 12px;">
+                                        <option value="">選択してください</option>
+                                        <optgroup label="北海道・東北">
+                                            <option value="hokkaido">北海道</option>
+                                            <option value="aomori">青森県</option>
+                                            <option value="iwate">岩手県</option>
+                                            <option value="miyagi">宮城県</option>
+                                            <option value="akita">秋田県</option>
+                                            <option value="yamagata">山形県</option>
+                                            <option value="fukushima">福島県</option>
+                                        </optgroup>
+                                        <optgroup label="関東">
+                                            <option value="ibaraki">茨城県</option>
+                                            <option value="tochigi">栃木県</option>
+                                            <option value="gunma">群馬県</option>
+                                            <option value="saitama">埼玉県</option>
+                                            <option value="chiba">千葉県</option>
+                                            <option value="tokyo">東京都</option>
+                                            <option value="kanagawa">神奈川県</option>
+                                        </optgroup>
+                                        <optgroup label="中部">
+                                            <option value="niigata">新潟県</option>
+                                            <option value="toyama">富山県</option>
+                                            <option value="ishikawa">石川県</option>
+                                            <option value="fukui">福井県</option>
+                                            <option value="yamanashi">山梨県</option>
+                                            <option value="nagano">長野県</option>
+                                            <option value="gifu">岐阜県</option>
+                                            <option value="shizuoka">静岡県</option>
+                                            <option value="aichi">愛知県</option>
+                                        </optgroup>
+                                        <optgroup label="近畿">
+                                            <option value="mie">三重県</option>
+                                            <option value="shiga">滋賀県</option>
+                                            <option value="kyoto">京都府</option>
+                                            <option value="osaka">大阪府</option>
+                                            <option value="hyogo">兵庫県</option>
+                                            <option value="nara">奈良県</option>
+                                            <option value="wakayama">和歌山県</option>
+                                        </optgroup>
+                                        <optgroup label="中国・四国">
+                                            <option value="tottori">鳥取県</option>
+                                            <option value="shimane">島根県</option>
+                                            <option value="okayama">岡山県</option>
+                                            <option value="hiroshima">広島県</option>
+                                            <option value="yamaguchi">山口県</option>
+                                            <option value="tokushima">徳島県</option>
+                                            <option value="kagawa">香川県</option>
+                                            <option value="ehime">愛媛県</option>
+                                            <option value="kochi">高知県</option>
+                                        </optgroup>
+                                        <optgroup label="九州・沖縄">
+                                            <option value="fukuoka">福岡県</option>
+                                            <option value="saga">佐賀県</option>
+                                            <option value="nagasaki">長崎県</option>
+                                            <option value="kumamoto">熊本県</option>
+                                            <option value="oita">大分県</option>
+                                            <option value="miyazaki">宮崎県</option>
+                                            <option value="kagoshima">鹿児島県</option>
+                                            <option value="okinawa">沖縄県</option>
+                                        </optgroup>
+                                        <optgroup label="離島特別地域">
+                                            <option value="ogasawara">小笠原諸島</option>
+                                            <option value="izu">伊豆諸島</option>
+                                            <option value="sado">佐渡島</option>
+                                            <option value="awaji">淡路島</option>
+                                            <option value="yakushima">屋久島</option>
+                                            <option value="amami">奄美大島</option>
+                                            <option value="ishigaki">石垣島</option>
+                                            <option value="miyako">宮古島</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="guideLanguages" class="form-label fw-bold">対応可能な言語<span class="text-danger">*</span></label>
+                                    <select class="form-select" id="guideLanguages" multiple required style="border-radius: 10px; padding: 12px;">
+                                        <optgroup label="アジア言語">
+                                            <option value="japanese">日本語</option>
+                                            <option value="english">英語</option>
+                                            <option value="chinese">中国語（簡体字）</option>
+                                            <option value="chinese_traditional">中国語（繁体字）</option>
+                                            <option value="korean">韓国語</option>
+                                            <option value="thai">タイ語</option>
+                                            <option value="vietnamese">ベトナム語</option>
+                                            <option value="indonesian">インドネシア語</option>
+                                            <option value="tagalog">タガログ語（フィリピン）</option>
+                                            <option value="hindi">ヒンディー語</option>
+                                        </optgroup>
+                                        <optgroup label="ヨーロッパ言語">
+                                            <option value="spanish">スペイン語</option>
+                                            <option value="french">フランス語</option>
+                                            <option value="german">ドイツ語</option>
+                                            <option value="italian">イタリア語</option>
+                                            <option value="portuguese">ポルトガル語</option>
+                                            <option value="russian">ロシア語</option>
+                                            <option value="dutch">オランダ語</option>
+                                            <option value="swedish">スウェーデン語</option>
+                                        </optgroup>
+                                        <optgroup label="その他">
+                                            <option value="arabic">アラビア語</option>
+                                            <option value="hebrew">ヘブライ語</option>
+                                            <option value="turkish">トルコ語</option>
+                                            <option value="swahili">スワヒリ語</option>
+                                        </optgroup>
+                                    </select>
+                                    <small class="text-muted">複数選択可能です（Ctrl+クリック）</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="guideSpecialty" class="form-label fw-bold">専門分野（任意）</label>
+                                    <input type="text" class="form-control" id="guideSpecialty" placeholder="歴史・文化、グルメ、自然など" style="border-radius: 10px; padding: 12px;">
+                                    <small class="text-muted">得意分野やツアー内容を入力してください</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="guidePrice" class="form-label fw-bold">1日ガイド料金<span class="text-danger">*</span></label>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="input-group">
+                                                <span class="input-group-text">¥</span>
+                                                <input type="number" class="form-control" id="guidePriceInput" placeholder="6000" min="6000" step="1000" style="border-radius: 0 10px 10px 0; padding: 12px;">
+                                            </div>
+                                            <small class="text-muted">¥6,000以上、¥1,000単位で入力</small>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <select class="form-select" id="guidePriceRange" style="border-radius: 10px; padding: 12px;">
+                                                <option value="">または選択</option>
+                                                <option value="6000-10000">¥6,000～¥10,000</option>
+                                                <option value="10000-15000">¥10,000～¥15,000</option>
+                                                <option value="15000-20000">¥15,000～¥20,000</option>
+                                                <option value="20000-25000">¥20,000～¥25,000</option>
+                                                <option value="25000-30000">¥25,000～¥30,000</option>
+                                                <option value="30000+">¥30,000～</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="guideDescription" class="form-label fw-bold">自己紹介文（任意）</label>
+                                    <textarea class="form-control" id="guideDescription" rows="3" placeholder="ガイドとしての経験や案内スタイルを説明してください" style="border-radius: 10px; padding: 12px;"></textarea>
+                                </div>
+                            </div>
+                            
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    <a href="#" class="text-decoration-none">利用規約</a>と<a href="#" class="text-decoration-none">プライバシーポリシー</a>に同意する<span class="text-danger">*</span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">キャンセル</button>
+                    <button type="button" class="btn btn-success" id="registrationSubmitBtn" style="display: none; border-radius: 25px; padding: 10px 20px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">登録する</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer id="main-footer" class="footer-dark">
         <div class="container">
             <div class="row">
-                <!-- Company Info -->
+                <!-- 会社情報 -->
                 <div class="col-lg-3 col-md-6 mb-4">
                     <div class="d-flex align-items-center mb-3">
-                        <img src="/assets/images/tomotrip-logo.png" alt="TomoTrip" class="footer-logo me-2">
-                        <h5 class="mb-0 text-white">TomoTrip</h5>
+                        <img src="/assets/images/tomotrip-logo.png" alt="TomoTrip" class="me-2 footer-logo">
+                        <h5 class="mb-0">TomoTrip</h5>
                     </div>
                     <p class="text-muted small">地域の専門ガイドと観光客をつなぐプラットフォーム。安全で信頼できる旅行体験をご提供します。</p>
                     <div class="d-flex gap-3">
-                        <a href="#" class="text-muted hover-social" target="_blank" rel="noopener" title="Facebook"><i class="bi bi-facebook fs-5"></i></a>
-                        <a href="#" class="text-muted hover-social" target="_blank" rel="noopener" title="Twitter"><i class="bi bi-twitter fs-5"></i></a>
-                        <a href="#" class="text-muted hover-social" target="_blank" rel="noopener" title="Instagram"><i class="bi bi-instagram fs-5"></i></a>
-                        <a href="#" class="text-muted hover-social" target="_blank" rel="noopener" title="YouTube"><i class="bi bi-youtube fs-5"></i></a>
+                        <a href="https://facebook.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Facebook"><i class="bi bi-facebook fs-5"></i></a>
+                        <a href="https://twitter.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Twitter"><i class="bi bi-twitter fs-5"></i></a>
+                        <a href="https://instagram.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="Instagram"><i class="bi bi-instagram fs-5"></i></a>
+                        <a href="https://youtube.com/tomotrip" class="text-muted hover-social" target="_blank" rel="noopener" title="YouTube"><i class="bi bi-youtube fs-5"></i></a>
                     </div>
                 </div>
-                <!-- Services -->
+                <!-- サービス -->
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サービス</h6>
                     <ul class="list-unstyled">
@@ -186,10 +1242,10 @@
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">ガイド登録</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">観光客登録</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">予約管理</a></li>
-                        <li class="mb-2"><a href="/sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
+                        <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">協賛店登録</a></li>
                     </ul>
                 </div>
-                <!-- Support -->
+                <!-- サポート -->
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">サポート</h6>
                     <ul class="list-unstyled">
@@ -200,7 +1256,7 @@
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">保険について</a></li>
                     </ul>
                 </div>
-                <!-- Legal -->
+                <!-- 法的情報 -->
                 <div class="col-lg-2 col-md-6 mb-4">
                     <h6 class="text-white mb-3">法的情報</h6>
                     <ul class="list-unstyled">
@@ -210,7 +1266,7 @@
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link">免責事項</a></li>
                     </ul>
                 </div>
-                <!-- Contact -->
+                <!-- お問い合わせ情報 -->
                 <div class="col-lg-3 col-md-6 mb-4">
                     <h6 class="text-white mb-3">お問い合わせ</h6>
                     <div class="contact-info">
@@ -236,7 +1292,7 @@
     <!-- Bootstrap 5 JavaScript Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- External JavaScript Files - ESM modules -->
+    <!-- External JavaScript Files with cache busting - ESM -->
     <script type="module" src="/assets/js/app-init.mjs?v=2025.08.09-unified"></script>
 </body>
 </html>

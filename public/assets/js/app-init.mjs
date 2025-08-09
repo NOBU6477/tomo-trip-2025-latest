@@ -3,16 +3,27 @@
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
+import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
+import { APP_CONFIG } from '../../env/app-config.mjs';
 
-// DEBUG flag for production - disable emergency footer logs
-const DEBUG = false;
+// Early detection for Replit preview iframe to suppress footer emergency logs
+const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
+
+// Suppress footer emergency scripts in iframe context
+if (isReplitIframe) {
+    // Block any footer emergency script execution
+    window.FOOTER_EMERGENCY_DISABLED = true;
+    log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
+}
 
 /** Main application initialization function */
 function appInit() {
-    console.log('🌴 TomoTrip Application Starting...');
+    log.ok('🌴 TomoTrip Application Starting...');
     setupEventListeners();
+    wireSponsorButtons();
+    wireLanguageSwitcher();
     initializeGuidePagination();
-    console.log('✅ Application initialized successfully');
+    log.ok('✅ Application initialized successfully');
 }
 
 // Call initialization when module loads
@@ -127,7 +138,7 @@ function createGuideCard(guide) {
                     ${(guide.languages || []).map(lang => `<span class="badge bg-secondary me-1">${lang === 'ja' ? '日本語' : lang === 'en' ? 'English' : lang}</span>`).join('')}
                 </div>
                 <div class="mt-auto">
-                    <button class="btn btn-outline-primary btn-sm w-100" onclick="viewGuideDetails(${guide.id})">詳細を見る</button>
+                    <button class="btn btn-outline-primary btn-sm w-100" data-guide-id="${guide.id}" class="view-guide-details">詳細を見る</button>
                 </div>
             </div>
         </div>
@@ -175,3 +186,17 @@ function updatePaginationInfo(page) {
 function viewGuideDetails(guideId) {
     alert(`ガイド詳細表示機能は開発中です。ガイドID: ${guideId}`);
 }
+
+// Initialize all event handlers after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup core application event handlers
+    setupEventListeners();
+    
+    // Wire sponsor buttons (CSP compliant)
+    wireSponsorButtons();
+    
+    // Wire language switcher (CSP compliant)
+    wireLanguageSwitcher();
+    
+    console.log('🎯 All event handlers initialized');
+});

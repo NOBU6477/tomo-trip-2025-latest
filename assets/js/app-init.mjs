@@ -3,16 +3,27 @@
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
+import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
+import { APP_CONFIG } from '../../env/app-config.mjs';
 
-// DEBUG flag for production - disable emergency footer logs
-const DEBUG = false;
+// Early detection for Replit preview iframe to suppress footer emergency logs
+const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
+
+// Suppress footer emergency scripts in iframe context
+if (isReplitIframe) {
+    // Block any footer emergency script execution
+    window.FOOTER_EMERGENCY_DISABLED = true;
+    log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
+}
 
 /** Main application initialization function */
 function appInit() {
-    console.log('🌴 TomoTrip Application Starting...');
+    log.ok('🌴 TomoTrip Application Starting...');
     setupEventListeners();
+    wireSponsorButtons();
+    wireLanguageSwitcher();
     initializeGuidePagination();
-    console.log('✅ Application initialized successfully');
+    log.ok('✅ Application initialized successfully');
 }
 
 // Call initialization when module loads

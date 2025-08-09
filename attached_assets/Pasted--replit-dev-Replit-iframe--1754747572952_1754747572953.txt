@@ -1,0 +1,149 @@
+了解です。貼っていただいたコンソールは「アプリ本体のタブ（…replit.dev）」と「Replitエディタ内プレビューiframe」が混在しています。
+今残っている“赤い”大量のエラーの大半は **ReplitのIDE／プレビューiframe由来** で、あなたのアプリからは出ていません（`connect-src 'none'`, `allow-downloads-without-user-activation`, `Unrecognized feature: ...`, `WebSocket ... replit.com/graphql_subscriptions`, `stallwart.build.js` などの行が目印）。
+一方、アプリ側からはフッターのデバッグ系ログだけが継続出力されています。
+
+下記の手順で「本当に直すべきもの」と「IDEのノイズ」を切り分け、アプリ側のログを静音化します。
+そのままコピペで依頼・実装に使える指示文です。
+
+---
+
+# Replit用・同期〜エラー切り分け＆静音化・最終指示
+
+## 0) 確認観点（結論）
+
+* `.replit.dev` の**別タブ**で開いた本番相当ページでは、**アプリ由来のコンソールエラーはゼロ**であること。
+* Replitエディタの**プレビュー枠内（workspace\_iframe.html / framework-\*.js）**にだけ下記の“赤/黄”が残るのは**正常**：
+
+  * `[Report Only] connect-src 'none'` / `script-src 'none'` などのCSP Report-Only
+  * `Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation'`
+  * `Unrecognized feature: 'ambient-light-sensor'` など大量の Permissions-Policy 警告
+  * `GroupMarkerNotSet(...): Automatic fallback to software WebGL…`
+  * `wss://replit.com/graphql_subscriptions` / `logs_browser-intake` / `stallwart.build.js` 系の失敗
+  * これらは **ReplitのIDEが差し込むiframe/計測スクリプト**で、アプリからは制御不能
+
+## 1) 切り分け手順（実行順）
+
+1. **IDEではなく別タブで開く**
+   サイドバーの「Open in a new tab」→ `https://<your-repl>.<id>.replit.dev/` を開く。
+   ここでコンソールに**エラーが出ない**ことを確認する。（出る場合のみ、2)へ）
+2. （もし出る場合）**自前スクリプトの最終チェック**
+
+   * すべてのJSは `type="module"` で `.mjs` を読み、**インラインスクリプト無し**。
+   * Service Workerは**完全無効**（登録処理や `navigator.serviceWorker.register` を呼ばない）。
+   * 404リソース無し（ネットワークタブで赤が無い）。
+     これが満たされていれば、残差はIDE側ノイズです。
+
+## 2) アプリ側ログの静音化（フッター緊急ログ抑制）
+
+アプリの「フッター緊急ログ」がIDEプレビューでも出て見づらいので、**トップウィンドウ限定**＆**デバッグ時のみ**出すように変更します。
+
+### 2-1) 環境フラグを外部化
+
+`env/app-config.mjs`（新規）：
+
+```js
+export const APP_CONFIG = {
+  DEBUG_LOG: false,          // 本番は false（必要時だけtrueに）
+  ALLOW_IFRAME_LOG: false,   // プレビューiframeではログ出力しない
+};
+```
+
+`index.html` の `<head>` で最上位に追加（※外部ファイルのみ・インライン禁止）：
+
+```html
+<script type="module" src="env/app-config.mjs"></script>
+```
+
+### 2-2) 共有ロガーを作成
+
+`assets/js/utils/logger.mjs`（新規）：
+
+```js
+import { APP_CONFIG } from '../../env/app-config.mjs';
+
+const isTop = window.top === window.self;
+
+function canLog() {
+  if (!APP_CONFIG.DEBUG_LOG) return false;          // デフォ静音
+  if (!isTop && !APP_CONFIG.ALLOW_IFRAME_LOG) return false; // iframe抑止
+  return true;
+}
+
+export const log = {
+  info: (...a) => { if (canLog()) console.info(...a); },
+  warn: (...a) => { if (canLog()) console.warn(...a); },
+  error: (...a) => { if (canLog()) console.error(...a); },
+  ok: (...a)   => { if (canLog()) console.log(...a); },
+};
+```
+
+### 2-3) フッター緊急スクリプトのガード
+
+`assets/js/footer/console.js`（現在の緊急ログ出力ファイル）内で、**生の `console.*` をすべて `log.*` に置換**し、先頭に以下を追加：
+
+```js
+import { log } from '../utils/logger.mjs';
+const isTop = window.top === window.self;
+if (!isTop) {
+  // IDEプレビューiframeでは一切動かさない
+  // （フッター強制表示やスタイル適用もスキップ）
+  // ここで即return
+  // ※どうしても必要なら app-config.mjs の ALLOW_IFRAME_LOG で個別解除
+  // ただし通常は不要
+  // return の後に何も置かない
+  // eslint-disable-next-line no-useless-return
+  return;
+}
+```
+
+> これで Replit のプレビュー枠に緊急ログが出ず、**別タブでは必要なときだけ出す**運用に切り替わります。
+
+## 3) Replit特有ノイズの扱い（放置でOK／消したい場合だけ）
+
+* `Unrecognized feature: ...` は **Permissions-Policy** の未知ディレクティブ警告（Replitのiframeヘッダ）。
+* `allow-downloads-without-user-activation` は Replit の `sandbox` 属性（アプリ側では存在しない）。
+* `connect-src 'none'`/`script-src 'none'` の **\[Report Only]** は ReplitのCSPレポート用。
+* `GroupMarkerNotSet(... WebGL ...)` は Chromeのドライバ・フラグ情報。
+* `wss://replit.com/graphql_subscriptions` 失敗はIDEの計測・WebSocket。
+  → **アプリからは変更不可**。別タブでは出ないので実害なし。
+
+（参考：もし自前サーバーを使う/将来VPSに移すとき）
+`Permissions-Policy` を最小に揃えてブラウザ警告をゼロにしたい場合は、サーバーヘッダを次のように固定します。
+
+```
+Permissions-Policy: geolocation=(), microphone=(), camera=(), fullscreen=*
+```
+
+※ReplitのIDE内は上書きされるため効果ありません。
+
+## 4) 最終チェックリスト
+
+* [ ] `.replit.dev` 別タブで **コンソールにエラー無し**（警告も0に近い）
+* [ ] 404/ネットワーク赤無し
+* [ ] SW未登録（`navigator.serviceWorker.getRegistrations()` が 0）
+* [ ] フッターは通常に表示、**プレビューiframeでは緊急スクリプト不実行**
+* [ ] `env/app-config.mjs` の `DEBUG_LOG=false` 運用
+
+## 5) GitHub同期（Replit→GitHub）
+
+1. Replit左の「Git」→「Connect to GitHub」→対象リポジトリを選択。
+2. 変更ファイルに **新規2ファイル** を含めてコミット＆プッシュ：
+
+   * `env/app-config.mjs`
+   * `assets/js/utils/logger.mjs`
+     併せて `assets/js/footer/console.js` の置換変更もコミット。
+3. コミットメッセージ：
+
+   ```
+   chore: silence app logs in Replit preview (top-window guard & env-driven debug)
+   ```
+
+---
+
+### これで期待できる状態
+
+* **本番相当（別タブ）**：アプリ起因のエラー/警告ゼロ、ログ静音（必要時だけON）。
+* **IDEプレビュー**：Replit由来の赤/黄だけが表示（放置可）。アプリの緊急ログは出ない。
+
+もし **別タブでもまだ赤いエラーが出る** 場合は、そのスクショをください。
+そのときは「行番号があなたのファイル（例：`app-init.mjs:12` や `footer/console.js:61`）」になっているはずなので、そこをピンポイントで直します。
