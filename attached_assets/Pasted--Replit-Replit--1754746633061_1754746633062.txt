@@ -1,0 +1,142 @@
+以下を**そのままコピペ**で Replit のエージェントに渡してください。
+（目的：コンソールの実エラーだけを根治し、Replit 固有のノイズは発生源ごと遮断／無視設定にする）
+
+---
+
+# TomoTrip – 残存コンソールエラーの根本修正タスク
+
+## 目的
+
+1. **我々のコード由来の実エラーのみ**をゼロにする。
+2. Replit ワークスペース iframe が吐く **外部ノイズ（LaunchDarkly・GraphQL・logs intake・WebGL fallback など）** は発生源切り離しとフィルタで無害化する。
+3. 別タブ表示（`.replit.dev`）とエディタ内プレビューの表示差異をなくす。
+
+---
+
+## まだ残っている“実エラー”と対処
+
+### A. `sandbox` の無効フラグ
+
+* コンソール：`Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.`
+* 対処：
+
+  1. プロジェクト全体を検索：`sandbox="...allow-downloads-without-user-activation..."`
+  2. **そのトークンを削除**し、`allow-downloads` のみ必要ならリンク側で `download` 属性（またはクリック時に `a.download = ...`）を付与して対応。
+  3. もし埋め込みが不要なら **当該 iframe 自体を廃止**。
+
+### B. HTML の **inline イベントハンドラ**（CSP Report-Only を誘発）
+
+* コンソールに表示：`<button ... onclick="handleSponsorRegistration()">` / `onclick="handleSponsorLogin()"` など。
+* 対処（例：`index.html`）：
+
+  * **HTML から onclick を全廃**し、代わりに JS でイベント登録。
+  * 置換例：
+    **Before**
+
+    ```html
+    <button class="sponsor-btn" id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
+    <button class="sponsor-btn login-btn" id="sponsorLoginBtn" onclick="handleSponsorLogin()">ログイン</button>
+    ```
+
+    **After**
+
+    ```html
+    <button class="sponsor-btn" id="sponsorRegBtn">協賛店登録</button>
+    <button class="sponsor-btn login-btn" id="sponsorLoginBtn">ログイン</button>
+    ```
+  * `assets/js/events/event-handlers.mjs` に以下を追加：
+
+    ```js
+    export function wireSponsorButtons() {
+      const reg = document.getElementById('sponsorRegBtn');
+      const login = document.getElementById('sponsorLoginBtn');
+      if (reg)   reg.addEventListener('click', handleSponsorRegistration);
+      if (login) login.addEventListener('click', handleSponsorLogin);
+    }
+    ```
+  * `assets/js/app-init.mjs` の起動時に呼び出し：
+
+    ```js
+    import { wireSponsorButtons } from './events/event-handlers.mjs';
+    document.addEventListener('DOMContentLoaded', () => {
+      wireSponsorButtons();
+    });
+    ```
+  * 既存の `handleSponsorRegistration` / `handleSponsorLogin` の定義は**グローバル露出不要**にし、モジュール内で export/import で繋ぐ。
+
+### C. フッター「強制表示」デバッグスクリプトの整理
+
+* コンソールに `"FOOTER DEBUG SCRIPT LOADED - EMERGENCY MODE"`, `"Footer element not found immediately"` などの冗長ログ。
+* 対処：
+
+  1. `console.js` 等のデバッグ出力を **DEBUG フラグ**で抑制：
+
+     ```js
+     const DEBUG = false; // 本番は false
+     DEBUG && console.info('FOOTER DEBUG ...');
+     ```
+  2. フッターは **静的 HTML**（`</body>` 直前）に常設し、JS での「強制表示ロジック」を**削除**またはデグレ保険として残す場合も **初回検査で見つかったら早期 return** するように単純化。
+  3. フッター CSS は 1 箇所に統合（重複クラスを掃除）。
+
+---
+
+## Replit 由来の“ノイズ”は**無視または抑制**（我々のコードでは解決不可）
+
+* 例：
+
+  * `[Report Only] Refused to connect to '<URL>' because it violates CSP "connect-src 'none'"`
+  * `WebSocket connection to 'wss://replit.com/graphql_subscriptions' failed`
+  * `LaunchDarkly client initialized` 以降の worker 作成失敗（`service_worker.js`）
+  * `logs_browser-intake` 系の `ERR_NAME_NOT_RESOLVED/ERR_CONNECTION_CLOSED/NETWORK_CHANGED`
+  * `GroupMarkerNotSet ... Automatic fallback to software WebGL`（GPU ドライバ警告）
+
+> これらは **Replit のワークスペース・オーバーレイ/監視**が注入するスクリプトで、アプリコードの責務外。
+> 対応：
+>
+> * **最終確認は必ず `.replit.dev` の別タブ**で行い、エディタ iframe のノイズを含めない。
+> * 我々のコード側では **inline/eval/worker** を使わず CSP 違反を出さない。
+> * デバッグ時は「コンソールフィルタ」に `-app-`, `logs_browser-intake`, `launchdarkly`, `graphql_subscriptions`, `workspace_iframe.html` を追加し、**自前スクリプトのソースだけ**を見る。
+
+---
+
+## ビルド識別と表示差異の解消
+
+1. 既存の **BUILD ID 表示**（例：`TomoTrip-v2025.08.09-UNIFIED-BUILD`）を維持。
+2. `env/build-id.js` のログを **`.replit.dev` のみ**に出す（編集 iframe では出さない）：
+
+   ```js
+   const isTopLevel = window.top === window.self;
+   if (isTopLevel) console.log('[TomoTrip] BUILD:', BUILD_ID);
+   ```
+3. 確認手順：エディタ内プレビューと別タブで **同一 BUILD ID** が見えること。
+
+---
+
+## 動作確認・受け入れ条件
+
+* [ ] `.replit.dev` の別タブで **コンソール赤エラー 0**（Replit ノイズ除外後）。
+* [ ] `sandbox` 無効フラグのエラーが消えている。
+* [ ] HTML から **全ての `onclick` などの inline ハンドラが消えている**。
+* [ ] フッターの緊急ログが出ない（`DEBUG=false`）か、最小限。
+* [ ] 別タブとエディタで **UI/件数/ページングが一致**。
+* [ ] ハードリロード（Cmd/Ctrl+Shift+R）後も同じ結果。
+
+---
+
+## 作業順序（コミット単位）
+
+1. **feat(iframe):** remove invalid sandbox token & migrate downloads to anchor `download`
+2. **refactor(events):** remove inline handlers; add `wireSponsorButtons()` & module binding
+3. **chore(footer):** remove emergency force script; static footer & debug gate
+4. **chore(build-log):** log only on top-level `.replit.dev`; add console filters note
+5. **test:** verify zero app-origin errors in `.replit.dev`
+
+---
+
+## 補足（よくある落とし穴）
+
+* 一部 HTML テンプレート（英語版/日本語版の両方）に **片側だけ onclick が残る**ことがある → **全テンプレートを横断検索**。
+* 依存ファイルを `.mjs` にしている場合、**import パスの拡張子表記揺れ**に注意。
+* `workspace_iframe.html` 由来の警告は **無視対象**。アプリコードで消すことは不可。
+
+以上、実装お願いします。

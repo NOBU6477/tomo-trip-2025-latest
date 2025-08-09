@@ -1,8 +1,11 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-import { setupEventListeners } from './events/event-handlers.mjs';
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
+
+// DEBUG flag for production - disable emergency footer logs
+const DEBUG = false;
 
 /** Main application initialization function */
 function appInit() {
@@ -124,7 +127,7 @@ function createGuideCard(guide) {
                     ${(guide.languages || []).map(lang => `<span class="badge bg-secondary me-1">${lang === 'ja' ? '日本語' : lang === 'en' ? 'English' : lang}</span>`).join('')}
                 </div>
                 <div class="mt-auto">
-                    <button class="btn btn-outline-primary btn-sm w-100" onclick="viewGuideDetails(${guide.id})">詳細を見る</button>
+                    <button class="btn btn-outline-primary btn-sm w-100" data-guide-id="${guide.id}" class="view-guide-details">詳細を見る</button>
                 </div>
             </div>
         </div>
@@ -172,3 +175,17 @@ function updatePaginationInfo(page) {
 function viewGuideDetails(guideId) {
     alert(`ガイド詳細表示機能は開発中です。ガイドID: ${guideId}`);
 }
+
+// Initialize all event handlers after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Setup core application event handlers
+    setupEventListeners();
+    
+    // Wire sponsor buttons (CSP compliant)
+    wireSponsorButtons();
+    
+    // Wire language switcher (CSP compliant)
+    wireLanguageSwitcher();
+    
+    console.log('🎯 All event handlers initialized');
+});

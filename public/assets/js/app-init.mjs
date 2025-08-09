@@ -1,8 +1,11 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-import { setupEventListeners } from './events/event-handlers.mjs';
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
+
+// DEBUG flag for production - disable emergency footer logs
+const DEBUG = false;
 
 /** Main application initialization function */
 function appInit() {

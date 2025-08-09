@@ -67,3 +67,64 @@ function setupPaginationEvents() {
         });
     }
 }
+
+// Sponsor button event handlers - CSP compliant
+export function wireSponsorButtons() {
+    const regBtn = document.getElementById('sponsorRegBtn');
+    const loginBtn = document.getElementById('sponsorLoginBtn');
+    
+    if (regBtn) {
+        regBtn.addEventListener('click', handleSponsorRegistration);
+    }
+    
+    if (loginBtn) {
+        loginBtn.addEventListener('click', handleSponsorLogin);
+    }
+}
+
+// Sponsor handler functions
+function handleSponsorRegistration() {
+    console.log('Sponsor registration clicked');
+    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-registration.html');
+    try {
+        window.location.href = 'sponsor-registration.html';
+    } catch (error) {
+        console.error('Redirect failed:', error);
+        alert('リダイレクトに失敗しました');
+    }
+}
+
+function handleSponsorLogin() {
+    console.log('Sponsor login clicked');
+    console.log('🔐 DIRECT ACTION: Showing sponsor login modal');
+    try {
+        showSponsorLoginModal();
+    } catch (error) {
+        console.error('Modal failed:', error);
+        alert('モーダル表示に失敗しました');
+    }
+}
+
+// Language switcher handlers - CSP compliant
+export function wireLanguageSwitcher() {
+    const jpBtn = document.getElementById('jpBtn');
+    const enBtn = document.getElementById('enBtn');
+    
+    if (jpBtn) {
+        jpBtn.addEventListener('click', switchToJapanese);
+    }
+    
+    if (enBtn) {
+        enBtn.addEventListener('click', switchToEnglish);
+    }
+}
+
+function switchToJapanese() {
+    console.log('Switching to Japanese');
+    window.location.href = 'index.html';
+}
+
+function switchToEnglish() {
+    console.log('Switching to English');
+    window.location.href = 'index-en.html';
+}
