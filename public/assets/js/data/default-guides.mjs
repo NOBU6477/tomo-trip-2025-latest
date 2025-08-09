@@ -6,7 +6,7 @@ export const defaultGuideData = [
         location: "tokyo",
         rating: 4.8,
         price: 8000,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/assets/img/guides/default-1.svg",
         languages: ["ja", "en"],
         specialties: ["history", "culture"]
     },
@@ -16,7 +16,7 @@ export const defaultGuideData = [
         location: "osaka", 
         rating: 4.9,
         price: 7500,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/assets/img/guides/default-2.svg",
         languages: ["ja", "en", "zh"],
         specialties: ["food", "local"]
     },
@@ -26,7 +26,7 @@ export const defaultGuideData = [
         location: "kyoto",
         rating: 4.7,
         price: 9000,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/assets/img/guides/default-3.svg",
         languages: ["ja", "en"],
         specialties: ["temples", "traditional"]
     },
@@ -36,7 +36,7 @@ export const defaultGuideData = [
         location: "osaka",
         rating: 4.6,
         price: 7000,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/assets/img/guides/default-4.svg",
         languages: ["ja", "en"],
         specialties: ["shopping", "food"]
     },
@@ -46,7 +46,7 @@ export const defaultGuideData = [
         location: "tokyo",
         rating: 4.8,
         price: 8500,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/assets/img/guides/default-5.svg",
         languages: ["en", "ja"],
         specialties: ["business", "modern"]
     },

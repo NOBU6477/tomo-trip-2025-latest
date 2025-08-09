@@ -3,6 +3,9 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
+- **CSP VIOLATION ELIMINATION (Aug 9, 2025)**: Complete removal of external image dependencies and Unsplash references, strict CSP implementation with 'self' policy
+- **EXTERNAL RESOURCE LOCALIZATION**: All guide images converted to local SVG placeholders, ocean background converted to CSS gradient
+- **FOOTER DUPLICATION FIX**: Eliminated redundant script references and modal-handlers.js double-loading causing visual duplication
 - **APPSTATE REDEFINITION ERROR ELIMINATION (Aug 9, 2025)**: Complete transformation to singleton pattern with configurable global access preventing TypeError: Cannot redefine property AppState
 - **DOUBLE INITIALIZATION PREVENTION**: Implemented boot guard (__APP_BOOTED__) and ESM URL normalization to prevent module double-loading
 - **COMPLETE CSP INLINE VIOLATION ELIMINATION**: Final removal of all HTML onclick handlers and implementation of CSP-compliant event listeners

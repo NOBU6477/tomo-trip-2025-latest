@@ -1,0 +1,211 @@
+了解。出ているログを「直せるもの / 直せない（環境由来）もの」に仕分けし、直せるものだけを潰すための最短手順をまとめます。
+（今回のスクショは Replit のプレビュー iframe が混ざっているため、環境由来の警告が大量に含まれています）
+
+# まず結論（何を直す？）
+
+**修正対象（アプリ由来）**
+
+1. 画像・フォントの CSP ブロック（外部 CDN 直読み）
+2. HTML の `onclick` 等の**インラインスクリプト**（CSP 違反）
+3. フッター制御の「要素が見つからない」タイミング問題
+
+**無視でOK（Replit/ブラウザ由来）**
+
+* `sp.replit.com` 400 / LaunchDarkly / GraphQL WebSocket 失敗
+* `workspace_iframe.html:32` の *Unrecognized feature* 群
+* `allow-downloads-without-user-activation is an invalid sandbox flag`（Replit の iframe）
+* WebGL/SwiftShader の deprecation 警告
+* `stallwart: failed ping` など Replit 実行基盤のログ
+
+---
+
+# 修正指示書
+
+## 1) 画像・フォントの CSP ブロック対策
+
+症状：`img-src 'self' data: blob:` や `font-src 'self' https://fonts.gstatic.com` により、**Unsplash / jsDelivr / data\:font** などがブロックされる。
+
+**指示**
+
+* ヒーロー背景・カード画像・アイコン類を**ローカルに保存**して参照先を相対パスに変更する。
+  例）`/assets/img/hero.jpg`, `/assets/img/guides/tanaka.jpg` など
+* Bootstrap Icons の woff/woff2 も CDN 直読みをやめ、**ファイル同梱**に切替。
+
+**作業手順**
+
+1. `/public/assets/img` と `/public/assets/fonts` を作成。
+2. 使っている外部画像・フォントをダウンロードして格納。
+3. HTML/CSS の参照を相対パスへ変更。
+
+   ```html
+   <!-- 変更前 -->
+   <img src="https://images.unsplash.com/…">
+   <!-- 変更後 -->
+   <img src="/assets/img/hero.jpg">
+   ```
+
+   ```css
+   /* 変更前 */
+   @font-face { src: url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/fonts/bootstrap-icons.woff2') format('woff2'); }
+   /* 変更後（同梱フォント） */
+   @font-face {
+     font-family: 'bootstrap-icons';
+     src: url('/assets/fonts/bootstrap-icons.woff2') format('woff2');
+     font-weight: normal;
+     font-style: normal;
+     font-display: swap;
+   }
+   ```
+4. もし CSS 内で `background-image: url(https://…)` を使っていたら**全て相対パスに置換**。
+
+> 補足：Replit のプレビューではアプリ側で CSP を緩められません。**外部直リンクをやめる**のが最短です。
+
+---
+
+## 2) インラインスクリプト禁止（CSP違反）を解消
+
+症状：`onclick="…"`, `<script>…</script>` のインライン実行が CSP で拒否。
+
+**指示**
+
+* HTML の `onclick`, `onchange`, `onload` などを**すべて削除**し、JS で `addEventListener` に置換。
+* すべての JS は**外部ファイル**（例：`/public/js/app-init.mjs`, `/public/js/event-handlers.mjs`）に分離。
+
+**例：スポンサー登録/ログインボタン**
+
+```html
+<!-- 変更前 -->
+<button id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
+<button id="sponsorLoginBtn" onclick="handleSponsorLogin()">ログイン</button>
+
+<!-- 変更後（HTML から on* を除去） -->
+<button id="sponsorRegBtn">協賛店登録</button>
+<button id="sponsorLoginBtn">ログイン</button>
+```
+
+```js
+// /public/js/event-handlers.mjs
+import { handleSponsorRegistration, handleSponsorLogin } from './sponsor.mjs';
+
+export function wireSponsorButtons() {
+  const reg = document.getElementById('sponsorRegBtn');
+  const login = document.getElementById('sponsorLoginBtn');
+  if (reg)   reg.addEventListener('click', handleSponsorRegistration, { passive: true });
+  if (login) login.addEventListener('click', handleSponsorLogin,      { passive: true });
+}
+```
+
+```js
+// /public/js/app-init.mjs
+import { wireSponsorButtons } from './event-handlers.mjs';
+
+window.addEventListener('DOMContentLoaded', () => {
+  wireSponsorButtons();
+  // 他の初期化もここで
+});
+```
+
+---
+
+## 3) フッター制御「要素が見つからない」対策（タイミング）
+
+症状：`Footer element not found immediately` → 直後に「見つかった」ログも出る＝**初期化順序の競合**。
+
+**指示（どれか1つ、または併用）**
+
+* 初期化を **`DOMContentLoaded`** まで待つ。（既に導入済みでも、他スクリプトが先に走っていないか確認）
+* **Retry with timeout** と **MutationObserver** で確実化。
+* フッター適用関数を**多重実行ガード**する。
+
+**サンプル（堅牢化ユーティリティ）**
+
+```js
+// /public/js/utils/dom-ready.mjs
+export function onReady(cb) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', cb, { once: true });
+  } else {
+    queueMicrotask(cb);
+  }
+}
+
+// /public/js/utils/query-retry.mjs
+export async function waitForEl(selector, { timeout = 5000, interval = 100 } = {}) {
+  const start = performance.now();
+  return new Promise((resolve, reject) => {
+    const tick = () => {
+      const el = document.querySelector(selector);
+      if (el) return resolve(el);
+      if (performance.now() - start > timeout) return reject(new Error(`not found: ${selector}`));
+      setTimeout(tick, interval);
+    };
+    tick();
+  });
+}
+```
+
+```js
+// /public/js/footer.mjs
+import { onReady } from './utils/dom-ready.mjs';
+import { waitForEl } from './utils/query-retry.mjs';
+
+let footerApplied = false;
+
+async function applyFooter() {
+  if (footerApplied) return;
+  footerApplied = true;
+
+  const footer = await waitForEl('footer', { timeout: 8000 }).catch(() => null);
+  if (!footer) return; // ここで静かに終了（ログは debug のみに）
+
+  // スタイルや可視化の適用…
+  footer.style.display = 'block';
+}
+
+export function initFooter() {
+  onReady(applyFooter);
+}
+```
+
+```js
+// /public/js/app-init.mjs
+import { initFooter } from './footer.mjs';
+window.addEventListener('DOMContentLoaded', () => {
+  initFooter();
+});
+```
+
+---
+
+## 4) 背景やプロフィール画像が画面によって違う件（質問の再掲への回答）
+
+* **別タブ .replit.dev** は純粋なアプリ、**エディタ内プレビュー**は Replit の IDE iframe で上から別 CSS/画像が被ることがあります（プレースホルダやサンプルが優先される場合）。
+* さらに、外部画像が CSP でブロックされると**フォールバックの背景**や**デフォルトのプロフ画像**に差し替わり、見た目が変わります。
+
+**同じ仕様に固定する手順**
+
+1. 背景・プロフィール画像を **ローカル同梱**（手順 1 を実施）。
+2. 画像の参照先を**相対パスに統一**（`/assets/img/...`）。
+3. CSS の背景指定を 1 ヶ所（例：`hero.css`）に集約し、他ファイルで上書きしない。
+4. ガイドカードの画像ロジックに**プレースホルダ**を明示。
+
+   ```js
+   const DEFAULT_AVATAR = '/assets/img/avatars/default.png';
+   const photo = guide.photo && guide.photo.exists ? guide.photo.url : DEFAULT_AVATAR;
+   ```
+5. **エディタ内プレビューの見た目は無視**。検証は常に **別タブ（.replit.dev）** で行う。
+
+---
+
+## 5) 動作確認チェックリスト
+
+1. `.replit.dev` を**別タブで開く** → コンソールを確認
+2. 赤い **Error** が「自前コードのファイル名」で出ていないことを確認
+
+   * 出る場合は上の 1)〜3) を再点検
+3. 画像は全て `/assets/…` から読み込まれているか（ネットワークタブで 200 になるか）
+4. HTML に `onclick` が残っていないか**全検索**（`on[a-z]+=`, `onclick`, `onchange` など）
+
+---
+
+必要なら、あなたのリポジトリ構成（`/public` の下のファイル一覧）を貼ってください。パスの置換スクリプトと、既存 HTML から `on*=` を一括除去 → `event-handlers.mjs` に集約するための**具体的な差分**を書き起こします。
