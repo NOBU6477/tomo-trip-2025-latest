@@ -1,0 +1,111 @@
+了解！まだ残っているエラーは
+
+> Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of “text/javascript”.
+
+＝「**モジュールとして読み込もうとしたのに、サーバの応答が“モジュールとして認識されない”**」状態です。実際には ①レスポンスがJS以外（HTML/404）なのにヘッダーだけJS、②`type="module"`タグやパスが不整合、③サーバのMIME/圧縮設定のズレ、のどれかで起きます。
+
+下を**そのまま1回コピペ**でReplitのAgentに渡してください👇
+
+---
+
+【Replit Agent 指示｜ESMモジュール読み込みエラーの根本原因を特定して修正】
+
+目的：
+
+* `app-init.mjs` の読み込みで出る **“Failed to load module script … MIME type …”** を完全解消し、プレビュー/別タブの双方で正常起動させる。
+
+やること（順番厳守）
+
+1. ネットワーク実態の確認（まず事実を取る）
+
+* DevTools Network で `app-init.mjs` を選び、以下を必ず記録：
+
+  * **Status**（200 になっているか／実は 301/302/404/500 になっていないか）
+  * **Content-Type**（厳密に `text/javascript` か。`text/html` や空、`application/octet-stream` ならNG）
+  * **Response** の先頭20行（もし **HTML** や「Not Found」ならパス誤り/ルーティングの問題）
+* 同様に **`/env/build-id.js`** や他モジュール1つも確認（片方OKで片方NGなら配信ルートの差）
+
+2. ルーティング/パスを正す（HTMLが返っていたら必須）
+
+* `index.html` の読み込みを **ルート相対**で統一：
+
+  ```html
+  <base href="/">
+  <script type="module" src="/assets/js/app-init.mjs?v={{BUILD_ID}}"></script>
+  ```
+* `public/`（または配信ルート）直下に `assets/js/app-init.mjs` が **実在**するか確認。
+  もしビルド後の配置が違うなら、**実在場所に合わせて src を修正**（相対ではなく必ず `/...` で）。
+* リンク切れ回避のため、`app-init.mjs` へ直接アクセスして**生のレスポンス**がJSになることを確認。
+
+3. MIME を正す（本当にヘッダーがズレていたら）
+
+* Python/Express 等のサーバがある場合、`.mjs`/`.js` を **必ず `text/javascript`** で返すよう強制：
+
+  * Node/Express:
+
+    ```js
+    app.use((req, res, next) => {
+      if (req.path.endsWith('.mjs') || req.path.endsWith('.js')) res.type('text/javascript');
+      next();
+    });
+    app.use(express.static('public'));
+    ```
+  * Python SimpleHTTP（独自サーバなら）：
+
+    * 拡張子 `.mjs` を `text/javascript` にマップ。gzip/deflate を返す場合も **Content-Type が変わらない**ことを確認。
+* Replit の静的ホスティングのみを使う場合は、**拡張子 `.mjs`** を維持し、**`/public` 配下に置く**。
+
+4. HTML 側の読み込み定義を見直す
+
+* **モジュールは1本化**し、二重読み込みを排除：
+
+  ```html
+  <!-- ✅ 正 -->
+  <script type="module" src="/assets/js/app-init.mjs?v={{BUILD_ID}}"></script>
+
+  <!-- ✅ 旧式は分離（必要な場合のみ） -->
+  <script nomodule src="/assets/js/main.js?v={{BUILD_ID}}"></script>
+  ```
+* `app-init.mjs` 内は **ESMのみ**（`import`/`export`使用）。`require` や UMD を混在させない。
+* 他の import も **拡張子つき**で統一：
+
+  ```js
+  import { setupEventListeners } from './events/event-handlers.mjs';
+  import { defaultGuideData } from './data/default-guides.mjs';
+  ```
+
+5. 切り分け用の最小モジュールで動作確認（原因の特定を早く）
+
+* `public/assets/js/ping.mjs` を作成：
+
+  ```js
+  console.info('[PING]', 'ok', new Date().toISOString());
+  export const ok = true;
+  ```
+* `index.html` に **一時的に** 追加して、コンソールに `[PING] ok` が出るか確認：
+
+  ```html
+  <script type="module" src="/assets/js/ping.mjs"></script>
+  ```
+
+  * `ping.mjs` が読めて `app-init.mjs` だけNGなら、**app-init.mjs のパス/依存か中身**が原因。
+  * `ping.mjs` もNGなら、**サーバ配信/ヘッダー/ルート**の問題。
+
+6. キャッシュ掃除＆再確認
+
+* Application → **Clear site data** → ハードリロード（Ctrl/Cmd+Shift+R）。
+* 別タブ(.replit.dev) とエディタープレビューの**両方**で再確認。
+
+受け入れ条件
+
+* Network で `app-init.mjs` が **200 / Content-Type: text/javascript / JS本文** を返す。
+* コンソールの **MIMEエラーが完全に消える**。
+* `ping.mjs` なしでもアプリ起動が安定。
+* プレビューと別タブで挙動が一致。
+
+コミットメッセージ
+`fix: correct ESM delivery (route+mime), unify absolute paths, and stabilize module loading`
+
+---
+
+メモ：今回のエラーは表示文言的に「MIMEが text/javascript なのに失敗」と見えますが、**実体がHTML/404**だったり、**相対パスで別場所を指している**ときに“こう見える”ことが多いです。まず **Networkの中身**で実物がJSかどうかを確認→ルート相対パスとファイル配置を合わせれば解決します。

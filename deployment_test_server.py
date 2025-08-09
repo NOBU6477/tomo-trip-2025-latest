@@ -17,13 +17,13 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
     def guess_type(self, path):
         """Override to ensure correct MIME types - ESM requires text/javascript"""
         if path.endswith('.css'):
-            return 'text/css', None
+            return 'text/css'
         elif path.endswith('.png'):
-            return 'image/png', None
+            return 'image/png'
         elif path.endswith('.jpg') or path.endswith('.jpeg'):
-            return 'image/jpeg', None
+            return 'image/jpeg'
         elif path.endswith('.js') or path.endswith('.mjs'):
-            return 'text/javascript', None  # ESM modules require text/javascript
+            return 'text/javascript'  # ESM modules require text/javascript
         return super().guess_type(path)
     
     def do_GET(self):
@@ -47,15 +47,21 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
             # Handle other files with correct MIME types, especially ESM modules
             if self.path.endswith('.mjs') or self.path.endswith('.js'):
                 # Force text/javascript for ESM compatibility
-                self.send_response(200)
-                self.send_header('Content-type', 'text/javascript')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
                 try:
-                    with open(self.path.lstrip('/'), 'rb') as f:
-                        self.wfile.write(f.read())
-                except FileNotFoundError:
-                    self.send_error(404, "File not found")
+                    local_path = self.path.lstrip('/')
+                    if os.path.exists(local_path):
+                        self.send_response(200)
+                        self.send_header('Content-Type', 'text/javascript; charset=utf-8')
+                        self.send_header('Access-Control-Allow-Origin', '*')
+                        self.send_header('Cache-Control', 'no-cache')
+                        self.end_headers()
+                        with open(local_path, 'rb') as f:
+                            self.wfile.write(f.read())
+                    else:
+                        self.send_error(404, "File not found")
+                except Exception as e:
+                    logger.error(f"Error serving {self.path}: {e}")
+                    self.send_error(500, "Server error")
             else:
                 # Handle other files with default handling
                 super().do_GET()
