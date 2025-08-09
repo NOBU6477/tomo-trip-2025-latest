@@ -1,6 +1,9 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
+import { setupEventListeners } from './events/event-handlers.js';
+import { defaultGuideData } from './data/default-guides.js';
+
 /** Main application initialization function */
 function appInit() {
     console.log('🌴 TomoTrip Application Starting...');
@@ -23,46 +26,14 @@ if (!window.locationNames) {
     console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
 }
 
-// Default guide data for initial display
-const defaultGuideData = [
-    {
-        id: 1,
-        name: "田中健太",
-        location: "tokyo",
-        rating: 4.8,
-        price: 8000,
-        image: "attached_assets/image_1754399234136.png",
-        languages: ["ja", "en"],
-        specialties: ["history", "culture"]
-    },
-    {
-        id: 2,
-        name: "佐藤美咲",
-        location: "osaka", 
-        rating: 4.9,
-        price: 7500,
-        image: "attached_assets/image_1754399234136.png",
-        languages: ["ja", "en", "zh"],
-        specialties: ["food", "local"]
-    },
-    {
-        id: 3,
-        name: "鈴木一郎",
-        location: "kyoto",
-        rating: 4.7,
-        price: 9000,
-        image: "attached_assets/image_1754399234136.png",
-        languages: ["ja", "en"],
-        specialties: ["temples", "traditional"]
-    }
-];
+// Default guide data imported from centralized module
 
 // Global guide data
 let globalCurrentPage = 1;
 let globalGuidesPerPage = 12;
 let globalAllGuides = [];
 
-// Make defaultGuideData available globally  
+// Make defaultGuideData available globally from import
 window.defaultGuideData = defaultGuideData;
 
 // Load all guides and populate display with robust fallback
