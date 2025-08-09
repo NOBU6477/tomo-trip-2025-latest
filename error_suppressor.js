@@ -38,7 +38,7 @@ window.addEventListener('error', function(e) {
         'LaunchDarkly',
         'workspace_iframe',
         'Failed to load resource',
-        'sandbox',
+
         'iframe',
         'replit.com',
         'stalwart',
@@ -50,7 +50,7 @@ window.addEventListener('error', function(e) {
         'webglcontextlost',
         'enable-unsafe-swiftshader',
         'software WebGL',
-        'allow-downloads-without-user-activation',
+
         'WebSocket connection to',
         'net::ERR_NETWORK_IO_SUSPENDED',
         'Uncaught (in promise) Timeout',

@@ -1,0 +1,138 @@
+OK、いま写っているログを仕分けするとこうです：
+
+* ✅ **あなたのアプリ側で直せるもの**
+
+  1. 別タブ(.replit.dev)での **`app-init.mjs` 読み込み失敗（module script/MIME）**
+  2. **`iframe sandbox/allow` の無効フラグ**（`allow-downloads-without-user-activation` など）
+  3. **フッター“非常用”スクリプト**が本番でも走っている（「EMERGENCY…」「Footer element not found…」）
+
+* 🟡 **Replitワークスペース由来（あなたのコードではない）**
+
+  * `sp.replit.com` の 400、LaunchDarkly、`workspace_iframe.html`、`framework-*.js`、多数の “Unrecognized feature”/WebGL 警告 → **エディター内だけに出るノイズ**。別タブ(.replit.dev)では対象外。
+
+下を**そのままコピペ**でReplitのAgentに渡してください👇
+
+---
+
+【Replit Agent一括指示｜TomoTrip：実アプリ原因のエラーを根本修正して、.replit.dev とプレビュー表示を完全一致】
+
+### 目的
+
+* `.replit.dev` とエディター内プレビューの**実アプリ領域**でエラー0にする。
+* Replit/LaunchDarkly/Workspace iframe 由来のログは対象外（無視）。
+
+---
+
+## 対応A：`.replit.dev` での `app-init.mjs` 読み込み失敗を解消
+
+1. **Networkで事実確認（.replit.dev）**
+
+   * `app-init.mjs` を開き、**Status/Content-Type/Response本文**を確認。
+   * 200 かつ `text/javascript`、本文がJSであること。**HTMLや404文言が混ざっていればパス/ルート不整合**。
+
+2. **絶対パス＋配信ルートを1本化**
+
+   * `index.html` を次で固定：
+
+     ```html
+     <base href="/">
+     <script type="module" src="/assets/js/app-init.mjs?v={{BUILD_ID}}" defer></script>
+     ```
+   * 実体が `public/assets/js/app-init.mjs`（※配信ルート）に**存在**するよう配置。
+   * `.replit.dev/assets/js/app-init.mjs` に**直アクセス**してJS本文が返ることを確認。
+
+3. **サーバ(MIME)を強制（使っていれば）**
+
+   * Node/Express の場合：
+
+     ```js
+     app.use((req,res,next)=>{ 
+       if (req.path.endsWith('.mjs')||req.path.endsWith('.js')) res.type('text/javascript');
+       next();
+     });
+     app.use(express.static('public'));
+     ```
+   * Python/独自サーバも `.mjs → text/javascript` へ確実にマップ。圧縮の有無で Content-Type が変わらないこと。
+
+4. **import 連鎖の拡張子を厳密化**
+
+   ```js
+   import { setupEventListeners } from './events/event-handlers.mjs';
+   import { defaultGuideData }   from './data/default-guides.mjs';
+   ```
+
+   * **同じファイルを `type="module"` と `nomodule` で二重読み込みしない**。
+
+5. **キャッシュ掃除**
+
+   * Application → “Clear site data” → ハードリロード（Ctrl/Cmd+Shift+R）。
+   * BUILD\_ID ログが**両環境で一致**することを確認。
+
+**受け入れ条件A**
+
+* `.replit.dev` の `app-init.mjs` が **200 / text/javascript / JS本文**。
+* コンソールの「Failed to load module script…MIME…」が**完全消失**。
+
+---
+
+## 対応B：`iframe` の `sandbox/allow` 無効フラグを廃止
+
+1. プロジェクト内の **自前の `<iframe>`** を全文検索。
+2. **`allow-downloads-without-user-activation` を削除**し、必要なら `allow="…; downloads"` と**ユーザー操作でのダウンロード**に変更。
+3. `allow`（Permissions-Policy）の**未対応トークン**を削除：
+   `ambient-light-sensor, battery, execution-while-not-rendered, execution-while-out-of-viewport, layout-animations, legacy-image-formats, navigation-override, oversized-images, publickey-credentials, speaker-selection, unoptimized-images, unsized-media, pointer-lock` など。
+   有効トークンだけ残す（例：`geolocation; microphone; camera; fullscreen` 等、仕様にあるもののみ）。
+4. `sandbox` は **標準のキーワードのみ**（例：`allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation`）。
+
+**受け入れ条件B**
+
+* `.replit.dev` とプレビュー双方で **`sandbox` エラーが出ない**。
+* `allow` 属性の未認識警告が**自前のiframeでは0**（Replitのiframe由来は除外）。
+
+---
+
+## 対応C：フッター“非常用”スクリプトを本番から外す
+
+1. `Console.js`（またはフッター制御ファイル）に出る
+
+   * `FOOTER DEBUG SCRIPT LOADED – EMERGENCY MODE`
+   * `Footer element not found immediately`
+     などの**非常用ルート**を、**開発のみ**実行に変更：
+
+   ```js
+   const isDev = location.hostname === 'localhost' || location.host.endsWith('.replit.dev');
+   const EMERGENCY_FLAG = false; // デフォルトOFF
+   if (isDev && EMERGENCY_FLAG) { runFooterEmergencyFix(); }
+   ```
+2. HTML側で**フッターを静的に配置**（`</body>` 直前）し、JSで強制表示する分岐は**基本無効**に。
+3. “Immediate footer check/Final footer force” の大量ログは **`debug` レベル**に落として、本番では抑制。
+
+**受け入れ条件C**
+
+* `.replit.dev` でフッターは**JSの強制なし**で自然表示。
+* コンソールに非常用フッターのログが**出ない**。
+
+---
+
+## 対象外（触らない）
+
+* `sp.replit.com` の 400、`LaunchDarkly`、`workspace_iframe.html`、`framework-*.js`、`GroupMarkerNotSet`（WebGL/SwiftShader）等の**Replitワークスペース由来**の警告。
+* これらは**エディターのiframe**から出るためアプリ外。**.replit.dev 直アクセスでのクリーン**を合格基準とする。
+
+---
+
+### 最終受け入れ（全体）
+
+* `.replit.dev` 直アクセスで**エラー0**（赤ログなし）。
+* `app-init.mjs` のNetworkが **200 / text/javascript / JS本文**。
+* 自前のiframeに**無効な `sandbox/allow` が残っていない**。
+* フッター非常用スクリプトのログが**本番で出ない**。
+* BUILD\_ID がプレビューと別タブで一致。
+
+### コミットメッセージ
+
+`fix: serve ESM correctly; remove invalid iframe flags; disable footer emergency script in prod; unify static root`
+
+---
+
+迷いどころは「MIME文言のエラー」ですが、9割は**実体がHTML/404**です。Networkパネルの **Response** を必ず確認してから、**絶対パス＋配信ルート統一**で締めましょう。

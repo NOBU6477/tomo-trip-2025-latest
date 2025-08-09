@@ -13,7 +13,11 @@ function appInit() {
 }
 
 // Call initialization when module loads
-document.addEventListener('DOMContentLoaded', appInit);
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', appInit);
+} else {
+    appInit();
+}
 
 // Location mapping for display - unified to prevent conflicts
 if (!window.locationNames) {
