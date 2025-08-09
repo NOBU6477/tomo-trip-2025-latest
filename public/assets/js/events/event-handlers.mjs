@@ -7,6 +7,9 @@ export function setupEventListeners(state) {
     // Setup sponsor button events (CSP compliant)
     setupSponsorButtonEvents();
     
+    // Setup language switch buttons
+    setupLanguageSwitchEvents();
+    
     // Pass state to sub-functions
     setupGuideCardEvents();
     setupModalEvents();
@@ -58,6 +61,36 @@ function setupSponsorButtonEvents() {
     }
     
     console.log('%cSponsor button events setup complete', 'color: #28a745;');
+}
+
+// Language switch button events
+function setupLanguageSwitchEvents() {
+    const jpBtn = document.getElementById('jpBtn');
+    const enBtn = document.getElementById('enBtn');
+    
+    if (jpBtn) {
+        jpBtn.addEventListener('click', switchToJapanese);
+        console.log('%cJapanese language button setup complete', 'color: #28a745;');
+    }
+    
+    if (enBtn) {
+        enBtn.addEventListener('click', switchToEnglish);
+        console.log('%cEnglish language button setup complete', 'color: #28a745;');
+    }
+}
+
+// Language switch functions
+function switchToJapanese() {
+    console.log('🇯🇵 Japanese selected - staying on current page');
+    // Already on Japanese page (index.html), no action needed
+    alert('既に日本語版を表示しています');
+}
+
+function switchToEnglish() {
+    console.log('🇺🇸 English selected - switching to English page');
+    console.log('Language switched to English');
+    // Redirect to English version
+    window.location.href = 'index-en.html';
 }
 
 // Utility function for AppState-based guide loading
