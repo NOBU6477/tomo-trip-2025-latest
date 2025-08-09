@@ -16,17 +16,25 @@ if (isReplitIframe) {
     log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
 }
 
-/** Main application initialization function */
+/** Main application initialization function - safe order guaranteed */
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // Data is already safely initialized above, now just setup UI
+    // 1) First determine final guide data (localStorage priority, then default)
+    const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+    const finalGuideData = (Array.isArray(storedGuides) && storedGuides.length) ? 
+        [...defaultGuideData, ...storedGuides] : defaultGuideData;
+
+    // 2) Make available globally BEFORE any function calls
+    window.globalAllGuides = finalGuideData;
+    window.defaultGuideData = defaultGuideData;
+
+    // 3) Only after global assignment, call functions with arguments
+    loadAllGuides(finalGuideData);
+    initializeGuidePagination(finalGuideData);
     setupEventListeners();
     wireSponsorButtons();
     wireLanguageSwitcher();
-    
-    // Initialize pagination with pre-loaded data
-    initializeGuidePagination(window.globalAllGuides);
     
     log.ok('✅ Application initialized successfully');
 }
@@ -52,22 +60,11 @@ if (!window.locationNames) {
     console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
 }
 
-// Global guide data - safe early initialization
+// Global guide data - NO early initialization to prevent TDZ
 let globalCurrentPage = 1;
 let globalGuidesPerPage = 12;
-let globalAllGuides = []; // Will be populated safely
 
-// 1) First determine final guide data (localStorage priority, then default)
-const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-const finalGuideData = (Array.isArray(storedGuides) && storedGuides.length) ? 
-    [...defaultGuideData, ...storedGuides] : defaultGuideData;
-
-// 2) Make available globally to break any potential cycles
-window.globalAllGuides = finalGuideData;
-window.defaultGuideData = defaultGuideData;
-
-// 3) Set module-level variable safely after window assignment
-globalAllGuides = finalGuideData;
+// Remove all top-level initialization - move to function
 
 // Utility function to ensure safe guide data (no longer used for initialization)
 function loadAllGuides(guidesData) {
@@ -199,16 +196,15 @@ function viewGuideDetails(guideId) {
     alert(`ガイド詳細表示機能は開発中です。ガイドID: ${guideId}`);
 }
 
-// Initialize all event handlers after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    // Setup core application event handlers
-    setupEventListeners();
-    
-    // Wire sponsor buttons (CSP compliant)
-    wireSponsorButtons();
-    
-    // Wire language switcher (CSP compliant)
-    wireLanguageSwitcher();
-    
-    console.log('🎯 All event handlers initialized');
-});
+// Safe initialization - no early calls to prevent TDZ
+function startApp() {
+    setupLocationNames();
+    appInit();
+}
+
+// Initialize after DOM load - with environment safety
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startApp, { once: true });
+} else {
+    startApp();
+}

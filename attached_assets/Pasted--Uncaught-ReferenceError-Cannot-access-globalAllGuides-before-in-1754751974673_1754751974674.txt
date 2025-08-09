@@ -1,0 +1,109 @@
+はい、まだ**修正が必要**です。赤いエラーは引き続き
+
+> `Uncaught ReferenceError: Cannot access 'globalAllGuides' before initialization`
+> で、**初期化前に参照**している（あるいは循環参照）ことが原因です。
+> 下の手順で「データ確定 → window に公開 → 関数へ引数で渡す → トップレベル副作用なし」に統一してください。
+
+---
+
+# 修正指示書（そのまま実装してください）
+
+## 1) `events/event-handlers.mjs` を**引数受け取り**に統一
+
+* 次のような**トップレベル参照/値の import**を全削除：
+
+```js
+// ❌削除
+// import { globalAllGuides } from '../app-init.mjs';
+// const g = window.globalAllGuides;
+```
+
+* すべての処理を**引数経由**にします（例）：
+
+```js
+export function loadAllGuides(guides) {
+  const data = Array.isArray(guides) ? guides : (window.globalAllGuides || []);
+  // …描画
+}
+
+export function initializeGuidePagination(guides) {
+  const data = Array.isArray(guides) ? guides : (window.globalAllGuides || []);
+  if (!Array.isArray(data)) return;               // ガード
+  // …ページネーション初期化
+}
+
+export function setupEventListeners() {
+  // データが必要なら関数内で window.globalAllGuides を読む
+}
+```
+
+> ポイント：**ファイル読込時（トップレベル）では絶対にデータへ触れない**こと。
+
+---
+
+## 2) `app-init.mjs` の**順序を固定**（宣言→公開→呼び出し）
+
+`initializeGuidePagination()` などを **`window.globalAllGuides` を設定する前に絶対に呼ばない**よう並び替えます。
+
+```js
+// app-init.mjs
+import { defaultGuides } from './data/default-guides.mjs';
+import { setupEventListeners, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
+
+// ------- ここから順序厳守 -------
+function startApp() {
+  // 1) データ確定（LS > default）
+  const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+  const initialGuides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
+
+  // 2) グローバルへ公開（宣言/代入はこの1回のみ）
+  window.globalAllGuides = initialGuides;
+
+  // 3) 公開後に“引数で”初期化
+  loadAllGuides(initialGuides);
+  initializeGuidePagination(initialGuides);
+  setupEventListeners();
+}
+
+// DOM 準備後に起動（早すぎる実行を防止）
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', startApp, { once: true });
+} else {
+  startApp();
+}
+```
+
+**禁止事項**
+
+* `let/const globalAllGuides = …` の**再宣言**（どのファイルにも置かない）
+* `events/*` から `app-init.mjs` を **import**（循環参照の温床）
+
+---
+
+## 3) サーチして循環と先行呼び出しを潰す
+
+* 全文検索で以下があれば修正
+
+  * `globalAllGuides` の **宣言**（`let/const`）が他ファイルにないか
+  * `initializeGuidePagination(` / `loadAllGuides(` を **`window.globalAllGuides` 代入より前**で呼んでいないか
+  * `events/` 側が **`app-init.mjs` を import** していないか
+
+---
+
+## 4) 動作確認
+
+1. `.replit.dev` を**別タブ**で開く
+2. DevTools → Network → **Disable cache ON**
+3. **ハードリロード**（Cmd/Ctrl+Shift+R）
+4. Console で赤エラーが消え、`globalAllGuides?.length` が数値を返すことを確認
+
+---
+
+## 5) 黄色ログについて
+
+* `Emergency: Using hard-coded fallback data` は `webgl-fix.js` の**警告**で致命ではありません（後で `console.debug` に落としてOK）。
+
+---
+
+これで `globalAllGuides` の初期化順エラーは止まるはずです。
+まだ出る場合は、**どこかのモジュールがトップレベルで参照**しています。スタックトレース先頭のファイルで、トップレベル参照を**関数内**に移して再試行してください。
