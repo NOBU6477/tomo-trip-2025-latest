@@ -74,6 +74,12 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
                         self.send_header('Content-Type', 'image/png')
                     elif public_file_path.endswith(('.jpg', '.jpeg')):
                         self.send_header('Content-Type', 'image/jpeg')
+                    elif public_file_path.endswith('.woff2'):
+                        self.send_header('Content-Type', 'font/woff2')
+                    elif public_file_path.endswith('.woff'):
+                        self.send_header('Content-Type', 'font/woff')
+                    elif public_file_path.endswith('.svg'):
+                        self.send_header('Content-Type', 'image/svg+xml')
                     else:
                         content_type = self.guess_type(public_file_path)
                         if content_type:

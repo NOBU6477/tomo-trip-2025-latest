@@ -5,6 +5,7 @@ Local Guide is a multilingual guide matching platform connecting tourists with l
 ## Recent Changes (August 2025)
 - **CSP VIOLATION ELIMINATION (Aug 9, 2025)**: Complete removal of external image dependencies and Unsplash references, strict CSP implementation with 'self' policy
 - **EXTERNAL RESOURCE LOCALIZATION**: All guide images converted to local SVG placeholders, ocean background converted to CSS gradient
+- **FONT CSP COMPLIANCE (Aug 9, 2025)**: Bootstrap Icons and Google Fonts localized to prevent CSP font-src violations, system font fallbacks implemented
 - **FOOTER DUPLICATION FIX**: Eliminated redundant script references and modal-handlers.js double-loading causing visual duplication
 - **APPSTATE REDEFINITION ERROR ELIMINATION (Aug 9, 2025)**: Complete transformation to singleton pattern with configurable global access preventing TypeError: Cannot redefine property AppState
 - **DOUBLE INITIALIZATION PREVENTION**: Implemented boot guard (__APP_BOOTED__) and ESM URL normalization to prevent module double-loading

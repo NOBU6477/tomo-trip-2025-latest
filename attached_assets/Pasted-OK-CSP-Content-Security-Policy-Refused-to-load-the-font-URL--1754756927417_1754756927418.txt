@@ -1,0 +1,93 @@
+OK、これは**CSP（Content-Security-Policy）で外部フォントがブロック**されているエラーです。
+
+> `Refused to load the font '<URL>' because it violates Content Security Policy: "font-src 'self' data:"`
+
+いまのポリシーは `font-src 'self' data:` なので、**自サイトと data: 以外のURLのフォントは読み込めません**。
+（jsDelivr / Google Fonts / CDN の woff/woff2 などは全て拒否されます）
+
+# 直し方（最短）
+
+## 手順1：フォントを同梱して相対パス参照に切り替え
+
+1. フォルダを作成
+
+```
+/public/assets/fonts
+```
+
+2. 使っているフォントファイル（例：bootstrap-icons.woff2 / .woff、任意の webfont）をダウンロードして上記に保存。
+
+3. 参照を**CDN→相対パス**へ置き換え
+
+### 例：Bootstrap Icons の場合
+
+**CSS（新規 or 既存に追記）** `/public/css/icons.css`
+
+```css
+@font-face{
+  font-family: "bootstrap-icons";
+  src: url("/assets/fonts/bootstrap-icons.woff2") format("woff2"),
+       url("/assets/fonts/bootstrap-icons.woff")  format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+```
+
+**HTML（CDNリンクを削除してローカルCSSに差し替え）**
+
+```html
+<!-- 削除: <link rel="stylesheet" href="https://cdn.jsdelivr.net/.../bootstrap-icons.css"> -->
+<link rel="stylesheet" href="/css/icons.css">
+```
+
+### 例：Google Fonts を使っていた場合
+
+* `https://fonts.googleapis.com/...` や `https://fonts.gstatic.com/...` を**全て削除**。
+* 代替：システムフォントスタックを使うか、必要な webfont を**ダウンロードして同梱**（ライセンス要確認）。
+
+4. もし CSS 内に `url(https://...)` が残っていたら**全置換**で相対パスに。
+
+> 検索ヒント：`https://`、`fonts.googleapis.com`、`fonts.gstatic.com`、`bootstrap-icons`、`.woff`、`.woff2`
+
+---
+
+## 手順2：MIME タイプ確認（まれに必要）
+
+Replit は通常問題ありませんが、もしネットワークタブで `bootstrap-icons.woff2` の **Content-Type** が不正なら、
+`/public/.replit`（またはサーバ設定）がある場合は woff/woff2 の MIME を明示します。
+
+* `font/woff2`（.woff2）
+* `font/woff`（.woff）
+
+（Replit 静的ホストなら通常自動で正しいタイプがつきます）
+
+---
+
+## 手順3：ビルドキャッシュをクリアして確認
+
+1. ブラウザのハードリロード（DevTools 開いたまま → 右クリックのリロードメニューから「キャッシュの消去とハード再読み込み」）
+2. **.replit.dev を別タブで開いて**コンソール確認（IDE プレビューではなく）
+
+---
+
+## 補足：ポリシーを緩める選択肢（推奨しない）
+
+`<meta http-equiv="Content-Security-Policy" ...>` で
+
+```
+font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net;
+```
+
+のように**許可先を増やす**手もありますが、Replit では iframe 側のヘッダーに勝てないことがあり、またセキュリティも下がります。
+**最短・確実なのは「同梱して相対パス参照」にすること**です。
+
+---
+
+## 最終チェックリスト
+
+* [ ] ネットワークタブでフォントが **/assets/fonts/xxx.woff2 (200)** として読み込まれている
+* [ ] コンソールから `Refused to load the font` が消えた
+* [ ] 外部フォントの `<link href="https://...">` が全部なくなった
+
+必要なら、現在使っているフォントの CDN リンク（またはCSS断片）を貼ってください。**ローカル同梱用の `@font-face` ブロックをこちらで正確に書き起こします。**
