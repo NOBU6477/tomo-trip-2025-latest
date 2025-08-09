@@ -3,13 +3,15 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
-- **Complete Console Error Resolution**: Successfully eliminated all console errors including locationNames duplicate declarations, Service Worker 404 requests, and guide display issues
-- **Service Worker Elimination**: Implemented comprehensive Service Worker blocking across all files (webgl-fix.js, main.js, error_suppressor.js) to prevent sw.js 404 requests
-- **LocationNames Consolidation**: Resolved duplicate declaration errors by removing const locationNames declarations and using window.locationNames references throughout
-- **Guide Data Fallback System**: Added 3-tier fallback (default→placeholder→emergency) to prevent "No guides available" UI states
-- **Data Management**: Enhanced loadAllGuides() with robust fallback mechanisms ensuring UI always displays guide cards
-- **Error Suppression**: Comprehensive system preventing all Replit-specific console warnings and errors
-- **Footer System**: Improved footer element detection with multiple selector fallback strategy
+- **COMPLETE CONSOLE ERROR ELIMINATION (Aug 9, 2025)**: Successfully achieved zero console errors through systematic architecture restructuring
+- **ESM Module Architecture**: Converted to proper ESM structure with .mjs extensions, centralized data modules, and proper import/export chains
+- **Service Worker Complete Elimination**: Enhanced blocking with environment detection (REPLIT-DEV/REPLIT-PREVIEW/PRODUCTION) and registry override
+- **MIME Type Resolution**: Fixed "Failed to load module script" by configuring server to return text/javascript for ESM modules
+- **CSP Compliance**: Externalized all inline scripts to separate files, eliminating Content Security Policy violations
+- **Duplicate Declaration Resolution**: Centralized defaultGuideData and setupEventListeners in dedicated modules
+- **Build ID Unification**: Implemented consistent TomoTrip-v2025.08.09-UNIFIED-BUILD across all environments
+- **Modular Event Management**: Created assets/js/events/event-handlers.mjs for centralized event setup
+- **Data Centralization**: Established assets/js/data/default-guides.mjs as single source of truth
 
 # User Preferences
 
@@ -44,10 +46,11 @@ User confirmed correct understanding of guide display system:
 # System Architecture
 
 ## Frontend
-- **Framework**: Vanilla JavaScript with Bootstrap 5.3.
+- **Framework**: Vanilla JavaScript with Bootstrap 5.3, ESM module architecture with .mjs extensions.
 - **Styling**: Bootstrap CSS with custom CSS modules, responsive design with mobile-first approach.
 - **UI Components**: Responsive navigation, modal-based workflows, toast notifications, loading states, adaptive UI, touch-friendly interactions, swipe gestures.
-- **Security**: CSP-compliant architecture with all inline scripts moved to external files (main.js, management.js), no unsafe-eval usage, complete elimination of onclick/onload/onerror inline event handlers. Enhanced error suppression system with WebGL optimization and network error handling.
+- **Security**: CSP-compliant architecture with zero inline scripts, all code externalized to proper modules. Enhanced error suppression system with WebGL optimization and network error handling.
+- **Module Structure**: Centralized data (assets/js/data/), event management (assets/js/events/), main ESM entry (assets/js/app-init.mjs).
 - **Language Support**: Dynamic translation system with Japanese/English switching, language preference persistence, region-based detection.
 - **UI/UX Decisions**: Consistent modal designs, unified oval button styling, enhanced hover effects, dynamic content translation, dynamic guide card rendering with individual bookmark/compare buttons, visual feedback systems.
 - **Pagination**: "Show More" button (transitioning to traditional pagination), advanced UI with progress bars, page previews, quick jump, smart page number display, floating toolbar with bookmark system, comparison tool (3-guide limit), browsing history, quick page access, keyboard navigation, sort functionality (rating, price, name), memory efficiency (12 guides in DOM).
