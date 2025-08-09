@@ -1,4 +1,4 @@
-// Default guide data - centralized to prevent duplication
+// Default guide data - centralized to prevent duplication with unified image paths
 export const defaultGuideData = [
     {
         id: 1,
@@ -6,7 +6,7 @@ export const defaultGuideData = [
         location: "tokyo",
         rating: 4.8,
         price: 8000,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["history", "culture"]
     },
@@ -16,7 +16,7 @@ export const defaultGuideData = [
         location: "osaka", 
         rating: 4.9,
         price: 7500,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "en", "zh"],
         specialties: ["food", "local"]
     },
@@ -26,7 +26,7 @@ export const defaultGuideData = [
         location: "kyoto",
         rating: 4.7,
         price: 9000,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["temples", "traditional"]
     },
@@ -36,7 +36,7 @@ export const defaultGuideData = [
         location: "osaka",
         rating: 4.6,
         price: 7000,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["shopping", "food"]
     },
@@ -46,7 +46,7 @@ export const defaultGuideData = [
         location: "tokyo",
         rating: 4.8,
         price: 8500,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
         specialties: ["business", "modern"]
     },
@@ -56,7 +56,7 @@ export const defaultGuideData = [
         location: "kyoto",
         rating: 4.9,
         price: 8800,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["zh", "ja", "en"],
         specialties: ["culture", "temples"]
     },
@@ -66,7 +66,7 @@ export const defaultGuideData = [
         location: "hokkaido",
         rating: 4.7,
         price: 9500,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["nature", "skiing"]
     },
@@ -76,7 +76,7 @@ export const defaultGuideData = [
         location: "tokyo",
         rating: 4.8,
         price: 8200,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
         specialties: ["fashion", "youth"]
     },
@@ -86,7 +86,7 @@ export const defaultGuideData = [
         location: "fukuoka",
         rating: 4.6,
         price: 7300,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "ko"],
         specialties: ["food", "local"]
     },
@@ -96,7 +96,7 @@ export const defaultGuideData = [
         location: "osaka",
         rating: 4.7,
         price: 7800,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["es", "en", "ja"],
         specialties: ["nightlife", "entertainment"]
     },
@@ -106,7 +106,7 @@ export const defaultGuideData = [
         location: "hiroshima",
         rating: 4.8,
         price: 8600,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["history", "peace"]
     },
@@ -116,7 +116,7 @@ export const defaultGuideData = [
         location: "kyoto",
         rating: 4.9,
         price: 9200,
-        image: "attached_assets/image_1754399234136.png",
+        image: "/attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
         specialties: ["zen", "meditation"]
     }

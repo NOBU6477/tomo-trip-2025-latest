@@ -3,7 +3,10 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
-- **APPSTATE REDEFINITION ERROR ELIMINATION (Aug 9, 2025)**: Complete transformation to singleton pattern with configurable global access preventing TypeError: Cannot redefine property AppState
+- **ENVIRONMENT UNIFICATION ACHIEVEMENT (Aug 9, 2025)**: Complete resolution of Replit IDE iframe vs .replit.dev tab display differences through unified storage and background management
+- **UNIFIED DIVER BACKGROUND**: Forced consistent hero/background image across all environments using !important CSS rules and absolute paths
+- **CROSS-ENVIRONMENT STORAGE**: Implemented TOMOTRIP::guides:v1 storage key with ?seed=1 parameter for identical data initialization
+- **APPSTATE REDEFINITION ERROR ELIMINATION**: Complete transformation to singleton pattern with configurable global access preventing TypeError: Cannot redefine property AppState
 - **DOUBLE INITIALIZATION PREVENTION**: Implemented boot guard (__APP_BOOTED__) and ESM URL normalization to prevent module double-loading
 - **COMPLETE CSP INLINE VIOLATION ELIMINATION**: Final removal of all HTML onclick handlers and implementation of CSP-compliant event listeners
 - **MODAL API CENTRALIZATION**: Created assets/js/ui/modal.mjs with Bootstrap safety checks and proper element validation

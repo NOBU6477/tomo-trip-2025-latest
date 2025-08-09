@@ -8,6 +8,10 @@ import { setupLocationNames } from './locations/location-setup.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
 import { APP_CONFIG } from '../../env/app-config.mjs';
 
+// Storage constants for cross-environment consistency
+const STORAGE_KEY = "TOMOTRIP::guides:v1";
+const FORCE_SEED = new URLSearchParams(location.search).get("seed") === "1";
+
 // Early detection for Replit preview iframe to suppress footer emergency logs
 const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
 
@@ -22,9 +26,17 @@ if (isReplitIframe) {
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // 1) First determine final guide data (localStorage priority, then default)
-    const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-    const guides = (Array.isArray(storedGuides) && storedGuides.length) ? storedGuides : defaultGuideData;
+    // 1) Unified storage management with seeding capability
+    function seedIfNeeded() {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (FORCE_SEED || !raw) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultGuideData));
+            log.info('🌱 Guide data seeded from defaults');
+        }
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }
+    
+    const guides = seedIfNeeded();
 
     // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
     const state = initAppState({ guides, pageSize: 12, currentPage: 1 });

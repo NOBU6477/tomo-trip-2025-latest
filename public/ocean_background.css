@@ -1,12 +1,12 @@
-/* Ocean background theme for TomoTrip */
+/* Ocean background theme for TomoTrip - UNIFIED DIVER BACKGROUND */
 .theme-ocean {
     margin: 0;
     padding: 0;
-    background-image: url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center center;
+    background-image: url('/attached_assets/image_1754399234136.png') !important;
+    background-size: cover !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    background-position: center center !important;
     min-height: 100vh;
     font-family: 'Noto Sans JP', 'Inter', sans-serif;
 }
@@ -27,6 +27,17 @@
         rgba(165, 242, 243, 0.85) 100%
     );
     z-index: -1;
+}
+
+/* === Hero background: force diver image across all environments === */
+.hero,
+.hero::before,
+.hero-section,
+.hero-section::before {
+    background-image: url('/attached_assets/image_1754399234136.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
 }
 
 #main-footer img { 

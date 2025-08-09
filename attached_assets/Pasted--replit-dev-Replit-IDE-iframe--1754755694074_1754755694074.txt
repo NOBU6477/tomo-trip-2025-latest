@@ -1,0 +1,132 @@
+了解。いま起きている「別タブ(.replit.dev) と Replit プレビュー(IDE内iframe) で背景やプロフィール画像が違う」件は、根本的に**オリジン(=保存領域)の違い**と**読み込みソースの差分**が原因です。
+要点だけまとめると：
+
+* **ガイドカードの画像が違う理由**
+
+  * `.replit.dev`（別タブ）はブラウザの **localStorage（本番オリジン）** に残っているテスト用データ（画像URL含む）を読んでいます。
+  * IDE の **プレビュー iframe** は **別オリジン** なので localStorage が空 → そのため **デフォルト画像**（人物写真）でレンダリングされます。
+    ⇒ 同じデータを読ませない限り、両者で表示が揃いません。
+
+* **ヒーロー背景が違う理由**
+
+  * 背景画像の選択が「CSS/JS の2系統」や「A/B 風のランダム・切替フラグ」「キャッシュの残骸」に分散しており、**iframe では新CSS（ビーチ）**、別タブでは **旧CSSやJS指定（ダイバー）** を拾っています。
+  * さらに **相対パス＋base href** の差で、読み込むCSS/画像ファイルがズレる可能性が残っています。
+
+---
+
+# 指示書（左＝別タブ側の「ダイバー背景」＆同一画像セットに統一）
+
+以下を上から順に実施してください。コミットメッセージ例：`chore: unify hero image and storage seed across replit and preview`
+
+## 1) 画像ソースを一元化（ヒーローを固定）
+
+1. ヒーロー画像を**ダイバー背景**に固定します。`assets/css/main.css`（または該当CSS）に、複数定義や媒体差分がある場合は最後に**強制上書き**を追加：
+
+   ```css
+   /* === Hero background: force diver image across all environments === */
+   .hero,
+   .hero::before {
+     background-image: url("/assets/img/hero/underwater-diver.jpg") !important;
+     background-size: cover !important;
+     background-position: center !important;
+     background-repeat: no-repeat !important;
+   }
+   ```
+2. JS 側で背景を差し替えるコード（ランダム・時間帯・言語で切替など）があれば**削除**または無効化。
+
+   * 例：`setHeroBackground(...)` などを **no-op** に。
+3. **base href の影響を受けない**よう、背景・CSS・JS のパスは**すべて絶対パス**（`/assets/...`）に統一。
+
+## 2) ガイド画像データを「同一シード」に固定
+
+1. 既定のガイド一覧（`default-guides.mjs` 等）を**単一のソース**にまとめ、**各ガイドの `photoUrl` をダイバー背景と共存できる安定URL**（プロジェクト内の `/assets/img/guides/*.jpg`）へ統一。外部CDNや `data:` / `blob:` は CSP に引っかかりやすいので避けます。
+2. データ読み込み順を**必ず**こうする：
+
+   ```mermaid
+   graph LR
+   A[defaultGuides (プロジェクト内固定画像)] --> B{localStorageに正当データ有?}
+   B -- Yes --> C[localStorageを使用]
+   B -- No  --> A2[defaultGuidesをseed保存して使用]
+   ```
+3. キーを**ビルド共通の名前空間**に固定（例：`TOMOTRIP::guides:v1`）。IDE プレビューと別タブを**同じ内容で初期化**したい場合は、初回ロード時に **seed を強制**するオプションを追加：
+
+   ```js
+   // app-init.mjs
+   const STORAGE_KEY = "TOMOTRIP::guides:v1";
+   const FORCE_SEED = new URLSearchParams(location.search).get("seed") === "1";
+
+   import { defaultGuides } from "/assets/js/data/default-guides.mjs";
+
+   function seedIfNeeded() {
+     const raw = localStorage.getItem(STORAGE_KEY);
+     if (FORCE_SEED || !raw) {
+       localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultGuides));
+     }
+     return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+   }
+
+   export const globalAllGuides = seedIfNeeded();
+   ```
+
+   * **確認手順**：
+
+     * 別タブ・IDE プレビュー両方で `?seed=1` を一度付けて開く → 同じ seed が入り画像が揃います。
+     * 以降は `?seed=1` なしでも同じ表示。
+
+## 3) 初期化の順序バグを解消（「…before initialization」系エラー対策）
+
+1. 依存順序を**必ず**この順で：
+
+   * `default-guides.mjs`（データ）
+   * `app-state.mjs`（AppState 定義）
+   * `app-init.mjs`（seed → `globalAllGuides` → UI 初期化）
+   * `event-handlers.mjs`（最後にイベント登録）
+2. `globalAllGuides` / `globalCurrentPage` など**グローバルを参照する前に**必ず定義/代入を終える。
+   例：`initializeGuidePagination()` の先頭で `if (!Array.isArray(globalAllGuides)) throw new Error('seed first')` などのガードを入れる。
+3. `Object.defineProperty(window, 'AppState', ...)` など**再定義**で落ちている箇所は、**一度だけ定義**に修正：
+
+   ```js
+   // app-state.mjs
+   if (!window.AppState) {
+     window.AppState = { currentPage: 1, pageSize: 12 /* ... */ };
+   }
+   ```
+
+   または ES モジュールの **named export** を使い、`window` を避ける。
+
+## 4) CSP（フォント/画像）を許容しておく（将来の差分防止）
+
+`<meta http-equiv="Content-Security-Policy" ...>` を使っている場合は、**最小限**以下を追加/確認：
+
+```
+img-src 'self' data: https://images.unsplash.com https://cdn.jsdelivr.net https://*.gstatic.com;
+font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net;
+```
+
+（外部CDNを使わないなら `img-src 'self' data:` で十分。今回の統一では**内部画像**に寄せるため、ここは保険です。）
+
+## 5) キャッシュとSWの後始末
+
+* 修正後、以下を必ず実施：
+
+  1. どちらの環境でも `localStorage.removeItem('TOMOTRIP::guides:v1')` → `?seed=1` で再読込
+  2. Service Worker は**登録しない**設計のまま（開発環境は常に無効）
+  3. 主要CSS/JSの参照に**キャッシュバスター**を付与：`?v=2025.08.09-unified`
+
+---
+
+## 期待される結果
+
+* 別タブ(.replit.dev) と IDE プレビューの\*\*背景が同じ「ダイバー画像」\*\*で一致。
+* ガイドカードのプロフィール画像も\*\*同じ（プロジェクト内の固定画像）\*\*で一致。
+* `?seed=1` を一度踏むと、以後はクエリなしでも同じ見た目を再現。
+
+---
+
+## トラブル時のチェックリスト
+
+* 背景が再びズレた → CSS の**他定義で上書き**されていないか（`!important` が最後にあるか、読み込み順が正しいか）。
+* 画像が違う → どちらかのオリジンの localStorage に**古いデータ**が残っていないか（キーを削除して `?seed=1` で復元）。
+* 「…before initialization」 → **読み込み順**（データ→状態→初期化→イベント）を崩していないか。
+
+必要なら、背景名（ファイルパス）や seed データの雛形も作ります。どのパスに置いたか教えてくれれば、ピンポイントで差分パッチを出します。
