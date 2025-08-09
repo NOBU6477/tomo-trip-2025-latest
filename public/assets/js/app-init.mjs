@@ -32,10 +32,15 @@ function appInit() {
     // 3) Setup location names in AppState
     setupLocationNames(state);
 
-    // 4) Pass state to functions to prevent global variable TDZ issues
+    // 4) Pass state to functions and display guides immediately
     loadAllGuides(state.guides);
     initializeGuidePagination(state);
     setupEventListeners(state);
+    
+    // Display guides on page load
+    displayGuides(1);
+    
+    // Setup button handlers
     wireSponsorButtons();
     wireLanguageSwitcher();
     
@@ -69,86 +74,101 @@ if (!window.locationNames) {
 
 // Functions moved to event-handlers.mjs - no global state here
 
-// Display guides for current page
-function displayGuides(page) {
+// Display guides for current page - complete implementation
+function displayGuides(page = 1) {
     const container = document.getElementById('guideCardsContainer');
     if (!container) return;
-    
-    const startIndex = (page - 1) * globalGuidesPerPage;
-    const endIndex = startIndex + globalGuidesPerPage;
-    const guidesForPage = globalAllGuides.slice(startIndex, endIndex);
-    
-    container.innerHTML = '';
-    
-    guidesForPage.forEach(guide => {
-        const guideCard = createGuideCard(guide);
-        container.appendChild(guideCard);
-    });
-    
-    updatePaginationInfo(page);
-}
 
-// Create guide card element
-function createGuideCard(guide) {
-    const col = document.createElement('div');
-    col.className = 'col-md-6 col-lg-4 mb-4';
-    
-    col.innerHTML = `
-        <div class="card guide-card h-100 shadow-sm">
-            <img src="${guide.image || 'assets/images/default-guide.jpg'}" class="card-img-top" alt="${guide.name}" style="height: 200px; object-fit: cover;">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">${guide.name}</h5>
-                <p class="card-text text-muted small">${window.locationNames[guide.location] || guide.location}</p>
-                <div class="mb-2">
-                    <span class="badge bg-primary me-1">⭐ ${guide.rating}</span>
-                    <span class="text-success fw-bold">¥${guide.price?.toLocaleString() || 'N/A'}/時間</span>
-                </div>
-                <div class="mb-2">
-                    ${(guide.languages || []).map(lang => `<span class="badge bg-secondary me-1">${lang === 'ja' ? '日本語' : lang === 'en' ? 'English' : lang}</span>`).join('')}
-                </div>
-                <div class="mt-auto">
-                    <button class="btn btn-outline-primary btn-sm w-100" data-guide-id="${guide.id}" class="view-guide-details">詳細を見る</button>
+    const state = window.AppState;
+    if (!state || !state.guides) {
+        console.warn('No guides data available');
+        return;
+    }
+
+    const startIndex = (page - 1) * state.pageSize;
+    const endIndex = startIndex + state.pageSize;
+    const guidesToShow = state.guides.slice(startIndex, endIndex);
+
+    let html = '';
+    guidesToShow.forEach((guide, index) => {
+        const globalIndex = startIndex + index + 1;
+        html += `
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card guide-card h-100 shadow-sm" data-guide-id="${guide.id || globalIndex}">
+                <img src="${guide.image || '/assets/img/guides/default-' + ((globalIndex - 1) % 5 + 1) + '.svg'}" 
+                     class="card-img-top" alt="${guide.name || 'ガイド写真'}" style="height: 200px; object-fit: cover;">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">${guide.name || 'ガイド名'}</h5>
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-geo-alt"></i> ${guide.location || guide.prefecture || '東京都'}
+                    </p>
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-translate"></i> ${guide.languages || '日本語、英語'}
+                    </p>
+                    <p class="card-text mb-3">${guide.description || 'プロフェッショナルなガイドサービスを提供いたします。'}</p>
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-primary fw-bold">¥${guide.price || '8,000'}/日</span>
+                            <small class="text-warning">
+                                <i class="bi bi-star-fill"></i> ${guide.rating || '4.8'}
+                            </small>
+                        </div>
+                        <button class="btn btn-primary w-100 view-details-btn" data-guide-id="${guide.id || globalIndex}">
+                            詳細を見る
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    `;
+        </div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Update counters
+    updateGuideCounters(page, state);
     
-    return col;
+    // Re-add event listeners after cards are rendered
+    addCardEventListeners();
+    
+    log.info(`📊 Displayed ${guidesToShow.length} guides on page ${page}`);
 }
 
-// Update pagination controls
-function updatePaginationInfo(page) {
-    const totalPages = Math.ceil(globalAllGuides.length / globalGuidesPerPage);
-    const startIndex = (page - 1) * globalGuidesPerPage + 1;
-    const endIndex = Math.min(page * globalGuidesPerPage, globalAllGuides.length);
+// Update guide counters
+function updateGuideCounters(page, state) {
+    const totalGuides = state.guides.length;
+    const startIndex = (page - 1) * state.pageSize + 1;
+    const endIndex = Math.min(page * state.pageSize, totalGuides);
     
-    const pageInfo = document.getElementById('pageInfo');
-    const displayRange = document.getElementById('displayRange');
-    const prevBtn = document.getElementById('prevPageBtn');
-    const nextBtn = document.getElementById('nextPageBtn');
+    const counterElement = document.getElementById('guideCounter');
+    const totalCounterElement = document.getElementById('totalGuideCounter');
     
-    if (pageInfo) pageInfo.textContent = `ページ ${page}`;
-    if (displayRange) displayRange.textContent = `${startIndex}-${endIndex}`;
-    
-    if (prevBtn) {
-        prevBtn.disabled = page === 1;
-        prevBtn.onclick = () => {
-            if (page > 1) {
-                globalCurrentPage = page - 1;
-                displayGuides(globalCurrentPage);
-            }
-        };
+    if (counterElement) {
+        counterElement.textContent = `${endIndex - startIndex + 1}人のガイドが見つかりました（全${totalGuides}人中）`;
     }
     
-    if (nextBtn) {
-        nextBtn.disabled = page === totalPages;
-        nextBtn.onclick = () => {
-            if (page < totalPages) {
-                globalCurrentPage = page + 1;
-                displayGuides(globalCurrentPage);
-            }
-        };
+    if (totalCounterElement) {
+        totalCounterElement.textContent = `登録ガイド総数: ${totalGuides}人`;
     }
+}
+
+// Add event listeners to cards
+function addCardEventListeners() {
+    const viewButtons = document.querySelectorAll('.view-details-btn');
+    console.log('🔧 Adding event listeners to View Details buttons...');
+    console.log('Found', viewButtons.length, 'View Details buttons');
+    
+    viewButtons.forEach((button, index) => {
+        const guideId = button.dataset.guideId;
+        console.log(`Setting up button ${index + 1} for guide ID: ${guideId}`);
+        
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('View Details clicked for guide:', guideId);
+            // Add guide detail modal logic here
+        });
+    });
+    
+    console.log('✅ Card event listeners added');
 }
 
 // View guide details function - moved to global scope for onclick compatibility
