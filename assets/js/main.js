@@ -1,6 +1,6 @@
 // TomoTrip Main JavaScript - CSP Compliant
 document.addEventListener('DOMContentLoaded', () => {
-  // Footer 多重保険：重複があれば先頭以外を除去
+  // Footer protection
   const footers = document.querySelectorAll('footer#main-footer');
   for (let i = 1; i < footers.length; i++) footers[i].remove();
 
@@ -16,8 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Setup all event listeners
-function setupEventListeners() {
-    // Basic event listener setup moved to app-init.js
-    console.log('Basic event listeners setup');
+// Clean Service Worker registration
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(registrations => {
+        registrations.forEach(registration => registration.unregister());
+        console.log('Service Worker cleaned up');
+    });
 }

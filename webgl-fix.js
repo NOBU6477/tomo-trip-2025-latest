@@ -50,3 +50,12 @@ window.addEventListener('offline', function() {
     
     console.log('✅ WebGL optimization applied');
 })();
+
+// Remove no-op Service Worker fetch handler if exists
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+            registration.unregister();
+        }
+    });
+}

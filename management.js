@@ -1,6 +1,9 @@
 // Management Center Functions - CSP Compliant
 // All management-related inline scripts moved to external file
 
+// Use global locationNames (defined in app-init.js)
+const locationNames = window.locationNames || {};
+
 // Management Center Functions
 function showManagementCenter() {
     console.log('Opening Management Center...');

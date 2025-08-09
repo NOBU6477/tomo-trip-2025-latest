@@ -23,40 +23,73 @@ if (!window.locationNames) {
 }
 const locationNames = window.locationNames;
 
+// Default guide data for initial display
+const defaultGuideData = [
+    {
+        id: 1,
+        name: "田中健太",
+        location: "tokyo",
+        rating: 4.8,
+        price: 8000,
+        image: "attached_assets/image_1754399234136.png",
+        languages: ["ja", "en"],
+        specialties: ["history", "culture"]
+    },
+    {
+        id: 2,
+        name: "佐藤美咲",
+        location: "osaka", 
+        rating: 4.9,
+        price: 7500,
+        image: "attached_assets/image_1754399234136.png",
+        languages: ["ja", "en", "zh"],
+        specialties: ["food", "local"]
+    },
+    {
+        id: 3,
+        name: "鈴木一郎",
+        location: "kyoto",
+        rating: 4.7,
+        price: 9000,
+        image: "attached_assets/image_1754399234136.png",
+        languages: ["ja", "en"],
+        specialties: ["temples", "traditional"]
+    }
+];
+
 // Global guide data
 let globalCurrentPage = 1;
 let globalGuidesPerPage = 12;
 let globalAllGuides = [];
 
-// Initialize default guide data
-function loadDefaultGuides() {
-    console.log('🔧 Loading default guide dataset...');
-    const existingGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
-    if (existingGuides.length === 0) {
-        localStorage.setItem('registeredGuides', JSON.stringify([]));
-        console.log('✅ Default guides storage initialized');
-    }
-}
+// Make defaultGuideData available globally  
+window.defaultGuideData = defaultGuideData;
 
 // Load all guides and populate display
 function loadAllGuides() {
     const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides')) || [];
     console.log('Loading registered guides:', registeredGuides.length);
-    if (registeredGuides.length === 0) {
-        console.log('⚠️ No registered guides found - initializing default dataset');
-        loadDefaultGuides();
+    
+    // Always ensure default data is available for UI display
+    const allGuides = [...defaultGuideData, ...registeredGuides];
+    
+    if (allGuides.length === 0) {
+        console.log('⚠️ Fallback: Using emergency default dataset');
+        return defaultGuideData;
     }
     
-    // Merge registered guides with default guides (from main.js)
-    return [...window.defaultGuideData || [], ...registeredGuides];
+    return allGuides;
 }
 
 // Initialize pagination and guide display
 function initializeGuidePagination() {
     globalAllGuides = loadAllGuides();
+    console.log('Total guides loaded:', globalAllGuides.length);
+    
+    // Ensure UI displays even with minimal data
     if (globalAllGuides.length === 0) {
-        console.warn('No guides available for display');
-        return;
+        console.warn('Using emergency fallback data');
+        globalAllGuides = defaultGuideData;
     }
     displayGuides(globalCurrentPage);
 }
