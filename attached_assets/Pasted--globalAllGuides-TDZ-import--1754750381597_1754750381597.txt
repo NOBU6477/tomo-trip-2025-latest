@@ -1,0 +1,91 @@
+ありがとうございます。スクショの赤エラーは **`globalAllGuides` を「宣言より前に参照」している**（TDZ/循環import）ことをはっきり示しています。
+スタックから見ると `app-init.mjs` の **96行 → `loadAllGuides()`** 呼び出し時点で未初期化です。
+
+下の指示文どおりに“データ確定 → windowに公開 → 関数は引数で受け取る”に統一すれば解消できます。
+
+---
+
+# 修正指示（コピペ用）
+
+## 1) `app-init.mjs` を並び替え（宣言→公開→呼び出し）
+
+```diff
+- import { setupEventListeners, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
++ import { setupEventListeners, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
++ import { defaultGuides } from './data/default-guides.mjs';
+
+- // どこか上で loadAllGuides() を先に呼んでいないか確認
+- loadAllGuides(globalAllGuides); // ← これが宣言より前に来ているのが原因
+
++// 1) まずデータを決める（localStorage優先、なければデフォルト）
++const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
++const allGuides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
++
++// 2) グローバルに公開して循環を断つ
++window.globalAllGuides = allGuides;
++
++// 3) その後に“引数で”初期化関数を呼ぶ
++loadAllGuides(window.globalAllGuides);
++initializeGuidePagination(window.globalAllGuides);
++setupEventListeners();
+```
+
+> ポイント
+>
+> * **`loadAllGuides/initializeGuidePagination/setupEventListeners` より前**に `window.globalAllGuides` を必ずセット。
+> * `export const globalAllGuides = ...` のような **値のimport** を他ファイルで行うと循環になりやすいので禁止。
+
+---
+
+## 2) `events/event-handlers.mjs` は **値をimportしない**（引数でもらう）
+
+```diff
+- import { globalAllGuides } from '../app-init.mjs'; // ❌ やめる（循環の原因）
++// 受け取り専用にする
++export function loadAllGuides(guides) {
++  const list = Array.isArray(guides) ? guides : (window.globalAllGuides || []);
++  // ...描画処理
++}
++
++export function initializeGuidePagination(guides) {
++  const data = Array.isArray(guides) ? guides : (window.globalAllGuides || []);
++  // ...ページネーション初期化
++}
++
++export function setupEventListeners() {
++  // ...イベント登録（データが必要なら window.globalAllGuides を参照）
++}
+```
+
+> 既存の関数シグネチャが引数無しなら、**第1引数 guides を追加**して上のように内部でフォールバックする形に直してください。
+
+---
+
+## 3) 重複宣言の排除
+
+プロジェクト全体で検索し、以下があれば削除または統一します。
+
+* `let/const globalAllGuides = ...` が **複数ファイル**にある
+* `default-guides.mjs` の内容を別のJSで再宣言している
+
+**唯一の生成元**は `app-init.mjs` のみ、他所は **引数または `window.globalAllGuides` 参照**に統一。
+
+---
+
+## 4) 動作確認
+
+1. `.replit.dev` を **別タブ**で開く（IDEプレビューではなく）。
+2. DevTools → Network「Disable cache」をON → **ハードリロード**（Cmd/Ctrl+Shift+R）。
+3. Console から `globalAllGuides?.length` を実行して **配列長が出る**ことを確認。
+4. 赤エラー **「Cannot access 'globalAllGuides' before initialization」** が消えていること。
+
+---
+
+## 補足（CSPの画像ブロックがもし出る場合）
+
+`images.unsplash.com` を使っているなら、サーバのCSP `img-src` に
+`https://images.unsplash.com https://*.unsplash.com` を足すか、画像をローカルに置き換えてください。
+
+---
+
+これで今回の赤エラーは解消できるはずです。終わったらスクショをもう一度送ってください。

@@ -20,17 +20,13 @@ if (isReplitIframe) {
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // 1) First ensure all data is loaded and available globally
-    const allGuides = loadAllGuides();
-    window.globalAllGuides = allGuides;
-    
-    // 2) Then setup event handlers with data available
+    // Data is already safely initialized above, now just setup UI
     setupEventListeners();
     wireSponsorButtons();
     wireLanguageSwitcher();
     
-    // 3) Finally initialize pagination with loaded data passed as argument
-    initializeGuidePagination(allGuides);
+    // Initialize pagination with pre-loaded data
+    initializeGuidePagination(window.globalAllGuides);
     
     log.ok('✅ Application initialized successfully');
 }
@@ -56,19 +52,26 @@ if (!window.locationNames) {
     console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
 }
 
-// Default guide data imported from centralized module
-
-// Global guide data - initialized before use
+// Global guide data - safe early initialization
 let globalCurrentPage = 1;
 let globalGuidesPerPage = 12;
-let globalAllGuides = []; // Will be populated by loadAllGuides()
+let globalAllGuides = []; // Will be populated safely
 
-// Make defaultGuideData available globally from import
+// 1) First determine final guide data (localStorage priority, then default)
+const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+const finalGuideData = (Array.isArray(storedGuides) && storedGuides.length) ? 
+    [...defaultGuideData, ...storedGuides] : defaultGuideData;
+
+// 2) Make available globally to break any potential cycles
+window.globalAllGuides = finalGuideData;
 window.defaultGuideData = defaultGuideData;
 
-// Load all guides and populate display with robust fallback
-function loadAllGuides() {
-    const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+// 3) Set module-level variable safely after window assignment
+globalAllGuides = finalGuideData;
+
+// Utility function to ensure safe guide data (no longer used for initialization)
+function loadAllGuides(guidesData) {
+    const guides = guidesData || window.globalAllGuides || defaultGuideData;
     
     // Ensure guides with robust fallback system
     const ensureGuides = (guides) => {
@@ -88,15 +91,8 @@ function loadAllGuides() {
         }];
     };
     
-    // Combine default data with registered guides
-    const allGuides = [...defaultGuideData, ...registeredGuides];
-    const safeGuides = ensureGuides(allGuides);
-    
-    // Make final guides available globally - safe assignment
-    globalAllGuides = safeGuides;
-    window.globalAllGuides = safeGuides; // Ensure window reference is consistent
-    
-    log.ok('🎯 Guide Loading Complete:', safeGuides.length, 'guides');
+    const safeGuides = ensureGuides(guides);
+    log.ok('🎯 Guide Data Validated:', safeGuides.length, 'guides');
     
     return safeGuides;
 }
