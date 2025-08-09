@@ -1,0 +1,129 @@
+ノブさん、スクショの赤ログを分類すると主にこの3系統でした。
+
+* A) **CSP違反（Report-Only）**：inline script / eval / worker / connect の拒否
+* B) **`iframe sandbox/allow` の無効フラグ**（`allow-downloads-without-user-activation` など）
+* C) **フッター“非常用”スクリプトが本番でも走っている**（大量のデバッグ出力）
+
+以下を**そのまま1回コピペ**でReplitのAgentに貼ってください。
+（※Replitエディター内の `sp.replit.com` や `workspace_iframe.html` 由来の警告は環境ノイズのため対象外。**.replit.dev直アクセスでエラー0**を合格基準にしてください。）
+
+---
+
+【Replit Agent一括指示｜TomoTrip – コンソールの実アプリ起因エラーを根治】
+
+### 目的
+
+* `.replit.dev` 直アクセス時に**赤エラー0**。
+* 当アプリのCSP準拠（インライン/評価系/不要なworker禁止）。
+* 無効な `iframe` 属性削除。
+* 本番で“非常用フッター”スクリプトを走らせない。
+
+---
+
+## 1) CSP準拠：**インライン/評価/外部依存の整理**
+
+**やること**
+
+1. プロジェクトを全文検索し、**すべてのインラインJS**を排除：
+
+   * `index*.html` 内の `<script>…</script>` 本体、`onclick=""`, `onchange=""`, `onload=""` など**属性内イベント**を**ゼロ**に。
+   * 代わりにモジュール側で `addEventListener` へ置換。
+   * 既に外部化済みの Build ID 等は確認だけ。
+2. **`eval`/`new Function`/`setTimeout(string)`/`setInterval(string)` を禁止**。使っていれば**関数参照**に書替。
+3. **Web Worker/Service Worker禁止**（開発環境）：
+
+   * 既存のSW登録コードは**本番以外で無効化**済みか再確認。
+   * Web Worker を使っていれば**撤去**（現フェーズ不要）。
+4. **外部CDNの列挙**（本当に使っているものだけ）：
+
+   * 例：`cdn.jsdelivr.net` / `unpkg.com` / `fonts.googleapis.com` / `fonts.gstatic.com` / `youtube-nocookie.com` など。
+5. `.replit.dev` 配信の **CSPメタ** をページ先頭に追加（本番想定の最小権限）：
+
+   ```html
+   <meta http-equiv="Content-Security-Policy" content="
+     default-src 'self';
+     script-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+     style-src  'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+     img-src    'self' data: blob:;
+     font-src   'self' https://fonts.gstatic.com;
+     connect-src 'self';
+     frame-src  https://www.youtube-nocookie.com https://www.youtube.com;
+     object-src 'none'; base-uri 'self'; form-action 'self';
+   ">
+   ```
+
+   * 上記ドメインは**実際に使っているものだけ**残す。不要なら削る。
+   * **inline許可（`'unsafe-inline'`）はstyleのみ**に限定。scriptは**許可しない**。
+
+**受け入れ基準 1**
+
+* `.replit.dev` で **\[Report Only] の inline/eval/worker/connnect** 警告が**当アプリ発のものは0**（Replitフレームは除外）。
+* ページ機能に影響なし（イベントはすべて外部JSで動作）。
+
+---
+
+## 2) `iframe` の**無効属性を削除**し、許可だけを明示
+
+**やること**
+
+1. 自前の `iframe` を全文検索。
+2. `sandbox` から **`allow-downloads-without-user-activation` を削除**。
+3. `allow`（Permissions Policy）で**未対応トークン**を削除：
+   `ambient-light-sensor, battery, execution-while-not-rendered, execution-while-out-of-viewport, layout-animations, legacy-image-formats, navigation-override, oversized-images, publickey-credentials, speaker-selection, unoptimized-images, unsized-media, pointer-lock` 等。
+
+   * 必要なものだけ残す（例：`fullscreen; geolocation; microphone; camera` など実用分のみ）。
+4. `sandbox` は標準キーワードのみ（例：`allow-forms allow-modals allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation`）。
+
+**受け入れ基準 2**
+
+* `.replit.dev` とプレビュー双方で **`sandbox` 無効フラグの赤エラーが0**。
+* `allow` 未認識の警告が**自前iframeでは0**（Replitのiframeは除外）。
+
+---
+
+## 3) フッター“非常用”スクリプトを**本番無効化**（ログ抑制）
+
+**やること**
+
+1. `Console.js` 等の非常用ルート（`FOOTER DEBUG SCRIPT LOADED – EMERGENCY MODE` など）の実行条件を**開発のみ**に限定：
+
+   ```js
+   const isDev = location.hostname === 'localhost';
+   const EMERGENCY_FLAG = false; // デフォルトOFF
+   if (isDev && EMERGENCY_FLAG) { runFooterEmergencyFix(); }
+   ```
+2. フッターを **静的HTML**（`</body>` 直前）で常設。JSでの“強制表示”はデバッグ時のみ。
+3. 非常用ログは `console.debug` に落とし、本番では `console.debug = () => {}` で抑止可。
+
+**受け入れ基準 3**
+
+* `.replit.dev` のコンソールに**非常用フッターのログが出ない**。
+* フッターは自然に表示される。
+
+---
+
+## 4) エディター環境のノイズは**除外**して評価
+
+* `sp.replit.com` の 400、`LaunchDarkly`、`workspace_iframe.html`、`framework-*.js`、`GroupMarkerNotSet`(WebGL) 等は**Replitワークスペース由来**。
+* **.replit.dev直アクセス**でのエラーゼロをもって合格。
+
+---
+
+## 検証手順
+
+1. 変更反映 → **Application → Clear site data → ハードリロード**。
+2. `.replit.dev` で赤エラー0を確認。
+3. 主要画面（トップ/ガイド一覧/詳細/スポンサー関連）を巡回し、イベント・モーダルが正常動作。
+4. エディタープレビューでも**当アプリ由来の赤エラー0**を確認（環境ノイズは無視）。
+
+## コミットメッセージ
+
+`chore(security): enforce CSP compliance (no inline/eval/worker), clean iframe flags, disable footer emergency in prod`
+
+---
+
+ポイント：
+
+* 今出ている大量の `[Report Only]` は**CSPルールに“違反する可能性のあるコード”が残っている**サインです。**インライン/属性イベント/評価系**を全廃すれば消えます。
+* `iframe` の無効トークンは**ブラウザ未対応**なので削除が正解。
+* 評価は必ず **.replit.dev直アクセス**で行ってください（エディターのノイズは無関係）。
