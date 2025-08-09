@@ -1,0 +1,101 @@
+ノブさん、原因は**同じサイトでも “別タブ(.replit.dev)” と “エディタープレビュー” で読み込んでいる資産の世代がズレている**ことです。主犯は **Service Worker（SW）とブラウザキャッシュの残留**、次点で **出力ディレクトリ／参照パスの不統一や二重読み込み**。
+下を**丸ごと1回コピペ**でReplitのAgentに渡してください👇
+
+---
+
+【Replit Agent一括指示｜表示差異の根本原因を解消して統一】
+
+目的：
+
+* 別タブ(.replit.dev)とエディタープレビューで**同一ビルドを必ず読み込む**ようにし、UI・ログの差異（例：`locationNames`再宣言）を完全解消する。
+
+作業手順（順番厳守）
+
+1. Service Worker とキャッシュの全解除（暫定ワンショット）
+
+* `sw-unregister.js` を追加して一度だけ実行、全SWとCacheを削除：
+
+  ```js
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()))
+    .finally(() => caches?.keys?.().then(keys => keys.forEach(k => caches.delete(k))));
+  }
+  ```
+* `index.html` 最下部に一時的に `<script src="/sw-unregister.js"></script>` を挿入。
+* 解除後、このタグとファイルは削除。
+
+2. 開発環境でのSW登録を停止（本番のみ登録）
+
+```js
+// sw 登録コード周辺
+if ('serviceWorker' in navigator) {
+  const isProd = !(location.hostname === 'localhost' || location.host.endsWith('.replit.dev'));
+  if (isProd) navigator.serviceWorker.register('/sw.js');
+}
+```
+
+* `sw.js` は更新時即反映できるように：
+
+```js
+self.skipWaiting();
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+```
+
+* キャッシュ名はバージョン/ビルドID付きに（例：`tt-cache-v{{BUILD_ID}}`）。
+
+3. 出力先・参照パスの統一（世代ズレの根を断つ）
+
+* 配信ディレクトリを**1つ**に集約（例：`/public` だけ）。`/dist` `/build` 等の旧生成物は削除。
+* `index.html` に `<base href="/">` を追加し、全ての `<script>`, 画像, JSON 参照を**ルート相対**(`/assets/...`)に統一。
+* 同一スクリプトの**二重読み込み**（`type="module"`と通常`<script>`の併用含む）を排除。ESMに統一。
+
+4. キャッシュバスティング導入（常に最新を取らせる）
+
+* バンドル名にハッシュを付与（推奨）。暫定的にはクエリでOK：
+
+```html
+<script type="module" src="/app-init.js?v={{BUILD_ID}}"></script>
+```
+
+5. `locationNames` 再宣言の恒久対策（どの経路でも安全）
+
+* 宣言は**1ファイル**に集約（例：`src/constants/locations.js`）：
+
+```js
+export const locationNames = [/* 値 */];
+```
+
+* 参照側はすべて `import { locationNames } from '../constants/locations.js'` に統一。
+* 旧グローバル経路が残る間の暫定ガード（最終的には撤去）：
+
+```js
+window.locationNames = window.locationNames ?? locationNames;
+```
+
+6. “どのビルドを読んだか”の可視化（短期デバッグ）
+
+* 起動時にビルドIDをログ：
+
+```html
+<script>window.APP_BUILD_ID='{{BUILD_ID}}'; console.info('[TomoTrip] BUILD', window.APP_BUILD_ID, location.href);</script>
+```
+
+* 両環境で**同じBUILD\_ID** が出ることを確認したら、このログは削除。
+
+受け入れ条件
+
+* 別タブ(.replit.dev)とエディタープレビューの**両方で同じ BUILD\_ID が表示**される。
+* 両方の環境で `locationNames … already been declared` が**完全に消える**。
+* UI（カード枚数・配置・フッターなど）が**一致**し、キャッシュクリア＆ハードリロード後も差異が再発しない。
+
+確認手順
+
+1. 変更デプロイ → ブラウザの Application > Storage で **Clear site data**。
+2. 両環境を開き、BUILD\_ID とコンソールを確認。
+3. 問題なければ `sw-unregister.js` とBUILDログを撤去、SW登録は本番のみ継続。
+4. コミット: `fix: unify preview/prod builds; purge SW caches; hash assets; dedupe locationNames`
+
+---
+
+ポイント：表示の食い違いは**SW＋キャッシュ＋出力先不統一**の複合が9割。
+この順で潰すと、一度で根治できます。

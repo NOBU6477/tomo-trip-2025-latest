@@ -39,7 +39,15 @@
         });
     }
     
-    // Set build identifier for debugging
-    window.APP_BUILD_ID = 'TomoTrip-v2025.08.09-SW-PURGE';
-    console.info('[TomoTrip] BUILD:', window.APP_BUILD_ID, 'Location:', location.href);
+    // Set build identifier for debugging - both environments should show same ID
+    window.APP_BUILD_ID = 'TomoTrip-v2025.08.09-UNIFIED-BUILD';
+    console.info('%c[TomoTrip] BUILD ID:', 'color: #ff6b35; font-weight: bold;', window.APP_BUILD_ID);
+    console.info('%c[Environment]:', 'color: #007bff;', location.href);
+    console.info('%c[Host Type]:', 'color: #28a745;', 
+        location.hostname === 'localhost' ? 'LOCAL' : 
+        location.host.includes('.replit.dev') ? 'REPLIT-DEV' : 
+        location.host.includes('replit.com') ? 'REPLIT-PREVIEW' : 'PRODUCTION');
+    
+    // Mark cache cleanup completion
+    localStorage.setItem('tomotrip-cache-cleaned', window.APP_BUILD_ID);
 })();

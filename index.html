@@ -9,7 +9,11 @@
     <title>Local Guide - 特別な旅の体験を</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     
-    <!-- Cache cleanup for Service Worker consistency -->
+    <!-- Build ID and cache cleanup for consistency -->
+    <script>
+        window.APP_BUILD_ID = 'TomoTrip-v2025.08.09-UNIFIED-BUILD';
+        console.info('%c[TomoTrip] BUILD ID:', 'color: #ff6b35; font-weight: bold;', window.APP_BUILD_ID, 'Host:', location.host);
+    </script>
     <script src="sw-unregister.js"></script>
     
     <!-- Complete error suppression system -->
