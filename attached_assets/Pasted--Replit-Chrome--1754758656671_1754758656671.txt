@@ -1,0 +1,249 @@
+了解。スクショ全体を見ると「無視してよい Replit/Chrome 由来の警告」と「あなたのアプリのコード由来で直すべき実エラー」が混在しています。下の“修正指示書”に沿って、**直すべきエラーだけ**順に潰してください。
+
+---
+
+# 修正指示書（Replit 用）
+
+## 0) 無視してよいもの
+
+以下は Replit のプレビュー iframe / Chrome 由来で、あなたのアプリの不具合ではありません。対応不要です。
+
+* `GroupMarkerNotSet ... fallback to software WebGL...`
+* `Unrecognized feature: 'ambient-light-sensor'` など “Unrecognized feature” 一覧
+* `Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation'`（Replit iframe 側）
+* `stallwart: failed ping` / `WebSocket ... eval.kirk.platform.replit.com` など Replit 通信の失敗ログ
+
+> 以降は**アプリ由来**のもの。ここだけ直せば OK。
+
+---
+
+## 1) CSP によりフォント/画像がブロックされる
+
+### 症状
+
+* `Refused to load the font ... violates Content Security Policy: "font-src 'self' data:"`
+* `Refused to load the image ... violates ... "img-src 'self' data: blob:"`
+
+### 修正
+
+`index.html` の `<head>` にある CSP `<meta http-equiv="Content-Security-Policy" ...>` を **この値に置換**：
+
+```html
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com;
+  font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  script-src 'self';
+  connect-src 'self';
+  object-src 'none';
+  base-uri 'self';
+  frame-ancestors 'self';
+">
+```
+
+> 外部画像を別ドメインから読みたくない場合は、該当 URL を削除してください。
+> 逆に他の CDN を使うなら、そのドメインを `img-src` / `font-src` に追加。
+
+---
+
+## 2) グローバルを使った初期化順序エラー
+
+### 症状
+
+* `Cannot access 'globalAllGuides' before initialization`
+* `Cannot access 'globalCurrentPage' before initialization`
+
+### 原因
+
+`app-init.mjs` などで **定義前**のグローバル変数を参照。
+
+### 修正（どちらか）
+
+**A. モジュール化して順序を保証（推奨）**
+
+1. `index.html` のスクリプトを **すべて `type="module"`** にする。読み込み順は「定義 → 利用」：
+
+   ```html
+   <script type="module" src="/js/app-state.mjs"></script>
+   <script type="module" src="/js/default-guides.mjs"></script>
+   <script type="module" src="/js/location-setup.mjs"></script>
+   <script type="module" src="/js/modal.mjs"></script>
+   <script type="module" src="/js/event-handlers.mjs"></script>
+   <script type="module" src="/js/app-init.mjs"></script>
+   ```
+2. `app-init.mjs` の先頭で必要なものを **明示 import** して使う：
+
+   ```js
+   import { AppState } from './app-state.mjs';
+   import { ALL_GUIDES } from './default-guides.mjs';
+   import { setupLocationNames } from './location-setup.mjs';
+   // ...以下で使用
+   ```
+
+**B. 当面の暫定（グローバルのまま）**
+
+* 定義側で `window` に一度だけ代入し、**存在チェックして上書きを防止**：
+
+  ```js
+  // default-guides.mjs
+  window.globalAllGuides = window.globalAllGuides || ALL_GUIDES_ARRAY;
+  window.globalCurrentPage = window.globalCurrentPage ?? 1;
+  ```
+* `app-init.mjs` は **DOMContentLoaded 後**に実行：
+
+  ```js
+  document.addEventListener('DOMContentLoaded', startApp);
+  ```
+
+---
+
+## 3) `Cannot redefine property: AppState`
+
+### 原因
+
+同じプロパティ名を `Object.defineProperty` で**何度も**定義。
+
+### 修正
+
+`app-state.mjs` を次に変更：
+
+```js
+// app-state.mjs
+function createAppState() {
+  return { /* ...state... */ };
+}
+
+if (!window.AppState) {
+  // 初回だけ作る
+  window.AppState = createAppState();
+}
+export const AppState = window.AppState; // どこでも同一インスタンス
+```
+
+> 既に `defineProperty` を使っているなら `configurable: true` を付けるか、上の簡単実装に置き換え。
+
+---
+
+## 4) `Identifier 'switchToJapanese' has already been declared`
+
+### 原因
+
+`event-handlers.mjs` などで同名関数/変数を**重複定義**。
+または同じファイルを HTML で**二重に読み込み**。
+
+### 修正
+
+* `index.html` で同じ JS を重複で読み込んでいないか確認して**片方削除**。
+* ファイル側は**名前衝突を避ける**：
+
+  ```js
+  // event-handlers.mjs
+  export function switchToJapaneseHandler() { /* ... */ }
+
+  // index.html 側（必要ならグローバルへ一度だけ公開）
+  if (!window.switchToJapanese) {
+    window.switchToJapanese = switchToJapaneseHandler;
+  }
+  ```
+
+---
+
+## 5) `Cannot read properties of undefined (reading 'backdrop')`（modal.js）
+
+### 原因
+
+対象モーダル要素が未生成/未配置のタイミングで参照。
+
+### 修正
+
+* **存在チェックを追加**し、なければ生成 or 処理中断：
+
+  ```js
+  // modal.mjs
+  export function showSponsorLoginModal() {
+    const modal = document.getElementById('sponsorLoginModal');
+    if (!modal) {
+      console.warn('[modal] sponsorLoginModal not found');
+      return; // もしくは createSponsorLoginModal();
+    }
+    const backdrop = modal.querySelector('.backdrop');
+    if (!backdrop) {
+      // 必要なら作る
+      const b = document.createElement('div');
+      b.className = 'backdrop';
+      modal.appendChild(b);
+    }
+    // ...open 処理
+  }
+  ```
+* `event-handlers.mjs` 側で **明示 import**：
+
+  ```js
+  import { showSponsorLoginModal } from './modal.mjs';
+  // ボタンにバインド
+  document.getElementById('sponsorLoginBtn')
+    ?.addEventListener('click', showSponsorLoginModal);
+  ```
+
+---
+
+## 6) `setupLocationNames is not defined` / `showSponsorLoginModal is not defined`
+
+### 原因
+
+関数が**別モジュールにある**のにグローバル参照している。
+
+### 修正
+
+* **すべて import に統一**（§2-A 参照）
+  例：
+
+  ```js
+  // event-handlers.mjs
+  import { setupLocationNames } from './location-setup.mjs';
+  import { showSponsorLoginModal } from './modal.mjs';
+  ```
+* どうしてもグローバルにしたいなら、定義側で一度だけ `window.xxx = window.xxx || fn;`
+
+---
+
+## 7) 背景画像・カード画像が画面によって違う件（.replit.dev と IDE プレビューで差が出る）
+
+* **原因**：IDE 右側プレビューは Replit の iframe/CSP/キャッシュの影響で、一部の外部画像がブロック or 置換されることがあります。
+* **統一手順**：
+
+  1. 画像は **同一ドメイン**（`/assets/...`）に配置し、CSP で `img-src 'self' data: blob:` のみでも表示できる形にする。
+  2. どうしても外部 CDN を使うなら、§1 の `img-src` に**使うドメインを追加**。
+  3. `background-image` / `<img src>` ともに **相対パス**（例：`/assets/hero.jpg`）へ変更。
+  4. 変更後、ブラウザのキャッシュを必ずクリア（DevTools → Network → Disable cache にチェック）。
+
+---
+
+## 8) フッター「EMERGENCY」ログが残る
+
+* これはあなたが入れたデバッグ表示。誤動作ではありません。
+* ノイズを減らしたい場合は `Console.js`（または該当ファイル）のフラグを false に：
+
+  ```js
+  const DEBUG_FOOTER = false; // true -> false に
+  ```
+
+---
+
+## 9) 仕上げチェック（順番どおりに）
+
+1. CSP メタを更新 → 外部画像/フォントがブロックされないか確認
+2. `index.html` のスクリプト読み込みを `type="module"` 化、**定義 → 利用**の順に並べ替え
+3. import を明示化（`globalAllGuides` などのグローバル依存を削減）
+4. `AppState` を**一度だけ**作る（再定義防止）
+5. `switchToJapanese` の重複定義を解消（重複読み込み or 関数名衝突を排除）
+6. モーダルの `backdrop` 参照に**null ガード**を入れる
+7. 画像パスを `/assets/...` に統一、キャッシュ消去
+8. 再読み込みして **コンソールの赤エラーが 0 件**になることを確認
+
+   * 黄の “Unrecognized feature … / WebGL …” が残っても問題なし（無視）
+
+---
+
+必要なら、いまのファイル構成（`/js/*.mjs` の実ファイル名）を教えてください。**具体的な import 文**まであなたの構成に合わせて書き換え版を作ります。
