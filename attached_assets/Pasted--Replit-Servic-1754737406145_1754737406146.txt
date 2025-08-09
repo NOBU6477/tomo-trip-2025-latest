@@ -1,0 +1,148 @@
+ノブさん、状況は「**別タブで開いたサイト**と**Replitエディターのプレビュー**で“読み込まれているファイルの世代が違う”＝表示が食い違う」問題です。
+最も多い根本原因は **Service Worker／キャッシュに古いバンドルが残留**していること、または **参照パスの違い（base/scope違い・二重ビルド）** です。
+下を**丸ごとコピペ**でReplit Agentに渡してください👇
+
+---
+
+【Replit Agent一括指示｜表示差異の根本原因調査と統一修正】
+
+目的：
+
+* 別タブ表示（.replit.dev 等）とエディタープレビューで**UIとコンソールログが一致**する状態に統一する。
+* 古いJS（`locationNames` が再宣言される版）を参照している経路を排除。
+
+### 0) 現状の主要症状
+
+* 別タブでは `Uncaught SyntaxError: Identifier 'locationNames' has already been declared (app-init.js:1)` が出るが、プレビューでは出ないか挙動が異なる。
+* カード表示数などUIが不一致。
+
+---
+
+### 1) Service Worker とキャッシュの全面リセット
+
+1. **既存SWの解除**（ブラウザ依存せずコードで実施）
+
+   * 起動時に1回だけSWを**全解除**するメンテ関数を追加し、ビルドに含めて実行：
+
+     ```js
+     // sw-unregister.js（暫定）
+     if ('serviceWorker' in navigator) {
+       navigator.serviceWorker.getRegistrations().then(regs => {
+         regs.forEach(reg => reg.unregister());
+       }).finally(() => {
+         if (caches?.keys) caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+       });
+     }
+     ```
+   * `index.html` 末尾で **一時的に**読み込む：
+
+     ```html
+     <script src="/sw-unregister.js"></script>
+     ```
+   * 反映後に**一度だけ**アクセスして解除→その後この `<script>` は削除。
+2. **開発中はSW登録しない**ように条件化。`main.js` などの SW 登録コードを：
+
+   ```js
+   if (location.hostname !== 'localhost' && !location.host.endsWith('.replit.dev')) {
+     navigator.serviceWorker.register('/sw.js'); // 本番のみ
+   }
+   ```
+3. **SW運用を継続する場合**
+
+   * `sw.js` 冒頭に：
+
+     ```js
+     self.skipWaiting();
+     self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+     ```
+   * キャッシュ名に**ビルドID**を入れ、更新時は必ず新名に：
+
+     ```js
+     const CACHE_NAME = 'tt-cache-v{{BUILD_ID}}';
+     ```
+
+---
+
+### 2) 参照パスと配信物の“世代ズレ”を消す
+
+1. **base / 相対パスの統一**
+
+   * `index.html` に `<base href="/">` を明示（なければ追加）。
+   * すべての `<script src>` / 画像 / JSON の参照を **ルート相対**（`/assets/...`）に統一。
+2. **二重ビルド/二重出力の排除**
+
+   * `dist/` や `public/` など**配信ディレクトリを1つに集約**。
+   * `index.html` が**両方**に存在する場合は**片方に統一**。
+   * 旧生成物（例：`/build`, `/out`）は削除。
+3. **ファイル名にバージョン付与（キャッシュバスティング）**
+
+   * バンドルに `app-init.[hash].js` のような**ハッシュ付与**を導入。
+   * もし現状は手動なら、当面はクエリ付与：
+
+     ```html
+     <script type="module" src="/app-init.js?v={{BUILD_ID}}"></script>
+     ```
+4. **同一スクリプトの二重読み込み禁止**
+
+   * `index.html` で `app-init.js` や `locations.js` を**重複で読み込んでいないか**点検。
+   * `type="module"` と従来 `<script>` の**併用をやめて**ESM一本化。
+
+---
+
+### 3) “locationNames 再宣言”の恒久対策（どの経路でも安全）
+
+1. **宣言は1か所に集約**（`src/constants/locations.js`）：
+
+   ```js
+   export const locationNames = [/* 値 */];
+   ```
+2. **参照側はすべて import** に統一。
+3. 万一グローバル経路が残る間の**安全ガード**：
+
+   ```js
+   // グローバル経路は最終撤去だが、一時的には再宣言防止
+   window.locationNames = window.locationNames ?? locationNames;
+   ```
+
+---
+
+### 4) 表示差異の“原因特定”ログを埋め込む（デバッグ用・短期）
+
+* ビルドIDを全画面で可視化して、**読み込んだ世代**の違いを確認：
+
+  ```js
+  // build-id.js（自動書き換えでもOK）
+  window.APP_BUILD_ID = '{{BUILD_ID}}';
+  console.info('[TomoTrip] BUILD', window.APP_BUILD_ID, location.href);
+  ```
+* `index.html`の先頭で必ず読み込む（どの経路でも出る）：
+
+  ```html
+  <script>window.APP_BUILD_ID='{{BUILD_ID}}'</script>
+  <script src="/build-id.js"></script>
+  ```
+* 受入れ後にこの可視化は削除OK。
+
+---
+
+### 5) 受け入れ条件
+
+* 別タブ（.replit.dev）とエディタープレビューで**同一の BUILD\_ID がコンソールに表示**される。
+* 両方の画面で `locationNames … already been declared` が**完全に消える**。
+* 6枚目以降のカード表示や背景・フッター挙動が**両環境で一致**。
+* キャッシュクリア・ハードリロード後も差異が再発しない。
+
+### 6) 確認手順
+
+1. 上記対応をコミット → デプロイ。
+2. **アプリを開く前に**：Applicationタブ → Service Workers で**Unregister**、Storageで**Clear site data**。
+3. 別タブ＆プレビューの**両方で**開いて BUILD\_ID とコンソールを確認。
+4. 問題なければ `sw-unregister.js` と BUILD表示ログを撤去、SWを本番条件のみに戻す。
+5. コミットメッセージ：
+   `fix: unify builds across preview/prod, purge SW caches, hash assets, dedupe locationNames`
+
+---
+
+補足アドバイス：
+
+* “片方だけ古い表示”は**SW・Cache・出力ディレクトリの不一致**がほぼ原因です。まず **SW全解除 → base/出力先統一 → ハッシュ付与** の順で潰すと、以降は再発しにくくなります。
