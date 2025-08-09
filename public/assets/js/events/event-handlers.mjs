@@ -1,6 +1,11 @@
 // Event handlers - centralized setup with AppState support
+import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal.mjs';
+
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
+    
+    // Setup sponsor button events (CSP compliant)
+    setupSponsorButtonEvents();
     
     // Pass state to sub-functions
     setupGuideCardEvents();
@@ -9,6 +14,50 @@ export function setupEventListeners(state) {
     setupPaginationEvents(state);
     
     console.log('%cEvent listeners setup complete', 'color: #28a745;');
+}
+
+// CSP compliant sponsor button event setup
+function setupSponsorButtonEvents() {
+    const regBtn = document.getElementById('sponsorRegBtn');
+    const loginBtn = document.getElementById('sponsorLoginBtn');
+    const regBtnMobile = document.getElementById('sponsorRegBtnMobile');
+    const loginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
+    
+    // Desktop buttons
+    if (regBtn) {
+        regBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Sponsor registration clicked - redirecting to registration page');
+            window.location.href = 'sponsor-registration.html';
+        });
+    }
+    
+    if (loginBtn) {
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Sponsor login clicked - showing modal');
+            showSponsorLoginModal();
+        });
+    }
+    
+    // Mobile buttons
+    if (regBtnMobile) {
+        regBtnMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Mobile sponsor registration clicked - redirecting to registration page');
+            window.location.href = 'sponsor-registration.html';
+        });
+    }
+    
+    if (loginBtnMobile) {
+        loginBtnMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('Mobile sponsor login clicked - showing modal');
+            showSponsorLoginModal();
+        });
+    }
+    
+    console.log('%cSponsor button events setup complete', 'color: #28a745;');
 }
 
 // Utility function for AppState-based guide loading

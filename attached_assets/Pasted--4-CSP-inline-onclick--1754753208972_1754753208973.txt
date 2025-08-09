@@ -1,0 +1,204 @@
+了解。出ている4つのエラーはそれぞれ原因が別です。下の「修正指示書」を上から順に適用してください。**CSPで弾かれている “inline onclick”** と、**未定義の関数/依存の読み順** が主因です。
+
+---
+
+# 修正指示書
+
+## 0) 目的（今回消すべきエラー）
+
+* `setupLocationNames is not defined`
+* `showSponsorLoginModal is not defined`
+* `Cannot read properties of undefined (reading 'backdrop')`（Bootstrap未読込 or 対象要素なし）
+* `Refused to execute inline event handler ... violates CSP`（HTMLの `onclick=...`）
+
+---
+
+## 1) HTMLの **inline イベント** を全廃（CSP対応）
+
+### 1-1. `index.html` から `onclick="..."` を削除
+
+例）
+
+```html
+<!-- 修正前 -->
+<button id="sponsorRegBtn"  class="sponsor-btn" onclick="handleSponsorRegistration()">協賛店登録</button>
+<button id="sponsorLoginBtn" class="sponsor-btn login-btn" onclick="handleSponsorLogin()">ログイン</button>
+
+<!-- 修正後（onclick削除、idは残す） -->
+<button id="sponsorRegBtn"  class="sponsor-btn">協賛店登録</button>
+<button id="sponsorLoginBtn" class="sponsor-btn login-btn">ログイン</button>
+```
+
+> ほかにも `onclick`, `onchange`, `oninput` など**すべて削除**してください（CSPで禁止）。
+
+### 1-2. JSでイベントを付与（`assets/js/events/event-handlers.mjs`）
+
+```js
+// どこかの初期化関数内で（例：setupEventListeners）
+export function setupEventListeners(state) {
+  const regBtn   = document.getElementById('sponsorRegBtn');
+  const loginBtn = document.getElementById('sponsorLoginBtn');
+
+  regBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showSponsorRegistrationModal(); // 後述のモーダル関数を呼ぶ
+  });
+
+  loginBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    showSponsorLoginModal();        // 後述のモーダル関数を呼ぶ
+  });
+
+  // …他のボタン/リンクも同様に addEventListener へ移行
+}
+```
+
+---
+
+## 2) 位置名初期化 `setupLocationNames` をモジュール化して **必ず export/import**
+
+### 2-1. 新規作成：`assets/js/locations/location-setup.mjs`
+
+```js
+// 位置名の初期化（既存の locationNames 配列/オブジェクトを AppState に載せる）
+export function setupLocationNames(state) {
+  const src =
+    (window.locationNames && Array.isArray(window.locationNames))
+      ? window.locationNames
+      : []; // 必要なら安全なデフォルトへ
+
+  state.locationNames = src;
+  console.log('LocationNames Object Initialized:', src.length, 'locations');
+}
+```
+
+### 2-2. `app-init.mjs` で呼び出し
+
+```js
+import { initAppState } from './state/app-state.mjs';
+import { defaultGuides } from './data/default-guides.mjs';
+import { setupEventListeners } from './events/event-handlers.mjs';
+import { initializeGuidePagination } from './events/event-handlers.mjs';
+import { setupLocationNames } from './locations/location-setup.mjs';
+
+function startApp() {
+  const stored = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+  const guides = (Array.isArray(stored) && stored.length) ? stored : defaultGuides;
+
+  const state = initAppState({ guides, pageSize: 12, currentPage: 1 });
+
+  // ★ ここで位置名を AppState に注入
+  setupLocationNames(state);
+
+  initializeGuidePagination(state);
+  setupEventListeners(state);
+}
+```
+
+> これで `setupLocationNames is not defined` は解消します。
+
+---
+
+## 3) モーダルAPIを **1か所に定義＆export**（未定義/読み順/要素未存在を同時に対策）
+
+### 3-1. `assets/js/ui/modal.mjs`（新規 or 既存修正）
+
+```js
+// Bootstrapのグローバルがないときの保険
+function getBootstrap() {
+  if (window.bootstrap?.Modal) return window.bootstrap;
+  console.warn('Bootstrap not found; modal actions skipped.');
+  return null;
+}
+
+function ensureEl(id) {
+  const el = document.getElementById(id);
+  if (!el) console.warn(`Modal element #${id} not found in DOM`);
+  return el;
+}
+
+export function showSponsorLoginModal() {
+  const bs = getBootstrap();
+  const el = ensureEl('sponsorLoginModal');
+  if (!bs || !el) return;
+  // backdrop 読み取り時に undefined にならないよう、必ず options を自前で渡す
+  const modal = new bs.Modal(el, { backdrop: 'static', keyboard: false });
+  modal.show();
+}
+
+export function showSponsorRegistrationModal() {
+  const bs = getBootstrap();
+  const el = ensureEl('sponsorRegistrationModal');
+  if (!bs || !el) return;
+  const modal = new bs.Modal(el, { backdrop: 'static', keyboard: false });
+  modal.show();
+}
+```
+
+### 3-2. `event-handlers.mjs` で利用
+
+```js
+import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal.mjs';
+// …上の setupEventListeners 内でクリックに紐づけ（§1-2 参照）
+```
+
+### 3-3. **Bootstrap JS の確実な読込順**
+
+`index.html` の `</body>` 直前に **一度だけ**配置（既にある重複は削除）
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+```
+
+* `bootstrap.min.js` ではなく **`bootstrap.bundle.min.js`**（Popper同梱）
+* `type="module"` は **付けない**
+* 二重読込を避ける（複数タグがあると競合→`backdrop` 読み取り時に undefined が出やすい）
+
+> これで `showSponsorLoginModal is not defined` と `backdrop` 由来の TypeError を同時に潰せます。
+> それでも `backdrop` が出る場合は **対象モーダル要素のIDが誤り or DOM未挿入**。IDとHTMLを確認してください。
+
+---
+
+## 4) モーダルHTMLの存在を確認（無いと `null` で失敗）
+
+`index.html` に最低限の構造を用意（例：ログイン用）
+
+```html
+<div class="modal fade" id="sponsorLoginModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog"><div class="modal-content">
+    <div class="modal-header"><h5 class="modal-title">ログイン</h5></div>
+    <div class="modal-body">…</div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+    </div>
+  </div></div>
+</div>
+```
+
+> `sponsorRegistrationModal` も同様に。
+
+---
+
+## 5) 動作確認（別タブ）
+
+1. `.replit.dev` を**別タブ**で開く（IDE内プレビューではなく）
+2. DevTools → **Network: Disable cache** → **ハードリロード**
+3. Console から次を確認
+
+   * `setupLocationNames is not defined` が消えている
+   * `showSponsorLoginModal is not defined` が消えている
+   * ボタン押下でモーダルが開く（`backdrop` エラーが出ない）
+   * CSP の **inline handler** 警告が出ない
+
+---
+
+## 6) 参考：既存コードの掃除ポイント
+
+* まだ `window.handleSponsorLogin = …` のような**グローバル関数**が残っていれば削除し、**イベント委譲 or addEventListener** へ移行
+* `modal.js` / `modal.mjs` が複数ある場合は**1つに統合**（二重定義→挙動不安定の原因）
+* 依存の読み順：**Bootstrap → 自作 modal.mjs → event-handlers.mjs → app-init.mjs** の順で利用されるように
+
+---
+
+これで、スクショで見えている4系統のエラーはすべて潰せます。
+実装後にまだ赤エラーが残る場合は、該当行の**要素IDのタイプミス**か**二重読込**がほぼ原因です。ログの行番号を教えてもらえれば、そこに合わせて追加パッチを書きます。

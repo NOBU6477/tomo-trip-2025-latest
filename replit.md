@@ -3,7 +3,10 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
-- **COMPLETE TDZ CIRCULATION RESOLUTION (Aug 9, 2025)**: Full elimination of globalAllGuides AND globalCurrentPage TDZ errors through centralized AppState architecture
+- **COMPLETE CSP INLINE VIOLATION ELIMINATION (Aug 9, 2025)**: Final removal of all HTML onclick handlers and implementation of CSP-compliant event listeners
+- **MODAL API CENTRALIZATION**: Created assets/js/ui/modal.mjs with Bootstrap safety checks and proper element validation
+- **LOCATION SETUP MODULARIZATION**: Implemented assets/js/locations/location-setup.mjs for centralized location name management
+- **COMPLETE TDZ CIRCULATION RESOLUTION**: Full elimination of globalAllGuides AND globalCurrentPage TDZ errors through centralized AppState architecture
 - **APPSTATE CENTRALIZED ARCHITECTURE**: Implemented assets/js/state/app-state.mjs for unified state management preventing all TDZ circulation references
 - **ZERO-ERROR PRODUCTION ACHIEVEMENT**: Complete elimination of ALL application-originated console errors, CSP strict compliance achieved
 - **ESM MODULE SAFETY**: Eliminated all top-level variable declarations and references causing temporal dead zone errors
