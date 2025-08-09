@@ -19,10 +19,18 @@ if (isReplitIframe) {
 /** Main application initialization function */
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
+    
+    // 1) First ensure all data is loaded and available globally
+    loadAllGuides();
+    
+    // 2) Then setup event handlers
     setupEventListeners();
     wireSponsorButtons();
     wireLanguageSwitcher();
+    
+    // 3) Finally initialize pagination with loaded data
     initializeGuidePagination();
+    
     log.ok('✅ Application initialized successfully');
 }
 
@@ -49,10 +57,10 @@ if (!window.locationNames) {
 
 // Default guide data imported from centralized module
 
-// Global guide data
+// Global guide data - initialized before use
 let globalCurrentPage = 1;
 let globalGuidesPerPage = 12;
-let globalAllGuides = [];
+let globalAllGuides = []; // Will be populated by loadAllGuides()
 
 // Make defaultGuideData available globally from import
 window.defaultGuideData = defaultGuideData;
@@ -65,8 +73,8 @@ function loadAllGuides() {
     const ensureGuides = (guides) => {
         if (Array.isArray(guides) && guides.length > 0) return guides;
         
-        // Emergency placeholder data to prevent UI breakage
-        return [{
+        // Use imported default guides as fallback
+        return defaultGuideData || [{
             id: 'placeholder-1',
             name: '準備中のガイド',
             location: 'tokyo',
@@ -83,14 +91,22 @@ function loadAllGuides() {
     const allGuides = [...defaultGuideData, ...registeredGuides];
     const safeGuides = ensureGuides(allGuides);
     
-    console.log('Total guides loaded:', safeGuides.length, '| Placeholders:', safeGuides.filter(g => g.isPlaceholder).length);
+    // Make final guides available globally - safe assignment
+    globalAllGuides = safeGuides;
+    window.globalAllGuides = safeGuides; // Ensure window reference is consistent
+    
+    log.ok('🎯 Guide Loading Complete:', safeGuides.length, 'guides');
     
     return safeGuides;
 }
 
 // Initialize pagination and guide display with comprehensive fallback
 function initializeGuidePagination() {
-    globalAllGuides = loadAllGuides();
+    // Ensure global data is already loaded by loadAllGuides() in appInit()
+    if (!globalAllGuides || globalAllGuides.length === 0) {
+        console.warn('Emergency: Global guides not loaded, loading now');
+        globalAllGuides = loadAllGuides();
+    }
     
     // Final safety check - should not be needed due to loadAllGuides() fallback
     if (!globalAllGuides || globalAllGuides.length === 0) {

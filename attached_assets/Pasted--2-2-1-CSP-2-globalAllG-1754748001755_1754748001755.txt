@@ -1,0 +1,125 @@
+ありがとうございます。貼っていただいた2枚のスクショから、今残っている“本当に直すべき”エラーは主にこの2点です。
+
+1. **CSP でフォントがブロック**
+2. **`globalAllGuides` を初期化前に参照（TDZ/定義順エラー）**
+
+下の指示文をそのまま Replit の作業者に渡してください。短時間で直せます。
+
+---
+
+# 修正指示（Replit 用）
+
+## ① フォントが CSP でブロックされる問題を解消
+
+コンソール:
+
+* `Refused to load the font https://cdn.jsdelivr.net/... because it violates CSP "font-src 'self' https://fonts.gstatic.com"`
+* `Refused to load the font data:application/font-woff... because it violates CSP "font-src 'self' https://fonts.gstatic.com"`
+
+### 対応方針（どれか1つ）
+
+**A. CSP を許可する（最短）**
+開発中は外部CDNと data: を許可します。
+
+* もし `deployment_test_server.py` でレスポンスヘッダに CSP を付けているなら、`font-src` を次に変更：
+
+```python
+# 例: headers 生成箇所
+csp = (
+  "default-src 'self'; "
+  "script-src 'self'; "
+  "style-src 'self' 'unsafe-inline'; "
+  "img-src 'self' data: blob:; "
+  "font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; "
+  "connect-src 'self'; "
+  "object-src 'none'; "
+  "base-uri 'self'; "
+  "frame-ancestors 'self';"
+)
+```
+
+* もし `index.html` に `<meta http-equiv="Content-Security-Policy" ...>` があるなら、同様に **font-src** に `https://cdn.jsdelivr.net data:` を追加。
+
+**B. 外部依存をやめる（本番向け）**
+
+* `bootstrap-icons.woff2` を `assets/fonts/` に保存。
+* `bootstrap-icons.css` の `src:` を **相対パス**（例: `url("/assets/fonts/bootstrap-icons.woff2") format("woff2")`）に書き換え。
+* CSP の `font-src` は `font-src 'self' https://fonts.gstatic.com;` のままでOK。
+* **data: の埋め込みフォントは使用しない**（CSP を緩めずに済みます）。
+
+> 受け入れ基準：ページ読み込み時、フォントの赤エラーがゼロになること。
+
+---
+
+## ② `globalAllGuides` を初期化前に参照しているエラーを解消
+
+コンソール:
+
+* `Uncaught ReferenceError: Cannot access 'globalAllGuides' before initialization`
+* 発生箇所: `initializeGuidePagination` → `app-init.mjs` 93行付近
+
+### 原因
+
+`let/const` で宣言した `globalAllGuides` を **宣言より前**（またはモジュール循環により未初期化）で参照しています。ESM の「一時的デッドゾーン（TDZ）」が原因。
+
+### 修正手順
+
+1. `app-init.mjs` で **データの確定 → windowへ公開 → それを使う関数呼び出し** の順に並び替えます。
+2. 参照する側（`initializeGuidePagination` など）には **値を引数で渡す** か、`window.globalAllGuides` を使うように統一します（循環参照回避）。
+
+#### 置換用サンプル（安全順序）
+
+```js
+// app-init.mjs (上部 import 群のあと)
+
+import { defaultGuides } from './data/default-guides.mjs';
+import { setupEventListeners, initializeGuidePagination } from './events/event-handlers.mjs';
+
+// 1) データをまず確定
+const stored = JSON.parse(localStorage.getItem('registeredGuides') || 'null');
+const allGuides = Array.isArray(stored) && stored.length ? stored : defaultGuides;
+
+// 2) 必要ならグローバルへ（循環参照を断つため window 経由）
+window.globalAllGuides = allGuides;
+
+// 3) その後で関数を呼ぶ（★呼び出しを必ず宣言の後に）
+initializeGuidePagination(window.globalAllGuides);
+setupEventListeners();
+```
+
+> 注意：
+>
+> * 他ファイルで `import { globalAllGuides } from 'app-init.mjs'` のように**値を import**していると循環しやすいです。
+>   その場合は **import をやめて** `window.globalAllGuides` を読むか、**引数で渡す**（推奨）に変更してください。
+> * 同モジュール内でも、`initializeGuidePagination()` の呼び出しが **宣言より上に来ない** ように並び替えてください。
+> * どうしても順序調整が難しい時は一時回避として `var globalAllGuides = ...`（関数スコープ・巻き上げ）もありますが、基本は**並び替え**で解決してください。
+
+> 受け入れ基準：ページ読み込み直後に `globalAllGuides` の ReferenceError が発生しない。`Total guides loaded: 12` 等のログが出て、ページネーションが動作する。
+
+---
+
+## 動作確認チェックリスト
+
+* [ ] ページ初回ロードで **赤エラー 0**（Replit エディターの枠内ではなく、**別タブの `.replit.dev` 本番プレビュー**で確認）
+* [ ] フォントの 403/CSP 拒否が出ない
+* [ ] `globalAllGuides` の ReferenceError が出ない
+* [ ] ガイドカードとページネーションが表示・操作可能
+* [ ] SW/キャッシュ掃除ログは緑で完了（以前のような 404 は出ない）
+
+### 確認手順
+
+1. Replit を **別タブ**で開く（`https://<host>.replit.dev`）。
+2. DevTools → Network「Disable cache」にチェック → **ハードリロード**（Cmd/Ctrl+Shift+R）。
+3. Console の赤エラーを確認。
+4. 問題が消えるまで CSP と初期化順序を調整。
+
+---
+
+### 補足（この赤や黄は気にしなくてOK）
+
+* `GroupMarkerNotSet(...): Automatic fallback to software WebGL...` は Chrome の情報ログ（警告）で、アプリ機能には無関係。
+* Replit IDE 内 `workspace_iframe.html` 由来の *Unrecognized feature* 警告や WebSocket 失敗は **IDEの埋め込みフレームのもの**。別タブ `.replit.dev` では出ません。
+
+---
+
+必要なら、あなたの CSP 方針（A/B どちらでいくか）だけ教えてください。方針に合わせて、実際の `deployment_test_server.py` または `index.html` の **差分パッチ**を書いてお渡しします。
