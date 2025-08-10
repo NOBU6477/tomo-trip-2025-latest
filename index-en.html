@@ -1638,7 +1638,7 @@
                                     <span class="fw-bold">${guide.rating}</span>
                                 </div>
                                 <div class="text-end">
-                                    <div class="fw-bold text-primary">¥${(guide.price || 0).toLocaleString()}</div>
+                                    <div class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</div>
                                     <small class="text-muted">per day</small>
                                 </div>
                             </div>
@@ -1899,7 +1899,7 @@
                                         <span class="text-warning">★</span>
                                         <span class="fw-bold">${guide.rating}</span>
                                     </div>
-                                    <div class="fw-bold text-primary fs-4">¥${(guide.price || 0).toLocaleString()}</div>
+                                    <div class="fw-bold text-primary fs-4">¥${Number(guide?.price || 0).toLocaleString()}</div>
                                     <small class="text-muted">per day</small>
                                 </div>
                                 <div class="col-md-8">
@@ -2864,7 +2864,7 @@
                     <div class="mb-2"><strong>Participants:</strong> ${participants} people</div>
                     <div class="mb-2"><strong>Base Rate:</strong> ${currentBookingGuide.price}/hour</div>
                 `;
-                totalElement.textContent = `¥${total.toLocaleString()}`;
+                totalElement.textContent = `¥${Number(total || 0).toLocaleString()}`;
             } else {
                 summary.innerHTML = '<p class="text-muted">Please fill in the details</p>';
                 totalElement.textContent = '¥0';

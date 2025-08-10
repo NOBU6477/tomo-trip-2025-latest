@@ -3,6 +3,11 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
+- **FINAL CSP INLINE SCRIPT ELIMINATION (Aug 10, 2025)**: Complete removal of all inline JavaScript from HTML files, externalized to .mjs modules for strict CSP compliance
+- **DUPLICATE FUNCTION DECLARATION RESOLUTION**: Eliminated switchToJapanese redefinition errors by consolidating event handler architecture and preventing function conflicts
+- **PRICE DATA TYPE SAFETY (Aug 10, 2025)**: Added comprehensive Number() validation to all toLocaleString() calls preventing undefined price errors
+- **EMERGENCY BUTTON MODULARIZATION**: Separated emergency button handlers into dedicated .mjs files (emergency-buttons.mjs, emergency-buttons-en.mjs) for CSP compliance
+- **MODAL SAFETY ENHANCEMENT**: Enhanced modal.mjs with comprehensive null checks and Bootstrap availability validation
 - **CSP VIOLATION ELIMINATION (Aug 9, 2025)**: Complete removal of external image dependencies and Unsplash references, strict CSP implementation with 'self' policy
 - **EXTERNAL RESOURCE LOCALIZATION**: All guide images converted to local SVG placeholders, ocean background converted to CSS gradient
 - **FONT CSP COMPLIANCE (Aug 9, 2025)**: Bootstrap Icons and Google Fonts localized to prevent CSP font-src violations, system font fallbacks implemented

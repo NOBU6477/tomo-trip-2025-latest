@@ -48,7 +48,7 @@ function loadBookmarksList() {
                             <div class="card-body p-3">
                                 <h6 class="card-title mb-1">${guide.name}</h6>
                                 <p class="card-text small text-muted mb-2">${window.locationNames[guide.location] || guide.location}</p>
-                                <p class="card-text"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
+                                <p class="card-text"><strong>¥${Number(guide?.price || 0).toLocaleString()}</strong></p>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">詳細</button>
                                     <button class="btn btn-outline-danger btn-sm" data-action="remove-bookmark" data-guide-id="${guide.id}">削除</button>
@@ -92,7 +92,7 @@ function loadComparisonList() {
                         <h6 class="card-title mb-1">${guide.name}</h6>
                         <p class="card-text small text-muted mb-1">${window.locationNames[guide.location] || guide.location}</p>
                         <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
-                        <p class="card-text mb-3"><strong>¥${(guide.price || 0).toLocaleString()}</strong></p>
+                        <p class="card-text mb-3"><strong>¥${Number(guide?.price || 0).toLocaleString()}</strong></p>
                         <div class="mt-auto">
                             <div class="d-grid gap-2">
                                 <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">

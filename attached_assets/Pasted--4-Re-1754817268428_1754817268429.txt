@@ -1,0 +1,260 @@
+了解。スクショに出ているエラー/警告は大きく4系統です。下の「修正指示書」を上から順に実施してください。**太字の行だけやれば最優先の赤エラーは消えます**。
+
+---
+
+# 修正指示書（Replit 用）
+
+## 0) 前提（Replitのノイズを切り分け）
+
+* Replit の「Preview（.replit.dev）」とは別に、\*\*右上の↗アイコンで「新しいタブで開く」\*\*を使って実アプリを確認してください。
+  `workspace_iframe.html` や `sp.replit.com` 由来の赤行は IDE 側の注入で、アプリ外のノイズです（無視可）。
+
+---
+
+## 1) sandbox の無効フラグを修正
+
+### 症状
+
+```
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+```
+
+### 指示
+
+* プロジェクト内で **`allow-downloads-without-user-activation` を使っている <iframe>** を検索し、**`allow-downloads`** に置換。
+  例:
+
+```html
+<!-- 修正前 -->
+<iframe sandbox="allow-scripts allow-same-origin allow-downloads-without-user-activation"></iframe>
+
+<!-- 修正後 -->
+<iframe sandbox="allow-scripts allow-same-origin allow-downloads"></iframe>
+```
+
+---
+
+## 2) Permissions-Policy（旧 Feature-Policy）の警告を消す
+
+### 症状
+
+```
+Unrecognized feature: 'ambient-light-sensor' / 'battery' / 'navigation-override' ...（多数）
+```
+
+### 指示
+
+* `index.html` の `<head>` に **古い `Feature-Policy` / `Permissions-Policy` の meta** があれば**削除**するか、**対応しているディレクティブだけ**に絞る。
+  最も簡単なのは **該当 meta を削除**です（サンドボックス化や権限制御が不要なら削除でOK）。
+
+> もし残すなら最小例（サンプル）：
+
+```html
+<meta http-equiv="Permissions-Policy" content="
+  geolocation=(),
+  camera=(),
+  microphone=()
+">
+```
+
+（列挙の書式は *feature=() or feature=("*")\*。列挙できない古い名前は使わない）
+
+---
+
+## 3) CSP（Content-Security-Policy）設定を整理
+
+### 症状
+
+* フォント・画像が CSP でブロック
+* jsdelivr / Unsplash / Google Fonts など外部CDNの拒否
+* 「inline script を実行できない」
+
+  ```
+  Refused to execute inline script because it violates "script-src 'self' ..."
+  Refused to load the font ... violates "font-src 'self' data:"
+  ```
+
+### 指示
+
+1. **`index.html` の古い CSP meta を一度削除**してから、下記を **そのまま貼り付け**てください（必要に応じてドメインを増減）:
+
+```html
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net https://apis.google.com;
+  style-src  'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+  img-src    'self' data: blob: https://images.unsplash.com https://*.unsplash.com;
+  font-src   'self' data: https://cdn.jsdelivr.net https://fonts.gstatic.com;
+  connect-src 'self' https://*.replit.dev wss://*.replit.dev https://replit.com wss://replit.com;
+  worker-src 'self' blob:;
+  frame-ancestors 'self';
+  upgrade-insecure-requests;
+">
+```
+
+> これで **Bootstrap Icons / Google Fonts / Unsplash 画像** の 403/拒否が止まります。
+> もし別CDN（Cloudflare, unpkg等）を使っていれば `script-src`/`style-src`/`font-src`/`img-src` に追記。
+
+2. **インラインJSとインラインイベントを撲滅**
+
+   * HTML から `onclick="..."` など**インラインイベント属性を削除**し、**JS側で `addEventListener`** に移行。
+   * `<script>...</script>` で生JSを書いている場合は、**別ファイル（.mjs / .js）に移動**して `<script type="module" src="..."></script>` で読み込む。
+     例（ボタン）:
+
+```html
+<!-- 修正前 -->
+<button id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
+
+<!-- 修正後（HTMLからonclick削除）-->
+<button id="sponsorRegBtn">協賛店登録</button>
+```
+
+```js
+// event-handlers.mjs
+document.getElementById('sponsorRegBtn')
+  ?.addEventListener('click', handleSponsorRegistration);
+```
+
+> ※ どうしてもインラインJSを残すなら、**nonce 方式**か\*\*`sha256-...` ハッシュ\*\*を CSP に追加が必要ですが、保守性の観点で「外部ファイル化」が圧倒的に楽です。
+
+---
+
+## 4) モジュールの二重読み込み・未定義/順序エラーを解決
+
+### 症状
+
+* `Uncaught SyntaxError: Identifier 'switchToJapanese' has already been declared`
+* `Cannot access 'globalAllGuides' before initialization`
+* `setupLocationNames is not defined`
+* `Cannot redefine property: AppState`
+
+### 指示
+
+1. **`index.html` で同じJSを重複読み込みしていないかを確認**
+
+   * `event-handlers.mjs` / `app-init.mjs` / `modal.js` など、**同一パスが2回以上 `<script>` に出ていないこと**。
+   * すべて \*\*`type="module"` + `defer`（またはデフォルトのモジュール遅延）\*\*で読み込む。
+
+```html
+<!-- 例：トップだけを読み込み、他はその中で import -->
+<script type="module" src="/js/app-init.mjs"></script>
+```
+
+```js
+// app-init.mjs（内部で統一して import）
+import './event-handlers.mjs';
+import './modal.js';
+import './location-setup.mjs';
+```
+
+2. **グローバル依存の初期値を先に定義**
+
+   * `app-init.mjs` の最上部などで最低限の初期化を置く：
+
+```js
+// app-init.mjs の最上部（最初に実行されるモジュール）
+window.AppState ??= {};
+window.globalAllGuides ??= [];
+window.globalCurrentPage ??= 1;
+```
+
+3. **同じ名前の関数やオブジェクトを再宣言しない**
+
+   * どうしても多重 import になる場合は「再定義ガード」を付与：
+
+```js
+// event-handlers.mjs
+if (!window.__handlersInitialized__) {
+  window.__handlersInitialized__ = true;
+  export function switchToJapanese(){ ... } // ←同名が別所に無いかも確認
+  // リスナー登録もここで一度だけ
+}
+```
+
+* `Cannot redefine property: AppState` は、`Object.defineProperty(window,'AppState',...)` を複数回実行しているサイン。
+  → **一度目だけ定義**する or **`defineProperty` をやめて通常代入に変更**:
+
+```js
+// NG: 毎回 defineProperty
+// OK:
+window.AppState = window.AppState || {};
+```
+
+---
+
+## 5) DOM 要素の未存在・順序依存をガード
+
+### 症状
+
+* `Cannot read properties of undefined (reading 'backdrop')`（`modal.js`）
+* モーダル要素が存在しないページでモーダル初期化を実行
+
+### 指示
+
+```js
+// modal.js
+const modalEl = document.getElementById('loginModal');
+if (!modalEl) {
+  // このページにモーダルが無い場合は何もしない
+  console.info('[modal] loginModal not found -> skip init');
+} else {
+  const loginModal = bootstrap?.Modal?.getOrCreateInstance(modalEl);
+  // 以降、loginModal を使う処理…
+}
+```
+
+---
+
+## 6) データ未定義を防ぐ（ガイドカード）
+
+### 症状
+
+* `Cannot read properties of undefined (reading 'toLocaleString')`（価格などが undefined）
+
+### 指示
+
+```js
+// createGuideCard など
+const rawPrice = Number(guide?.price);
+const price = Number.isFinite(rawPrice) ? rawPrice : 0;
+const priceLabel = price.toLocaleString('ja-JP');
+```
+
+* 画像URLやプロフィール画像も `??` でフォールバック：
+
+```js
+const avatar = guide?.avatar || '/assets/img/default-avatar.png';
+```
+
+---
+
+## 7) フォント/画像の 403 を止める（CSP 追加の再確認）
+
+* **Bootstrap Icons**: `font-src` に `https://cdn.jsdelivr.net` と `https://fonts.gstatic.com` を入れる（上のCSP例に含め済み）。
+* **Unsplash 画像**: `img-src` に `https://images.unsplash.com`（やサブドメイン）を入れる（含め済み）。
+* DataURL フォントを使う場合は `font-src` に **`data:`** が必要（含め済み）。
+
+---
+
+## 8) 余計なログ（フッター「EMERGENCY MODE」等）
+
+* これはあなたの**デバッグ出力**でエラーではありません。
+  noisy であれば `console.debug` に落とすか、`if (process.env.NODE_ENV !== 'production')` 相当のフラグで本番では出さないように。
+
+---
+
+## 9) 動作確認の手順（再発しやすい順序ミスを潰す）
+
+1. `index.html` から **重複 `<script>` を削除** → 入口は **`app-init.mjs` 1本**に。
+2. `app-init.mjs` の先頭で **グローバル初期化**（`AppState/global*`）を実行。
+3. `app-init.mjs` 内で **他モジュールを import**（順序を固定）。
+4. **すべての `onclick=` を削除**し、JSで `addEventListener` に置換。
+5. **CSP meta を差し替え**（上記テンプレ）。
+6. 可能なら **新しいタブ（.replit.dev）で検証**。IDE 由来の赤行が消えて、アプリ由来のものだけが残るはず。
+
+---
+
+### これでも残る/分からない箇所があれば
+
+* どのファイルのどの行か（例: `event-handlers.mjs:299`）を教えてくれたら、**該当スニペットをこちらで書き換え**ます。
+* 画像/フォント/CDN ドメインが他にもあれば、そのホスト名を列挙してください。CSP に追記します。

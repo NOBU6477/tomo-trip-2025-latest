@@ -63,34 +63,11 @@ function setupSponsorButtonEvents() {
     console.log('%cSponsor button events setup complete', 'color: #28a745;');
 }
 
-// Language switch button events
+// Language switch button events - delegated to emergency-buttons.mjs to prevent conflicts
 function setupLanguageSwitchEvents() {
-    const jpBtn = document.getElementById('jpBtn');
-    const enBtn = document.getElementById('enBtn');
-    
-    if (jpBtn) {
-        jpBtn.addEventListener('click', switchToJapanese);
-        console.log('%cJapanese language button setup complete', 'color: #28a745;');
-    }
-    
-    if (enBtn) {
-        enBtn.addEventListener('click', switchToEnglish);
-        console.log('%cEnglish language button setup complete', 'color: #28a745;');
-    }
-}
-
-// Language switch functions
-function switchToJapanese() {
-    console.log('🇯🇵 Japanese selected - staying on current page');
-    // Already on Japanese page (index.html), no action needed
-    alert('既に日本語版を表示しています');
-}
-
-function switchToEnglish() {
-    console.log('🇺🇸 English selected - switching to English page');
-    console.log('Language switched to English');
-    // Redirect to English version
-    window.location.href = 'index-en.html';
+    // Language switch is now handled by emergency-buttons.mjs to prevent duplicate declarations
+    // This avoids CSP violations and function redefinition errors
+    console.log('%cLanguage switch events delegated to emergency handlers', 'color: #6c757d;');
 }
 
 // Utility function for AppState-based guide loading
@@ -156,7 +133,7 @@ function createGuideCard(guide) {
                 <h5 class="card-title">${guide.name}</h5>
                 <p class="card-text text-muted small">${window.locationNames ? (window.locationNames[guide.location] || guide.location) : guide.location}</p>
                 <div class="mb-2">
-                    <span class="badge bg-primary me-1">¥${guide.price.toLocaleString()}</span>
+                    <span class="badge bg-primary me-1">¥${Number(guide?.price || 0).toLocaleString()}</span>
                     <span class="badge bg-warning text-dark">★${guide.rating}</span>
                 </div>
                 <div class="mt-auto">

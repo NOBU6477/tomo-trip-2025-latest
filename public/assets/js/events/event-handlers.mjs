@@ -133,7 +133,7 @@ function createGuideCard(guide) {
                 <h5 class="card-title">${guide.name}</h5>
                 <p class="card-text text-muted small">${window.locationNames ? (window.locationNames[guide.location] || guide.location) : guide.location}</p>
                 <div class="mb-2">
-                    <span class="badge bg-primary me-1">¥${guide.price.toLocaleString()}</span>
+                    <span class="badge bg-primary me-1">¥${Number(guide?.price || 0).toLocaleString()}</span>
                     <span class="badge bg-warning text-dark">★${guide.rating}</span>
                 </div>
                 <div class="mt-auto">
