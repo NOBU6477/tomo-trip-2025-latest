@@ -1,0 +1,104 @@
+了解。UI 崩れの主因は **CSP が厳しすぎて外部 CSS を遮断**していることです（`bootstrap.min.css` と `swiper-bundle.min.css` が弾かれているログが決定打）。ついでに `iframe` の `sandbox` に **無効なフラグ**（`allow-downloads-without-user-activation`）が入っているため赤エラーが増えています。
+下の「コピペ用指示書」を Replit のエージェントにそのまま貼って実行してください。
+
+---
+
+# ✅ コピペ用：Replit エージェント向け修正指示書
+
+以下の手順を **差分 PR** として実行してください。目的は Replit のプレビュー環境でも UI が崩れない **開発用の緩い CSP** に切り替え、`iframe sandbox` の無効フラグを除去することです。
+
+## 1) 開発用 CSP を緩和（CSS/CDN/画像等を許可）
+
+1-1. リポジトリ内で CSP を定義しているファイルを検索：
+
+* `csp.js` / `security/csp.js` / `utils/csp.js` / `public/csp.js`
+* または `index.html` にある `<meta http-equiv="Content-Security-Policy">`
+
+1-2. **開発環境（replit.dev / .replit.dev）では以下ポリシーを適用**するように置き換え。
+（メタタグ生成でも JS 生成でもよい。どちらも見つからない場合は `index.html` の `<head>` にメタタグで追加）
+
+```html
+<!-- 開発用: Replit プレビューで使う CSP（本番はより厳しく） -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self' https: data: blob:;
+  script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com/public/js;
+  style-src  'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+  style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+  img-src    'self' data: blob: https://images.unsplash.com https://*.gstatic.com;
+  font-src   'self' data: https://fonts.gstatic.com;
+  connect-src 'self' https: wss:;
+  frame-src  'self' https:;
+  object-src 'none';
+">
+```
+
+> ポイント
+>
+> * `style-src` / `style-src-elem` に **`https://cdn.jsdelivr.net`** と **`https://fonts.googleapis.com`** を追加（Bootstrap/Swiper/Google Fonts の CSS を通す）。
+> * `font-src` に **`https://fonts.gstatic.com`** を追加（フォント本体）。
+> * 画像は Unsplash を読むので `images.unsplash.com` を許可。
+> * Replit が挿入する `beacon.js` を許す場合は `script-src` に `https://replit.com/public/js` を含める。許したくない場合は**後述 3) で無効化**。
+
+> 注意
+>
+> * ログに「`frame-ancestors` は meta では無視」と出ています。`frame-ancestors` が必要なら **HTTP ヘッダー**で送る必要があるので、開発中は **CSP メタタグに `frame-ancestors` を入れない**でください（警告を消す目的）。
+
+## 2) `iframe sandbox` の無効フラグを除去
+
+2-1. プロジェクト全体で `allow-downloads-without-user-activation` を検索。
+2-2. `iframe` の `sandbox` 属性から **そのトークンを削除**してください。必要なら下記のように置き換え：
+
+```diff
+- <iframe ... sandbox="allow-scripts allow-same-origin allow-popups allow-downloads-without-user-activation ...">
++ <iframe ... sandbox="allow-scripts allow-same-origin allow-popups allow-downloads ...">
+```
+
+> 補足
+> `allow-downloads-without-user-activation` はブラウザや埋め込み先の制約で弾かれることがあり、**現状エラー原因**になっています。通常は `allow-downloads` で十分です。
+
+## 3) Replit の `beacon.js` をどうするか決める
+
+ログ末尾の
+`Refused to load the script 'https://replit.com/public/js/beacon.js'` は **Replit 側が注入**してくるものです。方針を選択：
+
+* **A. 読ませる**: 1) の `script-src` に `https://replit.com/public/js` を入れてあります。これでブロックは消えます。
+* **B. 読ませない**: アプリの HTML/JS 内に `beacon.js` を手動で書いている箇所があれば削除。Replit 側からの注入であれば**無視して良い開発時警告**です（機能影響なし）。
+
+## 4) 400 (sp.replit.com/v1/i)・WebGL・“Unrecognized feature” の扱い
+
+* `Failed to load resource: the server responded with a status of 400 (sp.replit.com/v1/i)` は Replit ワークスペース用の内部計測で、本番アプリには無関係。**無視可**。
+* `Automatic fallback to software WebGL has been deprecated` は Chrome の情報ログ。**無視可**。
+* `Unrecognized feature: 'ambient-light-sensor' ...` は Next/開発フレームワーク側が `Feature-Policy`/`Permissions-Policy` を網羅的に宣言しているための **警告**。**機能影響なし・無視可**。
+
+## 5) 動作確認（必須）
+
+* Replit の **外部タブ（`*.kirk.replit.dev` や `*.replit.dev`）で開いて確認**。
+* 下記が満たされること：
+
+  * Bootstrap / Swiper のスタイルが読み込まれ、UI が元のデザインに戻る。
+  * コンソールの赤エラーから **CSP（stylesheet/script）と sandbox のエラーが消える**。
+  * それ以外の黄色い “Unrecognized feature …” は残っていて OK。
+
+## 6) 本番用メモ（今はやらない）
+
+本番デプロイ時は CSP を再度引き締めてください：
+
+* `script-src` から `'unsafe-inline' 'unsafe-eval'` を外し、必要箇所は **nonce か SHA-256 ハッシュ**に置換。
+* 実運用の CDN だけを許可。
+* 可能なら **HTTP ヘッダー**で配信（`frame-ancestors` 等が有効に）。
+
+---
+
+### これで直るもの
+
+* UI 崩れ（外部 CSS ブロック）
+* `allow-downloads-without-user-activation` の赤エラー
+* `beacon.js` の CSP ブロック（許可する選択時）
+
+### そのままで問題ないもの
+
+* `sp.replit.com/v1/i` の 400
+* WebGL の deprecate 警告
+* “Unrecognized feature …” の大量の黄色ログ
+
+不明点があれば、現在の `CSP` を定義しているファイル名と `iframe` を出しているファイル名を教えてください。そこにピンポイントで当てた差分パッチも書きます。

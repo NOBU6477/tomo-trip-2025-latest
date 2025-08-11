@@ -76,7 +76,9 @@ window.addEventListener('error', function(e) {
         'speaker-selection',
         'unoptimized-images',
         'unsized-media',
-        'pointer-lock'
+        'pointer-lock',
+        'allow-downloads-without-user-activation',
+        'sandbox'
     ];
     
     function shouldSuppress(message) {
