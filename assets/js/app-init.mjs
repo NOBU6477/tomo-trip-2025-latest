@@ -3,7 +3,7 @@
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
-import { initAppState } from './state/app-state.mjs';
+import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
 import { APP_CONFIG } from '../../env/app-config.mjs';
@@ -27,7 +27,10 @@ function appInit() {
     const guides = (Array.isArray(storedGuides) && storedGuides.length) ? storedGuides : defaultGuideData;
 
     // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
-    const state = initAppState({ guides, pageSize: 12, currentPage: 1 });
+    AppState.guides = guides;
+    AppState.pageSize = 12;
+    AppState.currentPage = 1;
+    const state = AppState;
 
     // 3) Setup location names in AppState
     setupLocationNames(state);

@@ -1,7 +1,9 @@
-// AppState - Singleton pattern to prevent redefinition errors
-// Uses nullish coalescing to safely create or get existing state
+// AppState - Single application state object with default export
+// Uses nullish coalescing to prevent redefinition errors
 
-const state = (window.AppState ??= {
+const AppState = (window.AppState ??= {
+  locale: 'ja',
+  page: 1,
   guides: [],
   pageSize: 12,
   currentPage: 1,
@@ -31,9 +33,9 @@ const state = (window.AppState ??= {
   
   setGuides(guides) {
     this.guides = Array.isArray(guides) ? guides : [];
-    this.currentPage = 1; // Reset to first page
+    this.currentPage = 1;
     return this;
   }
 });
 
-export default state;
+export default AppState;
