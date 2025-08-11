@@ -244,7 +244,7 @@ export function initializeGuidePagination(state) {
 }
 
 // Display guides for current page using AppState
-function displayGuides(page, state) {
+export function displayGuides(page, state) {
     const currentState = state || window.AppState;
     if (!currentState) return;
     

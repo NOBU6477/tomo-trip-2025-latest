@@ -1,7 +1,7 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
@@ -40,8 +40,8 @@ function appInit() {
     initializeGuidePagination(state);
     setupEventListeners(state);
     
-    // Display guides on page load
-    displayGuides(1);
+    // Display guides on page load with state parameter
+    displayGuides(1, state);
     
     // Setup button handlers
     wireSponsorButtons();
