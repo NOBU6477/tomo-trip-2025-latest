@@ -2,7 +2,7 @@
 .theme-ocean {
     margin: 0;
     padding: 0;
-    background-image: url('/assets/images/yacht-beach-background.jpg');
+    background-image: url('/assets/images/beach-yacht-tourists.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -14,7 +14,7 @@
 /* Mobile-friendly background for better compatibility */
 @media (max-width: 768px) {
     html, body {
-        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat scroll !important;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
         min-height: 100vh !important;
         width: 100% !important;
     }
@@ -24,14 +24,14 @@
         background-size: cover !important;
         background-position: center center !important;
         background-repeat: no-repeat !important;
-        background-image: url('/assets/images/yacht-beach-background.jpg') !important;
+        background-image: url('/assets/images/beach-yacht-tourists.jpg') !important;
         min-height: 100vh !important;
         width: 100% !important;
     }
     
     /* Force background on very narrow screens */
     body.theme-ocean {
-        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat scroll !important;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
         min-height: 100vh !important;
         width: 100% !important;
     }
@@ -40,7 +40,7 @@
 /* Extra narrow mobile screens (320px and below) */
 @media (max-width: 480px) {
     html, body, .theme-ocean {
-        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat scroll !important;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
         min-height: 100vh !important;
         width: 100vw !important;
     }
@@ -53,7 +53,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat;
         z-index: -1;
     }
 }
