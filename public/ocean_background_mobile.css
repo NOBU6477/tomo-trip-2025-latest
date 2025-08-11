@@ -1,6 +1,17 @@
 /* Mobile-specific background CSS for TomoTrip */
 /* Force background on all mobile devices */
 
+/* Force background even before media queries */
+html {
+    background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+    min-height: 100vh !important;
+}
+
+body {
+    background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+    min-height: 100vh !important;
+}
+
 /* Global mobile background enforcement */
 @media (max-width: 768px) {
     * {
