@@ -78,7 +78,10 @@ window.addEventListener('error', function(e) {
         'unsized-media',
         'pointer-lock',
         'allow-downloads-without-user-activation',
-        'sandbox'
+        'sandbox',
+        'beacon.js',
+        'frame-ancestors',
+        'The CSP directive'
     ];
     
     function shouldSuppress(message) {
