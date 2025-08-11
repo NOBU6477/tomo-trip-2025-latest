@@ -1,0 +1,94 @@
+了解。添付のログは「本番で直すべきもの」と「Replit プレビュー(IDE iframe) 由来で無視してOKなもの」が混在しています。**直す対象**と**無視してよいもの**を切り分けたうえで、Replit でノイズを減らすための開発用CSPを入れる手順をまとめました。そのままコピペでエージェントに渡せます。
+
+---
+
+# ✅ エージェント向け修正指示書（Replit 用・コピペ可）
+
+次の作業を順番に実施してください。
+
+## 1) 「無視してよい」IDE由来ログを把握して、アプリ側の対応対象から外す
+
+以下は Replit のプレビュー iframe（`workspace_iframe.html`）や Chrome/Chromium 自身が出す警告で、アプリの不具合ではありません。修正対象から除外してください。
+
+* `Unrecognized feature: 'ambient-light-sensor' ...` などの **Permissions-Policy** 警告
+* `Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.`（出所が `workspace_iframe.html` のもの）
+* `GroupMarkerNotSet ... Automatic fallback to software WebGL has been deprecated...`（Chromium の WebGL デバッグ警告）
+* `stallwart: failed ping`（Replit 側のセッション監視）
+* `The CSP directive 'frame-ancestors' is ignored when delivered via a <meta> element.`（※メタCSPの仕様上の注意。後述で対処方針を定義します）
+
+## 2) 「CSPが原因で出ている」ノイズを開発中だけ緩和する
+
+`Refused to load the script 'https://replit.com/public/js/beacon.js' because it violates ... "script-src 'self' https://cdn.jsdelivr.net"`
+など、Replit の計測スクリプトや内部APIが **CSP(meta)** によってブロックされ、エラー表示の元になっています。
+本番では厳格CSPのままでOKですが、**Replit 開発中だけ** 次の「開発用CSP(meta)」に差し替えて、エラーを消してください。
+
+### 2-1) `index.html` の `<meta http-equiv="Content-Security-Policy" ...>` を以下に置き換え
+
+> ⚠️ すでに `<meta http-equiv="Content-Security-Policy"...>` がある場合は **丸ごとこの内容に置換**。
+> ない場合は `<head>` 内の最上部に追加。
+
+```html
+<!-- DEV-ONLY CSP for Replit preview: relax to suppress IDE/beacon noise -->
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net https://replit.com 'unsafe-inline';
+  script-src-elem 'self' https://cdn.jsdelivr.net https://replit.com;
+  connect-src 'self' https://replit.com https://sp.replit.com wss://replit.com;
+  img-src 'self' data: blob: https://images.unsplash.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' data: https://fonts.gstatic.com;
+  object-src 'none';
+  base-uri 'self';
+">
+```
+
+**ポイント**
+
+* Replit が挿入する `beacon.js` と内部API を許可（`replit.com` / `sp.replit.com` / `wss://replit.com`）。
+* 画像やフォント、Google Fonts を明示許可。
+* 本番(デプロイ)では、**`frame-ancestors` は HTTP ヘッダで送る**のが仕様です。meta では無効になるため、**DEVでは書かない**方針にします（警告回避）。
+
+### 2-2) 本番CSPは別途サーバヘッダで設定（メモ）
+
+デプロイ先（Cloudflare/Netlify/Vercel/Nginx等）で下記のようなヘッダを送る運用にしてください（ここは実行不要メモ）。
+
+```
+Content-Security-Policy:
+  default-src 'self';
+  script-src 'self' https://cdn.jsdelivr.net;
+  connect-src 'self';
+  img-src 'self' data: blob:;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com data:;
+  object-src 'none';
+  base-uri 'self';
+  frame-ancestors 'self';
+```
+
+## 3) いまだに残る 400 エラー（`sp.replit.com/v1/i`）
+
+* これは Replit の計測エンドポイントが返す 400 で、**アプリの不具合ではありません**。
+* 上記の DEV 用 CSP にしてもたまに出ることがありますが、**無視でOK**。ビルドや機能には影響しません。
+
+## 4) 最終確認
+
+1. Replit の **Preview（.replit.dev の埋め込み）** と **別タブ（`.kirk.replit.dev` の直アクセス）** の両方で確認。
+2. 直アクセス側では、今回列挙した **IDE 由来の警告がほぼ出ない**ことを確認。
+3. もし引き続き `Refused to load the script 'https://replit.com/public/js/beacon.js'` が出る場合は、`script-src-elem` と `connect-src` に `https://replit.com` が入っているか再確認。
+4. 本番デプロイ時は **DEV 用CSP(meta)を外し**、上記「本番CSP」をサーバヘッダで有効化すること。
+
+---
+
+## 補足（今回のログの分類）
+
+* ❗**手を入れる**：開発中のCSP(meta)を緩和して、Replit の `beacon.js` / `sp.replit.com` を許可
+* ✅**無視してOK**：
+
+  * `workspace_iframe.html:32` 起点の sandbox/Permissions-Policy 警告
+  * `GroupMarkerNotSet ... WebGL has been deprecated ...`
+  * `stallwart: failed ping`
+  * `frame-ancestors is ignored when delivered via a <meta> element`（仕様どおり。DEVでは設定しない）
+
+---
+
+以上です。これでコンソールの「本当に直すべきエラー」と「環境ノイズ」が分離でき、Replit 上ではエラー数が実質ゼロ〜ごく少数に落ち着きます。必要なら本番CSPヘッダの具体的な設定（Netlify/Vercel/Cloudflare/Nginx別）も書き起こしますよ。

@@ -3,6 +3,8 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
+- **REPLIT DEV CSP OPTIMIZATION (Aug 11, 2025)**: Implemented development-specific CSP policy for Replit environment, allowing beacon.js and internal APIs (replit.com, sp.replit.com) while maintaining security. Separates IDE noise from genuine application errors.
+- **INITAPPSTATE EXPORT FIX (Aug 11, 2025)**: Resolved module export error by converting initAppState to default export AppState pattern, eliminating "does not provide an export named 'initAppState'" errors.
 - **COMPLETE CSP COMPLIANCE ACHIEVEMENT (Aug 11, 2025)**: 100% elimination of all onclick handlers from both index.html and index-en.html, complete CSP policy upgrade with script-src-elem, worker-src, and frame-ancestors directives. Data-action event delegation system fully implemented and operational.
 - **DATA-ACTION EVENT SYSTEM (Aug 11, 2025)**: Unified event delegation system implemented in event-handlers.mjs with comprehensive data-action attribute support for all user interactions, eliminating CSP violations while maintaining full functionality.
 - **APPSTATE SINGLETON PATTERN (Aug 11, 2025)**: Converted AppState to nullish coalescing singleton pattern preventing "Cannot redefine property" errors while maintaining global accessibility and preventing temporal dead zone issues.
