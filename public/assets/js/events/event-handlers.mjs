@@ -262,6 +262,9 @@ export function displayGuides(page, state) {
         container.appendChild(guideCard);
     });
     
+    // Update guide count displays with actual rendered card count
+    updateGuideCounters(guidesForPage.length, currentState.guides.length);
+    
     updatePaginationInfo(page, currentState);
 }
 
@@ -288,6 +291,20 @@ function createGuideCard(guide) {
     `;
     
     return col;
+}
+
+// Update guide counter displays - synchronizes with actual rendered cards
+function updateGuideCounters(displayedCount, totalCount) {
+    const guideCounter = document.getElementById('guideCounter');
+    const totalGuideCounter = document.getElementById('totalGuideCounter');
+    
+    if (guideCounter) {
+        guideCounter.textContent = `${displayedCount}人のガイドが見つかりました（全${totalCount}人中）`;
+    }
+    
+    if (totalGuideCounter) {
+        totalGuideCounter.textContent = `登録ガイド総数: ${totalCount}人`;
+    }
 }
 
 // Update pagination info with AppState
