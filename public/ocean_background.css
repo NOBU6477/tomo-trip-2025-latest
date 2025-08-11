@@ -1,8 +1,8 @@
-/* Ocean background theme for TomoTrip */
+/* Beautiful yacht & beach background theme for TomoTrip */
 .theme-ocean {
     margin: 0;
     padding: 0;
-    background-image: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #2d3436 100%);
+    background-image: url('/assets/images/yacht-beach-background.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -20,13 +20,14 @@
     bottom: 0;
     background: linear-gradient(
         135deg,
-        rgba(0, 173, 181, 0.85) 0%,
-        rgba(0, 123, 191, 0.85) 25%,
-        rgba(41, 128, 185, 0.85) 50%,
-        rgba(109, 213, 250, 0.85) 75%,
-        rgba(165, 242, 243, 0.85) 100%
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(0, 173, 181, 0.3) 25%,
+        rgba(0, 123, 191, 0.4) 50%,
+        rgba(41, 128, 185, 0.3) 75%,
+        rgba(255, 255, 255, 0.1) 100%
     );
     z-index: -1;
+    backdrop-filter: blur(1px);
 }
 
 #main-footer img { 
@@ -41,17 +42,52 @@
     z-index: 1;
 }
 
-/* Text readability improvements */
+/* Text readability improvements with yacht background */
 .text-white, .navbar-brand, .nav-link {
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
 }
 
 .card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .modal-content {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+}
+
+/* Hero section improvements for yacht background */
+.hero-section {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(2px);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.hero-section h1, .hero-section h2 {
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    color: white;
+}
+
+.hero-section p {
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    color: rgba(255, 255, 255, 0.95);
+}
+
+/* Scroll parallax effect for background */
+@media (prefers-reduced-motion: no-preference) {
+    .theme-ocean {
+        background-attachment: fixed;
+    }
+}
+
+/* Mobile optimization */
+@media (max-width: 768px) {
+    .theme-ocean {
+        background-attachment: scroll;
+        background-position: center top;
+    }
 }

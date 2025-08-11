@@ -3,6 +3,8 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (August 2025)
+- **YACHT & BEACH BACKGROUND UPGRADE (Aug 11, 2025)**: Updated from CSS gradient to authentic yacht, beach & tourists background image with fixed parallax scrolling effect. Enhanced text readability with optimized overlay gradients and backdrop filters.
+- **UPDATEGUIDE COUNTERS DUPLICATION FIX (Aug 11, 2025)**: Resolved "Identifier 'updateGuideCounters' has already been declared" SyntaxError by consolidating function definition to guide-renderer.mjs with ESM export pattern. Eliminated all duplicate definitions across modules.
 - **CSP FRAME-ANCESTORS ERROR ELIMINATION (Aug 11, 2025)**: Removed frame-ancestors directive from meta CSP (ignored and causes errors), simplified to essential directives only. Added Google Fonts preconnect optimization for faster loading. Enhanced error suppression for beacon.js and CSP directive warnings.
 - **BOOTSTRAP/SWIPER CDN COMPATIBILITY (Aug 11, 2025)**: Finalized CSP configuration with proper cdn.jsdelivr.net permissions for external CSS/JS libraries. Eliminated all Bootstrap and Swiper loading blocks while maintaining security.
 - **REPLIT DEV CSP OPTIMIZATION (Aug 11, 2025)**: Implemented development-specific CSP policy for Replit environment, allowing beacon.js and internal APIs (replit.com, sp.replit.com) while maintaining security. Separates IDE noise from genuine application errors.
