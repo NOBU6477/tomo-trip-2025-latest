@@ -2,6 +2,7 @@
 // Consolidated from inline scripts in index.html
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
+import './emergency-buttons.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';

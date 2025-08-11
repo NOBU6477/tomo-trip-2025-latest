@@ -1,0 +1,102 @@
+了解。いま残っている“赤い”エラーは大きく2種類に分かれます。
+(1) Replit の IDE/プレビュー iframe によるノイズ（無視でOK）と、(2) あなたのアプリ側の重複定義エラー（要修正）です。
+以下を**そのまま Replit Agent にコピペ**して実行してください。
+
+---
+
+# Replit Agent への依頼（コピペ用）
+
+**目的**: 残っているアプリ由来のコンソールエラーを解消し、IDE 由来のノイズは発生源を切り分ける。
+
+## 1) 発生源の切り分け
+
+1. プレビューは必ず **`.replit.dev` を新しいタブで開いた画面** で確認してください（IDE 内のプレビュー iframe ではありません）。
+
+   * IDE 側のログに出る `workspace_iframe.html:*`、`framework-*.js:1`、`stallwart.build.js:*`、`sp.replit.com/v1/i:1`、`LaunchDarkly`、`Automatic fallback to software WebGL`、`allow-downloads-without-user-activation is an invalid sandbox flag` などは **IDE/プラットフォームが出している警告** です。アプリとは無関係なので対応不要です。
+
+## 2) アプリ側の実エラー修正（「すでに宣言済み」）
+
+いまの赤エラー：
+
+```
+Identifier 'displayGuides' has already been declared
+```
+
+これは **同じ関数/変数を複数の <script> で重複読み込み** しているのが原因です。ESM(ES Modules)で**単一のエントリ**にまとめます。
+
+### 2-1. index.html の `<script>` を整理
+
+* `index.html` を開き、**モジュールエントリを1本だけ**にします。
+* もし下記のように複数のモジュールや非モジュールを直貼りしていたら、**全部やめて** `app-init.mjs` の 1 本だけにします。
+
+```html
+<!-- 修正後（例）：エントリを1本に統一 -->
+<script type="module" src="/scripts/app-init.mjs"></script>
+```
+
+* 次のような重複を**すべて削除**してください（これらは `app-init.mjs` の中で import する形に変更）:
+
+  * `<script type="module" src="/scripts/event-handlers.mjs">`
+  * `<script type="module" src="/scripts/display-guides.mjs">`
+  * `<script type="module" src="/scripts/default-guides.mjs">`
+  * `<script src="/scripts/*.js">`（非モジュールでグローバル定義するもの）
+    など、**同じ関数を定義する可能性のあるファイルの直貼り**
+
+### 2-2. app-init.mjs に集約して import
+
+* `app-init.mjs` を開き、必要なモジュールを**ここから import**してください（例）:
+
+```js
+// app-init.mjs
+import { setupEventHandlers } from './event-handlers.mjs';
+import { displayGuides } from './display-guides.mjs';
+import { loadDefaultGuides } from './default-guides.mjs';
+// 他、必要なものをすべてここで import
+
+// 初期化シーケンスをここにまとめる
+export async function appInit() {
+  await loadDefaultGuides();
+  setupEventHandlers();
+  // もし onclick で displayGuides を HTML から呼ぶなら 1回だけ公開
+  if (!('displayGuides' in window)) {
+    window.displayGuides = displayGuides; // ←多重代入防止
+  }
+}
+
+appInit();
+```
+
+### 2-3. グローバル公開は「1 回だけ」
+
+* もし HTML の `onclick="displayGuides(...)"` のような呼び出しが残っている場合は、**グローバル公開を1回**に統一します。
+* 各モジュール内で `window.displayGuides = ...` を書かないでください。**公開は app-init.mjs のみ**で、次のように「既にあれば再代入しない」ガードを必ず入れます。
+
+```js
+if (!('displayGuides' in window)) {
+  window.displayGuides = displayGuides;
+}
+```
+
+### 2-4. モジュール内は `export` で提供、`var/let` の二重宣言を排除
+
+* `display-guides.mjs`・`event-handlers.mjs`・`default-guides.mjs` などで **同名の関数や変数を重複宣言していないか**を確認し、必要なら **関数名をユニークに**するか、**1つのモジュールに集約**してください。
+* IIFE(即時関数) や同名 `function` の重複があれば削除。**グローバルに直書きしない**方針で。
+
+## 3) CSP 関連の赤ログについて
+
+* `.replit.dev` の本番タブで **次の赤ログだけ**が残る場合があります:
+
+  * `Refused to load the script 'https://replit.com/public/js/beacon.js' ...`
+    → これは **Replit が自動で挿入しようとするトラッキングスクリプト**で、あなたの CSP が正しくブロックしているもの。**対応不要**です（CSP を弱めないでOK）。
+* 以前出ていた `bootstrap.min.css` や `swiper-bundle.min.css` など **外部CSSのCSPブロック**は、**ローカル同梱**に切り替えて解消してください（CDN直読みをやめ、`/vendor/` に置いて `link rel="stylesheet"` で相対パス参照）。
+
+## 4) 確認手順
+
+1. 変更を保存・再起動後、**`.replit.dev` タブ**で開き直す。
+2. DevTools Console を開き、**アプリ由来の赤エラー（重複宣言）が消えていること**を確認。
+3. `workspace_iframe.html:*` や `sp.replit.com/*` に関するログは **IDEのノイズ**なので無視。
+
+---
+
+これで「Identifier 'displayGuides' has already been declared」が解消し、アプリ側のエラーはなくなるはずです。
+実施後、まだ赤エラーが出る場合は**そのエラー行のファイル名が `workspace_iframe.html` かどうか**を教えてください。`index.html` / `app-init.mjs` / あなたの `*.mjs` が出ている場合だけ、続けて原因を追います。
