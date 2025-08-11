@@ -144,6 +144,12 @@
         
         /* Mobile background fix for English version */
         @media (max-width: 768px) {
+            body, html {
+                background: url('/assets/images/yacht-beach-background-new.jpg') center center / cover no-repeat !important;
+                background-attachment: scroll !important;
+                min-height: 100vh !important;
+            }
+            
             .hero-section::before {
                 background-attachment: scroll;
                 position: fixed;
@@ -775,7 +781,7 @@
         }
     </style>
 </head>
-<body class="theme-ocean">
+<body class="theme-ocean" style="background: url('/assets/images/yacht-beach-background-new.jpg') center center / cover no-repeat scroll; min-height: 100vh;">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">

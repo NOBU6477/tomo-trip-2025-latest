@@ -14,26 +14,23 @@
 /* Mobile-friendly background for better compatibility */
 @media (max-width: 768px) {
     .theme-ocean {
-        background-attachment: scroll;
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
+        background-attachment: scroll !important;
+        background-size: cover !important;
+        background-position: center center !important;
+        background-repeat: no-repeat !important;
         position: relative;
+        background-image: url('/assets/images/yacht-beach-background-new.jpg') !important;
     }
     
-    /* Alternative mobile background implementation */
-    .theme-ocean::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url('/assets/images/yacht-beach-background-new.jpg');
-        background-size: cover;
-        background-position: center center;
-        background-repeat: no-repeat;
-        z-index: -10;
+    /* Force background visibility on mobile */
+    body.theme-ocean {
+        background: url('/assets/images/yacht-beach-background-new.jpg') center center / cover no-repeat !important;
+        min-height: 100vh !important;
+    }
+    
+    /* Additional mobile background layer */
+    html {
+        background: url('/assets/images/yacht-beach-background-new.jpg') center center / cover no-repeat fixed !important;
     }
 }
 
