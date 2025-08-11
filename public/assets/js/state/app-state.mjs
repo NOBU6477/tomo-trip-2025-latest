@@ -1,45 +1,39 @@
-// AppState - Centralized singleton state management to prevent TDZ errors and redefinition
-// Single source of truth for all application state - no global property redefinition
+// AppState - Singleton pattern to prevent redefinition errors
+// Uses nullish coalescing to safely create or get existing state
 
-let _appState = null;
-
-export function initAppState({ guides, pageSize = 12, currentPage = 1 } = {}) {
-  // Return existing state if already initialized (prevents redefinition)
-  if (_appState) {
-    console.log('%cAppState already initialized - returning existing state', 'color: #ffc107;');
-    return _appState;
-  }
-
-  _appState = {
-    guides: Array.isArray(guides) ? guides : [],
-    pageSize,
-    currentPage,
-    locationNames: {},
-    get totalPages() {
-      return Math.max(1, Math.ceil(this.guides.length / this.pageSize));
-    },
-    initialized: Date.now()
-  };
+const state = (window.AppState ??= {
+  guides: [],
+  pageSize: 12,
+  currentPage: 1,
+  filters: {},
+  searchTerm: '',
+  locationNames: {},
   
-  // Safe global access for debugging (read-only, configurable to avoid redefinition error)
-  if (!('AppState' in window)) {
-    Object.defineProperty(window, 'AppState', {
-      get: () => _appState,
-      configurable: true
+  get totalPages() {
+    return Math.max(1, Math.ceil(this.guides.length / this.pageSize));
+  },
+  
+  initialize(initialData = {}) {
+    console.log('%cAppState initializing...', 'color: #007bff;');
+    
+    // Merge with initial data safely
+    Object.assign(this, initialData);
+    
+    console.log('%cAppState initialized:', 'color: #28a745; font-weight: bold;', {
+      guides: this.guides.length,
+      pageSize: this.pageSize,
+      currentPage: this.currentPage,
+      totalPages: this.totalPages
     });
+    
+    return this;
+  },
+  
+  setGuides(guides) {
+    this.guides = Array.isArray(guides) ? guides : [];
+    this.currentPage = 1; // Reset to first page
+    return this;
   }
-  
-  console.log('%cAppState initialized:', 'color: #28a745; font-weight: bold;', {
-    guides: _appState.guides.length,
-    pageSize: _appState.pageSize,
-    currentPage: _appState.currentPage,
-    totalPages: _appState.totalPages
-  });
-  
-  return _appState;
-}
+});
 
-// Utility function for safe state access
-export function getAppState() {
-  return _appState;
-}
+export default state;

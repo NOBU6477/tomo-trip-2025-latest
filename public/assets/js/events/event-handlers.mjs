@@ -4,6 +4,9 @@ import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     
+    // Setup data-action based event handlers (CSP compliant)
+    setupDataActionHandlers();
+    
     // Setup sponsor button events (CSP compliant)
     setupSponsorButtonEvents();
     
@@ -17,6 +20,147 @@ export function setupEventListeners(state) {
     setupPaginationEvents(state);
     
     console.log('%cEvent listeners setup complete', 'color: #28a745;');
+}
+
+// CSP compliant data-action event delegation system
+function setupDataActionHandlers() {
+    // Prevent double initialization
+    if (window.__dataActionHandlersSetup) return;
+    window.__dataActionHandlersSetup = true;
+    
+    // Unified event delegation for all data-action attributes
+    document.addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+        if (!action) return;
+        
+        e.preventDefault();
+        
+        const element = e.target.closest('[data-action]');
+        const guideId = element?.getAttribute('data-guide-id');
+        const bookingId = element?.getAttribute('data-booking-id');
+        const target = element?.getAttribute('data-target');
+        const email = element?.getAttribute('data-email');
+        
+        // Handle all data-action events
+        switch(action) {
+            // Authentication & Registration
+            case 'toggle-login-dropdown':
+                toggleLoginDropdown();
+                break;
+            case 'open-tourist-registration':
+                openTouristRegistration();
+                break;
+            case 'open-guide-registration':
+                openGuideRegistration();
+                break;
+            case 'process-sponsor-login':
+                processSponsorLogin();
+                break;
+            case 'redirect-sponsor-dashboard':
+                redirectToSponsorDashboard();
+                break;
+                
+            // Guide Actions
+            case 'book-guide':
+                if (guideId) bookGuide(guideId);
+                break;
+            case 'contact-guide':
+                if (guideId) contactGuide(guideId);
+                break;
+            case 'show-guide-detail':
+                if (guideId) showGuideDetailModalById(guideId);
+                break;
+                
+            // Bookmark & Comparison
+            case 'remove-bookmark':
+                if (guideId) removeBookmark(guideId);
+                break;
+            case 'remove-from-comparison':
+                if (guideId) removeFromComparison(guideId);
+                break;
+            case 'view-booking-details':
+                if (bookingId) viewBookingDetails(bookingId);
+                break;
+                
+            // Utility Actions
+            case 'trigger-photo-upload':
+                document.getElementById('guideProfilePhoto')?.click();
+                break;
+            case 'open-chat':
+                if (target) window.open(target, '_blank');
+                break;
+            case 'send-email':
+                if (email) window.location.href = `mailto:${email}`;
+                break;
+                
+            // Footer & Information Modals
+            case 'show-faq':
+                showFAQ();
+                break;
+            case 'show-cancellation':
+                showCancellation();
+                break;
+            case 'show-safety':
+                showSafety();
+                break;
+            case 'show-payment-help':
+                alert('Payment help coming soon');
+                break;
+            case 'show-guide-registration-help':
+                alert('Guide registration help coming soon');
+                break;
+            case 'show-profile-optimization':
+                alert('Profile optimization tips coming soon');
+                break;
+            case 'show-earnings-dashboard':
+                alert('Earnings dashboard coming soon');
+                break;
+            case 'show-guide-resources':
+                alert('Guide resources coming soon');
+                break;
+            case 'show-cookie-settings':
+                alert('Cookie settings panel under development');
+                break;
+            case 'clear-all-cookies':
+                alert('Cookie deletion feature under development');
+                break;
+            case 'scroll-to-guides':
+                scrollToGuides();
+                break;
+            case 'show-guide-registration-modal':
+                showGuideRegistrationModal();
+                break;
+            case 'show-tourist-registration-modal':
+                showTouristRegistrationModal();
+                break;
+            case 'show-management-center':
+                showManagementCenter();
+                break;
+            case 'show-help':
+                showHelp();
+                break;
+            case 'show-about':
+                showAbout();
+                break;
+            case 'show-terms':
+                showTerms();
+                break;
+            case 'show-privacy':
+                showPrivacy();
+                break;
+            case 'show-cookies':
+                showCookies();
+                break;
+            case 'show-compliance':
+                showCompliance();
+                break;
+                
+            default:
+                console.log('Unknown data-action:', action);
+        }
+    });
+    
+    console.log('%cData-action handlers setup complete', 'color: #28a745;');
 }
 
 // CSP compliant sponsor button event setup

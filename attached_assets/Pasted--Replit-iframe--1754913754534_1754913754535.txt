@@ -1,0 +1,232 @@
+了解です。いま映っているエラーは大きく分けて「Replit プレビュー iframe 由来のノイズ」と「アプリ本体の修正が必要なもの」の混在です。下の「修正指示書」に沿って直してください。全部コピペ運用できるよう、変更箇所とサンプルコードを最小でまとめました。
+
+---
+
+# 修正指示書（Replit 向け）
+
+## 0) まず確認（ノイズの切り分け）
+
+* Replit の右上「Open in new tab」などで **`https://<…>.replit.dev/` を別タブ**で開き、そのタブのコンソールで確認してください。
+  プレビュー用 iframe のログ（`workspace_iframe.html` / `framework-xxxx.js` / `beacon.js` / `allow-downloads-without-user-activation` など）は **IDE 側注入のノイズ**です。**本番には出ません**ので無視してOK。
+
+---
+
+## 1) CSP（Content-Security-Policy）を強化しつつ必要ドメインを許可
+
+**index.html** の `<head>` にある CSP `<meta>` を以下に差し替えます（なければ追加）。
+※「インライン禁止」「必要CDNのみ許可」「フォント/画像の data: blob: 許可」を同時に満たします。
+
+```html
+<meta
+  http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    script-src 'self' https://cdn.jsdelivr.net;
+    script-src-elem 'self' https://cdn.jsdelivr.net;
+    style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+    img-src 'self' https: data: blob:;
+    font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:;
+    connect-src 'self';
+    worker-src 'self' blob:;
+    object-src 'none';
+    base-uri 'self';
+    frame-ancestors 'self';
+  ">
+```
+
+**ポイント**
+
+* `beacon.js`（`https://replit.com/public/js/beacon.js`）は Replit が iframe に挿すもの。**許可しないままでOK**（.dev 別タブでは出ません）。
+* フォント/画像エラー（`font-src 'self' data:` や Unsplash）を防ぐために `fonts.gstatic.com` と `img-src https: data: blob:` を許可。
+
+---
+
+## 2) HTML の **inline ハンドラ**を全廃（CSP 違反の元）
+
+HTML に `onclick="..."` などがあれば削除して **データ属性**に置換します。
+例（スポンサー登録/ログインボタン）：
+
+**before**
+
+```html
+<button id="sponsorRegBtn" onclick="handleSponsorRegistration()">協賛店登録</button>
+<button id="sponsorLoginBtn" onclick="handleSponsorLogin()">ログイン</button>
+```
+
+**after**
+
+```html
+<button id="sponsorRegBtn" data-action="sponsor-register">協賛店登録</button>
+<button id="sponsorLoginBtn" data-action="sponsor-login">ログイン</button>
+```
+
+そして **event-handlers.mjs** にイベントを集中定義（重複防止付き）：
+
+```js
+// event-handlers.mjs
+export function wireGlobalEvents() {
+  // 二重バインド防止
+  if (window.__wiredEvents) return;
+  window.__wiredEvents = true;
+
+  const byAction = (action) => document.querySelectorAll(`[data-action="${action}"]`);
+
+  byAction('sponsor-register').forEach(btn => {
+    btn.addEventListener('click', () => {
+      import('./modal.js').then(m => m.showSponsorRegistrationModal());
+    }, { once: false });
+  });
+
+  byAction('sponsor-login').forEach(btn => {
+    btn.addEventListener('click', () => {
+      import('./modal.js').then(m => m.showSponsorLoginModal());
+    }, { once: false });
+  });
+}
+```
+
+**index.html** の最後で **1 回だけ**実行：
+
+```html
+<script type="module">
+  import { wireGlobalEvents } from './js/event-handlers.mjs';
+  import { appInit } from './js/app-init.mjs';
+  window.addEventListener('DOMContentLoaded', () => {
+    wireGlobalEvents();
+    appInit();
+  });
+</script>
+```
+
+---
+
+## 3) **重複読み込み**の解消（“has already been declared” 対策）
+
+* `<script type="module" src="./js/event-handlers.mjs">` のような **同じモジュールを複数回**読み込んでいないか確認。
+* バンドル済みファイルと生JSを **同時に読み込まない**。**1 つに統一**。
+
+検索観点：
+
+* `event-handlers.mjs` / `app-init.mjs` / `modal.js` が HTML 内の `<script>` で **2回以上**参照されていないか。
+* 別モジュールで `import './event-handlers.mjs'` しているのに、HTML でも `<script src="...">` していないか。
+
+---
+
+## 4) `AppState` の再定義エラー（“Cannot redefine property: AppState”）
+
+**app-state.mjs** を以下の **シングルトン**にします：
+
+```js
+// app-state.mjs
+const state = (window.AppState ??= {
+  locale: 'ja',
+  page: 1,
+  guides: [],
+  locations: [],
+});
+export default state;
+```
+
+**他のファイル**では：
+
+```js
+import AppState from './app-state.mjs';
+// 以降は AppState を直接参照（defineProperty などしない）
+```
+
+---
+
+## 5) 未定義呼び出しの順序修正
+
+* `setupLocationNames is not defined` → `location-setup.mjs` で `export function setupLocationNames(){...}` しているか、**appInit の中で import 後に呼ぶ**。
+* `showSponsorLoginModal is not defined` → `modal.js` で export し、**イベントで import 後に呼ぶ**（上の §2 参照）。
+
+**app-init.mjs（例）**
+
+```js
+// app-init.mjs
+import AppState from './app-state.mjs';
+import { loadDefaultGuides } from './default-guides.mjs';
+import { setupLocationNames } from './location-setup.mjs';
+import { initPagination } from './pagination.mjs';
+
+export async function appInit() {
+  setupLocationNames();         // ここで定義済み
+  AppState.guides = await loadDefaultGuides();
+  initPagination();             // ページネーション初期化
+}
+```
+
+---
+
+## 6) `toLocaleString` / `backdrop` などの **undefined** をガード
+
+### ガイドカード生成（`toLocaleString` エラー）
+
+価格など未定義を安全に処理：
+
+```js
+// somewhere in createGuideCard / displayGuides など
+const price = Number(guide?.price ?? 0);
+const priceLabel = price.toLocaleString('ja-JP', { maximumFractionDigits: 0 });
+priceEl.textContent = `¥${priceLabel}`;
+```
+
+### モーダルの `backdrop` エラー
+
+要素/インスタンス存在を **チェック**：
+
+```js
+// modal.js
+export function showSponsorLoginModal() {
+  const el = document.querySelector('#sponsorLoginModal');
+  if (!el) return console.warn('sponsorLoginModal not found');
+
+  // Bootstrap v5 の例（使っているUIに合わせて）
+  const modal = window.bootstrap ? window.bootstrap.Modal.getOrCreateInstance(el) : null;
+  if (!modal) return console.warn('Bootstrap Modal not available');
+
+  modal.show(); // backdrop は Bootstrap が管理。自前で直接触らない。
+}
+```
+
+---
+
+## 7) 画像・フォントの読み込み元を整理
+
+* **画像**：`img-src https: data: blob:`にしたので、Unsplash 等の https 直リンクでもOK。相対パスにできるものは `/assets/...` に統一すると安全。
+* **フォント**：`fonts.gstatic.com` と `cdn.jsdelivr.net` を許可済み。読み込みは `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>` を付与。
+
+---
+
+## 8) 画面差（背景/プロフィール画像）の理由と揃え方
+
+* **左（.replit.dev）**：**本番用**タブ。CSP/Service Worker/キャッシュクリアが効いた状態で **最新アセット**が表示。
+* **右（左ペインの Preview）**：**IDE の iframe**。Replit が注入するスタイル/スクリプトや別コンテキストのキャッシュの影響で、**別の背景やプロフィール画像**になることがあります。
+
+**同じ仕様に固定する手順**
+
+1. 背景画像・プロフィール画像の **決定ロジックを一箇所**（例：`assets.mjs`）に寄せる。
+2. 画像URLは **相対パス**（`/assets/images/...`）に統一。CDN直リンクは最小化。
+3. Service Worker を使っている場合は、**起動時に必ず unregister + cache delete**（あなたのログにある `sw-unregister.js` の動作でOK）。
+4. 表示確認は **必ず .replit.dev 別タブ**で行う。
+
+---
+
+## 9) WebGL/SwiftShader の黄色ログについて
+
+`Automatic fallback to software WebGL ... enable-unsafe-swiftshader` は **Chrome の情報ログ**で、アプリの不具合ではありません。無視でOK。
+
+---
+
+## 10) 仕上げのチェックリスト
+
+* [ ] `.replit.dev` 別タブでエラーが **赤（×）ゼロ**になる
+* [ ] `switchToJapanese has already been declared` が消えている（= 二重インポート解消）
+* [ ] ボタンのクリックが **addEventListener** で動作（HTML から inline 削除）
+* [ ] 価格/モーダルの未定義エラーが消えている（ガード実装）
+* [ ] フォント/画像の CSP ブロックが消えている
+
+---
+
+必要なら、該当ファイル（`index.html`, `event-handlers.mjs`, `app-init.mjs`, `modal.js`, `app-state.mjs`）の抜粋を貼ってくれれば、あなたの実装に合わせて**そのまま差し替え可能な形**まで調整します。
