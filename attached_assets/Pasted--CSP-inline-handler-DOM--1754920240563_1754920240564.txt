@@ -1,0 +1,264 @@
+了解。
+「フィルターや各ボタンを押しても反応しない」は、**CSPにより inline handler が無効**＋**DOM再描画後にイベントが外れている**のが主因です。
+以下の“コピペで直せる指示書”で、**(1) すべての onXXX をHTMLから撤去**し、**(2) 1回だけ付与する委譲リスナー**に置き換えてください。
+
+---
+
+# 修正指示書（コピペOK）
+
+## 1) HTMLから inline イベントを全廃
+
+`index.html` で、以下のような `onclick` / `onchange` / `onsubmit` など**全て**削除し、代わりに `data-action` 属性を付けます。
+
+```html
+<!-- NG: これだとCSPで無効 -->
+<!-- <button onclick="handleSponsorRegistration()">協賛店登録</button> -->
+
+<!-- OK: data-action で識別 -->
+<button class="sponsor-btn" data-action="open-sponsor-modal">協賛店登録</button>
+
+<!-- フィルター類 -->
+<select id="filter-region" data-action="filter-change"></select>
+<select id="filter-lang"   data-action="filter-change"></select>
+<select id="filter-price"  data-action="filter-change"></select>
+
+<!-- 検索/リセット -->
+<button id="btn-search"  data-action="search">検索</button>
+<button id="btn-reset"   data-action="reset">リセット</button>
+
+<!-- （必要なら）カードの詳しく見る -->
+<button class="view-details" data-action="view-details" data-guide-id="...">詳しく見る</button>
+```
+
+> ポイント: **HTMLに関数名を書かない**。CSPに引っかかって無効化されるため。
+
+---
+
+## 2) アプリ状態を一元化
+
+`/state/app-state.mjs`
+
+```js
+// すでにあるなら流用可。なければ新規作成
+const state = {
+  allGuides: [],          // 全件
+  filters: { region:'all', lang:'all', price:'all', q:'' },
+  page: 1,
+  pageSize: 12,
+  subscribers: new Set(),
+};
+
+export function initAppState(allGuides, opts={}) {
+  state.allGuides = allGuides || [];
+  if (opts.pageSize) state.pageSize = opts.pageSize;
+  notify();
+}
+
+export function setFilters(next) {
+  state.filters = { ...state.filters, ...next };
+  state.page = 1;         // フィルター変更時は先頭ページへ
+  notify();
+}
+
+export function resetFilters() {
+  state.filters = { region:'all', lang:'all', price:'all', q:'' };
+  state.page = 1;
+  notify();
+}
+
+export function getState() { return { ...state }; }
+
+export function subscribe(fn) {
+  state.subscribers.add(fn);
+  return () => state.subscribers.delete(fn);
+}
+
+function notify(){ state.subscribers.forEach(fn => fn(getState())); }
+
+export function selectFilteredGuides() {
+  const { allGuides, filters } = state;
+  return allGuides.filter(g => {
+    const okRegion = filters.region==='all' || g.region===filters.region;
+    const okLang   = filters.lang==='all'   || g.langs?.includes(filters.lang);
+    const okPrice  = filters.price==='all'  || g.priceTier===filters.price;
+    const okQ      = !filters.q || (g.name+g.city+g.tags?.join(' ')).toLowerCase().includes(filters.q.toLowerCase());
+    return okRegion && okLang && okPrice && okQ;
+  });
+}
+
+export function selectRenderedGuides() {
+  const list = selectFilteredGuides();
+  const { page, pageSize } = state;
+  return list.slice(0, page * pageSize);
+}
+```
+
+---
+
+## 3) 描画は**状態→選択子**の結果だけから行う
+
+`/ui/renderer.mjs`
+
+```js
+import { selectFilteredGuides, selectRenderedGuides, getState } from '../state/app-state.mjs';
+
+export function render() {
+  const filtered = selectFilteredGuides();
+  const rendered = selectRenderedGuides();
+  const { allGuides } = getState();
+
+  // カウント
+  document.querySelector('#total-count').textContent  = allGuides.length;
+  document.querySelector('#found-count').textContent  = filtered.length;
+
+  // カード描画（必要ならテンプレートで）
+  const grid = document.querySelector('#guide-grid');
+  grid.innerHTML = rendered.map(cardHTML).join('');
+
+  // “詳しく見る”ボタンなどは data-action で拾うのでここで個別 addEventListener は不要
+}
+
+function cardHTML(g){
+  return `
+  <article class="guide-card">
+    <img src="${g.photo}" alt="${g.name}">
+    <h3>${g.name}</h3>
+    <p>${g.city}</p>
+    <button class="view-details" data-action="view-details" data-guide-id="${g.id}">詳細を見る</button>
+  </article>`;
+}
+```
+
+---
+
+## 4) イベントは**1か所・委譲**で付与（再描画しても剥がれない）
+
+`/events/event-handlers.mjs`
+
+```js
+import { setFilters, resetFilters, getState } from '../state/app-state.mjs';
+import { render } from '../ui/renderer.mjs';
+
+let wired = false;
+
+export function initEventHandlers(){
+  if (wired) return;  // 二重バインド防止
+  wired = true;
+
+  // クリック委譲
+  document.addEventListener('click', (ev) => {
+    const el = ev.target.closest('[data-action]');
+    if (!el) return;
+
+    switch (el.dataset.action) {
+      case 'open-sponsor-modal':
+        // ここでモーダルを開く（例）
+        // openSponsorModal();
+        break;
+      case 'search':
+        collectAndApplyFilters();
+        break;
+      case 'reset':
+        resetFilters();   // 状態更新
+        render();         // 再描画
+        break;
+      case 'view-details':
+        const id = el.dataset.guideId;
+        // openGuideModal(id);
+        break;
+    }
+  }, { passive:true });
+
+  // フィルター変更（change委譲）
+  document.addEventListener('change', (ev) => {
+    const el = ev.target.closest('[data-action="filter-change"]');
+    if (!el) return;
+    collectAndApplyFilters();
+  });
+
+  // 初回描画時に安全確認ログ
+  console.table({ handlerWired: wired, origin: location.origin });
+}
+
+function collectAndApplyFilters(){
+  const region = document.querySelector('#filter-region')?.value || 'all';
+  const lang   = document.querySelector('#filter-lang')?.value   || 'all';
+  const price  = document.querySelector('#filter-price')?.value  || 'all';
+  const q      = document.querySelector('#filter-q')?.value?.trim() || '';
+
+  setFilters({ region, lang, price, q });
+  render();
+}
+```
+
+---
+
+## 5) アプリ初期化
+
+`/app-init.mjs`
+
+```js
+import { initAppState, subscribe } from './state/app-state.mjs';
+import { render } from './ui/renderer.mjs';
+import { initEventHandlers } from './events/event-handlers.mjs';
+
+export async function appInit(){
+  // データ取得（モックでもOK）
+  const guides = await loadGuides(); // ここは既存の取得関数に合わせて
+  initAppState(guides, { pageSize: 12 });
+
+  // 状態が変わるたび自動で描画したいなら:
+  subscribe(render);
+
+  initEventHandlers();
+  render();
+}
+document.addEventListener('DOMContentLoaded', appInit);
+```
+
+---
+
+## 6) クリックできないときの CSS ガード
+
+「押しても反応しない」が**オーバーレイの被さり**の場合があります。次を確認:
+
+```css
+/* もし .backdrop などが常時表示なら、非表示時はクリックを通す */
+.backdrop.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none; /* ←これ重要 */
+}
+
+/* 右側のフローティングボタンがリストに被っていたら… */
+.fab-stack {
+  pointer-events: none;     /* コンテナは透過 */
+}
+.fab-stack > .fab {         /* 実ボタンだけクリック可能に */
+  pointer-events: auto;
+}
+```
+
+---
+
+## 7) 動作確認チェックリスト
+
+1. コンソールに **inline script/handler** のCSPエラーが消えたことを確認。
+2. 初回ロード時、コンソールに `handlerWired: true` の行が出る。
+3. フィルター変更 → 件数とカードが同時に変わる。
+4. 再描画後もボタンが効く（委譲なので外れない）。
+
+---
+
+### よくある落とし穴
+
+* **二重import**で同じ関数名を複数定義 → 「has already been declared」
+  → 上記のように `wired` フラグで二重バインド防止＆import整理。
+* **再描画で addEventListener が消える**
+  → **委譲**（ドキュメント1か所）にする。
+* **CSPで無効**
+  → HTMLから`onClick=...`等を全撤去。スクリプトは外部ファイルのみ。
+
+---
+
+必要なら、あなたの現在のファイル名に合わせて**差分パッチ形式**に書き直します。該当ファイルのパスだけ教えてください。

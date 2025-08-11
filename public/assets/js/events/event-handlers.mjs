@@ -43,6 +43,37 @@ function setupDataActionHandlers() {
         
         // Handle all data-action events
         switch(action) {
+            // Filter & Search Actions
+            case 'search':
+                handleSearchAction();
+                break;
+            case 'reset':
+                handleResetFilters();
+                break;
+            
+            // Pagination Actions 
+            case 'next-page':
+                handleNextPage();
+                break;
+            case 'prev-page':
+                handlePrevPage();
+                break;
+            case 'goto-page':
+                const page = parseInt(element?.getAttribute('data-page'));
+                if (page && !isNaN(page)) handleGotoPage(page);
+                break;
+                
+            // Sponsor Actions
+            case 'open-sponsor-registration':
+                handleSponsorRegistration();
+                break;
+            case 'open-sponsor-login':
+                handleSponsorLogin();
+                break;
+            case 'open-management':
+                handleManagementCenter();
+                break;
+                
             // Authentication & Registration
             case 'toggle-login-dropdown':
                 toggleLoginDropdown();
@@ -68,6 +99,7 @@ function setupDataActionHandlers() {
                 if (guideId) contactGuide(guideId);
                 break;
             case 'show-guide-detail':
+            case 'view-details':
                 if (guideId) showGuideDetailModalById(guideId);
                 break;
                 
@@ -158,6 +190,13 @@ function setupDataActionHandlers() {
             default:
                 console.log('Unknown data-action:', action);
         }
+    });
+    
+    // Change delegation for filter elements
+    document.addEventListener('change', (e) => {
+        const element = e.target.closest('[data-action="filter-change"]');
+        if (!element) return;
+        handleFilterChange();
     });
     
     console.log('%cData-action handlers setup complete', 'color: #28a745;');
@@ -457,4 +496,105 @@ function switchToJapanese() {
 function switchToEnglish() {
     console.log('Switching to English');
     window.location.href = 'index-en.html';
+}
+
+// CSP-compliant filter and search handlers
+function handleSearchAction() {
+    console.log('🔍 Search action triggered');
+    applyCurrentFilters();
+}
+
+function handleResetFilters() {
+    console.log('🔄 Reset filters triggered');
+    
+    // Reset all filter selects
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter');  
+    const priceFilter = document.getElementById('priceFilter');
+    
+    if (locationFilter) locationFilter.value = '';
+    if (languageFilter) languageFilter.value = '';
+    if (priceFilter) priceFilter.value = '';
+    
+    // Trigger filter application
+    applyCurrentFilters();
+}
+
+function handleFilterChange() {
+    console.log('📊 Filter changed');
+    applyCurrentFilters();
+}
+
+function applyCurrentFilters() {
+    // Get current filter values
+    const locationValue = document.getElementById('locationFilter')?.value || '';
+    const languageValue = document.getElementById('languageFilter')?.value || '';
+    const priceValue = document.getElementById('priceFilter')?.value || '';
+    
+    console.log('🎯 Applying filters:', { locationValue, languageValue, priceValue });
+    
+    // Get current guides from AppState
+    if (window.AppState && window.AppState.guides) {
+        let filteredGuides = [...window.AppState.guides];
+        
+        // Apply location filter
+        if (locationValue) {
+            filteredGuides = filteredGuides.filter(guide => 
+                guide.location === locationValue || guide.prefecture === locationValue
+            );
+        }
+        
+        // Apply language filter
+        if (languageValue) {
+            filteredGuides = filteredGuides.filter(guide => 
+                guide.languages && guide.languages.includes(languageValue)
+            );
+        }
+        
+        // Apply price filter
+        if (priceValue) {
+            filteredGuides = filteredGuides.filter(guide => {
+                const price = guide.price;
+                switch(priceValue) {
+                    case 'budget': return price >= 6000 && price <= 10000;
+                    case 'premium': return price >= 10001 && price <= 20000;
+                    case 'luxury': return price >= 20001;
+                    default: return true;
+                }
+            });
+        }
+        
+        console.log(`✅ Filtered: ${filteredGuides.length}/${window.AppState.guides.length} guides`);
+        
+        // Re-render guide cards with filtered results
+        if (window.renderGuideCards) {
+            window.renderGuideCards(filteredGuides);
+        }
+        
+        // Update counters
+        updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
+    }
+}
+
+function updateGuideCounters(filtered, total) {
+    const guideCounter = document.getElementById('guideCounter');
+    const totalGuideCounter = document.getElementById('totalGuideCounter');
+    
+    if (guideCounter) {
+        guideCounter.textContent = `${filtered}人のガイドが見つかりました（全${total}人中）`;
+    }
+    
+    if (totalGuideCounter) {
+        totalGuideCounter.textContent = `総数: ${total}人`;
+    }
+}
+
+// Management center handler
+function handleManagementCenter() {
+    console.log('🏆 Management center clicked');
+    if (window.showManagementCenter) {
+        window.showManagementCenter();
+    } else {
+        alert('管理センターは開発中です');
+    }
 }

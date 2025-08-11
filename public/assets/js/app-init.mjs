@@ -3,6 +3,7 @@
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
 import './emergency-buttons.mjs';
+import { renderGuideCards } from './ui/guide-renderer.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
@@ -59,7 +60,8 @@ function appInit() {
     initializeGuidePagination(state);
     setupEventListeners(state);
     
-    // Display guides on page load with state parameter
+    // Render initial guide cards and display guides
+    renderGuideCards(guides);
     displayGuides(1, state);
     
     // Setup button handlers
