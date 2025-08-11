@@ -2,7 +2,7 @@
 .theme-ocean {
     margin: 0;
     padding: 0;
-    background-image: url('/assets/images/yacht-beach-background-new.jpg');
+    background-image: url('/assets/images/yacht-beach-background.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-attachment: fixed;
@@ -19,18 +19,18 @@
         background-position: center center !important;
         background-repeat: no-repeat !important;
         position: relative;
-        background-image: url('/assets/images/yacht-beach-background-new.jpg') !important;
+        background-image: url('/assets/images/yacht-beach-background.jpg') !important;
     }
     
     /* Force background visibility on mobile */
     body.theme-ocean {
-        background: url('/assets/images/yacht-beach-background-new.jpg') center center / cover no-repeat !important;
+        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat !important;
         min-height: 100vh !important;
     }
     
     /* Additional mobile background layer */
     html {
-        background: url('/assets/images/yacht-beach-background-new.jpg') center center / cover no-repeat fixed !important;
+        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat fixed !important;
     }
 }
 
