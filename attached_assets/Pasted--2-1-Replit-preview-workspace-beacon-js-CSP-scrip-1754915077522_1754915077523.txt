@@ -1,0 +1,98 @@
+了解。スクショに残っている “赤エラー” はほぼ2種類だけです。
+
+1. Replit の preview/workspace が勝手に挿入する `beacon.js` が **CSP(script-src)** でブロックされる
+2. Replit 側の iframe／Chromium の警告（`allow-downloads-without-user-activation` や WebGL/“Unrecognized feature …”）
+   → 2) は **IDE 由来**であなたのアプリのコードでは消せません（.replit.dev を別タブで開くと出ないやつです）。
+   → 1) は **CSP を dev環境だけ広げる** か、常に広げるのどちらかで消せます。以下は Replit のエージェントへそのままコピペで渡せる修正指示文です。
+
+---
+
+# ⬇︎Replitエージェント向け・コピペ用修正指示
+
+**目的**
+Preview で出る `Refused to load the script 'https://replit.com/public/js/beacon.js'` を解消しつつ、プロダクションの CSP は厳格に保つ。
+
+**やること（順番通り）**
+
+1. **CSPメタをホスト判定で出し分けるユーティリティを追加**
+
+   * `public/csp.js` を新規作成して、以下をそのまま保存。
+
+   ```html
+   <script>
+     (function () {
+       // Replit のプレビュー/ワークスペース内でのみ true
+       var isReplitPreview = location.hostname.endsWith(".replit.dev") || location.hostname.endsWith(".repl.co");
+       // 既存の CSP <meta> を除去（重複を避ける）
+       document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]').forEach(function(m){ m.remove(); });
+
+       // base（本番用：厳格）
+       var prod = "default-src 'self'; " +
+                  "img-src 'self' data: https:; " +
+                  "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+                  "font-src 'self' data: https://fonts.gstatic.com; " +
+                  "script-src 'self' https://cdn.jsdelivr.net; " +
+                  "script-src-elem 'self' https://cdn.jsdelivr.net; " +
+                  "connect-src 'self' https://api.emailjs.com; " +
+                  "frame-ancestors 'self' https://*.replit.com; " +
+                  "base-uri 'self'; form-action 'self'; upgrade-insecure-requests";
+
+       // dev（Replit プレビュー用：beacon.js を許可）
+       var dev = "default-src 'self'; " +
+                 "img-src 'self' data: https:; " +
+                 "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+                 "font-src 'self' data: https://fonts.gstatic.com; " +
+                 "script-src 'self' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; " +
+                 "script-src-elem 'self' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; " +
+                 "connect-src 'self' https://api.emailjs.com https://replit.com https://*.replit.com; " +
+                 "frame-ancestors 'self' https://*.replit.com; " +
+                 "base-uri 'self'; form-action 'self'";
+
+       var meta = document.createElement('meta');
+       meta.setAttribute('http-equiv','Content-Security-Policy');
+       meta.setAttribute('content', isReplitPreview ? dev : prod);
+       document.head.prepend(meta);
+     })();
+   </script>
+   ```
+
+2. **`index.html` の `<head>` を修正**
+
+   * 既存の **CSP の `<meta http-equiv="Content-Security-Policy" …>` をすべて削除**。
+   * いちばん上の `<script …>` やインラインスクリプトを追加しない設計は維持しています（上の `csp.js` はビルド時に埋め込むのではなく、**外部ファイルとして読み込み**ます）。
+   * `<head>` 末尾あたりに **外部読み込み**でユーティリティを追加：
+
+   ```html
+   <!-- 動的 CSP（本番は厳格、Replitプレビューでは replit.com を許可） -->
+   <script src="/csp.js" defer></script>
+   ```
+
+3. **ビルド/配置のパス確認**
+
+   * もし `public/` ではなく `./` 直下配信なら、2 の `src` を実体パスに合わせて変更。
+   * Vite/Parcel 等を使っていれば、`public/csp.js` はそのままルート配信されます。
+
+4. **（確認）”赤エラー”の扱い**
+
+   * 以下は **Replit IDE 由来**の警告で、アプリのコードでは消せません。**無視してOK**。
+
+     * `Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' …`（workspace\_iframe.html 由来）
+     * `GroupMarkerNotSet … enable-unsafe-swiftshader` / WebGL fallback
+     * `Unrecognized feature: 'ambient-light-sensor'` などの “Unrecognized feature …” 群
+   * 本番ホスト（`*.kirk.replit.dev` や独自ドメイン）を **ブラウザで別タブ**表示すると、上記は出ません。出る場合は、そのホストで CSP が “dev” になっていないかを再確認してください。
+
+5. **テスト手順**
+
+   * Replit Preview：コンソールの赤エラーから `beacon.js` の **CSPブロックが消えている**こと。
+   * `.replit.dev` 以外（本番側）：ネットワークタブで `https://replit.com/public/js/beacon.js` が **ブロックされる or そもそも読まれない**こと（= 厳格CSPが効いている）。
+
+---
+
+## 補足（質問でよくある点）
+
+* **CSP を常時ゆるめる**選択も可能です。上の手順1の `dev` と同じポリシーを本番にも常時適用すれば、Preview でも本番でも beacon エラーは出ません（ただしセキュリティはわずかに緩みます）。
+* `allow-downloads-without-user-activation` のエラーは **Replit の iframe 属性**で、プロジェクト内検索で見つからないのが正常です。あなたのアプリ側には作業不要です。
+
+---
+
+これで、**実アプリ由来の赤エラーは0**になり、残るのは IDE/ブラウザからの “警告（黄色）” のみになります。必要なら、この指示文のままエージェントに投げて進めてください。
