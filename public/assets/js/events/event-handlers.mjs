@@ -305,7 +305,9 @@ export function displayGuides(page, state) {
     });
     
     // Update guide count displays with actual rendered card count
-    updateGuideCounters(guidesForPage.length, currentState.guides.length);
+    if (window.updateGuideCounters) {
+        window.updateGuideCounters(guidesForPage.length, currentState.guides.length);
+    }
     
     // Environment debug log table
     console.table({
@@ -347,19 +349,7 @@ function createGuideCard(guide) {
     return col;
 }
 
-// Update guide counter displays - synchronizes with actual rendered cards
-function updateGuideCounters(displayedCount, totalCount) {
-    const guideCounter = document.getElementById('guideCounter');
-    const totalGuideCounter = document.getElementById('totalGuideCounter');
-    
-    if (guideCounter) {
-        guideCounter.textContent = `${displayedCount}人のガイドが見つかりました（全${totalCount}人中）`;
-    }
-    
-    if (totalGuideCounter) {
-        totalGuideCounter.textContent = `登録ガイド総数: ${totalCount}人`;
-    }
-}
+// Counter displays handled by guide-renderer.mjs to avoid duplication
 
 // Update pagination info with AppState
 function updatePaginationInfo(page, state) {
@@ -571,21 +561,10 @@ function applyCurrentFilters() {
             window.renderGuideCards(filteredGuides);
         }
         
-        // Update counters
-        updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
-    }
-}
-
-function updateGuideCounters(filtered, total) {
-    const guideCounter = document.getElementById('guideCounter');
-    const totalGuideCounter = document.getElementById('totalGuideCounter');
-    
-    if (guideCounter) {
-        guideCounter.textContent = `${filtered}人のガイドが見つかりました（全${total}人中）`;
-    }
-    
-    if (totalGuideCounter) {
-        totalGuideCounter.textContent = `総数: ${total}人`;
+        // Update counters using guide-renderer function
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
+        }
     }
 }
 

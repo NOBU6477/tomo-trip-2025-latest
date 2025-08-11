@@ -1,0 +1,116 @@
+原因はこれです👇
+**`updateGuideCounters` が同じページで 2 回以上定義されている**（重複 import/重複 `<script>`/グローバル関数の多重定義）。ESM では同名の `const/let/function` を再定義すると即 **SyntaxError** になり、その後の処理（ボタン/フィルタ）が止まります。必ず直してください。
+
+---
+
+# 修正指示書（コピペ運用可）
+
+## 1) 入口スクリプトを 1 本に統一
+
+`index.html` を開き、**自分で書いたモジュールは 1 本だけ**読み込むようにします。
+
+```html
+<!-- ✅ これだけにする -->
+<script type="module" src="/app-init.mjs"></script>
+
+<!-- ❌ 下のような直読みは削除（app-init が import するので重複になる） -->
+<!-- <script type="module" src="/ui/renderer.mjs"></script> -->
+<!-- <script type="module" src="/events/event-handlers.mjs"></script> -->
+<!-- <script type="module" src="/state/app-state.mjs"></script> -->
+```
+
+> ポイント: `app-init.mjs` から他ファイルを `import` していれば、`index.html` にそれらを**直接**並べてはいけません。重複読み込みで「already been declared」になります。
+
+---
+
+## 2) グローバル関数の多重定義をやめる
+
+`updateGuideCounters` を**1か所だけ**に置き、他からは import して使います。
+例：`/ui/renderer.mjs` に集約する場合
+
+```js
+// /ui/renderer.mjs
+export function updateGuideCounters({ total, found }) {
+  document.querySelector('#total-count').textContent = total;
+  document.querySelector('#found-count').textContent = found;
+}
+```
+
+```js
+// /app-init.mjs など使う側
+import { updateGuideCounters } from './ui/renderer.mjs';
+// ...
+updateGuideCounters({ total, found });
+```
+
+> もし過去コードで `window.updateGuideCounters = function(){...}` のように
+> 直にグローバルへ出している箇所があれば **削除** し、上の export/import に置き換えてください。
+
+---
+
+## 3) 暫定ガード（すぐに落ちないように）
+
+リファクタ中にページが落ちないよう、もしどうしても一時的にグローバル関数を残すなら**一度だけ**定義されるようガードしてください（恒久策ではなく暫定策）。
+
+```js
+// 悪手のグローバルに最低限の保険
+if (!window.updateGuideCounters) {
+  window.updateGuideCounters = function ({ total, found }) {
+    const t = document.querySelector('#total-count');
+    const f = document.querySelector('#found-count');
+    if (t) t.textContent = total;
+    if (f) f.textContent = found;
+  };
+}
+```
+
+---
+
+## 4) 二重バインド/二重初期化の防止
+
+ホットリロードや複数 import で初期化が重なると、同名関数の再評価が起きがちです。初期化関数にはフラグを入れておきます。
+
+```js
+// /events/event-handlers.mjs
+let wired = false;
+export function initEventHandlers() {
+  if (wired) return;
+  wired = true;
+  // ... addEventListener 群
+}
+
+// /app-init.mjs
+let booted = false;
+export async function appInit() {
+  if (booted) return;
+  booted = true;
+  // ... 初期化処理
+}
+document.addEventListener('DOMContentLoaded', appInit);
+```
+
+---
+
+## 5) 重複定義の場所を探すクイックチェック
+
+エディタ全体検索で確認してください。
+
+* 検索語：`updateGuideCounters`
+  → **定義（function / const / let / var）** が 1 つだけになるように。
+* 検索語：`<script type="module"` in `index.html`
+  → 自作モジュールのタグは **1 本**（`app-init.mjs` のみ）。
+
+---
+
+## 6) これで直るサイン
+
+* コンソールの赤い `Identifier 'updateGuideCounters' has already been declared` が**消える**。
+* その後の処理（描画・イベント）が止まらず動く。
+
+---
+
+### このエラーは「放置してよい？」
+
+いいえ。**実行が中断**されるタイプのエラーなので、必ず解消してください（単なる警告ではありません）。
+
+必要なら、現在のファイル構成（`index.html` の `<script>` 群と `updateGuideCounters` があるファイル名）を送ってください。重複箇所をピンポイントで差分パッチにします。

@@ -86,8 +86,8 @@ function createGuideCardHTML(guide) {
     `;
 }
 
-// Update guide counters
-function updateGuideCounters(filtered, total) {
+// Update guide counters - SINGLE DEFINITION
+export function updateGuideCounters(filtered, total) {
     const guideCounter = document.getElementById('guideCounter');
     const totalGuideCounter = document.getElementById('totalGuideCounter');
     
@@ -100,7 +100,8 @@ function updateGuideCounters(filtered, total) {
     }
 }
 
-// Make function globally available for filter system
+// Make functions globally available for filter system
 if (typeof window !== 'undefined') {
     window.renderGuideCards = renderGuideCards;
+    window.updateGuideCounters = updateGuideCounters;
 }
