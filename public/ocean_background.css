@@ -20,14 +20,11 @@
     bottom: 0;
     background: linear-gradient(
         135deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(0, 173, 181, 0.3) 25%,
-        rgba(0, 123, 191, 0.4) 50%,
-        rgba(41, 128, 185, 0.3) 75%,
-        rgba(255, 255, 255, 0.1) 100%
+        rgba(0, 0, 0, 0.1) 0%,
+        rgba(0, 0, 0, 0.15) 50%,
+        rgba(0, 0, 0, 0.1) 100%
     );
     z-index: -1;
-    backdrop-filter: blur(1px);
 }
 
 #main-footer img { 
@@ -60,21 +57,22 @@
 
 /* Hero section improvements for yacht background */
 .hero-section {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(2px);
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(3px);
     border-radius: 20px;
     padding: 2rem;
     margin: 2rem 0;
 }
 
 .hero-section h1, .hero-section h2 {
-    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
-    color: white;
+    text-shadow: 3px 3px 8px rgba(0,0,0,0.9);
+    color: white !important;
+    font-weight: bold;
 }
 
 .hero-section p {
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    color: rgba(255, 255, 255, 0.95);
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    color: rgba(255, 255, 255, 0.95) !important;
 }
 
 /* Scroll parallax effect for background */
