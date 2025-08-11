@@ -11,6 +11,32 @@
     font-family: 'Noto Sans JP', 'Inter', sans-serif;
 }
 
+/* Mobile-friendly background for better compatibility */
+@media (max-width: 768px) {
+    .theme-ocean {
+        background-attachment: scroll;
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+    
+    /* Alternative mobile background implementation */
+    .theme-ocean::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('/assets/images/yacht-beach-background-new.jpg');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+        z-index: -10;
+    }
+}
+
 .theme-ocean::before {
     content: '';
     position: fixed;
