@@ -1,0 +1,80 @@
+/* Mobile-specific background CSS for TomoTrip */
+/* Force background on all mobile devices */
+
+/* Global mobile background enforcement */
+@media (max-width: 768px) {
+    * {
+        box-sizing: border-box;
+    }
+    
+    html {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    body {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        background-attachment: scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    body.theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+    }
+}
+
+/* Extra narrow mobile screens */
+@media (max-width: 480px) {
+    html, body, .theme-ocean, body.theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Backup background layer */
+    .theme-ocean::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat;
+        z-index: -1000;
+    }
+}
+
+/* Very specific mobile targeting */
+@media screen and (max-width: 414px) {
+    html, body, .theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    html, body, .theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+    }
+}
