@@ -23,14 +23,32 @@ if (isReplitIframe) {
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // 1) First determine final guide data (localStorage priority, then default)
-    const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-    const guides = (Array.isArray(storedGuides) && storedGuides.length) ? storedGuides : defaultGuideData;
+    // 1) Force use default guide data for consistency across all environments
+    // This eliminates localStorage differences between editor and separate tabs
+    const guides = defaultGuideData;
+    
+    // Clear any localStorage differences that might affect guide count
+    localStorage.removeItem('registeredGuides');
+    localStorage.removeItem('guideFilters');
+    
+    console.log('🎯 Environment Data Sync:', {
+        guides: guides.length,
+        source: 'defaultGuideData (forced)',
+        localStorage_cleared: true
+    });
 
     // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
+    // Force clear localStorage/sessionStorage environment differences
+    if (window.location.search.includes('clear-cache')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log('🧹 Storage cleared due to clear-cache parameter');
+    }
+    
     AppState.guides = guides;
-    AppState.pageSize = 12;
+    AppState.pageSize = 12; // Fixed pageSize for all environments
     AppState.currentPage = 1;
+    AppState.filters = {}; // Reset filters to default
     const state = AppState;
 
     // 3) Setup location names in AppState

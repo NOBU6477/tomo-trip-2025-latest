@@ -1,0 +1,103 @@
+ありそうな原因はだいたいこの5つです。どれも「エディタ内プレビュー」と「別タブ(.replit.dev など他オリジン)」で挙動や保存領域が変わるのがポイント。
+
+1. ビルドが違う
+   　エディタ側は最新（HMR/プレビュー）の JS、別タブは一つ前のビルドを読んでいる。→ カード枚数ロジックがズレる。
+
+2. Service Worker / キャッシュ
+   　別タブ側だけ古い HTML/JS を SW が配っている。エディタで直しても別タブは古いまま。
+
+3. localStorage / sessionStorage の分離
+   　オリジンが違うので保存された「検索条件/フィルタ/ページ番号」が別物。別タブだけキツいフィルタやページ2などが残っていて、表示枚数が減る。
+
+4. ページネーション初期値の差
+   　プレビューでは pageSize=12、別タブでは pageSize=2 のように初期設定が環境分岐や未初期化で変わっている。
+
+5. データ取得の上限（limit）やモック差
+   　エディタは全件（12）を読み、別タブは limit=2 のエンドポイント/モックを見ている。
+
+---
+
+# 直し方（コピペ指示）
+
+**A. 同じビルド・同じ条件で動かす**
+
+1. Service Worker とキャッシュの強制クリア
+
+   * コンソールで実行（どちらのタブも）
+
+     ```js
+     if ('serviceWorker' in navigator) {
+       navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister()));
+     }
+     caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+     localStorage.clear(); sessionStorage.clear();
+     location.reload(true);
+     ```
+   * 以後、開発中は SW 登録を無効化（build 時に register を呼ばない or `if (process.env.NODE_ENV==='production')` で限定）。
+
+2. ビルドIDを表示して揃っているか確認
+
+   * 起動時ログに `BUILD_ID` を必ず出す（もう出ているならOK）。両タブで同じ値か確認。
+
+**B. 表示件数＝実描画配列の長さ に一本化**
+
+1. 検索/フィルタ後に**単一の配列**を作る
+
+   ```js
+   const allGuides = /* 全件 */;
+   const filtered = applyFilters(allGuides, currentFilters);
+   ```
+2. ページネーションは**この配列に対してのみ**行う
+
+   ```js
+   const pageSize = 12;      // ここを1箇所で定義
+   const page = 1;           // 初期ページ
+   const pageSlice = filtered.slice(0, page * pageSize);
+   renderCards(pageSlice);
+   ```
+3. カウント表示も**同じ配列を使う**
+
+   ```js
+   totalCountEl.textContent = allGuides.length;      // 総登録
+   foundCountEl.textContent = filtered.length;       // 見つかった
+   ```
+4. 初期化を**どの環境でも同じ値**に固定
+
+   * `pageSize`・`page`・`currentFilters` をハードコード or `.env` で、オリジン差で変わらないようにする。
+   * 初期ロード時に必ず `page=1` と `currentFilters = default` をセット。
+   * localStorage から復元する場合は **存在しない時だけ**適用し、復元後にログで確認：
+
+     ```js
+     console.log({pageSize, page, currentFilters});
+     ```
+
+**C. データ取得の limit を統一**
+
+* fetch のクエリに `?limit=` を付けているなら削除、または **両環境で同値**にする。
+* モック/本番切替フラグがあれば、両環境とも同じ（モック or 本番）に固定。
+
+**D. ガードログを入れて即確認（必須）**
+
+```js
+console.table({
+  build: BUILD_ID,
+  total: allGuides.length,
+  filtered: filtered.length,
+  page,
+  pageSize,
+  rendered: pageSlice.length,
+  origin: location.origin
+});
+```
+
+→ 別タブで `pageSize` や `origin` が原因になっていないか一目で分かります。
+
+---
+
+## つまり
+
+* **計上する配列をひとつに決める（filtered / rendered）**
+* **その配列からカウントを出し、同じ配列から描画する**
+* **環境差（SW/キャッシュ、localStorage、limit、pageSize）を潰す**
+
+これで「総登録：15」「見つかった：12」「カード：12」が一致するはずです。必要なら、あなたの `displayGuides()`／`initPagination()` の該当箇所に合わせて、具体的な修正パッチ（差分）を書きます。コード断片を貼ってくれれば、即パッチ化します。

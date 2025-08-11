@@ -251,6 +251,9 @@ export function displayGuides(page, state) {
     const container = document.getElementById('guideCardsContainer');
     if (!container) return;
     
+    // Force pageSize to 12 for consistency across all environments
+    currentState.pageSize = 12;
+    
     const startIndex = (page - 1) * currentState.pageSize;
     const endIndex = startIndex + currentState.pageSize;
     const guidesForPage = currentState.guides.slice(startIndex, endIndex);
@@ -264,6 +267,18 @@ export function displayGuides(page, state) {
     
     // Update guide count displays with actual rendered card count
     updateGuideCounters(guidesForPage.length, currentState.guides.length);
+    
+    // Environment debug log table
+    console.table({
+        build: window.BUILD_ID || 'TomoTrip-v2025.08.09-UNIFIED-BUILD',
+        total: currentState.guides.length,
+        filtered: currentState.guides.length, // Currently no filtering applied
+        page: page,
+        pageSize: currentState.pageSize,
+        rendered: guidesForPage.length,
+        origin: location.origin,
+        timestamp: new Date().toISOString()
+    });
     
     updatePaginationInfo(page, currentState);
 }
