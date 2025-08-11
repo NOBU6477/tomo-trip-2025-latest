@@ -13,24 +13,48 @@
 
 /* Mobile-friendly background for better compatibility */
 @media (max-width: 768px) {
+    html, body {
+        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+    }
+    
     .theme-ocean {
         background-attachment: scroll !important;
         background-size: cover !important;
         background-position: center center !important;
         background-repeat: no-repeat !important;
-        position: relative;
         background-image: url('/assets/images/yacht-beach-background.jpg') !important;
-    }
-    
-    /* Force background visibility on mobile */
-    body.theme-ocean {
-        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat !important;
         min-height: 100vh !important;
+        width: 100% !important;
     }
     
-    /* Additional mobile background layer */
-    html {
-        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat fixed !important;
+    /* Force background on very narrow screens */
+    body.theme-ocean {
+        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+    }
+}
+
+/* Extra narrow mobile screens (320px and below) */
+@media (max-width: 480px) {
+    html, body, .theme-ocean {
+        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+    }
+    
+    /* Ensure full viewport coverage */
+    .theme-ocean::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: url('/assets/images/yacht-beach-background.jpg') center center / cover no-repeat;
+        z-index: -1;
     }
 }
 
