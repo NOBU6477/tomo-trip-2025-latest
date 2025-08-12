@@ -1,29 +1,28 @@
-#!/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3
+#!/usr/bin/env python3
 """
-Alternative startup bypassing .replit errors
+Simple startup script for TomoTrip deployment
+This ensures compatibility with Replit's deployment system
 """
-import os
-import signal
 import subprocess
 import sys
+import os
 
-def signal_handler(sig, frame):
-    print("\n🛑 Server shutdown requested")
-    sys.exit(0)
+def main():
+    print("🚀 Starting TomoTrip deployment server...")
+    
+    # Set environment variables
+    os.environ['PYTHONPATH'] = '.'
+    os.environ['PORT'] = str(os.environ.get('PORT', 5000))
+    
+    try:
+        # Start the main server
+        subprocess.run([sys.executable, 'deployment_test_server.py'], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Server failed to start: {e}")
+        sys.exit(1)
+    except KeyboardInterrupt:
+        print("🛑 Server stopped by user")
+        sys.exit(0)
 
-signal.signal(signal.SIGINT, signal_handler)
-
-print("🌴 TomoTrip Alternative Startup")
-print("Bypassing .replit configuration errors...")
-
-# Try to run main.py directly
-try:
-    subprocess.run([
-        '/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3', 
-        'main.py'
-    ])
-except KeyboardInterrupt:
-    print("\n✅ Server stopped")
-except Exception as e:
-    print(f"❌ Error: {e}")
-    sys.exit(1)
+if __name__ == "__main__":
+    main()
