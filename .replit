@@ -13,15 +13,15 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "TomoTripServer"
+args = "MainTomoTrip"
 
 [[workflows.workflow]]
-name = "TomoTripServer"
+name = "MainTomoTrip"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3 deployment_test_server.py"
+args = "/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3 main.py"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
