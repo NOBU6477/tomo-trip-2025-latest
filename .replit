@@ -13,10 +13,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "MainTomoTrip"
+args = "TomoTripProduction"
 
 [[workflows.workflow]]
-name = "MainTomoTrip"
+name = "TomoTripProduction"
 author = "agent"
 
 [[workflows.workflow.tasks]]
