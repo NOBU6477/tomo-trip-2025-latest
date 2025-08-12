@@ -1,18 +1,29 @@
 [run]
-run = "python3 main.py"
+run = "python deployment_test_server.py"
 
 [deployment]
-run = ["python3", "main.py"]
-deploymentTarget = "cloudrun"
-ignorePorts = false
+run = ["python", "deployment_test_server.py"]
+deploymentTarget = "autoscale"
+
+[env]
+PYTHONPATH = "."
+
+[packager]
+language = "python3"
+
+[packager.features]
+packageSearch = true
+guessImports = true
+
+[languages.python3]
+pattern = "**/*.py"
+syntax = "python"
+
+[languages.python3.languageServer]
+start = ["pylsp"]
 
 [nix]
 channel = "stable-24_05"
 
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3000
+[gitHubImport]
+requiredFiles = [".replit", "replit.toml"]
