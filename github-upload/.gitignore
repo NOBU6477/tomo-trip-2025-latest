@@ -1,0 +1,105 @@
+# TomoTrip - GitHub Repository .gitignore
+# Generated on 2025-08-12
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+env/
+venv/
+ENV/
+.venv/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs/
+*.log
+
+# Cache directories
+.cache/
+.uv/
+.replit
+replit_backup.toml
+replit_python.toml
+
+# Temporary files
+temp_content.txt
+*.tmp
+*.temp
+
+# Replit specific
+attached_assets/
+github-ready/
+
+# Development and test files
+deploy.py
+deployment_*.py
+diagnose.py
+fix_*.py
+test_*.py
+start_*.py
+final_solution.py
+simple_server.py
+server.js
+
+# Documentation artifacts
+*_REPORT.md
+*_INSTRUCTIONS.md
+*_TROUBLESHOOTING.md
+*_GUIDE.md
+UPLOAD_LIST.md
+footer_code_export.txt
+
+# Backup files
+*.backup
+index.html.backup

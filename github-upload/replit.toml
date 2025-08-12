@@ -1,0 +1,51 @@
+[run]
+run = "/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3 main.py"
+
+[deployment]
+run = ["/nix/store/h097imm3w6dpx10qynrd2sz9fks2wbq8-python3-3.12.11/bin/python3", "main.py"]
+deploymentTarget = "autoscale"
+publicDir = "."
+ignorePorts = false
+
+[env]
+PYTHONPATH = "."
+PORT = "5000"
+REPLIT_DEV_DOMAIN = "${REPL_SLUG}-${REPL_OWNER}.replit.dev"
+
+[packager]
+language = "python3"
+
+[unitTest]
+language = "python3"
+
+[packager.features]
+packageSearch = true
+guessImports = true
+
+[languages.python3]
+pattern = "**/*.py"
+syntax = "python"
+
+[languages.python3.languageServer]
+start = ["pylsp"]
+
+[nix]
+channel = "stable-24_05"
+
+[deployment.environment]
+PORT = "5000"
+PYTHONPATH = "."
+REPLIT_DEPLOYMENT = "true"
+
+
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.toml"]
