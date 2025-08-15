@@ -1,7 +1,9 @@
 // TomoTrip Application Initialization - CSP Compliant
 // Consolidated from inline scripts in index.html
 
-import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination } from './events/event-handlers.mjs';
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
+import './emergency-buttons.mjs';
+import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
@@ -22,14 +24,32 @@ if (isReplitIframe) {
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // 1) First determine final guide data (localStorage priority, then default)
-    const storedGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-    const guides = (Array.isArray(storedGuides) && storedGuides.length) ? storedGuides : defaultGuideData;
+    // 1) Force use default guide data for consistency across all environments
+    // This eliminates localStorage differences between editor and separate tabs
+    const guides = defaultGuideData;
+    
+    // Clear any localStorage differences that might affect guide count
+    localStorage.removeItem('registeredGuides');
+    localStorage.removeItem('guideFilters');
+    
+    console.log('🎯 Environment Data Sync:', {
+        guides: guides.length,
+        source: 'defaultGuideData (forced)',
+        localStorage_cleared: true
+    });
 
     // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
+    // Force clear localStorage/sessionStorage environment differences
+    if (window.location.search.includes('clear-cache')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log('🧹 Storage cleared due to clear-cache parameter');
+    }
+    
     AppState.guides = guides;
-    AppState.pageSize = 12;
+    AppState.pageSize = 12; // Fixed pageSize for all environments
     AppState.currentPage = 1;
+    AppState.filters = {}; // Reset filters to default
     const state = AppState;
 
     // 3) Setup location names in AppState
@@ -40,8 +60,9 @@ function appInit() {
     initializeGuidePagination(state);
     setupEventListeners(state);
     
-    // Display guides on page load
-    displayGuides(1);
+    // Render initial guide cards and display guides
+    renderGuideCards(guides);
+    displayGuides(1, state);
     
     // Setup button handlers
     wireSponsorButtons();
@@ -72,126 +93,4 @@ if (!window.locationNames) {
 }
 
 // Remove all global state variables - managed by AppState now
-
-// Remove all top-level initialization - move to function
-
-// Functions moved to event-handlers.mjs - no global state here
-
-// Display guides for current page - complete implementation
-function displayGuides(page = 1) {
-    const container = document.getElementById('guideCardsContainer');
-    if (!container) return;
-
-    const state = window.AppState;
-    if (!state || !state.guides) {
-        console.warn('No guides data available');
-        return;
-    }
-
-    const startIndex = (page - 1) * state.pageSize;
-    const endIndex = startIndex + state.pageSize;
-    const guidesToShow = state.guides.slice(startIndex, endIndex);
-
-    let html = '';
-    guidesToShow.forEach((guide, index) => {
-        const globalIndex = startIndex + index + 1;
-        html += `
-        <div class="col-lg-4 col-md-6 mb-4">
-            <div class="card guide-card h-100 shadow-sm" data-guide-id="${guide.id || globalIndex}">
-                <img src="${guide.image || '/assets/img/guides/default-' + ((globalIndex - 1) % 5 + 1) + '.svg'}" 
-                     class="card-img-top" alt="${guide.name || 'ガイド写真'}" style="height: 200px; object-fit: cover;">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">${guide.name || 'ガイド名'}</h5>
-                    <p class="card-text text-muted small mb-2">
-                        <i class="bi bi-geo-alt"></i> ${guide.location || guide.prefecture || '東京都'}
-                    </p>
-                    <p class="card-text text-muted small mb-2">
-                        <i class="bi bi-translate"></i> ${guide.languages || '日本語、英語'}
-                    </p>
-                    <p class="card-text mb-3">${guide.description || 'プロフェッショナルなガイドサービスを提供いたします。'}</p>
-                    <div class="mt-auto">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="text-primary fw-bold">¥${guide.price || '8,000'}/日</span>
-                            <small class="text-warning">
-                                <i class="bi bi-star-fill"></i> ${guide.rating || '4.8'}
-                            </small>
-                        </div>
-                        <button class="btn btn-primary w-100 view-details-btn" data-guide-id="${guide.id || globalIndex}">
-                            詳細を見る
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>`;
-    });
-
-    container.innerHTML = html;
-
-    // Update counters
-    updateGuideCounters(page, state);
-    
-    // Re-add event listeners after cards are rendered
-    addCardEventListeners();
-    
-    log.info(`📊 Displayed ${guidesToShow.length} guides on page ${page}`);
-}
-
-// Update guide counters
-function updateGuideCounters(page, state) {
-    const totalGuides = state.guides.length;
-    const startIndex = (page - 1) * state.pageSize + 1;
-    const endIndex = Math.min(page * state.pageSize, totalGuides);
-    
-    const counterElement = document.getElementById('guideCounter');
-    const totalCounterElement = document.getElementById('totalGuideCounter');
-    
-    if (counterElement) {
-        counterElement.textContent = `${endIndex - startIndex + 1}人のガイドが見つかりました（全${totalGuides}人中）`;
-    }
-    
-    if (totalCounterElement) {
-        totalCounterElement.textContent = `登録ガイド総数: ${totalGuides}人`;
-    }
-}
-
-// Add event listeners to cards
-function addCardEventListeners() {
-    const viewButtons = document.querySelectorAll('.view-details-btn');
-    console.log('🔧 Adding event listeners to View Details buttons...');
-    console.log('Found', viewButtons.length, 'View Details buttons');
-    
-    viewButtons.forEach((button, index) => {
-        const guideId = button.dataset.guideId;
-        console.log(`Setting up button ${index + 1} for guide ID: ${guideId}`);
-        
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('View Details clicked for guide:', guideId);
-            // Add guide detail modal logic here
-        });
-    });
-    
-    console.log('✅ Card event listeners added');
-}
-
-// View guide details function - moved to global scope for onclick compatibility
-window.viewGuideDetails = function(guideId) {
-    alert(`ガイド詳細表示機能は開発中です。ガイドID: ${guideId}`);
-};
-
-// Safe initialization - no early calls to prevent TDZ
-function startApp() {
-    appInit();
-}
-
-// Boot guard to prevent double initialization
-if (!window.__APP_BOOTED__) {
-    window.__APP_BOOTED__ = true;
-    
-    // Initialize after DOM load - with environment safety
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startApp, { once: true });
-    } else {
-        startApp();
-    }
-}
+// All display functions moved to event-handlers.mjs to prevent conflicts

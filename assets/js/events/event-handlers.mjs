@@ -4,6 +4,9 @@ import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     
+    // Setup data-action based event handlers (CSP compliant)
+    setupDataActionHandlers();
+    
     // Setup sponsor button events (CSP compliant)
     setupSponsorButtonEvents();
     
@@ -17,6 +20,186 @@ export function setupEventListeners(state) {
     setupPaginationEvents(state);
     
     console.log('%cEvent listeners setup complete', 'color: #28a745;');
+}
+
+// CSP compliant data-action event delegation system
+function setupDataActionHandlers() {
+    // Prevent double initialization
+    if (window.__dataActionHandlersSetup) return;
+    window.__dataActionHandlersSetup = true;
+    
+    // Unified event delegation for all data-action attributes
+    document.addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+        if (!action) return;
+        
+        e.preventDefault();
+        
+        const element = e.target.closest('[data-action]');
+        const guideId = element?.getAttribute('data-guide-id');
+        const bookingId = element?.getAttribute('data-booking-id');
+        const target = element?.getAttribute('data-target');
+        const email = element?.getAttribute('data-email');
+        
+        // Handle all data-action events
+        switch(action) {
+            // Filter & Search Actions
+            case 'search':
+                handleSearchAction();
+                break;
+            case 'reset':
+                handleResetFilters();
+                break;
+            
+            // Pagination Actions 
+            case 'next-page':
+                handleNextPage();
+                break;
+            case 'prev-page':
+                handlePrevPage();
+                break;
+            case 'goto-page':
+                const page = parseInt(element?.getAttribute('data-page'));
+                if (page && !isNaN(page)) handleGotoPage(page);
+                break;
+                
+            // Sponsor Actions
+            case 'open-sponsor-registration':
+                handleSponsorRegistration();
+                break;
+            case 'open-sponsor-login':
+                handleSponsorLogin();
+                break;
+            case 'open-management':
+                handleManagementCenter();
+                break;
+                
+            // Authentication & Registration
+            case 'toggle-login-dropdown':
+                toggleLoginDropdown();
+                break;
+            case 'open-tourist-registration':
+                openTouristRegistration();
+                break;
+            case 'open-guide-registration':
+                openGuideRegistration();
+                break;
+            case 'process-sponsor-login':
+                processSponsorLogin();
+                break;
+            case 'redirect-sponsor-dashboard':
+                redirectToSponsorDashboard();
+                break;
+                
+            // Guide Actions
+            case 'book-guide':
+                if (guideId) bookGuide(guideId);
+                break;
+            case 'contact-guide':
+                if (guideId) contactGuide(guideId);
+                break;
+            case 'show-guide-detail':
+            case 'view-details':
+                if (guideId) showGuideDetailModalById(guideId);
+                break;
+                
+            // Bookmark & Comparison
+            case 'remove-bookmark':
+                if (guideId) removeBookmark(guideId);
+                break;
+            case 'remove-from-comparison':
+                if (guideId) removeFromComparison(guideId);
+                break;
+            case 'view-booking-details':
+                if (bookingId) viewBookingDetails(bookingId);
+                break;
+                
+            // Utility Actions
+            case 'trigger-photo-upload':
+                document.getElementById('guideProfilePhoto')?.click();
+                break;
+            case 'open-chat':
+                if (target) window.open(target, '_blank');
+                break;
+            case 'send-email':
+                if (email) window.location.href = `mailto:${email}`;
+                break;
+                
+            // Footer & Information Modals
+            case 'show-faq':
+                showFAQ();
+                break;
+            case 'show-cancellation':
+                showCancellation();
+                break;
+            case 'show-safety':
+                showSafety();
+                break;
+            case 'show-payment-help':
+                alert('Payment help coming soon');
+                break;
+            case 'show-guide-registration-help':
+                alert('Guide registration help coming soon');
+                break;
+            case 'show-profile-optimization':
+                alert('Profile optimization tips coming soon');
+                break;
+            case 'show-earnings-dashboard':
+                alert('Earnings dashboard coming soon');
+                break;
+            case 'show-guide-resources':
+                alert('Guide resources coming soon');
+                break;
+            case 'show-cookie-settings':
+                alert('Cookie settings panel under development');
+                break;
+            case 'clear-all-cookies':
+                alert('Cookie deletion feature under development');
+                break;
+            case 'scroll-to-guides':
+                scrollToGuides();
+                break;
+            case 'show-guide-registration-modal':
+                showGuideRegistrationModal();
+                break;
+            case 'show-tourist-registration-modal':
+                showTouristRegistrationModal();
+                break;
+            case 'show-management-center':
+                showManagementCenter();
+                break;
+            case 'show-help':
+                showHelp();
+                break;
+            case 'show-about':
+                showAbout();
+                break;
+            case 'show-terms':
+                showTerms();
+                break;
+            case 'show-privacy':
+                showPrivacy();
+                break;
+            case 'show-cookies':
+                showCookies();
+                break;
+            case 'show-compliance':
+                showCompliance();
+                break;
+                
+            default:
+                console.log('Unknown data-action:', action);
+        }
+    });
+    
+    // Change delegation for filter elements
+    document.addEventListener('change', (e) => {
+        const element = e.target.closest('[data-action="filter-change"]');
+        if (!element) return;
+        handleFilterChange();
+    });
+    
+    console.log('%cData-action handlers setup complete', 'color: #28a745;');
 }
 
 // CSP compliant sponsor button event setup
@@ -100,12 +283,15 @@ export function initializeGuidePagination(state) {
 }
 
 // Display guides for current page using AppState
-function displayGuides(page, state) {
+export function displayGuides(page, state) {
     const currentState = state || window.AppState;
     if (!currentState) return;
     
     const container = document.getElementById('guideCardsContainer');
     if (!container) return;
+    
+    // Force pageSize to 12 for consistency across all environments
+    currentState.pageSize = 12;
     
     const startIndex = (page - 1) * currentState.pageSize;
     const endIndex = startIndex + currentState.pageSize;
@@ -116,6 +302,23 @@ function displayGuides(page, state) {
     guidesForPage.forEach(guide => {
         const guideCard = createGuideCard(guide);
         container.appendChild(guideCard);
+    });
+    
+    // Update guide count displays with actual rendered card count
+    if (window.updateGuideCounters) {
+        window.updateGuideCounters(guidesForPage.length, currentState.guides.length);
+    }
+    
+    // Environment debug log table
+    console.table({
+        build: window.BUILD_ID || 'TomoTrip-v2025.08.09-UNIFIED-BUILD',
+        total: currentState.guides.length,
+        filtered: currentState.guides.length, // Currently no filtering applied
+        page: page,
+        pageSize: currentState.pageSize,
+        rendered: guidesForPage.length,
+        origin: location.origin,
+        timestamp: new Date().toISOString()
     });
     
     updatePaginationInfo(page, currentState);
@@ -145,6 +348,8 @@ function createGuideCard(guide) {
     
     return col;
 }
+
+// Counter displays handled by guide-renderer.mjs to avoid duplication
 
 // Update pagination info with AppState
 function updatePaginationInfo(page, state) {
@@ -281,4 +486,94 @@ function switchToJapanese() {
 function switchToEnglish() {
     console.log('Switching to English');
     window.location.href = 'index-en.html';
+}
+
+// CSP-compliant filter and search handlers
+function handleSearchAction() {
+    console.log('🔍 Search action triggered');
+    applyCurrentFilters();
+}
+
+function handleResetFilters() {
+    console.log('🔄 Reset filters triggered');
+    
+    // Reset all filter selects
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter');  
+    const priceFilter = document.getElementById('priceFilter');
+    
+    if (locationFilter) locationFilter.value = '';
+    if (languageFilter) languageFilter.value = '';
+    if (priceFilter) priceFilter.value = '';
+    
+    // Trigger filter application
+    applyCurrentFilters();
+}
+
+function handleFilterChange() {
+    console.log('📊 Filter changed');
+    applyCurrentFilters();
+}
+
+function applyCurrentFilters() {
+    // Get current filter values
+    const locationValue = document.getElementById('locationFilter')?.value || '';
+    const languageValue = document.getElementById('languageFilter')?.value || '';
+    const priceValue = document.getElementById('priceFilter')?.value || '';
+    
+    console.log('🎯 Applying filters:', { locationValue, languageValue, priceValue });
+    
+    // Get current guides from AppState
+    if (window.AppState && window.AppState.guides) {
+        let filteredGuides = [...window.AppState.guides];
+        
+        // Apply location filter
+        if (locationValue) {
+            filteredGuides = filteredGuides.filter(guide => 
+                guide.location === locationValue || guide.prefecture === locationValue
+            );
+        }
+        
+        // Apply language filter
+        if (languageValue) {
+            filteredGuides = filteredGuides.filter(guide => 
+                guide.languages && guide.languages.includes(languageValue)
+            );
+        }
+        
+        // Apply price filter
+        if (priceValue) {
+            filteredGuides = filteredGuides.filter(guide => {
+                const price = guide.price;
+                switch(priceValue) {
+                    case 'budget': return price >= 6000 && price <= 10000;
+                    case 'premium': return price >= 10001 && price <= 20000;
+                    case 'luxury': return price >= 20001;
+                    default: return true;
+                }
+            });
+        }
+        
+        console.log(`✅ Filtered: ${filteredGuides.length}/${window.AppState.guides.length} guides`);
+        
+        // Re-render guide cards with filtered results
+        if (window.renderGuideCards) {
+            window.renderGuideCards(filteredGuides);
+        }
+        
+        // Update counters using guide-renderer function
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
+        }
+    }
+}
+
+// Management center handler
+function handleManagementCenter() {
+    console.log('🏆 Management center clicked');
+    if (window.showManagementCenter) {
+        window.showManagementCenter();
+    } else {
+        alert('管理センターは開発中です');
+    }
 }
