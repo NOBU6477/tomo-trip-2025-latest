@@ -1,0 +1,56 @@
+/* Deployment-specific mobile background fixes */
+/* This CSS ensures background displays correctly on production */
+
+/* Universal background enforcement for all devices */
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+}
+
+.theme-ocean {
+    background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+    min-height: 100vh !important;
+}
+
+/* Production mobile compatibility */
+@media screen and (max-width: 768px) {
+    html, body, .theme-ocean, body.theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        background-attachment: scroll !important;
+        min-height: 100vh !important;
+        width: 100% !important;
+    }
+}
+
+/* Touch device optimization */
+@media (hover: none) and (pointer: coarse) {
+    html, body, .theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        width: 100vw !important;
+    }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    html, body {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+        min-height: -webkit-fill-available !important;
+    }
+}
+
+/* Android Chrome specific fixes */
+@media screen and (-webkit-min-device-pixel-ratio: 1) {
+    html, body, .theme-ocean {
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
+        min-height: 100vh !important;
+    }
+}

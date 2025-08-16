@@ -1,0 +1,126 @@
+了解！Replit の「Agent」にそのまま貼って動かせる、**必要ファイルを全部集めて ZIP にまとめる指示文**を用意しました。
+下の「▶ Agent 指示文」をコピペして実行してください。終わったら `export-tomotrip.zip` を1クリックでダウンロードできます。
+
+---
+
+# ▶ Agent 指示文（このまま貼ってOK）
+
+**やりたいこと**
+TomoTrip の公開に必要なファイルをすべて集め、空フォルダを除外して、ダウンロード用の ZIP（`export-tomotrip.zip`）を作ってください。
+
+**要件（ファイルと構成）**
+最終的なフォルダ構成はこうしてください：
+
+```
+export-tomotrip/
+├─ index.html
+├─ index-en.html
+├─ sponsor-registration.html   （存在すれば）
+├─ CSS/
+│   ├─ style.css               （存在すれば）
+│   ├─ footer.css              （重要）
+│   └─ icons.css               （重要）
+├─ js/
+│   ├─ app-init.mjs            （重要）
+│   ├─ app-state.mjs           （重要）
+│   ├─ guide-renderer.mjs      （重要）
+│   ├─ ui/modal.mjs            （重要）
+│   └─ utils/logger.mjs        （重要）
+├─ fonts/
+│   ├─ bootstrap-icons.woff2   （重要）
+│   └─ bootstrap-icons.woff    （重要）
+└─ images/
+    ├─ トモトリップロゴ.png          （存在すれば）
+    ├─ ocean-bg.jpg             （存在すれば）
+    ├─ beach-yacht-tourists.jpg （存在すれば）
+    └─ default-*.svg            （ガイドのデフォルトアイコン：存在すれば）
+```
+
+**収集ルール**
+
+* ルートの HTML：`index.html`、`index-en.html`、`sponsor-registration.html`（あれば）を含める
+* CSS：リポジトリ内の `*.css` をすべて拾い、`CSS/` に配置
+  特に `assets/css/icons.css`、`assets/css/footer.css` は必ず入れる
+* JS/モジュール：`*.mjs` と `*.js` を拾い、`js/` に配置
+  特に `assets/js/app-init.mjs`、`assets/js/app-state.mjs`、`assets/js/guide-renderer.mjs`、`assets/js/ui/modal.mjs`、`assets/js/utils/logger.mjs` は必須
+* フォント：`*.woff2`、`*.woff`、`*.ttf`、`*.otf` を拾い、`fonts/` に配置
+  特に `assets/fonts/bootstrap-icons.woff2` と `assets/fonts/bootstrap-icons.woff`
+* 画像：`*.png`、`*.jpg`、`*.jpeg`、`*.svg`、`*.webp` を拾い、`images/` に配置
+  `トモトリップロゴ.png`、`ocean-bg.jpg`、`beach-yacht-tourists.jpg`、`default-*.svg` など
+
+**禁止事項 / 注意**
+
+* 空フォルダは作らない（0バイトファイルも削除）
+* 重複は最後に1つにまとめる
+* ZIP 内は **上の構成** になるように整理
+* 既にある不要なテスト・ビルド生成物は除外（`.map`、`node_modules` など）
+
+**シェルで実行するコマンド（Agent で走らせてください）**
+
+```
+set -euo pipefail
+
+# 作業用の出力先
+EXPORT="export-tomotrip"
+rm -rf "$EXPORT"
+mkdir -p "$EXPORT"/{CSS,js,images,fonts}
+
+# 1) HTML（存在するものだけ）
+for f in index.html index-en.html sponsor-registration.html; do
+  [ -f "$f" ] && cp -v "$f" "$EXPORT"/
+done
+
+# 2) CSS
+find . -type f -iname "*.css" -print -exec cp -v {} "$EXPORT/CSS/" \;
+
+# 3) JS/MJS
+find . -type f \( -iname "*.mjs" -o -iname "*.js" \) -print -exec cp -v {} "$EXPORT/js/" \;
+
+# 4) Fonts
+find . -type f \( -iname "*.woff2" -o -iname "*.woff" -o -iname "*.ttf" -o -iname "*.otf" \) -print -exec cp -v {} "$EXPORT/fonts/" \;
+
+# 5) Images
+find . -type f \( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.svg" -o -iname "*.webp" \) -print -exec cp -v {} "$EXPORT/images/" \;
+
+# 6) 0バイトを除去
+find "$EXPORT" -type f -size 0 -print -delete
+
+# 7) マニフェスト作成（確認用）
+echo "=== EXPORT MANIFEST ===" > "$EXPORT/EXPORT_MANIFEST.txt"
+date >> "$EXPORT/EXPORT_MANIFEST.txt"
+echo >> "$EXPORT/EXPORT_MANIFEST.txt"
+find "$EXPORT" -type f -maxdepth 3 | sort >> "$EXPORT/EXPORT_MANIFEST.txt"
+
+# 8) ZIP化
+ZIPNAME="export-tomotrip.zip"
+rm -f "$ZIPNAME"
+zip -r "$ZIPNAME" "$EXPORT"
+
+echo
+echo "✅ 完了: $ZIPNAME をプロジェクトのルートに作成しました。ファイルツリーからダウンロードできます。"
+```
+
+**完了後のチェック**
+
+1. `export-tomotrip.zip` が Replit の左のファイルツリーに見えること
+2. `export-tomotrip/EXPORT_MANIFEST.txt` に上の構成どおりのファイルが列挙されていること
+3. `CSS/footer.css` と `CSS/icons.css`、`fonts/bootstrap-icons.woff2` が **入っている** こと
+4. `js/` に `*.mjs` が複数並んでいること（`app-init.mjs` など）
+
+**もし足りないとき**
+
+* 足りないファイル名を標準出力に出して教えてください（例：「icons.css が見つかりません」）。
+* その場合は代替パスの候補も同時に提示してください（例：「assets/css/icons.css」「public/assets/css/icons.css」など）。
+* そのうえで、もう一度収集～ZIP化をやり直してください。
+
+---
+
+## ダウンロードして GitHub へ
+
+1. Replit のファイル一覧で `export-tomotrip.zip` をクリック → **Download**
+2. PC で解凍して中身を目視
+3. GitHub のリポジトリで「**Add file → Upload files**」→ フォルダごとドラッグ&ドロップ → **Commit changes**
+
+---
+
+必要なら、**「このファイルが見つからない」** と出た名前を教えてください。そこだけピンポイントで探す/作る手順を追加で書きます！
