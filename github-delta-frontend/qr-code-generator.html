@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TomoTrip QRコード生成</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .url-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+            word-break: break-all;
+            color: #495057;
+            border: 1px solid #dee2e6;
+        }
+        
+        #qrcode {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+        
+        .download-btn:hover {
+            background: linear-gradient(135deg, #218838, #1ea584);
+            transform: translateY(-2px);
+        }
+        
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 8px;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 TomoTrip サーバー QRコード (ポート5001)</h1>
+        
+        <div class="url-display">
+            http://localhost:5001
+        </div>
+        
+        <div id="qrcode"></div>
+        
+        <button class="download-btn" onclick="downloadQR()">QRコードをダウンロード</button>
+        
+        <div class="info">
+            <strong>使用方法:</strong><br>
+            スマートフォンのカメラでQRコードをスキャンすると、TomoTripサーバー（ポート5001）に直接アクセスできます。<br>
+            <small>※ 同じWi-Fiネットワーク上でのみアクセス可能</small>
+        </div>
+    </div>
+
+    <!-- QRコード生成ライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <script>
+        // QRコード生成
+        const url = 'http://localhost:5001';
+        
+        // QRコードを生成して表示
+        QRCode.toCanvas(document.getElementById('qrcode'), url, {
+            width: 256,
+            height: 256,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            },
+            margin: 2,
+            errorCorrectionLevel: 'M'
+        }, function (error) {
+            if (error) {
+                console.error('QRコード生成エラー:', error);
+                document.getElementById('qrcode').innerHTML = '<p style="color: red;">QRコードの生成に失敗しました</p>';
+            } else {
+                console.log('✅ QRコード生成成功');
+                // QRコードに白い背景を追加
+                const canvas = document.querySelector('#qrcode canvas');
+                if (canvas) {
+                    const container = document.createElement('div');
+                    container.className = 'qr-container';
+                    canvas.parentNode.insertBefore(container, canvas);
+                    container.appendChild(canvas);
+                }
+            }
+        });
+        
+        // QRコードダウンロード機能
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                // より高品質なQRコードを生成
+                QRCode.toDataURL(url, {
+                    width: 512,
+                    height: 512,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    },
+                    margin: 4,
+                    errorCorrectionLevel: 'H'
+                }, function (err, dataUrl) {
+                    if (err) {
+                        alert('ダウンロードに失敗しました');
+                        return;
+                    }
+                    
+                    const link = document.createElement('a');
+                    link.download = 'TomoTrip-QRCode.png';
+                    link.href = dataUrl;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            } else {
+                alert('QRコードが生成されていません');
+            }
+        }
+        
+        // ページ読み込み時にQRコード情報を表示
+        window.addEventListener('load', function() {
+            console.log('🎯 TomoTrip URL: ' + url);
+            console.log('📱 QRコードでスマートフォンからアクセス可能');
+        });
+    </script>
+</body>
+</html>
