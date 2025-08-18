@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>協賛店管理画面 - TomoTrip</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="assets/css/icons.css">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; font-src 'self' data:; img-src 'self' data:; connect-src 'self';")
     <style>
         body {
             background: linear-gradient(135deg, #f8f9ff, #e6f3ff);
@@ -211,7 +212,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="assets/images/tomotrip-logo.png" alt="Logo" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                            <img src="assets/img/guides/default-1.svg" alt="Logo" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                             <div>
                                                 <strong>浅草観光案内所</strong>
                                                 <br><small class="text-muted">info@asakusa-guide.jp</small>
@@ -235,7 +236,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="assets/images/tomotrip-logo.png" alt="Logo" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                            <img src="assets/img/guides/default-2.svg" alt="Logo" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                             <div>
                                                 <strong>渋谷グルメガイド</strong>
                                                 <br><small class="text-muted">contact@shibuya-gourmet.jp</small>
@@ -259,7 +260,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <img src="assets/images/tomotrip-logo.png" alt="Logo" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
+                                            <img src="assets/img/guides/default-3.svg" alt="Logo" class="rounded me-3" style="width: 40px; height: 40px; object-fit: cover;">
                                             <div>
                                                 <strong>京都文化体験センター</strong>
                                                 <br><small class="text-muted">hello@kyoto-culture.jp</small>
@@ -420,49 +421,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // 店舗編集機能
-        function editStore(storeId) {
-            alert(`店舗ID ${storeId} の編集画面を開きます`);
-        }
-        
-        // 分析表示機能
-        function viewAnalytics(storeId) {
-            alert(`店舗ID ${storeId} の詳細分析を表示します`);
-        }
-        
-        // データエクスポート
-        function exportData() {
-            alert('データをCSV形式でエクスポートします');
-        }
-        
-        // 一括メール送信
-        function sendBulkEmail() {
-            alert('協賛店に一括メールを送信します');
-        }
-        
-        // レポート生成
-        function generateReport() {
-            alert('月次レポートを生成します');
-        }
-        
-        // データバックアップ
-        function backupData() {
-            alert('データベースをバックアップします');
-        }
-        
-        // ページ読み込み時の初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏪 協賛店管理画面が読み込まれました');
-            
-            // 統計情報の更新（実際のプロジェクトでは API から取得）
-            updateStatistics();
-        });
-        
-        function updateStatistics() {
-            // 実際のデータを取得してカウンターを更新
-            console.log('📊 統計情報を更新中...');
-        }
-    </script>
+    <script src="sponsor-dashboard.js"></script>
 </body>
 </html>
