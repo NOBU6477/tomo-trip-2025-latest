@@ -58,7 +58,8 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error(500, "Error loading page")
         else:
             # Try serving from public/ first, then fallback to root
-            requested_path = self.path.lstrip('/')
+            # Remove URL parameters for file lookup
+            requested_path = self.path.lstrip('/').split('?')[0]
             public_file_path = os.path.join('public', requested_path)
             
             # Debug logging
