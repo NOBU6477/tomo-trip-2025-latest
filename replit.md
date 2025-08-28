@@ -12,6 +12,9 @@ Local Guide is a multilingual guide matching platform connecting tourists with l
 - **Access Control**: Dashboard button shows disabled state until sponsor authentication is completed
 - **Registration Removal**: Removed dual sponsor registration system per user request - deleted sponsor-registration.html and disabled all registration workflows
 - **Modal System Fix**: Fixed modal positioning issues with proper z-index management and centered display using auth-modal.css
+- **Store Dashboard Authentication Fix**: Fixed logout button functionality by adding proper event listener
+- **Tourism Guide Features**: Enhanced store dashboard with tourism-specific functionality including guide registration, reservation management, and tourism statistics
+- **Guide Registration System**: Created dedicated guide-registration.html for recruiting new tourism guides with comprehensive application form
 
 # User Preferences
 

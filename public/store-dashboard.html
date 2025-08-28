@@ -135,7 +135,7 @@
                     <a href="index.html" class="btn btn-outline-light me-2">
                         <i class="bi bi-house me-1"></i>ホーム
                     </a>
-                    <button class="btn btn-light" onclick="logout()">
+                    <button class="btn btn-light" id="logoutBtn">
                         <i class="bi bi-box-arrow-right me-1"></i>ログアウト
                     </button>
                 </div>
@@ -280,21 +280,43 @@
                             </div>
                             
                             <div class="mt-4">
-                                <h6>クイック統計</h6>
+                                <h6>観光案内所情報</h6>
                                 <ul class="list-unstyled">
                                     <li class="mb-2">
                                         <i class="bi bi-calendar3 text-primary me-2"></i>
-                                        登録日: 2024-01-15
+                                        開業日: 2024-01-15
                                     </li>
                                     <li class="mb-2">
-                                        <i class="bi bi-eye text-info me-2"></i>
-                                        総閲覧数: 2,450
+                                        <i class="bi bi-people text-success me-2"></i>
+                                        アクティブガイド: 8名
                                     </li>
                                     <li class="mb-2">
-                                        <i class="bi bi-bookmark text-warning me-2"></i>
-                                        ブックマーク: 89
+                                        <i class="bi bi-star text-warning me-2"></i>
+                                        体験プログラム: 12種類
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-translate text-info me-2"></i>
+                                        対応言語: 日本語・英語・中国語
                                     </li>
                                 </ul>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>今月の実績</h6>
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="bg-light p-2 rounded text-center">
+                                            <small class="text-muted">総予約数</small>
+                                            <div class="fw-bold text-success">156件</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="bg-light p-2 rounded text-center">
+                                            <small class="text-muted">満足度</small>
+                                            <div class="fw-bold text-primary">4.8★</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -306,9 +328,14 @@
                 <div class="content-container">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5>予約一覧</h5>
-                        <button class="btn btn-store">
-                            <i class="bi bi-plus-circle me-2"></i>手動予約追加
-                        </button>
+                        <div>
+                            <a href="guide-registration.html" class="btn btn-outline-success me-2">
+                                <i class="bi bi-person-plus me-1"></i>ガイド募集
+                            </a>
+                            <button class="btn btn-store" onclick="addReservation()">
+                                <i class="bi bi-plus-circle me-2"></i>手動予約追加
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="table-responsive">
@@ -517,6 +544,64 @@
                     console.log('タブ切り替え:', e.target.id);
                 });
             });
+            
+            // Logout button event listener
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+        });
+        
+        // Tourism guide store management functions
+        function addReservation() {
+            const reservation = {
+                date: prompt('予約日時を入力してください (例: 2024-08-30 14:00)'),
+                customer: prompt('お客様名を入力してください'),
+                guests: prompt('人数を入力してください'),
+                contact: prompt('連絡先を入力してください')
+            };
+            
+            if (reservation.date && reservation.customer) {
+                console.log('新規予約追加:', reservation);
+                alert('予約が追加されました。');
+                location.reload();
+            }
+        }
+        
+        function filterReservations() {
+            const filter = prompt('フィルター条件を入力してください（確定/保留中/全て）');
+            console.log('Filtering reservations by:', filter);
+            alert('フィルター機能は実装中です。');
+        }
+        
+        function viewReservation(reservationId) {
+            console.log('Viewing reservation:', reservationId);
+            alert(`予約詳細 ${reservationId} を表示します。`);
+        }
+        
+        function editReservation(reservationId) {
+            console.log('Editing reservation:', reservationId);
+            alert(`予約 ${reservationId} を編集します。`);
+        }
+        
+        function updateStats() {
+            console.log('📊 Statistics updated for tourism guide store');
+            // Real-time stats would be loaded from server here
+        }
+        
+        // Initialize tourism guide features
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            setInterval(updateStats, 300000); // Update every 5 minutes
+        });
+        
+        function logout() {
+            if (confirm('ログアウトしますか？')) {
+                localStorage.removeItem('storeLogin');
+                localStorage.removeItem('tomotrip_auth_status');
+                localStorage.removeItem('tomotrip_user_type');
+                window.location.href = 'index.html';
+            }
         });
         
         function logout() {
