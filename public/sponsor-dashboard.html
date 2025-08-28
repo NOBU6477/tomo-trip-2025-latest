@@ -7,11 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/icons.css">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; font-src 'self' data:; img-src 'self' data:; connect-src 'self';")
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; font-src 'self' data:; img-src 'self' data:; connect-src 'self';">
     <style>
         body {
             background: linear-gradient(135deg, #f8f9ff, #e6f3ff);
             min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         .dashboard-header {
@@ -21,42 +22,46 @@
             box-shadow: 0 4px 15px rgba(44, 90, 160, 0.3);
         }
         
-        .sponsor-card {
+        .stats-card {
             background: white;
             border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
             border: none;
-            overflow: hidden;
+            height: 100%;
         }
         
-        .sponsor-card:hover {
+        .stats-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
         }
         
-        .stats-card {
+        .stats-card.success {
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
         }
         
         .stats-card.primary {
             background: linear-gradient(135deg, #007bff, #0056b3);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+            color: white;
         }
         
         .stats-card.warning {
             background: linear-gradient(135deg, #ffc107, #e0a800);
-            box-shadow: 0 6px 20px rgba(255, 193, 7, 0.3);
+            color: white;
         }
         
         .stats-card.info {
             background: linear-gradient(135deg, #17a2b8, #138496);
-            box-shadow: 0 6px 20px rgba(23, 162, 184, 0.3);
+            color: white;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
         
         .btn-dashboard {
@@ -67,32 +72,12 @@
             font-weight: 600;
             color: white;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
         }
         
         .btn-dashboard:hover {
             background: linear-gradient(135deg, #0056b3, #004085);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
             color: white;
-        }
-        
-        .btn-success-custom {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            border: none;
-            color: white;
-        }
-        
-        .btn-success-custom:hover {
-            background: linear-gradient(135deg, #20c997, #17a2b8);
-            color: white;
-        }
-        
-        .table-custom {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
         
         .nav-pills .nav-link.active {
@@ -100,16 +85,15 @@
             border-radius: 10px;
         }
         
-        .store-status.active {
-            color: #28a745;
-        }
+        .store-status.active { color: #28a745; }
+        .store-status.inactive { color: #dc3545; }
+        .store-status.pending { color: #ffc107; }
         
-        .store-status.inactive {
-            color: #dc3545;
-        }
-        
-        .store-status.pending {
-            color: #ffc107;
+        .sponsor-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            object-fit: cover;
         }
     </style>
 </head>
