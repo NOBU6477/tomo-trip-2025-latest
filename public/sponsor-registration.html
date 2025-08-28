@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スポンサー登録 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="ocean_background.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .registration-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            margin: 2rem;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+        }
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+        }
+        .btn-register {
+            background: linear-gradient(135deg, #00b894, #00a085);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: bold;
+            width: 100%;
+        }
+        .btn-register:hover {
+            background: linear-gradient(135deg, #00a085, #008975);
+            color: white;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #6c5ce7, #5f3dc4);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 25px;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .btn-home:hover {
+            background: linear-gradient(135deg, #5f3dc4, #4834b3);
+            color: white;
+        }
+        .registration-title {
+            color: #fd7f3d;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: linear-gradient(135deg, #fd7f3d, #e55f24);
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="registration-card">
+        <button class="btn btn-home" onclick="window.location.href='index.html'">
+            <i class="bi bi-house"></i> ← ホームに戻る
+        </button>
+        
+        <h2 class="registration-title">スポンサー登録</h2>
+        
+        <form id="sponsorRegistrationForm" onsubmit="handleRegistration(event)">
+            <div class="mb-3">
+                <label for="storeName" class="form-label">店舗名</label>
+                <input type="text" class="form-control" id="storeName" name="storeName" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">メールアドレス</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="phone" class="form-label">電話番号</label>
+                <input type="tel" class="form-control" id="phone" name="phone" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="address" class="form-label">住所</label>
+                <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">店舗説明</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+            
+            <div class="mb-3">
+                <label for="category" class="form-label">カテゴリー</label>
+                <select class="form-control" id="category" name="category" required>
+                    <option value="">選択してください</option>
+                    <option value="restaurant">レストラン・飲食</option>
+                    <option value="retail">小売・ショッピング</option>
+                    <option value="hotel">宿泊・ホテル</option>
+                    <option value="entertainment">エンターテイメント</option>
+                    <option value="service">サービス業</option>
+                    <option value="other">その他</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn btn-register">
+                <i class="bi bi-check-circle"></i> 登録申請
+            </button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Get URL parameters on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Pre-fill form if parameters exist
+            const storeName = urlParams.get('storeName');
+            const email = urlParams.get('email');
+            const phone = urlParams.get('phone');
+            const address = urlParams.get('address');
+            const description = urlParams.get('description');
+            const category = urlParams.get('category');
+            
+            if (storeName) document.getElementById('storeName').value = decodeURIComponent(storeName);
+            if (email) document.getElementById('email').value = decodeURIComponent(email);
+            if (phone) document.getElementById('phone').value = decodeURIComponent(phone);
+            if (address) document.getElementById('address').value = decodeURIComponent(address);
+            if (description) document.getElementById('description').value = decodeURIComponent(description);
+            if (category) document.getElementById('category').value = decodeURIComponent(category);
+        });
+
+        function handleRegistration(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData);
+            
+            // Show success message
+            alert('登録申請を受け付けました。審査後、メールにてご連絡いたします。');
+            
+            // Redirect to home
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
