@@ -444,9 +444,9 @@ export function wireSponsorButtons() {
 // Sponsor handler functions
 function handleSponsorRegistration() {
     console.log('Sponsor registration clicked');
-    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-registration.html');
+    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-registration.html with cache busting');
     try {
-        window.location.href = 'sponsor-registration.html';
+        window.location.href = 'sponsor-registration.html?v=' + Date.now();
     } catch (error) {
         console.error('Redirect failed:', error);
         alert('リダイレクトに失敗しました');

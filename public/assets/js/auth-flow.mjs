@@ -196,8 +196,8 @@ class AuthFlowManager {
             if (registrationBtn) {
                 registrationBtn.addEventListener('click', () => {
                     bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();
-                    // Direct navigation to registration page
-                    window.location.href = 'sponsor-registration.html';
+                    // Direct navigation to registration page with cache busting
+                    window.location.href = 'sponsor-registration.html?v=' + Date.now();
                 });
             }
         }, 100);
