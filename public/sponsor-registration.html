@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>スポンサー登録 - TomoTrip</title>
+    <title>スポンサー登録【最新版】 - TomoTrip</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/icons.css">
     <link rel="stylesheet" href="ocean_background.css">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <!-- FORCE REFRESH: v2025.08.28.16.34 -->
+    <meta name="cache-buster" content="v2025.08.28.16.37.FORCE">
+    <!-- TIMESTAMP: 1756399071000 -->
+    <script>
+        // Force cache clear on load
+        if (performance.navigation.type === 1) {
+            console.log('🔄 Force refresh detected - clearing all caches');
+            if ('caches' in window) {
+                caches.keys().then(names => names.forEach(name => caches.delete(name)));
+            }
+        }
+    </script>
     <style>
+        /* FORCE UPDATE 2025-08-28-16:36 */
         body {
+            background: linear-gradient(135deg, #74b9ff, #0984e3, #6c5ce7);
             background-image: url('/assets/images/beach-yacht-tourists.jpg');
             background-size: cover;
             background-position: center;
@@ -162,7 +174,10 @@
             <i class="bi bi-house"></i> ← ホームに戻る
         </button>
         
-        <h2 class="registration-title">🏢 スポンサー登録【NEW】</h2>
+        <div class="update-notice" style="background: linear-gradient(90deg, #fd7f3d, #e55f24); color: white; text-align: center; padding: 10px; border-radius: 10px; margin-bottom: 20px; animation: pulse 2s infinite;">
+            ✨ 最新バージョンが読み込まれました - 2025年8月28日 16:38 ✨
+        </div>
+        <h2 class="registration-title">🌊 スポンサー登録【最新版 2025】</h2>
         
         <form id="sponsorRegistrationForm" onsubmit="handleRegistration(event)">
             <div class="form-floating">
@@ -211,7 +226,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        console.log('🎯 Sponsor Registration Page Loaded - v2025.08.28-Enhanced');
+        console.log('🎯 Sponsor Registration Page Loaded - v2025.08.28-Enhanced-LATEST-16:38');
+        
+        // Show clear visual indicator that new version loaded
+        setTimeout(() => {
+            const notice = document.querySelector('.update-notice');
+            if (notice) {
+                notice.style.animation = 'none';
+                notice.style.background = 'linear-gradient(90deg, #00b894, #00a085)';
+                notice.innerHTML = '✅ 新しいデザインが正常に読み込まれました ✅';
+            }
+        }, 3000);
         
         // Get URL parameters on page load
         window.addEventListener('DOMContentLoaded', function() {
