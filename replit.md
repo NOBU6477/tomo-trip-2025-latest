@@ -74,6 +74,10 @@ User confirmed correct understanding of guide display system:
 - **Access Control**: Guide detail viewing requires tourist registration, modal-based access prompts, header login differentiation.
 - **Booking Flow**: Complete multilingual system with language detection and translation across payment and confirmation pages. Consistent guide rate display and language inheritance.
 - **Login/Registration**: Unified sponsor login/registration concept requiring store name, email, phone. Login redirects to individual store edit page.
+- **Dual Dashboard System**: 
+  - sponsor-dashboard.html: Admin/operations dashboard for TomoTrip team to manage all stores
+  - store-dashboard.html: Individual store dashboard for each sponsor to manage their own store
+  - Role-based access control with different permission levels and feature sets
 
 # External Dependencies
 
