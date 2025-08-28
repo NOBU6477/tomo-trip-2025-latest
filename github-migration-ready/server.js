@@ -191,12 +191,55 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Health check endpoint for monitoring
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+    uptime: Math.floor(process.uptime()),
+    database: {
+      stores: stores.length,
+      guides: guides.length,
+      reservations: reservations.length,
+      status: 'connected'
+    },
+    environment: process.env.NODE_ENV || 'development',
+    version: '1.0.0'
+  });
+});
+
+// API info endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    name: 'TomoTrip API Server',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      stores: '/api/sponsor-stores',
+      guides: '/api/tourism-guides', 
+      reservations: '/api/reservations',
+      health: '/health'
+    },
+    database: {
+      stores: stores.length,
+      guides: guides.length,
+      reservations: reservations.length
+    }
+  });
+});
+
 // 404 handler
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+  res.status(404).json({
+    error: 'Not Found',
+    message: 'The requested endpoint does not exist',
+    availableEndpoints: ['/api', '/health', '/api/sponsor-stores', '/api/tourism-guides', '/api/reservations']
+  });
 });
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 TomoTrip Server running on port ${PORT}`);
   console.log(`📊 Data stored in memory - stores: ${stores.length}, guides: ${guides.length}, reservations: ${reservations.length}`);
+  console.log(`🔍 Health check: http://localhost:${PORT}/health`);
+  console.log(`📖 API info: http://localhost:${PORT}/api`);
 });

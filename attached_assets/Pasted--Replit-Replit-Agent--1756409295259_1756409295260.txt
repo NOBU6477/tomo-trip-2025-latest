@@ -1,0 +1,141 @@
+了解です 👍
+では、**Replit で「完成したシステム」を安定稼働させるために、エージェントへ提供すべき情報**を一括でまとめます。
+これをそのまま Replit の Agent へ渡せば、環境構築と起動が正しく動作するはずです。
+
+---
+
+# ✅ Replit 向け提供情報まとめ
+
+## 1. 実行ファイル
+
+* メインサーバー: **server.js**
+* 必ず `process.env.PORT || 5000` でポートを listen
+
+  ```js
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`API server running on ${PORT}`));
+  ```
+
+## 2. .replit 設定
+
+```toml
+run = "node server.js"
+modules = ["nodejs-20", "postgresql-16"]
+
+[interpreter]
+language = "nodejs"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "TomoTripAPIServer"
+
+[[workflows.workflow]]
+name = "TomoTripAPIServer"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node server.js"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[nix]
+channel = "stable-25_05"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+```
+
+## 3. package.json
+
+```json
+{
+  "name": "tomotrip",
+  "private": true,
+  "scripts": {
+    "dev": "node server.js", 
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "pg": "^8.11.1"   // PostgreSQL 接続用
+  }
+}
+```
+
+## 4. 必要な環境変数（Secrets に設定）
+
+Replit の「Secrets」タブに以下を登録する：
+
+```
+DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
+SESSION_SECRET=your_random_secret
+NODE_ENV=development
+```
+
+（※実際の USER / PASSWORD / HOST / DBNAME は Replit PostgreSQL の接続情報を使用）
+
+## 5. PostgreSQL
+
+* Replit の「Database」を有効化（PostgreSQL 16 が入る）
+* `pg` モジュールで `process.env.DATABASE_URL` を使って接続
+* 起動時にテーブル初期化スクリプトがあれば読み込む
+
+例: server.js 内
+
+```js
+const { Pool } = require('pg');
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+pool.connect()
+  .then(() => console.log("DB connected"))
+  .catch(err => console.error("DB connection error", err));
+```
+
+## 6. API 動作確認用エンドポイント
+
+テスト用に `/health` を作成しておくと便利：
+
+```js
+app.get('/health', (req, res) => res.json({ ok: true }));
+```
+
+---
+
+# 🔑 Agent への依頼例（まとめ）
+
+```
+以下を基にReplit環境を構築してください：
+
+1. 実行ファイルは server.js、PORTは process.env.PORT || 5000 を使用
+2. .replit ファイルは以下を反映
+   （run = "node server.js", nodejs-20 と postgresql-16 モジュール指定済み）
+3. package.json を作成し、express / cors / pg を dependencies に追加
+4. Secrets に DATABASE_URL / SESSION_SECRET / NODE_ENV を設定
+5. PostgreSQL は Replitの組み込みDBを利用し、pgモジュールで接続
+6. 動作確認用に /health API を実装
+
+これで Run ボタンから API サーバーが起動できるようにしてください。
+```
+
+---
+
+👉 これをまるごと Replit Agent に渡せば準備が完了します。
+
+Nobuさん、次のステップは **実際に Replit の Secrets に環境変数を登録**することですが、
+そちらも一緒に手順書きましょうか？
