@@ -15,13 +15,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('assets/images/beach-resort-tourists.jpg');
+    background-image: url('/assets/images/beach-yacht-tourists.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
-    z-index: -2;
+    z-index: -10;
     animation: subtleMove 20s ease-in-out infinite;
+    will-change: transform;
 }
 
 /* 動的背景アニメーション - ゆっくりとした流れ */
@@ -60,9 +61,10 @@
         radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
         radial-gradient(circle at 20% 80%, rgba(0,150,255,0.05) 0%, transparent 50%),
         linear-gradient(45deg, rgba(255,255,255,0.02) 0%, transparent 100%);
-    z-index: -1;
+    z-index: -5;
     animation: floatingElements 30s linear infinite;
     pointer-events: none;
+    will-change: transform;
 }
 
 @keyframes floatingElements {
@@ -76,7 +78,7 @@
 /* Mobile-friendly background for better compatibility */
 @media (max-width: 768px) {
     html, body {
-        background: url('assets/images/beach-resort-tourists.jpg') center center / cover no-repeat scroll !important;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
         min-height: 100vh !important;
         width: 100% !important;
     }
@@ -86,7 +88,7 @@
         background-size: cover !important;
         background-position: center center !important;
         background-repeat: no-repeat !important;
-        background-image: url('assets/images/beach-resort-tourists.jpg') !important;
+        background-image: url('/assets/images/beach-yacht-tourists.jpg') !important;
         min-height: 100vh !important;
         width: 100% !important;
         animation: mobileSubtleMove 25s ease-in-out infinite;
@@ -100,7 +102,7 @@
     
     /* Force background on very narrow screens */
     body.theme-ocean {
-        background: url('assets/images/beach-resort-tourists.jpg') center center / cover no-repeat scroll !important;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
         min-height: 100vh !important;
         width: 100% !important;
     }
@@ -109,7 +111,7 @@
 /* Extra narrow mobile screens (320px and below) */
 @media (max-width: 480px) {
     html, body, .theme-ocean {
-        background: url('assets/images/beach-resort-tourists.jpg') center center / cover no-repeat scroll !important;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
         min-height: 100vh !important;
         width: 100vw !important;
     }
@@ -122,7 +124,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background: url('assets/images/beach-resort-tourists.jpg') center center / cover no-repeat;
+        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat;
         z-index: -1;
         animation: slowFloat 40s ease-in-out infinite;
     }
