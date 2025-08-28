@@ -159,10 +159,10 @@ class AuthFlowManager {
                                   'If you don\'t have an account yet, please register as a sponsor first.'}
                             </p>
                             <div class="d-grid gap-2">
-                                <button class="btn btn-primary" style="padding: 12px; border-radius: 8px;" onclick="authFlowManager.showSponsorLoginModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
+                                <button class="btn btn-primary" style="padding: 12px; border-radius: 8px;" id="sponsorLoginBtn">
                                     <i class="bi bi-person-check me-2"></i>${isJapanese ? '協賛店ログイン' : 'Sponsor Login'}
                                 </button>
-                                <button class="btn btn-outline-success" style="padding: 12px; border-radius: 8px;" onclick="authFlowManager.showSponsorRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
+                                <button class="btn btn-outline-success" style="padding: 12px; border-radius: 8px;" id="sponsorRegistrationBtn">
                                     <i class="bi bi-person-plus me-2"></i>${isJapanese ? '協賛店登録' : 'Sponsor Registration'}
                                 </button>
                             </div>
@@ -180,6 +180,27 @@ class AuthFlowManager {
 
         // Add modal to DOM
         document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        // Setup button event listeners
+        setTimeout(() => {
+            const loginBtn = document.getElementById('sponsorLoginBtn');
+            const registrationBtn = document.getElementById('sponsorRegistrationBtn');
+            
+            if (loginBtn) {
+                loginBtn.addEventListener('click', () => {
+                    bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();
+                    this.showSponsorLoginModal();
+                });
+            }
+            
+            if (registrationBtn) {
+                registrationBtn.addEventListener('click', () => {
+                    bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();
+                    // Direct navigation to registration page
+                    window.location.href = 'sponsor-registration.html';
+                });
+            }
+        }, 100);
 
         // Show modal with proper configuration
         const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'), {
@@ -252,7 +273,7 @@ class AuthFlowManager {
                                 <p class="mb-2">
                                     ${isJapanese ? 'まだアカウントをお持ちでない方' : 'Don\'t have an account?'}
                                 </p>
-                                <button class="btn btn-outline-success" onclick="authFlowManager.showSponsorRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal')).hide();">
+                                <button class="btn btn-outline-success" id="loginModalRegisterBtn">
                                     ${isJapanese ? '協賛店登録' : 'Register as Sponsor'}
                                 </button>
                             </div>
@@ -271,11 +292,22 @@ class AuthFlowManager {
         // Add modal to DOM
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Setup form handler
+        // Setup form handler and registration button
         document.getElementById('sponsorLoginForm').addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleSponsorLogin();
         });
+
+        // Setup registration button in login modal
+        setTimeout(() => {
+            const registerBtn = document.getElementById('loginModalRegisterBtn');
+            if (registerBtn) {
+                registerBtn.addEventListener('click', () => {
+                    bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal')).hide();
+                    window.location.href = 'sponsor-registration.html';
+                });
+            }
+        }, 100);
 
         // Show modal with proper configuration
         const modal = new bootstrap.Modal(document.getElementById('sponsorLoginModal'), {
