@@ -217,3 +217,26 @@ html, body {
         background-position: center top;
     }
 }
+
+/* Language switcher styling - guaranteed center positioning */
+.language-switcher-center {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    padding: 0 20px !important;
+    text-align: center !important;
+}
+
+.language-switcher-center .d-flex {
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+}
+
+.language-switcher-center .lang-btn-jp,
+.language-switcher-center .lang-btn-en {
+    margin: 0 auto !important;
+    text-align: center !important;
+}

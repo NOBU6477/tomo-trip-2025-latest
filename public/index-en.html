@@ -816,16 +816,20 @@
             </a>
             
             <div class="d-flex">
+                <button class="btn btn-success me-2" onclick="window.location.href='sponsor-dashboard.html'" title="Sponsor Management Dashboard">
+                    <i class="bi bi-shop"></i> <span class="d-none d-md-inline">Dashboard</span>
+                </button>
                 <div class="dropdown me-2" style="position: relative;">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" onclick="toggleLoginDropdown()" aria-expanded="false">
+                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" aria-expanded="false">
                         Login
                     </button>
                     <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
-                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">Tourist Login</button>
-                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onmouseover="this.style.backgroundColor='#f8f9fa'" onmouseout="this.style.backgroundColor='transparent'">Guide Login</button>
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">Tourist Login</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">Guide Login</button>
+                        <button class="dropdown-item" id="sponsorDashboardBtn" type="button" onclick="window.location.href='sponsor-dashboard.html'" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">Sponsor Management</button>
                     </div>
                 </div>
-                <button class="btn btn-primary" id="registerBtn">Register</button>
+                <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">Register</button>
             </div>
         </div>
     </nav>
@@ -956,63 +960,77 @@
                                     </optgroup>
                                 </select>
 
-                                <select class="form-select" style="width: auto; min-width: 140px;" id="languageFilter">
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
                                     <option value="">All Languages</option>
-                                    <option value="japanese">Japanese</option>
-                                    <option value="english">English</option>
-                                    <option value="chinese">Chinese</option>
-                                    <option value="korean">Korean</option>
-                                    <option value="spanish">Spanish</option>
-                                    <option value="french">French</option>
-                                    <option value="german">German</option>
-                                    <option value="thai">Thai</option>
-                                    <option value="vietnamese">Vietnamese</option>
-                                    <option value="portuguese">Portuguese</option>
-                                    <option value="russian">Russian</option>
+                                    <optgroup label="Asian Languages">
+                                        <option value="japanese">Japanese</option>
+                                        <option value="english">English</option>
+                                        <option value="chinese">Chinese (Simplified)</option>
+                                        <option value="chinese_traditional">Chinese (Traditional)</option>
+                                        <option value="korean">Korean</option>
+                                        <option value="thai">Thai</option>
+                                        <option value="vietnamese">Vietnamese</option>
+                                        <option value="indonesian">Indonesian</option>
+                                        <option value="tagalog">Tagalog (Filipino)</option>
+                                        <option value="hindi">Hindi</option>
+                                    </optgroup>
+                                    <optgroup label="European Languages">
+                                        <option value="spanish">Spanish</option>
+                                        <option value="french">French</option>
+                                        <option value="german">German</option>
+                                        <option value="italian">Italian</option>
+                                        <option value="portuguese">Portuguese</option>
+                                        <option value="russian">Russian</option>
+                                        <option value="dutch">Dutch</option>
+                                        <option value="swedish">Swedish</option>
+                                    </optgroup>
+                                    <optgroup label="Others">
+                                        <option value="arabic">Arabic</option>
+                                        <option value="hebrew">Hebrew</option>
+                                        <option value="turkish">Turkish</option>
+                                        <option value="swahili">Swahili</option>
+                                    </optgroup>
                                 </select>
-
-                                <select class="form-select" style="width: auto; min-width: 140px;" id="priceFilter">
+                                
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter">
                                     <option value="">All Prices</option>
-                                    <option value="5000">Under ¥5,000</option>
-                                    <option value="10000">¥5,000-10,000</option>
-                                    <option value="15000">¥10,000-15,000</option>
-                                    <option value="20000">¥15,000-20,000</option>
-                                    <option value="30000">¥20,000-30,000</option>
-                                    <option value="50000">Over ¥30,000</option>
+                                    <option value="budget">¥6,000～¥10,000</option>
+                                    <option value="premium">¥10,001～¥20,000</option>
+                                    <option value="luxury">¥20,001+</option>
                                 </select>
-
-                                <div class="keyword-filter" style="position: relative;">
-                                    <input type="text" class="form-control" id="keywordInput" placeholder="Keyword Search" style="min-width: 200px;">
-                                    <div id="keywordSuggestions" class="keyword-suggestions" style="display: none;"></div>
-                                </div>
                             </div>
-
+                            
                             <div class="d-flex gap-2">
-                                <button class="btn btn-primary" id="searchBtn" style="border-radius: 20px;">Search</button>
-                                <button class="btn btn-outline-secondary" id="resetBtn" style="border-radius: 20px;">Reset</button>
+                                <button class="btn btn-primary" id="searchBtn">Search</button>
+                                <button class="btn btn-outline-secondary" id="resetBtn">Reset</button>
                             </div>
+                        </div>
+                        
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <small class="text-muted" id="guideCounter">Loading...</small>
+                            <small class="text-info" id="totalGuideCounter">Total: Loading...</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Guide Counter and Pagination -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <span class="text-muted">Showing <span id="displayRange">1-12</span> of <span id="totalGuides">17</span> guides</span>
-                </div>
-                <div class="d-flex align-items-center gap-3">
-                    <span class="text-muted" id="pageInfo">Page 1 / 2</span>
-                    <div class="pagination-controls">
-                        <button class="btn btn-outline-primary" id="prevPageBtn">← Previous</button>
+            <!-- Guide Cards Section -->
+            <div class="row" id="guideCardsContainer">
+                <!-- Guide cards will be populated here -->
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-secondary" id="prevPageBtn" disabled>← Previous</button>
+                        <div class="pagination-info">
+                            <span id="pageInfo" class="fw-bold">Page 1</span>
+                            <small class="text-muted ms-2">(<span id="displayRange">1-12</span> guides shown)</small>
+                        </div>
                         <button class="btn btn-outline-primary" id="nextPageBtn">Next →</button>
                     </div>
                 </div>
-            </div>
-
-            <!-- Guides Container -->
-            <div class="row" id="guideCardsContainer">
-                <!-- Guides will be dynamically loaded here -->
             </div>
         </div>
     </section>
