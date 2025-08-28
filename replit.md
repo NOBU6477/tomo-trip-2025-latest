@@ -2,6 +2,12 @@
 
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
+## Recent Changes (2025-08-28)
+- **Language Version Unification**: Completely unified English and Japanese versions with identical Bootstrap structure, filtering system, and pagination layout
+- **Language Switcher Fix**: Resolved center positioning issue for language toggle buttons using enhanced CSS with !important declarations
+- **Filter System Alignment**: Standardized all filter options, price ranges, and language selections between both versions
+- **Navigation Consistency**: Unified navigation elements, dropdown menus, and button layouts across both language versions
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
