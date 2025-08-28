@@ -8,17 +8,26 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- CSP compatibility fixes -->
     <script src="env/csp-fix.js"></script>
+    <!-- Environment configuration - must be first -->
+    <script type="module" src="env/app-config.mjs"></script>
+    
+    <!-- Build ID and cache cleanup for consistency - CSP compliant -->
+    <script src="env/build-id.js"></script>
+    <script src="sw-unregister.js"></script>
+    
+    <!-- Complete error suppression system -->
+    <script src="env/csp-fix.js"></script>
+    <script src="webgl-fix.js" defer></script>
+    <script src="error_suppressor.js" defer></script>
+    <script src="management.js" defer></script>
+    
+    <!-- CSS Load Order: Bootstrap CSS → Local Icons → Custom CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Ocean background styling -->
+    <link rel="stylesheet" href="/assets/css/icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
     <link rel="stylesheet" href="ocean_background.css">
-    <link rel="stylesheet" href="ocean_background_mobile.css">
-    <link rel="stylesheet" href="deployment_mobile_fix.css">
-    <link rel="stylesheet" href="assets/css/icons.css">
     <link rel="stylesheet" href="assets/css/footer.css">
+
     <style>
         .guide-card:hover {
             transform: translateY(-5px);
@@ -823,36 +832,57 @@
 
     <!-- Hero Section -->
     <section class="hero-section">
-        <!-- Language Switcher - Center -->
-        <div class="language-switcher-center">
-            <button class="lang-btn-jp" id="jpBtn">🇯🇵 日本語</button>
-            <button class="lang-btn-en" id="enBtn">🇺🇸 English</button>
-        </div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 col-md-12">
+                    <!-- Language Switcher - Center -->
+                    <div class="language-switcher-center text-center mb-4">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px;">🇯🇵 日本語</button>
+                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px;">🇺🇸 English</button>
+                        </div>
+                    </div>
 
-        <!-- Hero Content -->
-        <div class="hero-content">
-            <div class="hero-title-container">
-                <div class="hero-logo">
-                    <img src="TomoTripロゴ_1752342509960.png" alt="TomoTrip Logo" />
+                    <!-- Hero Content -->
+                    <div class="hero-content text-center">
+                        <div class="hero-title-container mb-4">
+                            <div class="hero-logo mb-3">
+                                <img src="assets/images/tomotrip-logo.png" alt="TomoTrip Logo" class="modal-logo" />
+                            </div>
+                            <h1 class="display-4 fw-bold text-white">Your Special Journey Awaits</h1>
+                        </div>
+                        <p class="lead text-white mb-5">Discover hidden gems with local guides that tourists never find</p>
+                        <div class="hero-buttons">
+                            <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                                <button class="btn-hero btn-primary-hero btn" id="findGuideBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">Find Guide</button>
+                                <button class="btn-hero btn-outline-hero btn" id="contactBtn" style="background: linear-gradient(135deg, #f093fb, #f5576c); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">Contact Us</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="text-white">Your Special Journey Awaits</h1>
-            </div>
-            <p class="text-white">Discover hidden gems with local guides that tourists never find</p>
-            <div class="hero-buttons">
-                <button class="btn-hero btn-primary-hero" id="findGuideBtn">Find Guide</button>
-                <button class="btn-hero btn-outline-hero" id="contactBtn">Contact Us</button>
             </div>
         </div>
     </section>
 
-    <!-- Right Side Buttons -->
-    <div class="sponsor-buttons">
-        <button class="sponsor-btn" id="sponsorRegBtn">Store Registration</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn">Login</button>
+    <!-- Desktop Right Side Buttons -->
+    <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">Store Registration</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">Login</button>
     </div>
 
-    <!-- Management Center Button -->
-    <button class="management-center" id="managementBtn" title="Management Center">🏆</button>
+    <!-- Mobile Bottom Buttons -->
+    <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
+        <div class="d-flex gap-2">
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">Store Registration</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">Login</button>
+        </div>
+    </div>
+
+    <!-- Management Center Button - Desktop -->
+    <button class="management-center d-none d-lg-block" id="managementBtn" title="Management Center" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+    
+    <!-- Management Center Button - Mobile -->
+    <button class="management-center-mobile d-lg-none position-fixed" id="managementBtnMobile" title="Management Center" style="bottom: 80px; right: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
 
     <!-- Main Content Section -->
     <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
