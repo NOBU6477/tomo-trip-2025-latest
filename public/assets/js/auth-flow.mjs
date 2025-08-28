@@ -135,35 +135,35 @@ class AuthFlowManager {
                           !window.location.pathname.includes('index-en.html');
 
         const modalHTML = `
-            <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
+            <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold text-primary">
                                 ${isJapanese ? 'ダッシュボードアクセス' : 'Dashboard Access'}
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body text-center">
+                        <div class="modal-body text-center pt-2">
                             <div class="mb-4">
-                                <i class="bi bi-shield-lock" style="font-size: 3rem; color: #6c757d;"></i>
+                                <i class="bi bi-shield-lock" style="font-size: 3rem; color: #007bff;"></i>
                             </div>
                             <h6 class="mb-3">
                                 ${isJapanese ? 
                                   'ダッシュボードにアクセスするには協賛店としてログインする必要があります。' : 
                                   'You need to login as a sponsor to access the dashboard.'}
                             </h6>
-                            <p class="text-muted mb-4">
+                            <p class="text-muted mb-4 small">
                                 ${isJapanese ? 
                                   'まだアカウントをお持ちでない場合は、まず協賛店登録を行ってください。' : 
                                   'If you don\'t have an account yet, please register as a sponsor first.'}
                             </p>
                             <div class="d-grid gap-2">
-                                <button class="btn btn-primary" onclick="authFlowManager.showSponsorLoginModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
-                                    ${isJapanese ? '協賛店ログイン' : 'Sponsor Login'}
+                                <button class="btn btn-primary" style="padding: 12px; border-radius: 8px;" onclick="authFlowManager.showSponsorLoginModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
+                                    <i class="bi bi-person-check me-2"></i>${isJapanese ? '協賛店ログイン' : 'Sponsor Login'}
                                 </button>
-                                <button class="btn btn-outline-success" onclick="authFlowManager.showSponsorRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
-                                    ${isJapanese ? '協賛店登録' : 'Sponsor Registration'}
+                                <button class="btn btn-outline-success" style="padding: 12px; border-radius: 8px;" onclick="authFlowManager.showSponsorRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
+                                    <i class="bi bi-person-plus me-2"></i>${isJapanese ? '協賛店登録' : 'Sponsor Registration'}
                                 </button>
                             </div>
                         </div>
@@ -181,9 +181,25 @@ class AuthFlowManager {
         // Add modal to DOM
         document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+        // Show modal with proper configuration
+        const modal = new bootstrap.Modal(document.getElementById('loginPromptModal'), {
+            backdrop: 'static',  // Prevent backdrop click close
+            keyboard: true,      // Allow ESC key close
+            focus: true
+        });
         modal.show();
+        
+        // Ensure proper z-index layering
+        setTimeout(() => {
+            const modalElement = document.getElementById('loginPromptModal');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (modalElement) {
+                modalElement.style.zIndex = '9999';
+            }
+            if (backdrop) {
+                backdrop.style.zIndex = '9998';
+            }
+        }, 100);
     }
 
     /**
@@ -196,9 +212,9 @@ class AuthFlowManager {
                           !window.location.pathname.includes('index-en.html');
 
         const modalHTML = `
-            <div class="modal fade" id="sponsorLoginModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
+            <div class="modal fade" id="sponsorLoginModal" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                         <div class="modal-header">
                             <h5 class="modal-title">
                                 <i class="bi bi-shop"></i> ${isJapanese ? '協賛店ログイン' : 'Sponsor Login'}
@@ -261,9 +277,25 @@ class AuthFlowManager {
             this.handleSponsorLogin();
         });
 
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('sponsorLoginModal'));
+        // Show modal with proper configuration
+        const modal = new bootstrap.Modal(document.getElementById('sponsorLoginModal'), {
+            backdrop: 'static',
+            keyboard: true,
+            focus: true
+        });
         modal.show();
+        
+        // Ensure proper z-index layering
+        setTimeout(() => {
+            const modalElement = document.getElementById('sponsorLoginModal');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (modalElement) {
+                modalElement.style.zIndex = '9999';
+            }
+            if (backdrop) {
+                backdrop.style.zIndex = '9998';
+            }
+        }, 100);
     }
 
     /**
@@ -276,9 +308,9 @@ class AuthFlowManager {
                           !window.location.pathname.includes('index-en.html');
 
         const modalHTML = `
-            <div class="modal fade" id="sponsorRegistrationModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
+            <div class="modal fade" id="sponsorRegistrationModal" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                         <div class="modal-header">
                             <h5 class="modal-title">
                                 <i class="bi bi-shop-window"></i> ${isJapanese ? '協賛店登録' : 'Sponsor Registration'}
@@ -359,9 +391,25 @@ class AuthFlowManager {
             this.handleSponsorRegistration();
         });
 
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('sponsorRegistrationModal'));
+        // Show modal with proper configuration
+        const modal = new bootstrap.Modal(document.getElementById('sponsorRegistrationModal'), {
+            backdrop: 'static',
+            keyboard: true,
+            focus: true
+        });
         modal.show();
+        
+        // Ensure proper z-index layering
+        setTimeout(() => {
+            const modalElement = document.getElementById('sponsorRegistrationModal');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (modalElement) {
+                modalElement.style.zIndex = '9999';
+            }
+            if (backdrop) {
+                backdrop.style.zIndex = '9998';
+            }
+        }, 100);
     }
 
     /**
