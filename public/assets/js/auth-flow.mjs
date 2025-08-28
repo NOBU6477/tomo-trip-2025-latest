@@ -113,14 +113,15 @@ class AuthFlowManager {
     }
 
     /**
-     * Setup registration flow
+     * Setup registration flow - Registration disabled
      */
     setupRegistrationFlow() {
         const registerBtn = document.getElementById('registerBtn');
         if (registerBtn) {
             registerBtn.addEventListener('click', (e) => {
-                // Registration modal will be handled by existing modal system
-                // but we can track registration completion here
+                e.preventDefault();
+                // Registration is disabled - redirect to contact
+                this.showContactInfo();
             });
         }
     }
@@ -355,62 +356,11 @@ class AuthFlowManager {
     }
 
     /**
-     * Handle sponsor registration form submission
+     * Registration disabled - Contact for account creation
      */
     async handleSponsorRegistration() {
-        const storeName = document.getElementById('storeName').value;
-        const email = document.getElementById('storeEmail').value;
-        const phone = document.getElementById('storePhone').value;
-        const password = document.getElementById('storePassword').value;
-        const passwordConfirm = document.getElementById('storePasswordConfirm').value;
-
-        // Validate passwords match
-        if (password !== passwordConfirm) {
-            this.showToast(
-                document.documentElement.lang === 'ja' ? 
-                'パスワードが一致しません' : 'Passwords do not match',
-                'error'
-            );
-            return;
-        }
-
-        try {
-            // Show loading state
-            const submitBtn = document.querySelector('#sponsorRegistrationForm button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.disabled = true;
-            submitBtn.textContent = document.documentElement.lang === 'ja' ? '登録中...' : 'Registering...';
-
-            // Simulate registration API call
-            await this.simulateApiCall();
-
-            // Set auth status
-            this.setAuthData('sponsor', true);
-
-            // Update UI
-            this.updateDashboardButtonState();
-
-            // Close modal
-            bootstrap.Modal.getInstance(document.getElementById('sponsorRegistrationModal')).hide();
-
-            // Show success message
-            this.showToast(
-                document.documentElement.lang === 'ja' ? '登録完了しました' : 'Registration completed',
-                'success'
-            );
-
-            // Redirect to dashboard
-            setTimeout(() => {
-                window.location.href = 'sponsor-dashboard.html';
-            }, 1000);
-
-        } catch (error) {
-            console.error('Registration error:', error);
-            this.showToast(
-                document.documentElement.lang === 'ja' ? '登録に失敗しました' : 'Registration failed',
-                'error'
-            );
-        }
+        // Registration disabled - redirect to contact
+        this.showContactInfo();
     }
 
     /**
