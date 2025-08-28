@@ -539,7 +539,7 @@
             // プロフィール保存
             document.getElementById('storeProfileForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                alert('プロフィール情報を保存しました！');
+                saveStoreProfile();
             });
             
             // タブ切り替え時のログ
@@ -606,6 +606,9 @@
                 document.getElementById('storeCategory').textContent = storeData.category || '観光案内・文化体験';
                 document.getElementById('storeLocation').innerHTML = `<i class="bi bi-geo-alt me-1"></i>${storeData.address || '東京都台東区浅草'}`;
                 
+                // Populate editable form fields with actual store data
+                populateStoreForm(storeData);
+                
                 // Load guides for this store
                 const guidesResponse = await fetch(`/api/tourism-guides/store/${storeId}`);
                 const guides = await guidesResponse.json();
@@ -648,6 +651,90 @@
             );
             
             console.log(`📊 Statistics: ${guides.length} guides, ${todayReservations.length} today, ${monthlyReservations.length} this month`);
+        }
+        
+        // Populate form with actual store data
+        function populateStoreForm(storeData) {
+            // Update profile form fields with actual data
+            const formFields = [
+                { id: 'editStoreName', value: storeData.storeName },
+                { id: 'editStoreEmail', value: storeData.email },
+                { id: 'editStorePhone', value: storeData.phone || '' },
+                { id: 'editStoreAddress', value: storeData.address || '' },
+                { id: 'editStoreDescription', value: storeData.description || '' },
+                { id: 'editStoreHours', value: storeData.businessHours || '' },
+                { id: 'editStoreWebsite', value: storeData.website || '' }
+            ];
+            
+            formFields.forEach(field => {
+                const element = document.getElementById(field.id);
+                if (element) {
+                    element.value = field.value;
+                }
+            });
+            
+            // Update category selector
+            const categorySelect = document.getElementById('editStoreCategory');
+            if (categorySelect && storeData.category) {
+                categorySelect.value = storeData.category;
+            }
+            
+            console.log('✅ Form populated with actual store data');
+        }
+        
+        // Save store profile updates
+        async function saveStoreProfile() {
+            const storeLogin = localStorage.getItem('storeLogin');
+            if (!storeLogin) return;
+            
+            const storeData = JSON.parse(storeLogin);
+            
+            const updatedData = {
+                storeName: document.getElementById('editStoreName')?.value,
+                email: document.getElementById('editStoreEmail')?.value,
+                phone: document.getElementById('editStorePhone')?.value,
+                address: document.getElementById('editStoreAddress')?.value,
+                description: document.getElementById('editStoreDescription')?.value,
+                category: document.getElementById('editStoreCategory')?.value,
+                businessHours: document.getElementById('editStoreHours')?.value,
+                website: document.getElementById('editStoreWebsite')?.value
+            };
+            
+            try {
+                const response = await fetch(`/api/sponsor-stores/${storeData.storeId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+                
+                if (response.ok) {
+                    const updatedStore = await response.json();
+                    
+                    // Update localStorage with new data
+                    const newStoreLogin = {
+                        ...storeData,
+                        storeName: updatedStore.storeName,
+                        email: updatedStore.email
+                    };
+                    localStorage.setItem('storeLogin', JSON.stringify(newStoreLogin));
+                    
+                    // Update page header
+                    const storeNameElement = document.querySelector('h1');
+                    if (storeNameElement) {
+                        storeNameElement.textContent = `${updatedStore.storeName} - 店舗管理画面`;
+                    }
+                    
+                    alert('店舗情報が更新されました！');
+                    console.log('✅ Store profile updated successfully');
+                } else {
+                    throw new Error('Failed to update store profile');
+                }
+            } catch (error) {
+                console.error('Error updating store profile:', error);
+                alert('店舗情報の更新に失敗しました。');
+            }
         }
         
         // Initialize tourism guide features

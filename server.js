@@ -91,6 +91,28 @@ app.get('/api/sponsor-stores', (req, res) => {
   }
 });
 
+app.put('/api/sponsor-stores/:id', (req, res) => {
+  try {
+    const storeIndex = stores.findIndex(s => s.id === req.params.id);
+    if (storeIndex === -1) {
+      return res.status(404).json({ error: 'Store not found' });
+    }
+    
+    const updatedData = req.body;
+    stores[storeIndex] = {
+      ...stores[storeIndex],
+      ...updatedData,
+      updatedAt: new Date().toISOString()
+    };
+    
+    console.log('✅ Store updated:', stores[storeIndex].storeName);
+    res.json(stores[storeIndex]);
+  } catch (error) {
+    console.error('Error updating store:', error);
+    res.status(500).json({ error: 'Failed to update store' });
+  }
+});
+
 // Tourism Guide endpoints
 app.post('/api/tourism-guides', (req, res) => {
   try {
