@@ -214,7 +214,7 @@ function setupSponsorButtonEvents() {
         regBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Sponsor registration clicked - redirecting to registration page');
-            window.location.href = 'sponsor-registration.html';
+            window.location.href = 'sponsor-registration.html?v=' + Date.now();
         });
     }
     
@@ -231,7 +231,7 @@ function setupSponsorButtonEvents() {
         regBtnMobile.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Mobile sponsor registration clicked - redirecting to registration page');
-            window.location.href = 'sponsor-registration.html';
+            window.location.href = 'sponsor-registration.html?v=' + Date.now();
         });
     }
     
