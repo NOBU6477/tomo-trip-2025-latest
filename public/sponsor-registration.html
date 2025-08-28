@@ -9,20 +9,50 @@
     <link rel="stylesheet" href="ocean_background.css">
     <style>
         body {
-            background: linear-gradient(135deg, #74b9ff, #0984e3);
+            background-image: url('/assets/images/beach-yacht-tourists.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(116, 185, 255, 0.8), rgba(9, 132, 227, 0.8));
+            z-index: -1;
         }
         .registration-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 2rem;
-            max-width: 500px;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 25px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 3rem;
+            max-width: 600px;
             width: 100%;
             margin: 2rem;
+            position: relative;
+        }
+        
+        .registration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #fd7f3d, #e55f24, #74b9ff);
+            border-radius: 25px 25px 0 0;
         }
         .form-control {
             border-radius: 10px;
@@ -59,14 +89,39 @@
             color: white;
         }
         .registration-title {
-            color: #fd7f3d;
             font-weight: bold;
             text-align: center;
-            margin: 20px 0;
-            padding: 15px;
+            margin: 0 0 30px 0;
+            padding: 20px;
             background: linear-gradient(135deg, #fd7f3d, #e55f24);
             color: white;
-            border-radius: 10px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(253, 127, 61, 0.3);
+            font-size: 1.8rem;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-floating > .form-control {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(116, 185, 255, 0.3);
+        }
+        
+        .form-floating > .form-control:focus {
+            background: rgba(255, 255, 255, 1);
+            border-color: #74b9ff;
+            box-shadow: 0 0 15px rgba(116, 185, 255, 0.3);
+        }
+        
+        .form-floating > label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .category-select {
+            background: rgba(255, 255, 255, 0.9);
         }
     </style>
 </head>
@@ -79,46 +134,46 @@
         <h2 class="registration-title">スポンサー登録</h2>
         
         <form id="sponsorRegistrationForm" onsubmit="handleRegistration(event)">
-            <div class="mb-3">
-                <label for="storeName" class="form-label">店舗名</label>
-                <input type="text" class="form-control" id="storeName" name="storeName" required>
+            <div class="form-floating">
+                <input type="text" class="form-control" id="storeName" name="storeName" placeholder="店舗名" required>
+                <label for="storeName"><i class="bi bi-shop me-2"></i>店舗名</label>
             </div>
             
-            <div class="mb-3">
-                <label for="email" class="form-label">メールアドレス</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+            <div class="form-floating">
+                <input type="email" class="form-control" id="email" name="email" placeholder="メールアドレス" required>
+                <label for="email"><i class="bi bi-envelope me-2"></i>メールアドレス</label>
             </div>
             
-            <div class="mb-3">
-                <label for="phone" class="form-label">電話番号</label>
-                <input type="tel" class="form-control" id="phone" name="phone" required>
+            <div class="form-floating">
+                <input type="tel" class="form-control" id="phone" name="phone" placeholder="電話番号" required>
+                <label for="phone"><i class="bi bi-telephone me-2"></i>電話番号</label>
             </div>
             
-            <div class="mb-3">
-                <label for="address" class="form-label">住所</label>
-                <textarea class="form-control" id="address" name="address" rows="3"></textarea>
+            <div class="form-floating">
+                <textarea class="form-control" id="address" name="address" placeholder="住所" style="height: 100px;"></textarea>
+                <label for="address"><i class="bi bi-geo-alt me-2"></i>住所</label>
             </div>
             
-            <div class="mb-3">
-                <label for="description" class="form-label">店舗説明</label>
-                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            <div class="form-floating">
+                <textarea class="form-control" id="description" name="description" placeholder="店舗説明" style="height: 120px;"></textarea>
+                <label for="description"><i class="bi bi-card-text me-2"></i>店舗説明</label>
             </div>
             
-            <div class="mb-3">
-                <label for="category" class="form-label">カテゴリー</label>
-                <select class="form-control" id="category" name="category" required>
+            <div class="form-floating">
+                <select class="form-control category-select" id="category" name="category" required>
                     <option value="">選択してください</option>
-                    <option value="restaurant">レストラン・飲食</option>
-                    <option value="retail">小売・ショッピング</option>
-                    <option value="hotel">宿泊・ホテル</option>
-                    <option value="entertainment">エンターテイメント</option>
-                    <option value="service">サービス業</option>
-                    <option value="other">その他</option>
+                    <option value="restaurant">🍽️ レストラン・飲食</option>
+                    <option value="retail">🛍️ 小売・ショッピング</option>
+                    <option value="hotel">🏨 宿泊・ホテル</option>
+                    <option value="entertainment">🎭 エンターテイメント</option>
+                    <option value="service">💼 サービス業</option>
+                    <option value="other">📝 その他</option>
                 </select>
+                <label for="category"><i class="bi bi-tags me-2"></i>カテゴリー</label>
             </div>
             
             <button type="submit" class="btn btn-register">
-                <i class="bi bi-check-circle"></i> 登録申請
+                <i class="bi bi-check-circle me-2"></i>登録申請
             </button>
         </form>
     </div>
@@ -151,13 +206,56 @@
             const formData = new FormData(event.target);
             const data = Object.fromEntries(formData);
             
-            // Show success message
-            alert('登録申請を受け付けました。審査後、メールにてご連絡いたします。');
+            // Show loading state
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録中...';
             
-            // Redirect to home
+            // Simulate registration process
             setTimeout(() => {
-                window.location.href = 'index.html';
-            }, 2000);
+                // Store registration data (simulate successful registration)
+                localStorage.setItem('tomotrip_auth_status', 'true');
+                localStorage.setItem('tomotrip_user_type', 'sponsor');
+                localStorage.setItem('tomotrip_auth_expiry', (new Date().getTime() + (30 * 24 * 60 * 60 * 1000)).toString());
+                localStorage.setItem('sponsor_store_name', data.storeName);
+                localStorage.setItem('sponsor_email', data.email);
+                
+                // Show success message with better styling
+                showSuccessMessage('登録申請が完了しました！\n管理画面に移動します。');
+                
+                // Redirect to dashboard
+                setTimeout(() => {
+                    window.location.href = 'sponsor-dashboard.html';
+                }, 2000);
+                
+            }, 1500);
+        }
+        
+        function showSuccessMessage(message) {
+            // Create success modal
+            const modalHTML = `
+                <div class="modal fade" id="successModal" tabindex="-1" style="z-index: 10000;">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 20px; border: none;">
+                            <div class="modal-body text-center p-5">
+                                <div class="mb-4">
+                                    <i class="bi bi-check-circle-fill" style="font-size: 4rem; color: #28a745;"></i>
+                                </div>
+                                <h5 class="mb-3" style="color: #28a745; font-weight: bold;">登録完了</h5>
+                                <p class="mb-4" style="white-space: pre-line;">${message}</p>
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            const modal = new bootstrap.Modal(document.getElementById('successModal'));
+            modal.show();
         }
     </script>
 </body>
