@@ -471,7 +471,38 @@
     <script>
         // 店舗ダッシュボード機能
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('店舗ダッシュボードが読み込まれました');
+            // Store authentication check first
+            const storeLogin = localStorage.getItem('storeLogin');
+            
+            if (!storeLogin) {
+                alert('店舗管理画面にアクセスするには協賛店登録またはログインが必要です。');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            try {
+                const storeData = JSON.parse(storeLogin);
+                if (storeData.userType !== 'store_owner') {
+                    alert('この画面は協賛店専用です。');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                // Update store name in header if available
+                const storeNameElement = document.querySelector('h1');
+                if (storeNameElement && storeData.storeName) {
+                    storeNameElement.textContent = `${storeData.storeName} - 店舗管理画面`;
+                }
+                
+                console.log('🏪 店舗ダッシュボードが読み込まれました - ' + storeData.storeName);
+                
+            } catch (error) {
+                console.error('Store login data error:', error);
+                localStorage.removeItem('storeLogin');
+                alert('ログインデータに問題があります。再度ログインしてください。');
+                window.location.href = 'index.html';
+                return;
+            }
             
             // プロフィール保存
             document.getElementById('storeProfileForm').addEventListener('submit', function(e) {
@@ -491,6 +522,8 @@
         function logout() {
             if (confirm('ログアウトしますか？')) {
                 localStorage.removeItem('storeLogin');
+                localStorage.removeItem('tomotrip_auth_status');
+                localStorage.removeItem('tomotrip_user_type');
                 window.location.href = 'index.html';
             }
         }

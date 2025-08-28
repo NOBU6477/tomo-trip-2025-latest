@@ -281,14 +281,23 @@
                 localStorage.setItem('sponsor_store_name', data.storeName);
                 localStorage.setItem('sponsor_email', data.email);
                 
-                console.log('✅ Registration successful, redirecting to dashboard');
+                console.log('✅ Registration successful, redirecting to store dashboard');
                 
                 // Show success message with better styling
-                showSuccessMessage('🎉 登録申請が完了しました！\n管理画面に移動します...');
+                showSuccessMessage('🎉 登録申請が完了しました！\n店舗管理画面に移動します...');
                 
-                // Redirect to dashboard
+                // Store login session for the registered store
+                localStorage.setItem('storeLogin', JSON.stringify({
+                    storeName: data.storeName,
+                    email: data.email,
+                    loginTime: new Date().toISOString(),
+                    userType: 'store_owner'
+                }));
+                
+                // Redirect to individual store dashboard
                 setTimeout(() => {
-                    window.location.href = 'sponsor-dashboard.html';
+                    console.log('✅ Registration successful, redirecting to store dashboard');
+                    window.location.href = 'store-dashboard.html';
                 }, 2500);
                 
             }, 2000);
