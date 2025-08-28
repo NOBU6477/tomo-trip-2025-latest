@@ -1,10 +1,16 @@
 /* Beautiful resort & beach background theme for TomoTrip */
+html, body {
+    background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat fixed;
+    min-height: 100vh;
+}
+
 .theme-ocean {
     margin: 0;
     padding: 0;
     position: relative;
     min-height: 100vh;
     font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    background: transparent;
 }
 
 /* 背景画像レイヤー - 動的効果付き */
@@ -20,32 +26,32 @@
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
-    z-index: -10;
-    animation: subtleMove 20s ease-in-out infinite;
-    will-change: transform;
+    z-index: -1;
+    animation: subtleMove 15s ease-in-out infinite;
+    will-change: transform, background-position;
 }
 
 /* 動的背景アニメーション - ゆっくりとした流れ */
 @keyframes subtleMove {
     0% { 
         background-position: center center; 
-        transform: scale(1.0);
+        transform: scale(1.0) translateZ(0);
     }
     25% { 
-        background-position: 55% center; 
-        transform: scale(1.02);
+        background-position: 60% 40%; 
+        transform: scale(1.05) translateZ(0);
     }
     50% { 
-        background-position: center 45%; 
-        transform: scale(1.01);
+        background-position: 40% 60%; 
+        transform: scale(1.03) translateZ(0);
     }
     75% { 
-        background-position: 45% center; 
-        transform: scale(1.02);
+        background-position: 55% 45%; 
+        transform: scale(1.05) translateZ(0);
     }
     100% { 
         background-position: center center; 
-        transform: scale(1.0);
+        transform: scale(1.0) translateZ(0);
     }
 }
 
@@ -58,10 +64,10 @@
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%),
-        radial-gradient(circle at 20% 80%, rgba(0,150,255,0.05) 0%, transparent 50%),
-        linear-gradient(45deg, rgba(255,255,255,0.02) 0%, transparent 100%);
-    z-index: -5;
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 60%),
+        radial-gradient(circle at 20% 80%, rgba(0,150,255,0.04) 0%, transparent 60%),
+        linear-gradient(45deg, rgba(255,255,255,0.01) 0%, transparent 100%);
+    z-index: 0;
     animation: floatingElements 30s linear infinite;
     pointer-events: none;
     will-change: transform;
@@ -77,12 +83,6 @@
 
 /* Mobile-friendly background for better compatibility */
 @media (max-width: 768px) {
-    html, body {
-        background: url('/assets/images/beach-yacht-tourists.jpg') center center / cover no-repeat scroll !important;
-        min-height: 100vh !important;
-        width: 100% !important;
-    }
-    
     .theme-ocean {
         background-attachment: scroll !important;
         background-size: cover !important;
@@ -91,6 +91,10 @@
         background-image: url('/assets/images/beach-yacht-tourists.jpg') !important;
         min-height: 100vh !important;
         width: 100% !important;
+    }
+    
+    .theme-ocean::before {
+        background-attachment: scroll !important;
         animation: mobileSubtleMove 25s ease-in-out infinite;
     }
     
