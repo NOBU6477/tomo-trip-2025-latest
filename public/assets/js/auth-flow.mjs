@@ -155,15 +155,12 @@ class AuthFlowManager {
                             </h6>
                             <p class="text-muted mb-4 small">
                                 ${isJapanese ? 
-                                  'まだアカウントをお持ちでない場合は、まず協賛店登録を行ってください。' : 
-                                  'If you don\'t have an account yet, please register as a sponsor first.'}
+                                  'ダッシュボードにアクセスするには、協賛店アカウントでログインしてください。' : 
+                                  'Please login with your sponsor account to access the dashboard.'}
                             </p>
-                            <div class="d-grid gap-2">
+                            <div class="d-grid">
                                 <button class="btn btn-primary" style="padding: 12px; border-radius: 8px;" onclick="authFlowManager.showSponsorLoginModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
                                     <i class="bi bi-person-check me-2"></i>${isJapanese ? '協賛店ログイン' : 'Sponsor Login'}
-                                </button>
-                                <button class="btn btn-outline-success" style="padding: 12px; border-radius: 8px;" onclick="authFlowManager.showSponsorRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('loginPromptModal')).hide();">
-                                    <i class="bi bi-person-plus me-2"></i>${isJapanese ? '協賛店登録' : 'Sponsor Registration'}
                                 </button>
                             </div>
                         </div>
@@ -247,14 +244,12 @@ class AuthFlowManager {
                                     </button>
                                 </div>
                             </form>
-                            <hr>
-                            <div class="text-center">
-                                <p class="mb-2">
-                                    ${isJapanese ? 'まだアカウントをお持ちでない方' : 'Don\'t have an account?'}
-                                </p>
-                                <button class="btn btn-outline-success" onclick="authFlowManager.showSponsorRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal')).hide();">
-                                    ${isJapanese ? '協賛店登録' : 'Register as Sponsor'}
-                                </button>
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    ${isJapanese ? 
+                                      'アカウント作成についてはお問い合わせください' : 
+                                      'Please contact us for account creation'}
+                                </small>
                             </div>
                         </div>
                     </div>
@@ -299,117 +294,17 @@ class AuthFlowManager {
     }
 
     /**
-     * Show sponsor registration modal
+     * Show contact information for account creation
      */
-    showSponsorRegistrationModal() {
+    showContactInfo() {
         const isJapanese = document.documentElement.lang === 'ja' || 
                           document.querySelector('html[lang="ja"]') || 
                           window.location.pathname.includes('index.html') || 
                           !window.location.pathname.includes('index-en.html');
 
-        const modalHTML = `
-            <div class="modal fade" id="sponsorRegistrationModal" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
-                <div class="modal-dialog modal-dialog-centered" style="max-width: 500px;">
-                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                        <div class="modal-header">
-                            <h5 class="modal-title">
-                                <i class="bi bi-shop-window"></i> ${isJapanese ? '協賛店登録' : 'Sponsor Registration'}
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="sponsorRegistrationForm">
-                                <div class="mb-3">
-                                    <label for="storeName" class="form-label">
-                                        ${isJapanese ? '店舗名' : 'Store Name'} *
-                                    </label>
-                                    <input type="text" class="form-control" id="storeName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="storeEmail" class="form-label">
-                                        ${isJapanese ? 'メールアドレス' : 'Email Address'} *
-                                    </label>
-                                    <input type="email" class="form-control" id="storeEmail" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="storePhone" class="form-label">
-                                        ${isJapanese ? '電話番号' : 'Phone Number'} *
-                                    </label>
-                                    <input type="tel" class="form-control" id="storePhone" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="storePassword" class="form-label">
-                                        ${isJapanese ? 'パスワード' : 'Password'} *
-                                    </label>
-                                    <input type="password" class="form-control" id="storePassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="storePasswordConfirm" class="form-label">
-                                        ${isJapanese ? 'パスワード確認' : 'Confirm Password'} *
-                                    </label>
-                                    <input type="password" class="form-control" id="storePasswordConfirm" required>
-                                </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="agreeTerms" required>
-                                    <label class="form-check-label" for="agreeTerms">
-                                        ${isJapanese ? '利用規約に同意します' : 'I agree to the terms of service'}
-                                    </label>
-                                </div>
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-success">
-                                        ${isJapanese ? '登録' : 'Register'}
-                                    </button>
-                                </div>
-                            </form>
-                            <hr>
-                            <div class="text-center">
-                                <p class="mb-2">
-                                    ${isJapanese ? 'すでにアカウントをお持ちの方' : 'Already have an account?'}
-                                </p>
-                                <button class="btn btn-outline-primary" onclick="authFlowManager.showSponsorLoginModal(); bootstrap.Modal.getInstance(document.getElementById('sponsorRegistrationModal')).hide();">
-                                    ${isJapanese ? 'ログイン' : 'Login'}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Remove existing modal if any
-        const existingModal = document.getElementById('sponsorRegistrationModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-
-        // Add modal to DOM
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-
-        // Setup form handler
-        document.getElementById('sponsorRegistrationForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleSponsorRegistration();
-        });
-
-        // Show modal with proper configuration
-        const modal = new bootstrap.Modal(document.getElementById('sponsorRegistrationModal'), {
-            backdrop: 'static',
-            keyboard: true,
-            focus: true
-        });
-        modal.show();
-        
-        // Ensure proper z-index layering
-        setTimeout(() => {
-            const modalElement = document.getElementById('sponsorRegistrationModal');
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (modalElement) {
-                modalElement.style.zIndex = '9999';
-            }
-            if (backdrop) {
-                backdrop.style.zIndex = '9998';
-            }
-        }, 100);
+        alert(isJapanese ? 
+            'アカウント作成についてはお問い合わせください。\nメール: info@tomotrip.com' : 
+            'Please contact us for account creation.\nEmail: info@tomotrip.com');
     }
 
     /**
