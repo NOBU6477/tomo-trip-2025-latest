@@ -191,11 +191,33 @@
             const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
             data.languages = selectedLanguages;
             
+            // Get store ID from localStorage
+            const storeLogin = localStorage.getItem('storeLogin');
+            if (storeLogin) {
+                const storeData = JSON.parse(storeLogin);
+                data.storeId = storeData.storeId;
+            }
+            
             console.log('New guide registration:', data);
             
-            // Simulate registration
-            alert('ガイド登録申請を受け付けました。審査後、メールでご連絡いたします。');
-            window.location.href = 'store-dashboard.html';
+            // Send to server
+            fetch('/api/tourism-guides', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(guideData => {
+                console.log('✅ Guide registration successful:', guideData);
+                alert(`ガイド登録申請を受け付けました。\nガイドID: ${guideData.id.substring(0,8)}\n審査後、メールでご連絡いたします。`);
+                window.location.href = 'store-dashboard.html';
+            })
+            .catch(error => {
+                console.error('Guide registration failed:', error);
+                alert('ガイド登録に失敗しました。もう一度お試しください。');
+            });
         });
     </script>
 </body>

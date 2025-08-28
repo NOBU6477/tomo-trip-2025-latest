@@ -1,69 +1,180 @@
-#!/usr/bin/env node
-/**
- * TomoTrip - Node.js to Python Bridge
- * Immediate redirect to Python server
- */
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
 
-console.log('🌐 TomoTrip Node.js Bridge - Starting Python Server');
+const app = express();
+const PORT = 5000;
 
-const { spawn } = require('child_process');
+// Middleware for JSON parsing
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Start Python server immediately
-const pythonProcess = spawn('python3', ['main.py'], { 
-  stdio: 'inherit',
-  detached: true 
+// CORS headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
 
-pythonProcess.on('error', (err) => {
-  console.error('Failed to start Python server:', err);
-  process.exit(1);
-});
+// In-memory storage for demo (replace with database in production)
+let stores = [];
+let guides = [];
+let reservations = [];
 
-// Keep Node.js process alive
-process.on('SIGINT', () => {
-  pythonProcess.kill();
-  process.exit(0);
-});
-
-// Check if Node.js child_process is available
-try {
-  const { spawn } = require('child_process');
-  
-  // Start Python server with proper error handling and path resolution
-  const pythonCommand = process.env.PYTHON_CMD || 'python3';
-  const pythonProcess = spawn(pythonCommand, ['main.py'], {
-    stdio: 'inherit',
-    cwd: process.cwd(),
-    env: { 
-      ...process.env, 
-      PORT: '5000',
-      PATH: process.env.PATH + ':/usr/bin:/bin'
-    }
+// Generate UUID
+function generateUUID() {
+  return 'xxxx-xxxx-xxxx-xxxx'.replace(/[x]/g, function() {
+    return Math.floor(Math.random() * 16).toString(16);
   });
-
-  pythonProcess.on('error', (error) => {
-    console.error('❌ Bridge error:', error.message);
-    console.log('🔄 Falling back to direct Python execution...');
-    process.exit(1);
-  });
-
-  pythonProcess.on('exit', (code) => {
-    console.log(`🛑 Python server exited with code ${code}`);
-    process.exit(code || 0);
-  });
-
-  // Signal handling
-  ['SIGINT', 'SIGTERM'].forEach(signal => {
-    process.on(signal, () => {
-      console.log(`\n🛑 Received ${signal} - shutting down...`);
-      pythonProcess.kill(signal);
-    });
-  });
-
-  console.log('✅ Bridge established - Python server starting on port 5000');
-  
-} catch (error) {
-  console.error('❌ Node.js bridge failed:', error.message);
-  console.log('🔄 Please run: python3 main.py');
-  process.exit(1);
 }
+
+// API Routes
+// Sponsor Store endpoints
+app.post('/api/sponsor-stores', (req, res) => {
+  try {
+    const storeData = req.body;
+    
+    // Check if store already exists
+    const existingStore = stores.find(s => s.email === storeData.email);
+    if (existingStore) {
+      return res.status(409).json({ error: 'Store with this email already exists' });
+    }
+    
+    // Create new store with UUID
+    const newStore = {
+      id: generateUUID(),
+      ...storeData,
+      status: 'active',
+      registrationDate: new Date().toISOString(),
+      totalViews: 0,
+      totalBookings: 0,
+      averageRating: 0.00,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    stores.push(newStore);
+    console.log('✅ Store created with ID:', newStore.id, 'Name:', newStore.storeName);
+    
+    res.status(201).json(newStore);
+  } catch (error) {
+    console.error('Error creating sponsor store:', error);
+    res.status(500).json({ error: 'Failed to create store' });
+  }
+});
+
+app.get('/api/sponsor-stores/:id', (req, res) => {
+  try {
+    const store = stores.find(s => s.id === req.params.id);
+    if (!store) {
+      return res.status(404).json({ error: 'Store not found' });
+    }
+    res.json(store);
+  } catch (error) {
+    console.error('Error fetching store:', error);
+    res.status(500).json({ error: 'Failed to fetch store' });
+  }
+});
+
+app.get('/api/sponsor-stores', (req, res) => {
+  try {
+    res.json(stores.filter(s => s.isActive));
+  } catch (error) {
+    console.error('Error fetching stores:', error);
+    res.status(500).json({ error: 'Failed to fetch stores' });
+  }
+});
+
+// Tourism Guide endpoints
+app.post('/api/tourism-guides', (req, res) => {
+  try {
+    const guideData = req.body;
+    
+    const newGuide = {
+      id: generateUUID(),
+      ...guideData,
+      status: 'pending',
+      totalBookings: 0,
+      averageRating: 0.00,
+      isAvailable: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    guides.push(newGuide);
+    console.log('✅ Guide created with ID:', newGuide.id, 'Name:', newGuide.guideName);
+    
+    res.status(201).json(newGuide);
+  } catch (error) {
+    console.error('Error creating tourism guide:', error);
+    res.status(500).json({ error: 'Failed to create guide' });
+  }
+});
+
+app.get('/api/tourism-guides/store/:storeId', (req, res) => {
+  try {
+    const storeGuides = guides.filter(g => g.storeId === req.params.storeId && g.isAvailable);
+    res.json(storeGuides);
+  } catch (error) {
+    console.error('Error fetching guides:', error);
+    res.status(500).json({ error: 'Failed to fetch guides' });
+  }
+});
+
+// Reservation endpoints
+app.post('/api/reservations', (req, res) => {
+  try {
+    const reservationData = req.body;
+    
+    const newReservation = {
+      id: generateUUID(),
+      ...reservationData,
+      status: 'confirmed',
+      paymentStatus: 'pending',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    reservations.push(newReservation);
+    console.log('✅ Reservation created with ID:', newReservation.id);
+    
+    res.status(201).json(newReservation);
+  } catch (error) {
+    console.error('Error creating reservation:', error);
+    res.status(500).json({ error: 'Failed to create reservation' });
+  }
+});
+
+app.get('/api/reservations/store/:storeId', (req, res) => {
+  try {
+    const storeReservations = reservations.filter(r => r.storeId === req.params.storeId);
+    res.json(storeReservations);
+  } catch (error) {
+    console.error('Error fetching reservations:', error);
+    res.status(500).json({ error: 'Failed to fetch reservations' });
+  }
+});
+
+// Static file serving
+app.use(express.static('public'));
+
+// Default route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 TomoTrip Server running on port ${PORT}`);
+  console.log(`📊 Data stored in memory - stores: ${stores.length}, guides: ${guides.length}, reservations: ${reservations.length}`);
+});

@@ -521,6 +521,11 @@
                     storeNameElement.textContent = `${storeData.storeName} - 店舗管理画面`;
                 }
                 
+                // Load store data from server
+                if (storeData.storeId) {
+                    loadStoreData(storeData.storeId);
+                }
+                
                 console.log('🏪 店舗ダッシュボードが読み込まれました - ' + storeData.storeName);
                 
             } catch (error) {
@@ -587,6 +592,62 @@
         function updateStats() {
             console.log('📊 Statistics updated for tourism guide store');
             // Real-time stats would be loaded from server here
+        }
+        
+        // Load store data from server
+        async function loadStoreData(storeId) {
+            try {
+                // Load store information
+                const storeResponse = await fetch(`/api/sponsor-stores/${storeId}`);
+                const storeData = await storeResponse.json();
+                
+                // Update store information in the UI
+                document.getElementById('storeName').textContent = storeData.storeName;
+                document.getElementById('storeCategory').textContent = storeData.category || '観光案内・文化体験';
+                document.getElementById('storeLocation').innerHTML = `<i class="bi bi-geo-alt me-1"></i>${storeData.address || '東京都台東区浅草'}`;
+                
+                // Load guides for this store
+                const guidesResponse = await fetch(`/api/tourism-guides/store/${storeId}`);
+                const guides = await guidesResponse.json();
+                
+                // Load reservations for this store
+                const reservationsResponse = await fetch(`/api/reservations/store/${storeId}`);
+                const reservations = await reservationsResponse.json();
+                
+                // Update statistics
+                updateStoreStatistics(storeData, guides, reservations);
+                
+                console.log('✅ Store data loaded:', {
+                    store: storeData.storeName,
+                    guides: guides.length,
+                    reservations: reservations.length
+                });
+                
+            } catch (error) {
+                console.error('Error loading store data:', error);
+            }
+        }
+        
+        function updateStoreStatistics(store, guides, reservations) {
+            // Update guide count
+            const guidesCountElement = document.querySelector('.text-success');
+            if (guidesCountElement) {
+                guidesCountElement.textContent = `アクティブガイド: ${guides.length}名`;
+            }
+            
+            // Update today's reservations
+            const today = new Date().toISOString().split('T')[0];
+            const todayReservations = reservations.filter(r => 
+                r.reservationDate && r.reservationDate.startsWith(today)
+            );
+            
+            // Update monthly stats
+            const thisMonth = new Date().toISOString().substring(0, 7);
+            const monthlyReservations = reservations.filter(r => 
+                r.createdAt && r.createdAt.startsWith(thisMonth)
+            );
+            
+            console.log(`📊 Statistics: ${guides.length} guides, ${todayReservations.length} today, ${monthlyReservations.length} this month`);
         }
         
         // Initialize tourism guide features

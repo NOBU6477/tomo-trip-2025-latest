@@ -1,0 +1,23 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "## Overview Tourism-focused matching application where local residents register as guides and tourists select them. Features comprehensive guide registration with phone verification and ID document upload, activity region selection covering all prefectures, simplified 6-language selection system, automatic photo upload with name extraction functionality, strict tourist authentication requirements with minimum ¥6000 session fee, TomoTrip branding with logo integration, coastal landscape theming, and mandatory login for guide details access with proper authentication flow.",
+  "main": "csp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@types/express": "^5.0.3",
+    "@types/memoizee": "^0.4.12",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.5",
+    "express": "^5.1.0",
+    "memoizee": "^0.4.17",
+    "openid-client": "^6.7.0"
+  }
+}

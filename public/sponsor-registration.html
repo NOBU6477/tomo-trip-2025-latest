@@ -272,35 +272,47 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録処理中...';
             
-            // Simulate registration process
-            setTimeout(() => {
-                // Store registration data (simulate successful registration)
+            // Send registration data to server
+            fetch('/api/sponsor-stores', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(storeData => {
+                console.log('✅ Registration successful:', storeData);
+                
+                // Store authentication and store data
                 localStorage.setItem('tomotrip_auth_status', 'true');
                 localStorage.setItem('tomotrip_user_type', 'sponsor');
                 localStorage.setItem('tomotrip_auth_expiry', (new Date().getTime() + (30 * 24 * 60 * 60 * 1000)).toString());
-                localStorage.setItem('sponsor_store_name', data.storeName);
-                localStorage.setItem('sponsor_email', data.email);
                 
-                console.log('✅ Registration successful, redirecting to store dashboard');
-                
-                // Show success message with better styling
-                showSuccessMessage('🎉 登録申請が完了しました！\n店舗管理画面に移動します...');
-                
-                // Store login session for the registered store
+                // Store login session with actual store data from database
                 localStorage.setItem('storeLogin', JSON.stringify({
-                    storeName: data.storeName,
-                    email: data.email,
+                    storeId: storeData.id,
+                    storeName: storeData.storeName,
+                    email: storeData.email,
                     loginTime: new Date().toISOString(),
                     userType: 'store_owner'
                 }));
                 
-                // Redirect to individual store dashboard
+                // Show success message
+                showSuccessMessage(`🎉 店舗ID: ${storeData.id.substring(0,8)} で登録完了！\n店舗管理画面に移動します...`);
+                
+                // Redirect to store dashboard
                 setTimeout(() => {
-                    console.log('✅ Registration successful, redirecting to store dashboard');
                     window.location.href = 'store-dashboard.html';
                 }, 2500);
                 
-            }, 2000);
+            })
+            .catch(error => {
+                console.error('Registration failed:', error);
+                alert('登録に失敗しました。もう一度お試しください。');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            });
         }
         
         function showSuccessMessage(message) {
