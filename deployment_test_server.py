@@ -61,6 +61,12 @@ class ProductionHandler(http.server.SimpleHTTPRequestHandler):
             requested_path = self.path.lstrip('/')
             public_file_path = os.path.join('public', requested_path)
             
+            # Debug logging
+            logger.info(f"🔍 Looking for: {requested_path}")
+            logger.info(f"🔍 Public path: {public_file_path}")
+            logger.info(f"🔍 File exists: {os.path.exists(public_file_path)}")
+            logger.info(f"🔍 Current dir: {os.getcwd()}")
+            
             if os.path.exists(public_file_path) and os.path.isfile(public_file_path):
                 try:
                     self.send_response(200)
