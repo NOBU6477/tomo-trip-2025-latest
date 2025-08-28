@@ -1,0 +1,115 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Runtime data
+.DS_Store
+.vscode/
+.idea/
+
+# Build outputs
+dist/
+build/
+.tmp/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+
+# Replit specific files (keep for deployment reference)
+# .replit (keeping for deployment)
+# replit.toml (keeping for deployment)
+
+# Cache directories
+.npm
+.eslintcache
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# parcel-bundler cache (https://parceljs.org/)
+.cache
+.parcel-cache
+
+# next.js build output
+.next
+
+# nuxt.js build output
+.nuxt
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Development assets not needed in production
+attached_assets/
+export-*/
+github-*/
+tomotrip-*/
+*.zip
+collect_*.py
+diagnose.py
+deployment_*.py
+fix_*.py
+*.py
+*.md.backup
+*.html.backup
+temp_*.txt
+backup_*/
+
+# Other development files
+*_REPORT.md
+*_GUIDE.md
+*_INSTRUCTIONS.md
+ROADMAP.md
+RESTORE_*.md
+*_FIX_REPORT.md
+*_UPLOAD_GUIDE.md
