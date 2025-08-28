@@ -2,20 +2,19 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <base href="/">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta http-equiv="Content-Security-Policy" content="
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net;
       style-src  'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
       img-src    'self' data: blob: https://images.unsplash.com;
       font-src   'self' data: https://fonts.gstatic.com;
-      connect-src 'self' https://replit.com https://*.replit.com;
+      connect-src 'self';
       object-src 'none';
       base-uri 'self';
-      frame-src 'self' https://*.replit.dev https://replit.com;
     ">
     <title>Local Guide - 特別な旅の体験を</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -28,7 +27,6 @@
     <script src="sw-unregister.js"></script>
     
     <!-- Complete error suppression system -->
-    <script src="env/csp-fix.js"></script>
     <script src="webgl-fix.js" defer></script>
     <script src="error_suppressor.js" defer></script>
     <script src="management.js" defer></script>
@@ -112,6 +110,8 @@
             background: rgba(255, 255, 255, 0.95) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 10;
         }
 
         .navbar-brand {
@@ -236,14 +236,10 @@
         /* Hero Content */
         .hero-content {
             text-align: center;
-            color: white !important;
+            color: white;
             max-width: 800px;
             padding: 0 20px;
             margin-top: 150px;
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 20px;
-            padding: 40px 20px;
-            backdrop-filter: blur(4px);
         }
 
         .hero-title-container {
@@ -277,16 +273,14 @@
             font-size: 3.5rem;
             font-weight: 700;
             margin: 0;
-            text-shadow: 3px 3px 8px rgba(0,0,0,0.9);
-            color: white !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .hero-content p {
             font-size: 1.3rem;
             margin-bottom: 2.5rem;
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
             line-height: 1.6;
-            color: white !important;
         }
 
         /* Action Buttons */
@@ -684,6 +678,9 @@
             </a>
             
             <div class="d-flex">
+                <button class="btn btn-success me-2" id="dashboardBtn" title="協賛店管理ダッシュボード" style="opacity: 0.6; cursor: not-allowed;">
+                    <i class="bi bi-shop"></i> <span class="d-none d-md-inline">ダッシュボード</span>
+                </button>
                 <div class="dropdown me-2" style="position: relative;">
                     <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" aria-expanded="false">
                         ログイン
@@ -691,6 +688,7 @@
                     <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
                         <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
                         <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
+                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">協賛店ログイン</button>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -704,10 +702,10 @@
             <div class="row justify-content-center">
                 <div class="col-lg-10 col-md-12">
                     <!-- Language Switcher - Center -->
-                    <div class="language-switcher-center text-center mb-4">
-                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px;">🇯🇵 日本語</button>
-                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px;">🇺🇸 English</button>
+                    <div class="language-switcher-center text-center mb-4" style="display: flex !important; justify-content: center !important; align-items: center !important;">
+                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-3" style="justify-content: center !important; align-items: center !important; margin: 0 auto !important;">
+                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px; margin: 0 auto !important; text-align: center !important;">🇯🇵 日本語</button>
+                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px; margin: 0 auto !important; text-align: center !important;">🇺🇸 English</button>
                         </div>
                     </div>
 
@@ -734,23 +732,23 @@
 
     <!-- Desktop Right Side Buttons -->
     <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
-        <button class="sponsor-btn" id="sponsorRegBtn" data-action="open-sponsor-registration" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">協賛店登録</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" data-action="open-sponsor-login" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">協賛店登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
     </div>
 
     <!-- Mobile Bottom Buttons -->
     <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
         <div class="d-flex gap-2">
-            <button class="sponsor-btn" id="sponsorRegBtnMobile" data-action="open-sponsor-registration" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">協賛店登録</button>
-            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" data-action="open-sponsor-login" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">協賛店登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
         </div>
     </div>
 
     <!-- Management Center Button - Desktop -->
-    <button class="management-center d-none d-lg-block" id="managementBtn" data-action="open-management" title="管理センター" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+    <button class="management-center d-none d-lg-block" id="managementBtn" title="管理センター" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
     
     <!-- Management Center Button - Mobile -->
-    <button class="management-center-mobile d-lg-none position-fixed" id="managementBtnMobile" data-action="open-management" title="管理センター" style="bottom: 80px; right: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
+    <button class="management-center-mobile d-lg-none position-fixed" id="managementBtnMobile" title="管理センター" style="bottom: 80px; right: 20px; z-index: 1000; width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, #ffd700, #ffed4e); border: none; font-size: 20px; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4); transition: all 0.3s ease; cursor: pointer;">🏆</button>
 
     <!-- Main Content Section -->
     <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
@@ -761,7 +759,7 @@
                     <div class="filter-section" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
                         <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
                             <div class="d-flex flex-wrap gap-3">
-                                <select class="form-select" style="width: auto; min-width: 180px;" id="locationFilter" data-action="filter-change">
+                                <select class="form-select" style="width: auto; min-width: 180px;" id="locationFilter">
                                     <option value="">すべての地域</option>
                                     <optgroup label="北海道・東北">
                                         <option value="hokkaido">北海道</option>
@@ -834,7 +832,7 @@
                                     </optgroup>
                                 </select>
                                 
-                                <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter" data-action="filter-change">
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
                                     <option value="">すべての言語</option>
                                     <optgroup label="アジア言語">
                                         <option value="japanese">日本語</option>
@@ -866,7 +864,7 @@
                                     </optgroup>
                                 </select>
                                 
-                                <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter" data-action="filter-change">
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter">
                                     <option value="">すべての価格</option>
                                     <option value="budget">¥6,000～¥10,000</option>
                                     <option value="premium">¥10,001～¥20,000</option>
@@ -875,8 +873,8 @@
                             </div>
                             
                             <div class="d-flex gap-2">
-                                <button class="btn btn-primary" id="searchBtn" data-action="search">検索</button>
-                                <button class="btn btn-outline-secondary" id="resetBtn" data-action="reset">リセット</button>
+                                <button class="btn btn-primary" id="searchBtn">検索</button>
+                                <button class="btn btn-outline-secondary" id="resetBtn">リセット</button>
                             </div>
                         </div>
                         
@@ -897,12 +895,12 @@
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
-                        <button class="btn btn-outline-secondary" id="prevPageBtn" data-action="prev-page" disabled>← 前のページ</button>
+                        <button class="btn btn-outline-secondary" id="prevPageBtn" disabled>← 前のページ</button>
                         <div class="pagination-info">
                             <span id="pageInfo" class="fw-bold">ページ 1</span>
                             <small class="text-muted ms-2">(<span id="displayRange">1-12</span>人目を表示)</small>
                         </div>
-                        <button class="btn btn-outline-primary" id="nextPageBtn" data-action="next-page">次のページ →</button>
+                        <button class="btn btn-outline-primary" id="nextPageBtn">次のページ →</button>
                     </div>
                 </div>
             </div>
@@ -912,7 +910,10 @@
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Single ESM Entry Point - prevents function redefinition -->
+    <!-- Base href for absolute paths -->
+    <base href="/">
+    
+    <!-- External JavaScript Files - ESM modules -->
     <script type="module" src="/assets/js/app-init.mjs"></script>
 
     <!-- Sponsor Login Modal -->
