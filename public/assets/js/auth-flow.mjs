@@ -69,8 +69,15 @@ class AuthFlowManager {
      */
     handleDashboardAccess() {
         if (this.isLoggedIn && this.userType === 'sponsor') {
-            // Redirect to dashboard
-            window.location.href = 'sponsor-dashboard.html';
+            // Check if user is admin/operations team or regular store owner
+            const storeLogin = localStorage.getItem('storeLogin');
+            if (storeLogin) {
+                // Regular store owner - redirect to individual store dashboard
+                window.location.href = 'store-dashboard.html';
+            } else {
+                // Admin/operations team - redirect to operations dashboard
+                window.location.href = 'sponsor-dashboard.html';
+            }
         } else {
             // Show login prompt modal
             this.showLoginPromptModal();
@@ -544,9 +551,17 @@ class AuthFlowManager {
                 'success'
             );
 
-            // Redirect to dashboard
+            // Store registration info and redirect to individual store dashboard
+            localStorage.setItem('storeLogin', JSON.stringify({
+                storeName: storeName,
+                email: email,
+                loginTime: new Date().toISOString(),
+                userType: 'store_owner'
+            }));
+
+            // Redirect to store dashboard for individual store management
             setTimeout(() => {
-                window.location.href = 'sponsor-dashboard.html';
+                window.location.href = 'store-dashboard.html';
             }, 1000);
 
         } catch (error) {
