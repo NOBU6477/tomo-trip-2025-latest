@@ -3,6 +3,7 @@
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
 import './emergency-buttons.mjs';
+import './auth-flow.mjs';
 import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
 import { defaultGuideData } from './data/default-guides.mjs';
 import AppState from './state/app-state.mjs';
