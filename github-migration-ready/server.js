@@ -22,9 +22,73 @@ app.use((req, res, next) => {
 });
 
 // In-memory storage for demo (replace with database in production)
-let stores = [];
-let guides = [];
-let reservations = [];
+let stores = [
+  {
+    id: "store-001",
+    storeName: "沖縄そば屋 はな",
+    email: "hana@example.com",
+    status: "active",
+    registrationDate: new Date().toISOString(),
+    totalViews: 15,
+    totalBookings: 3,
+    averageRating: 4.5,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: "store-002",
+    storeName: "海辺カフェ BlueWave",
+    email: "bluewave@example.com",
+    status: "active",
+    registrationDate: new Date().toISOString(),
+    totalViews: 25,
+    totalBookings: 5,
+    averageRating: 4.8,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
+let guides = [
+  {
+    id: "guide-001",
+    guideName: "山田 太郎",
+    storeId: "store-001",
+    status: "pending",
+    totalBookings: 0,
+    averageRating: 0.0,
+    isAvailable: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  },
+  {
+    id: "guide-002",
+    guideName: "佐藤 花子",
+    storeId: "store-002",
+    status: "pending",
+    totalBookings: 2,
+    averageRating: 4.3,
+    isAvailable: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
+let reservations = [
+  {
+    id: "res-001",
+    storeId: "store-001",
+    guideId: "guide-001",
+    customerName: "John Doe",
+    status: "confirmed",
+    paymentStatus: "pending",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+];
+
 
 // Generate UUID
 function generateUUID() {

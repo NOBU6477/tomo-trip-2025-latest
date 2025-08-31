@@ -1,8 +1,14 @@
-run = "node server.js"
-modules = ["nodejs-20", "postgresql-16"]
+# ルートの .replit（最小でOK）
+run = "node github-migration-ready/server.js"
 
 [interpreter]
 language = "nodejs"
+
+# Port:5000 の公開設定（オレンジ警告の対策）
+[[ports]]
+localPort = 5000
+proxy = true
+visibility = "public"
 
 [workflows]
 runButton = "Project"
@@ -22,7 +28,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node server.js"
+args = "node github-migration-ready/server.js"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -30,19 +36,4 @@ outputType = "webview"
 
 [nix]
 channel = "stable-25_05"
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 5001
-externalPort = 3000
-
-[[ports]]
-localPort = 5002
-externalPort = 3001
-
-[[ports]]
-localPort = 8000
-externalPort = 8000
+packages = ["nodejs"]
