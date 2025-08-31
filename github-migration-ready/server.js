@@ -3,8 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 const app = express();
-const PORT = 5000;
-
+const PORT = process.env.PORT || 5000;
 // Middleware for JSON parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
