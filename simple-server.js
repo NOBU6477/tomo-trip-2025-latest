@@ -1,12 +1,10 @@
 const http = require('http');
-const fs = require('fs');
-const path = require('path');
 const url = require('url');
+const path = require('path');
+const fs = require('fs');
 
-const PORT = Number(process.env.PORT) || 5000;
-
-// Sample data for testing
-const stores = [
+// In-memory storage for demo
+let stores = [
   {
     id: "store-001",
     storeName: "沖縄そば屋 はな",
@@ -15,61 +13,71 @@ const stores = [
     registrationDate: new Date().toISOString(),
     totalViews: 15,
     totalBookings: 3,
-    averageRating: 4.5
+    averageRating: 4.5,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
   {
-    id: "store-002", 
+    id: "store-002",
     storeName: "海辺カフェ BlueWave",
     email: "bluewave@example.com",
     status: "active",
     registrationDate: new Date().toISOString(),
     totalViews: 25,
     totalBookings: 5,
-    averageRating: 4.8
+    averageRating: 4.8,
+    isActive: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 ];
 
-const guides = [
+let guides = [
   {
     id: "guide-001",
+    guideName: "山田 太郎",
     storeId: "store-001",
-    name: "田中 花子",
-    languages: ["日本語", "English"],
-    specialties: ["沖縄料理", "文化体験"],
-    rating: 4.5,
-    hourlyRate: 3000
+    status: "pending",
+    totalBookings: 0,
+    averageRating: 0.0,
+    isAvailable: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   },
   {
     id: "guide-002",
-    storeId: "store-002", 
-    name: "山田 太郎",
-    languages: ["日本語", "English", "中文"],
-    specialties: ["カフェ文化", "海辺散策"],
-    rating: 4.8,
-    hourlyRate: 3500
+    guideName: "佐藤 花子",
+    storeId: "store-002",
+    status: "pending",
+    totalBookings: 2,
+    averageRating: 4.3,
+    isAvailable: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 ];
 
-const reservations = [
+let reservations = [
   {
     id: "res-001",
     storeId: "store-001",
     guideId: "guide-001",
-    clientName: "Smith John",
+    customerName: "John Doe",
     status: "confirmed",
-    date: "2025-09-15",
-    time: "14:00",
-    duration: 2,
-    totalAmount: 6000
+    paymentStatus: "pending",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
   }
 ];
 
+// Helper function to get content type
 function getContentType(filePath) {
   const ext = path.extname(filePath).toLowerCase();
-  const types = {
+  const mimeTypes = {
     '.html': 'text/html',
-    '.js': 'text/javascript',
     '.css': 'text/css',
+    '.js': 'text/javascript',
     '.json': 'application/json',
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
@@ -77,25 +85,33 @@ function getContentType(filePath) {
     '.svg': 'image/svg+xml',
     '.ico': 'image/x-icon'
   };
-  return types[ext] || 'text/plain';
+  return mimeTypes[ext] || 'text/plain';
 }
 
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
+  const method = req.method;
 
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
-  if (req.method === 'OPTIONS') {
+  if (method === 'OPTIONS') {
     res.writeHead(200);
     res.end();
     return;
   }
 
-  // API Routes
+  // Root endpoint - API status
+  if (pathname === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end("TomoTrip API is running");
+    return;
+  }
+
+  // Health check endpoint
   if (pathname === '/health') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
@@ -114,6 +130,7 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // API info endpoint
   if (pathname === '/api') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
@@ -122,8 +139,8 @@ const server = http.createServer((req, res) => {
       status: 'running',
       endpoints: {
         stores: '/api/sponsor-stores',
-        guides: '/api/tourism-guides',
-        reservations: '/api/reservations', 
+        guides: '/api/tourism-guides', 
+        reservations: '/api/reservations',
         health: '/health'
       },
       database: {
@@ -135,43 +152,32 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (pathname === '/api/sponsor-stores') {
+  // API endpoints
+  if (pathname === '/api/sponsor-stores' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(stores));
     return;
   }
 
-  if (pathname === '/api/tourism-guides') {
+  if (pathname === '/api/tourism-guides' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(guides));
     return;
   }
 
-  if (pathname === '/api/reservations') {
+  if (pathname === '/api/reservations' && method === 'GET') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(reservations));
     return;
   }
 
-  // Static file serving
-  let filePath = pathname === '/' ? '/public/index.html' : '/public' + pathname;
-  filePath = path.join(__dirname, filePath);
-
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({
-        error: 'Not Found',
-        message: 'The requested resource does not exist',
-        availableEndpoints: ['/api', '/health', '/api/sponsor-stores', '/api/tourism-guides', '/api/reservations']
-      }));
-      return;
-    }
-
-    const contentType = getContentType(filePath);
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(data);
-  });
+  // 404 handler
+  res.writeHead(404, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({
+    error: 'Not Found',
+    message: 'The requested resource does not exist',
+    availableEndpoints: ['/api', '/health', '/api/sponsor-stores', '/api/tourism-guides', '/api/reservations']
+  }));
 });
 
 server.listen(Number(process.env.PORT) || 5000, "0.0.0.0", () => {
