@@ -249,9 +249,9 @@ app.get('/api/reservations/store/:storeId', (req, res) => {
 // Static file serving
 app.use(express.static('public'));
 
-// Default route
+// Default route - API status
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.status(200).send("TomoTrip API is running");
 });
 
 // Health check endpoint for monitoring
