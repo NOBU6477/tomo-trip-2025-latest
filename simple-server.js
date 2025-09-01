@@ -174,9 +174,9 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 TomoTrip Server running on port ${PORT}`);
+server.listen(Number(process.env.PORT) || 5000, "0.0.0.0", () => {
+  console.log(`TomoTrip Server running on port ${Number(process.env.PORT) || 5000}`);
   console.log(`📊 Data stored in memory - stores: ${stores.length}, guides: ${guides.length}, reservations: ${reservations.length}`);
-  console.log(`🔍 Health check: http://localhost:${PORT}/health`);
-  console.log(`📖 API info: http://localhost:${PORT}/api`);
+  console.log(`🔍 Health check: http://localhost:${Number(process.env.PORT) || 5000}/health`);
+  console.log(`📖 API info: http://localhost:${Number(process.env.PORT) || 5000}/api`);
 });
