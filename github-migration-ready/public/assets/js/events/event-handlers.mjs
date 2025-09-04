@@ -214,7 +214,7 @@ function setupSponsorButtonEvents() {
         regBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Sponsor registration clicked - redirecting to registration page');
-            window.location.href = 'sponsor-registration.html?v=' + Date.now();
+            window.location.href = 'sponsor-registration.html';
         });
     }
     
@@ -231,7 +231,7 @@ function setupSponsorButtonEvents() {
         regBtnMobile.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('Mobile sponsor registration clicked - redirecting to registration page');
-            window.location.href = 'sponsor-registration.html?v=' + Date.now();
+            window.location.href = 'sponsor-registration.html';
         });
     }
     
@@ -444,9 +444,9 @@ export function wireSponsorButtons() {
 // Sponsor handler functions
 function handleSponsorRegistration() {
     console.log('Sponsor registration clicked');
-    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-registration.html with cache busting');
+    console.log('🚀 DIRECT ACTION: Redirecting to sponsor-registration.html');
     try {
-        window.location.href = 'sponsor-registration.html?v=' + Date.now();
+        window.location.href = 'sponsor-registration.html';
     } catch (error) {
         console.error('Redirect failed:', error);
         alert('リダイレクトに失敗しました');

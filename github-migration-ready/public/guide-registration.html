@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ガイド登録 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .guide-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            margin: 2rem 0;
+        }
+        
+        .guide-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        
+        .btn-guide {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .btn-guide:hover {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="guide-container">
+                    <div class="guide-header">
+                        <h1><i class="bi bi-person-plus-fill me-2"></i>新規ガイド登録</h1>
+                        <p class="mb-0">浅草観光案内所 - ガイドスタッフ募集</p>
+                    </div>
+                    
+                    <div class="p-4">
+                        <form id="guideRegistrationForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="guideName" required>
+                                        <label for="guideName"><i class="bi bi-person me-1"></i>ガイド名</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="email" class="form-control" id="guideEmail" required>
+                                        <label for="guideEmail"><i class="bi bi-envelope me-1"></i>メールアドレス</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="guidePhone" required>
+                                        <label for="guidePhone"><i class="bi bi-telephone me-1"></i>電話番号</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="guideGender" required>
+                                            <option value="">選択してください</option>
+                                            <option value="male">男性</option>
+                                            <option value="female">女性</option>
+                                            <option value="other">その他</option>
+                                        </select>
+                                        <label for="guideGender"><i class="bi bi-people me-1"></i>性別</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="guideAge" min="18" max="80" required>
+                                        <label for="guideAge"><i class="bi bi-calendar me-1"></i>年齢</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="guideExperience" required>
+                                            <option value="">選択してください</option>
+                                            <option value="beginner">初心者（1年未満）</option>
+                                            <option value="intermediate">中級者（1-3年）</option>
+                                            <option value="advanced">上級者（3年以上）</option>
+                                        </select>
+                                        <label for="guideExperience"><i class="bi bi-award me-1"></i>経験レベル</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <select class="form-control" id="guideLanguages" multiple required>
+                                    <option value="japanese">日本語</option>
+                                    <option value="english">英語</option>
+                                    <option value="chinese">中国語</option>
+                                    <option value="korean">韓国語</option>
+                                    <option value="spanish">スペイン語</option>
+                                    <option value="french">フランス語</option>
+                                </select>
+                                <label for="guideLanguages"><i class="bi bi-translate me-1"></i>対応言語（複数選択可）</label>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <textarea class="form-control" id="guideIntroduction" style="height: 120px;" required></textarea>
+                                <label for="guideIntroduction"><i class="bi bi-chat-text me-1"></i>自己紹介・アピールポイント</label>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <textarea class="form-control" id="guideSpecialties" style="height: 100px;" required></textarea>
+                                <label for="guideSpecialties"><i class="bi bi-star me-1"></i>得意分野・専門エリア</label>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="guideHourlyRate" min="2000" max="10000" step="500" required>
+                                        <label for="guideHourlyRate"><i class="bi bi-currency-yen me-1"></i>希望時給（円）</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="guideAvailability" required>
+                                            <option value="">選択してください</option>
+                                            <option value="weekdays">平日のみ</option>
+                                            <option value="weekends">週末のみ</option>
+                                            <option value="both">平日・週末両方</option>
+                                        </select>
+                                        <label for="guideAvailability"><i class="bi bi-calendar-week me-1"></i>稼働可能日</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                                <label class="form-check-label" for="agreeTerms">
+                                    ガイド規約及び利用規約に同意します
+                                </label>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-guide">
+                                    <i class="bi bi-check-circle me-2"></i>ガイド登録申請
+                                </button>
+                                <a href="store-dashboard.html" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left me-2"></i>管理画面に戻る
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('guideRegistrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Get selected languages
+            const languageSelect = document.getElementById('guideLanguages');
+            const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
+            data.languages = selectedLanguages;
+            
+            // Get store ID from localStorage
+            const storeLogin = localStorage.getItem('storeLogin');
+            if (storeLogin) {
+                const storeData = JSON.parse(storeLogin);
+                data.storeId = storeData.storeId;
+            }
+            
+            console.log('New guide registration:', data);
+            
+            // Send to server
+            fetch('/api/tourism-guides', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(guideData => {
+                console.log('✅ Guide registration successful:', guideData);
+                alert(`ガイド登録申請を受け付けました。\nガイドID: ${guideData.id.substring(0,8)}\n審査後、メールでご連絡いたします。`);
+                window.location.href = 'store-dashboard.html';
+            })
+            .catch(error => {
+                console.error('Guide registration failed:', error);
+                alert('ガイド登録に失敗しました。もう一度お試しください。');
+            });
+        });
+    </script>
+</body>
+</html>
