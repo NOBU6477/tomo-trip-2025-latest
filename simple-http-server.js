@@ -2,7 +2,7 @@ const http = require('http');
 const path = require('path');
 const fs = require('fs');
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const HOST = '0.0.0.0';
 
 const server = http.createServer((req, res) => {
@@ -73,15 +73,23 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(PORT, HOST, () => {
+// Improved error handling and port binding
+server.listen(PORT, HOST, (err) => {
+  if (err) {
+    console.error('❌ Failed to start server:', err);
+    process.exit(1);
+  }
+  
   console.log(`✅ TomoTrip Server running on http://${HOST}:${PORT}`);
   console.log(`🌐 Website: http://localhost:${PORT}/`);
   console.log(`🔍 Health: http://localhost:${PORT}/health`);
+  console.log(`🚀 Server listening on ${HOST}:${PORT}`);
   
   // Test self-connection to ensure server is actually working
   setTimeout(() => {
     const testReq = http.request(`http://localhost:${PORT}/health`, (res) => {
       console.log(`🧪 Self-test: HTTP ${res.statusCode}`);
+      console.log(`🎯 Server is ready and accepting connections on port ${PORT}`);
     });
     testReq.on('error', (err) => {
       console.error('🚨 Self-test failed:', err.message);
