@@ -878,8 +878,8 @@
     <!-- Mobile Bottom Buttons -->
     <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
         <div class="d-flex gap-2">
-            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">Store Registration</button>
-            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">Login</button>
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">店舗登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
         </div>
     </div>
 
@@ -899,7 +899,7 @@
                         <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
                             <div class="d-flex flex-wrap gap-3">
                                 <select class="form-select" style="width: auto; min-width: 180px;" id="locationFilter">
-                                    <option value="">All Regions</option>
+                                    <option value="">すべての地域</option>
                                     <optgroup label="Hokkaido・Tohoku">
                                         <option value="hokkaido">Hokkaido</option>
                                         <option value="aomori">Aomori</option>
@@ -962,7 +962,7 @@
                                 </select>
 
                                 <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
-                                    <option value="">All Languages</option>
+                                    <option value="">すべての言語</option>
                                     <optgroup label="Asian Languages">
                                         <option value="japanese">Japanese</option>
                                         <option value="english">English</option>
@@ -994,7 +994,7 @@
                                 </select>
                                 
                                 <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter">
-                                    <option value="">All Prices</option>
+                                    <option value="">すべての価格</option>
                                     <option value="budget">¥6,000～¥10,000</option>
                                     <option value="premium">¥10,001～¥20,000</option>
                                     <option value="luxury">¥20,001+</option>
@@ -1002,8 +1002,8 @@
                             </div>
                             
                             <div class="d-flex gap-2">
-                                <button class="btn btn-primary" id="searchBtn">Search</button>
-                                <button class="btn btn-outline-secondary" id="resetBtn">Reset</button>
+                                <button class="btn btn-primary" id="searchBtn">検索</button>
+                                <button class="btn btn-outline-secondary" id="resetBtn">リセット</button>
                             </div>
                         </div>
                         
@@ -1263,7 +1263,7 @@
 
                         <div class="mb-3">
                             <label for="guideSpecialty" class="form-label fw-bold">Specialty (Optional)</label>
-                            <input type="text" class="form-control" id="guideSpecialty" placeholder="History & Culture, Food Tours, Nature, etc." style="border-radius: 10px; padding: 12px;">
+                            <input type="text" class="form-control" id="guideSpecialty" placeholder="歴史・文化、フードツアー、自然など" style="border-radius: 10px; padding: 12px;">
                             <small class="text-muted">Enter your area of expertise or tour specialties</small>
                         </div>
 
@@ -1601,12 +1601,12 @@
         const defaultGuides = [
             {
                 id: 1, name: "Hiroshi Tanaka", location: "tokyo", languages: ["japanese", "english"], 
-                price: 8000, rating: 4.8, specialty: "Cultural Tours", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-                description: "Experience authentic Tokyo beyond tourist spots"
+                price: 8000, rating: 4.8, specialty: "文化ツアー", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
+                description: "観光客が知らない本物の東京を体験しよう"
             },
             {
                 id: 2, name: "Yuki Sato", location: "kyoto", languages: ["japanese", "english", "chinese"], 
-                price: 9500, rating: 4.9, specialty: "Temples & Gardens", image: "https://images.unsplash.com/photo-1494790108755-2616c9a84d84?w=300&h=300&fit=crop&crop=face",
+                price: 9500, rating: 4.9, specialty: "寺院・庭園", image: "https://images.unsplash.com/photo-1494790108755-2616c9a84d84?w=300&h=300&fit=crop&crop=face",
                 description: "Discover Kyoto's beautiful temples and gardens"
             },
             {
@@ -1636,7 +1636,7 @@
             },
             {
                 id: 8, name: "Ayaka Hayashi", location: "hiroshima", languages: ["japanese", "english", "chinese"], 
-                price: 9000, rating: 4.7, specialty: "Nature & Scenery", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face",
+                price: 9000, rating: 4.7, specialty: "自然・景観", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face",
                 description: "Explore Hiroshima's beautiful nature"
             },
             {
@@ -1725,12 +1725,12 @@
                                 </div>
                                 <div class="text-end">
                                     <div class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</div>
-                                    <small class="text-muted">per day</small>
+                                    <small class="text-muted">一日あたり</small>
                                 </div>
                             </div>
                             <div class="mt-3">
                                 <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
-                                    View Details
+                                    詳細を見る
                                 </button>
                             </div>
                         </div>
@@ -1985,7 +1985,7 @@
                                         <span class="fw-bold">${guide.rating}</span>
                                     </div>
                                     <div class="fw-bold text-primary fs-4">¥${Number(guide?.price || 0).toLocaleString()}</div>
-                                    <small class="text-muted">per day</small>
+                                    <small class="text-muted">一日あたり</small>
                                 </div>
                                 <div class="col-md-8">
                                     <h6 class="text-primary mb-3">Basic Information</h6>
@@ -4922,7 +4922,7 @@
 
                 <!-- Services -->
                 <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="text-white mb-3">Services</h6>
+                    <h6 class="text-white mb-3">サービス</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">Find Guides</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">Become a Guide</a></li>
@@ -4934,7 +4934,7 @@
 
                 <!-- Support -->
                 <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="text-white mb-3">Support</h6>
+                    <h6 class="text-white mb-3">サポート</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showFAQ()">FAQ</a></li>
                         <li class="mb-2"><a href="chat.html" class="text-muted text-decoration-none hover-link">Contact Us</a></li>
@@ -4946,7 +4946,7 @@
 
                 <!-- Legal -->
                 <div class="col-lg-2 col-md-6 mb-4">
-                    <h6 class="text-white mb-3">Legal</h6>
+                    <h6 class="text-white mb-3">法的事項</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showAbout()">About Us</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTerms()">Terms of Service</a></li>
@@ -4958,7 +4958,7 @@
 
                 <!-- Contact Info -->
                 <div class="col-lg-3 col-md-6 mb-4">
-                    <h6 class="text-white mb-3">Contact Info</h6>
+                    <h6 class="text-white mb-3">連絡先</h6>
                     <div class="mb-3">
                         <p class="text-muted small mb-2">
                             <i class="bi bi-envelope me-2"></i>
