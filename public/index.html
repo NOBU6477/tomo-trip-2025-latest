@@ -830,7 +830,7 @@
                         <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">スポンサーログイン</button>
                     </div>
                 </div>
-                <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
+                <button class="btn btn-primary" id="registerBtn">新規登録</button>
             </div>
         </div>
     </nav>
@@ -1322,7 +1322,7 @@
             <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #007bff, #0056b3); color: white; border-radius: 20px 20px 0 0;">
                     <h5 class="modal-title fw-bold" id="registrationModalLabel">
-                        <i class="bi bi-person-plus me-2"></i>Tourist Registration
+                        <i class="bi bi-person-plus me-2"></i>観光客登録
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -1349,7 +1349,7 @@
                         
                         <div class="mb-3">
                             <label for="email" class="form-label fw-bold">
-                                <i class="bi bi-envelope me-2"></i>Email Address <span class="text-danger">*</span>
+                                <i class="bi bi-envelope me-2"></i>メールアドレス <span class="text-danger">*</span>
                             </label>
                             <input type="email" class="form-control" id="email" placeholder="john.smith@example.com" required style="border-radius: 10px; padding: 12px;">
                         </div>
@@ -1358,10 +1358,10 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="country" class="form-label fw-bold">
-                                        <i class="bi bi-globe me-2"></i>Country <span class="text-danger">*</span>
+                                        <i class="bi bi-globe me-2"></i>国/地域 <span class="text-danger">*</span>
                                     </label>
                                     <select class="form-select" id="country" required style="border-radius: 10px; padding: 12px;">
-                                        <option value="">Select your country</option>
+                                        <option value="">あなたの国を選択してください</option>
                                         <option value="usa">United States</option>
                                         <option value="uk">United Kingdom</option>
                                         <option value="canada">Canada</option>
@@ -1378,7 +1378,7 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="phone" class="form-label fw-bold">
-                                        <i class="bi bi-telephone me-2"></i>Phone Number
+                                        <i class="bi bi-telephone me-2"></i>電話番号
                                     </label>
                                     <input type="tel" class="form-control" id="phone" placeholder="+1-234-567-8900" style="border-radius: 10px; padding: 12px;">
                                 </div>
@@ -1387,10 +1387,10 @@
                         
                         <div class="mb-3">
                             <label for="visitPurpose" class="form-label fw-bold">
-                                <i class="bi bi-map me-2"></i>Purpose of Visit
+                                <i class="bi bi-map me-2"></i>訪問目的
                             </label>
                             <select class="form-select" id="visitPurpose" style="border-radius: 10px; padding: 12px;">
-                                <option value="">Select purpose</option>
+                                <option value="">目的を選択してください</option>
                                 <option value="tourism">Tourism/Sightseeing</option>
                                 <option value="business">Business</option>
                                 <option value="study">Study/Education</option>
@@ -1403,10 +1403,10 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="visitDuration" class="form-label fw-bold">
-                                        <i class="bi bi-calendar me-2"></i>Duration of Stay
+                                        <i class="bi bi-calendar me-2"></i>滞在期間
                                     </label>
                                     <select class="form-select" id="visitDuration" style="border-radius: 10px; padding: 12px;">
-                                        <option value="">Select duration</option>
+                                        <option value="">滞在期間を選択してください</option>
                                         <option value="1-3days">1-3 days</option>
                                         <option value="4-7days">4-7 days</option>
                                         <option value="1-2weeks">1-2 weeks</option>
@@ -1418,10 +1418,10 @@
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="preferredLanguage" class="form-label fw-bold">
-                                        <i class="bi bi-translate me-2"></i>Guide Language Preference
+                                        <i class="bi bi-translate me-2"></i>ガイド言語の希望
                                     </label>
                                     <select class="form-select" id="preferredLanguage" style="border-radius: 10px; padding: 12px;">
-                                        <option value="">Select language</option>
+                                        <option value="">言語を選択してください</option>
                                         <option value="english">English</option>
                                         <option value="chinese">Chinese</option>
                                         <option value="korean">Korean</option>
@@ -1434,15 +1434,15 @@
                         
                         <div class="mb-3">
                             <label for="interests" class="form-label fw-bold">
-                                <i class="bi bi-heart me-2"></i>Interests/Preferences
+                                <i class="bi bi-heart me-2"></i>興味/希望
                             </label>
-                            <textarea class="form-control" id="interests" rows="3" placeholder="Tell us about your interests, places you'd like to visit, activities you enjoy..." style="border-radius: 10px; padding: 12px;"></textarea>
+                            <textarea class="form-control" id="interests" rows="3" placeholder="あなたの興味、行きたい場所、楽しみたいアクティビティについて教えてください..." style="border-radius: 10px; padding: 12px;"></textarea>
                         </div>
                         
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="agreeTerms" required>
                             <label class="form-check-label" for="agreeTerms">
-                                I agree to the <a href="#" class="text-primary">Terms of Service</a> and <a href="#" class="text-primary">Privacy Policy</a> <span class="text-danger">*</span>
+                                <a href="#" class="text-primary">利用規約</a>及び<a href="#" class="text-primary">プライバシーポリシー</a>に同意します <span class="text-danger">*</span>
                             </label>
                         </div>
                         
