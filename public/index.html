@@ -2355,9 +2355,9 @@
             if (priceFilter) priceFilter.addEventListener('change', filterGuides);
             if (keywordInput) keywordInput.addEventListener('input', filterGuides);
             
-            // Registration button event - redirect to guide registration
+            // Registration button event - show choice modal
             document.getElementById('registerBtn').addEventListener('click', function() {
-                window.location.href = '/guide-registration.html';
+                showRegistrationChoice();
             });
             
             // Registration form submission
