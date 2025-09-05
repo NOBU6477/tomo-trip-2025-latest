@@ -3119,7 +3119,7 @@
             }, 5000);
         }
 
-        // Initialize chat and booking listeners
+        // Initialize chat and booking listeners - called from main DOMContentLoaded
         function initializeChatListeners() {
             const sendBtn = document.getElementById('sendMessageBtn');
             const messageInput = document.getElementById('chatMessageInput');
@@ -3167,7 +3167,7 @@
             // Initialize on page load
             updateBookmarkButtons();
             updateComparisonButtons();
-        });
+        }
     </script>
 
     <!-- Chat Modal -->
