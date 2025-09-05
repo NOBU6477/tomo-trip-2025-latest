@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://replit.com https://*.replit.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self' https://*.replit.dev https://replit.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://replit.com https://*.replit.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self' https://*.replit.dev https://replit.com; report-uri /csp-report;">
     <title>TomoTrip - 地元ガイドと特別な旅を発見</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- CSP compatibility fixes -->
@@ -871,14 +871,14 @@
 
     <!-- Desktop Right Side Buttons -->
     <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
-        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='/sponsor-registration.html'">店舗登録</button>
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='sponsor-registration.html'">店舗登録</button>
         <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='/operations-login.html'">ログイン</button>
     </div>
 
     <!-- Mobile Bottom Buttons -->
     <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
         <div class="d-flex gap-2">
-            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;" onclick="window.location.href='/sponsor-registration.html'">店舗登録</button>
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;" onclick="window.location.href='sponsor-registration.html'">店舗登録</button>
             <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;" onclick="window.location.href='/operations-login.html'">ログイン</button>
         </div>
     </div>
@@ -2197,16 +2197,26 @@
         function showRegistrationChoice() {
             console.log('🎯 showRegistrationChoice function called');
             try {
+                // Remove any existing modals first
+                const existingModal = document.querySelector('.registration-choice-modal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+                
                 const choiceModal = document.createElement('div');
-                choiceModal.className = 'modal fade';
+                choiceModal.className = 'modal fade registration-choice-modal';
+                choiceModal.id = 'registrationChoiceModal';
+                choiceModal.tabIndex = -1;
+                choiceModal.setAttribute('aria-labelledby', 'registrationChoiceModalLabel');
+                choiceModal.setAttribute('aria-hidden', 'true');
                 choiceModal.innerHTML = `
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
                         <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
-                            <h5 class="modal-title fw-bold">
+                            <h5 class="modal-title fw-bold" id="registrationChoiceModalLabel">
                                 <i class="bi bi-person-plus me-2"></i>登録タイプを選択
                             </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body p-4">
                             <div class="row g-3">
@@ -2246,11 +2256,18 @@
             document.body.appendChild(choiceModal);
             console.log('🔧 Modal element added to DOM');
             
-            const modal = new bootstrap.Modal(choiceModal);
-            console.log('🚀 Bootstrap Modal instance created');
-            
-            modal.show();
-            console.log('✅ Modal.show() called');
+            // Wait for the DOM to update
+            setTimeout(() => {
+                const modal = new bootstrap.Modal(choiceModal, {
+                    backdrop: true,
+                    keyboard: true,
+                    focus: true
+                });
+                console.log('🚀 Bootstrap Modal instance created');
+                
+                modal.show();
+                console.log('✅ Modal.show() called');
+            }, 100);
             
             // Clean up
             choiceModal.addEventListener('hidden.bs.modal', function() {
