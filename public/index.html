@@ -1008,8 +1008,8 @@
                         </div>
                         
                         <div class="mt-3 d-flex justify-content-between align-items-center">
-                            <small class="text-muted" id="guideCounter">Loading...</small>
-                            <small class="text-info" id="totalGuideCounter">Total: Loading...</small>
+                            <small class="text-muted" id="guideCounter">読み込み中...</small>
+                            <small class="text-info" id="totalGuideCounter">全体: 読み込み中...</small>
                         </div>
                     </div>
                 </div>
@@ -1024,12 +1024,12 @@
             <div class="row mt-4">
                 <div class="col-12">
                     <div class="d-flex justify-content-between align-items-center">
-                        <button class="btn btn-outline-secondary" id="prevPageBtn" disabled>← Previous</button>
+                        <button class="btn btn-outline-secondary" id="prevPageBtn" disabled>← 前のページ</button>
                         <div class="pagination-info">
-                            <span id="pageInfo" class="fw-bold">Page 1</span>
-                            <small class="text-muted ms-2">(<span id="displayRange">1-12</span> guides shown)</small>
+                            <span id="pageInfo" class="fw-bold">ページ 1</span>
+                            <small class="text-muted ms-2">(<span id="displayRange">1-12</span> 件表示中)</small>
                         </div>
-                        <button class="btn btn-outline-primary" id="nextPageBtn">Next →</button>
+                        <button class="btn btn-outline-primary" id="nextPageBtn">次のページ →</button>
                     </div>
                 </div>
             </div>
@@ -1766,7 +1766,7 @@
                     viewDetails: 'View Details',
                     perDay: 'per day',
                     showMore: 'Show More',
-                    loading: 'Loading...',
+                    loading: '読み込み中...',
                     culturalTours: 'Cultural Tours',
                     foodTours: 'Food Tours',
                     natureTours: 'Nature Tours',
@@ -1822,6 +1822,38 @@
             const totalElement = document.getElementById('totalGuides');
             if (totalElement) {
                 totalElement.textContent = currentGuides.length;
+            }
+            
+            // 検索数表示システム - 全体のガイド数と検索結果数
+            updateSearchCounters();
+        }
+        
+        // 検索数表示カウンターシステム
+        function updateSearchCounters() {
+            const guideCounterElement = document.getElementById('guideCounter');
+            const totalGuideCounterElement = document.getElementById('totalGuideCounter');
+            
+            // 全登録ガイド数（デフォルト15 + 新規登録）
+            const totalRegisteredGuides = (typeof allGuides !== 'undefined') ? allGuides.length : (currentGuides?.length || 15);
+            
+            // 現在表示されている（フィルター後の）ガイド数
+            const filteredGuides = currentGuides.length;
+            
+            // 現在のページで表示されているガイド数
+            const displayedCount = Math.min(guidesPerPage, filteredGuides - (currentPage - 1) * guidesPerPage);
+            const startIndex = (currentPage - 1) * guidesPerPage + 1;
+            const endIndex = Math.min(currentPage * guidesPerPage, filteredGuides);
+            
+            if (guideCounterElement && totalGuideCounterElement) {
+                // 言語に応じたカウンター表示
+                const lang = getCurrentPageLanguage();
+                if (lang === 'ja') {
+                    guideCounterElement.textContent = `${startIndex}-${endIndex}件表示中 (${filteredGuides}件中)`;
+                    totalGuideCounterElement.textContent = `全体: ${totalRegisteredGuides}名のガイドが登録済み`;
+                } else {
+                    guideCounterElement.textContent = `${startIndex}-${endIndex} shown (${filteredGuides} total)`;
+                    totalGuideCounterElement.textContent = `Total: ${totalRegisteredGuides} guides registered`;
+                }
             }
         }
 

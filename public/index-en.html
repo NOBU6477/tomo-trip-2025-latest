@@ -1786,6 +1786,38 @@
             if (totalElement) {
                 totalElement.textContent = currentGuides.length;
             }
+            
+            // Search count display system - total guides and search results
+            updateSearchCounters();
+        }
+        
+        // Search count display counter system
+        function updateSearchCounters() {
+            const guideCounterElement = document.getElementById('guideCounter');
+            const totalGuideCounterElement = document.getElementById('totalGuideCounter');
+            
+            // Total registered guides (default 15 + new registrations)
+            const totalRegisteredGuides = (typeof allGuides !== 'undefined') ? allGuides.length : (currentGuides?.length || 15);
+            
+            // Currently displayed (filtered) guide count
+            const filteredGuides = currentGuides.length;
+            
+            // Number of guides displayed on current page
+            const displayedCount = Math.min(guidesPerPage, filteredGuides - (currentPage - 1) * guidesPerPage);
+            const startIndex = (currentPage - 1) * guidesPerPage + 1;
+            const endIndex = Math.min(currentPage * guidesPerPage, filteredGuides);
+            
+            if (guideCounterElement && totalGuideCounterElement) {
+                // Counter display based on language
+                const lang = getCurrentPageLanguage();
+                if (lang === 'ja') {
+                    guideCounterElement.textContent = `${startIndex}-${endIndex}件表示中 (${filteredGuides}件中)`;
+                    totalGuideCounterElement.textContent = `全体: ${totalRegisteredGuides}名のガイドが登録済み`;
+                } else {
+                    guideCounterElement.textContent = `${startIndex}-${endIndex} shown (${filteredGuides} total)`;
+                    totalGuideCounterElement.textContent = `Total: ${totalRegisteredGuides} guides registered`;
+                }
+            }
         }
 
         // Add event listeners to cards
