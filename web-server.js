@@ -107,8 +107,10 @@ const server = http.createServer((req, res) => {
   // Root route - serve index.html
   if (pathname === '/') {
     const filePath = path.join(__dirname, 'public', 'index.html');
+    console.log('Attempting to serve:', filePath);
     fs.readFile(filePath, (err, data) => {
       if (err) {
+        console.error('Error reading index.html:', err);
         res.writeHead(404, { 'Content-Type': 'text/html' });
         res.end('<h1>404 - File not found</h1>');
         return;
@@ -184,13 +186,16 @@ const server = http.createServer((req, res) => {
   
   // Security check - prevent directory traversal
   if (!filePath.startsWith(path.join(__dirname, 'public'))) {
+    console.log('Security violation attempted:', filePath);
     res.writeHead(403, { 'Content-Type': 'text/html' });
     res.end('<h1>403 - Forbidden</h1>');
     return;
   }
 
+  console.log('Attempting to serve static file:', filePath);
   fs.stat(filePath, (err, stats) => {
     if (err || !stats.isFile()) {
+      console.log('File not found or not a file:', filePath, err);
       res.writeHead(404, { 'Content-Type': 'text/html' });
       res.end('<h1>404 - File not found</h1>');
       return;
@@ -200,15 +205,36 @@ const server = http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': contentType });
 
     const readStream = fs.createReadStream(filePath);
+    readStream.on('error', (streamErr) => {
+      console.error('Stream error:', streamErr);
+      res.writeHead(500, { 'Content-Type': 'text/html' });
+      res.end('<h1>500 - Internal Server Error</h1>');
+    });
     readStream.pipe(res);
   });
 });
 
 const PORT = Number(process.env.PORT) || 5000;
-server.listen(PORT, "0.0.0.0", () => {
+const HOST = process.env.HOST || "0.0.0.0";
+
+server.listen(PORT, HOST, () => {
   console.log(`TomoTrip Web Server running on port ${PORT}`);
   console.log(`📊 Data stored in memory - stores: ${stores.length}, guides: ${guides.length}, reservations: ${reservations.length}`);
   console.log(`🔍 Health check: http://localhost:${PORT}/health`);
   console.log(`📖 API info: http://localhost:${PORT}/api`);
   console.log(`🌐 Website: http://localhost:${PORT}/`);
+});
+
+// Handle server errors
+server.on('error', (err) => {
+  console.error('Server error:', err);
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully');
+  server.close(() => {
+    console.log('Server closed');
+    process.exit(0);
+  });
 });
