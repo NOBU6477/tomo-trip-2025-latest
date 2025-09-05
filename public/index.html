@@ -628,6 +628,153 @@
         <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobileSide" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; width: 100%;">協賛店ログイン</button>
     </div>
 
+    <!-- Main Content Section -->
+    <section class="main-content" style="padding: 80px 0; background: #f8f9fa;">
+        <div class="container">
+            <!-- Filter Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="filter-section" style="background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+                        <div class="d-flex flex-wrap gap-3 align-items-center justify-content-between">
+                            <div class="d-flex flex-wrap gap-3">
+                                <select class="form-select" style="width: auto; min-width: 180px;" id="locationFilter">
+                                    <option value="">全ての地域</option>
+                                    <optgroup label="北海道・東北">
+                                        <option value="hokkaido">北海道</option>
+                                        <option value="aomori">青森県</option>
+                                        <option value="iwate">岩手県</option>
+                                        <option value="miyagi">宮城県</option>
+                                        <option value="akita">秋田県</option>
+                                        <option value="yamagata">山形県</option>
+                                        <option value="fukushima">福島県</option>
+                                    </optgroup>
+                                    <optgroup label="関東">
+                                        <option value="ibaraki">茨城県</option>
+                                        <option value="tochigi">栃木県</option>
+                                        <option value="gunma">群馬県</option>
+                                        <option value="saitama">埼玉県</option>
+                                        <option value="chiba">千葉県</option>
+                                        <option value="tokyo">東京都</option>
+                                        <option value="kanagawa">神奈川県</option>
+                                    </optgroup>
+                                    <optgroup label="中部">
+                                        <option value="niigata">新潟県</option>
+                                        <option value="toyama">富山県</option>
+                                        <option value="ishikawa">石川県</option>
+                                        <option value="fukui">福井県</option>
+                                        <option value="yamanashi">山梨県</option>
+                                        <option value="nagano">長野県</option>
+                                        <option value="gifu">岐阜県</option>
+                                        <option value="shizuoka">静岡県</option>
+                                        <option value="aichi">愛知県</option>
+                                    </optgroup>
+                                    <optgroup label="近畿">
+                                        <option value="mie">三重県</option>
+                                        <option value="shiga">滋賀県</option>
+                                        <option value="kyoto">京都府</option>
+                                        <option value="osaka">大阪府</option>
+                                        <option value="hyogo">兵庫県</option>
+                                        <option value="nara">奈良県</option>
+                                        <option value="wakayama">和歌山県</option>
+                                    </optgroup>
+                                    <optgroup label="中国・四国">
+                                        <option value="tottori">鳥取県</option>
+                                        <option value="shimane">島根県</option>
+                                        <option value="okayama">岡山県</option>
+                                        <option value="hiroshima">広島県</option>
+                                        <option value="yamaguchi">山口県</option>
+                                        <option value="tokushima">徳島県</option>
+                                        <option value="kagawa">香川県</option>
+                                        <option value="ehime">愛媛県</option>
+                                        <option value="kochi">高知県</option>
+                                    </optgroup>
+                                    <optgroup label="九州・沖縄">
+                                        <option value="fukuoka">福岡県</option>
+                                        <option value="saga">佐賀県</option>
+                                        <option value="nagasaki">長崎県</option>
+                                        <option value="kumamoto">熊本県</option>
+                                        <option value="oita">大分県</option>
+                                        <option value="miyazaki">宮崎県</option>
+                                        <option value="kagoshima">鹿児島県</option>
+                                        <option value="okinawa">沖縄県</option>
+                                    </optgroup>
+                                </select>
+
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
+                                    <option value="">全ての言語</option>
+                                    <optgroup label="アジア言語">
+                                        <option value="japanese">日本語</option>
+                                        <option value="english">英語</option>
+                                        <option value="chinese">中国語（簡体字）</option>
+                                        <option value="chinese_traditional">中国語（繁体字）</option>
+                                        <option value="korean">韓国語</option>
+                                        <option value="thai">タイ語</option>
+                                        <option value="vietnamese">ベトナム語</option>
+                                        <option value="indonesian">インドネシア語</option>
+                                        <option value="tagalog">タガログ語（フィリピン語）</option>
+                                        <option value="hindi">ヒンディー語</option>
+                                    </optgroup>
+                                    <optgroup label="ヨーロッパ言語">
+                                        <option value="spanish">スペイン語</option>
+                                        <option value="french">フランス語</option>
+                                        <option value="german">ドイツ語</option>
+                                        <option value="italian">イタリア語</option>
+                                        <option value="portuguese">ポルトガル語</option>
+                                        <option value="russian">ロシア語</option>
+                                        <option value="dutch">オランダ語</option>
+                                        <option value="swedish">スウェーデン語</option>
+                                    </optgroup>
+                                    <optgroup label="その他">
+                                        <option value="arabic">アラビア語</option>
+                                        <option value="hebrew">ヘブライ語</option>
+                                        <option value="turkish">トルコ語</option>
+                                        <option value="swahili">スワヒリ語</option>
+                                    </optgroup>
+                                </select>
+                                
+                                <select class="form-select" style="width: auto; min-width: 160px;" id="priceFilter">
+                                    <option value="">全ての料金</option>
+                                    <option value="budget">¥6,000～¥10,000</option>
+                                    <option value="premium">¥10,001～¥20,000</option>
+                                    <option value="luxury">¥20,001+</option>
+                                </select>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-primary" id="searchBtn">検索</button>
+                                <button class="btn btn-outline-secondary" id="resetBtn">リセット</button>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-3 d-flex justify-content-between align-items-center">
+                            <small class="text-muted" id="guideCounter">読み込み中...</small>
+                            <small class="text-info" id="totalGuideCounter">合計: 読み込み中...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guide Cards Section -->
+            <div class="row" id="guideCardsContainer">
+                <!-- Guide cards will be populated here -->
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-secondary" id="prevPageBtn" disabled>← 前のページ</button>
+                        <div class="pagination-info">
+                            <span id="pageInfo" class="fw-bold">ページ 1</span>
+                            <small class="text-muted ms-2">(<span id="displayRange">1-12</span> ガイド表示中)</small>
+                        </div>
+                        <button class="btn btn-outline-primary" id="nextPageBtn">次のページ →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Language Switch JavaScript -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
