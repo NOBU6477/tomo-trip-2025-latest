@@ -73,7 +73,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-// Improved error handling and port binding
+// Improved error handling and port binding with Replit compatibility
 server.listen(PORT, HOST, (err) => {
   if (err) {
     console.error('❌ Failed to start server:', err);
@@ -85,11 +85,18 @@ server.listen(PORT, HOST, (err) => {
   console.log(`🔍 Health: http://localhost:${PORT}/health`);
   console.log(`🚀 Server listening on ${HOST}:${PORT}`);
   
+  // Special Replit port detection signal
+  console.log(`REPLIT_PORT_READY:${PORT}`);
+  
   // Test self-connection to ensure server is actually working
   setTimeout(() => {
     const testReq = http.request(`http://localhost:${PORT}/health`, (res) => {
       console.log(`🧪 Self-test: HTTP ${res.statusCode}`);
       console.log(`🎯 Server is ready and accepting connections on port ${PORT}`);
+      
+      // Additional Replit signals
+      console.log(`PORT_${PORT}_OPEN`);
+      console.log(`REPLIT_READY`);
     });
     testReq.on('error', (err) => {
       console.error('🚨 Self-test failed:', err.message);
@@ -100,6 +107,9 @@ server.listen(PORT, HOST, (err) => {
     setTimeout(() => {
       const mainReq = http.request(`http://localhost:${PORT}/`, (res) => {
         console.log(`🏠 Main page test: HTTP ${res.statusCode}`);
+        if (res.statusCode === 200) {
+          console.log(`APP_READY_ON_PORT_${PORT}`);
+        }
       });
       mainReq.on('error', (err) => {
         console.error('🚨 Main page test failed:', err.message);
