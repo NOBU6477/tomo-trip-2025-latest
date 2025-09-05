@@ -2195,9 +2195,11 @@
 
         // Show registration choice modal
         function showRegistrationChoice() {
-            const choiceModal = document.createElement('div');
-            choiceModal.className = 'modal fade';
-            choiceModal.innerHTML = `
+            console.log('🎯 showRegistrationChoice function called');
+            try {
+                const choiceModal = document.createElement('div');
+                choiceModal.className = 'modal fade';
+                choiceModal.innerHTML = `
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
                         <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
@@ -2242,13 +2244,23 @@
             `;
             
             document.body.appendChild(choiceModal);
+            console.log('🔧 Modal element added to DOM');
+            
             const modal = new bootstrap.Modal(choiceModal);
+            console.log('🚀 Bootstrap Modal instance created');
+            
             modal.show();
+            console.log('✅ Modal.show() called');
             
             // Clean up
             choiceModal.addEventListener('hidden.bs.modal', function() {
                 choiceModal.remove();
             });
+            
+            } catch (error) {
+                console.error('❌ Error in showRegistrationChoice:', error);
+                alert('Registration choice modal failed to open: ' + error.message);
+            }
         }
 
         // Open tourist registration
