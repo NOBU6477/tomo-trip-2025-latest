@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test Page</title>
+</head>
+<body>
+    <h1>Test Page Loaded Successfully</h1>
+    <p>If you see this, the server is working correctly.</p>
+    <script>
+        console.log('Test page JavaScript loaded');
+        document.body.style.backgroundColor = '#90EE90';
+        setTimeout(() => {
+            document.body.innerHTML += '<p style="color: red; font-size: 20px;">Timer worked - Page is fully loaded!</p>';
+        }, 1000);
+    </script>
+</body>
+</html>
