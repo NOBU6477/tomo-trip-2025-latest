@@ -87,6 +87,17 @@ server.listen(PORT, HOST, () => {
       console.error('🚨 Self-test failed:', err.message);
     });
     testReq.end();
+    
+    // Test main page
+    setTimeout(() => {
+      const mainReq = http.request(`http://localhost:${PORT}/`, (res) => {
+        console.log(`🏠 Main page test: HTTP ${res.statusCode}`);
+      });
+      mainReq.on('error', (err) => {
+        console.error('🚨 Main page test failed:', err.message);
+      });
+      mainReq.end();
+    }, 500);
   }, 1000);
 });
 
