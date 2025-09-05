@@ -86,6 +86,14 @@
             line-height: 1.6;
             color: #333;
             overflow-x: hidden;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
+        /* Force app visibility */
+        .app-loaded, .ready, .fallback-ready, .timeout-ready, .force-ready {
+            opacity: 1 !important;
+            visibility: visible !important;
         }
 
         /* Navigation */
@@ -841,9 +849,21 @@
     <!-- Bootstrap JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     
+    <!-- Fallback initialization script -->
+    <script src="init-fallback.js"></script>
+    
+    <!-- Emergency force ready after timeout -->
+    <script>
+        setTimeout(function() {
+            document.body.style.opacity = '1';
+            document.body.classList.add('timeout-ready');
+            console.log('🚨 Timeout fallback triggered');
+        }, 3000);
+    </script>
+    
     <!-- Main Application JavaScript -->
-    <script type="module" src="assets/js/app-init.mjs"></script>
-    <script type="module" src="assets/js/auth-flow.mjs"></script>
+    <script type="module" src="assets/js/app-init.mjs" onerror="console.error('Failed to load app-init.mjs')"></script>
+    <script type="module" src="assets/js/auth-flow.mjs" onerror="console.error('Failed to load auth-flow.mjs')"></script>
     
 </body>
 </html>
