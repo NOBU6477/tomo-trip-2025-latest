@@ -4,11 +4,12 @@ run = "node github-migration-ready/server.js"
 [interpreter]
 language = "nodejs"
 
-# Port:5000 の公開設定（オレンジ警告の対策）
+[[ports]]
+localPort = 3000
+externalPort = 80
+
 [[ports]]
 localPort = 5000
-proxy = true
-visibility = "public"
 
 [workflows]
 runButton = "Project"
@@ -31,8 +32,11 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node simple-http-server.js"
+args = "PORT=3000 node simple-http-server.js"
 
 [nix]
 channel = "stable-25_05"
 packages = ["nodejs"]
+
+[agent]
+expertMode = true

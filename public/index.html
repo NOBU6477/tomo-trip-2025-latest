@@ -38,6 +38,22 @@
     <script>
         console.log('✅ TomoTrip simple page loaded successfully');
         document.body.setAttribute('data-ready', 'true');
+        window.addEventListener('load', function() {
+            console.log('🎯 Window load event fired - app fully ready');
+            document.body.classList.add('ready');
+            // Send ready signal to parent frame if in iframe
+            if (window.parent !== window) {
+                window.parent.postMessage({type: 'app-ready', source: 'tomotrip'}, '*');
+            }
+        });
+        // Immediate DOM ready signal
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📝 DOM fully loaded');
+            setTimeout(function() {
+                document.body.style.opacity = '1';
+                console.log('🌟 Visual ready state complete');
+            }, 100);
+        });
     </script>
 </body>
 </html>
