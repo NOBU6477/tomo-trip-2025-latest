@@ -2,7 +2,9 @@
 console.log('🔧 CSP compatibility fix loaded');
 
 // Suppress specific console errors that don't affect functionality
-const originalConsoleError = console.error;
+if (!window.originalConsoleError) {
+    window.originalConsoleError = console.error;
+}
 console.error = function(...args) {
     const message = args.join(' ');
     
@@ -19,7 +21,7 @@ console.error = function(...args) {
         return; // Skip these errors
     }
     
-    originalConsoleError.apply(console, args);
+    window.originalConsoleError.apply(console, args);
 };
 
 // Handle iframe sandbox errors gracefully

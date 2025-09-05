@@ -2368,10 +2368,14 @@
             if (keywordInput) keywordInput.addEventListener('input', filterGuides);
             
             // Registration button event - show choice modal
-            document.getElementById('registerBtn').addEventListener('click', function() {
-                console.log('Registration button clicked!');
-                showRegistrationChoice();
-            });
+            const regBtn = document.getElementById('registerBtn');
+            if (regBtn) {
+                regBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Registration button clicked!');
+                    showRegistrationChoice();
+                });
+            }
             
             // Initialize chat listeners
             initializeChatListeners();
