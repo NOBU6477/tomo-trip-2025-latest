@@ -25,11 +25,16 @@ if (isReplitIframe) {
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // Immediately update loading indicators
+    // Keep the existing counter text since we already set it in HTML
     const guideCounter = document.getElementById('guideCounter');
     const totalGuideCounter = document.getElementById('totalGuideCounter');
-    if (guideCounter) guideCounter.textContent = '初期化中...';
-    if (totalGuideCounter) totalGuideCounter.textContent = '合計: 初期化中...';
+    // Don't change the text if it's already set to the final state
+    if (guideCounter && guideCounter.textContent.includes('読み込み中')) {
+        guideCounter.textContent = '初期化中...';
+    }
+    if (totalGuideCounter && totalGuideCounter.textContent.includes('読み込み中')) {
+        totalGuideCounter.textContent = '合計: 初期化中...';
+    }
     
     // 1) Force use default guide data for consistency across all environments
     // This eliminates localStorage differences between editor and separate tabs
