@@ -919,24 +919,24 @@
                                         <option value="kanagawa">神奈川</option>
                                     </optgroup>
                                     <optgroup label="中部">
-                                        <option value="niigata">Niigata</option>
-                                        <option value="toyama">Toyama</option>
-                                        <option value="ishikawa">Ishikawa</option>
-                                        <option value="fukui">Fukui</option>
-                                        <option value="yamanashi">Yamanashi</option>
-                                        <option value="nagano">Nagano</option>
-                                        <option value="gifu">Gifu</option>
-                                        <option value="shizuoka">Shizuoka</option>
-                                        <option value="aichi">Aichi</option>
+                                        <option value="niigata">新潟</option>
+                                        <option value="toyama">富山</option>
+                                        <option value="ishikawa">石川</option>
+                                        <option value="fukui">福井</option>
+                                        <option value="yamanashi">山梨</option>
+                                        <option value="nagano">長野</option>
+                                        <option value="gifu">岐阜</option>
+                                        <option value="shizuoka">静岡</option>
+                                        <option value="aichi">愛知</option>
                                     </optgroup>
                                     <optgroup label="Kinki">
-                                        <option value="mie">Mie</option>
-                                        <option value="shiga">Shiga</option>
-                                        <option value="kyoto">Kyoto</option>
-                                        <option value="osaka">Osaka</option>
-                                        <option value="hyogo">Hyogo</option>
-                                        <option value="nara">Nara</option>
-                                        <option value="wakayama">Wakayama</option>
+                                        <option value="mie">三重</option>
+                                        <option value="shiga">滋賀</option>
+                                        <option value="kyoto">京都</option>
+                                        <option value="osaka">大阪</option>
+                                        <option value="hyogo">兵庫</option>
+                                        <option value="nara">奈良</option>
+                                        <option value="wakayama">和歌山</option>
                                     </optgroup>
                                     <optgroup label="Chugoku・Shikoku">
                                         <option value="tottori">Tottori</option>
@@ -964,23 +964,23 @@
                                 <select class="form-select" style="width: auto; min-width: 160px;" id="languageFilter">
                                     <option value="">すべての言語</option>
                                     <optgroup label="Asian Languages">
-                                        <option value="japanese">Japanese</option>
-                                        <option value="english">English</option>
-                                        <option value="chinese">Chinese (Simplified)</option>
-                                        <option value="chinese_traditional">Chinese (Traditional)</option>
-                                        <option value="korean">Korean</option>
-                                        <option value="thai">Thai</option>
-                                        <option value="vietnamese">Vietnamese</option>
-                                        <option value="indonesian">Indonesian</option>
-                                        <option value="tagalog">Tagalog (Filipino)</option>
-                                        <option value="hindi">Hindi</option>
+                                        <option value="japanese">日本語</option>
+                                        <option value="english">英語</option>
+                                        <option value="chinese">中国語（簡体）</option>
+                                        <option value="chinese_traditional">中国語（繁体）</option>
+                                        <option value="korean">韓国語</option>
+                                        <option value="thai">タイ語</option>
+                                        <option value="vietnamese">ベトナム語</option>
+                                        <option value="indonesian">インドネシア語</option>
+                                        <option value="tagalog">タガログ語（フィリピン）</option>
+                                        <option value="hindi">ヒンディー語</option>
                                     </optgroup>
                                     <optgroup label="European Languages">
-                                        <option value="spanish">Spanish</option>
-                                        <option value="french">French</option>
-                                        <option value="german">German</option>
+                                        <option value="spanish">スペイン語</option>
+                                        <option value="french">フランス語</option>
+                                        <option value="german">ドイツ語</option>
                                         <option value="italian">Italian</option>
-                                        <option value="portuguese">Portuguese</option>
+                                        <option value="portuguese">ポルトガル語</option>
                                         <option value="russian">Russian</option>
                                         <option value="dutch">Dutch</option>
                                         <option value="swedish">Swedish</option>
@@ -1182,19 +1182,19 @@
                                     <option value="tokyo">Tokyo</option>
                                     <option value="kanagawa">Kanagawa</option>
                                 </optgroup>
-                                <optgroup label="Chubu">
-                                    <option value="niigata">Niigata</option>
-                                    <option value="toyama">Toyama</option>
-                                    <option value="ishikawa">Ishikawa</option>
-                                    <option value="fukui">Fukui</option>
-                                    <option value="yamanashi">Yamanashi</option>
-                                    <option value="nagano">Nagano</option>
-                                    <option value="gifu">Gifu</option>
-                                    <option value="shizuoka">Shizuoka</option>
-                                    <option value="aichi">Aichi</option>
+                                <optgroup label="中部">
+                                    <option value="niigata">新潟</option>
+                                    <option value="toyama">富山</option>
+                                    <option value="ishikawa">石川</option>
+                                    <option value="fukui">福井</option>
+                                    <option value="yamanashi">山梨</option>
+                                    <option value="nagano">長野</option>
+                                    <option value="gifu">岐阜</option>
+                                    <option value="shizuoka">静岡</option>
+                                    <option value="aichi">愛知</option>
                                 </optgroup>
-                                <optgroup label="Kansai">
-                                    <option value="mie">Mie</option>
+                                <optgroup label="関西">
+                                    <option value="mie">三重</option>
                                     <option value="shiga">Shiga</option>
                                     <option value="kyoto">Kyoto</option>
                                     <option value="osaka">Osaka</option>
@@ -1915,7 +1915,10 @@
             const price = document.getElementById('priceFilter').value;
             const keyword = document.getElementById('keywordInput').value.toLowerCase();
 
-            let filtered = guideData.filter(guide => {
+            // Load all available guides (default + registered)
+            const allGuides = loadAllGuides();
+            
+            let filtered = allGuides.filter(guide => {
                 const locationMatch = !location || guide.location === location;
                 const languageMatch = !language || (guide.languages && guide.languages.includes(language));
                 
@@ -1951,8 +1954,10 @@
             document.getElementById('priceFilter').value = '';
             document.getElementById('keywordInput').value = '';
             
-            currentGuides = guideData;
-            displayGuides(guideData, 1);
+            // Load all guides and reset display
+            const allGuides = loadAllGuides();
+            currentGuides = allGuides;
+            displayGuides(allGuides, 1);
         }
 
         // Price conversion function
