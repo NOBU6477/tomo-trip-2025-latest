@@ -938,16 +938,16 @@
                                         <option value="nara">奈良</option>
                                         <option value="wakayama">和歌山</option>
                                     </optgroup>
-                                    <optgroup label="Chugoku・Shikoku">
-                                        <option value="tottori">Tottori</option>
-                                        <option value="shimane">Shimane</option>
-                                        <option value="okayama">Okayama</option>
-                                        <option value="hiroshima">Hiroshima</option>
-                                        <option value="yamaguchi">Yamaguchi</option>
-                                        <option value="tokushima">Tokushima</option>
-                                        <option value="kagawa">Kagawa</option>
-                                        <option value="ehime">Ehime</option>
-                                        <option value="kochi">Kochi</option>
+                                    <optgroup label="中国・四国">
+                                        <option value="tottori">鳥取</option>
+                                        <option value="shimane">島根</option>
+                                        <option value="okayama">岡山</option>
+                                        <option value="hiroshima">広島</option>
+                                        <option value="yamaguchi">山口</option>
+                                        <option value="tokushima">徳島</option>
+                                        <option value="kagawa">香川</option>
+                                        <option value="ehime">愛媛</option>
+                                        <option value="kochi">高知</option>
                                     </optgroup>
                                     <optgroup label="Kyushu・Okinawa">
                                         <option value="fukuoka">Fukuoka</option>
@@ -975,21 +975,21 @@
                                         <option value="tagalog">タガログ語（フィリピン）</option>
                                         <option value="hindi">ヒンディー語</option>
                                     </optgroup>
-                                    <optgroup label="European Languages">
+                                    <optgroup label="ヨーロッパ言語">
                                         <option value="spanish">スペイン語</option>
                                         <option value="french">フランス語</option>
                                         <option value="german">ドイツ語</option>
-                                        <option value="italian">Italian</option>
+                                        <option value="italian">イタリア語</option>
                                         <option value="portuguese">ポルトガル語</option>
-                                        <option value="russian">Russian</option>
-                                        <option value="dutch">Dutch</option>
-                                        <option value="swedish">Swedish</option>
+                                        <option value="russian">ロシア語</option>
+                                        <option value="dutch">オランダ語</option>
+                                        <option value="swedish">スウェーデン語</option>
                                     </optgroup>
-                                    <optgroup label="Others">
-                                        <option value="arabic">Arabic</option>
-                                        <option value="hebrew">Hebrew</option>
-                                        <option value="turkish">Turkish</option>
-                                        <option value="swahili">Swahili</option>
+                                    <optgroup label="その他の言語">
+                                        <option value="arabic">アラビア語</option>
+                                        <option value="hebrew">ヘブライ語</option>
+                                        <option value="turkish">トルコ語</option>
+                                        <option value="swahili">スワヒリ語</option>
                                     </optgroup>
                                 </select>
                                 
@@ -1202,14 +1202,14 @@
                                     <option value="nara">Nara</option>
                                     <option value="wakayama">Wakayama</option>
                                 </optgroup>
-                                <optgroup label="Chugoku & Shikoku">
-                                    <option value="tottori">Tottori</option>
-                                    <option value="shimane">Shimane</option>
-                                    <option value="okayama">Okayama</option>
-                                    <option value="hiroshima">Hiroshima</option>
-                                    <option value="yamaguchi">Yamaguchi</option>
-                                    <option value="tokushima">Tokushima</option>
-                                    <option value="kagawa">Kagawa</option>
+                                <optgroup label="中国・四国">
+                                    <option value="tottori">鳥取</option>
+                                    <option value="shimane">島根</option>
+                                    <option value="okayama">岡山</option>
+                                    <option value="hiroshima">広島</option>
+                                    <option value="yamaguchi">山口</option>
+                                    <option value="tokushima">徳島</option>
+                                    <option value="kagawa">香川</option>
                                     <option value="ehime">Ehime</option>
                                     <option value="kochi">Kochi</option>
                                 </optgroup>
@@ -2344,6 +2344,17 @@
             // Event listeners
             document.getElementById('searchBtn').addEventListener('click', filterGuides);
             document.getElementById('resetBtn').addEventListener('click', resetFilters);
+            
+            // Add change event listeners for filters to enable real-time filtering
+            const locationFilter = document.getElementById('locationFilter');
+            const languageFilter = document.getElementById('languageFilter');
+            const priceFilter = document.getElementById('priceFilter');
+            const keywordInput = document.getElementById('keywordInput');
+            
+            if (locationFilter) locationFilter.addEventListener('change', filterGuides);
+            if (languageFilter) languageFilter.addEventListener('change', filterGuides);
+            if (priceFilter) priceFilter.addEventListener('change', filterGuides);
+            if (keywordInput) keywordInput.addEventListener('input', filterGuides);
             
             // Registration button event - show choice modal
             document.getElementById('registerBtn').addEventListener('click', function() {
