@@ -2357,8 +2357,12 @@
             
             // Registration button event - show choice modal
             document.getElementById('registerBtn').addEventListener('click', function() {
+                console.log('Registration button clicked!');
                 showRegistrationChoice();
             });
+            
+            // Initialize chat listeners
+            initializeChatListeners();
             
             // Registration form submission
             document.getElementById('registerSubmitBtn').addEventListener('click', function() {
@@ -3115,8 +3119,8 @@
             }, 5000);
         }
 
-        // Event listeners for chat
-        document.addEventListener('DOMContentLoaded', function() {
+        // Initialize chat and booking listeners
+        function initializeChatListeners() {
             const sendBtn = document.getElementById('sendMessageBtn');
             const messageInput = document.getElementById('chatMessageInput');
             
