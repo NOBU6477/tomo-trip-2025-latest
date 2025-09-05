@@ -25,6 +25,12 @@ if (isReplitIframe) {
 function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
+    // Immediately update loading indicators
+    const guideCounter = document.getElementById('guideCounter');
+    const totalGuideCounter = document.getElementById('totalGuideCounter');
+    if (guideCounter) guideCounter.textContent = '初期化中...';
+    if (totalGuideCounter) totalGuideCounter.textContent = '合計: 初期化中...';
+    
     // 1) Force use default guide data for consistency across all environments
     // This eliminates localStorage differences between editor and separate tabs
     const guides = defaultGuideData;
@@ -62,14 +68,47 @@ function appInit() {
     setupEventListeners(state);
     
     // Render initial guide cards and display guides
-    renderGuideCards(guides);
-    displayGuides(1, state);
+    try {
+        renderGuideCards(guides);
+        displayGuides(1, state);
+        
+        // Force update counters immediately
+        setTimeout(() => {
+            updateGuideCounters(guides.length, guides.length);
+        }, 100);
+        
+        console.log('✅ Guide cards rendered successfully');
+    } catch (error) {
+        console.error('❌ Error rendering guide cards:', error);
+        
+        // Fallback: manually update counters even if rendering fails
+        const guideCounter = document.getElementById('guideCounter');
+        const totalGuideCounter = document.getElementById('totalGuideCounter');
+        if (guideCounter) guideCounter.textContent = `${guides.length}人のガイドが見つかりました`;
+        if (totalGuideCounter) totalGuideCounter.textContent = `総数: ${guides.length}人`;
+    }
     
     // Setup button handlers
     wireSponsorButtons();
     wireLanguageSwitcher();
     
     log.ok('✅ Application initialized successfully with AppState');
+    
+    // Make critical functions globally available
+    window.renderGuideCards = renderGuideCards;
+    window.updateGuideCounters = updateGuideCounters;
+    window.displayGuides = displayGuides;
+    
+    console.log('🌍 Global functions exposed:', {
+        renderGuideCards: typeof window.renderGuideCards,
+        updateGuideCounters: typeof window.updateGuideCounters,
+        displayGuides: typeof window.displayGuides
+    });
+    
+    // Signal that the app is ready
+    document.body.setAttribute('data-app-status', 'ready');
+    document.dispatchEvent(new CustomEvent('appReady', { detail: { guides: guides.length } }));
+    console.log('🎉 TomoTrip application is fully ready!');
 }
 
 // Call initialization when module loads
