@@ -822,15 +822,15 @@
                 </button>
                 <div class="dropdown me-2" style="position: relative;">
                     <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" aria-expanded="false">
-                        Login
+                        ログイン
                     </button>
                     <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
-                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">Tourist Login</button>
-                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">Guide Login</button>
-                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">Sponsor Login</button>
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
+                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">スポンサーログイン</button>
                     </div>
                 </div>
-                <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">Register</button>
+                <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
             </div>
         </div>
     </nav>
@@ -854,13 +854,13 @@
                             <div class="hero-logo mb-3">
                                 <img src="assets/images/tomotrip-logo.png" alt="TomoTrip Logo" class="modal-logo" />
                             </div>
-                            <h1 class="display-4 fw-bold text-white">Your Special Journey Awaits</h1>
+                            <h1 class="display-4 fw-bold text-white">特別な旅の体験を</h1>
                         </div>
-                        <p class="lead text-white mb-5">Discover hidden gems with local guides that tourists never find</p>
+                        <p class="lead text-white mb-5">地元ガイドと一緒に観光客が知らない隠れた名所を発見しよう</p>
                         <div class="hero-buttons">
                             <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-                                <button class="btn-hero btn-primary-hero btn" id="findGuideBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">Find Guide</button>
-                                <button class="btn-hero btn-outline-hero btn" id="contactBtn" style="background: linear-gradient(135deg, #f093fb, #f5576c); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">Contact Us</button>
+                                <button class="btn-hero btn-primary-hero btn" id="findGuideBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">ガイドを探す</button>
+                                <button class="btn-hero btn-outline-hero btn" id="contactBtn" style="background: linear-gradient(135deg, #f093fb, #f5576c); border: none; padding: 15px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(240, 147, 251, 0.3); transition: all 0.3s ease; min-width: 150px; color: white;">お問い合わせ</button>
                             </div>
                         </div>
                     </div>
@@ -871,8 +871,8 @@
 
     <!-- Desktop Right Side Buttons -->
     <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
-        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">Store Registration</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">Login</button>
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">店舗登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
     </div>
 
     <!-- Mobile Bottom Buttons -->
