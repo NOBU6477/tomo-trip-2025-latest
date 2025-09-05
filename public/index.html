@@ -949,15 +949,15 @@
                                         <option value="ehime">愛媛</option>
                                         <option value="kochi">高知</option>
                                     </optgroup>
-                                    <optgroup label="Kyushu・Okinawa">
-                                        <option value="fukuoka">Fukuoka</option>
-                                        <option value="saga">Saga</option>
-                                        <option value="nagasaki">Nagasaki</option>
-                                        <option value="kumamoto">Kumamoto</option>
-                                        <option value="oita">Oita</option>
-                                        <option value="miyazaki">Miyazaki</option>
-                                        <option value="kagoshima">Kagoshima</option>
-                                        <option value="okinawa">Okinawa</option>
+                                    <optgroup label="九州・沖縄">
+                                        <option value="fukuoka">福岡</option>
+                                        <option value="saga">佐賀</option>
+                                        <option value="nagasaki">長崎</option>
+                                        <option value="kumamoto">熊本</option>
+                                        <option value="oita">大分</option>
+                                        <option value="miyazaki">宮崎</option>
+                                        <option value="kagoshima">鹿児島</option>
+                                        <option value="okinawa">沖縄</option>
                                     </optgroup>
                                 </select>
 
@@ -1213,15 +1213,15 @@
                                     <option value="ehime">Ehime</option>
                                     <option value="kochi">Kochi</option>
                                 </optgroup>
-                                <optgroup label="Kyushu & Okinawa">
-                                    <option value="fukuoka">Fukuoka</option>
-                                    <option value="saga">Saga</option>
-                                    <option value="nagasaki">Nagasaki</option>
-                                    <option value="kumamoto">Kumamoto</option>
-                                    <option value="oita">Oita</option>
-                                    <option value="miyazaki">Miyazaki</option>
-                                    <option value="kagoshima">Kagoshima</option>
-                                    <option value="okinawa">Okinawa</option>
+                                <optgroup label="九州・沖縄">
+                                    <option value="fukuoka">福岡</option>
+                                    <option value="saga">佐賀</option>
+                                    <option value="nagasaki">長崎</option>
+                                    <option value="kumamoto">熊本</option>
+                                    <option value="oita">大分</option>
+                                    <option value="miyazaki">宮崎</option>
+                                    <option value="kagoshima">鹿児島</option>
+                                    <option value="okinawa">沖縄</option>
                                 </optgroup>
                             </select>
                         </div>
@@ -1915,12 +1915,22 @@
             const price = document.getElementById('priceFilter').value;
             const keyword = document.getElementById('keywordInput').value.toLowerCase();
 
+            console.log('🔍 Filter parameters:', { location, language, price, keyword });
+
             // Load all available guides (default + registered)
             const allGuides = loadAllGuides();
+            console.log('📊 Total guides loaded:', allGuides.length);
             
             let filtered = allGuides.filter(guide => {
                 const locationMatch = !location || guide.location === location;
                 const languageMatch = !language || (guide.languages && guide.languages.includes(language));
+                
+                if (location && guide.location !== location) {
+                    console.log(`❌ Location mismatch: guide.location="${guide.location}" !== filter="${location}"`);
+                }
+                if (language && (!guide.languages || !guide.languages.includes(language))) {
+                    console.log(`❌ Language mismatch: guide.languages=${JSON.stringify(guide.languages)} doesn't include "${language}"`);
+                }
                 
                 let priceMatch = true;
                 if (price) {
