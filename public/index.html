@@ -825,9 +825,9 @@
                         ログイン
                     </button>
                     <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
-                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
-                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
-                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">スポンサーログイン</button>
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">観光客ログイン</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">ガイドログイン</button>
+                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">スポンサーログイン</button>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="registerBtn" data-bs-toggle="modal" data-bs-target="#registrationModal">新規登録</button>
@@ -871,15 +871,15 @@
 
     <!-- Desktop Right Side Buttons -->
     <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
-        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">店舗登録</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='/sponsor-registration.html'">店舗登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='/operations-login.html'">ログイン</button>
     </div>
 
     <!-- Mobile Bottom Buttons -->
     <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
         <div class="d-flex gap-2">
-            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">店舗登録</button>
-            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;" onclick="window.location.href='/sponsor-registration.html'">店舗登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;" onclick="window.location.href='/operations-login.html'">ログイン</button>
         </div>
     </div>
 
@@ -1917,22 +1917,12 @@
             const price = document.getElementById('priceFilter').value;
             const keyword = document.getElementById('keywordInput').value.toLowerCase();
 
-            console.log('🔍 Filter parameters:', { location, language, price, keyword });
-
             // Load all available guides (default + registered)
             const allGuides = loadAllGuides();
-            console.log('📊 Total guides loaded:', allGuides.length);
             
             let filtered = allGuides.filter(guide => {
                 const locationMatch = !location || guide.location === location;
                 const languageMatch = !language || (guide.languages && guide.languages.includes(language));
-                
-                if (location && guide.location !== location) {
-                    console.log(`❌ Location mismatch: guide.location="${guide.location}" !== filter="${location}"`);
-                }
-                if (language && (!guide.languages || !guide.languages.includes(language))) {
-                    console.log(`❌ Language mismatch: guide.languages=${JSON.stringify(guide.languages)} doesn't include "${language}"`);
-                }
                 
                 let priceMatch = true;
                 if (price) {
@@ -2365,9 +2355,9 @@
             if (priceFilter) priceFilter.addEventListener('change', filterGuides);
             if (keywordInput) keywordInput.addEventListener('input', filterGuides);
             
-            // Registration button event - show choice modal
+            // Registration button event - redirect to guide registration
             document.getElementById('registerBtn').addEventListener('click', function() {
-                showRegistrationChoice();
+                window.location.href = '/guide-registration.html';
             });
             
             // Registration form submission
