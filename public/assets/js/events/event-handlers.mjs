@@ -331,11 +331,16 @@ function openTouristRegistration() {
 
 // Open guide registration
 function openGuideRegistration() {
-    console.log('Guide registration selected');
+    console.log('🔄 Guide registration selected');
     
     // Get the form container and original form
     const formContainer = document.getElementById('registrationFormContainer');
     const originalForm = document.getElementById('detailedGuideRegistrationForm');
+    
+    console.log('📋 Form elements check:', {
+        formContainer: !!formContainer,
+        originalForm: !!originalForm
+    });
     
     if (formContainer && originalForm) {
         // Clear choice content and show registration form
@@ -344,18 +349,23 @@ function openGuideRegistration() {
         formContainer.style.display = 'block';
         originalForm.style.display = 'block';
         
-        // Initialize form handlers after form is shown
-        setTimeout(() => {
+        console.log('✅ Form displayed, initializing handlers...');
+        
+        // Initialize form handlers immediately instead of timeout
+        try {
             initializeRegistrationFormHandlers();
             handleGuideRegistrationSubmit();
-        }, 100);
+            console.log('✅ All handlers initialized successfully');
+        } catch (error) {
+            console.error('❌ Error initializing handlers:', error);
+        }
         
         // Scroll to the form smoothly
         setTimeout(() => {
             formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 200);
     } else {
-        console.warn('Registration container or form not found');
+        console.warn('⚠️ Registration container or form not found');
         alert('登録フォームが見つかりません。');
     }
 }
