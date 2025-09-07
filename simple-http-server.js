@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 const PORT = process.env.PORT || 5000;
-const HOST = '0.0.0.0';
+const HOST = '0.0.0.0'; // Ensure external accessibility
 
 const server = http.createServer((req, res) => {
   console.log(`Request: ${req.method} ${req.url}`);
