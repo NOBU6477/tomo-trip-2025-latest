@@ -1137,17 +1137,28 @@
                                 
                                 <!-- 身分証明書アップロード -->
                                 <h5 class="mb-3 text-success"><i class="bi bi-card-checklist me-2"></i>身分証明書</h5>
+                                
+                                <!-- 証明書タイプ選択 -->
+                                <div class="form-floating mb-3">
+                                    <select class="form-control" id="documentType" required onchange="updateDocumentUpload()">
+                                        <option value="">選択してください</option>
+                                        <option value="drivers_license">運転免許証（表面・裏面の2枚必須）</option>
+                                        <option value="passport">パスポート（写真ページ1枚）</option>
+                                        <option value="residence_card">住民票（1枚）</option>
+                                        <option value="insurance_card">健康保険証（表面・裏面の2枚必須）</option>
+                                        <option value="mynumber_card">マイナンバーカード（表面のみ1枚）</option>
+                                    </select>
+                                    <label for="documentType"><i class="bi bi-card-list me-1"></i>提出する証明書タイプ</label>
+                                </div>
+                                
+                                <!-- 動的証明書アップロード欄 -->
+                                <div id="documentUploadArea" style="display: none;">
+                                    <div class="alert alert-info" id="documentInstructions"></div>
+                                    <div class="row mb-3" id="documentUploadCards"></div>
+                                </div>
+                                
+                                <!-- プロフィール写真アップロード -->
                                 <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="card border-2 border-dashed border-secondary" style="min-height: 150px;">
-                                            <div class="card-body text-center">
-                                                <i class="bi bi-cloud-upload fs-1 text-secondary mb-2"></i>
-                                                <p class="text-muted">身分証明書をアップロード</p>
-                                                <input type="file" class="form-control" id="identityDocument" accept="image/*,.pdf" required>
-                                                <small class="text-muted">運転免許証、パスポート、住民票など<br>（JPG、PNG、PDF対応）</small>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div class="col-md-6">
                                         <div class="card border-2 border-dashed border-secondary" style="min-height: 150px;">
                                             <div class="card-body text-center">
@@ -1162,14 +1173,7 @@
                                 
                                 <!-- 画像プレビューエリア -->
                                 <div class="row mb-3" id="imagePreviewArea" style="display: none;">
-                                    <div class="col-md-6">
-                                        <div class="card">
-                                            <div class="card-body text-center">
-                                                <h6 class="card-title">身分証明書プレビュー</h6>
-                                                <img id="identityPreview" class="img-fluid" style="max-height: 200px; border-radius: 10px;">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div id="documentPreviewCards"></div>
                                     <div class="col-md-6">
                                         <div class="card">
                                             <div class="card-body text-center">
@@ -1207,8 +1211,9 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
-                                            <input type="number" class="form-control" id="detailedGuideHourlyRate" min="2000" max="10000" step="500" required>
-                                            <label for="detailedGuideHourlyRate"><i class="bi bi-currency-yen me-1"></i>希望時給（円）</label>
+                                            <input type="number" class="form-control" id="detailedGuideSessionRate" min="6000" max="25000" step="500" required>
+                                            <label for="detailedGuideSessionRate"><i class="bi bi-currency-yen me-1"></i>希望セッション料金（円）</label>
+                                            <small class="text-muted">1セッション（2〜3時間程度）の料金を設定してください（￥6,000〜）</small>
                                         </div>
                                     </div>
                                     <div class="col-md-6">

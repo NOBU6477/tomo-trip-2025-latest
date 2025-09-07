@@ -455,11 +455,122 @@ function initializeRegistrationFormHandlers() {
     }
 }
 
+// Dynamic document upload functionality
+function updateDocumentUpload() {
+    const documentType = document.getElementById('documentType').value;
+    const uploadArea = document.getElementById('documentUploadArea');
+    const uploadCards = document.getElementById('documentUploadCards');
+    const instructions = document.getElementById('documentInstructions');
+    
+    if (!documentType) {
+        uploadArea.style.display = 'none';
+        return;
+    }
+    
+    uploadArea.style.display = 'block';
+    uploadCards.innerHTML = '';
+    
+    const documentConfig = {
+        'drivers_license': {
+            count: 2,
+            names: ['表面', '裏面'],
+            instruction: '運転免許証の表面と裏面、両方の写真をアップロードしてください。文字が鮮明に読める状態で撮影してください。'
+        },
+        'passport': {
+            count: 1,
+            names: ['写真ページ'],
+            instruction: 'パスポートの写真とパーソナルデータが記載されているページの写真をアップロードしてください。'
+        },
+        'residence_card': {
+            count: 1,
+            names: ['住民票'],
+            instruction: '住民票の写真をアップロードしてください。発行から3ヶ月以内のものを使用してください。'
+        },
+        'insurance_card': {
+            count: 2,
+            names: ['表面', '裏面'],
+            instruction: '健康保険証の表面と裏面、両方の写真をアップロードしてください。'
+        },
+        'mynumber_card': {
+            count: 1,
+            names: ['表面のみ'],
+            instruction: 'マイナンバーカードの表面（写真面）のみをアップロードしてください。裏面（マイナンバー記載面）は不要です。'
+        }
+    };
+    
+    const config = documentConfig[documentType];
+    instructions.innerHTML = `<i class="bi bi-info-circle me-2"></i>${config.instruction}`;
+    
+    for (let i = 0; i < config.count; i++) {
+        const colClass = config.count === 1 ? 'col-md-6' : 'col-md-6';
+        uploadCards.innerHTML += `
+            <div class="${colClass}">
+                <div class="card border-2 border-dashed border-success" style="min-height: 150px;">
+                    <div class="card-body text-center">
+                        <i class="bi bi-cloud-upload fs-1 text-success mb-2"></i>
+                        <p class="text-muted">${config.names[i]}</p>
+                        <input type="file" class="form-control document-upload" id="document_${i}" accept="image/*,.pdf" required onchange="previewDocument(this, ${i})">
+                        <small class="text-muted">JPG、PNG、PDF対応</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// Document preview functionality
+function previewDocument(input, index) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewArea = document.getElementById('imagePreviewArea');
+            const previewCards = document.getElementById('documentPreviewCards');
+            
+            // Show preview area
+            previewArea.style.display = 'block';
+            
+            // Add or update preview card
+            let existingPreview = document.getElementById(`documentPreview_${index}`);
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+            
+            const previewCard = document.createElement('div');
+            previewCard.className = 'col-md-6';
+            previewCard.id = `documentPreview_${index}`;
+            previewCard.innerHTML = `
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h6 class="card-title">証明書プレビュー ${index + 1}</h6>
+                        <img src="${e.target.result}" class="img-fluid" style="max-height: 200px; border-radius: 10px;">
+                    </div>
+                </div>
+            `;
+            
+            previewCards.appendChild(previewCard);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Hide registration form functionality
+function hideRegistrationForm() {
+    const formContainer = document.getElementById('registrationFormContainer');
+    if (formContainer) {
+        formContainer.style.display = 'none';
+        formContainer.innerHTML = '';
+        console.log('✅ Registration form hidden');
+    }
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
 window.openTouristRegistration = openTouristRegistration;
 window.openGuideRegistration = openGuideRegistration;
+window.updateDocumentUpload = updateDocumentUpload;
+window.previewDocument = previewDocument;
+window.hideRegistrationForm = hideRegistrationForm;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
