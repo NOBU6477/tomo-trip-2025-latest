@@ -374,38 +374,104 @@ function openGuideRegistration() {
 function initializeRegistrationFormHandlers() {
     console.log('🔄 Initializing registration form handlers...');
     
-    // Wait a moment for DOM to be fully ready
-    setTimeout(() => {
-        // Find all important elements first
-        const sendCodeBtn = document.getElementById('sendVerificationCode');
-        const verifyCodeBtn = document.getElementById('verifyPhoneCode');
-        const phoneInput = document.getElementById('detailedGuidePhone');
-        const codeInput = document.getElementById('verificationCode');
-        const statusSpan = document.getElementById('phoneVerificationStatus');
-        
-        // Find cancel buttons (all possible methods)
-        const cancelButtons = [
-            ...document.querySelectorAll('button[onclick*="hideRegistrationForm"]'),
-            ...document.querySelectorAll('button:contains("キャンセル")'),
-            ...document.querySelectorAll('button[type="button"]')
-        ].filter(btn => btn && btn.textContent && btn.textContent.includes('キャンセル'));
-        
-        console.log('📞 Form elements found:', {
-            sendCodeBtn: !!sendCodeBtn,
-            verifyCodeBtn: !!verifyCodeBtn,
-            phoneInput: !!phoneInput,
-            codeInput: !!codeInput,
-            statusSpan: !!statusSpan,
-            cancelButtons: cancelButtons.length,
-            cancelButtonTexts: cancelButtons.map(btn => btn.textContent.trim())
-        });
-        
-        // Setup ALL the handlers
-        setupCancelButtons(cancelButtons);
-        setupPhoneVerification(sendCodeBtn, verifyCodeBtn, phoneInput, codeInput, statusSpan);
-        setupFileUploads();
-        
-    }, 50);
+    // Get elements directly - no timeout, no complex selectors
+    const sendCodeBtn = document.getElementById('sendVerificationCode');
+    const verifyCodeBtn = document.getElementById('verifyPhoneCode');
+    const phoneInput = document.getElementById('detailedGuidePhone');
+    const codeInput = document.getElementById('verificationCode');
+    const statusSpan = document.getElementById('phoneVerificationStatus');
+    
+    console.log('🔍 Elements check:', {
+        sendCodeBtn: !!sendCodeBtn,
+        verifyCodeBtn: !!verifyCodeBtn,
+        phoneInput: !!phoneInput,
+        codeInput: !!codeInput,
+        statusSpan: !!statusSpan
+    });
+
+    // Setup phone verification - SIMPLE AND DIRECT
+    if (sendCodeBtn && phoneInput) {
+        console.log('📞 Setting up send code button');
+        sendCodeBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('📞 Send code button clicked!');
+            
+            const phone = phoneInput.value.trim();
+            if (!phone) {
+                alert('電話番号を入力してください');
+                return;
+            }
+            
+            // Send verification code simulation
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
+            
+            setTimeout(() => {
+                sendCodeBtn.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
+                if (statusSpan) {
+                    statusSpan.textContent = '認証コードを送信しました';
+                    statusSpan.className = 'text-success ms-3';
+                }
+                if (codeInput) codeInput.disabled = false;
+                if (verifyCodeBtn) verifyCodeBtn.disabled = false;
+                console.log('✅ Code sent successfully');
+            }, 2000);
+        };
+        console.log('✅ Send code handler attached');
+    }
+
+    if (verifyCodeBtn && codeInput) {
+        console.log('🔐 Setting up verify button');
+        verifyCodeBtn.onclick = function(e) {
+            e.preventDefault();
+            console.log('🔐 Verify button clicked!');
+            
+            const code = codeInput.value.trim();
+            if (!code || code.length !== 6) {
+                alert('6桁の認証コードを入力してください');
+                return;
+            }
+            
+            // Verification simulation
+            verifyCodeBtn.disabled = true;
+            verifyCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>認証中...';
+            
+            setTimeout(() => {
+                verifyCodeBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                verifyCodeBtn.className = 'btn btn-success';
+                
+                if (statusSpan) {
+                    statusSpan.textContent = '電話番号の認証が完了しました';
+                    statusSpan.className = 'text-success ms-3';
+                }
+                if (phoneInput) {
+                    phoneInput.style.backgroundColor = '#d4edda';
+                    phoneInput.setAttribute('data-verified', 'true');
+                }
+                if (codeInput) codeInput.style.backgroundColor = '#d4edda';
+                
+                console.log('✅ Phone verification completed');
+            }, 1500);
+        };
+        console.log('✅ Verify handler attached');
+    }
+
+    // Setup cancel buttons - SIMPLE DIRECT APPROACH
+    const cancelButtons = document.querySelectorAll('button');
+    cancelButtons.forEach(btn => {
+        if (btn.textContent && btn.textContent.includes('キャンセル')) {
+            console.log('🛑 Found cancel button:', btn.textContent.trim());
+            btn.onclick = function(e) {
+                e.preventDefault();
+                console.log('❌ Cancel button clicked!');
+                hideRegistrationForm();
+            };
+            console.log('✅ Cancel handler attached');
+        }
+    });
+
+    // File uploads
+    setupFileUploads();
 }
 
 // Setup cancel button handlers
