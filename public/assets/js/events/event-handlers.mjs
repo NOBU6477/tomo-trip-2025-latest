@@ -362,6 +362,8 @@ function openGuideRegistration() {
 
 // Add phone verification and file upload handlers
 function initializeRegistrationFormHandlers() {
+    console.log('🔄 Initializing registration form handlers...');
+    
     // Phone verification handlers
     const sendCodeBtn = document.getElementById('sendVerificationCode');
     const verifyCodeBtn = document.getElementById('verifyPhoneCode');
@@ -369,8 +371,21 @@ function initializeRegistrationFormHandlers() {
     const codeInput = document.getElementById('verificationCode');
     const statusSpan = document.getElementById('phoneVerificationStatus');
     
+    console.log('📞 Phone verification elements found:', {
+        sendCodeBtn: !!sendCodeBtn,
+        verifyCodeBtn: !!verifyCodeBtn,
+        phoneInput: !!phoneInput,
+        codeInput: !!codeInput,
+        statusSpan: !!statusSpan
+    });
+    
     if (sendCodeBtn && phoneInput) {
-        sendCodeBtn.addEventListener('click', function() {
+        // Remove existing event listeners by cloning the node
+        const newSendCodeBtn = sendCodeBtn.cloneNode(true);
+        sendCodeBtn.parentNode.replaceChild(newSendCodeBtn, sendCodeBtn);
+        
+        newSendCodeBtn.addEventListener('click', function() {
+            console.log('📞 Send verification code button clicked');
             const phone = phoneInput.value.trim();
             if (!phone) {
                 alert('電話番号を入力してください');
@@ -378,22 +393,34 @@ function initializeRegistrationFormHandlers() {
             }
             
             // Simulate sending verification code
-            sendCodeBtn.disabled = true;
-            sendCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
+            newSendCodeBtn.disabled = true;
+            newSendCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
             
             setTimeout(() => {
-                sendCodeBtn.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
-                statusSpan.textContent = '認証コードを送信しました';
-                statusSpan.className = 'text-success ms-3';
+                newSendCodeBtn.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
+                if (statusSpan) {
+                    statusSpan.textContent = '認証コードを送信しました';
+                    statusSpan.className = 'text-success ms-3';
+                }
                 
                 if (codeInput) codeInput.disabled = false;
                 if (verifyCodeBtn) verifyCodeBtn.disabled = false;
+                
+                console.log('✅ Verification code sent successfully');
             }, 2000);
         });
+        console.log('✅ Send code button event listener attached');
+    } else {
+        console.warn('⚠️ Send code button or phone input not found');
     }
     
     if (verifyCodeBtn && codeInput) {
-        verifyCodeBtn.addEventListener('click', function() {
+        // Remove existing event listeners by cloning the node
+        const newVerifyCodeBtn = verifyCodeBtn.cloneNode(true);
+        verifyCodeBtn.parentNode.replaceChild(newVerifyCodeBtn, verifyCodeBtn);
+        
+        newVerifyCodeBtn.addEventListener('click', function() {
+            console.log('🔐 Verify code button clicked');
             const code = codeInput.value.trim();
             if (!code || code.length !== 6) {
                 alert('6桁の認証コードを入力してください');
@@ -401,22 +428,29 @@ function initializeRegistrationFormHandlers() {
             }
             
             // Simulate verification
-            verifyCodeBtn.disabled = true;
-            verifyCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>認証中...';
+            newVerifyCodeBtn.disabled = true;
+            newVerifyCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>認証中...';
             
             setTimeout(() => {
-                verifyCodeBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
-                verifyCodeBtn.className = 'btn btn-success';
-                statusSpan.textContent = '電話番号の認証が完了しました';
-                statusSpan.className = 'text-success ms-3';
+                newVerifyCodeBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                newVerifyCodeBtn.className = 'btn btn-success';
+                if (statusSpan) {
+                    statusSpan.textContent = '電話番号の認証が完了しました';
+                    statusSpan.className = 'text-success ms-3';
+                }
                 
                 phoneInput.style.backgroundColor = '#d4edda';
                 codeInput.style.backgroundColor = '#d4edda';
                 
                 // Mark phone as verified for form submission
                 phoneInput.setAttribute('data-verified', 'true');
+                
+                console.log('✅ Phone verification completed successfully');
             }, 1500);
         });
+        console.log('✅ Verify code button event listener attached');
+    } else {
+        console.warn('⚠️ Verify code button or code input not found');
     }
     
     // File upload preview handlers
