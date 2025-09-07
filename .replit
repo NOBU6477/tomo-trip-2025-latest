@@ -29,13 +29,13 @@ args = "TomoTripWebApp"
 name = "TomoTripWebApp"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node simple-http-server.js"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [nix]
 channel = "stable-25_05"
