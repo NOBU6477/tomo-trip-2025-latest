@@ -530,8 +530,10 @@ function setupPhoneVerification(sendCodeBtn, verifyCodeBtn, phoneInput, codeInpu
     } else {
         console.warn('⚠️ Verify code button or code input not found');
     }
-    
-    // File upload preview handlers
+}
+
+// Setup file upload handlers
+function setupFileUploads() {
     const identityUpload = document.getElementById('identityDocument');
     const profileUpload = document.getElementById('profilePhoto');
     const previewArea = document.getElementById('imagePreviewArea');
