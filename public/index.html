@@ -835,6 +835,11 @@
         </div>
     </nav>
 
+    <!-- Registration Form Container (right below the nav) -->
+    <div id="registrationFormContainer" style="display: none;">
+        <!-- Form will be inserted here dynamically -->
+    </div>
+
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
@@ -2052,9 +2057,7 @@
         window.showRegistrationChoice = function showRegistrationChoice() {
             console.log('🎯 showRegistrationChoice function called');
             try {
-                // First show the choice modal, don't directly show form
-                
-                // Fallback: Remove any existing modals first
+                // Remove any existing modals first
                 const existingModal = document.querySelector('.registration-choice-modal');
                 if (existingModal) {
                     existingModal.remove();
@@ -2162,10 +2165,38 @@
                 modal.hide();
             }
             
-            // Redirect to detailed guide registration page
-            setTimeout(() => {
-                window.location.href = 'guide-registration.html';
-            }, 300);
+            console.log('Guide registration selected');
+            
+            // Show the registration form container right below the navigation
+            const formContainer = document.getElementById('registrationFormContainer');
+            const originalForm = document.getElementById('detailedGuideRegistrationForm');
+            
+            if (formContainer && originalForm) {
+                // Move the form to the container below the nav
+                formContainer.appendChild(originalForm);
+                formContainer.style.display = 'block';
+                originalForm.style.display = 'block';
+                
+                // Scroll to the form smoothly
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 400);
+            } else {
+                console.warn('Registration container or form not found');
+                alert('登録フォームが見つかりません。');
+            }
+        }
+
+        // Hide registration form
+        window.hideRegistrationForm = function() {
+            const formContainer = document.getElementById('registrationFormContainer');
+            if (formContainer) {
+                formContainer.style.display = 'none';
+            }
+            const originalForm = document.getElementById('detailedGuideRegistrationForm');
+            if (originalForm) {
+                originalForm.style.display = 'none';
+            }
         }
 
         // Setup dropdown listeners
