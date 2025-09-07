@@ -211,19 +211,12 @@ function setupRegistrationButtonEvents() {
             e.preventDefault();
             console.log('Registration button clicked!');
             
-            // Get showRegistrationChoice function from global scope
+            // Always show choice modal first
             if (typeof window.showRegistrationChoice === 'function') {
                 window.showRegistrationChoice();
             } else {
-                // Fallback: show the form directly
-                const registrationForm = document.getElementById('detailedGuideRegistrationForm');
-                if (registrationForm) {
-                    registrationForm.style.display = 'block';
-                    console.log('Registration form displayed');
-                } else {
-                    console.error('Registration form not found');
-                    alert('登録フォームが見つかりません。ページを再読み込みしてください。');
-                }
+                console.error('showRegistrationChoice function not found');
+                alert('登録選択画面が見つかりません。ページを再読み込みしてください。');
             }
         });
         console.log('✅ Registration button event listener added');
