@@ -773,6 +773,141 @@ function saveGuidePassword(guideId, password) {
     localStorage.setItem('guideCredentials', JSON.stringify(guideCredentials));
 }
 
+// Profile photo preview functionality
+function previewProfilePhoto(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewCard = document.getElementById('profilePhotoPreviewCard');
+            const preview = document.getElementById('profilePhotoPreview');
+            
+            if (preview && previewCard) {
+                preview.src = e.target.result;
+                previewCard.style.display = 'block';
+                
+                // Update guide card preview if it's visible
+                if (document.getElementById('guideCardPreviewArea').style.display !== 'none') {
+                    updateGuideCardPreview();
+                }
+            }
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Show guide card preview
+function showGuideCardPreview() {
+    const previewArea = document.getElementById('guideCardPreviewArea');
+    if (previewArea) {
+        previewArea.style.display = 'block';
+        updateGuideCardPreview();
+        
+        // Scroll to preview
+        setTimeout(() => {
+            previewArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 200);
+    }
+}
+
+// Update guide card preview with current form data
+function updateGuideCardPreview() {
+    const cardPreview = document.getElementById('guideCardPreview');
+    if (!cardPreview) return;
+    
+    // Get form data
+    const name = document.getElementById('detailedGuideName')?.value || '山田太郎';
+    const age = document.getElementById('detailedGuideAge')?.value || '28';
+    const introduction = document.getElementById('detailedGuideIntroduction')?.value || 'こんにちは！地元を愛するガイドです。';
+    const specialties = document.getElementById('detailedGuideSpecialties')?.value || '観光案内、文化体験';
+    const sessionRate = document.getElementById('detailedGuideSessionRate')?.value || '8000';
+    const availability = document.getElementById('detailedGuideAvailability')?.value || 'both';
+    
+    // Get languages
+    const languageSelect = document.getElementById('detailedGuideLanguages');
+    const selectedLanguages = languageSelect ? Array.from(languageSelect.selectedOptions).map(option => option.text) : ['日本語', '英語'];
+    const languageText = selectedLanguages.length > 0 ? selectedLanguages.join('、') : '日本語、英語';
+    
+    // Get profile photo
+    const profilePhotoPreview = document.getElementById('profilePhotoPreview');
+    const profilePhotoSrc = profilePhotoPreview?.src || 'https://via.placeholder.com/300x200/20c997/white?text=プロフィール写真';
+    
+    // Generate availability text
+    const availabilityText = {
+        'weekdays': '平日のみ',
+        'weekends': '週末のみ',
+        'both': '平日・週末対応可能'
+    }[availability] || '要相談';
+    
+    // Create guide card HTML
+    cardPreview.innerHTML = `
+        <div class="position-relative">
+            <img src="${profilePhotoSrc}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="${name}のプロフィール写真">
+            <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-success fs-6">¥${parseInt(sessionRate).toLocaleString()}/セッション</span>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h5 class="card-title mb-1 fw-bold">${name} (${age}歳)</h5>
+                    <div class="text-muted small mb-2">
+                        <i class="bi bi-geo-alt me-1"></i>東京都内
+                        <span class="ms-3"><i class="bi bi-clock me-1"></i>${availabilityText}</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="d-flex align-items-center">
+                        <span class="text-warning me-1">★★★★★</span>
+                        <span class="small text-muted">(4.8)</span>
+                    </div>
+                    <small class="text-muted">12件のレビュー</small>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <h6 class="fw-bold text-primary mb-2">
+                    <i class="bi bi-chat-dots me-2"></i>自己紹介
+                </h6>
+                <p class="text-muted small mb-0" style="line-height: 1.5;">${introduction}</p>
+            </div>
+            
+            <div class="mb-3">
+                <h6 class="fw-bold text-success mb-2">
+                    <i class="bi bi-star me-2"></i>得意分野
+                </h6>
+                <p class="text-muted small mb-0">${specialties}</p>
+            </div>
+            
+            <div class="mb-3">
+                <h6 class="fw-bold text-info mb-2">
+                    <i class="bi bi-translate me-2"></i>対応言語
+                </h6>
+                <div class="d-flex flex-wrap gap-1">
+                    ${selectedLanguages.map(lang => `<span class="badge bg-light text-dark border">${lang}</span>`).join('')}
+                </div>
+            </div>
+            
+            <div class="d-grid gap-2 mt-4">
+                <button class="btn btn-primary">
+                    <i class="bi bi-calendar-check me-2"></i>予約する
+                </button>
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button class="btn btn-outline-danger btn-sm w-100">
+                            <i class="bi bi-heart me-1"></i>お気に入り
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-info btn-sm w-100">
+                            <i class="bi bi-graph-up me-1"></i>比較
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
@@ -783,6 +918,9 @@ window.previewDocument = previewDocument;
 window.hideRegistrationForm = hideRegistrationForm;
 window.completeRegistration = completeRegistration;
 window.copyToClipboard = copyToClipboard;
+window.previewProfilePhoto = previewProfilePhoto;
+window.showGuideCardPreview = showGuideCardPreview;
+window.updateGuideCardPreview = updateGuideCardPreview;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
