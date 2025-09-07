@@ -1071,6 +1071,8 @@
                                     </div>
                                 </div>
                                 
+                                <!-- 電話認証セクション -->
+                                <h5 class="mb-3 text-success"><i class="bi bi-telephone-fill me-2"></i>電話認証</h5>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
@@ -1078,6 +1080,28 @@
                                             <label for="detailedGuidePhone"><i class="bi bi-telephone me-1"></i>電話番号</label>
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-outline-success w-100" id="sendVerificationCode" style="height: 58px;">
+                                            <i class="bi bi-send me-1"></i>認証コード送信
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="verificationCode" placeholder="認証コード" maxlength="6">
+                                            <label for="verificationCode"><i class="bi bi-shield-check me-1"></i>認証コード</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <button type="button" class="btn btn-success" id="verifyPhoneCode" disabled>
+                                            <i class="bi bi-check-circle me-1"></i>電話番号を認証する
+                                        </button>
+                                        <span id="phoneVerificationStatus" class="text-muted ms-3"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating mb-3">
                                             <select class="form-control" id="detailedGuideGender" required>
@@ -1111,6 +1135,51 @@
                                     </div>
                                 </div>
                                 
+                                <!-- 身分証明書アップロード -->
+                                <h5 class="mb-3 text-success"><i class="bi bi-card-checklist me-2"></i>身分証明書</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="card border-2 border-dashed border-secondary" style="min-height: 150px;">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-cloud-upload fs-1 text-secondary mb-2"></i>
+                                                <p class="text-muted">身分証明書をアップロード</p>
+                                                <input type="file" class="form-control" id="identityDocument" accept="image/*,.pdf" required>
+                                                <small class="text-muted">運転免許証、パスポート、住民票など<br>（JPG、PNG、PDF対応）</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card border-2 border-dashed border-secondary" style="min-height: 150px;">
+                                            <div class="card-body text-center">
+                                                <i class="bi bi-person-square fs-1 text-secondary mb-2"></i>
+                                                <p class="text-muted">プロフィール写真</p>
+                                                <input type="file" class="form-control" id="profilePhoto" accept="image/*" required>
+                                                <small class="text-muted">顔がはっきり写った写真<br>（JPG、PNG対応）</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 画像プレビューエリア -->
+                                <div class="row mb-3" id="imagePreviewArea" style="display: none;">
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">身分証明書プレビュー</h6>
+                                                <img id="identityPreview" class="img-fluid" style="max-height: 200px; border-radius: 10px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body text-center">
+                                                <h6 class="card-title">プロフィール写真プレビュー</h6>
+                                                <img id="profilePreview" class="img-fluid" style="max-height: 200px; border-radius: 10px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-floating mb-3">
                                     <select class="form-control" id="detailedGuideLanguages" multiple required style="min-height: 120px;">
                                         <option value="japanese">日本語</option>
@@ -1119,6 +1188,8 @@
                                         <option value="korean">韓国語</option>
                                         <option value="spanish">スペイン語</option>
                                         <option value="french">フランス語</option>
+                                        <option value="german">ドイツ語</option>
+                                        <option value="italian">イタリア語</option>
                                     </select>
                                     <label for="detailedGuideLanguages"><i class="bi bi-translate me-1"></i>対応言語（複数選択可）</label>
                                 </div>
@@ -2196,6 +2267,138 @@
             const originalForm = document.getElementById('detailedGuideRegistrationForm');
             if (originalForm) {
                 originalForm.style.display = 'none';
+            }
+        }
+        
+        // Add phone verification and file upload handlers
+        function initializeRegistrationFormHandlers() {
+            // Phone verification handlers
+            const sendCodeBtn = document.getElementById('sendVerificationCode');
+            const verifyCodeBtn = document.getElementById('verifyPhoneCode');
+            const phoneInput = document.getElementById('detailedGuidePhone');
+            const codeInput = document.getElementById('verificationCode');
+            const statusSpan = document.getElementById('phoneVerificationStatus');
+            
+            if (sendCodeBtn && phoneInput) {
+                sendCodeBtn.addEventListener('click', function() {
+                    const phone = phoneInput.value.trim();
+                    if (!phone) {
+                        alert('電話番号を入力してください');
+                        return;
+                    }
+                    
+                    // Simulate sending verification code
+                    sendCodeBtn.disabled = true;
+                    sendCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
+                    
+                    setTimeout(() => {
+                        sendCodeBtn.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
+                        statusSpan.textContent = '認証コードを送信しました';
+                        statusSpan.className = 'text-success ms-3';
+                        
+                        if (codeInput) codeInput.disabled = false;
+                        if (verifyCodeBtn) verifyCodeBtn.disabled = false;
+                    }, 2000);
+                });
+            }
+            
+            if (verifyCodeBtn && codeInput) {
+                verifyCodeBtn.addEventListener('click', function() {
+                    const code = codeInput.value.trim();
+                    if (!code || code.length !== 6) {
+                        alert('6桁の認証コードを入力してください');
+                        return;
+                    }
+                    
+                    // Simulate verification
+                    verifyCodeBtn.disabled = true;
+                    verifyCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>認証中...';
+                    
+                    setTimeout(() => {
+                        verifyCodeBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                        verifyCodeBtn.className = 'btn btn-success';
+                        statusSpan.textContent = '電話番号の認証が完了しました';
+                        statusSpan.className = 'text-success ms-3';
+                        
+                        phoneInput.style.backgroundColor = '#d4edda';
+                        codeInput.style.backgroundColor = '#d4edda';
+                    }, 1500);
+                });
+            }
+            
+            // File upload preview handlers
+            const identityUpload = document.getElementById('identityDocument');
+            const profileUpload = document.getElementById('profilePhoto');
+            const previewArea = document.getElementById('imagePreviewArea');
+            
+            if (identityUpload) {
+                identityUpload.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const preview = document.getElementById('identityPreview');
+                            if (preview) {
+                                preview.src = e.target.result;
+                                if (previewArea) previewArea.style.display = 'block';
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            if (profileUpload) {
+                profileUpload.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const preview = document.getElementById('profilePreview');
+                            if (preview) {
+                                preview.src = e.target.result;
+                                if (previewArea) previewArea.style.display = 'block';
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+        
+        // Initialize handlers when registration form is shown
+        window.openGuideRegistration = function() {
+            // Close choice modal
+            const choiceModal = document.querySelector('.modal.show');
+            if (choiceModal) {
+                const modal = bootstrap.Modal.getInstance(choiceModal);
+                modal.hide();
+            }
+            
+            console.log('Guide registration selected');
+            
+            // Show the registration form container right below the navigation
+            const formContainer = document.getElementById('registrationFormContainer');
+            const originalForm = document.getElementById('detailedGuideRegistrationForm');
+            
+            if (formContainer && originalForm) {
+                // Move the form to the container below the nav
+                formContainer.appendChild(originalForm);
+                formContainer.style.display = 'block';
+                originalForm.style.display = 'block';
+                
+                // Initialize form handlers after form is shown
+                setTimeout(() => {
+                    initializeRegistrationFormHandlers();
+                }, 100);
+                
+                // Scroll to the form smoothly
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 400);
+            } else {
+                console.warn('Registration container or form not found');
+                alert('登録フォームが見つかりません。');
             }
         }
 
