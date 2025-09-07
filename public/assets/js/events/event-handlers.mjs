@@ -364,19 +364,39 @@ function openGuideRegistration() {
 function initializeRegistrationFormHandlers() {
     console.log('🔄 Initializing registration form handlers...');
     
-    // Phone verification handlers
+    // Find all important elements first
     const sendCodeBtn = document.getElementById('sendVerificationCode');
     const verifyCodeBtn = document.getElementById('verifyPhoneCode');
     const phoneInput = document.getElementById('detailedGuidePhone');
     const codeInput = document.getElementById('verificationCode');
     const statusSpan = document.getElementById('phoneVerificationStatus');
     
-    console.log('📞 Phone verification elements found:', {
+    // Find cancel buttons (both possible selectors)
+    const cancelButtons = document.querySelectorAll('button[onclick*="hideRegistrationForm"]');
+    
+    console.log('📞 Form elements found:', {
         sendCodeBtn: !!sendCodeBtn,
         verifyCodeBtn: !!verifyCodeBtn,
         phoneInput: !!phoneInput,
         codeInput: !!codeInput,
-        statusSpan: !!statusSpan
+        statusSpan: !!statusSpan,
+        cancelButtons: cancelButtons.length
+    });
+
+    // Setup cancel button handlers first
+    cancelButtons.forEach((cancelBtn, index) => {
+        console.log(`🔄 Setting up cancel button ${index + 1}`);
+        // Remove onclick attribute and add event listener
+        cancelBtn.removeAttribute('onclick');
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+        
+        newCancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('❌ Cancel button clicked');
+            hideRegistrationForm();
+        });
+        console.log(`✅ Cancel button ${index + 1} event listener attached`);
     });
     
     if (sendCodeBtn && phoneInput) {
