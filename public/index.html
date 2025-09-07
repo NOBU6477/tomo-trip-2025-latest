@@ -2052,13 +2052,7 @@
         window.showRegistrationChoice = function showRegistrationChoice() {
             console.log('🎯 showRegistrationChoice function called');
             try {
-                // Show the guide registration form directly below the button
-                const registrationForm = document.getElementById('detailedGuideRegistrationForm');
-                if (registrationForm) {
-                    registrationForm.style.display = 'block';
-                    // No scroll - show directly in place
-                    return;
-                }
+                // First show the choice modal, don't directly show form
                 
                 // Fallback: Remove any existing modals first
                 const existingModal = document.querySelector('.registration-choice-modal');
