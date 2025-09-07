@@ -389,12 +389,24 @@ function initializeRegistrationFormHandlers() {
         statusSpan: !!statusSpan
     });
 
-    // Setup phone verification - SIMPLE AND DIRECT
+    // Setup phone verification - MULTIPLE EVENT METHODS FOR RELIABILITY
     if (sendCodeBtn && phoneInput) {
-        console.log('📞 Setting up send code button');
-        sendCodeBtn.onclick = function(e) {
+        console.log('📞 Setting up send code button with multiple event methods');
+        
+        // Test immediately if button is clickable
+        console.log('🔍 Testing button accessibility:', {
+            id: sendCodeBtn.id,
+            className: sendCodeBtn.className,
+            disabled: sendCodeBtn.disabled,
+            style: sendCodeBtn.style.display,
+            offsetParent: !!sendCodeBtn.offsetParent
+        });
+        
+        // Define the click handler function
+        const sendCodeHandler = function(e) {
+            console.log('🎯 SEND CODE BUTTON ACTUALLY CLICKED!');
             e.preventDefault();
-            console.log('📞 Send code button clicked!');
+            e.stopPropagation();
             
             const phone = phoneInput.value.trim();
             if (!phone) {
@@ -417,14 +429,33 @@ function initializeRegistrationFormHandlers() {
                 console.log('✅ Code sent successfully');
             }, 2000);
         };
-        console.log('✅ Send code handler attached');
+        
+        // Set up multiple event listeners for maximum reliability
+        sendCodeBtn.onclick = sendCodeHandler;
+        sendCodeBtn.addEventListener('click', sendCodeHandler);
+        sendCodeBtn.addEventListener('touchstart', sendCodeHandler);
+        
+        // Add visual feedback on hover/touch
+        sendCodeBtn.addEventListener('mouseenter', () => console.log('🖱️ Mouse entered send code button'));
+        sendCodeBtn.addEventListener('touchstart', () => console.log('👆 Touch started on send code button'));
+        
+        console.log('✅ Send code handler attached with multiple methods');
     }
 
     if (verifyCodeBtn && codeInput) {
-        console.log('🔐 Setting up verify button');
-        verifyCodeBtn.onclick = function(e) {
+        console.log('🔐 Setting up verify button with multiple event methods');
+        
+        // Test button accessibility
+        console.log('🔍 Testing verify button accessibility:', {
+            id: verifyCodeBtn.id,
+            disabled: verifyCodeBtn.disabled,
+            offsetParent: !!verifyCodeBtn.offsetParent
+        });
+        
+        const verifyHandler = function(e) {
+            console.log('🎯 VERIFY BUTTON ACTUALLY CLICKED!');
             e.preventDefault();
-            console.log('🔐 Verify button clicked!');
+            e.stopPropagation();
             
             const code = codeInput.value.trim();
             if (!code || code.length !== 6) {
@@ -453,20 +484,44 @@ function initializeRegistrationFormHandlers() {
                 console.log('✅ Phone verification completed');
             }, 1500);
         };
-        console.log('✅ Verify handler attached');
+        
+        // Multiple event methods
+        verifyCodeBtn.onclick = verifyHandler;
+        verifyCodeBtn.addEventListener('click', verifyHandler);
+        verifyCodeBtn.addEventListener('touchstart', verifyHandler);
+        
+        console.log('✅ Verify handler attached with multiple methods');
     }
 
-    // Setup cancel buttons - SIMPLE DIRECT APPROACH
+    // Setup cancel buttons - MULTIPLE EVENT METHODS FOR RELIABILITY
     const cancelButtons = document.querySelectorAll('button');
     cancelButtons.forEach(btn => {
         if (btn.textContent && btn.textContent.includes('キャンセル')) {
             console.log('🛑 Found cancel button:', btn.textContent.trim());
-            btn.onclick = function(e) {
+            
+            // Test button accessibility
+            console.log('🔍 Testing cancel button accessibility:', {
+                text: btn.textContent.trim(),
+                disabled: btn.disabled,
+                offsetParent: !!btn.offsetParent
+            });
+            
+            const cancelHandler = function(e) {
+                console.log('🎯 CANCEL BUTTON ACTUALLY CLICKED!');
                 e.preventDefault();
-                console.log('❌ Cancel button clicked!');
+                e.stopPropagation();
                 hideRegistrationForm();
             };
-            console.log('✅ Cancel handler attached');
+            
+            // Multiple event methods for maximum reliability
+            btn.onclick = cancelHandler;
+            btn.addEventListener('click', cancelHandler);
+            btn.addEventListener('touchstart', cancelHandler);
+            
+            // Add hover feedback
+            btn.addEventListener('mouseenter', () => console.log('🖱️ Mouse entered cancel button'));
+            
+            console.log('✅ Cancel handler attached with multiple methods');
         }
     });
 
