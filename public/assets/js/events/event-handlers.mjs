@@ -837,7 +837,6 @@ function updateGuideCardPreview() {
     
     // Get form data
     const name = document.getElementById('detailedGuideName')?.value || '山田太郎';
-    const age = document.getElementById('detailedGuideAge')?.value || '28';
     const introduction = document.getElementById('detailedGuideIntroduction')?.value || 'こんにちは！地元を愛するガイドです。';
     const specialties = document.getElementById('detailedGuideSpecialties')?.value || '観光案内、文化体験';
     const sessionRate = document.getElementById('detailedGuideSessionRate')?.value || '8000';
@@ -870,7 +869,7 @@ function updateGuideCardPreview() {
         <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
-                    <h5 class="card-title mb-1 fw-bold">${name} (${age}歳)</h5>
+                    <h5 class="card-title mb-1 fw-bold">${name}</h5>
                     <div class="text-muted small mb-2">
                         <i class="bi bi-geo-alt me-1"></i>東京都内
                         <span class="ms-3"><i class="bi bi-clock me-1"></i>${availabilityText}</span>
@@ -936,7 +935,6 @@ function generateModalGuideCard() {
     
     // Get form data
     const name = document.getElementById('detailedGuideName')?.value || '山田太郎';
-    const age = document.getElementById('detailedGuideAge')?.value || '28';
     const introduction = document.getElementById('detailedGuideIntroduction')?.value || 'こんにちは！地元を愛するガイドです。';
     const specialties = document.getElementById('detailedGuideSpecialties')?.value || '観光案内、文化体験';
     const sessionRate = document.getElementById('detailedGuideSessionRate')?.value || '8000';
@@ -968,7 +966,7 @@ function generateModalGuideCard() {
         <div class="card-body p-3">
             <div class="d-flex justify-content-between align-items-start mb-2">
                 <div>
-                    <h6 class="card-title mb-1 fw-bold">${name} (${age}歳)</h6>
+                    <h6 class="card-title mb-1 fw-bold">${name}</h6>
                     <div class="text-muted small">
                         <i class="bi bi-geo-alt me-1"></i>東京都内
                         <span class="ms-2"><i class="bi bi-clock me-1"></i>${availabilityText}</span>
