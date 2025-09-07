@@ -673,6 +673,22 @@ function showRegistrationSuccessModal(guideId, guideName) {
                     </div>
                     
                     <hr class="my-4">
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3 text-center">あなたのガイドカードプレビュー</h6>
+                        <div class="border rounded-3 p-2" style="background-color: #f8f9fa;">
+                            <div id="modalGuideCardPreview" class="card shadow-sm border-0" style="border-radius: 10px; overflow: hidden; max-height: 300px; overflow-y: auto;">
+                                <!-- Guide card will be inserted here -->
+                            </div>
+                        </div>
+                        <div class="text-center mt-2">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                これが観光客に表示されるあなたのガイドカードです
+                            </small>
+                        </div>
+                    </div>
+                    
                     <div class="text-start">
                         <h6 class="fw-bold mb-2">次のステップ：</h6>
                         <ol class="small text-muted">
@@ -689,6 +705,11 @@ function showRegistrationSuccessModal(guideId, guideName) {
     document.body.appendChild(modal);
     const bootstrapModal = new bootstrap.Modal(modal);
     bootstrapModal.show();
+    
+    // Generate guide card for the modal after modal is shown
+    setTimeout(() => {
+        generateModalGuideCard();
+    }, 500);
     
     // Clean up when modal is hidden
     modal.addEventListener('hidden.bs.modal', function() {
@@ -908,6 +929,91 @@ function updateGuideCardPreview() {
     `;
 }
 
+// Generate guide card for success modal
+function generateModalGuideCard() {
+    const modalCardPreview = document.getElementById('modalGuideCardPreview');
+    if (!modalCardPreview) return;
+    
+    // Get form data
+    const name = document.getElementById('detailedGuideName')?.value || '山田太郎';
+    const age = document.getElementById('detailedGuideAge')?.value || '28';
+    const introduction = document.getElementById('detailedGuideIntroduction')?.value || 'こんにちは！地元を愛するガイドです。';
+    const specialties = document.getElementById('detailedGuideSpecialties')?.value || '観光案内、文化体験';
+    const sessionRate = document.getElementById('detailedGuideSessionRate')?.value || '8000';
+    const availability = document.getElementById('detailedGuideAvailability')?.value || 'both';
+    
+    // Get languages
+    const languageSelect = document.getElementById('detailedGuideLanguages');
+    const selectedLanguages = languageSelect ? Array.from(languageSelect.selectedOptions).map(option => option.text) : ['日本語', '英語'];
+    
+    // Get profile photo
+    const profilePhotoPreview = document.getElementById('profilePhotoPreview');
+    const profilePhotoSrc = profilePhotoPreview?.src || 'https://via.placeholder.com/300x150/20c997/white?text=プロフィール写真';
+    
+    // Generate availability text
+    const availabilityText = {
+        'weekdays': '平日のみ',
+        'weekends': '週末のみ',
+        'both': '平日・週末対応可能'
+    }[availability] || '要相談';
+    
+    // Create compact guide card HTML for modal
+    modalCardPreview.innerHTML = `
+        <div class="position-relative">
+            <img src="${profilePhotoSrc}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="${name}のプロフィール写真">
+            <div class="position-absolute top-0 end-0 m-2">
+                <span class="badge bg-success">¥${parseInt(sessionRate).toLocaleString()}/セッション</span>
+            </div>
+        </div>
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <h6 class="card-title mb-1 fw-bold">${name} (${age}歳)</h6>
+                    <div class="text-muted small">
+                        <i class="bi bi-geo-alt me-1"></i>東京都内
+                        <span class="ms-2"><i class="bi bi-clock me-1"></i>${availabilityText}</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="d-flex align-items-center">
+                        <span class="text-warning me-1">★★★★★</span>
+                        <span class="small text-muted">(4.8)</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-2">
+                <h6 class="fw-bold text-primary mb-1 small">
+                    <i class="bi bi-chat-dots me-1"></i>自己紹介
+                </h6>
+                <p class="text-muted small mb-0" style="line-height: 1.4;">${introduction}</p>
+            </div>
+            
+            <div class="mb-2">
+                <h6 class="fw-bold text-success mb-1 small">
+                    <i class="bi bi-star me-1"></i>得意分野
+                </h6>
+                <p class="text-muted small mb-0">${specialties}</p>
+            </div>
+            
+            <div class="mb-3">
+                <h6 class="fw-bold text-info mb-1 small">
+                    <i class="bi bi-translate me-1"></i>対応言語
+                </h6>
+                <div class="d-flex flex-wrap gap-1">
+                    ${selectedLanguages.map(lang => `<span class="badge bg-light text-dark border small">${lang}</span>`).join('')}
+                </div>
+            </div>
+            
+            <div class="d-grid">
+                <button class="btn btn-primary btn-sm">
+                    <i class="bi bi-calendar-check me-1"></i>予約する
+                </button>
+            </div>
+        </div>
+    `;
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
@@ -921,6 +1027,7 @@ window.copyToClipboard = copyToClipboard;
 window.previewProfilePhoto = previewProfilePhoto;
 window.showGuideCardPreview = showGuideCardPreview;
 window.updateGuideCardPreview = updateGuideCardPreview;
+window.generateModalGuideCard = generateModalGuideCard;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
