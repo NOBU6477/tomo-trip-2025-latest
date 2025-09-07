@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Replit-optimized server configuration
-const PORT = 5000;
-const HOST = '0.0.0.0';
+const PORT = process.env.PORT || process.env.REPLIT_PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0';
 
 console.log('🚀 Starting Replit-optimized server...');
 
