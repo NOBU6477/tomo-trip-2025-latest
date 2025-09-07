@@ -2048,8 +2048,8 @@
             });
         }
 
-        // Show registration choice modal
-        function showRegistrationChoice() {
+        // Show registration choice modal - make it globally available
+        window.showRegistrationChoice = function showRegistrationChoice() {
             console.log('🎯 showRegistrationChoice function called');
             try {
                 // Show the guide registration form directly below the button

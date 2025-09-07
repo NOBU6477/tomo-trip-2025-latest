@@ -10,6 +10,9 @@ export function setupEventListeners(state) {
     // Setup sponsor button events (CSP compliant)
     setupSponsorButtonEvents();
     
+    // Setup registration button events
+    setupRegistrationButtonEvents();
+    
     // Setup language switch buttons
     setupLanguageSwitchEvents();
     
@@ -198,6 +201,35 @@ function setupDataActionHandlers() {
         if (!element) return;
         handleFilterChange();
     });
+}
+
+// Setup registration button events
+function setupRegistrationButtonEvents() {
+    const regBtn = document.getElementById('registerBtn');
+    if (regBtn) {
+        regBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Registration button clicked!');
+            
+            // Get showRegistrationChoice function from global scope
+            if (typeof window.showRegistrationChoice === 'function') {
+                window.showRegistrationChoice();
+            } else {
+                // Fallback: show the form directly
+                const registrationForm = document.getElementById('detailedGuideRegistrationForm');
+                if (registrationForm) {
+                    registrationForm.style.display = 'block';
+                    console.log('Registration form displayed');
+                } else {
+                    console.error('Registration form not found');
+                    alert('登録フォームが見つかりません。ページを再読み込みしてください。');
+                }
+            }
+        });
+        console.log('✅ Registration button event listener added');
+    } else {
+        console.warn('Registration button not found');
+    }
     
     console.log('%cData-action handlers setup complete', 'color: #28a745;');
 }
