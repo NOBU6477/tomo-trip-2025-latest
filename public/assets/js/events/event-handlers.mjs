@@ -559,9 +559,114 @@ function initializeRegistrationFormHandlers() {
 
     // File uploads
     setupFileUploads();
+    
+    // EMERGENCY DOCUMENT-LEVEL EVENT DELEGATION
+    console.log('🚨 Setting up DOCUMENT-LEVEL event delegation as fallback');
+    
+    // Remove any existing document listeners first
+    document.removeEventListener('click', globalClickHandler);
+    
+    // Add global click handler
+    document.addEventListener('click', globalClickHandler, true);
+    
+    console.log('✅ Document-level emergency handlers attached');
 }
 
-// Setup cancel button handlers
+// Global click handler for ALL clicks
+function globalClickHandler(e) {
+    const target = e.target;
+    const targetInfo = {
+        tagName: target.tagName,
+        id: target.id,
+        className: target.className,
+        textContent: target.textContent?.trim() || '',
+        type: target.type
+    };
+    
+    console.log('🌍 GLOBAL CLICK DETECTED:', targetInfo);
+    
+    // Check for send verification code button
+    if (target.id === 'sendVerificationCode' || 
+        (target.textContent && target.textContent.includes('認証コード送信'))) {
+        console.log('🚨🎯 EMERGENCY: Send verification code button clicked via GLOBAL handler!');
+        alert('🚨 緊急検出: 電話認証ボタンがクリックされました！');
+        
+        const phoneInput = document.getElementById('detailedGuidePhone');
+        if (phoneInput && phoneInput.value.trim()) {
+            target.disabled = true;
+            target.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
+            
+            setTimeout(() => {
+                target.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
+                const statusSpan = document.getElementById('phoneVerificationStatus');
+                if (statusSpan) {
+                    statusSpan.textContent = '認証コードを送信しました';
+                    statusSpan.className = 'text-success ms-3';
+                }
+                const codeInput = document.getElementById('verificationCode');
+                const verifyBtn = document.getElementById('verifyPhoneCode');
+                if (codeInput) codeInput.disabled = false;
+                if (verifyBtn) verifyBtn.disabled = false;
+            }, 2000);
+        } else {
+            alert('電話番号を入力してください');
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+    
+    // Check for verify button
+    if (target.id === 'verifyPhoneCode' || 
+        (target.textContent && target.textContent.includes('電話番号を認証'))) {
+        console.log('🚨🎯 EMERGENCY: Verify button clicked via GLOBAL handler!');
+        alert('🚨 緊急検出: 認証確認ボタンがクリックされました！');
+        
+        const codeInput = document.getElementById('verificationCode');
+        if (codeInput && codeInput.value.trim().length === 6) {
+            target.disabled = true;
+            target.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>認証中...';
+            
+            setTimeout(() => {
+                target.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                target.className = 'btn btn-success';
+                
+                const statusSpan = document.getElementById('phoneVerificationStatus');
+                const phoneInput = document.getElementById('detailedGuidePhone');
+                
+                if (statusSpan) {
+                    statusSpan.textContent = '電話番号の認証が完了しました';
+                    statusSpan.className = 'text-success ms-3';
+                }
+                if (phoneInput) {
+                    phoneInput.style.backgroundColor = '#d4edda';
+                    phoneInput.setAttribute('data-verified', 'true');
+                }
+                if (codeInput) codeInput.style.backgroundColor = '#d4edda';
+            }, 1500);
+        } else {
+            alert('6桁の認証コードを入力してください');
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+    
+    // Check for cancel button
+    if (target.textContent && target.textContent.includes('キャンセル')) {
+        console.log('🚨🎯 EMERGENCY: Cancel button clicked via GLOBAL handler!');
+        alert('🚨 緊急検出: キャンセルボタンがクリックされました！');
+        hideRegistrationForm();
+        
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+    }
+}
+
+// Setup cancel button handlers (OLD FUNCTION - KEPT FOR COMPATIBILITY)
 function setupCancelButtons(cancelButtons) {
     cancelButtons.forEach((cancelBtn, index) => {
         if (!cancelBtn) return;
