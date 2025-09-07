@@ -628,19 +628,30 @@ function previewDocument(input, index) {
 
 // Hide registration form functionality
 function hideRegistrationForm() {
+    console.log('🛑 Hiding registration form...');
+    
     const formContainer = document.getElementById('registrationFormContainer');
     const guideCardPreviewArea = document.getElementById('guideCardPreviewArea');
     const profilePhotoPreviewCard = document.getElementById('profilePhotoPreviewCard');
+    const originalForm = document.getElementById('detailedGuideRegistrationForm');
     
+    // Reset form if it exists
+    if (originalForm) {
+        originalForm.reset();
+        console.log('🔄 Form reset');
+    }
+    
+    // Hide and clear form container
     if (formContainer) {
         formContainer.style.display = 'none';
         formContainer.innerHTML = '';
-        console.log('✅ Registration form hidden');
+        console.log('✅ Registration form container hidden and cleared');
     }
     
     // Hide guide card preview area
     if (guideCardPreviewArea) {
         guideCardPreviewArea.style.display = 'none';
+        console.log('✅ Guide card preview area hidden');
     }
     
     // Hide profile photo preview
