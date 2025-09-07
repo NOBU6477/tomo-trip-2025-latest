@@ -960,13 +960,23 @@ function hideRegistrationForm() {
             });
             console.log('🔄 Form reset manually');
         }
+        
+        // IMPORTANT: Move form back to its original location instead of deleting it
+        originalForm.style.display = 'none';
+        
+        // Find the original parent and move the form back
+        const originalParent = document.body; // Move to body as a safe location
+        if (originalForm.parentNode !== originalParent) {
+            originalParent.appendChild(originalForm);
+            console.log('🔄 Form moved back to original location');
+        }
     }
     
-    // Hide and clear form container
+    // Hide form container but don't clear innerHTML to preserve the form element
     if (formContainer) {
         formContainer.style.display = 'none';
-        formContainer.innerHTML = '';
-        console.log('✅ Registration form container hidden and cleared');
+        // Instead of innerHTML = '', just hide it
+        console.log('✅ Registration form container hidden');
     }
     
     // Hide guide card preview area
@@ -985,6 +995,8 @@ function hideRegistrationForm() {
     if (profilePhotoPreview) {
         profilePhotoPreview.src = '';
     }
+    
+    console.log('✅ hideRegistrationForm completed - form preserved for reuse');
 }
 
 // Generate unique guide ID
