@@ -2305,10 +2305,9 @@
                 modal.hide();
             }
             
-            // Open guide registration modal
+            // Redirect to detailed guide registration page
             setTimeout(() => {
-                const guideModal = new bootstrap.Modal(document.getElementById('guideRegistrationModal'));
-                guideModal.show();
+                window.location.href = 'guide-registration.html';
             }, 300);
         }
 
