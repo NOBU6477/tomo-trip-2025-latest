@@ -2226,13 +2226,11 @@
             console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${currentGuides.length} total`);
         }
 
-        // Initialize page
+        // Initialize page - manual event listeners (app-init.mjs handles main initialization)
         document.addEventListener('DOMContentLoaded', function() {
-            // Load registered guides and combine with default guides
-            updateGuideDisplay();
-            
-            // Event listeners
-            document.getElementById('searchBtn').addEventListener('click', filterGuides);
+            // Event listeners for search and filter functionality
+            const searchBtn = document.getElementById('searchBtn');
+            if (searchBtn) searchBtn.addEventListener('click', filterGuides);
             document.getElementById('resetBtn').addEventListener('click', resetFilters);
             
             // Add change event listeners for filters to enable real-time filtering
@@ -2246,18 +2244,18 @@
             if (priceFilter) priceFilter.addEventListener('change', filterGuides);
             if (keywordInput) keywordInput.addEventListener('input', filterGuides);
             
-            // Registration button event - show choice modal
-            const regBtn = document.getElementById('registerBtn');
-            if (regBtn) {
-                regBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    console.log('Registration button clicked!');
-                    showRegistrationChoice();
-                });
-            }
+            // Registration button event - show choice modal (handled by app-init.mjs)
+            // const regBtn = document.getElementById('registerBtn');
+            // if (regBtn) {
+            //     regBtn.addEventListener('click', function(e) {
+            //         e.preventDefault();
+            //         console.log('Registration button clicked!');
+            //         showRegistrationChoice();
+            //     });
+            // }
             
             // Initialize chat listeners
-            initializeChatListeners();
+            // initializeChatListeners(); // Handled by app-init.mjs
             
             // Registration form submission
             document.getElementById('registerSubmitBtn').addEventListener('click', function() {
@@ -5028,6 +5026,9 @@
         </div>
     </footer>
 
+    <!-- Main application initialization -->
+    <script type="module" src="/assets/js/app-init.mjs"></script>
+    
     <!-- Emergency button handlers for new tab compatibility -->
     <script type="module" src="/assets/js/emergency-buttons.mjs"></script>
 </body>
