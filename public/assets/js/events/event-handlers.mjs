@@ -389,22 +389,27 @@ function initializeRegistrationFormHandlers() {
         statusSpan: !!statusSpan
     });
 
-    // Setup phone verification - MULTIPLE EVENT METHODS FOR RELIABILITY
+    // Setup phone verification - AGGRESSIVE EVENT HANDLING
     if (sendCodeBtn && phoneInput) {
-        console.log('📞 Setting up send code button with multiple event methods');
+        console.log('📞 Setting up send code button with AGGRESSIVE event methods');
         
-        // Test immediately if button is clickable
-        console.log('🔍 Testing button accessibility:', {
+        // Test button state in detail
+        console.log('🔍 DETAILED button analysis:', {
             id: sendCodeBtn.id,
-            className: sendCodeBtn.className,
+            tagName: sendCodeBtn.tagName,
+            type: sendCodeBtn.type,
             disabled: sendCodeBtn.disabled,
-            style: sendCodeBtn.style.display,
-            offsetParent: !!sendCodeBtn.offsetParent
+            className: sendCodeBtn.className,
+            innerHTML: sendCodeBtn.innerHTML,
+            computedStyle: window.getComputedStyle(sendCodeBtn).pointerEvents,
+            offsetParent: !!sendCodeBtn.offsetParent,
+            clientRect: sendCodeBtn.getBoundingClientRect()
         });
         
-        // Define the click handler function
+        // AGGRESSIVE click handler
         const sendCodeHandler = function(e) {
-            console.log('🎯 SEND CODE BUTTON ACTUALLY CLICKED!');
+            console.log('🚨🎯 SEND CODE BUTTON DEFINITELY CLICKED! 🎯🚨');
+            alert('電話認証ボタンがクリックされました！'); // Visual confirmation
             e.preventDefault();
             e.stopPropagation();
             
@@ -430,16 +435,26 @@ function initializeRegistrationFormHandlers() {
             }, 2000);
         };
         
-        // Set up multiple event listeners for maximum reliability
+        // Remove ALL existing event listeners first
+        sendCodeBtn.removeAttribute('onclick');
+        
+        // Set up MULTIPLE aggressive event listeners
         sendCodeBtn.onclick = sendCodeHandler;
-        sendCodeBtn.addEventListener('click', sendCodeHandler);
+        sendCodeBtn.addEventListener('click', sendCodeHandler, true); // Use capture phase
+        sendCodeBtn.addEventListener('mousedown', sendCodeHandler);
         sendCodeBtn.addEventListener('touchstart', sendCodeHandler);
+        sendCodeBtn.addEventListener('pointerdown', sendCodeHandler);
         
-        // Add visual feedback on hover/touch
-        sendCodeBtn.addEventListener('mouseenter', () => console.log('🖱️ Mouse entered send code button'));
-        sendCodeBtn.addEventListener('touchstart', () => console.log('👆 Touch started on send code button'));
+        // Add debugging listeners
+        sendCodeBtn.addEventListener('mouseenter', () => console.log('🖱️ Mouse ENTERED send code button'));
+        sendCodeBtn.addEventListener('mouseover', () => console.log('🖱️ Mouse OVER send code button'));
+        sendCodeBtn.addEventListener('mousedown', () => console.log('🖱️ Mouse DOWN on send code button'));
         
-        console.log('✅ Send code handler attached with multiple methods');
+        // Force style to ensure clickability
+        sendCodeBtn.style.pointerEvents = 'auto';
+        sendCodeBtn.style.cursor = 'pointer';
+        
+        console.log('✅ AGGRESSIVE send code handler attached');
     }
 
     if (verifyCodeBtn && codeInput) {
@@ -493,35 +508,52 @@ function initializeRegistrationFormHandlers() {
         console.log('✅ Verify handler attached with multiple methods');
     }
 
-    // Setup cancel buttons - MULTIPLE EVENT METHODS FOR RELIABILITY
+    // Setup cancel buttons - AGGRESSIVE EVENT HANDLING
     const cancelButtons = document.querySelectorAll('button');
     cancelButtons.forEach(btn => {
         if (btn.textContent && btn.textContent.includes('キャンセル')) {
             console.log('🛑 Found cancel button:', btn.textContent.trim());
             
-            // Test button accessibility
-            console.log('🔍 Testing cancel button accessibility:', {
+            // Detailed button analysis
+            console.log('🔍 DETAILED cancel button analysis:', {
                 text: btn.textContent.trim(),
+                tagName: btn.tagName,
+                type: btn.type,
                 disabled: btn.disabled,
-                offsetParent: !!btn.offsetParent
+                className: btn.className,
+                computedStyle: window.getComputedStyle(btn).pointerEvents,
+                offsetParent: !!btn.offsetParent,
+                clientRect: btn.getBoundingClientRect()
             });
             
             const cancelHandler = function(e) {
-                console.log('🎯 CANCEL BUTTON ACTUALLY CLICKED!');
+                console.log('🚨🎯 CANCEL BUTTON DEFINITELY CLICKED! 🎯🚨');
+                alert('キャンセルボタンがクリックされました！'); // Visual confirmation
                 e.preventDefault();
                 e.stopPropagation();
                 hideRegistrationForm();
             };
             
-            // Multiple event methods for maximum reliability
+            // Remove existing event listeners
+            btn.removeAttribute('onclick');
+            
+            // AGGRESSIVE event setup
             btn.onclick = cancelHandler;
-            btn.addEventListener('click', cancelHandler);
+            btn.addEventListener('click', cancelHandler, true); // Use capture phase
+            btn.addEventListener('mousedown', cancelHandler);
             btn.addEventListener('touchstart', cancelHandler);
+            btn.addEventListener('pointerdown', cancelHandler);
             
-            // Add hover feedback
-            btn.addEventListener('mouseenter', () => console.log('🖱️ Mouse entered cancel button'));
+            // Debug listeners
+            btn.addEventListener('mouseenter', () => console.log('🖱️ Mouse ENTERED cancel button'));
+            btn.addEventListener('mouseover', () => console.log('🖱️ Mouse OVER cancel button'));
+            btn.addEventListener('mousedown', () => console.log('🖱️ Mouse DOWN on cancel button'));
             
-            console.log('✅ Cancel handler attached with multiple methods');
+            // Force clickability
+            btn.style.pointerEvents = 'auto';
+            btn.style.cursor = 'pointer';
+            
+            console.log('✅ AGGRESSIVE cancel handler attached');
         }
     });
 
