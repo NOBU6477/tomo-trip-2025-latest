@@ -203,6 +203,243 @@ function setupDataActionHandlers() {
     });
 }
 
+// Show registration choice modal function
+function showRegistrationChoice() {
+    console.log('🎯 showRegistrationChoice function called');
+    try {
+        // Remove any existing modals first
+        const existingModal = document.querySelector('.registration-choice-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        const choiceModal = document.createElement('div');
+        choiceModal.className = 'modal fade registration-choice-modal';
+        choiceModal.id = 'registrationChoiceModal';
+        choiceModal.tabIndex = -1;
+        choiceModal.setAttribute('aria-labelledby', 'registrationChoiceModalLabel');
+        choiceModal.setAttribute('aria-hidden', 'true');
+        choiceModal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold" id="registrationChoiceModalLabel">
+                        <i class="bi bi-person-plus me-2"></i>登録タイプを選択
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card h-100 border-primary" style="cursor: pointer; border-radius: 15px; border-width: 2px;" onclick="openTouristRegistration()">
+                                <div class="card-body text-center p-4">
+                                    <i class="bi bi-camera-fill text-primary mb-3" style="font-size: 3rem;"></i>
+                                    <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
+                                    <p class="text-muted small mb-0">観光客として登録し、ガイドを閲覧・予約できます</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 border-success" style="cursor: pointer; border-radius: 15px; border-width: 2px;" onclick="openGuideRegistration()">
+                                <div class="card-body text-center p-4">
+                                    <i class="bi bi-person-badge-fill text-success mb-3" style="font-size: 3rem;"></i>
+                                    <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
+                                    <p class="text-muted small mb-0">観光ガイドとして登録し、お客様にサービスを提供できます</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            希望する登録タイプを選択してください。後で変更することも可能です。
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        
+        document.body.appendChild(choiceModal);
+        
+        // Wait for the DOM to update and ensure Bootstrap is loaded
+        setTimeout(() => {
+            try {
+                const modal = new bootstrap.Modal(choiceModal);
+                modal.show();
+                console.log('🔧 Modal shown successfully');
+            } catch (modalError) {
+                console.error('❌ Modal creation error:', modalError);
+                // Fallback: show alert and direct to registration
+                alert('登録タイプを選択してください: ガイド登録は OK をクリック');
+                openGuideRegistration();
+            }
+        }, 100);
+        
+        // Clean up when modal is hidden
+        choiceModal.addEventListener('hidden.bs.modal', function() {
+            choiceModal.remove();
+        });
+        
+    } catch (error) {
+        console.error('❌ Error in showRegistrationChoice:', error);
+        alert('Registration choice modal failed to open: ' + error.message);
+    }
+}
+
+// Open tourist registration
+function openTouristRegistration() {
+    // Close choice modal
+    const choiceModal = document.querySelector('.modal.show');
+    if (choiceModal) {
+        const modal = bootstrap.Modal.getInstance(choiceModal);
+        modal.hide();
+    }
+    
+    // Open tourist registration modal
+    setTimeout(() => {
+        const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+        registrationModal.show();
+    }, 300);
+}
+
+// Open guide registration
+function openGuideRegistration() {
+    // Close choice modal
+    const choiceModal = document.querySelector('.modal.show');
+    if (choiceModal) {
+        const modal = bootstrap.Modal.getInstance(choiceModal);
+        modal.hide();
+    }
+    
+    console.log('Guide registration selected');
+    
+    // Show the registration form container right below the navigation
+    const formContainer = document.getElementById('registrationFormContainer');
+    const originalForm = document.getElementById('detailedGuideRegistrationForm');
+    
+    if (formContainer && originalForm) {
+        // Move the form to the container below the nav
+        formContainer.appendChild(originalForm);
+        formContainer.style.display = 'block';
+        originalForm.style.display = 'block';
+        
+        // Initialize form handlers after form is shown
+        setTimeout(() => {
+            initializeRegistrationFormHandlers();
+        }, 100);
+        
+        // Scroll to the form smoothly
+        setTimeout(() => {
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 400);
+    } else {
+        console.warn('Registration container or form not found');
+        alert('登録フォームが見つかりません。');
+    }
+}
+
+// Add phone verification and file upload handlers
+function initializeRegistrationFormHandlers() {
+    // Phone verification handlers
+    const sendCodeBtn = document.getElementById('sendVerificationCode');
+    const verifyCodeBtn = document.getElementById('verifyPhoneCode');
+    const phoneInput = document.getElementById('detailedGuidePhone');
+    const codeInput = document.getElementById('verificationCode');
+    const statusSpan = document.getElementById('phoneVerificationStatus');
+    
+    if (sendCodeBtn && phoneInput) {
+        sendCodeBtn.addEventListener('click', function() {
+            const phone = phoneInput.value.trim();
+            if (!phone) {
+                alert('電話番号を入力してください');
+                return;
+            }
+            
+            // Simulate sending verification code
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
+            
+            setTimeout(() => {
+                sendCodeBtn.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
+                statusSpan.textContent = '認証コードを送信しました';
+                statusSpan.className = 'text-success ms-3';
+                
+                if (codeInput) codeInput.disabled = false;
+                if (verifyCodeBtn) verifyCodeBtn.disabled = false;
+            }, 2000);
+        });
+    }
+    
+    if (verifyCodeBtn && codeInput) {
+        verifyCodeBtn.addEventListener('click', function() {
+            const code = codeInput.value.trim();
+            if (!code || code.length !== 6) {
+                alert('6桁の認証コードを入力してください');
+                return;
+            }
+            
+            // Simulate verification
+            verifyCodeBtn.disabled = true;
+            verifyCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>認証中...';
+            
+            setTimeout(() => {
+                verifyCodeBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                verifyCodeBtn.className = 'btn btn-success';
+                statusSpan.textContent = '電話番号の認証が完了しました';
+                statusSpan.className = 'text-success ms-3';
+                
+                phoneInput.style.backgroundColor = '#d4edda';
+                codeInput.style.backgroundColor = '#d4edda';
+            }, 1500);
+        });
+    }
+    
+    // File upload preview handlers
+    const identityUpload = document.getElementById('identityDocument');
+    const profileUpload = document.getElementById('profilePhoto');
+    const previewArea = document.getElementById('imagePreviewArea');
+    
+    if (identityUpload) {
+        identityUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('identityPreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        if (previewArea) previewArea.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    if (profileUpload) {
+        profileUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('profilePreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        if (previewArea) previewArea.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+}
+
+// Make functions globally available
+window.showRegistrationChoice = showRegistrationChoice;
+window.openTouristRegistration = openTouristRegistration;
+window.openGuideRegistration = openGuideRegistration;
+
 // Setup registration button events
 function setupRegistrationButtonEvents() {
     const regBtn = document.getElementById('registerBtn');
@@ -212,12 +449,7 @@ function setupRegistrationButtonEvents() {
             console.log('Registration button clicked!');
             
             // Always show choice modal first
-            if (typeof window.showRegistrationChoice === 'function') {
-                window.showRegistrationChoice();
-            } else {
-                console.error('showRegistrationChoice function not found');
-                alert('登録選択画面が見つかりません。ページを再読み込みしてください。');
-            }
+            showRegistrationChoice();
         });
         console.log('✅ Registration button event listener added');
     } else {
