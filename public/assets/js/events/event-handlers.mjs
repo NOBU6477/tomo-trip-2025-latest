@@ -203,123 +203,139 @@ function setupDataActionHandlers() {
     });
 }
 
-// Show registration choice modal function
+// Show registration choice inline (below navigation)
 function showRegistrationChoice() {
     console.log('🎯 showRegistrationChoice function called');
     try {
-        // Remove any existing modals first
-        const existingModal = document.querySelector('.registration-choice-modal');
-        if (existingModal) {
-            existingModal.remove();
+        // Get the form container (below navigation)
+        const formContainer = document.getElementById('registrationFormContainer');
+        if (!formContainer) {
+            console.error('registrationFormContainer not found');
+            alert('登録コンテナが見つかりません');
+            return;
         }
         
-        const choiceModal = document.createElement('div');
-        choiceModal.className = 'modal fade registration-choice-modal';
-        choiceModal.id = 'registrationChoiceModal';
-        choiceModal.tabIndex = -1;
-        choiceModal.setAttribute('aria-labelledby', 'registrationChoiceModalLabel');
-        choiceModal.setAttribute('aria-hidden', 'true');
-        choiceModal.innerHTML = `
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 15px 50px rgba(0,0,0,0.2);">
-                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
-                    <h5 class="modal-title fw-bold" id="registrationChoiceModalLabel">
-                        <i class="bi bi-person-plus me-2"></i>登録タイプを選択
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card h-100 border-primary" style="cursor: pointer; border-radius: 15px; border-width: 2px;" onclick="openTouristRegistration()">
-                                <div class="card-body text-center p-4">
-                                    <i class="bi bi-camera-fill text-primary mb-3" style="font-size: 3rem;"></i>
-                                    <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
-                                    <p class="text-muted small mb-0">観光客として登録し、ガイドを閲覧・予約できます</p>
+        // Clear any existing content
+        formContainer.innerHTML = '';
+        
+        // Create inline choice selection
+        const choiceContent = document.createElement('div');
+        choiceContent.className = 'registration-choice-content';
+        choiceContent.id = 'registrationChoiceContent';
+        choiceContent.innerHTML = `
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="choice-container" style="background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); margin: 2rem 0;">
+                        <div class="choice-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
+                            <h1><i class="bi bi-person-plus me-2"></i>登録タイプを選択</h1>
+                            <p class="mb-0">あなたに最適な登録方法を選んでください</p>
+                        </div>
+                        
+                        <div class="p-4">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openTouristRegistration()">
+                                        <div class="card-body text-center p-4">
+                                            <i class="bi bi-camera-fill text-primary mb-3" style="font-size: 3rem;"></i>
+                                            <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
+                                            <p class="text-muted small mb-3">観光客として登録し、ガイドを閲覧・予約できます</p>
+                                            <div class="mt-3">
+                                                <span class="badge bg-primary">簡単登録</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openGuideRegistration()">
+                                        <div class="card-body text-center p-4">
+                                            <i class="bi bi-person-badge-fill text-success mb-3" style="font-size: 3rem;"></i>
+                                            <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
+                                            <p class="text-muted small mb-3">観光ガイドとして登録し、お客様にサービスを提供できます</p>
+                                            <div class="mt-3">
+                                                <span class="badge bg-success">プロフェッショナル</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card h-100 border-success" style="cursor: pointer; border-radius: 15px; border-width: 2px;" onclick="openGuideRegistration()">
-                                <div class="card-body text-center p-4">
-                                    <i class="bi bi-person-badge-fill text-success mb-3" style="font-size: 3rem;"></i>
-                                    <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
-                                    <p class="text-muted small mb-0">観光ガイドとして登録し、お客様にサービスを提供できます</p>
-                                </div>
+                            <div class="text-center mt-4">
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    希望する登録タイプを選択してください。後で変更することも可能です。
+                                </small>
+                            </div>
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-outline-secondary" onclick="hideRegistrationChoice()">
+                                    <i class="bi bi-x-circle me-2"></i>キャンセル
+                                </button>
                             </div>
                         </div>
-                    </div>
-                    <div class="mt-3">
-                        <small class="text-muted">
-                            <i class="bi bi-info-circle me-1"></i>
-                            希望する登録タイプを選択してください。後で変更することも可能です。
-                        </small>
                     </div>
                 </div>
             </div>
         </div>
         `;
         
-        document.body.appendChild(choiceModal);
-        
-        // Wait for the DOM to update and ensure Bootstrap is loaded
-        setTimeout(() => {
-            try {
-                const modal = new bootstrap.Modal(choiceModal);
-                modal.show();
-                console.log('🔧 Modal shown successfully');
-            } catch (modalError) {
-                console.error('❌ Modal creation error:', modalError);
-                // Fallback: show alert and direct to registration
-                alert('登録タイプを選択してください: ガイド登録は OK をクリック');
-                openGuideRegistration();
+        // Add hover effects style
+        const style = document.createElement('style');
+        style.textContent = `
+            .choice-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
             }
+        `;
+        document.head.appendChild(style);
+        
+        // Show the choice content
+        formContainer.appendChild(choiceContent);
+        formContainer.style.display = 'block';
+        
+        // Scroll to the choice section smoothly
+        setTimeout(() => {
+            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
         
-        // Clean up when modal is hidden
-        choiceModal.addEventListener('hidden.bs.modal', function() {
-            choiceModal.remove();
-        });
+        console.log('✅ Registration choice shown inline below navigation');
         
     } catch (error) {
         console.error('❌ Error in showRegistrationChoice:', error);
-        alert('Registration choice modal failed to open: ' + error.message);
+        alert('Registration choice failed to show: ' + error.message);
+    }
+}
+
+// Hide registration choice content
+function hideRegistrationChoice() {
+    const formContainer = document.getElementById('registrationFormContainer');
+    if (formContainer) {
+        formContainer.style.display = 'none';
+        formContainer.innerHTML = '';
     }
 }
 
 // Open tourist registration
 function openTouristRegistration() {
-    // Close choice modal
-    const choiceModal = document.querySelector('.modal.show');
-    if (choiceModal) {
-        const modal = bootstrap.Modal.getInstance(choiceModal);
-        modal.hide();
-    }
+    // Hide choice content
+    hideRegistrationChoice();
     
     // Open tourist registration modal
     setTimeout(() => {
         const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
         registrationModal.show();
-    }, 300);
+    }, 100);
 }
 
 // Open guide registration
 function openGuideRegistration() {
-    // Close choice modal
-    const choiceModal = document.querySelector('.modal.show');
-    if (choiceModal) {
-        const modal = bootstrap.Modal.getInstance(choiceModal);
-        modal.hide();
-    }
-    
     console.log('Guide registration selected');
     
-    // Show the registration form container right below the navigation
+    // Get the form container and original form
     const formContainer = document.getElementById('registrationFormContainer');
     const originalForm = document.getElementById('detailedGuideRegistrationForm');
     
     if (formContainer && originalForm) {
-        // Move the form to the container below the nav
+        // Clear choice content and show registration form
+        formContainer.innerHTML = '';
         formContainer.appendChild(originalForm);
         formContainer.style.display = 'block';
         originalForm.style.display = 'block';
@@ -332,7 +348,7 @@ function openGuideRegistration() {
         // Scroll to the form smoothly
         setTimeout(() => {
             formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 400);
+        }, 200);
     } else {
         console.warn('Registration container or form not found');
         alert('登録フォームが見つかりません。');
@@ -437,6 +453,7 @@ function initializeRegistrationFormHandlers() {
 
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
+window.hideRegistrationChoice = hideRegistrationChoice;
 window.openTouristRegistration = openTouristRegistration;
 window.openGuideRegistration = openGuideRegistration;
 
