@@ -1038,6 +1038,138 @@
         </div>
     </section>
 
+    <!-- Detailed Guide Registration Form (Hidden by default) -->
+    <div id="detailedGuideRegistrationForm" style="display: none; margin-top: 2rem;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="guide-container" style="background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); margin: 2rem 0;">
+                        <div class="guide-header" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
+                            <h1><i class="bi bi-person-plus-fill me-2"></i>新規ガイド登録</h1>
+                            <p class="mb-0">浅草観光案内所 - ガイドスタッフ募集</p>
+                        </div>
+                        
+                        <div class="p-4">
+                            <form id="detailedGuideForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="detailedGuideName" required>
+                                            <label for="detailedGuideName"><i class="bi bi-person me-1"></i>ガイド名</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="email" class="form-control" id="detailedGuideEmail" required>
+                                            <label for="detailedGuideEmail"><i class="bi bi-envelope me-1"></i>メールアドレス</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="tel" class="form-control" id="detailedGuidePhone" required>
+                                            <label for="detailedGuidePhone"><i class="bi bi-telephone me-1"></i>電話番号</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-control" id="detailedGuideGender" required>
+                                                <option value="">選択してください</option>
+                                                <option value="male">男性</option>
+                                                <option value="female">女性</option>
+                                                <option value="other">その他</option>
+                                            </select>
+                                            <label for="detailedGuideGender"><i class="bi bi-people me-1"></i>性別</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="number" class="form-control" id="detailedGuideAge" min="18" max="80" required>
+                                            <label for="detailedGuideAge"><i class="bi bi-calendar me-1"></i>年齢</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-control" id="detailedGuideExperience" required>
+                                                <option value="">選択してください</option>
+                                                <option value="beginner">初心者（1年未満）</option>
+                                                <option value="intermediate">中級者（1-3年）</option>
+                                                <option value="advanced">上級者（3年以上）</option>
+                                            </select>
+                                            <label for="detailedGuideExperience"><i class="bi bi-award me-1"></i>経験レベル</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-floating mb-3">
+                                    <select class="form-control" id="detailedGuideLanguages" multiple required style="min-height: 120px;">
+                                        <option value="japanese">日本語</option>
+                                        <option value="english">英語</option>
+                                        <option value="chinese">中国語</option>
+                                        <option value="korean">韓国語</option>
+                                        <option value="spanish">スペイン語</option>
+                                        <option value="french">フランス語</option>
+                                    </select>
+                                    <label for="detailedGuideLanguages"><i class="bi bi-translate me-1"></i>対応言語（複数選択可）</label>
+                                </div>
+                                
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" id="detailedGuideIntroduction" style="height: 120px;" required></textarea>
+                                    <label for="detailedGuideIntroduction"><i class="bi bi-chat-text me-1"></i>自己紹介・アピールポイント</label>
+                                </div>
+                                
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" id="detailedGuideSpecialties" style="height: 100px;" required></textarea>
+                                    <label for="detailedGuideSpecialties"><i class="bi bi-star me-1"></i>得意分野・専門エリア</label>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <input type="number" class="form-control" id="detailedGuideHourlyRate" min="2000" max="10000" step="500" required>
+                                            <label for="detailedGuideHourlyRate"><i class="bi bi-currency-yen me-1"></i>希望時給（円）</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-control" id="detailedGuideAvailability" required>
+                                                <option value="">選択してください</option>
+                                                <option value="weekdays">平日のみ</option>
+                                                <option value="weekends">週末のみ</option>
+                                                <option value="both">平日・週末両方</option>
+                                            </select>
+                                            <label for="detailedGuideAvailability"><i class="bi bi-calendar-week me-1"></i>稼働可能日</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3 form-check">
+                                    <input type="checkbox" class="form-check-input" id="detailedAgreeTerms" required>
+                                    <label class="form-check-label" for="detailedAgreeTerms">
+                                        ガイド規約及び利用規約に同意します
+                                    </label>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-guide" style="background: linear-gradient(135deg, #28a745, #20c997); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 600;">
+                                        <i class="bi bi-check-circle me-2"></i>ガイド登録申請
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('detailedGuideRegistrationForm').style.display='none'">
+                                        <i class="bi bi-x-circle me-2"></i>キャンセル
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Registration Modal -->
     <div class="modal fade" id="registrationModal" tabindex="-1" aria-labelledby="registrationModalLabel" aria-hidden="true">
@@ -1920,7 +2052,15 @@
         function showRegistrationChoice() {
             console.log('🎯 showRegistrationChoice function called');
             try {
-                // Remove any existing modals first
+                // Show the guide registration form directly below the button
+                const registrationForm = document.getElementById('detailedGuideRegistrationForm');
+                if (registrationForm) {
+                    registrationForm.style.display = 'block';
+                    // No scroll - show directly in place
+                    return;
+                }
+                
+                // Fallback: Remove any existing modals first
                 const existingModal = document.querySelector('.registration-choice-modal');
                 if (existingModal) {
                     existingModal.remove();
@@ -2285,8 +2425,55 @@
                 }
             });
 
-            // Guide registration form submission
-            document.getElementById('guideRegistrationSubmitBtn').addEventListener('click', function() {
+            // Detailed guide registration form submission
+            const detailedGuideForm = document.getElementById('detailedGuideForm');
+            if (detailedGuideForm) {
+                detailedGuideForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const formData = {
+                        guideName: document.getElementById('detailedGuideName').value.trim(),
+                        email: document.getElementById('detailedGuideEmail').value.trim(),
+                        phone: document.getElementById('detailedGuidePhone').value.trim(),
+                        gender: document.getElementById('detailedGuideGender').value,
+                        age: parseInt(document.getElementById('detailedGuideAge').value),
+                        experience: document.getElementById('detailedGuideExperience').value,
+                        languages: Array.from(document.getElementById('detailedGuideLanguages').selectedOptions).map(option => option.value),
+                        introduction: document.getElementById('detailedGuideIntroduction').value.trim(),
+                        specialties: document.getElementById('detailedGuideSpecialties').value.trim(),
+                        hourlyRate: parseFloat(document.getElementById('detailedGuideHourlyRate').value),
+                        availability: document.getElementById('detailedGuideAvailability').value,
+                        agreeTerms: document.getElementById('detailedAgreeTerms').checked
+                    };
+                    
+                    console.log('Detailed guide registration:', formData);
+                    
+                    // Basic validation
+                    if (!formData.agreeTerms) {
+                        alert('利用規約に同意してください。');
+                        return;
+                    }
+                    
+                    if (formData.languages.length === 0) {
+                        alert('対応言語を最低1つ選択してください。');
+                        return;
+                    }
+                    
+                    // Simulate API call - replace with actual endpoint
+                    alert(`ガイド登録申請を受け付けました。\n申請者: ${formData.guideName}\n対応言語: ${formData.languages.join(', ')}\n審査後、メールでご連絡いたします。`);
+                    
+                    // Hide form after successful submission
+                    document.getElementById('detailedGuideRegistrationForm').style.display = 'none';
+                    
+                    // Reset form
+                    detailedGuideForm.reset();
+                });
+            }
+
+            // Guide registration form submission (legacy)
+            const guideRegistrationSubmitBtn = document.getElementById('guideRegistrationSubmitBtn');
+            if (guideRegistrationSubmitBtn) {
+                guideRegistrationSubmitBtn.addEventListener('click', function() {
                 const formData = {
                     firstName: document.getElementById('guideFirstName').value.trim(),
                     lastName: document.getElementById('guideLastName').value.trim(),
