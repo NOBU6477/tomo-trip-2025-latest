@@ -347,6 +347,7 @@ function openGuideRegistration() {
         // Initialize form handlers after form is shown
         setTimeout(() => {
             initializeRegistrationFormHandlers();
+            handleGuideRegistrationSubmit();
         }, 100);
         
         // Scroll to the form smoothly
@@ -411,6 +412,9 @@ function initializeRegistrationFormHandlers() {
                 
                 phoneInput.style.backgroundColor = '#d4edda';
                 codeInput.style.backgroundColor = '#d4edda';
+                
+                // Mark phone as verified for form submission
+                phoneInput.setAttribute('data-verified', 'true');
             }, 1500);
         });
     }
@@ -563,6 +567,212 @@ function hideRegistrationForm() {
     }
 }
 
+// Generate unique guide ID
+function generateGuideId() {
+    const timestamp = Date.now().toString(36);
+    const randomStr = Math.random().toString(36).substring(2, 7);
+    return `GD-${timestamp}-${randomStr}`.toUpperCase();
+}
+
+// Handle guide registration form submission
+function handleGuideRegistrationSubmit() {
+    const form = document.getElementById('detailedGuideRegistrationForm');
+    if (!form) return;
+    
+    // Remove existing event listeners to prevent duplicates
+    const newForm = form.cloneNode(true);
+    form.parentNode.replaceChild(newForm, form);
+    
+    newForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate phone verification
+        const phoneInput = document.getElementById('detailedGuidePhone');
+        if (!phoneInput.getAttribute('data-verified')) {
+            alert('電話認証を完了してください');
+            return;
+        }
+        
+        // Validate document uploads
+        const documentUploads = document.querySelectorAll('.document-upload');
+        for (let upload of documentUploads) {
+            if (!upload.files || !upload.files[0]) {
+                alert('すべての身分証明書をアップロードしてください');
+                return;
+            }
+        }
+        
+        // Generate unique guide ID and show registration success
+        const guideId = generateGuideId();
+        const guideName = document.getElementById('detailedGuideName').value;
+        
+        // Show registration success modal with ID
+        showRegistrationSuccessModal(guideId, guideName);
+        
+        // Save guide data (basic implementation)
+        saveGuideRegistrationData(guideId);
+        
+        // Clear form
+        newForm.reset();
+        hideRegistrationForm();
+    });
+}
+
+// Show registration success modal with ID
+function showRegistrationSuccessModal(guideId, guideName) {
+    // Remove existing modal if any
+    const existingModal = document.querySelector('.registration-success-modal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    const modal = document.createElement('div');
+    modal.className = 'modal fade registration-success-modal';
+    modal.innerHTML = `
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-check-circle me-2"></i>ガイド登録申請完了
+                    </h5>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <div class="mb-4">
+                        <i class="bi bi-person-badge text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    <h4 class="text-success mb-3">おめでとうございます！</h4>
+                    <p class="mb-4">${guideName}さんのガイド登録申請が正常に受理されました。</p>
+                    
+                    <div class="alert alert-info" style="border-radius: 15px;">
+                        <h6 class="fw-bold mb-3">あなたのガイドID</h6>
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control fs-5 fw-bold text-center" value="${guideId}" readonly>
+                            <button class="btn btn-outline-secondary" onclick="copyToClipboard('${guideId}')">
+                                <i class="bi bi-copy"></i> コピー
+                            </button>
+                        </div>
+                        <small class="text-muted">このIDを安全に保管してください。ログイン時に必要です。</small>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">パスワードを設定してください</h6>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <input type="password" class="form-control" id="newGuidePassword" placeholder="パスワード（8文字以上）" minlength="8">
+                            </div>
+                            <div class="col-12">
+                                <input type="password" class="form-control" id="confirmGuidePassword" placeholder="パスワード（確認）">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success btn-lg" onclick="completeRegistration('${guideId}')">
+                            <i class="bi bi-check-circle me-2"></i>パスワード設定完了
+                        </button>
+                    </div>
+                    
+                    <hr class="my-4">
+                    <div class="text-start">
+                        <h6 class="fw-bold mb-2">次のステップ：</h6>
+                        <ol class="small text-muted">
+                            <li>審査結果をお待ちください（通常1-2営業日）</li>
+                            <li>承認後、ログインボタンからプロフィール編集が可能になります</li>
+                            <li>魅力的なプロフィールを作成してガイド活動を開始しましょう</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+    
+    // Clean up when modal is hidden
+    modal.addEventListener('hidden.bs.modal', function() {
+        modal.remove();
+    });
+}
+
+// Complete guide registration with password
+function completeRegistration(guideId) {
+    const password = document.getElementById('newGuidePassword').value;
+    const confirmPassword = document.getElementById('confirmGuidePassword').value;
+    
+    if (!password || password.length < 8) {
+        alert('パスワードは8文字以上で設定してください');
+        return;
+    }
+    
+    if (password !== confirmPassword) {
+        alert('パスワードが一致しません');
+        return;
+    }
+    
+    // Save password (basic implementation)
+    saveGuidePassword(guideId, password);
+    
+    alert('ガイド登録が完了しました！IDとパスワードを大切に保管してください。');
+    
+    // Close modal
+    const modal = document.querySelector('.registration-success-modal');
+    if (modal) {
+        const bootstrapModal = bootstrap.Modal.getInstance(modal);
+        bootstrapModal.hide();
+    }
+}
+
+// Copy guide ID to clipboard
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        alert('ガイドIDをクリップボードにコピーしました');
+    }).catch(() => {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        alert('ガイドIDをクリップボードにコピーしました');
+    });
+}
+
+// Save guide registration data (basic localStorage implementation)
+function saveGuideRegistrationData(guideId) {
+    const guideData = {
+        id: guideId,
+        name: document.getElementById('detailedGuideName').value,
+        email: document.getElementById('detailedGuideEmail').value,
+        phone: document.getElementById('detailedGuidePhone').value,
+        gender: document.getElementById('detailedGuideGender').value,
+        age: document.getElementById('detailedGuideAge').value,
+        experience: document.getElementById('detailedGuideExperience').value,
+        languages: Array.from(document.getElementById('detailedGuideLanguages').selectedOptions).map(option => option.value),
+        introduction: document.getElementById('detailedGuideIntroduction').value,
+        specialties: document.getElementById('detailedGuideSpecialties').value,
+        sessionRate: document.getElementById('detailedGuideSessionRate').value,
+        availability: document.getElementById('detailedGuideAvailability').value,
+        documentType: document.getElementById('documentType').value,
+        status: 'pending_review',
+        registrationDate: new Date().toISOString()
+    };
+    
+    // Save to localStorage (in real app, this would be sent to backend)
+    const guides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+    guides.push(guideData);
+    localStorage.setItem('registeredGuides', JSON.stringify(guides));
+}
+
+// Save guide password (basic localStorage implementation)
+function saveGuidePassword(guideId, password) {
+    const guideCredentials = JSON.parse(localStorage.getItem('guideCredentials') || '{}');
+    guideCredentials[guideId] = password;
+    localStorage.setItem('guideCredentials', JSON.stringify(guideCredentials));
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
@@ -571,6 +781,8 @@ window.openGuideRegistration = openGuideRegistration;
 window.updateDocumentUpload = updateDocumentUpload;
 window.previewDocument = previewDocument;
 window.hideRegistrationForm = hideRegistrationForm;
+window.completeRegistration = completeRegistration;
+window.copyToClipboard = copyToClipboard;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
