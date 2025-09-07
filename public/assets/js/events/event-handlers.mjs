@@ -374,51 +374,86 @@ function openGuideRegistration() {
 function initializeRegistrationFormHandlers() {
     console.log('🔄 Initializing registration form handlers...');
     
-    // Find all important elements first
-    const sendCodeBtn = document.getElementById('sendVerificationCode');
-    const verifyCodeBtn = document.getElementById('verifyPhoneCode');
-    const phoneInput = document.getElementById('detailedGuidePhone');
-    const codeInput = document.getElementById('verificationCode');
-    const statusSpan = document.getElementById('phoneVerificationStatus');
-    
-    // Find cancel buttons (both possible selectors)
-    const cancelButtons = document.querySelectorAll('button[onclick*="hideRegistrationForm"]');
-    
-    console.log('📞 Form elements found:', {
-        sendCodeBtn: !!sendCodeBtn,
-        verifyCodeBtn: !!verifyCodeBtn,
-        phoneInput: !!phoneInput,
-        codeInput: !!codeInput,
-        statusSpan: !!statusSpan,
-        cancelButtons: cancelButtons.length
-    });
-
-    // Setup cancel button handlers first
-    cancelButtons.forEach((cancelBtn, index) => {
-        console.log(`🔄 Setting up cancel button ${index + 1}`);
-        // Remove onclick attribute and add event listener
-        cancelBtn.removeAttribute('onclick');
-        const newCancelBtn = cancelBtn.cloneNode(true);
-        cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+    // Wait a moment for DOM to be fully ready
+    setTimeout(() => {
+        // Find all important elements first
+        const sendCodeBtn = document.getElementById('sendVerificationCode');
+        const verifyCodeBtn = document.getElementById('verifyPhoneCode');
+        const phoneInput = document.getElementById('detailedGuidePhone');
+        const codeInput = document.getElementById('verificationCode');
+        const statusSpan = document.getElementById('phoneVerificationStatus');
         
+        // Find cancel buttons (all possible methods)
+        const cancelButtons = [
+            ...document.querySelectorAll('button[onclick*="hideRegistrationForm"]'),
+            ...document.querySelectorAll('button:contains("キャンセル")'),
+            ...document.querySelectorAll('button[type="button"]')
+        ].filter(btn => btn && btn.textContent && btn.textContent.includes('キャンセル'));
+        
+        console.log('📞 Form elements found:', {
+            sendCodeBtn: !!sendCodeBtn,
+            verifyCodeBtn: !!verifyCodeBtn,
+            phoneInput: !!phoneInput,
+            codeInput: !!codeInput,
+            statusSpan: !!statusSpan,
+            cancelButtons: cancelButtons.length,
+            cancelButtonTexts: cancelButtons.map(btn => btn.textContent.trim())
+        });
+        
+        // Setup ALL the handlers
+        setupCancelButtons(cancelButtons);
+        setupPhoneVerification(sendCodeBtn, verifyCodeBtn, phoneInput, codeInput, statusSpan);
+        setupFileUploads();
+        
+    }, 50);
+}
+
+// Setup cancel button handlers
+function setupCancelButtons(cancelButtons) {
+    cancelButtons.forEach((cancelBtn, index) => {
+        if (!cancelBtn) return;
+        
+        console.log(`🔄 Setting up cancel button ${index + 1}: "${cancelBtn.textContent.trim()}"`);
+        
+        // Remove all existing event attributes
+        cancelBtn.removeAttribute('onclick');
+        cancelBtn.removeAttribute('data-dismiss');
+        
+        // Clone to remove all event listeners
+        const newCancelBtn = cancelBtn.cloneNode(true);
+        if (cancelBtn.parentNode) {
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+        }
+        
+        // Add new event listener
         newCancelBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('❌ Cancel button clicked');
+            e.stopPropagation();
+            console.log(`❌ Cancel button ${index + 1} clicked`);
             hideRegistrationForm();
         });
+        
         console.log(`✅ Cancel button ${index + 1} event listener attached`);
     });
-    
-    // Setup phone verification handlers
+}
+
+// Setup phone verification handlers
+function setupPhoneVerification(sendCodeBtn, verifyCodeBtn, phoneInput, codeInput, statusSpan) {
+
     if (sendCodeBtn && phoneInput) {
         console.log('🔄 Setting up send verification code button');
-        // Remove existing event listeners by cloning the node
+        
+        // Clone button to remove all existing listeners
         const newSendCodeBtn = sendCodeBtn.cloneNode(true);
-        sendCodeBtn.parentNode.replaceChild(newSendCodeBtn, sendCodeBtn);
+        if (sendCodeBtn.parentNode) {
+            sendCodeBtn.parentNode.replaceChild(newSendCodeBtn, sendCodeBtn);
+        }
         
         newSendCodeBtn.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             console.log('📞 Send verification code button clicked');
+            
             const phone = phoneInput.value.trim();
             if (!phone) {
                 alert('電話番号を入力してください');
@@ -436,16 +471,14 @@ function initializeRegistrationFormHandlers() {
                     statusSpan.className = 'text-success ms-3';
                 }
                 
-                // Re-find elements after DOM manipulation
-                const currentCodeInput = document.getElementById('verificationCode');
-                const currentVerifyBtn = document.getElementById('verifyPhoneCode');
-                
-                if (currentCodeInput) currentCodeInput.disabled = false;
-                if (currentVerifyBtn) currentVerifyBtn.disabled = false;
+                // Enable verification input and button
+                if (codeInput) codeInput.disabled = false;
+                if (verifyCodeBtn) verifyCodeBtn.disabled = false;
                 
                 console.log('✅ Verification code sent successfully');
             }, 2000);
         });
+        
         console.log('✅ Send code button event listener attached');
     } else {
         console.warn('⚠️ Send code button or phone input not found');
