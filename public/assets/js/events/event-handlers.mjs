@@ -399,12 +399,15 @@ function initializeRegistrationFormHandlers() {
         console.log(`✅ Cancel button ${index + 1} event listener attached`);
     });
     
+    // Setup phone verification handlers
     if (sendCodeBtn && phoneInput) {
+        console.log('🔄 Setting up send verification code button');
         // Remove existing event listeners by cloning the node
         const newSendCodeBtn = sendCodeBtn.cloneNode(true);
         sendCodeBtn.parentNode.replaceChild(newSendCodeBtn, sendCodeBtn);
         
-        newSendCodeBtn.addEventListener('click', function() {
+        newSendCodeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             console.log('📞 Send verification code button clicked');
             const phone = phoneInput.value.trim();
             if (!phone) {
@@ -423,8 +426,12 @@ function initializeRegistrationFormHandlers() {
                     statusSpan.className = 'text-success ms-3';
                 }
                 
-                if (codeInput) codeInput.disabled = false;
-                if (verifyCodeBtn) verifyCodeBtn.disabled = false;
+                // Re-find elements after DOM manipulation
+                const currentCodeInput = document.getElementById('verificationCode');
+                const currentVerifyBtn = document.getElementById('verifyPhoneCode');
+                
+                if (currentCodeInput) currentCodeInput.disabled = false;
+                if (currentVerifyBtn) currentVerifyBtn.disabled = false;
                 
                 console.log('✅ Verification code sent successfully');
             }, 2000);
@@ -435,11 +442,13 @@ function initializeRegistrationFormHandlers() {
     }
     
     if (verifyCodeBtn && codeInput) {
+        console.log('🔄 Setting up verify code button');
         // Remove existing event listeners by cloning the node
         const newVerifyCodeBtn = verifyCodeBtn.cloneNode(true);
         verifyCodeBtn.parentNode.replaceChild(newVerifyCodeBtn, verifyCodeBtn);
         
-        newVerifyCodeBtn.addEventListener('click', function() {
+        newVerifyCodeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             console.log('🔐 Verify code button clicked');
             const code = codeInput.value.trim();
             if (!code || code.length !== 6) {
@@ -454,16 +463,22 @@ function initializeRegistrationFormHandlers() {
             setTimeout(() => {
                 newVerifyCodeBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
                 newVerifyCodeBtn.className = 'btn btn-success';
-                if (statusSpan) {
-                    statusSpan.textContent = '電話番号の認証が完了しました';
-                    statusSpan.className = 'text-success ms-3';
+                
+                // Re-find elements after DOM manipulation
+                const currentStatusSpan = document.getElementById('phoneVerificationStatus');
+                const currentPhoneInput = document.getElementById('detailedGuidePhone');
+                const currentCodeInput = document.getElementById('verificationCode');
+                
+                if (currentStatusSpan) {
+                    currentStatusSpan.textContent = '電話番号の認証が完了しました';
+                    currentStatusSpan.className = 'text-success ms-3';
                 }
                 
-                phoneInput.style.backgroundColor = '#d4edda';
-                codeInput.style.backgroundColor = '#d4edda';
-                
-                // Mark phone as verified for form submission
-                phoneInput.setAttribute('data-verified', 'true');
+                if (currentPhoneInput) {
+                    currentPhoneInput.style.backgroundColor = '#d4edda';
+                    currentPhoneInput.setAttribute('data-verified', 'true');
+                }
+                if (currentCodeInput) currentCodeInput.style.backgroundColor = '#d4edda';
                 
                 console.log('✅ Phone verification completed successfully');
             }, 1500);
