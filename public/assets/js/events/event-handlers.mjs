@@ -560,10 +560,29 @@ function previewDocument(input, index) {
 // Hide registration form functionality
 function hideRegistrationForm() {
     const formContainer = document.getElementById('registrationFormContainer');
+    const guideCardPreviewArea = document.getElementById('guideCardPreviewArea');
+    const profilePhotoPreviewCard = document.getElementById('profilePhotoPreviewCard');
+    
     if (formContainer) {
         formContainer.style.display = 'none';
         formContainer.innerHTML = '';
         console.log('✅ Registration form hidden');
+    }
+    
+    // Hide guide card preview area
+    if (guideCardPreviewArea) {
+        guideCardPreviewArea.style.display = 'none';
+    }
+    
+    // Hide profile photo preview
+    if (profilePhotoPreviewCard) {
+        profilePhotoPreviewCard.style.display = 'none';
+    }
+    
+    // Clear any form data and reset preview states
+    const profilePhotoPreview = document.getElementById('profilePhotoPreview');
+    if (profilePhotoPreview) {
+        profilePhotoPreview.src = '';
     }
 }
 
