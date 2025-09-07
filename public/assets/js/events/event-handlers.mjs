@@ -801,10 +801,28 @@ function hideRegistrationForm() {
     const profilePhotoPreviewCard = document.getElementById('profilePhotoPreviewCard');
     const originalForm = document.getElementById('detailedGuideRegistrationForm');
     
-    // Reset form if it exists
+    // Reset form if it exists and is actually a form element
     if (originalForm) {
-        originalForm.reset();
-        console.log('🔄 Form reset');
+        console.log('🔍 originalForm element found:', {
+            tagName: originalForm.tagName,
+            hasResetMethod: typeof originalForm.reset === 'function'
+        });
+        
+        if (typeof originalForm.reset === 'function') {
+            originalForm.reset();
+            console.log('🔄 Form reset using .reset()');
+        } else {
+            // Manual reset for non-form elements
+            const inputs = originalForm.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+            console.log('🔄 Form reset manually');
+        }
     }
     
     // Hide and clear form container
