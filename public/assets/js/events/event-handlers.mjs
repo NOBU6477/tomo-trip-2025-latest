@@ -306,10 +306,14 @@ function showRegistrationChoice() {
 
 // Hide registration choice content
 function hideRegistrationChoice() {
+    console.log('🛑 Hiding registration choice content');
     const formContainer = document.getElementById('registrationFormContainer');
     if (formContainer) {
         formContainer.style.display = 'none';
         formContainer.innerHTML = '';
+        console.log('✅ Registration choice content hidden');
+    } else {
+        console.warn('⚠️ Registration form container not found');
     }
 }
 
