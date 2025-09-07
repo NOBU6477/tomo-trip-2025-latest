@@ -2177,41 +2177,9 @@
             }
         }
 
-        // Hide registration form
-        window.hideRegistrationForm = function() {
-            const formContainer = document.getElementById('registrationFormContainer');
-            if (formContainer) {
-                formContainer.style.display = 'none';
-            }
-            const originalForm = document.getElementById('detailedGuideRegistrationForm');
-            if (originalForm) {
-                originalForm.style.display = 'none';
-            }
-        }
+        // Hide registration form is now handled by event-handlers.mjs - function removed to prevent conflicts
         
-        // Add phone verification and file upload handlers
-        function initializeRegistrationFormHandlers() {
-            // Phone verification handlers
-            const sendCodeBtn = document.getElementById('sendVerificationCode');
-            const verifyCodeBtn = document.getElementById('verifyPhoneCode');
-            const phoneInput = document.getElementById('detailedGuidePhone');
-            const codeInput = document.getElementById('verificationCode');
-            const statusSpan = document.getElementById('phoneVerificationStatus');
-            
-            if (sendCodeBtn && phoneInput) {
-                sendCodeBtn.addEventListener('click', function() {
-                    const phone = phoneInput.value.trim();
-                    if (!phone) {
-                        alert('電話番号を入力してください');
-                        return;
-                    }
-                    
-                    // Simulate sending verification code
-                    sendCodeBtn.disabled = true;
-                    sendCodeBtn.innerHTML = '<i class="bi bi-hourglass-split me-1"></i>送信中...';
-                    
-                    setTimeout(() => {
-                        sendCodeBtn.innerHTML = '<i class="bi bi-check me-1"></i>送信完了';
+        // Phone verification and file upload handlers are now handled by event-handlers.mjs - function removed to prevent conflicts
                         statusSpan.textContent = '認証コードを送信しました';
                         statusSpan.className = 'text-success ms-3';
                         
@@ -2285,41 +2253,7 @@
             }
         }
         
-        // Initialize handlers when registration form is shown
-        window.openGuideRegistration = function() {
-            // Close choice modal
-            const choiceModal = document.querySelector('.modal.show');
-            if (choiceModal) {
-                const modal = bootstrap.Modal.getInstance(choiceModal);
-                modal.hide();
-            }
-            
-            console.log('Guide registration selected');
-            
-            // Show the registration form container right below the navigation
-            const formContainer = document.getElementById('registrationFormContainer');
-            const originalForm = document.getElementById('detailedGuideRegistrationForm');
-            
-            if (formContainer && originalForm) {
-                // Move the form to the container below the nav
-                formContainer.appendChild(originalForm);
-                formContainer.style.display = 'block';
-                originalForm.style.display = 'block';
-                
-                // Initialize form handlers after form is shown
-                setTimeout(() => {
-                    initializeRegistrationFormHandlers();
-                }, 100);
-                
-                // Scroll to the form smoothly
-                setTimeout(() => {
-                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }, 400);
-            } else {
-                console.warn('Registration container or form not found');
-                alert('登録フォームが見つかりません。');
-            }
-        }
+        // Guide registration is now handled by event-handlers.mjs - function removed to prevent conflicts
 
         // Setup dropdown listeners
         function setupCustomDropdownListeners() {
