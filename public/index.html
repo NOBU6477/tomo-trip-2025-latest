@@ -2125,10 +2125,12 @@
             console.log('Add to comparison:', guideId);
         }
 
-        // Filter functions
+        // Filter functions (Enhanced Error Handling)
         function filterGuides() {
-            const location = document.getElementById('locationFilter').value;
-            const language = document.getElementById('languageFilter').value;
+            console.log('🔍 Filter guides function called');
+            try {
+                const location = document.getElementById('locationFilter').value;
+                const language = document.getElementById('languageFilter').value;
             const price = document.getElementById('priceFilter').value;
             const keyword = document.getElementById('keywordInput').value.toLowerCase();
 
@@ -2159,6 +2161,11 @@
 
             currentGuides = filtered;
             displayGuides(filtered, 1);
+            console.log(`✅ Filter completed: ${filtered.length} guides found`);
+            } catch (error) {
+                console.error('❌ Filter error:', error);
+                alert('検索中にエラーが発生しました。再度お試しください。');
+            }
         }
 
         // Reset filters
