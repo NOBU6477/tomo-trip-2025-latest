@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sponsorLoginBtn && !sponsorLoginBtn.hasAttribute('data-listener-added')) {
         sponsorLoginBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Sponsor login clicked');
-            alert('協賛店ログインモーダルを準備中です');
+            console.log('Sponsor login clicked - redirecting to operations login');
+            window.location.href = 'operations-login.html';
         });
         sponsorLoginBtn.setAttribute('data-listener-added', 'true');
         console.log('✅ Login button setup complete');
@@ -68,8 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sponsorLoginBtnMobile && !sponsorLoginBtnMobile.hasAttribute('data-listener-added')) {
         sponsorLoginBtnMobile.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Mobile sponsor login clicked');
-            alert('協賛店ログインモーダルを準備中です');
+            console.log('Mobile sponsor login clicked - redirecting to operations login');
+            window.location.href = 'operations-login.html';
         });
         sponsorLoginBtnMobile.setAttribute('data-listener-added', 'true');
         console.log('✅ Mobile login button setup complete');

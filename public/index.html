@@ -876,15 +876,15 @@
 
     <!-- Desktop Right Side Buttons -->
     <div class="sponsor-buttons d-none d-lg-flex position-fixed" style="right: 20px; top: 50%; transform: translateY(-50%); z-index: 999; flex-direction: column; gap: 10px;">
-        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='sponsor-registration.html'">店舗登録</button>
-        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;" onclick="window.location.href='/operations-login.html'">ログイン</button>
+        <button class="sponsor-btn" id="sponsorRegBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; white-space: nowrap;">店舗登録</button>
+        <button class="sponsor-btn login-btn" id="sponsorLoginBtn" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 25px; padding: 12px 20px; font-weight: 500; font-size: 14px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease; white-space: nowrap;">ログイン</button>
     </div>
 
     <!-- Mobile Bottom Buttons -->
     <div class="sponsor-buttons-mobile d-lg-none position-fixed" style="bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999;">
         <div class="d-flex gap-2">
-            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;" onclick="window.location.href='sponsor-registration.html'">店舗登録</button>
-            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;" onclick="window.location.href='/operations-login.html'">ログイン</button>
+            <button class="sponsor-btn" id="sponsorRegBtnMobile" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease;">店舗登録</button>
+            <button class="sponsor-btn login-btn" id="sponsorLoginBtnMobile" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 20px; padding: 10px 16px; font-weight: 500; font-size: 12px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); transition: all 0.3s ease;">ログイン</button>
         </div>
     </div>
 
@@ -5679,6 +5679,153 @@
             
         }, 100);
         
+        // Setup navigation registration and login buttons
+        setTimeout(function() {
+            // Main registration button
+            const registerBtn = document.getElementById('registerBtn');
+            if (registerBtn && !registerBtn.hasAttribute('data-handler-added')) {
+                registerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Registration button clicked - showing registration choice');
+                    
+                    // Show registration choice modal (the existing one)
+                    const formContainer = document.getElementById('registrationFormContainer');
+                    if (formContainer) {
+                        // Clear any existing content
+                        formContainer.innerHTML = '';
+                        
+                        // Create inline choice selection
+                        const choiceContent = document.createElement('div');
+                        choiceContent.className = 'registration-choice-content';
+                        choiceContent.id = 'registrationChoiceContent';
+                        choiceContent.innerHTML = `
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-8">
+                                    <div class="choice-container" style="background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); margin: 2rem 0;">
+                                        <div class="choice-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
+                                            <h1><i class="bi bi-person-plus me-2"></i>登録タイプを選択</h1>
+                                            <p class="mb-0">あなたに最適な登録方法を選んでください</p>
+                                        </div>
+                                        
+                                        <div class="p-4">
+                                            <div class="row g-4">
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openTouristRegistration()">
+                                                        <div class="card-body text-center p-4">
+                                                            <i class="bi bi-camera-fill text-primary mb-3" style="font-size: 3rem;"></i>
+                                                            <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
+                                                            <p class="text-muted small mb-3">観光客として登録し、ガイドを閲覧・予約できます</p>
+                                                            <div class="mt-3">
+                                                                <span class="badge bg-primary">簡単登録</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openGuideRegistration()">
+                                                        <div class="card-body text-center p-4">
+                                                            <i class="bi bi-person-badge-fill text-success mb-3" style="font-size: 3rem;"></i>
+                                                            <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
+                                                            <p class="text-muted small mb-3">観光ガイドとして登録し、お客様にサービスを提供できます</p>
+                                                            <div class="mt-3">
+                                                                <span class="badge bg-success">プロフェッショナル</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="text-center mt-4">
+                                                <small class="text-muted">
+                                                    <i class="bi bi-info-circle me-1"></i>
+                                                    希望する登録タイプを選択してください。後で変更することも可能です。
+                                                </small>
+                                            </div>
+                                            <div class="text-center mt-3">
+                                                <button type="button" class="btn btn-outline-secondary" onclick="hideRegistrationChoice()">
+                                                    <i class="bi bi-x-circle me-2"></i>キャンセル
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `;
+                        
+                        // Show the choice content
+                        formContainer.appendChild(choiceContent);
+                        formContainer.style.display = 'block';
+                        
+                        // Scroll to the choice section smoothly
+                        setTimeout(() => {
+                            formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }, 100);
+                        
+                        console.log('✅ Registration choice shown');
+                    }
+                });
+                registerBtn.setAttribute('data-handler-added', 'true');
+                console.log('✅ Main registration button handler added');
+            }
+            
+            // Login dropdown toggle
+            const loginDropdown = document.getElementById('loginDropdown');
+            if (loginDropdown && !loginDropdown.hasAttribute('data-handler-added')) {
+                loginDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Login dropdown clicked');
+                    
+                    const dropdown = document.getElementById('customLoginDropdown');
+                    if (dropdown) {
+                        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                            dropdown.style.display = 'block';
+                        } else {
+                            dropdown.style.display = 'none';
+                        }
+                    }
+                });
+                loginDropdown.setAttribute('data-handler-added', 'true');
+                console.log('✅ Login dropdown handler added');
+            }
+            
+            // Individual login buttons
+            const touristLoginBtn = document.getElementById('directTouristLoginBtn');
+            const guideLoginBtn = document.getElementById('directGuideLoginBtn');
+            const sponsorDropdownBtn = document.getElementById('sponsorLoginBtn');
+            
+            if (touristLoginBtn && !touristLoginBtn.hasAttribute('data-handler-added')) {
+                touristLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Tourist login clicked');
+                    alert('観光客ログイン機能は準備中です');
+                });
+                touristLoginBtn.setAttribute('data-handler-added', 'true');
+            }
+            
+            if (guideLoginBtn && !guideLoginBtn.hasAttribute('data-handler-added')) {
+                guideLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Guide login clicked');
+                    alert('ガイドログイン機能は準備中です');
+                });
+                guideLoginBtn.setAttribute('data-handler-added', 'true');
+            }
+            
+            // Note: sponsorLoginBtn from dropdown is different from the floating one
+            // This one is in the dropdown menu
+            if (sponsorDropdownBtn && !sponsorDropdownBtn.hasAttribute('data-handler-added')) {
+                sponsorDropdownBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Sponsor login (dropdown) clicked - redirecting to operations login');
+                    window.location.href = 'operations-login.html';
+                });
+                sponsorDropdownBtn.setAttribute('data-handler-added', 'true');
+            }
+            
+            console.log('✅ Navigation buttons setup complete');
+        }, 200);
+        
         // Setup hero buttons (backup)
         setupHeroButtons();
         
@@ -5772,6 +5919,52 @@
         };
         
         console.log('✅ Guide detail modal function added');
+        
+        // Global functions for registration choice
+        window.openTouristRegistration = function() {
+            console.log('🎯 Tourist registration selected');
+            hideRegistrationChoice();
+            
+            setTimeout(() => {
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                registrationModal.show();
+                console.log('✅ Tourist registration modal opened');
+            }, 100);
+        };
+        
+        window.openGuideRegistration = function() {
+            console.log('🎯 Guide registration selected');
+            
+            const formContainer = document.getElementById('registrationFormContainer');
+            const originalForm = document.getElementById('detailedGuideRegistrationForm');
+            
+            if (formContainer && originalForm) {
+                formContainer.innerHTML = '';
+                formContainer.appendChild(originalForm);
+                formContainer.style.display = 'block';
+                originalForm.style.display = 'block';
+                
+                setTimeout(() => {
+                    formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 200);
+                
+                console.log('✅ Guide registration form displayed');
+            } else {
+                alert('ガイド登録フォームが見つかりません。');
+            }
+        };
+        
+        window.hideRegistrationChoice = function() {
+            console.log('🛑 Hiding registration choice');
+            const formContainer = document.getElementById('registrationFormContainer');
+            if (formContainer) {
+                formContainer.style.display = 'none';
+                formContainer.innerHTML = '';
+                console.log('✅ Registration choice hidden');
+            }
+        };
+        
+        console.log('✅ Global registration functions added');
     </script>
     
     <!-- Main application initialization -->
