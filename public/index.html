@@ -1272,7 +1272,7 @@
                                     <button type="submit" class="btn btn-guide" style="background: linear-gradient(135deg, #28a745, #20c997); border: none; padding: 12px; border-radius: 10px; color: white; font-weight: 600;">
                                         <i class="bi bi-check-circle me-2"></i>ガイド登録申請
                                     </button>
-                                    <button type="button" class="btn btn-outline-secondary">
+                                    <button type="button" class="btn btn-outline-secondary" id="guideRegistrationCancelBtn">
                                         <i class="bi bi-x-circle me-2"></i>キャンセル
                                     </button>
                                 </div>
@@ -5965,6 +5965,44 @@
         };
         
         console.log('✅ Global registration functions added');
+        
+        // Guide registration cancel button handler
+        setTimeout(function() {
+            const guideRegistrationCancelBtn = document.getElementById('guideRegistrationCancelBtn');
+            if (guideRegistrationCancelBtn && !guideRegistrationCancelBtn.hasAttribute('data-handler-added')) {
+                guideRegistrationCancelBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🛑 Guide registration cancel clicked');
+                    
+                    // Hide the guide registration form
+                    const formContainer = document.getElementById('registrationFormContainer');
+                    const detailedForm = document.getElementById('detailedGuideRegistrationForm');
+                    
+                    if (formContainer) {
+                        formContainer.style.display = 'none';
+                        formContainer.innerHTML = '';
+                        console.log('✅ Guide registration form hidden');
+                    }
+                    
+                    if (detailedForm) {
+                        detailedForm.style.display = 'none';
+                        console.log('✅ Detailed guide form hidden');
+                    }
+                    
+                    // Reset the form
+                    const guideForm = document.getElementById('detailedGuideForm');
+                    if (guideForm) {
+                        guideForm.reset();
+                        console.log('✅ Guide form reset');
+                    }
+                    
+                    // Scroll to top smoothly
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+                guideRegistrationCancelBtn.setAttribute('data-handler-added', 'true');
+                console.log('✅ Guide registration cancel button handler added');
+            }
+        }, 300);
     </script>
     
     <!-- Main application initialization -->
