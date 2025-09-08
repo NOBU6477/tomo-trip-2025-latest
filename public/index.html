@@ -5527,29 +5527,66 @@
             if (findGuideBtn) {
                 findGuideBtn.onclick = function(e) {
                     e.preventDefault();
-                    console.log('🎯 Find Guide clicked - checking registration');
+                    console.log('🎯 Find Guide clicked - scrolling to guides');
                     
-                    // Check if tourist is already registered
+                    // Always scroll to guides section (no registration check)
+                    let target = document.getElementById('guides-section') || 
+                                document.getElementById('guideCardsContainer') ||
+                                document.querySelector('.guide-card') ||
+                                document.querySelector('[id*="guide"]');
+                    
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        console.log('✅ Scrolled to guides section');
+                    } else {
+                        window.scrollTo({ top: 2000, behavior: 'smooth' });
+                        console.log('✅ Fallback scroll performed');
+                    }
+                };
+                console.log('✅ Find Guide button setup - direct scroll');
+            }
+            
+            if (contactBtn) {
+                contactBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Contact clicked - opening chat');
+                    try {
+                        window.open('chat.html', '_blank');
+                        console.log('✅ Chat opened');
+                    } catch (error) {
+                        console.error('Chat open error:', error);
+                        alert('お問い合わせページ: chat.html');
+                    }
+                };
+                console.log('✅ Contact button setup');
+            }
+            
+            // Guide detail buttons - Check registration before showing details
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-action="view-details"]');
+                if (target) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const guideId = target.getAttribute('data-guide-id');
+                    console.log('🎯 Guide detail clicked:', guideId);
+                    
+                    // Check if tourist is registered
                     const touristRegistered = localStorage.getItem('touristRegistrationCompleted');
                     
                     if (touristRegistered) {
-                        // If already registered, scroll to guides section
-                        let target = document.getElementById('guides-section') || 
-                                    document.getElementById('guideCardsContainer') ||
-                                    document.querySelector('.guide-card') ||
-                                    document.querySelector('[id*="guide"]');
-                        
-                        if (target) {
-                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            console.log('✅ Scrolled to guides section');
+                        // If registered, show guide detail modal
+                        if (window.showGuideDetailModalById) {
+                            window.showGuideDetailModalById(parseInt(guideId));
                         } else {
-                            window.scrollTo({ top: 2000, behavior: 'smooth' });
+                            console.error('showGuideDetailModalById not found');
+                            alert('ガイド詳細機能（ID: ' + guideId + '）を準備中です');
                         }
                     } else {
-                        // If not registered, show registration prompt and open modal
-                        console.log('🔄 Tourist not registered - opening registration modal');
+                        // If not registered, show registration prompt
+                        console.log('🔄 Tourist not registered - showing registration prompt');
                         
-                        // Create a custom modal for registration prompt
+                        // Create registration prompt modal
                         const promptHtml = `
                             <div class="modal fade" id="registrationPromptModal" tabindex="-1">
                                 <div class="modal-dialog modal-dialog-centered">
@@ -5626,7 +5663,7 @@
                                 // Open tourist registration modal
                                 const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
                                 registrationModal.show();
-                                console.log('✅ Registration modal opened');
+                                console.log('✅ Registration modal opened from guide detail');
                             }, 300);
                         });
                         
@@ -5634,41 +5671,6 @@
                         document.getElementById('registrationPromptModal').addEventListener('hidden.bs.modal', function() {
                             this.remove();
                         });
-                    }
-                };
-                console.log('✅ Find Guide button setup with registration check');
-            }
-            
-            if (contactBtn) {
-                contactBtn.onclick = function(e) {
-                    e.preventDefault();
-                    console.log('🎯 Contact clicked - opening chat');
-                    try {
-                        window.open('chat.html', '_blank');
-                        console.log('✅ Chat opened');
-                    } catch (error) {
-                        console.error('Chat open error:', error);
-                        alert('お問い合わせページ: chat.html');
-                    }
-                };
-                console.log('✅ Contact button setup');
-            }
-            
-            // Guide detail buttons - AGGRESSIVE event delegation
-            document.addEventListener('click', function(e) {
-                const target = e.target.closest('[data-action="view-details"]');
-                if (target) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const guideId = target.getAttribute('data-guide-id');
-                    console.log('🎯 Guide detail clicked:', guideId);
-                    
-                    if (window.showGuideDetailModalById) {
-                        window.showGuideDetailModalById(parseInt(guideId));
-                    } else {
-                        console.error('showGuideDetailModalById not found');
-                        alert('ガイド詳細機能（ID: ' + guideId + '）を準備中です');
                     }
                 }
             }, true); // Use capture phase
@@ -5696,12 +5698,7 @@
                 nara: "奈良県", hiroshima: "広島県", fukuoka: "福岡県", okinawa: "沖縄県"
             };
             
-            // Check if tourist is registered
-            const touristRegistered = localStorage.getItem('touristRegistrationCompleted');
-            if (!touristRegistered) {
-                alert('ガイドの詳細情報を見るには観光客登録が必要です。「ガイドを探す」ボタンから登録を開始してください。');
-                return;
-            }
+            // This function is now only called for registered tourists
             
             // Create and show modal
             const modalHtml = `
