@@ -1570,30 +1570,48 @@
                             </div>
                         </div>
 
-                        <!-- Step 3: Complete -->
+                        <!-- Step 3: Document Upload -->
                         <div class="step-content" id="step3Content" style="display: none;">
-                            <div class="p-4 text-center">
-                                <div class="mb-4">
-                                    <div class="success-icon mx-auto mb-4" 
-                                         style="width: 100px; height: 100px; background: linear-gradient(135deg, #28a745, #20c997); 
-                                                border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                                        <i class="bi bi-check-circle text-white" style="font-size: 3rem;"></i>
+                            <div class="p-4">
+                                <h4 class="mb-3">身分証明書の提出</h4>
+                                <div class="verification-box p-3 mb-3" style="background: #f8f9fa; border-radius: 15px; border-left: 4px solid #0984e3;">
+                                    <p class="mb-3">以下のいずれかの身分証明書をアップロードしてください：</p>
+                                    <ul class="mb-3">
+                                        <li>パスポート</li>
+                                        <li>運転免許証</li>
+                                        <li>マイナンバーカード</li>
+                                        <li>在留カード（外国人の方）</li>
+                                    </ul>
+                                    
+                                    <div class="document-upload-area p-4 text-center" id="uploadAreaModal" style="border: 2px dashed #0984e3; border-radius: 15px; background: #f8f9fa; cursor: pointer;">
+                                        <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #0984e3;"></i>
+                                        <h5 class="mt-3">ファイルをドラッグ&ドロップ</h5>
+                                        <p class="text-muted">または</p>
+                                        <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInputModal').click()" style="border-radius: 15px;">
+                                            ファイルを選択
+                                        </button>
+                                        <input type="file" id="fileInputModal" accept="image/*,.pdf" style="display: none;">
+                                        <div class="form-text mt-2">
+                                            対応形式: JPG, PNG, PDF（最大5MB）
+                                        </div>
                                     </div>
-                                    <h4 class="fw-bold text-success mb-3">登録完了</h4>
-                                    <p class="text-muted mb-4">
-                                        観光客登録が正常に完了しました！<br>
-                                        全てのガイドサービスをご利用いただけます。
-                                    </p>
+                                    
+                                    <div id="uploadPreviewModal" style="display: none;">
+                                        <img id="previewImageModal" class="upload-preview" style="max-width: 100%; max-height: 200px; border-radius: 10px; margin-top: 1rem;" alt="プレビュー">
+                                        <div class="mt-2">
+                                            <span id="fileNameModal" class="fw-bold"></span>
+                                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeFileModal()">削除</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="text-success mt-3" id="uploadSuccessModal" style="display: none;">
+                                        <i class="bi bi-check-circle-fill"></i> 身分証明書のアップロードが完了しました
+                                    </div>
                                 </div>
                                 
-                                <div class="alert alert-info border-0" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb); border-radius: 15px;">
-                                    <h6 class="fw-bold mb-2">これからできること</h6>
-                                    <ul class="list-unstyled text-start mb-0">
-                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>ガイドの詳細プロフィール閲覧</li>
-                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>ガイドへの直接お問い合わせ</li>
-                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>ツアー予約と日程調整</li>
-                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>レビュー・評価の投稿</li>
-                                    </ul>
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="goToStep2Modal()" style="border-radius: 25px; padding: 12px 30px;">戻る</button>
+                                    <button type="button" class="btn btn-primary" id="completeBtnModal" onclick="completeRegistrationModal()" disabled style="border-radius: 25px; padding: 12px 30px;">登録完了</button>
                                 </div>
                             </div>
                         </div>
