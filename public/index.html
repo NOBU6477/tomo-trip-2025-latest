@@ -5527,23 +5527,116 @@
             if (findGuideBtn) {
                 findGuideBtn.onclick = function(e) {
                     e.preventDefault();
-                    console.log('🎯 Find Guide clicked - scrolling');
+                    console.log('🎯 Find Guide clicked - checking registration');
                     
-                    // Try multiple scroll targets
-                    let target = document.getElementById('guides-section') || 
-                                document.getElementById('guideCardsContainer') ||
-                                document.querySelector('.guide-card') ||
-                                document.querySelector('[id*="guide"]');
+                    // Check if tourist is already registered
+                    const touristRegistered = localStorage.getItem('touristRegistrationCompleted');
                     
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        console.log('✅ Scrolled to:', target.id || target.className);
+                    if (touristRegistered) {
+                        // If already registered, scroll to guides section
+                        let target = document.getElementById('guides-section') || 
+                                    document.getElementById('guideCardsContainer') ||
+                                    document.querySelector('.guide-card') ||
+                                    document.querySelector('[id*="guide"]');
+                        
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            console.log('✅ Scrolled to guides section');
+                        } else {
+                            window.scrollTo({ top: 2000, behavior: 'smooth' });
+                        }
                     } else {
-                        alert('ガイド一覧セクションに移動します');
-                        window.scrollTo({ top: 2000, behavior: 'smooth' });
+                        // If not registered, show registration prompt and open modal
+                        console.log('🔄 Tourist not registered - opening registration modal');
+                        
+                        // Create a custom modal for registration prompt
+                        const promptHtml = `
+                            <div class="modal fade" id="registrationPromptModal" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+                                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
+                                            <h5 class="modal-title fw-bold">
+                                                <i class="bi bi-info-circle-fill me-2"></i>ガイドサービスのご利用について
+                                            </h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body p-4 text-center">
+                                            <div class="mb-4">
+                                                <i class="bi bi-person-check" style="font-size: 4rem; color: #667eea; opacity: 0.8;"></i>
+                                            </div>
+                                            <h6 class="fw-bold mb-3" style="color: #2c3e50;">観光客登録が必要です</h6>
+                                            <p class="text-muted mb-4" style="line-height: 1.6;">
+                                                TomoTripでは、信頼できる地元ガイドとの安全な出会いをサポートしています。<br>
+                                                ガイドの詳細情報閲覧やお問い合わせをご利用いただくため、観光客としての登録をお願いいたします。
+                                            </p>
+                                            <div class="mb-4">
+                                                <div class="row text-start">
+                                                    <div class="col-12 mb-2">
+                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                        <small>ガイドの詳細プロフィール閲覧</small>
+                                                    </div>
+                                                    <div class="col-12 mb-2">
+                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                        <small>ガイドへの直接お問い合わせ</small>
+                                                    </div>
+                                                    <div class="col-12 mb-2">
+                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                        <small>ツアー予約と日程調整</small>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                                        <small>安全で信頼できるガイドマッチング</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-0 pt-0">
+                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                                <i class="bi bi-x-circle me-1"></i>キャンセル
+                                            </button>
+                                            <button type="button" class="btn btn-primary" id="proceedToRegistration" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
+                                                <i class="bi bi-person-plus me-1"></i>観光客登録を開始
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Remove existing prompt modal if exists
+                        const existingPrompt = document.getElementById('registrationPromptModal');
+                        if (existingPrompt) existingPrompt.remove();
+                        
+                        // Add prompt modal to body
+                        document.body.insertAdjacentHTML('beforeend', promptHtml);
+                        
+                        // Show prompt modal
+                        const promptModal = new bootstrap.Modal(document.getElementById('registrationPromptModal'));
+                        promptModal.show();
+                        
+                        // Setup proceed button handler
+                        document.getElementById('proceedToRegistration').addEventListener('click', function() {
+                            // Hide prompt modal
+                            promptModal.hide();
+                            
+                            // Wait for modal to hide, then show registration modal
+                            setTimeout(() => {
+                                document.getElementById('registrationPromptModal').remove();
+                                
+                                // Open tourist registration modal
+                                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                                registrationModal.show();
+                                console.log('✅ Registration modal opened');
+                            }, 300);
+                        });
+                        
+                        // Clean up prompt modal on hide
+                        document.getElementById('registrationPromptModal').addEventListener('hidden.bs.modal', function() {
+                            this.remove();
+                        });
                     }
                 };
-                console.log('✅ Find Guide button setup');
+                console.log('✅ Find Guide button setup with registration check');
             }
             
             if (contactBtn) {
