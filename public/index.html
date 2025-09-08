@@ -2131,37 +2131,37 @@
             try {
                 const location = document.getElementById('locationFilter').value;
                 const language = document.getElementById('languageFilter').value;
-            const price = document.getElementById('priceFilter').value;
-            const keyword = document.getElementById('keywordInput').value.toLowerCase();
+                const price = document.getElementById('priceFilter').value;
+                const keyword = document.getElementById('keywordInput').value.toLowerCase();
 
-            // Load all available guides (default + registered)
-            const allGuides = loadAllGuides();
-            
-            let filtered = allGuides.filter(guide => {
-                const locationMatch = !location || guide.location === location;
-                const languageMatch = !language || (guide.languages && guide.languages.includes(language));
+                // Load all available guides (default + registered)
+                const allGuides = loadAllGuides();
                 
-                let priceMatch = true;
-                if (price) {
-                    const guidePrice = guide.price || 0;
-                    switch(price) {
-                        case 'budget': priceMatch = guidePrice >= 6000 && guidePrice <= 10000; break;
-                        case 'premium': priceMatch = guidePrice >= 10001 && guidePrice <= 20000; break;
-                        case 'luxury': priceMatch = guidePrice >= 20001; break;
+                let filtered = allGuides.filter(guide => {
+                    const locationMatch = !location || guide.location === location;
+                    const languageMatch = !language || (guide.languages && guide.languages.includes(language));
+                    
+                    let priceMatch = true;
+                    if (price) {
+                        const guidePrice = guide.price || 0;
+                        switch(price) {
+                            case 'budget': priceMatch = guidePrice >= 6000 && guidePrice <= 10000; break;
+                            case 'premium': priceMatch = guidePrice >= 10001 && guidePrice <= 20000; break;
+                            case 'luxury': priceMatch = guidePrice >= 20001; break;
+                        }
                     }
-                }
-                
-                const keywordMatch = !keyword || 
-                    (guide.name && guide.name.toLowerCase().includes(keyword)) ||
-                    (guide.specialty && guide.specialty.toLowerCase().includes(keyword)) ||
-                    (guide.description && guide.description.toLowerCase().includes(keyword));
+                    
+                    const keywordMatch = !keyword || 
+                        (guide.name && guide.name.toLowerCase().includes(keyword)) ||
+                        (guide.specialty && guide.specialty.toLowerCase().includes(keyword)) ||
+                        (guide.description && guide.description.toLowerCase().includes(keyword));
 
-                return locationMatch && languageMatch && priceMatch && keywordMatch;
-            });
+                    return locationMatch && languageMatch && priceMatch && keywordMatch;
+                });
 
-            currentGuides = filtered;
-            displayGuides(filtered, 1);
-            console.log(`✅ Filter completed: ${filtered.length} guides found`);
+                currentGuides = filtered;
+                displayGuides(filtered, 1);
+                console.log(`✅ Filter completed: ${filtered.length} guides found`);
             } catch (error) {
                 console.error('❌ Filter error:', error);
                 alert('検索中にエラーが発生しました。再度お試しください。');
