@@ -139,6 +139,11 @@ function appInit() {
     // Setup guide card click handlers with authentication
     setTimeout(() => {
         setupGuideCardClickHandlers();
+        
+        // Setup tourist registration system
+        if (window.setupTouristRegistration) {
+            window.setupTouristRegistration();
+        }
     }, 200);
     
     console.log('🌍 Global functions exposed:', {

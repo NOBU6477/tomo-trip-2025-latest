@@ -1999,6 +1999,389 @@ function setupGuideCardClickHandlers() {
     });
 }
 
+// Tourist Registration Multi-Step System
+let currentTouristStep = 1;
+const maxTouristSteps = 3;
+
+// Initialize tourist registration system
+function setupTouristRegistration() {
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    const sendSmsBtn = document.getElementById('sendSmsBtn');
+    const verifySmsBtn = document.getElementById('verifySmsBtn');
+    const documentUpload = document.getElementById('touristDocumentUpload');
+    const phoneInput = document.getElementById('touristPhone');
+    const verificationPhoneInput = document.getElementById('verificationPhone');
+    
+    if (nextStepBtn) {
+        nextStepBtn.addEventListener('click', handleNextStep);
+    }
+    
+    if (sendSmsBtn) {
+        sendSmsBtn.addEventListener('click', handleSendSms);
+    }
+    
+    if (verifySmsBtn) {
+        verifySmsBtn.addEventListener('click', handleVerifySms);
+    }
+    
+    if (documentUpload) {
+        documentUpload.addEventListener('change', handleDocumentUpload);
+    }
+    
+    // Sync phone numbers
+    if (phoneInput && verificationPhoneInput) {
+        phoneInput.addEventListener('input', function() {
+            verificationPhoneInput.value = this.value;
+        });
+    }
+    
+    // Initialize first step
+    showTouristStep(1);
+    
+    console.log('✅ Tourist registration system initialized');
+}
+
+// Handle next step in tourist registration
+function handleNextStep() {
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    
+    if (currentTouristStep === 1) {
+        // Validate step 1 - basic information
+        if (validateTouristStep1()) {
+            showTouristStep(2);
+            nextStepBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>登録完了';
+        }
+    } else if (currentTouristStep === 2) {
+        // Validate step 2 - verification
+        if (validateTouristStep2()) {
+            completeTouristRegistration();
+        }
+    }
+}
+
+// Show specific tourist registration step
+function showTouristStep(stepNumber) {
+    currentTouristStep = stepNumber;
+    
+    // Hide all step contents
+    for (let i = 1; i <= maxTouristSteps; i++) {
+        const stepContent = document.getElementById(`step${i}Content`);
+        const stepIndicator = document.getElementById(`step${i}Indicator`);
+        
+        if (stepContent) {
+            stepContent.style.display = i === stepNumber ? 'block' : 'none';
+            stepContent.classList.toggle('active', i === stepNumber);
+        }
+        
+        if (stepIndicator) {
+            stepIndicator.classList.toggle('active', i === stepNumber);
+        }
+    }
+    
+    // Update next button text
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    if (nextStepBtn) {
+        if (stepNumber === 1) {
+            nextStepBtn.innerHTML = '<i class="bi bi-arrow-right me-2"></i>次へ';
+        } else if (stepNumber === 2) {
+            nextStepBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>登録完了';
+        } else {
+            nextStepBtn.style.display = 'none';
+        }
+    }
+    
+    // Show/hide terms section based on step
+    const termsSection = document.getElementById('termsSection');
+    if (termsSection) {
+        termsSection.style.display = stepNumber === 1 ? 'block' : 'none';
+    }
+    
+    console.log(`🔄 Showing tourist registration step ${stepNumber}`);
+}
+
+// Validate tourist registration step 1
+function validateTouristStep1() {
+    const requiredFields = [
+        'touristFirstName',
+        'touristLastName', 
+        'touristEmail',
+        'touristCountry',
+        'touristPhone'
+    ];
+    
+    const termsCheckbox = document.getElementById('touristAgreeTerms');
+    
+    let isValid = true;
+    const errors = [];
+    
+    // Check required fields
+    for (const fieldId of requiredFields) {
+        const field = document.getElementById(fieldId);
+        if (field && !field.value.trim()) {
+            field.style.borderColor = '#dc3545';
+            isValid = false;
+            errors.push(`${field.labels?.[0]?.textContent || fieldId}は必須項目です`);
+        } else if (field) {
+            field.style.borderColor = '#e9ecef';
+        }
+    }
+    
+    // Check email format
+    const emailField = document.getElementById('touristEmail');
+    if (emailField && emailField.value) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailField.value)) {
+            emailField.style.borderColor = '#dc3545';
+            isValid = false;
+            errors.push('正しいメールアドレスを入力してください');
+        }
+    }
+    
+    // Check terms agreement
+    if (!termsCheckbox || !termsCheckbox.checked) {
+        isValid = false;
+        errors.push('利用規約への同意が必要です');
+    }
+    
+    if (!isValid) {
+        alert('入力内容を確認してください：\n\n' + errors.join('\n'));
+    }
+    
+    return isValid;
+}
+
+// Validate tourist registration step 2
+function validateTouristStep2() {
+    const phoneVerified = localStorage.getItem('tourist_phone_verified') === 'true';
+    const documentsUploaded = document.getElementById('uploadedDocuments').children.length > 0;
+    
+    if (!phoneVerified) {
+        alert('電話番号認証を完了してください');
+        return false;
+    }
+    
+    if (!documentsUploaded) {
+        alert('身分証明書のアップロードが必要です');
+        return false;
+    }
+    
+    return true;
+}
+
+// Handle SMS sending for phone verification
+function handleSendSms() {
+    const phoneInput = document.getElementById('touristPhone');
+    const sendSmsBtn = document.getElementById('sendSmsBtn');
+    const smsVerificationArea = document.getElementById('smsVerificationArea');
+    
+    if (!phoneInput || !phoneInput.value.trim()) {
+        alert('電話番号を入力してください');
+        return;
+    }
+    
+    // Simulate SMS sending
+    console.log('📱 Sending SMS to:', phoneInput.value);
+    
+    // Disable send button and show verification area
+    sendSmsBtn.disabled = true;
+    sendSmsBtn.innerHTML = '<i class="bi bi-clock me-2"></i>送信中...';
+    
+    setTimeout(() => {
+        sendSmsBtn.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>再送信';
+        sendSmsBtn.disabled = false;
+        smsVerificationArea.style.display = 'block';
+        
+        // Start countdown timer
+        startSmsTimer();
+        
+        alert('認証コードを送信しました。\n（デモ用コード: 123456）');
+        
+    }, 2000);
+}
+
+// Handle SMS verification
+function handleVerifySms() {
+    const smsCodeInput = document.getElementById('smsCode');
+    const verifySmsBtn = document.getElementById('verifySmsBtn');
+    const phoneVerificationStatus = document.getElementById('phoneVerificationStatus');
+    
+    if (!smsCodeInput || !smsCodeInput.value.trim()) {
+        alert('認証コードを入力してください');
+        return;
+    }
+    
+    // Demo verification (accept 123456)
+    if (smsCodeInput.value.trim() === '123456') {
+        verifySmsBtn.disabled = true;
+        verifySmsBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証中...';
+        
+        setTimeout(() => {
+            localStorage.setItem('tourist_phone_verified', 'true');
+            phoneVerificationStatus.innerHTML = '<div class="verification-success"><i class="bi bi-check-circle-fill me-2"></i>電話番号認証が完了しました</div>';
+            verifySmsBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証完了';
+            smsCodeInput.disabled = true;
+            
+            console.log('✅ Phone verification completed');
+        }, 1500);
+    } else {
+        alert('認証コードが正しくありません。\n（デモ用コード: 123456）');
+        smsCodeInput.select();
+    }
+}
+
+// Start SMS verification timer
+function startSmsTimer() {
+    const smsTimer = document.getElementById('smsTimer');
+    let timeLeft = 300; // 5 minutes
+    
+    const timer = setInterval(() => {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        
+        if (smsTimer) {
+            smsTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        timeLeft--;
+        
+        if (timeLeft < 0) {
+            clearInterval(timer);
+            if (smsTimer) {
+                smsTimer.textContent = '期限切れ';
+                smsTimer.style.color = '#dc3545';
+            }
+        }
+    }, 1000);
+}
+
+// Handle document upload
+function handleDocumentUpload(event) {
+    const files = event.target.files;
+    const uploadedDocuments = document.getElementById('uploadedDocuments');
+    
+    if (!files || !uploadedDocuments) return;
+    
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        
+        // Validate file
+        if (!validateDocumentFile(file)) continue;
+        
+        // Create preview
+        const documentPreview = createDocumentPreview(file);
+        uploadedDocuments.appendChild(documentPreview);
+    }
+    
+    console.log(`📎 Uploaded ${files.length} documents`);
+}
+
+// Validate document file
+function validateDocumentFile(file) {
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+    
+    if (!allowedTypes.includes(file.type)) {
+        alert(`「${file.name}」はサポートされていないファイル形式です。\nJPG、PNG、PDFファイルをアップロードしてください。`);
+        return false;
+    }
+    
+    if (file.size > maxSize) {
+        alert(`「${file.name}」はファイルサイズが大きすぎます。\n5MB以下のファイルをアップロードしてください。`);
+        return false;
+    }
+    
+    return true;
+}
+
+// Create document preview element
+function createDocumentPreview(file) {
+    const preview = document.createElement('div');
+    preview.className = 'document-preview';
+    
+    const icon = file.type.includes('pdf') ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image';
+    const fileSize = (file.size / 1024).toFixed(1);
+    
+    preview.innerHTML = `
+        <i class="bi ${icon} text-primary me-3" style="font-size: 1.5rem;"></i>
+        <div class="flex-grow-1">
+            <div class="fw-semibold">${file.name}</div>
+            <small class="text-muted">${fileSize} KB</small>
+        </div>
+        <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">
+            <i class="bi bi-trash"></i>
+        </button>
+    `;
+    
+    return preview;
+}
+
+// Complete tourist registration
+function completeTouristRegistration() {
+    console.log('🎉 Completing tourist registration...');
+    
+    // Collect form data
+    const formData = {
+        firstName: document.getElementById('touristFirstName')?.value,
+        lastName: document.getElementById('touristLastName')?.value,
+        email: document.getElementById('touristEmail')?.value,
+        country: document.getElementById('touristCountry')?.value,
+        phone: document.getElementById('touristPhone')?.value,
+        visitPurpose: document.getElementById('touristVisitPurpose')?.value,
+        visitDuration: document.getElementById('touristVisitDuration')?.value,
+        preferredLanguage: document.getElementById('touristPreferredLanguage')?.value,
+        interests: document.getElementById('touristInterests')?.value,
+        receiveUpdates: document.getElementById('touristReceiveUpdates')?.checked,
+        phoneVerified: localStorage.getItem('tourist_phone_verified') === 'true',
+        documentsUploaded: document.getElementById('uploadedDocuments').children.length > 0
+    };
+    
+    console.log('📋 Tourist registration data:', formData);
+    
+    // Show completion step
+    showTouristStep(3);
+    
+    // Store registration data (simulate)
+    localStorage.setItem('tourist_registration_data', JSON.stringify(formData));
+    localStorage.setItem('tourist_registration_complete', 'true');
+    
+    // Auto-login the user
+    setTimeout(() => {
+        // Store login state
+        localStorage.setItem('tomotrip_user_type', 'tourist');
+        localStorage.setItem('tomotrip_user_email', formData.email);
+        localStorage.setItem('tomotrip_login_time', Date.now().toString());
+        
+        // Check for pending guide view
+        const pendingGuideId = sessionStorage.getItem('pending_guide_view');
+        
+        if (pendingGuideId) {
+            // Close modal and show guide details
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+            if (modal) {
+                modal.hide();
+            }
+            
+            sessionStorage.removeItem('pending_guide_view');
+            
+            setTimeout(() => {
+                showGuideDetailsModal(pendingGuideId);
+            }, 500);
+        } else {
+            // Just close modal and reload
+            setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+                if (modal) {
+                    modal.hide();
+                }
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }, 3000); // Give user time to see completion message
+        }
+    }, 2000);
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
@@ -2025,6 +2408,12 @@ window.setupGuideCardClickHandlers = setupGuideCardClickHandlers;
 window.showTouristLoginFromAuth = showTouristLoginFromAuth;
 window.showTouristRegistrationFromAuth = showTouristRegistrationFromAuth;
 window.contactGuide = contactGuide;
+window.setupTouristRegistration = setupTouristRegistration;
+window.showTouristStep = showTouristStep;
+window.handleNextStep = handleNextStep;
+window.handleSendSms = handleSendSms;
+window.handleVerifySms = handleVerifySms;
+window.handleDocumentUpload = handleDocumentUpload;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
