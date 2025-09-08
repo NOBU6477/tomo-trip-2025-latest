@@ -26,11 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ English button setup complete');
     }
     
-    // Sponsor buttons
+    // Sponsor buttons (floating buttons - different IDs from dropdown)
     const sponsorRegBtn = document.getElementById('sponsorRegBtn');
-    const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+    const sponsorLoginBtn = document.getElementById('sponsorLoginBtnFloat');
     const sponsorRegBtnMobile = document.getElementById('sponsorRegBtnMobile');
-    const sponsorLoginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
+    const sponsorLoginBtnMobile = document.getElementById('sponsorLoginBtnMobileFloat');
     
     if (sponsorRegBtn && !sponsorRegBtn.hasAttribute('data-listener-added')) {
         sponsorRegBtn.addEventListener('click', function(e) {
