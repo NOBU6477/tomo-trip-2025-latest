@@ -2448,7 +2448,7 @@ function showGuideDetailsModal(guideId) {
     console.log('🎯 Showing guide details for:', guideId);
     
     // Get guide data from default guides
-    const guide = window.defaultGuides?.find(g => g.id === guideId);
+    const guide = window.defaultGuides?.find(g => g.id == guideId);
     
     if (!guide) {
         alert('申し訳ございませんが、該当するガイドの情報が見つかりませんでした。');

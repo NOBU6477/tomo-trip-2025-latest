@@ -58,6 +58,9 @@ function appInit() {
         console.log('🧹 Storage cleared due to clear-cache parameter');
     }
     
+    // CRITICAL FIX: Assign defaultGuides to window for guide details modal
+    window.defaultGuides = guides;
+    
     AppState.guides = guides;
     AppState.pageSize = 12; // Fixed pageSize for all environments
     AppState.currentPage = 1;
@@ -122,6 +125,29 @@ function appInit() {
         if (guideLoginBtn && window.handleGuideLogin) {
             guideLoginBtn.addEventListener('click', window.handleGuideLogin);
             console.log('✅ Guide login button handler attached');
+        }
+        
+        // Set up main hero buttons
+        const findGuideBtn = document.getElementById('findGuideBtn');
+        const contactBtn = document.getElementById('contactBtn');
+        
+        if (findGuideBtn) {
+            findGuideBtn.addEventListener('click', function() {
+                // Scroll to guides section
+                const guidesSection = document.getElementById('guides-section');
+                if (guidesSection) {
+                    guidesSection.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+            console.log('✅ Find Guide button handler attached');
+        }
+        
+        if (contactBtn) {
+            contactBtn.addEventListener('click', function() {
+                // Show contact modal or information
+                alert('お問い合わせいただきありがとうございます。\n\nメール: info@tomotrip.com\n電話: 03-1234-5678\n\nまたは、ご希望のガイドから直接お問い合わせいただけます。');
+            });
+            console.log('✅ Contact button handler attached');
         }
     }, 100);
     
