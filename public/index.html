@@ -1296,8 +1296,8 @@
                             <i class="bi bi-person-plus-fill" style="font-size: 22px;"></i>
                         </div>
                         <div>
-                            <div style="font-size: 1.3rem;">観光客新規登録</div>
-                            <small style="opacity: 0.9; font-weight: normal;">安全で信頼できるガイドサービスをご利用いただくため</small>
+                            <div style="font-size: 1.3rem;">観光客登録</div>
+                            <small style="opacity: 0.9; font-weight: normal;">電話認証と身分証明書の提出が必要です</small>
                         </div>
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる" 
@@ -1305,26 +1305,22 @@
                 </div>
                 
                 <div class="modal-body p-0" style="max-height: 70vh; overflow-y: auto;">
-                    <!-- Progress Steps -->
-                    <div class="px-4 py-3" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-bottom: 1px solid #dee2e6;">
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <div class="step-indicator active" id="step1Indicator">
-                                    <div class="step-number">1</div>
-                                    <div class="step-text">基本情報</div>
-                                </div>
+                    <!-- Step Indicator -->
+                    <div class="text-center mb-4 px-4 py-3" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-bottom: 1px solid #dee2e6;">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="step-item active" id="step1-indicator">
+                                <span class="badge bg-primary rounded-circle me-2">1</span>
+                                基本情報
                             </div>
-                            <div class="col-4">
-                                <div class="step-indicator" id="step2Indicator">
-                                    <div class="step-number">2</div>
-                                    <div class="step-text">本人認証</div>
-                                </div>
+                            <div class="mx-3">→</div>
+                            <div class="step-item" id="step2-indicator">
+                                <span class="badge bg-secondary rounded-circle me-2">2</span>
+                                電話認証
                             </div>
-                            <div class="col-4">
-                                <div class="step-indicator" id="step3Indicator">
-                                    <div class="step-number">3</div>
-                                    <div class="step-text">完了</div>
-                                </div>
+                            <div class="mx-3">→</div>
+                            <div class="step-item" id="step3-indicator">
+                                <span class="badge bg-secondary rounded-circle me-2">3</span>
+                                身分証明書
                             </div>
                         </div>
                     </div>
@@ -5929,11 +5925,15 @@
         
         // Global functions for registration choice
         window.openTouristRegistration = function() {
-            console.log('🎯 Tourist registration selected - redirecting to advanced form');
+            console.log('🎯 Tourist registration selected - showing advanced 3-step modal');
             hideRegistrationChoice();
             
-            // Redirect to advanced tourist registration form
-            window.location.href = 'tourist-registration-advanced.html';
+            // Show the updated registration modal with 3-step process
+            setTimeout(() => {
+                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+                registrationModal.show();
+                console.log('✅ Advanced tourist registration modal opened');
+            }, 300);
         };
         
         window.openGuideRegistration = function() {
