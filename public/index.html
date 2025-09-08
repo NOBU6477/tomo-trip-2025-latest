@@ -1343,93 +1343,46 @@
                                     </div>
                                 </div>
 
+                                <h4 class="mb-3">基本情報を入力してください</h4>
+
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="touristFirstName" 
-                                                   placeholder="名前（名）" required 
-                                                   style="border-radius: 12px; border: 2px solid #e9ecef; height: 58px;">
-                                            <label for="touristFirstName">
-                                                <i class="bi bi-person me-2 text-primary"></i>名前（名） <span class="text-danger">*</span>
-                                            </label>
-                                        </div>
+                                        <label for="touristFirstName" class="form-label">名</label>
+                                        <input type="text" class="form-control" id="touristFirstName" required style="border-radius: 15px; padding: 12px 20px; border: 2px solid #e9ecef;">
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="text" class="form-control" id="touristLastName" 
-                                                   placeholder="名前（姓）" required 
-                                                   style="border-radius: 12px; border: 2px solid #e9ecef; height: 58px;">
-                                            <label for="touristLastName">
-                                                <i class="bi bi-person me-2 text-primary"></i>名前（姓） <span class="text-danger">*</span>
-                                            </label>
-                                        </div>
+                                        <label for="touristLastName" class="form-label">姓</label>
+                                        <input type="text" class="form-control" id="touristLastName" required style="border-radius: 15px; padding: 12px 20px; border: 2px solid #e9ecef;">
                                     </div>
                                 </div>
                                 
                                 <div class="mt-3">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="touristEmail" 
-                                               placeholder="メールアドレス" required 
-                                               style="border-radius: 12px; border: 2px solid #e9ecef; height: 58px;">
-                                        <label for="touristEmail">
-                                            <i class="bi bi-envelope me-2 text-primary"></i>メールアドレス <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                
-                                <div class="row g-3 mt-1">
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <select class="form-select" id="touristCountry" required 
-                                                    style="border-radius: 12px; border: 2px solid #e9ecef; height: 58px;">
-                                                <option value="">出身国・地域を選択</option>
-                                                <option value="japan">日本</option>
-                                                <option value="usa">アメリカ合衆国</option>
-                                                <option value="uk">イギリス</option>
-                                                <option value="canada">カナダ</option>
-                                                <option value="australia">オーストラリア</option>
-                                                <option value="germany">ドイツ</option>
-                                                <option value="france">フランス</option>
-                                                <option value="china">中国</option>
-                                                <option value="korea">韓国</option>
-                                                <option value="taiwan">台湾</option>
-                                                <option value="thailand">タイ</option>
-                                                <option value="singapore">シンガポール</option>
-                                                <option value="other">その他</option>
-                                            </select>
-                                            <label for="touristCountry">
-                                                <i class="bi bi-globe me-2 text-primary"></i>出身国・地域 <span class="text-danger">*</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-floating">
-                                            <input type="tel" class="form-control" id="touristPhone" 
-                                                   placeholder="電話番号" required 
-                                                   style="border-radius: 12px; border: 2px solid #e9ecef; height: 58px;">
-                                            <label for="touristPhone">
-                                                <i class="bi bi-telephone me-2 text-primary"></i>電話番号 <span class="text-danger">*</span>
-                                            </label>
-                                            <div class="form-text">国際番号形式（例：+81-90-1234-5678）</div>
-                                        </div>
-                                    </div>
+                                    <label for="touristEmail" class="form-label">メールアドレス</label>
+                                    <input type="email" class="form-control" id="touristEmail" required style="border-radius: 15px; padding: 12px 20px; border: 2px solid #e9ecef;">
                                 </div>
                                 
                                 <div class="mt-3">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="touristVisitPurpose" 
-                                                style="border-radius: 12px; border: 2px solid #e9ecef; height: 58px;">
-                                            <option value="">訪問目的を選択してください</option>
-                                            <option value="tourism">観光・旅行</option>
-                                            <option value="business">出張・ビジネス</option>
-                                            <option value="study">学習・研修</option>
-                                            <option value="family">家族・親戚訪問</option>
-                                            <option value="other">その他</option>
-                                        </select>
-                                        <label for="touristVisitPurpose">
-                                            <i class="bi bi-map me-2 text-primary"></i>訪問目的
-                                        </label>
-                                    </div>
+                                    <label for="touristPhone" class="form-label">電話番号</label>
+                                    <input type="tel" class="form-control" id="touristPhone" placeholder="090-1234-5678" required style="border-radius: 15px; padding: 12px 20px; border: 2px solid #e9ecef;">
+                                    <div class="form-text">SMS認証コードを受信する電話番号を入力してください</div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <label for="touristCountry" class="form-label">国籍</label>
+                                    <select class="form-control" id="touristCountry" required style="border-radius: 15px; padding: 12px 20px; border: 2px solid #e9ecef;">
+                                        <option value="">選択してください</option>
+                                        <option value="japan">日本</option>
+                                        <option value="usa">アメリカ合衆国</option>
+                                        <option value="china">中国</option>
+                                        <option value="korea">韓国</option>
+                                        <option value="taiwan">台湾</option>
+                                        <option value="other">その他</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mt-4">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()" style="border-radius: 25px; padding: 12px 30px;">戻る</button>
+                                    <button type="button" class="btn btn-primary" onclick="goToStep2Modal()" style="border-radius: 25px; padding: 12px 30px;">次へ</button>
                                 </div>
                                 
                                 <div class="row g-3 mt-1">
