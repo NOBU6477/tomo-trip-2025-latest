@@ -1434,21 +1434,35 @@
                             </div>
                         </div>
 
-                        <!-- Step 2: Verification -->
+                        <!-- Step 2: Phone Verification -->
                         <div class="step-content" id="step2Content" style="display: none;">
                             <div class="p-4">
-                                <div class="alert alert-warning border-0 mb-4" 
-                                     style="background: linear-gradient(135deg, #fff3cd, #ffeaa7); border-radius: 15px;">
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-shield-check text-warning me-3" style="font-size: 1.5rem; margin-top: 2px;"></i>
-                                        <div>
-                                            <h6 class="fw-bold mb-2 text-warning">本人確認について</h6>
-                                            <small class="text-dark">
-                                                安心してガイドサービスをご利用いただくため、電話番号認証と身分証明書の確認を行います。
-                                                お預かりした情報は厳重に管理され、ガイドマッチング以外の目的では使用されません。
-                                            </small>
-                                        </div>
+                                <h4 class="mb-3">電話番号認証</h4>
+                                <div class="verification-box p-3 mb-3" style="background: #f8f9fa; border-radius: 15px; border-left: 4px solid #0984e3;">
+                                    <p class="mb-3">入力された電話番号にSMS認証コードを送信します。</p>
+                                    <p class="fw-bold" id="phoneDisplayModal"></p>
+                                    
+                                    <div class="mb-3" id="sendCodeSectionModal">
+                                        <button type="button" class="btn btn-primary w-100" id="sendCodeBtnModal" style="border-radius: 15px; padding: 12px;">
+                                            <i class="bi bi-phone"></i> 認証コードを送信
+                                        </button>
                                     </div>
+                                    
+                                    <div class="mb-3" id="verifyCodeSectionModal" style="display: none;">
+                                        <label for="verificationCodeModal" class="form-label">認証コード（6桁）</label>
+                                        <input type="text" class="form-control" id="verificationCodeModal" maxlength="6" placeholder="123456" style="border-radius: 15px; padding: 12px 20px; font-size: 1.5rem; text-align: center; letter-spacing: 0.5rem;">
+                                        <div class="form-text">デモ用認証コード: 123456</div>
+                                        <button type="button" class="btn btn-primary w-100 mt-2" id="verifyCodeBtnModal" style="border-radius: 15px; padding: 12px;">認証する</button>
+                                    </div>
+                                    
+                                    <div class="text-success" id="verificationSuccessModal" style="display: none;">
+                                        <i class="bi bi-check-circle-fill"></i> 電話番号認証が完了しました
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <button type="button" class="btn btn-outline-secondary" onclick="goToStep1Modal()" style="border-radius: 25px; padding: 12px 30px;">戻る</button>
+                                    <button type="button" class="btn btn-primary" id="step2NextBtnModal" onclick="goToStep3Modal()" disabled style="border-radius: 25px; padding: 12px 30px;">次へ</button>
                                 </div>
 
                                 <!-- Phone Verification -->
@@ -2130,6 +2144,66 @@
             displayGuides(allGuides, 1);
         }
 
+        // Tourist Registration Modal Step Navigation Functions
+        function goToStep2Modal() {
+            const phoneInput = document.getElementById('touristPhone');
+            if (!phoneInput || !phoneInput.value.trim()) {
+                alert('電話番号を入力してください');
+                return;
+            }
+            
+            // Hide step 1, show step 2
+            document.getElementById('step1Content').style.display = 'none';
+            document.getElementById('step2Content').style.display = 'block';
+            
+            // Update step indicators
+            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+            
+            // Update phone display
+            document.getElementById('phoneDisplayModal').textContent = '電話番号: ' + phoneInput.value;
+        }
+        
+        function goToStep1Modal() {
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step1Content').style.display = 'block';
+            
+            // Reset indicators
+            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+        }
+        
+        function goToStep3Modal() {
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step3Content').style.display = 'block';
+            
+            // Update indicators
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
+            document.getElementById('step3-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+        }
+        
+        function goToStep2Modal() {
+            document.getElementById('step3Content').style.display = 'none';
+            document.getElementById('step2Content').style.display = 'block';
+            
+            // Reset indicators
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+            document.getElementById('step3-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+        }
+        
+        function completeRegistrationModal() {
+            alert('登録が完了しました！');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
+            modal.hide();
+        }
+        
+        function removeFileModal() {
+            document.getElementById('uploadPreviewModal').style.display = 'none';
+            document.getElementById('fileInputModal').value = '';
+            document.getElementById('completeBtnModal').disabled = true;
+            document.getElementById('uploadSuccessModal').style.display = 'none';
+        }
+
         // Price conversion function
         function getPriceFromRange(rangeValue) {
             const priceRanges = {
@@ -2429,7 +2503,54 @@
             // Event listeners for search and filter functionality
             const searchBtn = document.getElementById('searchBtn');
             if (searchBtn) searchBtn.addEventListener('click', filterGuides);
-            document.getElementById('resetBtn').addEventListener('click', resetFilters);
+            
+            const resetBtn = document.getElementById('resetBtn');
+            if (resetBtn) resetBtn.addEventListener('click', resetFilters);
+            
+            // Tourist registration modal event listeners
+            const sendCodeBtn = document.getElementById('sendCodeBtnModal');
+            if (sendCodeBtn) {
+                sendCodeBtn.addEventListener('click', function() {
+                    document.getElementById('sendCodeSectionModal').style.display = 'none';
+                    document.getElementById('verifyCodeSectionModal').style.display = 'block';
+                });
+            }
+            
+            const verifyCodeBtn = document.getElementById('verifyCodeBtnModal');
+            if (verifyCodeBtn) {
+                verifyCodeBtn.addEventListener('click', function() {
+                    const code = document.getElementById('verificationCodeModal').value;
+                    if (code === '123456') {
+                        document.getElementById('verifyCodeSectionModal').style.display = 'none';
+                        document.getElementById('verificationSuccessModal').style.display = 'block';
+                        document.getElementById('step2NextBtnModal').disabled = false;
+                    } else {
+                        alert('認証コードが正しくありません。');
+                    }
+                });
+            }
+            
+            const fileInput = document.getElementById('fileInputModal');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        document.getElementById('fileNameModal').textContent = file.name;
+                        document.getElementById('uploadPreviewModal').style.display = 'block';
+                        document.getElementById('uploadSuccessModal').style.display = 'block';
+                        document.getElementById('completeBtnModal').disabled = false;
+                        
+                        // Show preview for images
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                document.getElementById('previewImageModal').src = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    }
+                });
+            }
             
             // Add change event listeners for filters to enable real-time filtering
             const locationFilter = document.getElementById('locationFilter');
