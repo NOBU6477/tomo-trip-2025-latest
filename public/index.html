@@ -5515,7 +5515,76 @@
             }
         };
         
-        // Setup hero buttons
+        // DIRECT BUTTON HANDLERS - Immediate setup without module conflicts
+        console.log('🔧 Setting up DIRECT button handlers');
+        
+        // Force immediate button setup
+        setTimeout(function() {
+            // Hero buttons
+            const findGuideBtn = document.getElementById('findGuideBtn');
+            const contactBtn = document.getElementById('contactBtn');
+            
+            if (findGuideBtn) {
+                findGuideBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Find Guide clicked - scrolling');
+                    
+                    // Try multiple scroll targets
+                    let target = document.getElementById('guides-section') || 
+                                document.getElementById('guideCardsContainer') ||
+                                document.querySelector('.guide-card') ||
+                                document.querySelector('[id*="guide"]');
+                    
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        console.log('✅ Scrolled to:', target.id || target.className);
+                    } else {
+                        alert('ガイド一覧セクションに移動します');
+                        window.scrollTo({ top: 2000, behavior: 'smooth' });
+                    }
+                };
+                console.log('✅ Find Guide button setup');
+            }
+            
+            if (contactBtn) {
+                contactBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Contact clicked - opening chat');
+                    try {
+                        window.open('chat.html', '_blank');
+                        console.log('✅ Chat opened');
+                    } catch (error) {
+                        console.error('Chat open error:', error);
+                        alert('お問い合わせページ: chat.html');
+                    }
+                };
+                console.log('✅ Contact button setup');
+            }
+            
+            // Guide detail buttons - AGGRESSIVE event delegation
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-action="view-details"]');
+                if (target) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const guideId = target.getAttribute('data-guide-id');
+                    console.log('🎯 Guide detail clicked:', guideId);
+                    
+                    if (window.showGuideDetailModalById) {
+                        window.showGuideDetailModalById(parseInt(guideId));
+                    } else {
+                        console.error('showGuideDetailModalById not found');
+                        alert('ガイド詳細機能（ID: ' + guideId + '）を準備中です');
+                    }
+                }
+            }, true); // Use capture phase
+            
+            console.log('✅ Guide detail delegation setup');
+            
+        }, 100);
+        
+        // Setup hero buttons (backup)
         setupHeroButtons();
         
         window.showGuideDetailModalById = function(guideId) {
