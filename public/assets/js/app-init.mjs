@@ -93,6 +93,38 @@ function appInit() {
         if (totalGuideCounter) totalGuideCounter.textContent = `総数: ${guides.length}人`;
     }
     
+    // Setup login system
+    if (window.updateLoginStatus) {
+        window.updateLoginStatus();
+        console.log('✅ Login status updated');
+    }
+    
+    if (window.setupLoginDropdown) {
+        window.setupLoginDropdown();
+        console.log('✅ Login dropdown setup');
+    }
+    
+    if (window.setupLoginForms) {
+        window.setupLoginForms();
+        console.log('✅ Login forms setup');
+    }
+    
+    // Set up login dropdown button handlers
+    setTimeout(() => {
+        const touristLoginBtn = document.getElementById('directTouristLoginBtn');
+        const guideLoginBtn = document.getElementById('directGuideLoginBtn');
+        
+        if (touristLoginBtn && window.handleTouristLogin) {
+            touristLoginBtn.addEventListener('click', window.handleTouristLogin);
+            console.log('✅ Tourist login button handler attached');
+        }
+        
+        if (guideLoginBtn && window.handleGuideLogin) {
+            guideLoginBtn.addEventListener('click', window.handleGuideLogin);
+            console.log('✅ Guide login button handler attached');
+        }
+    }, 100);
+    
     // Setup button handlers
     wireSponsorButtons();
     wireLanguageSwitcher();

@@ -1444,6 +1444,229 @@ function generateModalGuideCard() {
     `;
 }
 
+// Login System Functions
+function setupLoginDropdown() {
+    const loginDropdown = document.getElementById('loginDropdown');
+    const customLoginDropdown = document.getElementById('customLoginDropdown');
+    
+    if (loginDropdown && customLoginDropdown) {
+        // Toggle dropdown visibility
+        loginDropdown.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const isVisible = customLoginDropdown.style.display === 'block';
+            customLoginDropdown.style.display = isVisible ? 'none' : 'block';
+        });
+        
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!loginDropdown.contains(e.target) && !customLoginDropdown.contains(e.target)) {
+                customLoginDropdown.style.display = 'none';
+            }
+        });
+        
+        console.log('✅ Login dropdown setup complete');
+    }
+}
+
+// Handle tourist login button click
+function handleTouristLogin() {
+    console.log('🔄 Tourist login clicked');
+    
+    // Hide dropdown
+    const customLoginDropdown = document.getElementById('customLoginDropdown');
+    if (customLoginDropdown) {
+        customLoginDropdown.style.display = 'none';
+    }
+    
+    // Show tourist login modal
+    const touristModal = new bootstrap.Modal(document.getElementById('touristLoginModal'));
+    touristModal.show();
+}
+
+// Handle guide login button click
+function handleGuideLogin() {
+    console.log('🔄 Guide login clicked');
+    
+    // Hide dropdown
+    const customLoginDropdown = document.getElementById('customLoginDropdown');
+    if (customLoginDropdown) {
+        customLoginDropdown.style.display = 'none';
+    }
+    
+    // Show guide login modal
+    const guideModal = new bootstrap.Modal(document.getElementById('guideLoginModal'));
+    guideModal.show();
+}
+
+// Setup login form handlers
+function setupLoginForms() {
+    // Tourist login form
+    const touristLoginForm = document.getElementById('touristLoginForm');
+    if (touristLoginForm) {
+        touristLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('touristEmail').value.trim();
+            const password = document.getElementById('touristPassword').value.trim();
+            
+            if (!email || !password) {
+                alert('メールアドレスとパスワードを入力してください');
+                return;
+            }
+            
+            // Simulate login process
+            console.log('🔐 Tourist login attempt:', { email });
+            
+            // Store login state
+            localStorage.setItem('tomotrip_user_type', 'tourist');
+            localStorage.setItem('tomotrip_user_email', email);
+            localStorage.setItem('tomotrip_login_time', Date.now().toString());
+            
+            // Show success and reload
+            alert('ログインに成功しました！\n\n全てのガイドカード詳細が閲覧可能になりました。');
+            
+            // Close modal and reload
+            const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
+            modal.hide();
+            
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        });
+    }
+    
+    // Guide login form
+    const guideLoginForm = document.getElementById('guideLoginForm');
+    if (guideLoginForm) {
+        guideLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const guideId = document.getElementById('guideId').value.trim().toUpperCase();
+            const password = document.getElementById('guidePassword').value.trim();
+            
+            if (!guideId || !password) {
+                alert('ガイドIDとパスワードを入力してください');
+                return;
+            }
+            
+            // Validate guide ID format
+            if (!guideId.match(/^GD-[A-Z0-9]+-[A-Z0-9]+$/)) {
+                alert('ガイドIDの形式が正しくありません\n正しい形式: GD-XXXXXXXXXX-XXXXX');
+                return;
+            }
+            
+            // Simulate login process
+            console.log('🔐 Guide login attempt:', { guideId });
+            
+            // Store login state
+            localStorage.setItem('tomotrip_user_type', 'guide');
+            localStorage.setItem('tomotrip_guide_id', guideId);
+            localStorage.setItem('tomotrip_login_time', Date.now().toString());
+            
+            // Show success and redirect to guide dashboard
+            alert(`ガイドログインに成功しました！\n\nガイドID: ${guideId}\n\nガイド管理画面に移動します。`);
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('guideLoginModal'));
+            modal.hide();
+            
+            setTimeout(() => {
+                // In future, redirect to guide dashboard
+                // For now, just reload
+                location.reload();
+            }, 500);
+        });
+    }
+    
+    // Registration redirect buttons
+    const showTouristRegistration = document.getElementById('showTouristRegistration');
+    if (showTouristRegistration) {
+        showTouristRegistration.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Close login modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
+            modal.hide();
+            
+            // Show registration choice
+            setTimeout(() => {
+                const registerBtn = document.getElementById('registerBtn');
+                if (registerBtn) {
+                    registerBtn.click();
+                }
+            }, 300);
+        });
+    }
+    
+    const showGuideRegistration = document.getElementById('showGuideRegistration');
+    if (showGuideRegistration) {
+        showGuideRegistration.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Close login modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('guideLoginModal'));
+            modal.hide();
+            
+            // Show registration choice and select guide registration
+            setTimeout(() => {
+                const registerBtn = document.getElementById('registerBtn');
+                if (registerBtn) {
+                    registerBtn.click();
+                    
+                    // Wait for registration choice modal to show, then click guide registration
+                    setTimeout(() => {
+                        const guideRegChoice = document.querySelector('.choice-card[onclick*="openGuideRegistration"]');
+                        if (guideRegChoice) {
+                            guideRegChoice.click();
+                        }
+                    }, 500);
+                }
+            }, 300);
+        });
+    }
+    
+    console.log('✅ Login forms setup complete');
+}
+
+// Check if user is logged in and update UI accordingly
+function updateLoginStatus() {
+    const userType = localStorage.getItem('tomotrip_user_type');
+    const loginTime = localStorage.getItem('tomotrip_login_time');
+    
+    if (userType && loginTime) {
+        // Check if login is still valid (24 hours)
+        const loginAge = Date.now() - parseInt(loginTime);
+        const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+        
+        if (loginAge > maxAge) {
+            // Login expired, clear storage
+            localStorage.removeItem('tomotrip_user_type');
+            localStorage.removeItem('tomotrip_user_email');
+            localStorage.removeItem('tomotrip_guide_id');
+            localStorage.removeItem('tomotrip_login_time');
+            return;
+        }
+        
+        // Update header to show logged in state
+        const loginDropdown = document.getElementById('loginDropdown');
+        if (loginDropdown) {
+            if (userType === 'tourist') {
+                const email = localStorage.getItem('tomotrip_user_email');
+                loginDropdown.innerHTML = `<i class="bi bi-person-check me-1"></i>観光客 (${email?.substring(0, 10)}...)`;
+                loginDropdown.className = 'btn btn-success dropdown-toggle';
+            } else if (userType === 'guide') {
+                const guideId = localStorage.getItem('tomotrip_guide_id');
+                loginDropdown.innerHTML = `<i class="bi bi-person-badge me-1"></i>ガイド (${guideId?.substring(0, 10)}...)`;
+                loginDropdown.className = 'btn btn-warning dropdown-toggle';
+            }
+        }
+        
+        console.log('✅ User logged in as:', userType);
+    }
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
@@ -1458,6 +1681,11 @@ window.previewProfilePhoto = previewProfilePhoto;
 window.showGuideCardPreview = showGuideCardPreview;
 window.updateGuideCardPreview = updateGuideCardPreview;
 window.generateModalGuideCard = generateModalGuideCard;
+window.setupLoginDropdown = setupLoginDropdown;
+window.handleTouristLogin = handleTouristLogin;
+window.handleGuideLogin = handleGuideLogin;
+window.setupLoginForms = setupLoginForms;
+window.updateLoginStatus = updateLoginStatus;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {

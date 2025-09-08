@@ -825,9 +825,9 @@
                         ログイン
                     </button>
                     <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
-                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">観光客ログイン</button>
-                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">ガイドログイン</button>
-                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;" onclick="window.location.href='/operations-login.html'">スポンサーログイン</button>
+                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
+                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
+                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">スポンサーログイン</button>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="registerBtn">新規登録</button>
@@ -5020,6 +5020,109 @@
             </div>
         </div>
     </footer>
+
+    <!-- Tourist Login Modal -->
+    <div class="modal fade" id="touristLoginModal" tabindex="-1" aria-labelledby="touristLoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="touristLoginModalLabel">
+                        <i class="bi bi-person-circle me-2"></i>観光客ログイン
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>観光客向けサービス</strong><br>
+                            <small>ガイドの詳細情報を見るには、まず観光客として登録が必要です。</small>
+                        </div>
+                    </div>
+                    
+                    <form id="touristLoginForm">
+                        <div class="mb-3">
+                            <label for="touristEmail" class="form-label fw-bold">
+                                <i class="bi bi-envelope me-1"></i>メールアドレス
+                            </label>
+                            <input type="email" class="form-control" id="touristEmail" placeholder="your@email.com" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="touristPassword" class="form-label fw-bold">
+                                <i class="bi bi-lock me-1"></i>パスワード
+                            </label>
+                            <input type="password" class="form-control" id="touristPassword" placeholder="パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 12px; border-radius: 10px; font-weight: 600;">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+                            </button>
+                            <div class="text-center mt-3">
+                                <small class="text-muted">アカウントをお持ちでない場合は</small><br>
+                                <button type="button" class="btn btn-link" id="showTouristRegistration">
+                                    <i class="bi bi-person-plus me-1"></i>新規登録はこちら
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guide Login Modal -->
+    <div class="modal fade" id="guideLoginModal" tabindex="-1" aria-labelledby="guideLoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="guideLoginModalLabel">
+                        <i class="bi bi-person-badge me-2"></i>ガイドログイン
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="text-center mb-4">
+                        <div class="alert alert-success">
+                            <i class="bi bi-shield-check me-2"></i>
+                            <strong>ガイド専用</strong><br>
+                            <small>登録時に発行されたガイドIDとパスワードでログインしてください。</small>
+                        </div>
+                    </div>
+                    
+                    <form id="guideLoginForm">
+                        <div class="mb-3">
+                            <label for="guideId" class="form-label fw-bold">
+                                <i class="bi bi-card-text me-1"></i>ガイドID
+                            </label>
+                            <input type="text" class="form-control" id="guideId" placeholder="GD-XXXXXXXXXX" required style="border-radius: 10px; padding: 12px; font-family: monospace;">
+                            <small class="text-muted">例: GD-1A2B3C4D5E-FGHIJ</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="guidePassword" class="form-label fw-bold">
+                                <i class="bi bi-lock me-1"></i>パスワード
+                            </label>
+                            <input type="password" class="form-control" id="guidePassword" placeholder="パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success" style="background: linear-gradient(135deg, #28a745, #20c997); border: none; padding: 12px; border-radius: 10px; font-weight: 600;">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+                            </button>
+                            <div class="text-center mt-3">
+                                <small class="text-muted">ガイド登録がお済みでない場合は</small><br>
+                                <button type="button" class="btn btn-link" id="showGuideRegistration">
+                                    <i class="bi bi-person-badge me-1"></i>ガイド登録はこちら
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Main application initialization -->
     <script type="module" src="/assets/js/app-init.mjs"></script>
