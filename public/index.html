@@ -5929,14 +5929,11 @@
         
         // Global functions for registration choice
         window.openTouristRegistration = function() {
-            console.log('🎯 Tourist registration selected');
+            console.log('🎯 Tourist registration selected - redirecting to advanced form');
             hideRegistrationChoice();
             
-            setTimeout(() => {
-                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                registrationModal.show();
-                console.log('✅ Tourist registration modal opened');
-            }, 100);
+            // Redirect to advanced tourist registration form
+            window.location.href = 'tourist-registration-advanced.html';
         };
         
         window.openGuideRegistration = function() {
