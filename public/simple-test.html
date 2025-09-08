@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Simple Test</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Simple Guide Cards Test</h1>
+        <div class="row" id="testContainer">
+            <!-- Cards will be added here -->
+        </div>
+        <div id="debug-info" class="mt-3">
+            <h3>Debug Information:</h3>
+            <div id="debug-output"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔍 Simple test script started');
+        
+        function addDebugInfo(message) {
+            const output = document.getElementById('debug-output');
+            if (output) {
+                output.innerHTML += '<p>' + message + '</p>';
+            }
+            console.log(message);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            addDebugInfo('✅ DOM Content Loaded');
+            
+            const container = document.getElementById('testContainer');
+            addDebugInfo('Container found: ' + (container ? 'YES' : 'NO'));
+            
+            if (container) {
+                // Add simple test cards
+                container.innerHTML = `
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">テストガイド 1</h5>
+                                <p class="card-text">東京のガイドです</p>
+                                <button class="btn btn-primary" onclick="alert('ボタン1がクリックされました')">詳細を見る</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">テストガイド 2</h5>
+                                <p class="card-text">大阪のガイドです</p>
+                                <button class="btn btn-primary" onclick="alert('ボタン2がクリックされました')">詳細を見る</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">テストガイド 3</h5>
+                                <p class="card-text">京都のガイドです</p>
+                                <button class="btn btn-primary" onclick="alert('ボタン3がクリックされました')">詳細を見る</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                addDebugInfo('✅ Test cards added to container');
+                addDebugInfo('Container HTML length: ' + container.innerHTML.length);
+            }
+        });
+        
+        // Additional checks
+        setTimeout(function() {
+            addDebugInfo('=== After 2 seconds ===');
+            addDebugInfo('Window location: ' + window.location.href);
+            addDebugInfo('Document ready state: ' + document.readyState);
+            
+            const cards = document.querySelectorAll('.card');
+            addDebugInfo('Number of cards found: ' + cards.length);
+        }, 2000);
+    </script>
+</body>
+</html>
