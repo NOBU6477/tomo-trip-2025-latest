@@ -2761,8 +2761,8 @@ export function initializeGuidePagination(state) {
         guides: state.guides.length
     });
     
-    // Display initial page
-    displayGuides(state.currentPage, state);
+    // Note: Initial guides are rendered by renderGuideCards in app-init.mjs
+    // No need to call displayGuides here to avoid conflicts
 }
 
 // Display guides for current page using AppState
@@ -2807,23 +2807,51 @@ export function displayGuides(page, state) {
     updatePaginationInfo(page, currentState);
 }
 
-// Create guide card element
+// Create guide card element - CONSISTENT WITH guide-renderer.mjs
 function createGuideCard(guide) {
     const col = document.createElement('div');
     col.className = 'col-md-6 col-lg-4 mb-4';
     
     col.innerHTML = `
-        <div class="card guide-card h-100 shadow-sm">
-            <img src="${guide.image || 'assets/images/default-guide.jpg'}" class="card-img-top" alt="${guide.name}" style="height: 200px; object-fit: cover;">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">${guide.name}</h5>
-                <p class="card-text text-muted small">${window.locationNames ? (window.locationNames[guide.location] || guide.location) : guide.location}</p>
-                <div class="mb-2">
-                    <span class="badge bg-primary me-1">¥${Number(guide?.price || 0).toLocaleString()}</span>
-                    <span class="badge bg-warning text-dark">★${guide.rating}</span>
+        <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
+            <div class="position-relative">
+                <img src="${guide.photo || guide.image || '/assets/img/guides/default-1.svg'}" 
+                     class="card-img-top" 
+                     alt="${guide.name}" 
+                     style="height: 250px; object-fit: cover;">
+                <div class="position-absolute top-0 end-0 m-2">
+                    <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
+                        評価 ${guide.rating || '4.8'} ⭐
+                    </span>
                 </div>
-                <div class="mt-auto">
-                    <button class="btn btn-outline-primary btn-sm" onclick="viewGuideDetails('${guide.id}')">詳細を見る</button>
+            </div>
+            <div class="card-body p-4">
+                <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.name}</h5>
+                <p class="text-muted mb-2">
+                    <i class="bi bi-geo-alt"></i> ${window.locationNames ? (window.locationNames[guide.location] || guide.location) : guide.location}
+                </p>
+                <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
+                    ${guide.description || '地域の魅力をご案内します'}
+                </p>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted">対応言語</small>
+                        <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages || '日本語'}</small>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small class="text-muted">料金</small>
+                        <small class="fw-bold text-primary">¥${Number(guide.price || 8000).toLocaleString()}</small>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary" 
+                            data-action="view-details" 
+                            data-guide-id="${guide.id}"
+                            style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
+                        詳しく見る
+                    </button>
                 </div>
             </div>
         </div>

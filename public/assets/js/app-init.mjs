@@ -75,10 +75,10 @@ function appInit() {
     initializeGuidePagination(state);
     setupEventListeners(state);
     
-    // Render initial guide cards and display guides
+    // Render initial guide cards using single consistent system
     try {
+        // Only use renderGuideCards - don't call displayGuides which conflicts
         renderGuideCards(guides);
-        displayGuides(1, state);
         
         // Force update counters immediately
         setTimeout(() => {
