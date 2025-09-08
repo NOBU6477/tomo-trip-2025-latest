@@ -136,6 +136,11 @@ function appInit() {
     window.updateGuideCounters = updateGuideCounters;
     window.displayGuides = displayGuides;
     
+    // Setup guide card click handlers with authentication
+    setTimeout(() => {
+        setupGuideCardClickHandlers();
+    }, 200);
+    
     console.log('🌍 Global functions exposed:', {
         renderGuideCards: typeof window.renderGuideCards,
         updateGuideCounters: typeof window.updateGuideCounters,

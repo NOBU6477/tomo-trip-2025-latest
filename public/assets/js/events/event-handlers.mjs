@@ -1524,16 +1524,34 @@ function setupLoginForms() {
             localStorage.setItem('tomotrip_user_email', email);
             localStorage.setItem('tomotrip_login_time', Date.now().toString());
             
-            // Show success and reload
-            alert('ログインに成功しました！\n\n全てのガイドカード詳細が閲覧可能になりました。');
+            // Show success and check for pending guide view
+            const pendingGuideId = sessionStorage.getItem('pending_guide_view');
             
-            // Close modal and reload
-            const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
-            modal.hide();
-            
-            setTimeout(() => {
-                location.reload();
-            }, 500);
+            if (pendingGuideId) {
+                alert(`ログインに成功しました！\n\n${pendingGuideId}さんの詳細を表示します。`);
+                
+                // Clear pending guide
+                sessionStorage.removeItem('pending_guide_view');
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
+                modal.hide();
+                
+                // Show the guide details after a brief delay
+                setTimeout(() => {
+                    showGuideDetailsModal(pendingGuideId);
+                }, 500);
+            } else {
+                alert('ログインに成功しました！\n\n全てのガイドカード詳細が閲覧可能になりました。');
+                
+                // Close modal and reload
+                const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
+                modal.hide();
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            }
         });
     }
     
@@ -1667,6 +1685,320 @@ function updateLoginStatus() {
     }
 }
 
+// Check authentication status
+function checkAuthenticationStatus() {
+    const userType = localStorage.getItem('tomotrip_user_type');
+    const loginTime = localStorage.getItem('tomotrip_login_time');
+    
+    if (!userType || !loginTime) {
+        return { authenticated: false, reason: 'not_logged_in' };
+    }
+    
+    // Check if login is still valid (24 hours)
+    const loginAge = Date.now() - parseInt(loginTime);
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+    
+    if (loginAge > maxAge) {
+        // Login expired, clear storage
+        localStorage.removeItem('tomotrip_user_type');
+        localStorage.removeItem('tomotrip_user_email');
+        localStorage.removeItem('tomotrip_guide_id');
+        localStorage.removeItem('tomotrip_login_time');
+        return { authenticated: false, reason: 'expired' };
+    }
+    
+    return { authenticated: true, userType: userType };
+}
+
+// Handle guide details view with authentication check
+function viewGuideDetails(guideId) {
+    console.log('🔍 Viewing guide details for:', guideId);
+    
+    const authStatus = checkAuthenticationStatus();
+    
+    if (!authStatus.authenticated) {
+        console.log('🚫 Authentication required for guide details');
+        showAuthRequiredModal(guideId);
+        return;
+    }
+    
+    // User is authenticated, show guide details
+    showGuideDetailsModal(guideId);
+}
+
+// Show authentication required modal
+function showAuthRequiredModal(guideId) {
+    // Remove existing modal if present
+    const existingModal = document.getElementById('authRequiredModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    const modalHTML = `
+        <div class="modal fade" id="authRequiredModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-lock-fill me-2"></i>ログインが必要です
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4 text-center">
+                        <div class="mb-4">
+                            <i class="bi bi-person-x" style="font-size: 48px; color: #ff6b6b;"></i>
+                        </div>
+                        <h6 class="fw-bold mb-3">ガイドの詳細情報を見るには、観光客としてログインが必要です</h6>
+                        <p class="text-muted mb-4">
+                            ガイドの詳細プロフィール、連絡先、予約可能日程などの情報をご覧いただくには、
+                            観光客としてアカウント登録またはログインしてください。
+                        </p>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary" 
+                                    onclick="showTouristLoginFromAuth('${guideId}')" 
+                                    style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; padding: 12px; border-radius: 10px; font-weight: 600;">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>観光客ログイン
+                            </button>
+                            <button type="button" class="btn btn-outline-primary" 
+                                    onclick="showTouristRegistrationFromAuth('${guideId}')" 
+                                    style="border: 2px solid #667eea; color: #667eea; padding: 12px; border-radius: 10px; font-weight: 600;">
+                                <i class="bi bi-person-plus me-2"></i>新規登録（無料）
+                            </button>
+                        </div>
+                        
+                        <div class="mt-3 text-center">
+                            <small class="text-muted">
+                                登録は無料です。ログイン後、全てのガイドの詳細情報がご覧いただけます。
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    const modal = new bootstrap.Modal(document.getElementById('authRequiredModal'));
+    modal.show();
+    
+    console.log('🔐 Authentication required modal shown');
+}
+
+// Show tourist login from auth modal
+function showTouristLoginFromAuth(guideId) {
+    // Close auth required modal
+    const authModal = bootstrap.Modal.getInstance(document.getElementById('authRequiredModal'));
+    if (authModal) {
+        authModal.hide();
+    }
+    
+    // Store the guide ID for after login
+    sessionStorage.setItem('pending_guide_view', guideId);
+    
+    // Show tourist login modal
+    setTimeout(() => {
+        const touristModal = new bootstrap.Modal(document.getElementById('touristLoginModal'));
+        touristModal.show();
+    }, 300);
+}
+
+// Show tourist registration from auth modal
+function showTouristRegistrationFromAuth(guideId) {
+    // Close auth required modal
+    const authModal = bootstrap.Modal.getInstance(document.getElementById('authRequiredModal'));
+    if (authModal) {
+        authModal.hide();
+    }
+    
+    // Store the guide ID for after registration
+    sessionStorage.setItem('pending_guide_view', guideId);
+    
+    // Show registration choice
+    setTimeout(() => {
+        const registerBtn = document.getElementById('registerBtn');
+        if (registerBtn) {
+            registerBtn.click();
+            
+            // Auto-select tourist registration
+            setTimeout(() => {
+                const touristRegChoice = document.querySelector('.choice-card[onclick*="openTouristRegistration"]');
+                if (touristRegChoice) {
+                    touristRegChoice.click();
+                }
+            }, 500);
+        }
+    }, 300);
+}
+
+// Show guide details modal (when authenticated)
+function showGuideDetailsModal(guideId) {
+    // Find guide data
+    const guides = window.AppState?.guides || defaultGuideData;
+    const guide = guides.find(g => g.id === guideId);
+    
+    if (!guide) {
+        alert('ガイド情報が見つかりませんでした');
+        return;
+    }
+    
+    // Remove existing modal if present
+    const existingModal = document.getElementById('guideDetailsModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    const formattedPrice = Number(guide.price) ? `¥${Number(guide.price).toLocaleString()}` : '料金応相談';
+    const languages = guide.languages?.join(', ') || '日本語';
+    const tags = guide.tags?.join(', ') || '';
+    
+    const modalHTML = `
+        <div class="modal fade" id="guideDetailsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="border-radius: 15px;">
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-person-badge me-2"></i>${guide.name}さんのプロフィール
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="row">
+                            <div class="col-md-4 text-center mb-4">
+                                <img src="${guide.photo || '/assets/img/guides/default-1.svg'}" 
+                                     class="img-fluid rounded-circle shadow" 
+                                     alt="${guide.name}" 
+                                     style="width: 200px; height: 200px; object-fit: cover;">
+                                <div class="mt-3">
+                                    <div class="badge bg-warning text-dark fs-6 p-2">
+                                        <i class="bi bi-star-fill me-1"></i>評価 ${guide.rating || '4.8'}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <h4 class="fw-bold mb-3">${guide.name}</h4>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">📍 活動エリア</h6>
+                                    <p class="mb-0">${guide.city || guide.location}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">💰 料金</h6>
+                                    <p class="mb-0 text-primary fw-bold fs-5">${formattedPrice}</p>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">🗣️ 対応言語</h6>
+                                    <p class="mb-0">${languages}</p>
+                                </div>
+                                
+                                ${tags ? `
+                                <div class="mb-3">
+                                    <h6 class="text-muted mb-2">🏷️ 特徴・専門分野</h6>
+                                    <p class="mb-0">${tags}</p>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-3">📝 自己紹介・サービス内容</h6>
+                            <p class="text-dark" style="line-height: 1.6;">
+                                ${guide.description || 'こんにちは！地域の魅力をたっぷりとご案内させていただきます。観光スポットから地元の人しか知らない隠れた名所まで、あなたの興味に合わせてカスタマイズしたツアーをご提供します。'}
+                                <br><br>
+                                一緒に素晴らしい思い出を作りましょう！ご質問やご要望がございましたら、お気軽にお声かけください。
+                            </p>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold mb-2">
+                                <i class="bi bi-info-circle me-2"></i>予約・お問い合わせについて
+                            </h6>
+                            <p class="mb-2 small">
+                                • ガイドへの直接連絡が可能です<br>
+                                • 日程調整や詳細な相談ができます<br>
+                                • お支払いは現地またはオンライン決済対応
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4">
+                        <div class="d-grid gap-2 w-100">
+                            <button type="button" class="btn btn-success" 
+                                    onclick="contactGuide('${guide.id}')" 
+                                    style="background: linear-gradient(135deg, #28a745, #20c997); border: none; padding: 12px; border-radius: 10px; font-weight: 600;">
+                                <i class="bi bi-chat-dots me-2"></i>ガイドにお問い合わせ
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" 
+                                    style="border-radius: 10px; padding: 12px;">
+                                閉じる
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    const modal = new bootstrap.Modal(document.getElementById('guideDetailsModal'));
+    modal.show();
+    
+    console.log('✅ Guide details modal shown for:', guide.name);
+}
+
+// Contact guide function (placeholder)
+function contactGuide(guideId) {
+    alert(`${guideId}さんへのお問い合わせ機能は準備中です。\n\n実際の運用時は、ガイドとの連絡機能が利用できます。`);
+}
+
+// Setup guide card click handlers  
+function setupGuideCardClickHandlers() {
+    // Add event delegation for dynamic guide cards
+    const guideContainer = document.getElementById('guideCardsContainer');
+    
+    if (guideContainer) {
+        guideContainer.addEventListener('click', function(e) {
+            // Check if clicked element or its parent is a guide details button
+            const button = e.target.closest('[data-action="view-details"]');
+            
+            if (button) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const guideId = button.getAttribute('data-guide-id');
+                if (guideId) {
+                    console.log('🎯 Guide card clicked:', guideId);
+                    viewGuideDetails(guideId);
+                }
+            }
+        });
+        
+        console.log('✅ Guide card click handlers setup with event delegation');
+    }
+    
+    // Also handle any existing onclick handlers
+    const existingButtons = document.querySelectorAll('[onclick*="viewGuideDetails"]');
+    existingButtons.forEach(button => {
+        const onclickValue = button.getAttribute('onclick');
+        if (onclickValue) {
+            const match = onclickValue.match(/viewGuideDetails\('([^']+)'\)/);
+            if (match) {
+                const guideId = match[1];
+                
+                // Remove onclick and add event listener
+                button.removeAttribute('onclick');
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    viewGuideDetails(guideId);
+                });
+            }
+        }
+    });
+}
+
 // Make functions globally available
 window.showRegistrationChoice = showRegistrationChoice;
 window.hideRegistrationChoice = hideRegistrationChoice;
@@ -1686,6 +2018,13 @@ window.handleTouristLogin = handleTouristLogin;
 window.handleGuideLogin = handleGuideLogin;
 window.setupLoginForms = setupLoginForms;
 window.updateLoginStatus = updateLoginStatus;
+window.viewGuideDetails = viewGuideDetails;
+window.checkAuthenticationStatus = checkAuthenticationStatus;
+window.showAuthRequiredModal = showAuthRequiredModal;
+window.setupGuideCardClickHandlers = setupGuideCardClickHandlers;
+window.showTouristLoginFromAuth = showTouristLoginFromAuth;
+window.showTouristRegistrationFromAuth = showTouristRegistrationFromAuth;
+window.contactGuide = contactGuide;
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
