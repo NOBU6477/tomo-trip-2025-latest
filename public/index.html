@@ -1462,7 +1462,7 @@
                                 
                                 <div class="d-flex justify-content-between">
                                     <button type="button" class="btn btn-outline-secondary" onclick="goToStep1Modal()" style="border-radius: 25px; padding: 12px 30px;">戻る</button>
-                                    <button type="button" class="btn btn-primary" id="step2NextBtnModal" onclick="goToStep3Modal()" disabled style="border-radius: 25px; padding: 12px 30px;">次へ</button>
+                                    <button type="button" class="btn btn-primary" id="step2NextBtnModal" onclick="goToStep3Modal()" style="border-radius: 25px; padding: 12px 30px;">次へ</button>
                                 </div>
 
                                 <!-- Phone Verification -->
@@ -2336,7 +2336,19 @@
                                     <div class="row mb-3">
                                         <div class="col-sm-4"><strong>Languages:</strong></div>
                                         <div class="col-sm-8">
-                                            ${guide.languages.map(lang => lang.charAt(0).toUpperCase() + lang.slice(1)).join(', ')}
+                                            ${guide.languages.map(lang => {
+                                                const langMap = {
+                                                    'ja': '日本語', 'japanese': '日本語',
+                                                    'en': '英語', 'english': '英語', 
+                                                    'zh': '中国語', 'chinese': '中国語',
+                                                    'ko': '韓国語', 'korean': '韓国語',
+                                                    'es': 'スペイン語', 'spanish': 'スペイン語',
+                                                    'fr': 'フランス語', 'french': 'フランス語',
+                                                    'de': 'ドイツ語', 'german': 'ドイツ語',
+                                                    'it': 'イタリア語', 'italian': 'イタリア語'
+                                                };
+                                                return langMap[lang.toLowerCase()] || lang;
+                                            }).join(', ')}
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -2515,6 +2527,10 @@
             
             console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${currentGuides.length} total`);
         }
+
+        // Make filter functions globally available
+        window.filterGuides = filterGuides;
+        window.resetFilters = resetFilters;
 
         // Initialize page - manual event listeners (app-init.mjs handles main initialization)
         document.addEventListener('DOMContentLoaded', function() {
@@ -5534,7 +5550,19 @@
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <small class="text-muted">対応言語</small>
-                                    <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages}</small>
+                                    <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.map(lang => {
+                                        const langMap = {
+                                            'ja': '日本語', 'japanese': '日本語',
+                                            'en': '英語', 'english': '英語', 
+                                            'zh': '中国語', 'chinese': '中国語',
+                                            'ko': '韓国語', 'korean': '韓国語',
+                                            'es': 'スペイン語', 'spanish': 'スペイン語',
+                                            'fr': 'フランス語', 'french': 'フランス語',
+                                            'de': 'ドイツ語', 'german': 'ドイツ語',
+                                            'it': 'イタリア語', 'italian': 'イタリア語'
+                                        };
+                                        return langMap[lang.toLowerCase()] || lang;
+                                    }).join(', ') : guide.languages}</small>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <small class="text-muted">料金</small>
@@ -5983,7 +6011,19 @@
                                     </div>
                                     <div class="col-md-8">
                                         <h6><i class="bi bi-translate me-2"></i>対応言語</h6>
-                                        <p>${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages}</p>
+                                        <p>${Array.isArray(guide.languages) ? guide.languages.map(lang => {
+                                            const langMap = {
+                                                'ja': '日本語', 'japanese': '日本語',
+                                                'en': '英語', 'english': '英語', 
+                                                'zh': '中国語', 'chinese': '中国語',
+                                                'ko': '韓国語', 'korean': '韓国語',
+                                                'es': 'スペイン語', 'spanish': 'スペイン語',
+                                                'fr': 'フランス語', 'french': 'フランス語',
+                                                'de': 'ドイツ語', 'german': 'ドイツ語',
+                                                'it': 'イタリア語', 'italian': 'イタリア語'
+                                            };
+                                            return langMap[lang.toLowerCase()] || lang;
+                                        }).join(', ') : guide.languages}</p>
                                         
                                         <h6><i class="bi bi-currency-yen me-2"></i>料金</h6>
                                         <p class="h5 text-primary">¥${Number(guide.price).toLocaleString()}/日</p>
