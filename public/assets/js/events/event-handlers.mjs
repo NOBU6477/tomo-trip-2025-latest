@@ -2298,19 +2298,45 @@ function createDocumentPreview(file) {
     const preview = document.createElement('div');
     preview.className = 'document-preview';
     
+    const isImage = file.type.startsWith('image/');
     const icon = file.type.includes('pdf') ? 'bi-file-earmark-pdf' : 'bi-file-earmark-image';
     const fileSize = (file.size / 1024).toFixed(1);
     
-    preview.innerHTML = `
-        <i class="bi ${icon} text-primary me-3" style="font-size: 1.5rem;"></i>
-        <div class="flex-grow-1">
-            <div class="fw-semibold">${file.name}</div>
-            <small class="text-muted">${fileSize} KB</small>
-        </div>
-        <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">
-            <i class="bi bi-trash"></i>
-        </button>
-    `;
+    // Create image preview if it's an image file
+    if (isImage) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imagePreview = preview.querySelector('.image-preview');
+            if (imagePreview) {
+                imagePreview.style.backgroundImage = `url(${e.target.result})`;
+            }
+        };
+        reader.readAsDataURL(file);
+        
+        preview.innerHTML = `
+            <div class="image-preview me-3" 
+                 style="width: 60px; height: 60px; background: #f8f9fa; border-radius: 8px; 
+                        background-size: cover; background-position: center; border: 2px solid #dee2e6;"></div>
+            <div class="flex-grow-1">
+                <div class="fw-semibold">${file.name}</div>
+                <small class="text-muted">${fileSize} KB</small>
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+    } else {
+        preview.innerHTML = `
+            <i class="bi ${icon} text-primary me-3" style="font-size: 1.5rem;"></i>
+            <div class="flex-grow-1">
+                <div class="fw-semibold">${file.name}</div>
+                <small class="text-muted">${fileSize} KB</small>
+            </div>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="this.parentElement.remove()">
+                <i class="bi bi-trash"></i>
+            </button>
+        `;
+    }
     
     return preview;
 }
@@ -2414,6 +2440,231 @@ window.handleNextStep = handleNextStep;
 window.handleSendSms = handleSendSms;
 window.handleVerifySms = handleVerifySms;
 window.handleDocumentUpload = handleDocumentUpload;
+window.showGuideDetailsModal = showGuideDetailsModal;
+window.viewGuideDetailsUpdated = viewGuideDetailsUpdated;
+
+// Show guide details modal with comprehensive information
+function showGuideDetailsModal(guideId) {
+    console.log('🎯 Showing guide details for:', guideId);
+    
+    // Get guide data from default guides
+    const guide = window.defaultGuides?.find(g => g.id === guideId);
+    
+    if (!guide) {
+        alert('申し訳ございませんが、該当するガイドの情報が見つかりませんでした。');
+        return;
+    }
+    
+    // Create modal if it doesn't exist
+    let modal = document.getElementById('guideDetailsModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.className = 'modal fade';
+        modal.id = 'guideDetailsModal';
+        modal.setAttribute('tabindex', '-1');
+        modal.setAttribute('aria-labelledby', 'guideDetailsModalLabel');
+        modal.setAttribute('aria-hidden', 'true');
+        
+        modal.innerHTML = `
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 60px rgba(0,0,0,0.25);">
+                    <div class="modal-header border-0 position-relative" 
+                         style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                                color: white; border-radius: 20px 20px 0 0; padding: 20px 30px;">
+                        <h5 class="modal-title fw-bold d-flex align-items-center" id="guideDetailsModalLabel">
+                            <div class="me-3" style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-person-circle" style="font-size: 20px;"></i>
+                            </div>
+                            <div id="guideModalTitle">ガイド詳細</div>
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる" 
+                                style="font-size: 1.1rem; padding: 8px;"></button>
+                    </div>
+                    
+                    <div class="modal-body p-0" style="max-height: 70vh; overflow-y: auto;">
+                        <div id="guideDetailsContent">
+                            <!-- Dynamic content will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer border-0 p-4 bg-light" style="border-radius: 0 0 20px 20px;">
+                        <div class="w-100">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-outline-secondary w-100" data-bs-dismiss="modal" 
+                                            style="border-radius: 15px; padding: 12px; font-weight: 600;">
+                                        <i class="bi bi-x-circle me-2"></i>閉じる
+                                    </button>
+                                </div>
+                                <div class="col-6">
+                                    <button type="button" class="btn btn-primary w-100" id="contactGuideBtn"
+                                            style="border-radius: 15px; padding: 12px; 
+                                                   background: linear-gradient(135deg, #667eea, #764ba2); 
+                                                   border: none; font-weight: 600;">
+                                        <i class="bi bi-chat-dots me-2"></i>お問い合わせ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+    }
+    
+    const titleElement = document.getElementById('guideModalTitle');
+    const contentElement = document.getElementById('guideDetailsContent');
+    const contactBtn = document.getElementById('contactGuideBtn');
+    
+    // Update modal title
+    if (titleElement) {
+        titleElement.textContent = `${guide.displayName || guide.name}さんの詳細`;
+    }
+    
+    // Create detailed content
+    const languages = Array.isArray(guide.languages) ? guide.languages.join('、') : guide.languages;
+    const specialties = Array.isArray(guide.specialties) ? guide.specialties.join('、') : guide.specialties;
+    
+    if (contentElement) {
+        contentElement.innerHTML = `
+            <div class="guide-profile-header p-4 text-center" 
+                 style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-bottom: 1px solid #dee2e6;">
+                <div class="guide-avatar mx-auto mb-3" 
+                     style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <img src="${guide.profileImage || 'attached_assets/image_1754398586272.png'}" 
+                         alt="${guide.name}" class="w-100 h-100" style="object-fit: cover;">
+                </div>
+                <h4 class="fw-bold text-dark mb-2">${guide.displayName || guide.name}</h4>
+                <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
+                    <span class="badge bg-primary px-3 py-2 rounded-pill">
+                        <i class="bi bi-geo-alt me-2"></i>${window.locationNames?.[guide.location] || guide.location}
+                    </span>
+                    <span class="badge bg-success px-3 py-2 rounded-pill">
+                        <i class="bi bi-star-fill me-2"></i>${guide.rating || '5.0'}
+                    </span>
+                </div>
+                <div class="guide-price text-center">
+                    <h5 class="text-primary fw-bold mb-0">￥${Number(guide.price || 8000).toLocaleString()}</h5>
+                    <small class="text-muted">1セッション（2〜3時間）</small>
+                </div>
+            </div>
+            
+            <div class="guide-details p-4">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-card h-100 p-3" style="background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef;">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-translate me-2"></i>対応言語
+                            </h6>
+                            <p class="mb-0">${languages || '日本語、英語'}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-card h-100 p-3" style="background: #f8f9fa; border-radius: 12px; border: 1px solid #e9ecef;">
+                            <h6 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-heart me-2"></i>専門分野
+                            </h6>
+                            <p class="mb-0">${specialties || '文化体験、グルメツアー'}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-person-circle me-2"></i>自己紹介
+                    </h6>
+                    <div class="bg-light p-3 rounded-3">
+                        <p class="mb-0" style="line-height: 1.6;">
+                            ${guide.description || `こんにちは！${guide.displayName || guide.name}です。${window.locationNames?.[guide.location] || guide.location}の魅力を皆様にお伝えするのが私の使命です。地元ならではの隠れた名所や美味しいグルメスポットをご案内いたします。観光だけでなく、日本の文化や習慣についても丁寧にご説明します。一緒に素晴らしい思い出を作りましょう！`}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-clock me-2"></i>サービス詳細
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <div class="service-item d-flex align-items-center p-2">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <span>観光地案内</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="service-item d-flex align-items-center p-2">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <span>グルメツアー</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="service-item d-flex align-items-center p-2">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <span>文化体験サポート</span>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="service-item d-flex align-items-center p-2">
+                                <i class="bi bi-check-circle-fill text-success me-3"></i>
+                                <span>言語サポート</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <h6 class="fw-bold text-primary mb-3">
+                        <i class="bi bi-star me-2"></i>お客様の声
+                    </h6>
+                    <div class="testimonial bg-light p-3 rounded-3 mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="stars text-warning me-2">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                            <strong>田中様（アメリカ）</strong>
+                        </div>
+                        <p class="mb-0 small" style="line-height: 1.5;">
+                            「${guide.displayName || guide.name}さんのガイドのおかげで、想像以上に素晴らしい旅になりました。地元の人だからこそ知っている穴場スポットを教えてくれて、本当に感謝しています！」
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    // Setup contact button
+    if (contactBtn) {
+        contactBtn.onclick = () => contactGuide(guideId);
+    }
+    
+    // Show modal
+    const bootstrapModal = new bootstrap.Modal(modal);
+    bootstrapModal.show();
+    
+    console.log('✅ Guide details modal displayed');
+}
+
+// Update the existing viewGuideDetails function to use the new modal
+function viewGuideDetailsUpdated(guideId) {
+    console.log('🔍 Attempting to view guide details:', guideId);
+    
+    // Check authentication first
+    if (!checkAuthenticationStatus()) {
+        // Store guide ID for after login/registration
+        sessionStorage.setItem('pending_guide_view', guideId);
+        showAuthRequiredModal();
+        return;
+    }
+    
+    // Show the detailed modal
+    showGuideDetailsModal(guideId);
+}
 
 // Setup registration button events
 function setupRegistrationButtonEvents() {
