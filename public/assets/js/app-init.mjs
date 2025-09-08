@@ -184,10 +184,107 @@ function appInit() {
     console.log('🎉 TomoTrip application is fully ready!');
 }
 
-// Call initialization when module loads
+// Simplified guide rendering - bypassing complex module system
+function renderGuidesDirectly() {
+    console.log('🎯 Rendering guides directly...');
+    
+    const container = document.getElementById('guideCardsContainer');
+    if (!container) {
+        console.error('Guide container not found');
+        return;
+    }
+    
+    // Full guide dataset - expanded from original defaultGuideData
+    const guides = [
+        { id: 1, name: "田中健太", location: "tokyo", rating: 4.8, price: 8000, photo: "/assets/img/guides/default-1.svg", languages: ["ja", "en"], specialties: ["history", "culture"] },
+        { id: 2, name: "佐藤美咲", location: "osaka", rating: 4.9, price: 7500, photo: "/assets/img/guides/default-2.svg", languages: ["ja", "en", "zh"], specialties: ["food", "local"] },
+        { id: 3, name: "鈴木一郎", location: "kyoto", rating: 4.7, price: 9000, photo: "/assets/img/guides/default-3.svg", languages: ["ja", "en"], specialties: ["temples", "traditional"] },
+        { id: 4, name: "山田花子", location: "osaka", rating: 4.6, price: 7000, photo: "/assets/img/guides/default-4.svg", languages: ["ja", "en"], specialties: ["shopping", "food"] },
+        { id: 5, name: "Johnson Mike", location: "tokyo", rating: 4.8, price: 8500, photo: "/assets/img/guides/default-5.svg", languages: ["en", "ja"], specialties: ["business", "modern"] },
+        { id: 6, name: "李美麗", location: "kyoto", rating: 4.9, price: 8800, photo: "attached_assets/image_1754399234136.png", languages: ["zh", "ja", "en"], specialties: ["culture", "temples"] },
+        { id: 7, name: "高橋翔太", location: "hokkaido", rating: 4.7, price: 9500, photo: "attached_assets/image_1754399234136.png", languages: ["ja", "en"], specialties: ["nature", "skiing"] },
+        { id: 8, name: "Anderson Sarah", location: "okinawa", rating: 4.8, price: 8200, photo: "attached_assets/image_1754399234136.png", languages: ["en", "ja"], specialties: ["beach", "diving"] },
+        { id: 9, name: "金成民", location: "tokyo", rating: 4.6, price: 7800, photo: "attached_assets/image_1754399234136.png", languages: ["ko", "ja", "en"], specialties: ["kpop", "modern"] },
+        { id: 10, name: "伊藤優子", location: "nara", rating: 4.9, price: 8600, photo: "attached_assets/image_1754399234136.png", languages: ["ja", "en"], specialties: ["deer", "temples"] },
+        { id: 11, name: "Rodriguez Carlos", location: "hiroshima", rating: 4.7, price: 8300, photo: "attached_assets/image_1754399234136.png", languages: ["es", "ja", "en"], specialties: ["history", "peace"] },
+        { id: 12, name: "中村孝", location: "fukuoka", rating: 4.8, price: 7900, photo: "attached_assets/image_1754399234136.png", languages: ["ja", "en"], specialties: ["ramen", "local"] }
+    ];
+    
+    // Set global reference for modal system
+    window.defaultGuides = guides;
+    
+    // Location mapping for display
+    window.locationNames = {
+        hokkaido: "北海道", tokyo: "東京都", osaka: "大阪府", kyoto: "京都府", 
+        nara: "奈良県", hiroshima: "広島県", fukuoka: "福岡県", okinawa: "沖縄県"
+    };
+    
+    // Render cards
+    const cardsHTML = guides.map(guide => `
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
+                <div class="position-relative">
+                    <img src="${guide.photo || '/assets/img/guides/default-1.svg'}" 
+                         class="card-img-top" alt="${guide.name}" 
+                         style="height: 250px; object-fit: cover;">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
+                            評価 ${guide.rating} ⭐
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.name}</h5>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-geo-alt"></i> ${window.locationNames[guide.location] || guide.location}
+                    </p>
+                    <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
+                        地域の魅力をご案内します
+                    </p>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">対応言語</small>
+                            <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages}</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">料金</small>
+                            <small class="fw-bold text-primary">¥${Number(guide.price).toLocaleString()}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" 
+                                data-action="view-details" 
+                                data-guide-id="${guide.id}"
+                                style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
+                            詳しく見る
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+    
+    container.innerHTML = cardsHTML;
+    
+    // Update counters
+    const guideCounter = document.getElementById('guideCounter');
+    const totalGuideCounter = document.getElementById('totalGuideCounter');
+    if (guideCounter) guideCounter.textContent = `${guides.length}人のガイドが見つかりました（全${guides.length}人中）`;
+    if (totalGuideCounter) totalGuideCounter.textContent = `総数: ${guides.length}人`;
+    
+    console.log(`✅ Rendered ${guides.length} guide cards successfully`);
+}
+
+// Initialize application with direct rendering
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', appInit);
+    document.addEventListener('DOMContentLoaded', function() {
+        renderGuidesDirectly();
+        appInit();
+    });
 } else {
+    renderGuidesDirectly();
     appInit();
 }
 
