@@ -99,6 +99,43 @@
             border-left: 4px solid #0984e3;
         }
         
+        .verification-step {
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+        
+        .verification-step.active {
+            opacity: 1;
+        }
+        
+        .verification-step.completed {
+            opacity: 1;
+            color: #28a745;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #dee2e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 5px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .verification-step.active .step-circle {
+            background: #007bff;
+            color: white;
+        }
+        
+        .verification-step.completed .step-circle {
+            background: #28a745;
+            color: white;
+        }
+        
         .document-upload-area {
             border: 2px dashed #0984e3;
             border-radius: 15px;
@@ -250,26 +287,86 @@
 
         <!-- Step 2: Phone Verification -->
         <div class="step" id="step2">
-            <h4 class="mb-3">電話番号認証</h4>
+            <h4 class="mb-3">📱 電話番号認証</h4>
+            
+            <!-- Progress Steps -->
+            <div class="mb-4">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="verification-step active" id="sms-step-1">
+                            <div class="step-circle">1</div>
+                            <small>SMS送信</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="verification-step" id="sms-step-2">
+                            <div class="step-circle">2</div>
+                            <small>コード入力</small>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="verification-step" id="sms-step-3">
+                            <div class="step-circle">3</div>
+                            <small>認証完了</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="verification-box">
-                <p class="mb-3">入力された電話番号にSMS認証コードを送信します。</p>
-                <p class="fw-bold" id="phoneDisplay"></p>
+                <div class="text-center mb-3">
+                    <i class="bi bi-shield-check text-success" style="font-size: 2.5rem;"></i>
+                    <h5 class="mt-2">安全な本人確認</h5>
+                </div>
+                
+                <div class="bg-light rounded p-3 mb-3">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <i class="bi bi-phone me-2 text-primary"></i>
+                        <strong>認証対象電話番号:</strong>
+                        <span class="ms-2 text-primary" id="phoneDisplay"></span>
+                    </div>
+                </div>
                 
                 <div class="mb-3" id="sendCodeSection">
-                    <button type="button" class="btn btn-primary w-100" id="sendCodeBtn">
-                        <i class="bi bi-phone"></i> 認証コードを送信
+                    <div class="alert alert-info text-center">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>ステップ1:</strong> 上記の電話番号にSMS認証コードを送信します
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg w-100" id="sendCodeBtn" style="border-radius: 25px;">
+                        <i class="bi bi-send me-2"></i>📱 認証コードを送信
                     </button>
                 </div>
                 
                 <div class="mb-3" id="verifyCodeSection" style="display: none;">
-                    <label for="verificationCode" class="form-label">認証コード（6桁）</label>
-                    <input type="text" class="form-control verification-code-input" id="verificationCode" maxlength="6" placeholder="123456">
-                    <div class="form-text">デモ用認証コード: 123456</div>
-                    <button type="button" class="btn btn-primary w-100 mt-2" id="verifyCodeBtn">認証する</button>
+                    <div class="alert alert-warning text-center">
+                        <i class="bi bi-clock me-2"></i>
+                        <strong>ステップ2:</strong> SMSで受信した6桁のコードを入力してください
+                    </div>
+                    <label for="verificationCode" class="form-label text-center d-block">
+                        <i class="bi bi-key me-2"></i>認証コード（6桁）
+                    </label>
+                    <input type="text" class="form-control form-control-lg text-center verification-code-input" 
+                           id="verificationCode" maxlength="6" placeholder="000000" 
+                           style="font-size: 1.8rem; letter-spacing: 0.8rem; border-radius: 15px; border: 3px solid #007bff;">
+                    <div class="text-center mt-2">
+                        <div class="alert alert-success">
+                            <i class="bi bi-lightbulb me-2"></i>
+                            <strong>デモ用認証コード:</strong> <code style="font-size: 1.2rem; color: #dc3545;">123456</code>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-lg w-100 mt-3" id="verifyCodeBtn" style="border-radius: 25px;">
+                        <i class="bi bi-check-circle me-2"></i>✅ 認証する
+                    </button>
                 </div>
                 
-                <div class="text-success" id="verificationSuccess" style="display: none;">
-                    <i class="bi bi-check-circle-fill"></i> 電話番号認証が完了しました
+                <div class="text-success text-center" id="verificationSuccess" style="display: none;">
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem;"></i>
+                        <strong>ステップ3完了!</strong>
+                        <div class="mt-2">
+                            🎉 電話番号認証が完了しました
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -281,15 +378,50 @@
 
         <!-- Step 3: Document Upload -->
         <div class="step" id="step3">
-            <h4 class="mb-3">身分証明書の提出</h4>
+            <h4 class="mb-3">📄 身分証明書の提出</h4>
+            
+            <div class="alert alert-info">
+                <i class="bi bi-shield-lock me-2"></i>
+                <strong>安全保証:</strong> アップロードされた画像は暗号化され、本人確認後に安全に削除されます
+            </div>
+            
             <div class="verification-box">
-                <p class="mb-3">以下のいずれかの身分証明書をアップロードしてください：</p>
-                <ul class="mb-3">
-                    <li>パスポート</li>
-                    <li>運転免許証</li>
-                    <li>マイナンバーカード</li>
-                    <li>在留カード（外国人の方）</li>
-                </ul>
+                <div class="text-center mb-4">
+                    <i class="bi bi-file-earmark-person text-primary" style="font-size: 2.5rem;"></i>
+                    <h5 class="mt-2">身分証明書アップロード</h5>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-8 mx-auto">
+                        <p class="text-center mb-3"><strong>以下のいずれかの身分証明書をアップロード:</strong></p>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="card p-2 text-center">
+                                    <i class="bi bi-passport text-primary"></i>
+                                    <small>パスポート</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card p-2 text-center">
+                                    <i class="bi bi-credit-card text-primary"></i>
+                                    <small>運転免許証</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card p-2 text-center">
+                                    <i class="bi bi-person-badge text-primary"></i>
+                                    <small>マイナンバーカード</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="card p-2 text-center">
+                                    <i class="bi bi-card-text text-primary"></i>
+                                    <small>在留カード</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="document-upload-area" id="uploadArea">
                     <i class="bi bi-cloud-upload" style="font-size: 3rem; color: #0984e3;"></i>
@@ -377,28 +509,51 @@
             currentStep = step;
         }
         
-        // Phone verification
+        // Phone verification with step indicators
         document.getElementById('sendCodeBtn').addEventListener('click', function() {
             this.disabled = true;
             this.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>送信中...';
             
+            // Update step indicators
+            const step1 = document.getElementById('sms-step-1');
+            const step2 = document.getElementById('sms-step-2');
+            if (step1) {
+                step1.classList.add('completed');
+                step1.classList.remove('active');
+            }
+            if (step2) {
+                step2.classList.add('active');
+            }
+            
             setTimeout(() => {
-                this.style.display = 'none';
+                document.getElementById('sendCodeSection').style.display = 'none';
                 document.getElementById('verifyCodeSection').style.display = 'block';
-                alert('認証コードを送信しました。デモ用コード: 123456');
             }, 2000);
         });
         
         document.getElementById('verifyCodeBtn').addEventListener('click', function() {
             const code = document.getElementById('verificationCode').value;
             if (code === '123456') {
+                // Update step indicators
+                const step2 = document.getElementById('sms-step-2');
+                const step3 = document.getElementById('sms-step-3');
+                if (step2) {
+                    step2.classList.add('completed');
+                    step2.classList.remove('active');
+                }
+                if (step3) {
+                    step3.classList.add('active');
+                    step3.classList.add('completed');
+                }
+                
+                // Show success message
                 document.getElementById('verifyCodeSection').style.display = 'none';
                 document.getElementById('verificationSuccess').style.display = 'block';
                 document.getElementById('verificationSuccess').classList.add('success-animation');
                 document.getElementById('step2NextBtn').disabled = false;
                 phoneVerified = true;
             } else {
-                alert('認証コードが正しくありません。');
+                alert('認証コードが正しくありません。正しいコードは 123456 です。');
             }
         });
         
