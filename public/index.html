@@ -2266,14 +2266,10 @@
 
 
 
-        // View guide detail with access control
+        // View guide detail with access control - redirect to detail page
         function viewGuideDetail(guideId) {
-            console.log('Opening guide detail modal for guide:', guideId);
-            const allGuides = loadAllGuides();
-            const guide = allGuides.find(g => g.id == guideId);
-            console.log('Opening guide detail modal for guide:', guide);
-            if (!guide) return;
-
+            console.log('Opening guide detail page for guide:', guideId);
+            
             // Check if user is registered
             const touristData = localStorage.getItem('touristData');
             console.log('Tourist registration status:', touristData ? 'REGISTERED' : 'NOT REGISTERED');
@@ -2286,15 +2282,13 @@
                 return;
             }
 
-            // Show guide details for registered users
-            console.log('Showing guide detail modal for registered user');
-            console.log('About to call showGuideDetailModal with guide:', guide);
-            try {
-                showGuideDetailModal(guide);
-            } catch (error) {
-                console.error('❌ Error calling showGuideDetailModal:', error);
-                alert('Error showing guide details: ' + error.message);
-            }
+            // Store all guides data for the detail page
+            const allGuides = loadAllGuides();
+            localStorage.setItem('allGuides', JSON.stringify(allGuides));
+            
+            // Redirect to guide detail page
+            console.log('Redirecting to guide detail page for registered user');
+            window.location.href = `/guide-detail.html?id=${guideId}`;
         }
 
         // Show guide detail modal
