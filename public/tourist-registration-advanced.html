@@ -497,8 +497,10 @@
             const tourists = JSON.parse(localStorage.getItem('registeredTourists') || '[]');
             tourists.push(formData);
             localStorage.setItem('registeredTourists', JSON.stringify(tourists));
+            localStorage.setItem('touristData', JSON.stringify(formData));
             
-            alert('観光客登録が完了しました！\n\n電話認証と身分証明書の確認が完了しています。\nガイドの詳細情報をご覧いただけます。');
+            // Set flag to show unlock notification after redirect
+            sessionStorage.setItem('showUnlockNotification', 'true');
             
             // Redirect back to main page
             window.location.href = '/';

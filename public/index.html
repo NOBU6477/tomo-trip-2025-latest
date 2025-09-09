@@ -6180,5 +6180,19 @@
     
     <!-- Main application initialization -->
     <script type="module" src="/assets/js/app-init.mjs"></script>
+    <script>
+        // Check for unlock notification flag after registration
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('showUnlockNotification') === 'true') {
+                sessionStorage.removeItem('showUnlockNotification');
+                // Wait for app-init.mjs to load
+                setTimeout(() => {
+                    if (window.showUnlockNotification) {
+                        window.showUnlockNotification();
+                    }
+                }, 500);
+            }
+        });
+    </script>
 </body>
 </html>

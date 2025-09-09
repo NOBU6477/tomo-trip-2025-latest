@@ -515,7 +515,7 @@ function setupGlobalFunctions() {
         detailModal.show();
     };
     
-    // Start tourist registration function
+    // Start tourist registration function - redirect to registration page
     window.startTouristRegistration = function() {
         // Close login prompt modal
         const loginModal = document.getElementById('loginPromptModal');
@@ -523,9 +523,70 @@ function setupGlobalFunctions() {
             bootstrap.Modal.getInstance(loginModal)?.hide();
         }
         
-        // Show tourist registration modal
-        const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-        registrationModal.show();
+        // Redirect to tourist registration page instead of showing modal
+        window.location.href = '/tourist-registration-advanced.html';
+    };
+    
+    // Show unlock notification after successful registration
+    window.showUnlockNotification = function() {
+        const unlockHtml = `
+            <div class="modal fade" id="unlockModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border-radius: 20px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                        <div class="modal-header border-0 text-center text-white pb-0">
+                            <div class="w-100">
+                                <i class="bi bi-unlock-fill text-warning" style="font-size: 4rem;"></i>
+                                <h3 class="modal-title mt-3">🎉 ロック解除完了！</h3>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center text-white px-4">
+                            <div class="mb-4">
+                                <h5 class="mb-3">おめでとうございます！</h5>
+                                <p class="mb-3">観光客登録が完了しました</p>
+                                <div class="row g-3 mb-4">
+                                    <div class="col-4">
+                                        <div class="unlock-feature">
+                                            <i class="bi bi-eye-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
+                                            <small class="d-block">ガイド詳細</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="unlock-feature">
+                                            <i class="bi bi-calendar-check-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
+                                            <small class="d-block">予約機能</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="unlock-feature">
+                                            <i class="bi bi-chat-dots-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
+                                            <small class="d-block">チャット</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-light">すべての機能にアクセスできるようになりました！</p>
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="button" class="btn btn-light btn-lg" onclick="window.location.href='/'" style="border-radius: 15px;">
+                                    <i class="bi bi-house-fill me-2"></i>ガイドを探す
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing unlock modal if any
+        const existingUnlockModal = document.getElementById('unlockModal');
+        if (existingUnlockModal) existingUnlockModal.remove();
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', unlockHtml);
+        
+        // Show modal
+        const unlockModal = new bootstrap.Modal(document.getElementById('unlockModal'));
+        unlockModal.show();
     };
     
     console.log('✅ All global functions set up successfully:', {
