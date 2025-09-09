@@ -2464,10 +2464,26 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Event listeners for search and filter functionality
             const searchBtn = document.getElementById('searchBtn');
-            if (searchBtn) searchBtn.addEventListener('click', window.filterGuides || function(){alert('検索機能を準備中です');});
+            if (searchBtn) {
+                searchBtn.addEventListener('click', function() {
+                    if (window.filterGuides) {
+                        window.filterGuides();
+                    } else {
+                        alert('検索機能を準備中です');
+                    }
+                });
+            }
             
             const resetBtn = document.getElementById('resetBtn');
-            if (resetBtn) resetBtn.addEventListener('click', window.resetFilters || function(){location.reload();});
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    if (window.resetFilters) {
+                        window.resetFilters();
+                    } else {
+                        location.reload();
+                    }
+                });
+            }
             
             // Tourist registration modal event listeners
             const sendCodeBtn = document.getElementById('sendCodeBtnModal');
@@ -6049,37 +6065,7 @@
             }
         };
         
-        // Clear registration modal function
-        window.clearRegistrationModal = function() {
-            console.log('🧹 Clearing registration modal data');
-            
-            // Clear all form inputs
-            const inputs = ['touristFirstName', 'touristLastName', 'touristEmail', 'touristPhone', 'touristCountry', 
-                           'touristVisitDuration', 'touristPreferredLanguage', 'touristSpecialRequests'];
-            
-            inputs.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.value = '';
-                }
-            });
-            
-            // Clear checkboxes
-            const checkboxes = document.querySelectorAll('#registrationModal input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.checked = false);
-            
-            // Reset to step 1
-            document.getElementById('step1Content').style.display = 'block';
-            document.getElementById('step2Content').style.display = 'none';
-            document.getElementById('step3Content').style.display = 'none';
-            
-            // Reset indicators
-            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
-            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
-            document.getElementById('step3-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
-            
-            console.log('✅ Registration modal cleared');
-        };
+        // Registration modal clear function moved to app-init.mjs to prevent conflicts
         
         console.log('✅ Global registration functions added');
         
