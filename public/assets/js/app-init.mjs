@@ -157,16 +157,36 @@ function setupGlobalFunctions() {
             // Get all guides (use original data for filtering, then convert for display)
             const originalGuides = defaultGuideData || [];
             
+            // Language mapping from HTML filter values to data codes
+            const languageMap = {
+                'japanese': 'ja',
+                'english': 'en',
+                'chinese': 'zh',
+                'chinese_traditional': 'zh',
+                'korean': 'ko', 
+                'spanish': 'es',
+                'french': 'fr',
+                'german': 'de',
+                'russian': 'ru',
+                'thai': 'thai',
+                'vietnamese': 'vietnamese'
+            };
+            
             // Apply filters to original data
             let filtered = originalGuides.filter(guide => {
                 const locationMatch = !location || guide.location === location;
-                // Fix language filter: check against original language codes
-                const languageMatch = !language || (Array.isArray(guide.languages) ? guide.languages.includes(language) : guide.languages === language);
+                
+                // Fix language filter: map HTML value to data code
+                const targetLanguage = languageMap[language] || language;
+                const languageMatch = !language || (Array.isArray(guide.languages) ? guide.languages.includes(targetLanguage) : guide.languages === targetLanguage);
+                
+                // Fix price filter: map HTML values to actual price ranges
                 const priceMatch = !price || (
-                    price === 'low' && guide.price <= 8000 ||
-                    price === 'medium' && guide.price > 8000 && guide.price <= 10000 ||
-                    price === 'high' && guide.price > 10000
+                    price === 'budget' && guide.price >= 6000 && guide.price <= 10000 ||
+                    price === 'premium' && guide.price >= 10001 && guide.price <= 20000 ||
+                    price === 'luxury' && guide.price >= 20001
                 );
+                
                 const keywordMatch = !keyword || 
                     guide.name.toLowerCase().includes(keyword) ||
                     (guide.specialties && guide.specialties.some(s => s.toLowerCase().includes(keyword)));
@@ -410,7 +430,77 @@ function setupGlobalFunctions() {
         }
         
         // Show guide detail modal for registered users
-        alert(`${guide.name}の詳細\n場所: ${guide.location}\n言語: ${guide.languages?.join(', ')}\n料金: ¥${guide.price.toLocaleString()}/日\n評価: ${guide.rating}/5`);
+        const detailHtml = `
+            <div class="modal fade" id="guideDetailModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <div class="modal-content" style="border-radius: 20px; border: none;">
+                        <div class="modal-header border-0 text-center pb-0">
+                            <div class="w-100">
+                                <img src="${guide.photo}" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
+                                <h4 class="modal-title text-primary">${guide.name}さんの詳細</h4>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body px-4">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-geo-alt text-primary fs-2"></i>
+                                            <h6 class="card-title mt-2">場所</h6>
+                                            <p class="card-text">${guide.location}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-chat-dots text-success fs-2"></i>
+                                            <h6 class="card-title mt-2">対応言語</h6>
+                                            <p class="card-text">${guide.languages?.join(', ')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-currency-yen text-warning fs-2"></i>
+                                            <h6 class="card-title mt-2">料金</h6>
+                                            <p class="card-text">¥${guide.price.toLocaleString()}/日</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card h-100">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-star-fill text-warning fs-2"></i>
+                                            <h6 class="card-title mt-2">評価</h6>
+                                            <p class="card-text">${guide.rating}/5</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4">
+                                <button type="button" class="btn btn-primary btn-lg px-5" style="border-radius: 25px;">
+                                    <i class="bi bi-calendar-check me-2"></i>このガイドを予約
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing modal if any
+        const existingDetailModal = document.getElementById('guideDetailModal');
+        if (existingDetailModal) existingDetailModal.remove();
+        
+        // Add modal to body
+        document.body.insertAdjacentHTML('beforeend', detailHtml);
+        
+        // Show modal
+        const detailModal = new bootstrap.Modal(document.getElementById('guideDetailModal'));
+        detailModal.show();
     };
     
     // Start tourist registration function
