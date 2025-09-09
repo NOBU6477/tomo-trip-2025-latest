@@ -49,7 +49,19 @@ function renderGuideCards(guides) {
                         <span class="badge bg-secondary">${guide.specialties?.[0] || 'ガイド'}</span>
                     </div>
                     <div class="mb-2">
-                        <small class="text-muted">対応言語: ${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages || 'N/A'}</small>
+                        <small class="text-muted">対応言語: ${Array.isArray(guide.languages) ? guide.languages.map(lang => {
+                            const langMap = {
+                                'ja': '日本語',
+                                'en': '英語', 
+                                'zh': '中国語',
+                                'ko': '韓国語',
+                                'es': 'スペイン語',
+                                'fr': 'フランス語',
+                                'de': 'ドイツ語',
+                                'ru': 'ロシア語'
+                            };
+                            return langMap[lang] || lang;
+                        }).join(', ') : guide.languages || 'N/A'}</small>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
                         <div>
