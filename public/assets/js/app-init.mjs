@@ -162,109 +162,233 @@ function appInit() {
     window.updateGuideCounters = updateGuideCounters;
     window.displayGuides = displayGuides;
     
-    // Import and expose filter functions from event-handlers
-    import('./events/event-handlers.mjs').then(module => {
-        // Make filter functions globally available with correct names
-        window.filterGuides = function() {
-            console.log('🔍 filterGuides called - delegating to handleSearchAction');
-            module.handleSearchAction?.() || handleSearchAction?.() || alert('検索機能の準備中です');
-        };
-        
-        window.resetFilters = function() {
-            console.log('🔄 resetFilters called - delegating to handleResetFilters');
-            module.handleResetFilters?.() || handleResetFilters?.() || (() => {
-                document.getElementById('locationFilter').value = '';
-                document.getElementById('languageFilter').value = '';
-                document.getElementById('priceFilter').value = '';
-                document.getElementById('keywordInput').value = '';
-                location.reload();
-            })();
-        };
-        
-        window.handleSponsorRegistration = function() {
-            console.log('🏪 handleSponsorRegistration called');
-            window.location.href = 'sponsor-registration.html';
-        };
-        
-        // Tourist registration modal functions
-        window.goToStep2Modal = function() {
-            console.log('🎯 goToStep2Modal called');
+    // Direct function definitions - bypassing dynamic import to prevent loading issues
+    console.log('🔧 Setting up global functions directly...');
+    
+    // Filter functions with full implementation
+    window.filterGuides = function() {
+        console.log('🔍 filterGuides called');
+        try {
+            const location = document.getElementById('locationFilter')?.value || '';
+            const language = document.getElementById('languageFilter')?.value || '';
+            const price = document.getElementById('priceFilter')?.value || '';
+            const keyword = document.getElementById('keywordInput')?.value?.toLowerCase() || '';
             
-            const phoneInput = document.getElementById('touristPhone');
-            const firstNameInput = document.getElementById('touristFirstName');
-            const lastNameInput = document.getElementById('touristLastName');
-            const emailInput = document.getElementById('touristEmail');
+            console.log('🔍 Filter values:', { location, language, price, keyword });
             
-            // Basic validation
-            if (!firstNameInput?.value?.trim()) {
-                alert('名前を入力してください');
-                return;
-            }
-            if (!lastNameInput?.value?.trim()) {
-                alert('姓を入力してください');
-                return;
-            }
-            if (!emailInput?.value?.trim()) {
-                alert('メールアドレスを入力してください');
-                return;
-            }
-            if (!phoneInput?.value?.trim()) {
-                alert('電話番号を入力してください');
-                return;
-            }
+            // Get all guides
+            const allGuides = window.defaultGuides || [];
             
-            // Hide step 1, show step 2
-            document.getElementById('step1Content').style.display = 'none';
-            document.getElementById('step2Content').style.display = 'block';
-            
-            // Update step indicators
-            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
-            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
-            
-            // Update phone display
-            document.getElementById('phoneDisplayModal').textContent = '電話番号: ' + phoneInput.value;
-            
-            console.log('✅ Successfully moved to step 2');
-        };
-        
-        window.clearRegistrationModal = function() {
-            console.log('🧹 Clearing registration modal data');
-            
-            // Clear all form inputs
-            const inputs = ['touristFirstName', 'touristLastName', 'touristEmail', 'touristPhone', 'touristCountry', 
-                           'touristVisitDuration', 'touristPreferredLanguage', 'touristSpecialRequests'];
-            
-            inputs.forEach(id => {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.value = '';
-                }
+            // Apply filters
+            let filtered = allGuides.filter(guide => {
+                const locationMatch = !location || guide.location === location;
+                const languageMatch = !language || (Array.isArray(guide.languages) ? guide.languages.includes(language) : guide.languages === language);
+                const priceMatch = !price || (
+                    price === 'low' && guide.price <= 8000 ||
+                    price === 'medium' && guide.price > 8000 && guide.price <= 10000 ||
+                    price === 'high' && guide.price > 10000
+                );
+                const keywordMatch = !keyword || 
+                    guide.name.toLowerCase().includes(keyword) ||
+                    (guide.specialty && guide.specialty.toLowerCase().includes(keyword)) ||
+                    (guide.description && guide.description.toLowerCase().includes(keyword));
+                
+                return locationMatch && languageMatch && priceMatch && keywordMatch;
             });
             
-            // Clear checkboxes
-            const checkboxes = document.querySelectorAll('#registrationModal input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.checked = false);
+            console.log(`✅ Filtered guides: ${filtered.length} out of ${allGuides.length}`);
             
-            // Reset to step 1
-            document.getElementById('step1Content').style.display = 'block';
-            document.getElementById('step2Content').style.display = 'none';
-            document.getElementById('step3Content').style.display = 'none';
+            // Re-render guide cards
+            if (window.renderGuideCards) {
+                window.renderGuideCards(filtered);
+            }
             
-            // Reset indicators
-            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
-            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
-            document.getElementById('step3-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+            // Update counters
+            if (window.updateGuideCounters) {
+                window.updateGuideCounters(filtered.length, allGuides.length);
+            }
             
-            console.log('✅ Registration modal cleared');
-        };
+        } catch (error) {
+            console.error('❌ Filter error:', error);
+            alert('検索中にエラーが発生しました');
+        }
+    };
+    
+    window.resetFilters = function() {
+        console.log('🔄 resetFilters called');
+        try {
+            // Clear all filter inputs
+            const locationFilter = document.getElementById('locationFilter');
+            const languageFilter = document.getElementById('languageFilter');
+            const priceFilter = document.getElementById('priceFilter');
+            const keywordInput = document.getElementById('keywordInput');
+            
+            if (locationFilter) locationFilter.value = '';
+            if (languageFilter) languageFilter.value = '';
+            if (priceFilter) priceFilter.value = '';
+            if (keywordInput) keywordInput.value = '';
+            
+            // Reset to show all guides
+            const allGuides = window.defaultGuides || [];
+            
+            if (window.renderGuideCards) {
+                window.renderGuideCards(allGuides);
+            }
+            
+            if (window.updateGuideCounters) {
+                window.updateGuideCounters(allGuides.length, allGuides.length);
+            }
+            
+            console.log('✅ Filters reset successfully');
+            
+        } catch (error) {
+            console.error('❌ Reset error:', error);
+            location.reload();
+        }
+    };
+    
+    window.handleSponsorRegistration = function() {
+        console.log('🏪 handleSponsorRegistration called');
+        window.location.href = 'sponsor-registration.html';
+    };
+    
+    // Tourist registration modal functions
+    window.goToStep2Modal = function() {
+        console.log('🎯 goToStep2Modal called');
         
-        console.log('✅ All global functions exposed successfully');
-    }).catch(error => {
-        console.error('❌ Error importing event handlers:', error);
-        // Fallback implementations
-        window.filterGuides = () => alert('検索機能の準備中です');
-        window.resetFilters = () => location.reload();
-        window.handleSponsorRegistration = () => window.location.href = 'sponsor-registration.html';
+        const phoneInput = document.getElementById('touristPhone');
+        const firstNameInput = document.getElementById('touristFirstName');
+        const lastNameInput = document.getElementById('touristLastName');
+        const emailInput = document.getElementById('touristEmail');
+        
+        // Basic validation
+        if (!firstNameInput?.value?.trim()) {
+            alert('名前を入力してください');
+            return;
+        }
+        if (!lastNameInput?.value?.trim()) {
+            alert('姓を入力してください');
+            return;
+        }
+        if (!emailInput?.value?.trim()) {
+            alert('メールアドレスを入力してください');
+            return;
+        }
+        if (!phoneInput?.value?.trim()) {
+            alert('電話番号を入力してください');
+            return;
+        }
+        
+        // Hide step 1, show step 2
+        const step1 = document.getElementById('step1Content');
+        const step2 = document.getElementById('step2Content');
+        if (step1) step1.style.display = 'none';
+        if (step2) step2.style.display = 'block';
+        
+        // Update step indicators
+        const step1Indicator = document.getElementById('step1-indicator');
+        const step2Indicator = document.getElementById('step2-indicator');
+        if (step1Indicator?.querySelector('.badge')) {
+            step1Indicator.querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
+        }
+        if (step2Indicator?.querySelector('.badge')) {
+            step2Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+        }
+        
+        // Update phone display
+        const phoneDisplay = document.getElementById('phoneDisplayModal');
+        if (phoneDisplay) {
+            phoneDisplay.textContent = '電話番号: ' + phoneInput.value;
+        }
+        
+        console.log('✅ Successfully moved to step 2');
+    };
+    
+    window.clearRegistrationModal = function() {
+        console.log('🧹 Clearing registration modal data');
+        
+        // Clear all form inputs
+        const inputs = ['touristFirstName', 'touristLastName', 'touristEmail', 'touristPhone', 'touristCountry', 
+                       'touristVisitDuration', 'touristPreferredLanguage', 'touristSpecialRequests'];
+        
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.value = '';
+            }
+        });
+        
+        // Clear checkboxes
+        const checkboxes = document.querySelectorAll('#registrationModal input[type="checkbox"]');
+        checkboxes.forEach(cb => cb.checked = false);
+        
+        // Reset to step 1
+        const step1 = document.getElementById('step1Content');
+        const step2 = document.getElementById('step2Content');
+        const step3 = document.getElementById('step3Content');
+        if (step1) step1.style.display = 'block';
+        if (step2) step2.style.display = 'none';
+        if (step3) step3.style.display = 'none';
+        
+        // Reset indicators
+        const step1Indicator = document.getElementById('step1-indicator');
+        const step2Indicator = document.getElementById('step2-indicator');
+        const step3Indicator = document.getElementById('step3-indicator');
+        
+        if (step1Indicator?.querySelector('.badge')) {
+            step1Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+        }
+        if (step2Indicator?.querySelector('.badge')) {
+            step2Indicator.querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+        }
+        if (step3Indicator?.querySelector('.badge')) {
+            step3Indicator.querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+        }
+        
+        console.log('✅ Registration modal cleared');
+    };
+    
+    // Additional tourist registration functions
+    window.goToStep1Modal = function() {
+        const step1 = document.getElementById('step1Content');
+        const step2 = document.getElementById('step2Content');
+        if (step1) step1.style.display = 'block';
+        if (step2) step2.style.display = 'none';
+        
+        const step1Indicator = document.getElementById('step1-indicator');
+        const step2Indicator = document.getElementById('step2-indicator');
+        if (step1Indicator?.querySelector('.badge')) {
+            step1Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+        }
+        if (step2Indicator?.querySelector('.badge')) {
+            step2Indicator.querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+        }
+        console.log('✅ Returned to step 1');
+    };
+    
+    window.goToStep3Modal = function() {
+        const step2 = document.getElementById('step2Content');
+        const step3 = document.getElementById('step3Content');
+        if (step2) step2.style.display = 'none';
+        if (step3) step3.style.display = 'block';
+        
+        const step2Indicator = document.getElementById('step2-indicator');
+        const step3Indicator = document.getElementById('step3-indicator');
+        if (step2Indicator?.querySelector('.badge')) {
+            step2Indicator.querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
+        }
+        if (step3Indicator?.querySelector('.badge')) {
+            step3Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+        }
+        console.log('✅ Moved to step 3');
+    };
+    
+    console.log('✅ All global functions set up successfully:', {
+        filterGuides: typeof window.filterGuides,
+        resetFilters: typeof window.resetFilters,
+        goToStep2Modal: typeof window.goToStep2Modal,
+        clearRegistrationModal: typeof window.clearRegistrationModal,
+        handleSponsorRegistration: typeof window.handleSponsorRegistration
     });
     
     // Setup guide card click handlers with authentication
