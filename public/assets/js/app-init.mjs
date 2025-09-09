@@ -162,6 +162,111 @@ function appInit() {
     window.updateGuideCounters = updateGuideCounters;
     window.displayGuides = displayGuides;
     
+    // Import and expose filter functions from event-handlers
+    import('./events/event-handlers.mjs').then(module => {
+        // Make filter functions globally available with correct names
+        window.filterGuides = function() {
+            console.log('🔍 filterGuides called - delegating to handleSearchAction');
+            module.handleSearchAction?.() || handleSearchAction?.() || alert('検索機能の準備中です');
+        };
+        
+        window.resetFilters = function() {
+            console.log('🔄 resetFilters called - delegating to handleResetFilters');
+            module.handleResetFilters?.() || handleResetFilters?.() || (() => {
+                document.getElementById('locationFilter').value = '';
+                document.getElementById('languageFilter').value = '';
+                document.getElementById('priceFilter').value = '';
+                document.getElementById('keywordInput').value = '';
+                location.reload();
+            })();
+        };
+        
+        window.handleSponsorRegistration = function() {
+            console.log('🏪 handleSponsorRegistration called');
+            window.location.href = 'sponsor-registration.html';
+        };
+        
+        // Tourist registration modal functions
+        window.goToStep2Modal = function() {
+            console.log('🎯 goToStep2Modal called');
+            
+            const phoneInput = document.getElementById('touristPhone');
+            const firstNameInput = document.getElementById('touristFirstName');
+            const lastNameInput = document.getElementById('touristLastName');
+            const emailInput = document.getElementById('touristEmail');
+            
+            // Basic validation
+            if (!firstNameInput?.value?.trim()) {
+                alert('名前を入力してください');
+                return;
+            }
+            if (!lastNameInput?.value?.trim()) {
+                alert('姓を入力してください');
+                return;
+            }
+            if (!emailInput?.value?.trim()) {
+                alert('メールアドレスを入力してください');
+                return;
+            }
+            if (!phoneInput?.value?.trim()) {
+                alert('電話番号を入力してください');
+                return;
+            }
+            
+            // Hide step 1, show step 2
+            document.getElementById('step1Content').style.display = 'none';
+            document.getElementById('step2Content').style.display = 'block';
+            
+            // Update step indicators
+            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+            
+            // Update phone display
+            document.getElementById('phoneDisplayModal').textContent = '電話番号: ' + phoneInput.value;
+            
+            console.log('✅ Successfully moved to step 2');
+        };
+        
+        window.clearRegistrationModal = function() {
+            console.log('🧹 Clearing registration modal data');
+            
+            // Clear all form inputs
+            const inputs = ['touristFirstName', 'touristLastName', 'touristEmail', 'touristPhone', 'touristCountry', 
+                           'touristVisitDuration', 'touristPreferredLanguage', 'touristSpecialRequests'];
+            
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.value = '';
+                }
+            });
+            
+            // Clear checkboxes
+            const checkboxes = document.querySelectorAll('#registrationModal input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            
+            // Reset to step 1
+            document.getElementById('step1Content').style.display = 'block';
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step3Content').style.display = 'none';
+            
+            // Reset indicators
+            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+            document.getElementById('step3-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+            
+            console.log('✅ Registration modal cleared');
+        };
+        
+        console.log('✅ All global functions exposed successfully');
+    }).catch(error => {
+        console.error('❌ Error importing event handlers:', error);
+        // Fallback implementations
+        window.filterGuides = () => alert('検索機能の準備中です');
+        window.resetFilters = () => location.reload();
+        window.handleSponsorRegistration = () => window.location.href = 'sponsor-registration.html';
+    });
+    
     // Setup guide card click handlers with authentication
     setTimeout(() => {
         setupGuideCardClickHandlers();
@@ -245,7 +350,19 @@ function renderGuidesDirectly() {
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <small class="text-muted">対応言語</small>
-                            <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages}</small>
+                            <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.map(lang => {
+                                const langMap = {
+                                    'ja': '日本語', 'japanese': '日本語',
+                                    'en': '英語', 'english': '英語', 
+                                    'zh': '中国語', 'chinese': '中国語',
+                                    'ko': '韓国語', 'korean': '韓国語',
+                                    'es': 'スペイン語', 'spanish': 'スペイン語',
+                                    'fr': 'フランス語', 'french': 'フランス語',
+                                    'de': 'ドイツ語', 'german': 'ドイツ語',
+                                    'it': 'イタリア語', 'italian': 'イタリア語'
+                                };
+                                return langMap[lang.toLowerCase()] || lang;
+                            }).join(', ') : guide.languages}</small>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <small class="text-muted">料金</small>
