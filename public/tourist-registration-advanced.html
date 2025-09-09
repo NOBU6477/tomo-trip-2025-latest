@@ -534,11 +534,27 @@
             
             // Add event listener for next step button
             const nextStepBtn = document.getElementById('nextStepBtn');
+            console.log('Looking for nextStepBtn:', nextStepBtn);
             if (nextStepBtn) {
-                nextStepBtn.addEventListener('click', function() {
+                console.log('Found nextStepBtn, adding event listener');
+                nextStepBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
                     console.log('Next button clicked');
+                    alert('Button clicked! Proceeding to validation...');
                     goToStep2();
                 });
+                
+                // Also add a simple onclick as backup
+                nextStepBtn.onclick = function(e) {
+                    e.preventDefault();
+                    console.log('Button onclick triggered');
+                    goToStep2();
+                };
+                
+                console.log('Event listeners added successfully');
+            } else {
+                console.error('nextStepBtn not found!');
             }
             
             if (sendSMSBtn) {
