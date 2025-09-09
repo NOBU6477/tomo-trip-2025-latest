@@ -2962,8 +2962,15 @@
 
         // Sponsor Registration and Login Functions
         function handleSponsorRegistration() {
-            console.log('Sponsor registration clicked');
-            window.location.href = 'sponsor-registration.html';
+            console.log('🏪 Sponsor registration clicked');
+            try {
+                // Direct navigation to sponsor registration page
+                window.location.href = './sponsor-registration.html';
+            } catch (error) {
+                console.error('❌ Sponsor registration navigation error:', error);
+                // Fallback to direct URL
+                window.location.href = '/sponsor-registration.html';
+            }
         }
 
         function handleSponsorLogin() {
