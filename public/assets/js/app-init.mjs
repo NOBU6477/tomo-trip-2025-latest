@@ -457,7 +457,19 @@ function setupGlobalFunctions() {
                                         <div class="card-body text-center">
                                             <i class="bi bi-chat-dots text-success fs-2"></i>
                                             <h6 class="card-title mt-2">対応言語</h6>
-                                            <p class="card-text">${guide.languages?.join(', ')}</p>
+                                            <p class="card-text">${guide.languages?.map(lang => {
+                                                const langMap = {
+                                                    'ja': '日本語',
+                                                    'en': '英語', 
+                                                    'zh': '中国語',
+                                                    'ko': '韓国語',
+                                                    'es': 'スペイン語',
+                                                    'fr': 'フランス語',
+                                                    'de': 'ドイツ語',
+                                                    'ru': 'ロシア語'
+                                                };
+                                                return langMap[lang] || lang;
+                                            }).join(', ')}</p>
                                         </div>
                                     </div>
                                 </div>
