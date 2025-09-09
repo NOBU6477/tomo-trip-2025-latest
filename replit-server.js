@@ -32,9 +32,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // Serve static files
-  let filePath = req.url === '/' ? '/index.html' : req.url;
-  filePath = path.join(__dirname, 'public', filePath);
+  // Serve static files - remove query parameters
+  let urlPath = req.url === '/' ? '/index.html' : req.url;
+  
+  // Remove query parameters from URL
+  const urlWithoutQuery = urlPath.split('?')[0];
+  let filePath = path.join(__dirname, 'public', urlWithoutQuery);
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
