@@ -1381,7 +1381,7 @@
                                 </div>
                                 
                                 <div class="d-flex justify-content-between mt-4">
-                                    <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()" style="border-radius: 25px; padding: 12px 30px;">戻る</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="clearRegistrationModal(); bootstrap.Modal.getInstance(document.getElementById('registrationModal')).hide();" style="border-radius: 25px; padding: 12px 30px;">キャンセル</button>
                                     <button type="button" class="btn btn-primary" onclick="goToStep2Modal()" style="border-radius: 25px; padding: 12px 30px;">次へ</button>
                                 </div>
                                 
@@ -2164,7 +2164,26 @@
 
         // Tourist Registration Modal Step Navigation Functions
         function goToStep2Modal() {
+            console.log('🎯 goToStep2Modal called');
+            
             const phoneInput = document.getElementById('touristPhone');
+            const firstNameInput = document.getElementById('touristFirstName');
+            const lastNameInput = document.getElementById('touristLastName');
+            const emailInput = document.getElementById('touristEmail');
+            
+            // Basic validation
+            if (!firstNameInput || !firstNameInput.value.trim()) {
+                alert('名前を入力してください');
+                return;
+            }
+            if (!lastNameInput || !lastNameInput.value.trim()) {
+                alert('姓を入力してください');
+                return;
+            }
+            if (!emailInput || !emailInput.value.trim()) {
+                alert('メールアドレスを入力してください');
+                return;
+            }
             if (!phoneInput || !phoneInput.value.trim()) {
                 alert('電話番号を入力してください');
                 return;
@@ -2180,6 +2199,8 @@
             
             // Update phone display
             document.getElementById('phoneDisplayModal').textContent = '電話番号: ' + phoneInput.value;
+            
+            console.log('✅ Successfully moved to step 2');
         }
         
         function goToStep1Modal() {
@@ -2528,9 +2549,31 @@
             console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${currentGuides.length} total`);
         }
 
-        // Make filter functions globally available
-        window.filterGuides = filterGuides;
-        window.resetFilters = resetFilters;
+        // Make filter functions globally available with error handling
+        window.filterGuides = function() {
+            console.log('🔍 Global filterGuides called');
+            try {
+                filterGuides();
+            } catch (error) {
+                console.error('❌ Filter error:', error);
+                alert('検索中にエラーが発生しました。ページを再読み込みしてください。');
+            }
+        };
+        
+        window.resetFilters = function() {
+            console.log('🔄 Global resetFilters called');
+            try {
+                resetFilters();
+            } catch (error) {
+                console.error('❌ Reset error:', error);
+                // Direct reset as fallback
+                document.getElementById('locationFilter').value = '';
+                document.getElementById('languageFilter').value = '';
+                document.getElementById('priceFilter').value = '';
+                document.getElementById('keywordInput').value = '';
+                location.reload(); // Force page reload as last resort
+            }
+        };
 
         // Initialize page - manual event listeners (app-init.mjs handles main initialization)
         document.addEventListener('DOMContentLoaded', function() {
@@ -6112,6 +6155,38 @@
                 formContainer.innerHTML = '';
                 console.log('✅ Registration choice hidden');
             }
+        };
+        
+        // Clear registration modal function
+        window.clearRegistrationModal = function() {
+            console.log('🧹 Clearing registration modal data');
+            
+            // Clear all form inputs
+            const inputs = ['touristFirstName', 'touristLastName', 'touristEmail', 'touristPhone', 'touristCountry', 
+                           'touristVisitDuration', 'touristPreferredLanguage', 'touristSpecialRequests'];
+            
+            inputs.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.value = '';
+                }
+            });
+            
+            // Clear checkboxes
+            const checkboxes = document.querySelectorAll('#registrationModal input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+            
+            // Reset to step 1
+            document.getElementById('step1Content').style.display = 'block';
+            document.getElementById('step2Content').style.display = 'none';
+            document.getElementById('step3Content').style.display = 'none';
+            
+            // Reset indicators
+            document.getElementById('step1-indicator').querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+            document.getElementById('step2-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+            document.getElementById('step3-indicator').querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+            
+            console.log('✅ Registration modal cleared');
         };
         
         console.log('✅ Global registration functions added');
