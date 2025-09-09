@@ -1,78 +1,44 @@
-// TomoTrip Application Initialization - CSP Compliant
-// Consolidated from inline scripts in index.html
+// TomoTrip Application Initialization - Direct Implementation
+// No imports - all functions defined directly to prevent loading issues
 
-import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
-import './emergency-buttons.mjs';
-import './auth-flow.mjs';
-import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
-import { defaultGuideData } from './data/default-guides.mjs';
-import AppState from './state/app-state.mjs';
-import { setupLocationNames } from './locations/location-setup.mjs';
-import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
-import { APP_CONFIG } from '../../env/app-config.mjs';
+console.log('🚀 TomoTrip app-init.mjs loading...');
 
-// Early detection for Replit preview iframe to suppress footer emergency logs
-const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
+// Early detection for iframe
+const isReplitIframe = window.self !== window.top;
 
-// Suppress footer emergency scripts in iframe context
 if (isReplitIframe) {
-    // Block any footer emergency script execution
     window.FOOTER_EMERGENCY_DISABLED = true;
-    log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
+    console.log('🔇 Iframe context detected');
 }
 
-/** Main application initialization function - TDZ safe with AppState */
+// Default guide data - simplified
+const defaultGuideData = [
+    { id: 1, name: "田中健太", location: "tokyo", rating: 4.8, price: 8000, photo: "/assets/img/guides/default-1.svg", languages: ["ja", "en"], specialties: ["history", "culture"] },
+    { id: 2, name: "佐藤美咲", location: "osaka", rating: 4.9, price: 7500, photo: "/assets/img/guides/default-2.svg", languages: ["ja", "en", "zh"], specialties: ["food", "local"] },
+    { id: 3, name: "鈴木一郎", location: "kyoto", rating: 4.7, price: 9000, photo: "/assets/img/guides/default-3.svg", languages: ["ja", "en"], specialties: ["temples", "traditional"] },
+    { id: 4, name: "山田花子", location: "osaka", rating: 4.6, price: 7000, photo: "/assets/img/guides/default-4.svg", languages: ["ja", "en"], specialties: ["shopping", "food"] },
+    { id: 5, name: "Johnson Mike", location: "tokyo", rating: 4.8, price: 8500, photo: "/assets/img/guides/default-5.svg", languages: ["en", "ja"], specialties: ["business", "modern"] },
+    { id: 6, name: "李美麗", location: "kyoto", rating: 4.9, price: 8800, photo: "attached_assets/image_1754399234136.png", languages: ["zh", "ja", "en"], specialties: ["culture", "temples"] },
+    { id: 7, name: "高橋翔太", location: "hokkaido", rating: 4.7, price: 9500, photo: "attached_assets/image_1754399234136.png", languages: ["ja", "en"], specialties: ["nature", "skiing"] },
+    { id: 8, name: "Anderson Sarah", location: "okinawa", rating: 4.8, price: 8200, photo: "attached_assets/image_1754399234136.png", languages: ["en", "ja"], specialties: ["beach", "diving"] },
+    { id: 9, name: "金成民", location: "tokyo", rating: 4.6, price: 7800, photo: "attached_assets/image_1754399234136.png", languages: ["ko", "ja", "en"], specialties: ["kpop", "modern"] },
+    { id: 10, name: "伊藤優子", location: "nara", rating: 4.9, price: 8600, photo: "attached_assets/image_1754399234136.png", languages: ["ja", "en"], specialties: ["deer", "temples"] },
+    { id: 11, name: "Rodriguez Carlos", location: "hiroshima", rating: 4.7, price: 8300, photo: "attached_assets/image_1754399234136.png", languages: ["es", "ja", "en"], specialties: ["history", "peace"] },
+    { id: 12, name: "中村孝", location: "fukuoka", rating: 4.8, price: 7900, photo: "attached_assets/image_1754399234136.png", languages: ["ja", "en"], specialties: ["ramen", "local"] }
+];
+
+/** Main application initialization function */
 function appInit() {
-    log.ok('🌴 TomoTrip Application Starting...');
+    console.log('🌴 TomoTrip Application Starting...');
     
-    // Keep the existing counter text since we already set it in HTML
-    const guideCounter = document.getElementById('guideCounter');
-    const totalGuideCounter = document.getElementById('totalGuideCounter');
-    // Don't change the text if it's already set to the final state
-    if (guideCounter && guideCounter.textContent.includes('読み込み中')) {
-        guideCounter.textContent = '初期化中...';
-    }
-    if (totalGuideCounter && totalGuideCounter.textContent.includes('読み込み中')) {
-        totalGuideCounter.textContent = '合計: 初期化中...';
-    }
-    
-    // 1) Force use default guide data for consistency across all environments
-    // This eliminates localStorage differences between editor and separate tabs
+    // Initialize with default guide data
     const guides = defaultGuideData;
-    
-    // Clear any localStorage differences that might affect guide count
-    localStorage.removeItem('registeredGuides');
-    localStorage.removeItem('guideFilters');
+    window.defaultGuides = guides;
     
     console.log('🎯 Environment Data Sync:', {
         guides: guides.length,
-        source: 'defaultGuideData (forced)',
-        localStorage_cleared: true
+        source: 'defaultGuideData (direct)',
     });
-
-    // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
-    // Force clear localStorage/sessionStorage environment differences
-    if (window.location.search.includes('clear-cache')) {
-        localStorage.clear();
-        sessionStorage.clear();
-        console.log('🧹 Storage cleared due to clear-cache parameter');
-    }
-    
-    // CRITICAL FIX: Assign defaultGuides to window for guide details modal
-    window.defaultGuides = guides;
-    
-    AppState.guides = guides;
-    AppState.pageSize = 12; // Fixed pageSize for all environments
-    AppState.currentPage = 1;
-    AppState.filters = {}; // Reset filters to default
-    const state = AppState;
-
-    // 3) Setup location names in AppState
-    setupLocationNames(state);
-
-    // 4) Pass state to functions and display guides immediately
-    loadAllGuides(state.guides);
-    initializeGuidePagination(state);
     setupEventListeners(state);
     
     // Render initial guide cards using single consistent system
