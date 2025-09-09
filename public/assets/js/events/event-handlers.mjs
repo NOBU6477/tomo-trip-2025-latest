@@ -1,6 +1,91 @@
 // Event handlers - centralized setup with AppState support
 import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal.mjs';
 
+// Define filter functions to be exported
+function handleSearchAction() {
+    console.log('🔍 handleSearchAction called');
+    try {
+        const location = document.getElementById('locationFilter')?.value || '';
+        const language = document.getElementById('languageFilter')?.value || '';
+        const price = document.getElementById('priceFilter')?.value || '';
+        const keyword = document.getElementById('keywordInput')?.value?.toLowerCase() || '';
+        
+        console.log('🔍 Filter values:', { location, language, price, keyword });
+        
+        // Get all guides
+        const allGuides = window.defaultGuides || [];
+        
+        // Apply filters
+        let filtered = allGuides.filter(guide => {
+            const locationMatch = !location || guide.location === location;
+            const languageMatch = !language || (Array.isArray(guide.languages) ? guide.languages.includes(language) : guide.languages === language);
+            const priceMatch = !price || (
+                price === 'low' && guide.price <= 8000 ||
+                price === 'medium' && guide.price > 8000 && guide.price <= 10000 ||
+                price === 'high' && guide.price > 10000
+            );
+            const keywordMatch = !keyword || 
+                guide.name.toLowerCase().includes(keyword) ||
+                (guide.specialty && guide.specialty.toLowerCase().includes(keyword)) ||
+                (guide.description && guide.description.toLowerCase().includes(keyword));
+            
+            return locationMatch && languageMatch && priceMatch && keywordMatch;
+        });
+        
+        console.log(`✅ Filtered guides: ${filtered.length} out of ${allGuides.length}`);
+        
+        // Re-render guide cards
+        if (window.renderGuideCards) {
+            window.renderGuideCards(filtered);
+        }
+        
+        // Update counters
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(filtered.length, allGuides.length);
+        }
+        
+    } catch (error) {
+        console.error('❌ Filter error:', error);
+        alert('検索中にエラーが発生しました');
+    }
+}
+
+function handleResetFilters() {
+    console.log('🔄 handleResetFilters called');
+    try {
+        // Clear all filter inputs
+        const locationFilter = document.getElementById('locationFilter');
+        const languageFilter = document.getElementById('languageFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const keywordInput = document.getElementById('keywordInput');
+        
+        if (locationFilter) locationFilter.value = '';
+        if (languageFilter) languageFilter.value = '';
+        if (priceFilter) priceFilter.value = '';
+        if (keywordInput) keywordInput.value = '';
+        
+        // Reset to show all guides
+        const allGuides = window.defaultGuides || [];
+        
+        if (window.renderGuideCards) {
+            window.renderGuideCards(allGuides);
+        }
+        
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(allGuides.length, allGuides.length);
+        }
+        
+        console.log('✅ Filters reset successfully');
+        
+    } catch (error) {
+        console.error('❌ Reset error:', error);
+        location.reload();
+    }
+}
+
+// Export the functions
+export { handleSearchAction, handleResetFilters };
+
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     
