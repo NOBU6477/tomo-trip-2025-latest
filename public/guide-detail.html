@@ -301,29 +301,52 @@
 
         // Get guide data (from localStorage or server)
         function getGuideData(guideId) {
-            // Try to get from localStorage first (for dynamic guides)
-            let allGuides = [];
-            
-            // Load default guides
-            if (window.opener && window.opener.defaultGuides) {
-                allGuides = window.opener.defaultGuides;
-            } else {
-                // Fallback: load from local storage or default data
-                try {
-                    const storedGuides = localStorage.getItem('allGuides');
-                    if (storedGuides) {
-                        allGuides = JSON.parse(storedGuides);
-                    } else {
-                        // Load default guide data
-                        allGuides = getDefaultGuides();
-                    }
-                } catch (error) {
-                    console.error('Error loading guide data:', error);
-                    allGuides = getDefaultGuides();
+            try {
+                // First try to get from allGuides (set by index page)
+                let allGuides = [];
+                const storedAllGuides = localStorage.getItem('allGuides');
+                if (storedAllGuides) {
+                    allGuides = JSON.parse(storedAllGuides);
                 }
+                
+                // If not found, load from registered guides + default guides
+                if (allGuides.length === 0) {
+                    const defaultGuides = getDefaultGuides();
+                    const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+                    
+                    // Also check new registration format (from new guide registration system)
+                    const newRegisteredGuides = JSON.parse(localStorage.getItem('newRegisteredGuides') || '[]');
+                    
+                    // Check individual guide storage
+                    const individualGuide = localStorage.getItem(`guide_${guideId}`);
+                    if (individualGuide) {
+                        const guide = JSON.parse(individualGuide);
+                        console.log('Found individual guide data:', guide);
+                        return guide;
+                    }
+                    
+                    allGuides = [...defaultGuides, ...registeredGuides, ...newRegisteredGuides];
+                    console.log(`Total guides loaded: ${allGuides.length} (${defaultGuides.length} default + ${registeredGuides.length} registered + ${newRegisteredGuides.length} new)`);
+                }
+                
+                // Try to get from opener window
+                if (allGuides.length === 0 && window.opener && window.opener.defaultGuides) {
+                    allGuides = window.opener.defaultGuides;
+                }
+                
+                const guide = allGuides.find(guide => guide.id == guideId);
+                if (guide) {
+                    console.log('Found guide:', guide);
+                    return guide;
+                }
+                
+                console.warn('Guide not found with ID:', guideId);
+                return null;
+                
+            } catch (error) {
+                console.error('Error loading guide data:', error);
+                return null;
             }
-
-            return allGuides.find(guide => guide.id == guideId);
         }
 
         // Display guide data

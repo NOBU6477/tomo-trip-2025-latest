@@ -1955,12 +1955,36 @@
         function loadAllGuides() {
             try {
                 const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-                console.log(`📊 Loaded ${registeredGuides.length} registered guides`);
+                const newRegisteredGuides = JSON.parse(localStorage.getItem('newRegisteredGuides') || '[]');
                 
-                const allGuides = [...defaultGuides, ...registeredGuides];
-                console.log(`📊 Total guides: ${allGuides.length} (${defaultGuides.length} default + ${registeredGuides.length} registered)`);
+                // Check for individually stored guides (from new registration system)
+                const individualGuides = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('guide_')) {
+                        try {
+                            const guide = JSON.parse(localStorage.getItem(key));
+                            if (guide && guide.id) {
+                                individualGuides.push(guide);
+                            }
+                        } catch (e) {
+                            console.warn('Error parsing individual guide:', key);
+                        }
+                    }
+                }
                 
-                return allGuides;
+                console.log(`📊 Loaded ${registeredGuides.length} registered guides + ${newRegisteredGuides.length} new guides + ${individualGuides.length} individual guides`);
+                
+                const allGuides = [...defaultGuides, ...registeredGuides, ...newRegisteredGuides, ...individualGuides];
+                
+                // Remove duplicates based on ID
+                const uniqueGuides = allGuides.filter((guide, index, self) => 
+                    index === self.findIndex(g => g.id === guide.id)
+                );
+                
+                console.log(`📊 Total unique guides: ${uniqueGuides.length} (${defaultGuides.length} default + ${uniqueGuides.length - defaultGuides.length} dynamic)`);
+                
+                return uniqueGuides;
             } catch (error) {
                 console.error('Error loading guides:', error);
                 return defaultGuides;
