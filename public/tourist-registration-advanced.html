@@ -308,7 +308,7 @@
                 
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">戻る</button>
-                    <button type="button" class="btn btn-primary" onclick="goToStep2()">次へ</button>
+                    <button type="button" class="btn btn-primary" id="nextStepBtn">次へ</button>
                 </div>
             </form>
         </div>
@@ -531,6 +531,15 @@
             const verifySMSBtn = document.getElementById('verifySMSBtn');
             const verificationPhone = document.getElementById('verificationPhone');
             const smsCode = document.getElementById('smsCode');
+            
+            // Add event listener for next step button
+            const nextStepBtn = document.getElementById('nextStepBtn');
+            if (nextStepBtn) {
+                nextStepBtn.addEventListener('click', function() {
+                    console.log('Next button clicked');
+                    goToStep2();
+                });
+            }
             
             if (sendSMSBtn) {
                 sendSMSBtn.addEventListener('click', function() {
