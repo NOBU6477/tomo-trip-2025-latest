@@ -154,12 +154,13 @@ function setupGlobalFunctions() {
             
             console.log('🔍 Filter values:', { location, language, price, keyword });
             
-            // Get all guides
-            const allGuides = window.defaultGuides || [];
+            // Get all guides (use original data for filtering, then convert for display)
+            const originalGuides = defaultGuideData || [];
             
-            // Apply filters
-            let filtered = allGuides.filter(guide => {
+            // Apply filters to original data
+            let filtered = originalGuides.filter(guide => {
                 const locationMatch = !location || guide.location === location;
+                // Fix language filter: check against original language codes
                 const languageMatch = !language || (Array.isArray(guide.languages) ? guide.languages.includes(language) : guide.languages === language);
                 const priceMatch = !price || (
                     price === 'low' && guide.price <= 8000 ||
@@ -173,11 +174,12 @@ function setupGlobalFunctions() {
                 return locationMatch && languageMatch && priceMatch && keywordMatch;
             });
             
-            console.log(`✅ Filtered guides: ${filtered.length} out of ${allGuides.length}`);
+            console.log(`✅ Filtered guides: ${filtered.length} out of ${originalGuides.length}`);
             
-            // Re-render guide cards
-            renderGuideCards(filtered);
-            updateGuideCounters(filtered.length, allGuides.length);
+            // Convert languages for display and render
+            const filteredWithJapanese = convertGuideLanguages(filtered);
+            renderGuideCards(filteredWithJapanese);
+            updateGuideCounters(filtered.length, originalGuides.length);
             
         } catch (error) {
             console.error('❌ Filter error:', error);
@@ -361,15 +363,67 @@ function setupGlobalFunctions() {
         // Check if user is registered
         const touristData = localStorage.getItem('touristData');
         if (!touristData) {
-            // Show registration modal for unregistered users
-            console.log('User not registered - showing registration modal');
-            const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-            registrationModal.show();
+            // Create and show enhanced registration prompt modal
+            const modalHtml = `
+                <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 20px; border: none;">
+                            <div class="modal-header text-center border-0 pb-0">
+                                <div class="w-100">
+                                    <i class="bi bi-person-circle text-primary" style="font-size: 3rem;"></i>
+                                    <h4 class="modal-title text-primary mt-2">ログインが必要です</h4>
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body text-center px-4">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    ガイドの詳細情報を見るには会員登録が必要です
+                                </div>
+                                <h5 class="mb-3">${guide.name}さんの詳細を確認</h5>
+                                <p class="text-muted mb-4">簡単な会員登録で全てのガイド情報にアクセスできます</p>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-primary btn-lg" onclick="startTouristRegistration()" style="border-radius: 15px;">
+                                        <i class="bi bi-person-plus me-2"></i>今すぐ無料登録
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        後で登録する
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('loginPromptModal');
+            if (existingModal) existingModal.remove();
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const loginModal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+            loginModal.show();
             return;
         }
         
         // Show guide detail modal for registered users
         alert(`${guide.name}の詳細\n場所: ${guide.location}\n言語: ${guide.languages?.join(', ')}\n料金: ¥${guide.price.toLocaleString()}/日\n評価: ${guide.rating}/5`);
+    };
+    
+    // Start tourist registration function
+    window.startTouristRegistration = function() {
+        // Close login prompt modal
+        const loginModal = document.getElementById('loginPromptModal');
+        if (loginModal) {
+            bootstrap.Modal.getInstance(loginModal)?.hide();
+        }
+        
+        // Show tourist registration modal
+        const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+        registrationModal.show();
     };
     
     console.log('✅ All global functions set up successfully:', {
