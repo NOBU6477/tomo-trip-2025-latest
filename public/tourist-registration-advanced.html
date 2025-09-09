@@ -443,6 +443,8 @@
         }
         
         function goToStep2() {
+            console.log('goToStep2 function called');
+            
             // Validate all required fields manually
             const firstName = document.getElementById('firstName').value.trim();
             const lastName = document.getElementById('lastName').value.trim();
@@ -479,7 +481,17 @@
             }
             
             // Display phone number in step 2
-            document.getElementById('phoneDisplay').textContent = phone;
+            const phoneDisplayElement = document.getElementById('phoneDisplay');
+            if (phoneDisplayElement) {
+                phoneDisplayElement.textContent = phone;
+            }
+            
+            // Also set the verification phone field
+            const verificationPhoneElement = document.getElementById('verificationPhone');
+            if (verificationPhoneElement) {
+                verificationPhoneElement.value = phone;
+            }
+            
             showStep(2);
         }
         
