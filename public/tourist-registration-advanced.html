@@ -308,10 +308,9 @@
                 
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">戻る</button>
-                    <button type="button" class="btn btn-primary" id="nextStepBtn" style="z-index: 999; position: relative;">次へ</button>
+                    <button type="button" class="btn btn-primary" onclick="handleNextStep()" style="z-index: 999; position: relative; pointer-events: auto;">次へ</button>
                 </div>
             </div>
-        </form>
         </div>
 
         <!-- Step 2: Phone Verification -->
@@ -437,6 +436,37 @@
         let currentStep = 1;
         let phoneVerified = false;
         let documentUploaded = false;
+        
+        // Direct button handler
+        function handleNextStep() {
+            console.log('handleNextStep called');
+            alert('Button works! Processing...');
+            
+            // Validate all required fields
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const nationality = document.getElementById('nationality').value;
+            
+            if (!firstName || !lastName || !email || !phone || !nationality) {
+                alert('すべてのフィールドを入力してください。');
+                return;
+            }
+            
+            // Update phone display and proceed
+            const phoneDisplayElement = document.getElementById('phoneDisplay');
+            if (phoneDisplayElement) {
+                phoneDisplayElement.textContent = phone;
+            }
+            
+            const verificationPhoneElement = document.getElementById('verificationPhone');
+            if (verificationPhoneElement) {
+                verificationPhoneElement.value = phone;
+            }
+            
+            showStep(2);
+        }
         
         // Step navigation functions
         function goToStep1() {
