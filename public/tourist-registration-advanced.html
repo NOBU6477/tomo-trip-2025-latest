@@ -136,6 +136,33 @@
             color: white;
         }
         
+        .document-type-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+        
+        .document-type-card:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+        
+        .document-type-card.selected {
+            border-color: #28a745;
+            background-color: #f8fff9;
+        }
+        
+        .selection-check {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        
+        .document-type-card {
+            position: relative;
+        }
+        
         .document-upload-area {
             border: 2px dashed #0984e3;
             border-radius: 15px;
@@ -261,7 +288,8 @@
                 
                 <div class="mb-3">
                     <label for="phone" class="form-label">電話番号</label>
-                    <input type="tel" class="form-control" id="phone" placeholder="090-1234-5678" required>
+                    <input type="tel" class="form-control" id="phone" placeholder="090-1234-5678" required 
+                           style="font-size: 16px; padding: 12px;" autocomplete="tel">
                     <div class="form-text">SMS認証コードを受信する電話番号を入力してください</div>
                 </div>
                 
@@ -392,33 +420,51 @@
                 </div>
                 
                 <div class="row mb-3">
-                    <div class="col-md-8 mx-auto">
-                        <p class="text-center mb-3"><strong>以下のいずれかの身分証明書をアップロード:</strong></p>
-                        <div class="row g-2">
+                    <div class="col-md-10 mx-auto">
+                        <p class="text-center mb-3"><strong>以下のいずれかの身分証明書を選択してください:</strong></p>
+                        <div class="row g-2" id="documentTypeSelector">
                             <div class="col-6">
-                                <div class="card p-2 text-center">
-                                    <i class="bi bi-passport text-primary"></i>
-                                    <small>パスポート</small>
+                                <div class="card document-type-card" data-type="passport" onclick="selectDocumentType('passport')">
+                                    <div class="card-body p-2 text-center">
+                                        <i class="bi bi-passport text-primary" style="font-size: 1.5rem;"></i>
+                                        <div class="mt-1"><small>パスポート</small></div>
+                                        <i class="bi bi-check-circle-fill selection-check" style="display: none; color: #28a745; font-size: 1.2rem;"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="card p-2 text-center">
-                                    <i class="bi bi-credit-card text-primary"></i>
-                                    <small>運転免許証</small>
+                                <div class="card document-type-card" data-type="license" onclick="selectDocumentType('license')">
+                                    <div class="card-body p-2 text-center">
+                                        <i class="bi bi-credit-card text-primary" style="font-size: 1.5rem;"></i>
+                                        <div class="mt-1"><small>運転免許証</small></div>
+                                        <i class="bi bi-check-circle-fill selection-check" style="display: none; color: #28a745; font-size: 1.2rem;"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="card p-2 text-center">
-                                    <i class="bi bi-person-badge text-primary"></i>
-                                    <small>マイナンバーカード</small>
+                                <div class="card document-type-card" data-type="mynumber" onclick="selectDocumentType('mynumber')">
+                                    <div class="card-body p-2 text-center">
+                                        <i class="bi bi-person-badge text-primary" style="font-size: 1.5rem;"></i>
+                                        <div class="mt-1"><small>マイナンバーカード</small></div>
+                                        <i class="bi bi-check-circle-fill selection-check" style="display: none; color: #28a745; font-size: 1.2rem;"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-6">
-                                <div class="card p-2 text-center">
-                                    <i class="bi bi-card-text text-primary"></i>
-                                    <small>在留カード</small>
+                                <div class="card document-type-card" data-type="residence" onclick="selectDocumentType('residence')">
+                                    <div class="card-body p-2 text-center">
+                                        <i class="bi bi-card-text text-primary" style="font-size: 1.5rem;"></i>
+                                        <div class="mt-1"><small>在留カード</small></div>
+                                        <i class="bi bi-check-circle-fill selection-check" style="display: none; color: #28a745; font-size: 1.2rem;"></i>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        
+                        <!-- Selected Document Display -->
+                        <div id="selectedDocumentDisplay" class="alert alert-success mt-3" style="display: none;">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>選択済み:</strong> <span id="selectedDocumentName"></span>
                         </div>
                     </div>
                 </div>
@@ -468,13 +514,42 @@
         }
         
         function goToStep2() {
-            const form = document.getElementById('basicInfoForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
+            // Validate all required fields manually
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const nationality = document.getElementById('nationality').value;
+            
+            console.log('Form validation:', { firstName, lastName, email, phone, nationality });
+            
+            if (!firstName) {
+                alert('名を入力してください。');
+                document.getElementById('firstName').focus();
+                return;
+            }
+            if (!lastName) {
+                alert('姓を入力してください。');
+                document.getElementById('lastName').focus();
+                return;
+            }
+            if (!email) {
+                alert('メールアドレスを入力してください。');
+                document.getElementById('email').focus();
+                return;
+            }
+            if (!phone) {
+                alert('電話番号を入力してください。');
+                document.getElementById('phone').focus();
+                return;
+            }
+            if (!nationality) {
+                alert('国籍を選択してください。');
+                document.getElementById('nationality').focus();
                 return;
             }
             
-            const phone = document.getElementById('phone').value;
+            // Display phone number in step 2
             document.getElementById('phoneDisplay').textContent = phone;
             showStep(2);
         }
@@ -630,9 +705,44 @@
             documentUploaded = false;
         }
         
+        // Document type selection
+        let selectedDocumentType = null;
+        
+        function selectDocumentType(type) {
+            // Clear previous selections
+            document.querySelectorAll('.document-type-card').forEach(card => {
+                card.classList.remove('selected');
+                card.querySelector('.selection-check').style.display = 'none';
+            });
+            
+            // Mark selected document
+            const selectedCard = document.querySelector(`[data-type="${type}"]`);
+            selectedCard.classList.add('selected');
+            selectedCard.querySelector('.selection-check').style.display = 'block';
+            
+            // Update display
+            const documentNames = {
+                'passport': 'パスポート',
+                'license': '運転免許証',
+                'mynumber': 'マイナンバーカード',
+                'residence': '在留カード'
+            };
+            
+            selectedDocumentType = type;
+            document.getElementById('selectedDocumentName').textContent = documentNames[type];
+            document.getElementById('selectedDocumentDisplay').style.display = 'block';
+            
+            console.log('証明書選択:', documentNames[type]);
+        }
+        
         function completeRegistration() {
             if (!phoneVerified || !documentUploaded) {
                 alert('すべての認証手続きを完了してください。');
+                return;
+            }
+            
+            if (!selectedDocumentType) {
+                alert('身分証明書の種類を選択してください。');
                 return;
             }
             
