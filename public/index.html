@@ -1438,14 +1438,28 @@
                         <div class="step-content" id="step2Content" style="display: none;">
                             <div class="p-4">
                                 <h4 class="mb-3">電話番号認証</h4>
-                                <div class="verification-box p-3 mb-3" style="background: #f8f9fa; border-radius: 15px; border-left: 4px solid #0984e3;">
-                                    <p class="mb-3">入力された電話番号にSMS認証コードを送信します。</p>
-                                    <p class="fw-bold" id="phoneDisplayModal"></p>
+                                <div class="verification-box p-4 mb-3" style="background: linear-gradient(135deg, #e3f2fd, #f3e5f5); border-radius: 15px; border: 2px solid #2196f3;">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-phone text-primary" style="font-size: 2.5rem;"></i>
+                                        <h5 class="text-primary mt-2">📱 電話番号認証</h5>
+                                    </div>
+                                    <div class="alert alert-info" role="alert">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <strong>簡単3ステップ!</strong> SMS認証コードで本人確認を行います
+                                    </div>
+                                    <p class="fw-bold mb-1" id="phoneDisplayModal"></p>
                                     
                                     <div class="mb-3" id="sendCodeSectionModal">
-                                        <button type="button" class="btn btn-primary w-100" id="sendCodeBtnModal" style="border-radius: 15px; padding: 12px;">
-                                            <i class="bi bi-phone"></i> 認証コードを送信
-                                        </button>
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary btn-lg" id="sendCodeBtnModal" style="border-radius: 15px; padding: 15px;">
+                                                <i class="bi bi-send-fill me-2"></i>📲 認証コードを送信
+                                            </button>
+                                        </div>
+                                        <div class="text-center mt-2">
+                                            <small class="text-muted">
+                                                <i class="bi bi-shield-check me-1"></i>安全な認証システムで個人情報を保護
+                                            </small>
+                                        </div>
                                     </div>
                                     
                                     <div class="mb-3" id="verifyCodeSectionModal" style="display: none;">
@@ -1528,20 +1542,50 @@
                                     <div class="card border-0 shadow-sm" style="border-radius: 15px;">
                                         <div class="card-body p-4">
                                             <div class="mb-3">
-                                                <label class="form-label fw-semibold">身分証明書の種類を選択してください</label>
+                                                <label class="form-label fw-semibold">身分証明書の種類を選択してください <span class="text-success">(外国人の方もOK)</span></label>
                                                 <div class="row g-2">
-                                                    <div class="col-6">
+                                                    <div class="col-6 col-lg-4">
                                                         <input type="radio" class="btn-check" name="idType" id="passport" value="passport">
                                                         <label class="btn btn-outline-primary w-100" for="passport" style="border-radius: 10px;">
                                                             <i class="bi bi-bookmark-star me-2"></i>パスポート
                                                         </label>
                                                     </div>
-                                                    <div class="col-6">
+                                                    <div class="col-6 col-lg-4">
                                                         <input type="radio" class="btn-check" name="idType" id="license" value="license">
                                                         <label class="btn btn-outline-primary w-100" for="license" style="border-radius: 10px;">
                                                             <i class="bi bi-credit-card me-2"></i>運転免許証
                                                         </label>
                                                     </div>
+                                                    <div class="col-6 col-lg-4">
+                                                        <input type="radio" class="btn-check" name="idType" id="residence_card" value="residence_card">
+                                                        <label class="btn btn-outline-success w-100" for="residence_card" style="border-radius: 10px;">
+                                                            <i class="bi bi-person-badge me-2"></i>在留カード
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-6 col-lg-4">
+                                                        <input type="radio" class="btn-check" name="idType" id="special_resident" value="special_resident">
+                                                        <label class="btn btn-outline-success w-100" for="special_resident" style="border-radius: 10px;">
+                                                            <i class="bi bi-award me-2"></i>特別永住者証明書
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-6 col-lg-4">
+                                                        <input type="radio" class="btn-check" name="idType" id="insurance_card" value="insurance_card">
+                                                        <label class="btn btn-outline-info w-100" for="insurance_card" style="border-radius: 10px;">
+                                                            <i class="bi bi-heart me-2"></i>健康保険証
+                                                        </label>
+                                                    </div>
+                                                    <div class="col-6 col-lg-4">
+                                                        <input type="radio" class="btn-check" name="idType" id="student_id" value="student_id">
+                                                        <label class="btn btn-outline-warning w-100" for="student_id" style="border-radius: 10px;">
+                                                            <i class="bi bi-mortarboard me-2"></i>学生証
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-info-circle me-1"></i>
+                                                        外国の方: パスポート、在留カード、特別永住者証明書が利用可能
+                                                    </small>
                                                 </div>
                                             </div>
                                             

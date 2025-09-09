@@ -349,12 +349,36 @@ function setupGlobalFunctions() {
         console.log('✅ Moved to step 3');
     };
     
+    // View guide detail function
+    window.viewGuideDetail = function(guideId) {
+        console.log('🔍 viewGuideDetail called for guide:', guideId);
+        const guide = window.defaultGuides?.find(g => g.id == guideId);
+        if (!guide) {
+            alert('ガイド情報が見つかりません');
+            return;
+        }
+        
+        // Check if user is registered
+        const touristData = localStorage.getItem('touristData');
+        if (!touristData) {
+            // Show registration modal for unregistered users
+            console.log('User not registered - showing registration modal');
+            const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
+            registrationModal.show();
+            return;
+        }
+        
+        // Show guide detail modal for registered users
+        alert(`${guide.name}の詳細\n場所: ${guide.location}\n言語: ${guide.languages?.join(', ')}\n料金: ¥${guide.price.toLocaleString()}/日\n評価: ${guide.rating}/5`);
+    };
+    
     console.log('✅ All global functions set up successfully:', {
         filterGuides: typeof window.filterGuides,
         resetFilters: typeof window.resetFilters,
         goToStep2Modal: typeof window.goToStep2Modal,
         clearRegistrationModal: typeof window.clearRegistrationModal,
-        handleSponsorRegistration: typeof window.handleSponsorRegistration
+        handleSponsorRegistration: typeof window.handleSponsorRegistration,
+        viewGuideDetail: typeof window.viewGuideDetail
     });
 }
 
