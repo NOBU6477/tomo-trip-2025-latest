@@ -269,7 +269,7 @@
         <!-- Step 1: Basic Information -->
         <div class="step active" id="step1">
             <h4 class="mb-3">基本情報を入力してください</h4>
-            <form id="basicInfoForm">
+            <div id="basicInfoForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="firstName" class="form-label">名</label>
@@ -308,9 +308,10 @@
                 
                 <div class="d-flex justify-content-between">
                     <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">戻る</button>
-                    <button type="button" class="btn btn-primary" id="nextStepBtn">次へ</button>
+                    <button type="button" class="btn btn-primary" id="nextStepBtn" style="z-index: 999; position: relative;">次へ</button>
                 </div>
-            </form>
+            </div>
+        </form>
         </div>
 
         <!-- Step 2: Phone Verification -->
