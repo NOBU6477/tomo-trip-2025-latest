@@ -48,6 +48,9 @@ function renderGuideCards(guides) {
                         <span class="badge bg-primary me-1">${guide.location}</span>
                         <span class="badge bg-secondary">${guide.specialties?.[0] || 'ガイド'}</span>
                     </div>
+                    <div class="mb-2">
+                        <small class="text-muted">対応言語: ${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages || 'N/A'}</small>
+                    </div>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
                         <div>
                             <span class="text-warning">★</span>
@@ -59,7 +62,7 @@ function renderGuideCards(guides) {
                         </div>
                     </div>
                     <div class="mt-3">
-                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
+                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;" onclick="viewGuideDetail(${guide.id})">
                             詳細を見る
                         </button>
                     </div>
@@ -212,7 +215,7 @@ function setupGlobalFunctions() {
     
     window.handleSponsorRegistration = function() {
         console.log('🏪 handleSponsorRegistration called');
-        window.location.href = 'sponsor-registration.html';
+        window.location.href = '/sponsor-registration.html';
     };
     
     // Tourist registration modal functions
