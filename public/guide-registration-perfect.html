@@ -99,11 +99,10 @@
                     </div>
                     
                     <div class="p-4">
+                        <form id="guideRegistrationForm">
                         <!-- Step 1: Basic Information -->
                         <div class="verification-step">
                             <h5 class="text-primary mb-3"><i class="bi bi-1-circle-fill me-2"></i>基本情報</h5>
-                            
-                            <form id="guideRegistrationForm">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating">
@@ -194,7 +193,7 @@
                                     <i class="bi bi-cloud-upload text-success" style="font-size: 3rem;"></i>
                                     <h6 class="mt-3">身分証明書をアップロード</h6>
                                     <p class="text-muted">JPG、PNG形式対応（最大5MB）</p>
-                                    <input type="file" class="form-control" id="documentFile" accept="image/*">
+                                    <input type="file" class="form-control" id="documentFile" accept="image/*" capture="environment">
                                     <div id="documentPreview" class="mt-3" style="display:none;">
                                         <img id="previewImage" class="photo-preview" alt="プレビュー">
                                         <p class="text-success mt-2"><i class="bi bi-check-circle"></i> アップロード完了</p>
@@ -207,7 +206,7 @@
                                         <div class="upload-section">
                                             <i class="bi bi-card-image text-primary" style="font-size: 2rem;"></i>
                                             <h6 class="mt-2">表面</h6>
-                                            <input type="file" class="form-control" id="documentFront" accept="image/*">
+                                            <input type="file" class="form-control" id="documentFront" accept="image/*" capture="environment">
                                             <div id="frontPreview" class="mt-2" style="display:none;">
                                                 <img id="frontImage" class="photo-preview" alt="表面プレビュー">
                                                 <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
@@ -216,7 +215,7 @@
                                         <div class="upload-section">
                                             <i class="bi bi-card-image text-secondary" style="font-size: 2rem;"></i>
                                             <h6 class="mt-2">裏面</h6>
-                                            <input type="file" class="form-control" id="documentBack" accept="image/*">
+                                            <input type="file" class="form-control" id="documentBack" accept="image/*" capture="environment">
                                             <div id="backPreview" class="mt-2" style="display:none;">
                                                 <img id="backImage" class="photo-preview" alt="裏面プレビュー">
                                                 <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
@@ -293,7 +292,7 @@
                                     <i class="bi bi-person-square text-primary" style="font-size: 3rem;"></i>
                                     <h6 class="mt-3">ガイドカードに表示される写真</h6>
                                     <p class="text-muted">風景・人物・任意の写真OK（JPG、PNG対応）</p>
-                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*" required>
+                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*" capture="environment" required>
                                     <div id="profilePreview" class="mt-3" style="display:none;">
                                         <img id="profileImage" class="photo-preview" alt="プロフィール写真プレビュー">
                                         <p class="text-success mt-2"><i class="bi bi-check-circle"></i> プロフィール写真アップロード完了</p>
@@ -354,6 +353,14 @@
             
             documentType.addEventListener('change', function() {
                 const selectedType = this.value;
+                
+                // Clear previous files when changing type
+                document.getElementById('documentFile').value = '';
+                document.getElementById('documentFront').value = '';
+                document.getElementById('documentBack').value = '';
+                document.getElementById('documentPreview').style.display = 'none';
+                document.getElementById('frontPreview').style.display = 'none';
+                document.getElementById('backPreview').style.display = 'none';
                 
                 if (selectedType === 'drivers_license' || selectedType === 'insurance_card') {
                     // Show dual upload for front/back
@@ -449,6 +456,9 @@
                     showToast(result.message || 'SMS認証コードを送信しました', 'success');
                     document.getElementById('verificationCodeArea').style.display = 'block';
                     
+                    // Lock phone input after successful send
+                    document.getElementById('guidePhone').readOnly = true;
+                    
                     // Show simulation code if available (development mode)
                     if (result.simulationCode) {
                         showToast(`開発モード: 認証コードは ${result.simulationCode} です`, 'info');
@@ -461,13 +471,19 @@
                 showToast('ネットワークエラーが発生しました', 'error');
             } finally {
                 sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i class="bi bi-phone me-1"></i>認証コード送信';
+                sendBtn.innerHTML = '<i class="bi bi-send me-1"></i>認証コード送信';
             }
         });
 
         document.getElementById('verifyPhone').addEventListener('click', async function() {
-            const phone = formatPhoneNumber(document.getElementById('guidePhone').value);
+            const phoneInput = document.getElementById('guidePhone').value;
+            const phone = formatPhoneNumber(phoneInput);
             const code = document.getElementById('verificationCode').value;
+            
+            if (!phone) {
+                showToast('有効な電話番号を入力してください', 'error');
+                return;
+            }
             
             if (!code) {
                 showToast('認証コードを入力してください', 'error');
@@ -476,6 +492,7 @@
             
             // Disable button and show loading
             const verifyBtn = this;
+            let verificationResult;
             verifyBtn.disabled = true;
             verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>認証中...';
             
@@ -488,25 +505,26 @@
                     body: JSON.stringify({ phoneNumber: phone, code })
                 });
                 
-                const result = await response.json();
+                verificationResult = await response.json();
                 
-                if (result.success) {
-                    sessionId = result.sessionId;
-                    showToast(result.message || '電話認証が完了しました！', 'success');
+                if (verificationResult.success) {
+                    sessionId = verificationResult.sessionId;
+                    showToast(verificationResult.message || '電話認証が完了しました！', 'success');
                     verifyBtn.classList.remove('btn-primary');
                     verifyBtn.classList.add('btn-success');
                     verifyBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
                     verifyBtn.disabled = true;
                 } else {
-                    showToast(result.message || '認証コードが正しくありません', 'error');
-                    verifyBtn.disabled = false;
-                    verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証';
+                    showToast(verificationResult.message || '認証コードが正しくありません', 'error');
                 }
             } catch (error) {
                 console.error('認証エラー:', error);
                 showToast('ネットワークエラーが発生しました', 'error');
-                verifyBtn.disabled = false;
-                verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証';
+            } finally {
+                if (!verificationResult?.success) {
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証確認';
+                }
             }
         });
 
@@ -517,6 +535,35 @@
             if (!sessionId) {
                 showToast('電話認証を完了してください', 'error');
                 return;
+            }
+            
+            // Validate document upload based on type
+            const documentType = document.getElementById('documentType').value;
+            if (!documentType) {
+                showToast('証明書タイプを選択してください', 'error');
+                return;
+            }
+            
+            if (documentType === 'drivers_license' || documentType === 'insurance_card') {
+                // Dual upload validation
+                const frontFile = document.getElementById('documentFront').files[0];
+                const backFile = document.getElementById('documentBack').files[0];
+                
+                if (!frontFile) {
+                    showToast('証明書の表面写真をアップロードしてください', 'error');
+                    return;
+                }
+                if (!backFile) {
+                    showToast('証明書の裏面写真をアップロードしてください', 'error');
+                    return;
+                }
+            } else {
+                // Single upload validation
+                const documentFile = document.getElementById('documentFile').files[0];
+                if (!documentFile) {
+                    showToast('証明書をアップロードしてください', 'error');
+                    return;
+                }
             }
             
             // Disable submit button
@@ -626,24 +673,10 @@
             }
         }
         
-        // Profile photo preview
-        document.getElementById('guideProfilePhoto').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('profilePhotoPreview');
-                    if (preview) {
-                        preview.src = e.target.result;
-                        preview.style.display = 'block';
-                    }
-                };
-                reader.readAsDataURL(file);
-                showToast('プロフィール写真が選択されました', 'info');
-            }
-        });
+        
         // Initialize document upload system
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Initializing TomoTrip guide registration...');
             setupDocumentUpload();
         });
     </script>
