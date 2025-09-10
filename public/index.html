@@ -6342,7 +6342,14 @@
         // Tourist registration management functions
         window.checkTouristRegistration = function() {
             const registrationData = localStorage.getItem('touristRegistrationData');
+            console.log('🔍 Raw localStorage data:', registrationData);
             return registrationData ? JSON.parse(registrationData) : null;
+        };
+        
+        // FOR TESTING: Clear registration data to force modal display
+        window.clearTestRegistration = function() {
+            localStorage.removeItem('touristRegistrationData');
+            console.log('🧹 Test: Registration data cleared');
         };
 
         window.setTouristRegistration = function(data) {
