@@ -5723,27 +5723,7 @@
                 console.log('✅ Contact button setup');
             }
             
-            // Guide detail buttons - Check registration before showing details
-            document.addEventListener('click', function(e) {
-                const target = e.target.closest('[data-action="view-details"]');
-                if (target) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    const guideId = target.getAttribute('data-guide-id');
-                    console.log('🎯 Guide detail clicked:', guideId);
-                    
-                    // Check if tourist is registered - unified check
-                    const isRegistered = localStorage.getItem('isRegisteredTourist') === 'true';
-                    const touristData = localStorage.getItem('touristRegistration');
-                    
-                    if (isRegistered && touristData) {
-                        // If registered, navigate to guide detail page
-                        console.log('Navigating to guide detail page for registered user');
-                        window.location.href = `guide-detail.html?id=${guideId}`;
-                    } else {
-                        // If not registered, show registration prompt
-                        console.log('🔄 Tourist not registered - showing registration prompt');
+            // REMOVED - This is now handled by the unified event delegation below
                         
                         // Create registration prompt modal
                         const promptHtml = `
@@ -6303,38 +6283,27 @@
             if (searchBtn) searchBtn.addEventListener('click', window.filterGuides);
             if (resetBtn) resetBtn.addEventListener('click', window.resetFilters);
             
-            // Setup guide detail button click handlers with delegation
-            setTimeout(() => {
-                // Use event delegation for dynamic content
-                document.addEventListener('click', function(e) {
-                    const target = e.target.closest('[data-action="view-details"]');
-                    if (target) {
-                        e.preventDefault();
-                        const guideId = target.getAttribute('data-guide-id');
-                        console.log('🎯 Guide detail button clicked for ID:', guideId);
-                        console.log('🔍 Checking registration status...');
-                        
-                        // Force registration check and modal display
-                        window.handleGuideDetailAccess(guideId);
-                        return false;
-                    }
-                });
-                
-                // Also setup direct handlers for existing buttons
-                const detailButtons = document.querySelectorAll('[data-action="view-details"]');
-                detailButtons.forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const guideId = this.getAttribute('data-guide-id');
-                        console.log('🎯 Direct handler - Guide detail button clicked for ID:', guideId);
-                        console.log('🔍 Checking registration status...');
-                        window.handleGuideDetailAccess(guideId);
-                        return false;
-                    });
-                });
-                console.log(`✅ Setup event delegation + ${detailButtons.length} direct guide detail button handlers`);
-            }, 500);
+            // Setup UNIFIED guide detail button click handlers with delegation
+            console.log('🔧 Setting up unified guide detail event handlers');
+            
+            // SINGLE event delegation for all guide detail buttons
+            document.addEventListener('click', function(e) {
+                const target = e.target.closest('[data-action="view-details"]');
+                if (target) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const guideId = target.getAttribute('data-guide-id');
+                    console.log('🎯 UNIFIED HANDLER - Guide detail button clicked for ID:', guideId);
+                    console.log('🔍 Checking registration status via unified handler...');
+                    
+                    // ALWAYS use registration check - no exceptions
+                    window.handleGuideDetailAccess(guideId);
+                    return false;
+                }
+            });
+            
+            console.log('✅ Unified guide detail event handler setup complete');
             
             console.log('✅ Guide system initialized successfully');
         });
