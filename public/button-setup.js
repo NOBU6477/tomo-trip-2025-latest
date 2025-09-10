@@ -424,12 +424,8 @@ function openTouristRegistration() {
 
 function openGuideRegistration() {
     console.log('🎯 Guide registration selected');
-    if (typeof window.openGuideRegistration === 'function') {
-        window.openGuideRegistration();
-    } else {
-        hideRegistrationChoice();
-        window.open('guide-registration.html', '_blank');
-    }
+    hideRegistrationChoice();
+    window.open('guide-registration.html', '_blank');
 }
 
 function handleSponsorRegistration() {
