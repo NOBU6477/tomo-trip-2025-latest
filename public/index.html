@@ -1010,7 +1010,7 @@
             </div>
 
             <!-- Guide Cards Section -->
-            <div class="row" id="guideCardsContainer">
+            <div class="row" id="guidesContainer">
                 <!-- Guide cards will be populated here -->
             </div>
             
@@ -2076,7 +2076,7 @@
             const pageGuides = allGuides.slice(startIndex, endIndex);
             
             displayedGuides = pageGuides;
-            const container = document.getElementById('guideCardsContainer');
+            const container = document.getElementById('guidesContainer');
             container.innerHTML = pageGuides.map(guide => createGuideCard(guide)).join('');
             
             updateCounter();
@@ -5531,7 +5531,7 @@
         function renderGuideCardsNow() {
             console.log('🎯 DIRECT: Function called');
             
-            const container = document.getElementById('guideCardsContainer');
+            const container = document.getElementById('guidesContainer');
             if (!container) {
                 console.error('🎯 DIRECT: Container not found');
                 return;
@@ -5693,7 +5693,7 @@
                     
                     // Always scroll to guides section (no registration check)
                     let target = document.getElementById('guides-section') || 
-                                document.getElementById('guideCardsContainer') ||
+                                document.getElementById('guidesContainer') ||
                                 document.querySelector('.guide-card') ||
                                 document.querySelector('[id*="guide"]');
                     
