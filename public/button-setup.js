@@ -425,7 +425,14 @@ function openTouristRegistration() {
 function openGuideRegistration() {
     console.log('🎯 Guide registration selected');
     hideRegistrationChoice();
-    window.open('guide-registration.html', '_blank');
+    
+    // Open beautiful modal instead of external page
+    if (typeof window.showGuideRegistrationModal === 'function') {
+        window.showGuideRegistrationModal();
+    } else {
+        console.error('❌ showGuideRegistrationModal function not found');
+        alert('ガイド登録機能は準備中です。しばらくお待ちください。');
+    }
 }
 
 function handleSponsorRegistration() {

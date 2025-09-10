@@ -1033,8 +1033,8 @@
         </div>
     </section>
 
-    <!-- Detailed Guide Registration Form (Hidden by default) -->
-    <div id="detailedGuideRegistrationForm" style="display: none; margin-top: 2rem;">
+    <!-- Legacy Guide Registration Form (DISABLED - replaced by modal) -->
+    <div id="detailedGuideRegistrationForm" style="display: none !important; margin-top: 2rem;" data-disabled="true">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -2918,81 +2918,93 @@
                 });
             }
 
-            // Guide registration form submission (legacy)
+            // Guide registration form submission (updated for new modal)
             const guideRegistrationSubmitBtn = document.getElementById('guideRegistrationSubmitBtn');
             if (guideRegistrationSubmitBtn) {
                 guideRegistrationSubmitBtn.addEventListener('click', function() {
-                const formData = {
-                    firstName: document.getElementById('guideFirstName').value.trim(),
-                    lastName: document.getElementById('guideLastName').value.trim(),
-                    displayFirstName: document.getElementById('guideDisplayFirstName').value.trim(),
-                    displayLastName: document.getElementById('guideDisplayLastName').value.trim(),
-                    email: document.getElementById('guideEmail').value.trim(),
-                    phone: document.getElementById('guidePhone').value.trim(),
-                    location: document.getElementById('guideLocation').value,
-                    languages: Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value),
-                    specialty: document.getElementById('guideSpecialty').value.trim(),
-                    price: document.getElementById('guidePriceInput').value || getPriceFromRange(document.getElementById('guidePriceRange').value),
-                    description: document.getElementById('guideDescription').value.trim(),
-                    agreeTerms: document.getElementById('guideAgreeTerms').checked,
-                    profilePhoto: document.getElementById('guideProfilePreview').src
-                };
-
-                // Validate required fields
-                if (!formData.firstName || !formData.lastName || !formData.email || !formData.phone || 
-                    !formData.location || formData.languages.length === 0 || !formData.price) {
-                    alert('Please fill in all required fields (marked with *)');
-                    return;
-                }
-
-                if (!formData.agreeTerms) {
-                    alert('Please agree to the Terms of Service and Privacy Policy');
-                    return;
-                }
-
-                if (!isGuidePhoneVerified) {
-                    alert('Please verify your phone number before registering');
-                    return;
-                }
-
-                // Save guide data
-                try {
-                    const guideData = {
-                        ...formData,
-                        id: Date.now(),
-                        registrationDate: new Date().toISOString(),
-                        type: 'guide',
-                        rating: 4.5 + (Math.random() * 0.5), // Random rating between 4.5-5.0
-                        name: `${formData.displayFirstName || formData.firstName} ${formData.displayLastName || formData.lastName}`,
-                        image: formData.profilePhoto || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+                    console.log('🎯 Guide registration form submitted');
+                    
+                    // Validate required fields
+                    const guideName = document.getElementById('guideName').value.trim();
+                    const guideEmail = document.getElementById('guideEmail').value.trim();
+                    const guidePhone = document.getElementById('guidePhone').value.trim();
+                    const guideLocation = document.getElementById('guideLocation').value;
+                    const guidePrice = document.getElementById('guidePrice').value;
+                    const guideDescription = document.getElementById('guideDescription').value.trim();
+                    
+                    // Get selected languages
+                    const selectedLanguages = [];
+                    document.querySelectorAll('#guideRegistrationModal input[type="checkbox"]:checked').forEach(checkbox => {
+                        selectedLanguages.push(checkbox.value);
+                    });
+                    
+                    // Validation
+                    if (!guideName || !guideEmail || !guidePhone || !guideLocation || !guidePrice || !guideDescription) {
+                        alert('すべての必須項目を入力してください。');
+                        return;
+                    }
+                    
+                    if (selectedLanguages.length === 0) {
+                        alert('少なくとも1つの対応言語を選択してください。');
+                        return;
+                    }
+                    
+                    const formData = {
+                        name: guideName,
+                        email: guideEmail,
+                        phone: guidePhone,
+                        location: guideLocation,
+                        languages: selectedLanguages,
+                        price: parseInt(guidePrice),
+                        description: guideDescription
                     };
 
-                    // Get existing registered guides
-                    let registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-                    registeredGuides.push(guideData);
-                    localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
-
-                    // Update guide data for display
+                    // Save guide data
                     try {
-                        updateGuideDisplay();
+                        const guideData = {
+                            ...formData,
+                            id: Date.now(),
+                            registrationDate: new Date().toISOString(),
+                            type: 'guide',
+                            rating: 4.5 + (Math.random() * 0.5), // Random rating between 4.5-5.0
+                            image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"
+                        };
+
+                        // Get existing registered guides
+                        let registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+                        registeredGuides.push(guideData);
+                        localStorage.setItem('registeredGuides', JSON.stringify(registeredGuides));
+
+                        console.log('✅ Guide registered successfully:', guideData);
+
+                        // Update guide data for display
+                        try {
+                            if (typeof updateGuideDisplay === 'function') {
+                                updateGuideDisplay();
+                            }
+                        } catch (error) {
+                            console.error('Error updating guide display after registration:', error);
+                            // Continue anyway as the registration was successful
+                        }
+
+                        // Close modal
+                        const guideModal = bootstrap.Modal.getInstance(document.getElementById('guideRegistrationModal'));
+                        if (guideModal) {
+                            guideModal.hide();
+                        }
+
+                        // Reset form
+                        document.getElementById('guideRegistrationForm').reset();
+
+                        // Show success message
+                        setTimeout(() => {
+                            alert('ガイド登録が完了しました！\n\n登録内容は24時間以内に審査され、承認後にアクティブになります。');
+                        }, 500);
+
                     } catch (error) {
-                        console.error('Error updating guide display after registration:', error);
-                        // Continue anyway as the registration was successful
+                        console.error('Guide registration error:', error);
+                        alert('登録中にエラーが発生しました。もう一度お試しください。');
                     }
-
-                    // Close modal
-                    const guideModal = bootstrap.Modal.getInstance(document.getElementById('guideRegistrationModal'));
-                    guideModal.hide();
-
-                    // Show success message
-                    setTimeout(() => {
-                        alert('Guide registration completed successfully!\n\nYour profile will be reviewed and activated within 24 hours.');
-                    }, 500);
-
-                } catch (error) {
-                    console.error('Guide registration error:', error);
-                    alert('An error occurred during registration. Please try again.');
-                }
             });
 
             // Setup dropdown listeners
@@ -5616,6 +5628,95 @@
         </div>
     </div>
 
+    <!-- Guide Registration Modal -->
+    <div class="modal fade" id="guideRegistrationModal" tabindex="-1" aria-labelledby="guideRegistrationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                    <h5 class="modal-title fw-bold" id="guideRegistrationModalLabel">
+                        <i class="bi bi-map me-2"></i>ガイド登録
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="guideRegistrationForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="guideName" class="form-label">ガイド名 <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="guideName" required style="border-radius: 10px;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="guideEmail" class="form-label">メールアドレス <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="guideEmail" required style="border-radius: 10px;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="guidePhone" class="form-label">電話番号 <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="guidePhone" required style="border-radius: 10px;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="guideLocation" class="form-label">活動地域 <span class="text-danger">*</span></label>
+                                <select class="form-select" id="guideLocation" required style="border-radius: 10px;">
+                                    <option value="">地域を選択</option>
+                                    <option value="東京都">東京都</option>
+                                    <option value="大阪府">大阪府</option>
+                                    <option value="京都府">京都府</option>
+                                    <option value="神奈川県">神奈川県</option>
+                                    <option value="愛知県">愛知県</option>
+                                    <option value="福岡県">福岡県</option>
+                                    <option value="北海道">北海道</option>
+                                    <option value="沖縄県">沖縄県</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="guideLanguages" class="form-label">対応言語 <span class="text-danger">*</span></label>
+                                <div class="form-check-container" style="max-height: 120px; overflow-y: auto; border: 1px solid #ced4da; border-radius: 10px; padding: 10px;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="日本語" id="lang-japanese">
+                                        <label class="form-check-label" for="lang-japanese">日本語</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="英語" id="lang-english">
+                                        <label class="form-check-label" for="lang-english">英語</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="中国語" id="lang-chinese">
+                                        <label class="form-check-label" for="lang-chinese">中国語</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="韓国語" id="lang-korean">
+                                        <label class="form-check-label" for="lang-korean">韓国語</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="スペイン語" id="lang-spanish">
+                                        <label class="form-check-label" for="lang-spanish">スペイン語</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="フランス語" id="lang-french">
+                                        <label class="form-check-label" for="lang-french">フランス語</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="guidePrice" class="form-label">料金 (円/日) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="guidePrice" required min="1000" max="50000" style="border-radius: 10px;">
+                            </div>
+                            <div class="col-12">
+                                <label for="guideDescription" class="form-label">自己紹介・経験 <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="guideDescription" rows="4" required style="border-radius: 10px;" placeholder="あなたの経験、専門知識、ガイドとしての魅力を教えてください..."></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 20px;">キャンセル</button>
+                    <button type="button" class="btn btn-success" id="guideRegistrationSubmitBtn" style="border-radius: 25px; padding: 10px 20px; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                        <i class="bi bi-check-circle me-2"></i>ガイドとして登録
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Emergency button handlers for new tab compatibility -->
     <script type="module" src="/assets/js/emergency-buttons.mjs"></script>
     
@@ -6700,6 +6801,19 @@
             console.log('🔍 viewGuideDetail called for guide:', guideId);
             return window.handleGuideDetailAccess(guideId);
         };
+
+        // Show guide registration modal function
+        window.showGuideRegistrationModal = function() {
+            console.log('🎯 Opening guide registration modal');
+            try {
+                const modal = new bootstrap.Modal(document.getElementById('guideRegistrationModal'));
+                modal.show();
+                console.log('✅ Guide registration modal opened');
+            } catch (error) {
+                console.error('❌ Error opening guide registration modal:', error);
+                alert('ガイド登録モーダルの表示に問題が発生しました。');
+            }
+        };
         
         console.log('🎉 TomoTrip Guide System Loaded');
     </script>
@@ -6729,6 +6843,20 @@
             }
         }
         
+        // Setup guide registration button handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const showGuideRegistrationBtn = document.getElementById('showGuideRegistration');
+            if (showGuideRegistrationBtn) {
+                showGuideRegistrationBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (typeof window.showGuideRegistrationModal === 'function') {
+                        window.showGuideRegistrationModal();
+                    }
+                });
+                console.log('✅ Guide registration button handler attached');
+            }
+        });
+
         // Update guide card button states when guides are rendered
         function updateGuideCardButtonStates() {
             const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
