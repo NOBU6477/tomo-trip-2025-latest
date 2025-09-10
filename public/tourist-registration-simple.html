@@ -737,29 +737,35 @@
 
                 console.log('Tourist registration completed:', formData);
 
-                // Hide registration form with animation
+                // Show success message immediately
+                console.log('Showing success message...');
+                
                 const registrationCard = document.querySelector('.registration-card');
                 const successMessage = document.getElementById('successMessage');
                 
+                console.log('Registration card found:', !!registrationCard);
+                console.log('Success message found:', !!successMessage);
+                
                 if (registrationCard && successMessage) {
-                    // Fade out registration card
-                    registrationCard.style.transition = 'opacity 0.5s ease';
-                    registrationCard.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        registrationCard.style.display = 'none';
-                        successMessage.style.display = 'block';
-                        successMessage.style.opacity = '0';
-                        successMessage.style.transition = 'opacity 0.5s ease';
-                        
-                        // Fade in success message
-                        setTimeout(() => {
-                            successMessage.style.opacity = '1';
-                        }, 50);
-                    }, 500);
+                    registrationCard.style.display = 'none';
+                    successMessage.style.display = 'block';
+                    console.log('Success message displayed');
                 } else {
-                    console.error('Cannot find registration card or success message elements');
-                    alert('登録は完了しましたが、画面の更新に問題があります。');
+                    console.error('Cannot find required elements');
+                    console.error('Registration card:', registrationCard);
+                    console.error('Success message:', successMessage);
+                    
+                    // Fallback: just show an alert
+                    alert('✅ 観光客登録が完了しました！\n\nようこそTomoTripへ！\nこれでガイド詳細を閲覧できます。');
+                    
+                    // Navigate back to main page
+                    if (window.opener) {
+                        window.opener.location.reload();
+                        window.close();
+                    } else {
+                        window.location.href = '/index.html';
+                    }
+                    return;
                 }
 
                 // Add to parent window if available
