@@ -6303,18 +6303,37 @@
             if (searchBtn) searchBtn.addEventListener('click', window.filterGuides);
             if (resetBtn) resetBtn.addEventListener('click', window.resetFilters);
             
-            // Setup guide detail button click handlers
+            // Setup guide detail button click handlers with delegation
             setTimeout(() => {
+                // Use event delegation for dynamic content
+                document.addEventListener('click', function(e) {
+                    const target = e.target.closest('[data-action="view-details"]');
+                    if (target) {
+                        e.preventDefault();
+                        const guideId = target.getAttribute('data-guide-id');
+                        console.log('🎯 Guide detail button clicked for ID:', guideId);
+                        console.log('🔍 Checking registration status...');
+                        
+                        // Force registration check and modal display
+                        window.handleGuideDetailAccess(guideId);
+                        return false;
+                    }
+                });
+                
+                // Also setup direct handlers for existing buttons
                 const detailButtons = document.querySelectorAll('[data-action="view-details"]');
                 detailButtons.forEach(btn => {
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
+                        e.stopPropagation();
                         const guideId = this.getAttribute('data-guide-id');
-                        console.log('🎯 Guide detail button clicked for ID:', guideId);
+                        console.log('🎯 Direct handler - Guide detail button clicked for ID:', guideId);
+                        console.log('🔍 Checking registration status...');
                         window.handleGuideDetailAccess(guideId);
+                        return false;
                     });
                 });
-                console.log(`✅ Setup ${detailButtons.length} guide detail button handlers`);
+                console.log(`✅ Setup event delegation + ${detailButtons.length} direct guide detail button handlers`);
             }, 500);
             
             console.log('✅ Guide system initialized successfully');
@@ -6334,10 +6353,13 @@
         // Handle guide detail access with registration check
         window.handleGuideDetailAccess = function(guideId) {
             console.log('🎯 Checking tourist registration for guide access:', guideId);
+            console.log('🔍 Current localStorage data:', localStorage.getItem('touristRegistrationData'));
             
             const registrationData = window.checkTouristRegistration();
+            console.log('📊 Registration data result:', registrationData);
             
             if (!registrationData) {
+                console.log('❌ No registration data found - showing modal');
                 // Show registration prompt modal
                 window.showRegistrationPromptModal(guideId);
                 return;
