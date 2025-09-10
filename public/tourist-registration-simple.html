@@ -424,9 +424,11 @@
                 <button type="button" class="btn btn-primary" id="completeRegistration" onclick="completeRegistration()" disabled>登録完了</button>
             </div>
         </div>
+    </div>
 
-        <!-- Success Message (initially hidden) -->
-        <div id="successMessage" style="display: none;">
+    <!-- Success Message (initially hidden) - moved outside registration-card -->
+    <div id="successMessage" style="display: none;">
+        <div class="registration-card">
             <div class="text-center success-animation">
                 <i class="bi bi-check-circle-fill welcome-icon"></i>
                 <h3 class="text-success mb-3">登録完了！</h3>
