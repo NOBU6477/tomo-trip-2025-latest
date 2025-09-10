@@ -39,48 +39,44 @@ function renderGuideCards(guides) {
     
     const html = guides.map(guide => `
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100 guide-card" style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
-                <img src="${guide.photo}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="${guide.name}">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title mb-1">${guide.name}</h5>
-                        <div class="d-flex gap-1">
-                            <button class="btn btn-sm btn-outline-warning bookmark-btn" data-guide-id="${guide.id}" title="Bookmark">⭐</button>
-                            <button class="btn btn-sm btn-outline-success compare-btn" data-guide-id="${guide.id}" title="Add to compare">✓</button>
+            <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
+                <div class="position-relative">
+                    <img src="${guide.photo || '/assets/img/guides/default-1.svg'}" 
+                         class="card-img-top" 
+                         alt="${guide.name}" 
+                         style="height: 250px; object-fit: cover;">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
+                            評価 ${guide.rating || '4.8'} ⭐
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.name}</h5>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-geo-alt"></i> ${guide.location || ''}
+                    </p>
+                    <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
+                        地域の魅力をご案内します
+                    </p>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">対応言語</small>
+                            <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages || '日本語'}</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">料金</small>
+                            <small class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</small>
                         </div>
                     </div>
-                    <div class="mb-2">
-                        <span class="badge bg-primary me-1">${guide.location}</span>
-                        <span class="badge bg-secondary">${guide.specialties?.[0] || 'ガイド'}</span>
-                    </div>
-                    <div class="mb-2">
-                        <small class="text-muted">対応言語: ${Array.isArray(guide.languages) ? guide.languages.map(lang => {
-                            const langMap = {
-                                'ja': '日本語',
-                                'en': '英語', 
-                                'zh': '中国語',
-                                'ko': '韓国語',
-                                'es': 'スペイン語',
-                                'fr': 'フランス語',
-                                'de': 'ドイツ語',
-                                'ru': 'ロシア語'
-                            };
-                            return langMap[lang] || lang;
-                        }).join(', ') : guide.languages || 'N/A'}</small>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <div>
-                            <span class="text-warning">★</span>
-                            <span class="fw-bold">${guide.rating}</span>
-                        </div>
-                        <div class="text-end">
-                            <div class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</div>
-                            <small class="text-muted">1日あたり</small>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;" onclick="viewGuideDetail(${guide.id})">
-                            詳細を見る
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" 
+                                data-action="view-details" 
+                                data-guide-id="${guide.id}"
+                                style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
+                            詳しく見る
                         </button>
                     </div>
                 </div>
