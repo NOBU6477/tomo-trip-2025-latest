@@ -89,12 +89,26 @@ function createGuideCardHTML(guide) {
                         ` : ''}
                     </div>
                     
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" 
+                    <div class="d-flex gap-2 mb-2">
+                        <button class="btn btn-primary flex-grow-1" 
                                 data-action="view-details" 
                                 data-guide-id="${guide.id}"
                                 style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
                             詳しく見る
+                        </button>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-warning bookmark-btn flex-grow-1" 
+                                data-guide-id="${guide.id}"
+                                data-action="bookmark"
+                                style="border-radius: 10px; padding: 8px; font-weight: 600;">
+                            <i class="bi bi-bookmark-star me-1"></i>⭐
+                        </button>
+                        <button class="btn btn-outline-success compare-btn flex-grow-1" 
+                                data-guide-id="${guide.id}"
+                                data-action="compare"
+                                style="border-radius: 10px; padding: 8px; font-weight: 600;">
+                            <i class="bi bi-bar-chart-line me-1"></i>✓
                         </button>
                     </div>
                 </div>

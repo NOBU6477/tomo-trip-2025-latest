@@ -448,6 +448,7 @@ function hideRegistrationChoice() {
     }
 }
 
+
 /**
  * Setup Management Center Buttons - Both desktop and mobile
  */
