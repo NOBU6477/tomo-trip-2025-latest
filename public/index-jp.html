@@ -1954,13 +1954,12 @@
                 return;
             }
 
-            // Show guide details for registered users
-            console.log('Showing guide detail modal for registered user');
-            console.log('About to call showGuideDetailModal with guide:', guide);
+            // Show guide details for registered users - navigate to guide detail page
+            console.log('Navigating to guide detail page for registered user');
             try {
-                showGuideDetailModal(guide);
+                window.location.href = `guide-detail.html?id=${guideId}`;
             } catch (error) {
-                console.error('❌ Error calling showGuideDetailModal:', error);
+                console.error('❌ Error navigating to guide detail:', error);
                 alert('Error showing guide details: ' + error.message);
             }
         }
