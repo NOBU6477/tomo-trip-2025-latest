@@ -1,0 +1,73 @@
+<!-- ✅ 旅行業法回避版：おすすめ“案内サービス” セクション -->
+<section id="recommended-services" class="card shadow-sm" style="border-radius:16px; overflow:hidden;">
+  <div class="card-header" style="background:#eaf2ff;">
+    <h3 class="m-0" style="display:flex;align-items:center;gap:.5rem;">
+      <span aria-hidden="true">📘</span> おすすめ案内サービス
+    </h3>
+  </div>
+
+  <div class="list-group list-group-flush">
+
+    <!-- 半日ご案内 -->
+    <div class="list-group-item">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <div class="fw-bold">半日ご案内（約4時間目安）</div>
+          <ul class="mb-1 small" style="padding-left:1.2rem;">
+            <li>市内の見どころを一緒に歩いてご紹介</li>
+            <li>写真スポットのご提案／軽い歴史解説</li>
+          </ul>
+          <div class="text-muted small">
+            ガイド報酬：<b>各ガイドが設定</b>（例：時間あたり／セッションあたり）<br>
+            ※交通機関・宿泊の手配は行いません。移動費等は実費・お客様ご負担です。
+          </div>
+        </div>
+        <a class="btn btn-primary" href="#contact-guide" style="white-space:nowrap;">ガイドに相談する</a>
+      </div>
+    </div>
+
+    <!-- 文化体験サポート -->
+    <div class="list-group-item">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <div class="fw-bold">文化体験サポート（約8時間目安）</div>
+          <ul class="mb-1 small" style="padding-left:1.2rem;">
+            <li>歴史・文化のスポット同行＆解説</li>
+            <li>体験施設までの同行・現地サポート</li>
+          </ul>
+          <div class="text-muted small">
+            ガイド報酬：<b>相談可（ガイドが自由設定）</b><br>
+            ※体験予約・運送手配・宿泊手配は行いません。必要な予約はお客様ご自身でお願いします。
+          </div>
+        </div>
+        <a class="btn btn-primary" href="#contact-guide" style="white-space:nowrap;">ガイドに相談する</a>
+      </div>
+    </div>
+
+    <!-- オーダーメイド案内 -->
+    <div class="list-group-item">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+        <div>
+          <div class="fw-bold">オーダーメイド案内（内容を一緒に設計）</div>
+          <ul class="mb-1 small" style="padding-left:1.2rem;">
+            <li>ご希望に合わせて行程（目安時間）を共同で作成</li>
+            <li>食事処・撮影・散策など柔軟にアレンジ</li>
+          </ul>
+          <div class="text-muted small">
+            ガイド報酬：<b>要相談（ガイド提示の条件に同意後に確定）</b><br>
+            ※当サービスはガイドと旅行者のマッチングであり、<b>旅行商品の販売ではありません</b>。
+          </div>
+        </div>
+        <a class="btn btn-outline-primary" href="#contact-guide" style="white-space:nowrap;">希望を伝える</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 法令対応の注意書き（フッター） -->
+  <div class="card-footer bg-light small text-muted">
+    TomoTrip（旅友）はガイドと利用者をつなぐ<strong>マッチングプラットフォーム</strong>です。
+    交通機関・宿泊・運送・旅行契約の取次や企画旅行の販売は行っていません。
+    必要な手配はお客様ご自身でお願いします。
+  </div>
+</section>
