@@ -588,48 +588,6 @@ function setupGlobalFunctions() {
         console.log('🔍 viewGuideDetail called for guide:', guideId);
         return window.handleGuideDetailAccess(guideId);
     };
-                                        <div class="unlock-feature">
-                                            <i class="bi bi-eye-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
-                                            <small class="d-block">ガイド詳細</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="unlock-feature">
-                                            <i class="bi bi-calendar-check-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
-                                            <small class="d-block">予約機能</small>
-                                        </div>
-                                    </div>
-                                    <div class="col-4">
-                                        <div class="unlock-feature">
-                                            <i class="bi bi-chat-dots-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
-                                            <small class="d-block">チャット</small>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="text-light">すべての機能にアクセスできるようになりました！</p>
-                            </div>
-                            <div class="d-grid gap-2">
-                                <button type="button" class="btn btn-light btn-lg" onclick="window.location.href='/'" style="border-radius: 15px;">
-                                    <i class="bi bi-house-fill me-2"></i>ガイドを探す
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Remove existing unlock modal if any
-        const existingUnlockModal = document.getElementById('unlockModal');
-        if (existingUnlockModal) existingUnlockModal.remove();
-        
-        // Add modal to body
-        document.body.insertAdjacentHTML('beforeend', unlockHtml);
-        
-        // Show modal
-        const unlockModal = new bootstrap.Modal(document.getElementById('unlockModal'));
-        unlockModal.show();
-    };
     
     console.log('✅ All global functions set up successfully:', {
         filterGuides: typeof window.filterGuides,
@@ -637,7 +595,9 @@ function setupGlobalFunctions() {
         goToStep2Modal: typeof window.goToStep2Modal,
         clearRegistrationModal: typeof window.clearRegistrationModal,
         handleSponsorRegistration: typeof window.handleSponsorRegistration,
-        viewGuideDetail: typeof window.viewGuideDetail
+        viewGuideDetail: typeof window.viewGuideDetail,
+        handleGuideDetailAccess: typeof window.handleGuideDetailAccess,
+        checkTouristRegistration: typeof window.checkTouristRegistration
     });
 }
 
