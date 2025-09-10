@@ -600,19 +600,77 @@
                 return;
             }
 
-            // Show upload preview
+            // Show upload preview with image preview
             const previewArea = document.getElementById('uploadPreview');
-            previewArea.innerHTML = `
+            
+            // Create preview content
+            let previewContent = `
                 <div class="alert alert-success mt-3">
-                    <i class="bi bi-check-circle me-2"></i>
-                    <strong>アップロード完了:</strong> ${file.name}
-                    <br><small>ファイルサイズ: ${(file.size / 1024 / 1024).toFixed(2)}MB</small>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <i class="bi bi-check-circle me-2"></i>
+                            <strong>アップロード完了:</strong> ${file.name}
+                            <br><small>ファイルサイズ: ${(file.size / 1024 / 1024).toFixed(2)}MB</small>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeUploadedFile()">
+                            <i class="bi bi-trash"></i> 削除
+                        </button>
+                    </div>
                 </div>
             `;
+
+            // If it's an image, show preview
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewContent += `
+                        <div class="mt-3 text-center">
+                            <h6 class="mb-2">プレビュー:</h6>
+                            <div class="border rounded p-2" style="background: #f8f9fa;">
+                                <img src="${e.target.result}" class="upload-preview" 
+                                     style="max-width: 100%; max-height: 200px; border-radius: 8px;" 
+                                     alt="アップロードされた画像">
+                            </div>
+                            <small class="text-muted d-block mt-2">画像内容を確認してください</small>
+                        </div>
+                    `;
+                    previewArea.innerHTML = previewContent;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // For PDFs or other files
+                previewContent += `
+                    <div class="mt-3 text-center">
+                        <div class="border rounded p-4" style="background: #f8f9fa;">
+                            <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 3rem;"></i>
+                            <p class="mt-2 mb-0">PDFファイルがアップロードされました</p>
+                        </div>
+                    </div>
+                `;
+                previewArea.innerHTML = previewContent;
+            }
+            
             previewArea.style.display = 'block';
             
             documentUploaded = true;
             document.getElementById('completeRegistration').disabled = false;
+            
+            console.log('File uploaded successfully:', file.name);
+        }
+
+        // Function to remove uploaded file
+        function removeUploadedFile() {
+            const previewArea = document.getElementById('uploadPreview');
+            previewArea.style.display = 'none';
+            previewArea.innerHTML = '';
+            
+            const fileInput = document.getElementById('fileInput');
+            fileInput.value = '';
+            
+            documentUploaded = false;
+            document.getElementById('completeRegistration').disabled = true;
+            
+            console.log('Uploaded file removed');
         }
 
         // Drag and drop functionality
@@ -640,41 +698,86 @@
 
         // Complete registration
         function completeRegistration() {
+            console.log('Starting registration completion...');
+            
+            // Validate required conditions
             if (!selectedDocumentType || !documentUploaded) {
                 alert('証明書の種類を選択し、ファイルをアップロードしてください。');
                 return;
             }
 
-            // Get form data
-            const formData = {
-                firstName: document.getElementById('firstName').value,
-                lastName: document.getElementById('lastName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                nationality: document.getElementById('nationality').value,
-                documentType: selectedDocumentType,
-                phoneVerified: phoneVerified,
-                documentUploaded: documentUploaded,
-                registrationDate: new Date().toISOString(),
-                isRegistered: true
-            };
+            if (!phoneVerified) {
+                alert('電話番号認証を完了してください。');
+                return;
+            }
 
-            // Save registration data
-            localStorage.setItem('touristRegistration', JSON.stringify(formData));
-            localStorage.setItem('isRegisteredTourist', 'true');
+            try {
+                // Disable the button to prevent double submission
+                const completeBtn = document.getElementById('completeRegistration');
+                completeBtn.disabled = true;
+                completeBtn.innerHTML = '<i class="bi bi-clock me-2"></i>処理中...';
 
-            console.log('Tourist registration completed:', formData);
+                // Get form data
+                const formData = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    nationality: document.getElementById('nationality').value,
+                    documentType: selectedDocumentType,
+                    phoneVerified: phoneVerified,
+                    documentUploaded: documentUploaded,
+                    registrationDate: new Date().toISOString(),
+                    isRegistered: true
+                };
 
-            // Show success message
-            document.querySelector('.registration-card').style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
+                // Save registration data
+                localStorage.setItem('touristRegistration', JSON.stringify(formData));
+                localStorage.setItem('isRegisteredTourist', 'true');
 
-            // Add to parent window if available
-            if (window.opener) {
-                window.opener.postMessage({
-                    type: 'touristRegistered',
-                    data: formData
-                }, '*');
+                console.log('Tourist registration completed:', formData);
+
+                // Hide registration form with animation
+                const registrationCard = document.querySelector('.registration-card');
+                const successMessage = document.getElementById('successMessage');
+                
+                if (registrationCard && successMessage) {
+                    // Fade out registration card
+                    registrationCard.style.transition = 'opacity 0.5s ease';
+                    registrationCard.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        registrationCard.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        successMessage.style.opacity = '0';
+                        successMessage.style.transition = 'opacity 0.5s ease';
+                        
+                        // Fade in success message
+                        setTimeout(() => {
+                            successMessage.style.opacity = '1';
+                        }, 50);
+                    }, 500);
+                } else {
+                    console.error('Cannot find registration card or success message elements');
+                    alert('登録は完了しましたが、画面の更新に問題があります。');
+                }
+
+                // Add to parent window if available
+                if (window.opener) {
+                    window.opener.postMessage({
+                        type: 'touristRegistered',
+                        data: formData
+                    }, '*');
+                }
+
+            } catch (error) {
+                console.error('Registration completion error:', error);
+                alert('登録処理中にエラーが発生しました。再度お試しください。');
+                
+                // Re-enable button
+                const completeBtn = document.getElementById('completeRegistration');
+                completeBtn.disabled = false;
+                completeBtn.innerHTML = '登録完了';
             }
         }
 
