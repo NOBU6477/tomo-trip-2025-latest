@@ -20,8 +20,11 @@ function setupAllButtons() {
     // Setup Contact Button
     setupContactButton();
     
-    // Setup Register Button
+    // Setup Register Button (Header)
     setupRegisterButton();
+    
+    // Setup Management Center Buttons
+    setupManagementButtons();
     
     console.log('✅ All button event handlers setup complete');
 }
@@ -241,22 +244,16 @@ function setupContactButton() {
 
 function handleContactClick(e) {
     e.preventDefault();
-    console.log('📞 Contact button clicked - opening contact options');
+    console.log('📞 Contact button clicked - opening Japanese contact page');
     
     try {
-        // Check if contact modal exists
-        const contactModal = document.getElementById('contactModal');
-        if (contactModal) {
-            const modal = new bootstrap.Modal(contactModal);
-            modal.show();
-            console.log('📧 Contact modal opened');
-        } else {
-            // Fallback: show contact options in alert or create simple contact form
-            showContactOptions();
-        }
+        // Always open the beautiful Japanese contact page
+        window.open('chat.html', '_blank');
+        console.log('✅ Japanese contact page opened');
     } catch (error) {
         console.error('❌ Contact button error:', error);
-        alert('お問い合わせ機能に問題が発生しました。');
+        // Fallback: show contact options
+        showContactOptions();
     }
 }
 
@@ -297,24 +294,62 @@ function handleRegisterClick(e) {
     console.log('📝 Register button clicked - showing registration options');
     
     try {
-        // Show registration form or redirect to registration page
-        const registrationContainer = document.getElementById('registrationFormContainer');
-        if (registrationContainer) {
-            // Toggle registration form visibility
-            const isVisible = registrationContainer.style.display === 'block';
-            registrationContainer.style.display = isVisible ? 'none' : 'block';
-            
-            if (!isVisible) {
-                // Scroll to registration form
-                registrationContainer.scrollIntoView({ behavior: 'smooth' });
-            }
+        // Try to show registration choice modal first
+        if (typeof showRegistrationChoice === 'function') {
+            showRegistrationChoice();
+        } else if (typeof showTouristRegistrationModal === 'function') {
+            showTouristRegistrationModal();
         } else {
-            // Fallback: alert with registration options
-            alert('新規登録機能は開発中です。しばらくお待ちください。');
+            // Fallback: direct to tourist registration page
+            window.open('tourist-registration-simple.html', '_blank');
         }
     } catch (error) {
         console.error('❌ Register button error:', error);
-        alert('新規登録に問題が発生しました。');
+        alert('新規登録機能に問題が発生しました。しばらくお待ちください。');
+    }
+}
+
+/**
+ * Setup Management Center Buttons - Both desktop and mobile
+ */
+function setupManagementButtons() {
+    const managementBtn = document.getElementById('managementBtn');
+    const managementBtnMobile = document.getElementById('managementBtnMobile');
+    
+    [managementBtn, managementBtnMobile].forEach(btn => {
+        if (btn && !btn.hasAttribute('data-handler-added')) {
+            // Remove any existing listeners to prevent duplicates
+            btn.removeEventListener('click', handleManagementClick);
+            btn.addEventListener('click', handleManagementClick);
+            btn.setAttribute('data-handler-added', 'true');
+            console.log('✅ Management center button handler attached');
+        }
+    });
+}
+
+function handleManagementClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('🏆 Management center button clicked');
+    
+    try {
+        // Check if management modal exists
+        const managementModal = document.getElementById('managementModal');
+        if (managementModal) {
+            // Load management data if function exists
+            if (typeof loadManagementData === 'function') {
+                loadManagementData();
+            }
+            const modal = new bootstrap.Modal(managementModal);
+            modal.show();
+            console.log('✅ Management center opened');
+        } else {
+            // Fallback: show simple alert
+            alert('管理センターは準備中です。ブックマークと比較機能は各ガイドカードのボタンからご利用いただけます。');
+        }
+    } catch (error) {
+        console.error('❌ Management center error:', error);
+        alert('管理センターの表示に問題が発生しました。');
     }
 }
 
