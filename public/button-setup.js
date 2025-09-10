@@ -294,21 +294,157 @@ function setupRegisterButton() {
 
 function handleRegisterClick(e) {
     e.preventDefault();
-    console.log('📝 Register button clicked - showing registration options');
+    console.log('📝 Register button clicked - showing registration choice');
     
     try {
-        // Try to show registration choice modal first
-        if (typeof showRegistrationChoice === 'function') {
+        // Try to show registration choice first
+        if (typeof window.showRegistrationChoice === 'function') {
+            console.log('✅ Using window.showRegistrationChoice');
+            window.showRegistrationChoice();
+        } else if (typeof showRegistrationChoice === 'function') {
+            console.log('✅ Using showRegistrationChoice');
             showRegistrationChoice();
-        } else if (typeof showTouristRegistrationModal === 'function') {
-            showTouristRegistrationModal();
         } else {
-            // Fallback: direct to tourist registration page
-            window.open('tourist-registration-simple.html', '_blank');
+            // Manually create and show registration choice
+            console.log('🔧 Creating registration choice manually');
+            showRegistrationChoiceManual();
         }
     } catch (error) {
         console.error('❌ Register button error:', error);
         alert('新規登録機能に問題が発生しました。しばらくお待ちください。');
+    }
+}
+
+function showRegistrationChoiceManual() {
+    console.log('🔧 Showing registration choice manually');
+    
+    let formContainer = document.getElementById('registrationFormContainer');
+    if (!formContainer) {
+        console.warn('⚠️ Registration form container not found, creating one');
+        // Create the container if it doesn't exist
+        formContainer = document.createElement('div');
+        formContainer.id = 'registrationFormContainer';
+        formContainer.style.display = 'none';
+        
+        // Insert after the navigation
+        const nav = document.querySelector('nav');
+        if (nav && nav.parentNode) {
+            nav.parentNode.insertBefore(formContainer, nav.nextSibling);
+        } else {
+            document.body.appendChild(formContainer);
+        }
+    }
+    
+    // Clear any existing content
+    formContainer.innerHTML = '';
+    
+    // Create registration choice content
+    const choiceContent = `
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="choice-container" style="background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); margin: 2rem 0;">
+                    <div class="choice-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
+                        <h1><i class="bi bi-person-plus me-2"></i>登録タイプを選択</h1>
+                        <p class="mb-0">お客様の用途に合わせて適切な登録タイプをお選びください</p>
+                    </div>
+                    
+                    <div class="choice-body" style="padding: 2.5rem;">
+                        <div class="row g-4">
+                            <!-- Tourist Registration -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openTouristRegistration()">
+                                    <div class="card-body text-center p-4">
+                                        <i class="bi bi-person-check text-primary mb-3" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
+                                        <p class="text-muted small mb-3">地元ガイドサービスを利用するための登録です</p>
+                                        <div class="mt-3">
+                                            <span class="badge bg-primary">個人向け</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Guide Registration -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openGuideRegistration()">
+                                    <div class="card-body text-center p-4">
+                                        <i class="bi bi-person-badge text-success mb-3" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
+                                        <p class="text-muted small mb-3">地元ガイドとして観光客にサービスを提供します</p>
+                                        <div class="mt-3">
+                                            <span class="badge bg-success">フリーランス</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sponsor Registration -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="card h-100 border-warning choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="handleSponsorRegistration()">
+                                    <div class="card-body text-center p-4">
+                                        <i class="bi bi-building text-warning mb-3" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold text-warning mb-2">協賛店登録</h6>
+                                        <p class="text-muted small mb-3">お店や施設を協賛店として登録し、観光客にPRできます</p>
+                                        <div class="mt-3">
+                                            <span class="badge bg-warning">ビジネス向け</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="button" class="btn btn-outline-secondary" onclick="hideRegistrationChoice()" style="border-radius: 25px; padding: 12px 30px;">キャンセル</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    `;
+    
+    formContainer.innerHTML = choiceContent;
+    formContainer.style.display = 'block';
+    
+    // Scroll to the form container
+    setTimeout(() => {
+        formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+    
+    console.log('✅ Registration choice displayed manually');
+}
+
+// Helper functions for registration choices
+function openTouristRegistration() {
+    console.log('🎯 Tourist registration selected');
+    hideRegistrationChoice();
+    window.open('tourist-registration-simple.html', '_blank');
+}
+
+function openGuideRegistration() {
+    console.log('🎯 Guide registration selected');
+    if (typeof window.openGuideRegistration === 'function') {
+        window.openGuideRegistration();
+    } else {
+        hideRegistrationChoice();
+        window.open('guide-registration.html', '_blank');
+    }
+}
+
+function handleSponsorRegistration() {
+    console.log('🎯 Sponsor registration selected');
+    hideRegistrationChoice();
+    window.open('sponsor-registration.html', '_blank');
+}
+
+function hideRegistrationChoice() {
+    console.log('🛑 Hiding registration choice');
+    const formContainer = document.getElementById('registrationFormContainer');
+    if (formContainer) {
+        formContainer.style.display = 'none';
+        formContainer.innerHTML = '';
+        console.log('✅ Registration choice hidden');
     }
 }
 

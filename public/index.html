@@ -2003,9 +2003,9 @@
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <h5 class="card-title mb-1">${guide.name}</h5>
-                                <div class="d-flex gap-1">
-                                    <button class="btn btn-sm btn-outline-warning bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク" style="font-size: 12px; padding: 4px 8px; min-width: 32px;">⭐</button>
-                                    <button class="btn btn-sm btn-outline-success compare-btn" data-guide-id="${guide.id}" title="比較に追加" style="font-size: 12px; padding: 4px 8px; min-width: 32px;">✓</button>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-sm btn-outline-warning bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク" style="font-size: 14px; padding: 6px 10px; min-width: 38px; border-width: 2px; font-weight: bold;">⭐</button>
+                                    <button class="btn btn-sm btn-outline-success compare-btn" data-guide-id="${guide.id}" title="比較に追加" style="font-size: 14px; padding: 6px 10px; min-width: 38px; border-width: 2px; font-weight: bold;">✓</button>
                                 </div>
                             </div>
                             <div class="mb-2">
@@ -2193,14 +2193,62 @@
 
         // Removed empty viewGuideDetail function - full implementation exists later
 
-        // Add to bookmarks
+        // Add to bookmarks - Real implementation
         function addToBookmarks(guideId) {
-            console.log('Add to bookmarks:', guideId);
+            console.log('Adding to bookmarks:', guideId);
+            
+            // Get current bookmarks
+            let bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            
+            // Check if already bookmarked
+            if (!bookmarkedGuides.includes(guideId) && !bookmarkedGuides.includes(parseInt(guideId))) {
+                bookmarkedGuides.push(guideId);
+                localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+                
+                // Update button state
+                document.querySelectorAll(`.bookmark-btn[data-guide-id="${guideId}"]`).forEach(btn => {
+                    btn.classList.remove('btn-outline-warning');
+                    btn.classList.add('btn-warning');
+                });
+                
+                console.log('✅ Guide added to bookmarks');
+                if (typeof safeShowToast === 'function') {
+                    safeShowToast('ブックマークに追加しました', 'success');
+                }
+            }
         }
 
-        // Add to comparison
+        // Add to comparison - Real implementation
         function addToComparison(guideId) {
-            console.log('Add to comparison:', guideId);
+            console.log('Adding to comparison:', guideId);
+            
+            // Get current comparison list
+            let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            
+            // Check comparison limit
+            if (comparisonGuides.length >= 3) {
+                if (typeof safeShowToast === 'function') {
+                    safeShowToast('比較リストは最大3件までです', 'warning');
+                }
+                return;
+            }
+            
+            // Check if already in comparison
+            if (!comparisonGuides.includes(guideId) && !comparisonGuides.includes(parseInt(guideId))) {
+                comparisonGuides.push(guideId);
+                localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+                
+                // Update button state
+                document.querySelectorAll(`.compare-btn[data-guide-id="${guideId}"]`).forEach(btn => {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-success');
+                });
+                
+                console.log('✅ Guide added to comparison');
+                if (typeof safeShowToast === 'function') {
+                    safeShowToast('比較リストに追加しました', 'success');
+                }
+            }
         }
 
         // Filter functions moved to app-init.mjs to prevent conflicts
@@ -3693,35 +3741,41 @@
     <!-- Management Center Modal -->
     <div class="modal fade" id="managementModal" tabindex="-1" aria-labelledby="managementModalLabel" aria-hidden="true" style="z-index: 2200;">
         <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
-            <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                <div class="modal-header border-0" style="background: linear-gradient(135deg, #ffc107, #fd7e14); color: white; border-radius: 15px 15px 0 0;">
-                    <h5 class="modal-title fw-bold" id="managementModalLabel">
-                        <i class="bi bi-gear me-2"></i>Management Center
+            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: none; backdrop-filter: blur(10px);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b9d 100%); color: white; border-radius: 20px 20px 0 0; padding: 25px 30px;">
+                    <h5 class="modal-title fw-bold d-flex align-items-center" id="managementModalLabel">
+                        <div class="me-3" style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-gear-fill" style="font-size: 22px;"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.4rem;">🏆 管理センター</div>
+                            <small style="opacity: 0.9; font-weight: normal;">ブックマーク・比較・予約管理</small>
+                        </div>
                     </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
                 <div class="modal-body p-0">
                     <!-- Tab Navigation -->
-                    <div class="bg-light border-bottom">
-                        <ul class="nav nav-pills nav-fill" id="managementTabs" role="tablist">
+                    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <ul class="nav nav-pills nav-fill" id="managementTabs" role="tablist" style="background: rgba(255,255,255,0.5); border-radius: 30px; padding: 8px;">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks" type="button" role="tab">
-                                    <i class="bi bi-bookmark me-2"></i>Bookmarks
+                                <button class="nav-link active" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;">
+                                    <i class="bi bi-bookmark-star-fill me-2"></i>📌 ブックマーク
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="comparison-tab" data-bs-toggle="pill" data-bs-target="#comparison" type="button" role="tab">
-                                    <i class="bi bi-graph-up me-2"></i>Compare List
+                                <button class="nav-link" id="comparison-tab" data-bs-toggle="pill" data-bs-target="#comparison" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
+                                    <i class="bi bi-bar-chart-line-fill me-2"></i>📊 比較リスト
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="bookings-tab" data-bs-toggle="pill" data-bs-target="#bookings" type="button" role="tab">
-                                    <i class="bi bi-calendar-check me-2"></i>Booking History
+                                <button class="nav-link" id="bookings-tab" data-bs-toggle="pill" data-bs-target="#bookings" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
+                                    <i class="bi bi-calendar-check-fill me-2"></i>📅 予約履歴
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab">
-                                    <i class="bi bi-gear me-2"></i>Settings
+                                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
+                                    <i class="bi bi-gear-fill me-2"></i>⚙️ 設定
                                 </button>
                             </li>
                         </ul>
@@ -3731,40 +3785,58 @@
                     <div class="tab-content p-4" id="managementTabContent" style="min-height: 500px;">
                         <!-- Bookmarks Tab -->
                         <div class="tab-pane fade show active" id="bookmarks" role="tabpanel">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">Saved Guides</h6>
-                                <button class="btn btn-outline-danger btn-sm" id="clearBookmarksBtn">
-                                    <i class="bi bi-trash me-1"></i>Clear All
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 fw-bold text-primary">
+                                    <i class="bi bi-bookmark-star-fill me-2"></i>保存したガイド
+                                </h5>
+                                <button class="btn btn-outline-danger btn-sm" id="clearBookmarksBtn" style="border-radius: 20px; padding: 8px 16px;">
+                                    <i class="bi bi-trash3 me-1"></i>すべて削除
                                 </button>
                             </div>
                             <div id="bookmarksList" class="row">
-                                <!-- Bookmarked guides will be loaded here -->
+                                <div class="col-12 text-center py-5">
+                                    <i class="bi bi-clock-history" style="font-size: 3rem; color: #6c757d; opacity: 0.5;"></i>
+                                    <p class="text-muted mt-3 mb-0" style="font-size: 1.1rem;">保存されたガイドはありません</p>
+                                    <small class="text-muted">ガイドカードの⭐ボタンでブックマークできます</small>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Comparison Tab -->
                         <div class="tab-pane fade" id="comparison" role="tabpanel">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">Comparing Guides</h6>
-                                <button class="btn btn-outline-danger btn-sm" id="clearComparisonBtn">
-                                    <i class="bi bi-trash me-1"></i>Clear All
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 fw-bold text-success">
+                                    <i class="bi bi-bar-chart-line-fill me-2"></i>比較中のガイド
+                                </h5>
+                                <button class="btn btn-outline-danger btn-sm" id="clearComparisonBtn" style="border-radius: 20px; padding: 8px 16px;">
+                                    <i class="bi bi-trash3 me-1"></i>すべて削除
                                 </button>
                             </div>
                             <div id="comparisonList" class="row">
-                                <!-- Comparison guides will be loaded here -->
+                                <div class="col-12 text-center py-5">
+                                    <i class="bi bi-clock-history" style="font-size: 3rem; color: #6c757d; opacity: 0.5;"></i>
+                                    <p class="text-muted mt-3 mb-0" style="font-size: 1.1rem;">比較中のガイドはありません</p>
+                                    <small class="text-muted">ガイドカードの✓ボタンで比較リストに追加できます（最大3件）</small>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- Bookings Tab -->
                         <div class="tab-pane fade" id="bookings" role="tabpanel">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0">Your Bookings</h6>
-                                <button class="btn btn-outline-danger btn-sm" id="clearBookingsBtn">
-                                    <i class="bi bi-trash me-1"></i>Clear All
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="mb-0 fw-bold text-info">
+                                    <i class="bi bi-calendar-check-fill me-2"></i>予約履歴
+                                </h5>
+                                <button class="btn btn-outline-info btn-sm" id="refreshBookingsBtn" style="border-radius: 20px; padding: 8px 16px;">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>更新
                                 </button>
                             </div>
-                            <div id="bookingsList">
-                                <!-- Booking history will be loaded here -->
+                            <div id="bookingsList" class="row">
+                                <div class="col-12 text-center py-5">
+                                    <i class="bi bi-calendar-x" style="font-size: 3rem; color: #6c757d; opacity: 0.5;"></i>
+                                    <p class="text-muted mt-3 mb-0" style="font-size: 1.1rem;">予約履歴はありません</p>
+                                    <small class="text-muted">ガイドと予約が完了すると履歴が表示されます</small>
+                                </div>
                             </div>
                         </div>
                         
@@ -3772,35 +3844,39 @@
                         <div class="tab-pane fade" id="settings" role="tabpanel">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Preferences</h6>
-                                    <div class="mb-3">
-                                        <label for="defaultLanguageSetting" class="form-label">Default Language</label>
-                                        <select class="form-select" id="defaultLanguageSetting">
-                                            <option value="en">English</option>
-                                            <option value="ja">Japanese</option>
+                                    <h5 class="mb-4 fw-bold text-secondary">
+                                        <i class="bi bi-sliders me-2"></i>設定
+                                    </h5>
+                                    <div class="mb-4">
+                                        <label for="defaultLanguageSetting" class="form-label fw-bold">デフォルト言語</label>
+                                        <select class="form-select" id="defaultLanguageSetting" style="border-radius: 10px;">
+                                            <option value="en">🇺🇸 English（英語）</option>
+                                            <option value="ja" selected>🇯🇵 Japanese（日本語）</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Notifications</label>
+                                    <div class="mb-4">
+                                        <label class="form-label fw-bold">通知設定</label>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" id="notificationsEnabled" checked>
                                             <label class="form-check-label" for="notificationsEnabled">
-                                                Receive notifications for new guide registrations
+                                                新しいガイド登録時に通知を受け取る
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <h6 class="mb-3">Data Management</h6>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-outline-primary" id="exportDataBtn">
-                                            <i class="bi bi-download me-2"></i>Export Data
+                                    <h5 class="mb-4 fw-bold text-secondary">
+                                        <i class="bi bi-database me-2"></i>データ管理
+                                    </h5>
+                                    <div class="d-grid gap-3">
+                                        <button class="btn btn-outline-primary" id="exportDataBtn" style="border-radius: 15px; padding: 12px;">
+                                            <i class="bi bi-download me-2"></i>📤 データをエクスポート
                                         </button>
-                                        <button class="btn btn-outline-warning" id="clearAllDataBtn">
-                                            <i class="bi bi-exclamation-triangle me-2"></i>Clear All Data
+                                        <button class="btn btn-outline-warning" id="clearAllDataBtn" style="border-radius: 15px; padding: 12px;">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>🗑️ 全データを削除
                                         </button>
-                                        <button class="btn btn-outline-info" id="dataStatsBtn">
-                                            <i class="bi bi-bar-chart me-2"></i>Storage Usage
+                                        <button class="btn btn-outline-info" id="dataStatsBtn" style="border-radius: 15px; padding: 12px;">
+                                            <i class="bi bi-bar-chart me-2"></i>📊 ストレージ使用量
                                         </button>
                                     </div>
                                 </div>
@@ -3808,8 +3884,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer border-0" style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 0 0 20px 20px; padding: 20px 30px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 25px; padding: 10px 25px; background: linear-gradient(135deg, #6c757d, #495057); border: none;">
+                        <i class="bi bi-x-circle me-2"></i>閉じる
+                    </button>
                 </div>
             </div>
         </div>
