@@ -383,130 +383,78 @@ function setupGlobalFunctions() {
         console.log('✅ Moved to step 3');
     };
     
-    // View guide detail function
-    window.viewGuideDetail = function(guideId) {
-        console.log('🔍 viewGuideDetail called for guide:', guideId);
-        const guide = window.defaultGuides?.find(g => g.id == guideId);
-        if (!guide) {
-            alert('ガイド情報が見つかりません');
+    // Tourist registration status management
+    window.checkTouristRegistration = function() {
+        const registrationData = localStorage.getItem('touristRegistrationData');
+        return registrationData ? JSON.parse(registrationData) : null;
+    };
+
+    window.setTouristRegistration = function(data) {
+        localStorage.setItem('touristRegistrationData', JSON.stringify(data));
+        console.log('✅ Tourist registration saved:', data);
+    };
+
+    // Handle guide detail access with registration check
+    window.handleGuideDetailAccess = function(guideId) {
+        console.log('🎯 Checking tourist registration for guide access:', guideId);
+        
+        const registrationData = window.checkTouristRegistration();
+        
+        if (!registrationData) {
+            // Show registration prompt modal
+            window.showRegistrationPromptModal(guideId);
             return;
         }
         
-        // Check if user is registered
-        const touristData = localStorage.getItem('touristData');
-        if (!touristData) {
-            // Create and show enhanced registration prompt modal
-            const modalHtml = `
-                <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="border-radius: 20px; border: none;">
-                            <div class="modal-header text-center border-0 pb-0">
-                                <div class="w-100">
-                                    <i class="bi bi-person-circle text-primary" style="font-size: 3rem;"></i>
-                                    <h4 class="modal-title text-primary mt-2">ログインが必要です</h4>
-                                </div>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body text-center px-4">
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    ガイドの詳細情報を見るには会員登録が必要です
-                                </div>
-                                <h5 class="mb-3">${guide.name}さんの詳細を確認</h5>
-                                <p class="text-muted mb-4">簡単な会員登録で全てのガイド情報にアクセスできます</p>
-                                <div class="d-grid gap-2">
-                                    <button type="button" class="btn btn-primary btn-lg" onclick="startTouristRegistration()" style="border-radius: 15px;">
-                                        <i class="bi bi-person-plus me-2"></i>今すぐ無料登録
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                        後で登録する
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Remove existing modal if any
-            const existingModal = document.getElementById('loginPromptModal');
-            if (existingModal) existingModal.remove();
-            
-            // Add modal to body
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
-            // Show modal
-            const loginModal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
-            loginModal.show();
-            return;
+        // User is registered, show guide details
+        console.log('✅ Tourist registered, showing guide details');
+        if (typeof showGuideDetailModalById === 'function') {
+            showGuideDetailModalById(guideId);
+        } else if (typeof showGuideDetailModal === 'function') {
+            showGuideDetailModal(guideId);
+        } else {
+            console.error('❌ Guide detail modal function not found');
+            window.open(`/guide-detail.html?id=${guideId}`, '_blank');
+        }
+    };
+
+    // Show registration prompt modal
+    window.showRegistrationPromptModal = function(guideId) {
+        console.log('📋 Showing registration prompt modal for guide:', guideId);
+        
+        // Remove existing modal if present
+        const existingModal = document.querySelector('#registrationPromptModal');
+        if (existingModal) {
+            existingModal.remove();
         }
         
-        // Show guide detail modal for registered users
-        const detailHtml = `
-            <div class="modal fade" id="guideDetailModal" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg">
-                    <div class="modal-content" style="border-radius: 20px; border: none;">
-                        <div class="modal-header border-0 text-center pb-0">
-                            <div class="w-100">
-                                <img src="${guide.photo}" class="rounded-circle mb-3" style="width: 80px; height: 80px; object-fit: cover;">
-                                <h4 class="modal-title text-primary">${guide.name}さんの詳細</h4>
-                            </div>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        // Create registration prompt modal HTML
+        const modalHTML = `
+            <div class="modal fade" id="registrationPromptModal" tabindex="-1" aria-labelledby="registrationPromptModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 15px 15px 0 0;">
+                            <h5 class="modal-title fw-bold" id="registrationPromptModalLabel">
+                                <i class="bi bi-lock me-2"></i>観光客登録が必要です
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body px-4">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-geo-alt text-primary fs-2"></i>
-                                            <h6 class="card-title mt-2">場所</h6>
-                                            <p class="card-text">${guide.location}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-chat-dots text-success fs-2"></i>
-                                            <h6 class="card-title mt-2">対応言語</h6>
-                                            <p class="card-text">${guide.languages?.map(lang => {
-                                                const langMap = {
-                                                    'ja': '日本語',
-                                                    'en': '英語', 
-                                                    'zh': '中国語',
-                                                    'ko': '韓国語',
-                                                    'es': 'スペイン語',
-                                                    'fr': 'フランス語',
-                                                    'de': 'ドイツ語',
-                                                    'ru': 'ロシア語'
-                                                };
-                                                return langMap[lang] || lang;
-                                            }).join(', ')}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-currency-yen text-warning fs-2"></i>
-                                            <h6 class="card-title mt-2">料金</h6>
-                                            <p class="card-text">¥${guide.price.toLocaleString()}/日</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="card h-100">
-                                        <div class="card-body text-center">
-                                            <i class="bi bi-star-fill text-warning fs-2"></i>
-                                            <h6 class="card-title mt-2">評価</h6>
-                                            <p class="card-text">${guide.rating}/5</p>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="modal-body p-4 text-center">
+                            <div class="mb-4">
+                                <i class="bi bi-person-plus-fill text-primary" style="font-size: 4rem;"></i>
                             </div>
-                            <div class="text-center mt-4">
-                                <button type="button" class="btn btn-primary btn-lg px-5" style="border-radius: 25px;">
-                                    <i class="bi bi-calendar-check me-2"></i>このガイドを予約
+                            <h6 class="fw-bold mb-3">ガイド詳細を閲覧するには観光客登録が必要です</h6>
+                            <p class="text-muted mb-4">
+                                ガイドの詳細情報、料金プラン、予約機能をご利用いただくために、<br>
+                                まず観光客として登録をお願いいたします。<br><br>
+                                <strong>登録は簡単で、数分で完了します。</strong>
+                            </p>
+                            <div class="d-grid gap-3">
+                                <button type="button" class="btn btn-primary btn-lg" id="proceedToRegistration" data-guide-id="${guideId}" style="border-radius: 25px; padding: 15px; font-weight: 500; background: linear-gradient(135deg, #007bff, #0056b3); border: none;">
+                                    <i class="bi bi-arrow-right-circle me-2"></i>観光客登録へ進む
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal" style="border-radius: 25px; padding: 15px; font-weight: 500;">
+                                    <i class="bi bi-x-circle me-2"></i>後で登録する
                                 </button>
                             </div>
                         </div>
@@ -515,49 +463,131 @@ function setupGlobalFunctions() {
             </div>
         `;
         
-        // Remove existing modal if any
-        const existingDetailModal = document.getElementById('guideDetailModal');
-        if (existingDetailModal) existingDetailModal.remove();
-        
-        // Add modal to body
-        document.body.insertAdjacentHTML('beforeend', detailHtml);
+        // Add modal to document
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
         
         // Show modal
-        const detailModal = new bootstrap.Modal(document.getElementById('guideDetailModal'));
-        detailModal.show();
+        const modal = new bootstrap.Modal(document.getElementById('registrationPromptModal'));
+        modal.show();
+        
+        // Setup proceed button event
+        const proceedBtn = document.getElementById('proceedToRegistration');
+        if (proceedBtn) {
+            proceedBtn.addEventListener('click', function() {
+                const targetGuideId = this.getAttribute('data-guide-id');
+                console.log('🚀 Proceeding to registration for guide:', targetGuideId);
+                
+                // Store the target guide ID for after registration
+                sessionStorage.setItem('targetGuideId', targetGuideId);
+                
+                // Close modal
+                modal.hide();
+                
+                // Open tourist registration in a centered window
+                setTimeout(() => {
+                    const width = 800;
+                    const height = 900;
+                    const left = (screen.width - width) / 2;
+                    const top = (screen.height - height) / 2;
+                    
+                    const registrationWindow = window.open(
+                        '/tourist-registration-simple.html',
+                        'touristRegistration',
+                        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+                    );
+                    
+                    // Listen for registration completion
+                    window.addEventListener('message', function(event) {
+                        if (event.data.type === 'registrationComplete') {
+                            console.log('✅ Registration completed:', event.data);
+                            
+                            // Save registration data
+                            window.setTouristRegistration(event.data.data);
+                            
+                            // Show service unlock notification
+                            window.showServiceUnlockNotification();
+                            
+                            // Close registration window
+                            if (registrationWindow && !registrationWindow.closed) {
+                                registrationWindow.close();
+                            }
+                        }
+                    });
+                }, 300);
+            });
+        }
     };
-    
-    // Start tourist registration function - redirect to registration page
-    window.startTouristRegistration = function() {
-        // Close login prompt modal
-        const loginModal = document.getElementById('loginPromptModal');
-        if (loginModal) {
-            bootstrap.Modal.getInstance(loginModal)?.hide();
+
+    // Show service unlock notification
+    window.showServiceUnlockNotification = function() {
+        console.log('🎉 Showing service unlock notification');
+        
+        // Remove existing notification if present
+        const existingNotification = document.querySelector('#serviceUnlockModal');
+        if (existingNotification) {
+            existingNotification.remove();
         }
         
-        // Redirect to tourist registration page instead of showing modal
-        window.location.href = '/tourist-registration-advanced.html';
-    };
-    
-    // Show unlock notification after successful registration
-    window.showUnlockNotification = function() {
-        const unlockHtml = `
-            <div class="modal fade" id="unlockModal" tabindex="-1" aria-hidden="true">
+        // Create service unlock notification HTML
+        const notificationHTML = `
+            <div class="modal fade" id="serviceUnlockModal" tabindex="-1" aria-labelledby="serviceUnlockModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content" style="border-radius: 20px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                        <div class="modal-header border-0 text-center text-white pb-0">
-                            <div class="w-100">
-                                <i class="bi bi-unlock-fill text-warning" style="font-size: 4rem;"></i>
-                                <h3 class="modal-title mt-3">🎉 ロック解除完了！</h3>
-                            </div>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
+                            <h5 class="modal-title fw-bold" id="serviceUnlockModalLabel">
+                                <i class="bi bi-check-circle me-2"></i>登録完了！
+                            </h5>
                         </div>
-                        <div class="modal-body text-center text-white px-4">
+                        <div class="modal-body p-4 text-center">
                             <div class="mb-4">
-                                <h5 class="mb-3">おめでとうございます！</h5>
-                                <p class="mb-3">観光客登録が完了しました</p>
-                                <div class="row g-3 mb-4">
-                                    <div class="col-4">
+                                <i class="bi bi-unlock-fill text-success" style="font-size: 4rem;"></i>
+                            </div>
+                            <h6 class="fw-bold mb-3 text-success">🎉 すべてのサービスがアンロックされました！</h6>
+                            <div class="alert alert-success" role="alert">
+                                <i class="bi bi-star-fill me-2"></i>
+                                <strong>ご利用いただける機能：</strong>
+                                <ul class="list-unstyled mt-2 mb-0">
+                                    <li>✅ ガイド詳細の閲覧</li>
+                                    <li>✅ 料金プランの確認</li>
+                                    <li>✅ ガイドへの予約・問い合わせ</li>
+                                    <li>✅ ブックマーク機能</li>
+                                    <li>✅ ガイド比較機能</li>
+                                </ul>
+                            </div>
+                            <p class="text-muted mb-4">
+                                登録ありがとうございます！<br>
+                                これで「ガイド詳細を見る」ボタンからガイドの詳細情報をご確認いただけます。
+                            </p>
+                            <button type="button" class="btn btn-success btn-lg" data-bs-dismiss="modal" style="border-radius: 25px; padding: 15px 30px; font-weight: 500; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
+                                <i class="bi bi-arrow-right-circle me-2"></i>ガイドを探す
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Add notification to document
+        document.body.insertAdjacentHTML('beforeend', notificationHTML);
+        
+        // Show notification
+        const notification = new bootstrap.Modal(document.getElementById('serviceUnlockModal'));
+        notification.show();
+        
+        // Auto close after 10 seconds
+        setTimeout(() => {
+            notification.hide();
+            setTimeout(() => {
+                document.querySelector('#serviceUnlockModal')?.remove();
+            }, 300);
+        }, 10000);
+    };
+
+    // Main view guide detail function - now uses new registration check logic
+    window.viewGuideDetail = function(guideId) {
+        console.log('🔍 viewGuideDetail called for guide:', guideId);
+        return window.handleGuideDetailAccess(guideId);
+    };
                                         <div class="unlock-feature">
                                             <i class="bi bi-eye-fill mb-2" style="font-size: 2rem; color: #ffd700;"></i>
                                             <small class="d-block">ガイド詳細</small>
