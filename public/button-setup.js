@@ -26,6 +26,9 @@ function setupAllButtons() {
     // Setup Management Center Buttons
     setupManagementButtons();
     
+    // Setup Guide Card Management Buttons (delegated event handling)
+    setupGuideCardButtons();
+    
     console.log('✅ All button event handlers setup complete');
 }
 
@@ -351,6 +354,171 @@ function handleManagementClick(e) {
         console.error('❌ Management center error:', error);
         alert('管理センターの表示に問題が発生しました。');
     }
+}
+
+/**
+ * Setup Guide Card Management Buttons - Bookmark and Compare (delegated event handling)
+ */
+function setupGuideCardButtons() {
+    // Use delegated event handling since guide cards are dynamically generated
+    document.addEventListener('click', function(e) {
+        // Handle bookmark button clicks (use closest for better event targeting)
+        const bookmarkBtn = e.target.closest('.bookmark-btn');
+        if (bookmarkBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const guideId = bookmarkBtn.getAttribute('data-guide-id');
+            handleBookmarkClick(guideId, bookmarkBtn);
+        }
+        
+        // Handle compare button clicks (use closest for better event targeting)
+        const compareBtn = e.target.closest('.compare-btn');
+        if (compareBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const guideId = compareBtn.getAttribute('data-guide-id');
+            handleCompareClick(guideId, compareBtn);
+        }
+    });
+    
+    console.log('✅ Guide card button delegation setup complete');
+}
+
+function handleBookmarkClick(guideId, buttonElement) {
+    console.log('⭐ Bookmark button clicked for guide:', guideId);
+    
+    try {
+        // Get current bookmarks
+        let bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+        
+        // Check if already bookmarked
+        const isBookmarked = bookmarkedGuides.includes(guideId) || bookmarkedGuides.includes(parseInt(guideId));
+        
+        if (isBookmarked) {
+            // Remove from bookmarks
+            bookmarkedGuides = bookmarkedGuides.filter(id => id != guideId && id != parseInt(guideId));
+            buttonElement.classList.remove('btn-warning');
+            buttonElement.classList.add('btn-outline-warning');
+            console.log('📌 Guide removed from bookmarks');
+        } else {
+            // Add to bookmarks
+            bookmarkedGuides.push(guideId);
+            buttonElement.classList.remove('btn-outline-warning');
+            buttonElement.classList.add('btn-warning');
+            console.log('⭐ Guide added to bookmarks');
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+        
+        // Show feedback
+        const action = isBookmarked ? '削除しました' : '追加しました';
+        safeShowToast(`ブックマークに${action}`, 'success');
+        
+    } catch (error) {
+        console.error('❌ Bookmark error:', error);
+        safeShowToast('ブックマークの操作に失敗しました', 'error');
+    }
+}
+
+function handleCompareClick(guideId, buttonElement) {
+    console.log('✓ Compare button clicked for guide:', guideId);
+    
+    try {
+        // Get current comparison list
+        let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+        
+        // Check if already in comparison
+        const isInComparison = comparisonGuides.includes(guideId) || comparisonGuides.includes(parseInt(guideId));
+        
+        if (isInComparison) {
+            // Remove from comparison
+            comparisonGuides = comparisonGuides.filter(id => id != guideId && id != parseInt(guideId));
+            buttonElement.classList.remove('btn-success');
+            buttonElement.classList.add('btn-outline-success');
+            console.log('📊 Guide removed from comparison');
+        } else {
+            // Check comparison limit
+            if (comparisonGuides.length >= 3) {
+                safeShowToast('比較リストは最大3件までです', 'warning');
+                return;
+            }
+            
+            // Add to comparison
+            comparisonGuides.push(guideId);
+            buttonElement.classList.remove('btn-outline-success');
+            buttonElement.classList.add('btn-success');
+            console.log('✓ Guide added to comparison');
+        }
+        
+        // Save to localStorage
+        localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+        
+        // Show feedback
+        const action = isInComparison ? '削除しました' : '追加しました';
+        safeShowToast(`比較リストに${action}`, 'success');
+        
+    } catch (error) {
+        console.error('❌ Compare error:', error);
+        safeShowToast('比較リストの操作に失敗しました', 'error');
+    }
+}
+
+// Safe wrapper for toast notifications
+function safeShowToast(message, type = 'info') {
+    if (typeof showToast === 'function') {
+        return showToast(message, type);
+    }
+    // Fallback implementation
+    return showToastFallback(message, type);
+}
+
+function showToast(message, type = 'info') {
+    // Simple toast implementation
+    const toastContainer = document.createElement('div');
+    toastContainer.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+        background: ${type === 'success' ? '#28a745' : type === 'warning' ? '#ffc107' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        font-size: 14px;
+        max-width: 300px;
+        opacity: 0;
+        transform: translateX(100px);
+        transition: all 0.3s ease;
+    `;
+    toastContainer.textContent = message;
+    
+    document.body.appendChild(toastContainer);
+    
+    // Show toast
+    setTimeout(() => {
+        toastContainer.style.opacity = '1';
+        toastContainer.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Hide and remove toast
+    setTimeout(() => {
+        toastContainer.style.opacity = '0';
+        toastContainer.style.transform = 'translateX(100px)';
+        setTimeout(() => {
+            if (toastContainer.parentNode) {
+                toastContainer.parentNode.removeChild(toastContainer);
+            }
+        }, 300);
+    }, 3000);
+}
+
+// Fallback toast implementation (alias for main implementation)
+function showToastFallback(message, type = 'info') {
+    return showToast(message, type);
 }
 
 /**

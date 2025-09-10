@@ -6625,5 +6625,76 @@
             }
         });
     </script>
+    
+    <!-- Initialize Button Setup System -->
+    <script>
+        // Ensure button setup runs after DOM is ready
+        if (typeof setupAllButtons === 'function') {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setupAllButtons);
+            } else {
+                setupAllButtons();
+            }
+        }
+        
+        // Update guide card button states when guides are rendered
+        function updateGuideCardButtonStates() {
+            const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            
+            // Update bookmark buttons
+            document.querySelectorAll('.bookmark-btn').forEach(btn => {
+                const guideId = btn.getAttribute('data-guide-id');
+                const isBookmarked = bookmarkedGuides.includes(guideId) || bookmarkedGuides.includes(parseInt(guideId));
+                
+                if (isBookmarked) {
+                    btn.classList.remove('btn-outline-warning');
+                    btn.classList.add('btn-warning');
+                } else {
+                    btn.classList.remove('btn-warning');
+                    btn.classList.add('btn-outline-warning');
+                }
+            });
+            
+            // Update compare buttons
+            document.querySelectorAll('.compare-btn').forEach(btn => {
+                const guideId = btn.getAttribute('data-guide-id');
+                const isInComparison = comparisonGuides.includes(guideId) || comparisonGuides.includes(parseInt(guideId));
+                
+                if (isInComparison) {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-success');
+                } else {
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-success');
+                }
+            });
+        }
+        
+        // Observer to automatically update button states when new guide cards are added
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                    // Check if any added nodes contain guide cards
+                    for (let node of mutation.addedNodes) {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            if (node.querySelector && (node.querySelector('.bookmark-btn') || node.querySelector('.compare-btn'))) {
+                                setTimeout(updateGuideCardButtonStates, 100);
+                                break;
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        
+        // Start observing the document for changes
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log('✅ Button state management initialized');
+    </script>
 </body>
 </html>
