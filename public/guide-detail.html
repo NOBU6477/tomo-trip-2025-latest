@@ -346,15 +346,16 @@
                 return;
             }
 
-            // Check authentication - unified check
-            const isRegistered = localStorage.getItem('isRegisteredTourist') === 'true';
-            const touristData = localStorage.getItem('touristRegistration');
+            // Check authentication - unified check using correct key
+            const touristData = localStorage.getItem('touristRegistrationData');
             
-            if (!isRegistered || !touristData) {
+            if (!touristData) {
                 alert('この機能をご利用いただくには観光客登録が必要です。');
                 window.location.href = '/tourist-registration-simple.html';
                 return;
             }
+            
+            console.log('✅ Tourist registration verified:', JSON.parse(touristData));
 
             // Load guide data from localStorage or fetch from server
             const guideData = getGuideData(guideId);
@@ -544,7 +545,9 @@
 
         function bookGuide() {
             const guideId = getGuideId();
-            const touristData = localStorage.getItem('touristData');
+            
+            // Use the correct localStorage key for tourist registration
+            const touristData = localStorage.getItem('touristRegistrationData');
             
             if (!touristData) {
                 alert('予約機能をご利用いただくには観光客登録が必要です。');
@@ -552,13 +555,42 @@
                 return;
             }
             
-            // Redirect to booking page
-            window.location.href = `/booking.html?guide=${guideId}`;
+            console.log('🎯 予約ボタンが押されました - ガイドID:', guideId);
+            alert('予約機能は開発中です。まもなく利用可能になります。');
+            // TODO: 実際の予約システムが実装されたら有効化
+            // window.location.href = `/booking.html?guide=${guideId}`;
         }
 
         function contactGuide() {
             const guideId = getGuideId();
-            alert(`ガイドID: ${guideId} への問い合わせ機能は開発中です。`);
+            
+            // Check if user is registered before allowing contact
+            const touristData = localStorage.getItem('touristRegistrationData');
+            
+            if (!touristData) {
+                alert('問い合わせ機能をご利用いただくには観光客登録が必要です。');
+                window.location.href = '/tourist-registration-simple.html';
+                return;
+            }
+            
+            console.log('🎯 問い合わせボタンが押されました - ガイドID:', guideId);
+            
+            // Scroll to contact information section
+            const contactSection = document.getElementById('contact-guide');
+            if (contactSection) {
+                contactSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                // Highlight the contact section briefly
+                contactSection.style.border = '3px solid #007bff';
+                contactSection.style.borderRadius = '15px';
+                setTimeout(() => {
+                    contactSection.style.border = '';
+                }, 2000);
+                
+                alert('連絡先情報をご確認ください。直接お電話またはメールでお問い合わせいただけます。');
+            } else {
+                alert(`ガイドID: ${guideId} への問い合わせ機能は開発中です。`);
+            }
         }
 
         // Initialize page
