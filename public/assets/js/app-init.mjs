@@ -29,8 +29,13 @@ const defaultGuideData = [
 
 // Simple guide card renderer
 function renderGuideCards(guides) {
-    const container = document.getElementById('guideCardsContainer');
-    if (!container) return;
+    const container = document.getElementById('guidesContainer') || document.getElementById('guideCardsContainer');
+    if (!container) {
+        console.error('❌ Guide container not found');
+        return;
+    }
+    
+    console.log(`🎨 Rendering ${guides.length} guide cards to container:`, container.id);
     
     const html = guides.map(guide => `
         <div class="col-md-6 col-lg-4 mb-4">
@@ -89,14 +94,16 @@ function renderGuideCards(guides) {
 
 // Update guide counters
 function updateGuideCounters(displayed, total) {
-    const guideCounter = document.getElementById('guideCounter');
-    const totalGuideCounter = document.getElementById('totalGuideCounter');
+    // Find the guide counter text element
+    const guideTitle = document.querySelector('h2.display-5.fw-bold.text-dark');
+    const badgeElement = document.querySelector('.badge.bg-info.text-white');
     
-    if (guideCounter) {
-        guideCounter.textContent = `${displayed}件のガイドが見つかりました`;
+    if (guideTitle) {
+        guideTitle.innerHTML = `<i class="bi bi-people me-3" style="color: #007bff;"></i>${displayed}人のガイドが見つかりました`;
     }
-    if (totalGuideCounter) {
-        totalGuideCounter.textContent = `合計: ${total}件`;
+    
+    if (badgeElement) {
+        badgeElement.innerHTML = `<i class="bi bi-clock me-1"></i>総計: ${total}人`;
     }
     
     console.log(`📊 Guide counters updated: ${displayed}/${total}`);
