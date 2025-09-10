@@ -3758,6 +3758,119 @@
             });
         }
         
+        // Show guide access required modal - unified implementation
+        function showGuideAccessRequiredModal() {
+            console.log('🚪 Showing guide access required modal');
+            
+            // Create modal HTML
+            const modalHtml = `
+                <div class="modal fade" id="guideAccessModal" tabindex="-1" aria-labelledby="guideAccessModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+                            <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
+                                <h5 class="modal-title fw-bold" id="guideAccessModalLabel">
+                                    <i class="bi bi-info-circle-fill me-2"></i>ガイドサービスのご利用について
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body p-4 text-center">
+                                <div class="mb-4">
+                                    <i class="bi bi-person-check" style="font-size: 4rem; color: #667eea; opacity: 0.8;"></i>
+                                </div>
+                                <h6 class="fw-bold mb-3" style="color: #2c3e50;">観光客登録が必要です</h6>
+                                <p class="text-muted mb-4" style="line-height: 1.6;">
+                                    TomoTripでは、信頼できる地元ガイドとの安全な出会いをサポートしています。<br>
+                                    ガイドの詳細情報閲覧やお問い合わせをご利用いただくため、観光客としての登録をお願いいたします。
+                                </p>
+                                <div class="mb-4">
+                                    <div class="row text-start">
+                                        <div class="col-12 mb-2">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <small>ガイドの詳細プロフィール閲覧</small>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <small>ガイドへの直接お問い合わせ</small>
+                                        </div>
+                                        <div class="col-12 mb-2">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <small>ツアー予約と日程調整</small>
+                                        </div>
+                                        <div class="col-12">
+                                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                            <small>安全で信頼できるガイドマッチング</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-grid gap-2">
+                                    <button type="button" class="btn btn-primary btn-lg" onclick="startTouristRegistration()">
+                                        <i class="bi bi-person-plus me-2"></i>観光客登録を開始
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                        キャンセル
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if present
+            const existingModal = document.getElementById('guideAccessModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('guideAccessModal'));
+            modal.show();
+        }
+
+        // Start tourist registration - unified implementation
+        function startTouristRegistration() {
+            console.log('🎯 Starting tourist registration from guide access modal');
+            
+            // Close current modal
+            const currentModal = bootstrap.Modal.getInstance(document.getElementById('guideAccessModal'));
+            if (currentModal) {
+                currentModal.hide();
+            }
+            
+            // Open registration in new window (centered)
+            const width = 800;
+            const height = 900;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            const registrationWindow = window.open(
+                '/tourist-registration-simple.html',
+                'touristRegistration',
+                `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+            );
+            
+            // Listen for registration completion
+            window.addEventListener('message', function(event) {
+                if (event.data && event.data.type === 'touristRegistered') {
+                    console.log('✅ Tourist registration completed:', event.data.data);
+                    
+                    // Close registration window
+                    if (registrationWindow && !registrationWindow.closed) {
+                        registrationWindow.close();
+                    }
+                    
+                    // Show success message
+                    alert('観光客登録が完了しました！\nこれでガイドの詳細情報をご覧いただけます。');
+                    
+                    // Reload page to update UI state
+                    window.location.reload();
+                }
+            }, { once: true });
+        }
+
         // Show guide detail modal from management center
         function showGuideDetailModalById(guideId) {
             console.log('Opening guide detail modal for guide:', guideId);

@@ -251,7 +251,17 @@ function setupDataActionHandlers() {
                 showGuideRegistrationModal();
                 break;
             case 'show-tourist-registration-modal':
-                window.open('/tourist-registration-simple.html', '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
+                // Open registration in centered window
+                const width = 800;
+                const height = 900;
+                const left = (screen.width - width) / 2;
+                const top = (screen.height - height) / 2;
+                
+                window.open(
+                    '/tourist-registration-simple.html',
+                    'touristRegistration',
+                    `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+                );
                 break;
             case 'show-management-center':
                 showManagementCenter();
