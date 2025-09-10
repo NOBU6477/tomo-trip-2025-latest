@@ -3559,19 +3559,8 @@
                 submitBookingBtn.addEventListener('click', submitBooking);
             }
 
-            // Management Center Button Event Listener
-            const managementBtn = document.getElementById('managementBtn');
-            if (managementBtn) {
-                managementBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    try {
-                        showManagementCenter();
-                    } catch (error) {
-                        console.error('Error opening management center:', error);
-                    }
-                });
-            }
+            // Management Center Button Event Listeners are handled in button-setup.js
+            // to avoid duplicated bindings and maintain consistency
 
             // Initialize on page load
             updateBookmarkButtons();
