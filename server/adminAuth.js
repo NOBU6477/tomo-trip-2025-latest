@@ -6,7 +6,17 @@ const rateLimit = require('express-rate-limit');
 
 class AdminAuthService {
   constructor() {
+    // JWT Secret with fallback for development but warning for production
     this.jwtSecret = process.env.JWT_SECRET || 'tomotrip-admin-secret-2024';
+    if (!process.env.JWT_SECRET) {
+      console.warn('⚠️ WARNING: JWT_SECRET not set. Using default secret (NOT for production!)');
+      if (process.env.NODE_ENV === 'production') {
+        console.error('❌ CRITICAL: JWT_SECRET environment variable is required for production');
+        process.exit(1);
+      }
+    } else {
+      console.log('✅ Using secure JWT_SECRET from environment');
+    }
     this.saltRounds = 12;
     
     // Admin credentials with hashed passwords
