@@ -1,6 +1,6 @@
 # ルートの .replit（最小でOK）
 run = "node github-migration-ready/server.js"
-modules = ["nodejs-20"]
+modules = ["nodejs-20", "python-3.11"]
 
 [interpreter]
 language = "nodejs"
@@ -43,3 +43,4 @@ packages = ["nodejs"]
 
 [agent]
 expertMode = true
+integrations = ["twilio_send_message:1.0.0", "javascript_object_storage:1.0.0", "javascript_auth_all_persistance:1.0.0"]
