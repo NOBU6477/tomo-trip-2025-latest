@@ -739,7 +739,7 @@
 
                 console.log('Tourist registration completed:', formData);
 
-                // Show success message immediately
+                // Show success message
                 console.log('Showing success message...');
                 
                 const registrationCard = document.querySelector('.registration-card');
@@ -749,9 +749,23 @@
                 console.log('Success message found:', !!successMessage);
                 
                 if (registrationCard && successMessage) {
-                    registrationCard.style.display = 'none';
-                    successMessage.style.display = 'block';
-                    console.log('Success message displayed');
+                    // Hide the registration form
+                    registrationCard.style.transition = 'opacity 0.3s ease';
+                    registrationCard.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        registrationCard.style.display = 'none';
+                        
+                        // Show success message
+                        successMessage.style.display = 'block';
+                        successMessage.style.opacity = '0';
+                        successMessage.style.transition = 'opacity 0.3s ease';
+                        
+                        setTimeout(() => {
+                            successMessage.style.opacity = '1';
+                            console.log('Success message displayed with animation');
+                        }, 50);
+                    }, 300);
                 } else {
                     console.error('Cannot find required elements');
                     console.error('Registration card:', registrationCard);
