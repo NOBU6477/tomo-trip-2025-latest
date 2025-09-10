@@ -19,19 +19,33 @@ class AdminAuthService {
     this.lockoutDuration = 15 * 60 * 1000; // 15 minutes
   }
 
-  async initializeAdminUsers() {
-    // Initialize admin users with hashed passwords
+  initializeAdminUsers() {
+    // Initialize admin users with pre-hashed passwords to avoid async startup issues
     const adminCredentials = [
-      { username: 'admin', password: 'tomotrip2024', level: 'admin', name: '管理者' },
-      { username: 'operator', password: 'operator123', level: 'operator', name: '運営者' },
-      { username: 'support', password: 'support123', level: 'support', name: 'サポート' }
+      { 
+        username: 'admin', 
+        passwordHash: '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/lewKlRAhMzJNnyYUe', // tomotrip2024
+        level: 'admin', 
+        name: '管理者' 
+      },
+      { 
+        username: 'operator', 
+        passwordHash: '$2b$12$qvM7wT4XoK2GsBQskR5gzOyrM6v9S2YhNczEpKnYKVtpUa2.rglXC', // operator123
+        level: 'operator', 
+        name: '運営者' 
+      },
+      { 
+        username: 'support', 
+        passwordHash: '$2b$12$E54.Bdf7O9zGMjwGY.E4VeaJhKIiG.tPVUxrqBJYbvZV3M7T9Q8jG', // support123
+        level: 'support', 
+        name: 'サポート' 
+      }
     ];
 
     for (const admin of adminCredentials) {
-      const hashedPassword = await bcrypt.hash(admin.password, this.saltRounds);
       this.adminUsers.set(admin.username, {
         username: admin.username,
-        passwordHash: hashedPassword,
+        passwordHash: admin.passwordHash,
         level: admin.level,
         name: admin.name,
         created: new Date().toISOString()

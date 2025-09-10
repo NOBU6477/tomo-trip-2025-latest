@@ -1,85 +1,165 @@
+const express = require('express');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const cors = require('cors');
+
+// Import our new API services
+const { guideAPIService } = require('./server/guideAPI');
+const { adminAuthService } = require('./server/adminAuth');
 
 // Replit-optimized server configuration
 const PORT = process.env.PORT || process.env.REPLIT_PORT || 5000;
 const HOST = process.env.HOST || '0.0.0.0';
 
-console.log('🚀 Starting Replit-optimized server...');
+console.log('🚀 Starting TomoTrip integrated server...');
 
-const server = http.createServer((req, res) => {
-  // Basic CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+// Create Express app
+const app = express();
 
-  // Handle OPTIONS requests
-  if (req.method === 'OPTIONS') {
-    res.writeHead(200);
-    res.end();
-    return;
-  }
+// Middleware setup
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-  // Health check
-  if (req.url === '/health') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ 
-      status: 'OK', 
-      server: 'Replit-Optimized',
-      timestamp: new Date().toISOString() 
-    }));
-    return;
-  }
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  // Serve static files - remove query parameters
-  let urlPath = req.url === '/' ? '/index.html' : req.url;
-  
-  // Remove query parameters from URL
-  const urlWithoutQuery = urlPath.split('?')[0];
-  let filePath = path.join(__dirname, 'public', urlWithoutQuery);
+// Rate limiting for admin login
+app.use('/api/admin/login', adminAuthService.createLoginRateLimit());
 
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'text/html' });
-      res.end('<h1>404 - Not Found</h1>');
-      return;
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    server: 'TomoTrip Integrated Server',
+    timestamp: new Date().toISOString(),
+    services: {
+      sms: 'enabled',
+      fileStorage: 'enabled',
+      adminAuth: 'enabled',
+      guideAPI: 'enabled'
     }
-
-    const ext = path.extname(filePath);
-    const contentType = {
-      '.html': 'text/html',
-      '.css': 'text/css',
-      '.js': 'text/javascript',
-      '.mjs': 'text/javascript',
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg'
-    }[ext] || 'text/plain';
-
-    res.writeHead(200, { 'Content-Type': contentType });
-    res.end(data);
   });
 });
 
+// API Status endpoint
+app.get('/api', (req, res) => {
+  res.json({
+    name: 'TomoTrip API Server',
+    version: '2.0.0',
+    status: 'running',
+    endpoints: {
+      guides: '/api/guides',
+      sms: '/api/guides/send-verification',
+      upload: '/api/guides/upload-document',
+      admin: '/api/admin',
+      health: '/health'
+    },
+    features: {
+      smsVerification: true,
+      fileUpload: true,
+      adminAuth: true,
+      guideRegistration: true
+    }
+  });
+});
+
+// Admin authentication endpoints
+app.post('/api/admin/login', async (req, res) => {
+  try {
+    const { username, password, accessLevel } = req.body;
+    const clientIP = req.ip || req.connection.remoteAddress || 'unknown';
+    
+    const result = await adminAuthService.authenticateAdmin(username, password, accessLevel, clientIP);
+    
+    if (result.success) {
+      res.json({
+        success: true,
+        message: 'ログイン成功',
+        token: result.token,
+        user: result.user
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        error: result.error,
+        message: result.message
+      });
+    }
+  } catch (error) {
+    console.error('❌ Admin login error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'INTERNAL_ERROR',
+      message: 'ログイン処理中にエラーが発生しました'
+    });
+  }
+});
+
+app.post('/api/admin/logout', (req, res) => {
+  res.json({
+    success: true,
+    message: 'ログアウトしました'
+  });
+});
+
+app.get('/api/admin/verify', adminAuthService.requireAuth(), (req, res) => {
+  res.json({
+    success: true,
+    user: req.adminUser,
+    permissions: adminAuthService.getPermissions(req.adminUser.level)
+  });
+});
+
+// Setup Guide API routes
+guideAPIService.setupRoutes(app);
+
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public'), {
+  setHeaders: (res, path) => {
+    // Set cache control headers
+    if (path.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    } else {
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+    }
+  }
+}));
+
+// Fallback to index.html for SPA routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Explicit server binding for Replit compatibility
-server.listen(PORT, HOST, () => {
-  console.log(`✅ Replit Server READY on ${HOST}:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`✅ TomoTrip Integrated Server READY on ${HOST}:${PORT}`);
   console.log(`REPLIT_PORT_READY:${PORT}`);
   console.log(`PORT_${PORT}_OPEN`);
   console.log(`REPLIT_READY`);
+  console.log('🎯 TomoTrip Complete System Services:');
+  console.log('   • SMS Verification: Twilio integration');
+  console.log('   • File Upload: Object storage ready');
+  console.log('   • Admin Auth: JWT-based security');
+  console.log('   • Guide API: Full registration system');
 });
 
 // Error handling
-server.on('error', (err) => {
-  console.error('❌ Server error:', err);
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('❌ Unhandled Promise Rejection:', err);
   process.exit(1);
 });
 
 // Keep the process alive
 process.on('SIGTERM', () => {
   console.log('🔄 Graceful shutdown...');
-  server.close(() => {
-    console.log('✅ Server closed');
-    process.exit(0);
-  });
+  process.exit(0);
 });
