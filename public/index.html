@@ -1033,8 +1033,8 @@
         </div>
     </section>
 
-    <!-- Legacy Guide Registration Form (DISABLED - replaced by modal) -->
-    <div id="detailedGuideRegistrationForm" style="display: none !important; margin-top: 2rem;" data-disabled="true">
+    <!-- Detailed Guide Registration Form (with Phone Verification & Document Upload) -->
+    <div id="detailedGuideRegistrationForm" style="display: none; margin-top: 2rem;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
@@ -5628,8 +5628,8 @@
         </div>
     </div>
 
-    <!-- Guide Registration Modal -->
-    <div class="modal fade" id="guideRegistrationModal" tabindex="-1" aria-labelledby="guideRegistrationModalLabel" aria-hidden="true">
+    <!-- Simple Guide Registration Modal (DISABLED - use detailed form instead) -->
+    <div class="modal fade" id="guideRegistrationModal" tabindex="-1" aria-labelledby="guideRegistrationModalLabel" aria-hidden="true" style="display: none !important;" data-disabled="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
@@ -5869,16 +5869,16 @@
         function setupAllButtons() {
             console.log('🔧 Setting up all button event handlers...');
             
-            // 1. Dashboard button
+            // 1. Dashboard button (for sponsors/store owners)
             const dashboardBtn = document.getElementById('dashboardBtn');
             if (dashboardBtn && !dashboardBtn.hasAttribute('data-handler-added')) {
                 dashboardBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🎯 Dashboard button clicked - opening sponsor dashboard');
+                    console.log('🏪 Dashboard button clicked - opening sponsor dashboard');
                     window.open('sponsor-dashboard.html', '_blank');
                 });
                 dashboardBtn.setAttribute('data-handler-added', 'true');
-                console.log('✅ Dashboard button handler added');
+                console.log('✅ Dashboard button handler added (sponsor dashboard)');
             }
             
             // 2. Login dropdown toggle
@@ -6802,16 +6802,36 @@
             return window.handleGuideDetailAccess(guideId);
         };
 
-        // Show guide registration modal function
+        // Show detailed guide registration form (UPDATED)
         window.showGuideRegistrationModal = function() {
-            console.log('🎯 Opening guide registration modal');
+            console.log('🎯 Opening detailed guide registration form');
             try {
-                const modal = new bootstrap.Modal(document.getElementById('guideRegistrationModal'));
-                modal.show();
-                console.log('✅ Guide registration modal opened');
+                // Use the detailed form instead of simple modal
+                const formContainer = document.getElementById('registrationFormContainer');
+                const originalForm = document.getElementById('detailedGuideRegistrationForm');
+                
+                if (formContainer && originalForm) {
+                    formContainer.innerHTML = '';
+                    formContainer.appendChild(originalForm);
+                    originalForm.style.display = 'block';
+                    formContainer.style.display = 'block';
+                    
+                    // Scroll to form
+                    setTimeout(() => {
+                        formContainer.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }, 100);
+                    
+                    console.log('✅ Detailed guide registration form opened');
+                } else {
+                    console.error('❌ Form container or detailed form not found');
+                    alert('ガイド登録フォームの読み込みに失敗しました。');
+                }
             } catch (error) {
-                console.error('❌ Error opening guide registration modal:', error);
-                alert('ガイド登録モーダルの表示に問題が発生しました。');
+                console.error('❌ Error opening guide registration form:', error);
+                alert('ガイド登録フォームの表示に問題が発生しました。');
             }
         };
         

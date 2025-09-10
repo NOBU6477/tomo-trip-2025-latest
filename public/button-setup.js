@@ -50,27 +50,15 @@ function setupDashboardButton() {
 
 function handleDashboardClick(e) {
     e.preventDefault();
-    console.log('🏆 Dashboard button clicked - opening management center');
+    console.log('🏪 Dashboard button clicked - opening sponsor dashboard');
     
     try {
-        // Check if management center function exists
-        if (typeof showManagementCenter === 'function') {
-            showManagementCenter();
-        } else {
-            // Fallback: try to show management modal directly
-            const managementModal = document.getElementById('managementModal');
-            if (managementModal) {
-                const modal = new bootstrap.Modal(managementModal);
-                modal.show();
-                console.log('📋 Management modal opened directly');
-            } else {
-                alert('管理センターは現在利用できません。');
-                console.error('❌ Management center not available');
-            }
-        }
+        // Open sponsor dashboard page (for store owners/sponsors)
+        window.open('sponsor-dashboard.html', '_blank');
+        console.log('✅ Sponsor dashboard opened');
     } catch (error) {
         console.error('❌ Dashboard button error:', error);
-        alert('管理センターの表示に失敗しました。');
+        alert('ダッシュボードの表示に失敗しました。');
     }
 }
 
@@ -423,15 +411,31 @@ function openTouristRegistration() {
 }
 
 function openGuideRegistration() {
-    console.log('🎯 Guide registration selected');
+    console.log('🎯 Guide registration selected - opening detailed form');
     hideRegistrationChoice();
     
-    // Open beautiful modal instead of external page
-    if (typeof window.showGuideRegistrationModal === 'function') {
-        window.showGuideRegistrationModal();
+    // Show the detailed guide registration form with phone verification & document upload
+    const formContainer = document.getElementById('registrationFormContainer');
+    const originalForm = document.getElementById('detailedGuideRegistrationForm');
+    
+    if (formContainer && originalForm) {
+        formContainer.innerHTML = '';
+        formContainer.appendChild(originalForm);
+        originalForm.style.display = 'block';
+        formContainer.style.display = 'block';
+        
+        // Scroll to form
+        setTimeout(() => {
+            formContainer.scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 100);
+        
+        console.log('✅ Detailed guide registration form displayed');
     } else {
-        console.error('❌ showGuideRegistrationModal function not found');
-        alert('ガイド登録機能は準備中です。しばらくお待ちください。');
+        console.warn('⚠️ Form container or detailed form not found');
+        alert('ガイド登録フォームの読み込みに失敗しました。ページを再読み込みしてください。');
     }
 }
 
