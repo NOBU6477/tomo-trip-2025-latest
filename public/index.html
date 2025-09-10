@@ -5738,13 +5738,9 @@
                     const touristData = localStorage.getItem('touristRegistration');
                     
                     if (isRegistered && touristData) {
-                        // If registered, show guide detail modal
-                        if (window.showGuideDetailModalById) {
-                            window.showGuideDetailModalById(parseInt(guideId));
-                        } else {
-                            console.error('showGuideDetailModalById not found');
-                            alert('ガイド詳細機能（ID: ' + guideId + '）を準備中です');
-                        }
+                        // If registered, navigate to guide detail page
+                        console.log('Navigating to guide detail page for registered user');
+                        window.location.href = `guide-detail.html?id=${guideId}`;
                     } else {
                         // If not registered, show registration prompt
                         console.log('🔄 Tourist not registered - showing registration prompt');

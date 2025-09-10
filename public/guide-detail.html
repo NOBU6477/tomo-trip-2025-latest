@@ -280,9 +280,11 @@
                 return;
             }
 
-            // Check authentication
-            const touristData = localStorage.getItem('touristData');
-            if (!touristData) {
+            // Check authentication - unified check
+            const isRegistered = localStorage.getItem('isRegisteredTourist') === 'true';
+            const touristData = localStorage.getItem('touristRegistration');
+            
+            if (!isRegistered || !touristData) {
                 alert('この機能をご利用いただくには観光客登録が必要です。');
                 window.location.href = '/tourist-registration-simple.html';
                 return;
