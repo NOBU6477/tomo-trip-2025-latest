@@ -5441,7 +5441,7 @@
                     <h6 class="text-white mb-3">サービス</h6>
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">ガイドを探す</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">ガイドになる</a></li>
+                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="openGuideRegistration()">ガイドになる</a></li>
                         <li class="mb-2"><a href="/tourist-registration-simple.html" class="text-muted text-decoration-none hover-link" target="_blank">観光客登録</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showManagementCenter()">予約管理</a></li>
                         <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">スポンサー登録</a></li>
@@ -6791,32 +6791,16 @@
             return window.handleGuideDetailAccess(guideId);
         };
 
-        // Show detailed guide registration form (UPDATED)
+        // Redirect to detailed guide registration form
         window.showGuideRegistrationModal = function() {
-            console.log('🎯 Opening detailed guide registration form');
+            console.log('🎯 Redirecting to detailed guide registration form');
             try {
-                // Use the detailed form instead of simple modal
-                const formContainer = document.getElementById('registrationFormContainer');
-                const originalForm = document.getElementById('detailedGuideRegistrationForm');
-                
-                if (formContainer && originalForm) {
-                    formContainer.innerHTML = '';
-                    formContainer.appendChild(originalForm);
-                    originalForm.style.display = 'block';
-                    formContainer.style.display = 'block';
-                    
-                    // Scroll to form
-                    setTimeout(() => {
-                        formContainer.scrollIntoView({ 
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }, 100);
-                    
-                    console.log('✅ Detailed guide registration form opened');
+                // Call the detailed registration function instead
+                if (typeof openGuideRegistration === 'function') {
+                    openGuideRegistration();
                 } else {
-                    console.error('❌ Form container or detailed form not found');
-                    alert('ガイド登録フォームの読み込みに失敗しました。');
+                    console.error('❌ openGuideRegistration function not found');
+                    alert('ガイド登録フォームの読み込みに失敗しました。ページを再読み込みしてください。');
                 }
             } catch (error) {
                 console.error('❌ Error opening guide registration form:', error);
