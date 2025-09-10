@@ -1938,15 +1938,19 @@
             console.log('Opening guide detail modal for guide:', guide);
             if (!guide) return;
 
-            // Check if user is registered
-            const touristData = localStorage.getItem('touristData');
-            console.log('Tourist registration status:', touristData ? 'REGISTERED' : 'NOT REGISTERED');
+            // Check if user is registered - unified check
+            const isRegistered = localStorage.getItem('isRegisteredTourist') === 'true';
+            const touristData = localStorage.getItem('touristRegistration');
             
-            if (!touristData) {
-                // Show registration modal for unregistered users
-                console.log('Showing registration modal for unregistered user');
-                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                registrationModal.show();
+            console.log('Tourist registration status:', {
+                isRegistered,
+                hasData: !!touristData
+            });
+            
+            if (!isRegistered || !touristData) {
+                // Show registration requirement modal for unregistered users
+                console.log('Showing registration requirement modal for unregistered user');
+                showGuideAccessRequiredModal();
                 return;
             }
 
