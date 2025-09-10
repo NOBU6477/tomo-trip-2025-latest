@@ -251,7 +251,7 @@ function setupDataActionHandlers() {
                 showGuideRegistrationModal();
                 break;
             case 'show-tourist-registration-modal':
-                showTouristRegistrationModal();
+                window.open('/tourist-registration-simple.html', '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
                 break;
             case 'show-management-center':
                 showManagementCenter();
