@@ -6426,35 +6426,6 @@
                 console.log('🧹 Cleaning up registration prompt modal');
                 this.remove();
             });
-                            'touristRegistration',
-                            `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
-                        );
-                        
-                        // Listen for registration completion
-                        window.addEventListener('message', function(event) {
-                            if (event.data.type === 'registrationComplete') {
-                                console.log('✅ Registration completed:', event.data);
-                                
-                                // Save registration data
-                                window.setTouristRegistration(event.data.data);
-                                
-                                // Show service unlock notification
-                                window.showServiceUnlockNotification();
-                                
-                                // Close registration window
-                                if (registrationWindow && !registrationWindow.closed) {
-                                    registrationWindow.close();
-                                }
-                                
-                                // Navigate to guide detail after a delay
-                                setTimeout(() => {
-                                    window.location.href = `/guide-detail.html?id=${targetGuideId}`;
-                                }, 3000);
-                            }
-                        });
-                    }, 300);
-                });
-            }
         };
 
         // Show service unlock notification
