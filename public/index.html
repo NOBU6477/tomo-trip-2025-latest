@@ -6387,47 +6387,60 @@
                 existingModal.remove();
             }
             
-            // Create registration prompt modal HTML
-            const modalHTML = `
-                <div class="modal fade" id="registrationPromptModal" tabindex="-1" aria-labelledby="registrationPromptModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                            <div class="modal-header border-0" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 15px 15px 0 0;">
-                                <h5 class="modal-title fw-bold" id="registrationPromptModalLabel">
-                                    <i class="bi bi-lock me-2"></i>観光客登録が必要です
-                                </h5>
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body p-4 text-center">
-                                <div class="mb-4">
-                                    <i class="bi bi-person-plus-fill text-primary" style="font-size: 4rem;"></i>
-                                </div>
-                                <h6 class="fw-bold mb-3">ガイド詳細を閲覧するには観光客登録が必要です</h6>
-                                <p class="text-muted mb-4">
-                                    ガイドの詳細情報、料金プラン、予約機能をご利用いただくために、<br>
-                                    まず観光客として登録をお願いいたします。<br><br>
-                                    <strong>登録は簡単で、数分で完了します。</strong>
-                                </p>
-                                <div class="d-grid gap-3">
-                                    <button type="button" class="btn btn-primary btn-lg" id="proceedToRegistration" data-guide-id="${guideId}" style="border-radius: 25px; padding: 15px; font-weight: 500; background: linear-gradient(135deg, #007bff, #0056b3); border: none;">
-                                        <i class="bi bi-arrow-right-circle me-2"></i>観光客登録へ進む
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal" style="border-radius: 25px; padding: 15px; font-weight: 500;">
-                                        <i class="bi bi-x-circle me-2"></i>後で登録する
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            // Force immediate modal display using alert for testing
+            const userConfirm = confirm(
+                '🔒 観光客登録が必要です\n\n' +
+                'ガイドの詳細情報、料金プラン、予約機能をご利用いただくために、\n' +
+                'まず観光客として登録をお願いいたします。\n\n' +
+                '登録は簡単で、数分で完了します。\n\n' +
+                '今すぐ観光客登録へ進みますか？'
+            );
             
-            // Add modal to document
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            if (userConfirm) {
+                console.log('🚀 User confirmed - proceeding to registration');
+                
+                // Store the target guide ID for after registration
+                sessionStorage.setItem('targetGuideId', guideId);
+                
+                // Open tourist registration in a centered window
+                const width = 800;
+                const height = 900;
+                const left = (screen.width - width) / 2;
+                const top = (screen.height - height) / 2;
+                
+                const registrationWindow = window.open(
+                    '/tourist-registration-simple.html',
+                    'touristRegistration',
+                    `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+                );
+                
+                // Listen for registration completion
+                window.addEventListener('message', function(event) {
+                    if (event.data.type === 'registrationComplete') {
+                        console.log('✅ Registration completed:', event.data);
+                        
+                        // Save registration data
+                        window.setTouristRegistration(event.data.data);
+                        
+                        // Show service unlock notification
+                        window.showServiceUnlockNotification();
+                        
+                        // Close registration window
+                        if (registrationWindow && !registrationWindow.closed) {
+                            registrationWindow.close();
+                        }
+                        
+                        // Navigate to guide detail after a delay
+                        setTimeout(() => {
+                            window.location.href = `/guide-detail.html?id=${guideId}`;
+                        }, 3000);
+                    }
+                });
+                
+                return;
+            }
             
-            // Show modal
-            const modal = new bootstrap.Modal(document.getElementById('registrationPromptModal'));
-            modal.show();
+            console.log('❌ User declined registration');
             
             // Setup proceed button event
             const proceedBtn = document.getElementById('proceedToRegistration');
