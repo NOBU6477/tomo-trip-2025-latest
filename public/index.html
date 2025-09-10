@@ -21,6 +21,9 @@
     <script src="error_suppressor.js" defer></script>
     <script src="management.js" defer></script>
     
+    <!-- Unified Button Setup - Must load after management.js -->
+    <script src="button-setup.js" defer></script>
+    
     <!-- CSS Load Order: Bootstrap CSS → Local Icons → Custom CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/icons.css">
@@ -817,7 +820,7 @@
             </a>
             
             <div class="d-flex">
-                <button class="btn btn-success me-2" id="dashboardBtn" title="Sponsor Management Dashboard" style="opacity: 0.6; cursor: not-allowed;">
+                <button class="btn btn-success me-2" id="dashboardBtn" title="Sponsor Management Dashboard">
                     <i class="bi bi-shop"></i> <span class="d-none d-md-inline">Dashboard</span>
                 </button>
                 <div class="dropdown me-2" style="position: relative;">
@@ -996,7 +999,7 @@
                             </div>
                             
                             <div class="d-flex gap-2">
-                                <button class="btn btn-primary" id="searchBtn" onclick="filterGuides()">検索</button>
+                                <button class="btn btn-primary" id="searchBtn">検索</button>
                                 <button class="btn btn-outline-secondary" id="resetBtn" onclick="resetFilters()">リセット</button>
                             </div>
                         </div>
@@ -2494,25 +2497,39 @@
         
         // Guide registration is now handled by event-handlers.mjs - function removed to prevent conflicts
 
-        // Setup dropdown listeners
+        // Setup dropdown listeners (enhanced)
         function setupCustomDropdownListeners() {
             const touristBtn = document.getElementById('directTouristLoginBtn');
             const guideBtn = document.getElementById('directGuideLoginBtn');
+            const sponsorBtn = document.getElementById('sponsorLoginBtn');
             
-            if (touristBtn) {
+            if (touristBtn && !touristBtn.hasAttribute('data-handler-added')) {
                 touristBtn.onclick = function() {
+                    console.log('🎯 Tourist login clicked');
                     showLoginModal('tourist').catch(() => {});
                     document.getElementById('customLoginDropdown').style.display = 'none';
                     return false;
                 };
+                touristBtn.setAttribute('data-handler-added', 'true');
             }
             
-            if (guideBtn) {
+            if (guideBtn && !guideBtn.hasAttribute('data-handler-added')) {
                 guideBtn.onclick = function() {
+                    console.log('🎯 Guide login clicked');
                     showLoginModal('guide').catch(() => {});
                     document.getElementById('customLoginDropdown').style.display = 'none';
                     return false;
                 };
+                guideBtn.setAttribute('data-handler-added', 'true');
+            }
+            
+            if (sponsorBtn && !sponsorBtn.hasAttribute('data-handler-added')) {
+                sponsorBtn.onclick = function() {
+                    console.log('🎯 Sponsor login clicked');
+                    window.location.href = 'operations-login.html';
+                    return false;
+                };
+                sponsorBtn.setAttribute('data-handler-added', 'true');
             }
         }
 
@@ -5646,50 +5663,143 @@
         setTimeout(renderGuideCardsNow, 1000);
         
         // Add missing guide detail modal function
-        // Add hero button event handlers
+        // Legacy hero button setup function (deprecated - now handled by unified setup)
         window.setupHeroButtons = function() {
-            const findGuideBtn = document.getElementById('findGuideBtn');
-            const contactBtn = document.getElementById('contactBtn');
+            console.log('⚠️ setupHeroButtons called - this is now handled by unified button setup');
+        };
+        
+        // DIRECT BUTTON HANDLERS - Immediate setup without module conflicts
+        console.log('🔧 Setting up DIRECT button handlers');
+        
+        // ===== UNIFIED BUTTON SETUP =====
+        // Clean setup of all main buttons with proper event handlers
+        function setupAllButtons() {
+            console.log('🔧 Setting up all button event handlers...');
             
+            // 1. Dashboard button
+            const dashboardBtn = document.getElementById('dashboardBtn');
+            if (dashboardBtn && !dashboardBtn.hasAttribute('data-handler-added')) {
+                dashboardBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Dashboard button clicked - opening sponsor dashboard');
+                    window.open('sponsor-dashboard.html', '_blank');
+                });
+                dashboardBtn.setAttribute('data-handler-added', 'true');
+                console.log('✅ Dashboard button handler added');
+            }
+            
+            // 2. Login dropdown toggle
+            const loginDropdown = document.getElementById('loginDropdown');
+            if (loginDropdown && !loginDropdown.hasAttribute('data-handler-added')) {
+                loginDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Login dropdown clicked');
+                    
+                    const dropdown = document.getElementById('customLoginDropdown');
+                    if (dropdown) {
+                        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+                            dropdown.style.display = 'block';
+                        } else {
+                            dropdown.style.display = 'none';
+                        }
+                    }
+                });
+                loginDropdown.setAttribute('data-handler-added', 'true');
+                console.log('✅ Login dropdown handler added');
+            }
+            
+            // 3. Hero buttons - Find Guide
+            const findGuideBtn = document.getElementById('findGuideBtn');
             if (findGuideBtn && !findGuideBtn.hasAttribute('data-handler-added')) {
+                // Remove any existing onclick to prevent conflicts
+                findGuideBtn.onclick = null;
+                
                 findGuideBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     console.log('🎯 Find Guide button clicked - scrolling to guides section');
+                    
                     const guidesSection = document.getElementById('guides-section');
                     if (guidesSection) {
                         guidesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     } else {
-                        alert('ガイド一覧セクションを表示します');
+                        // Fallback - scroll to main content
+                        const mainContent = document.querySelector('.main-content');
+                        if (mainContent) {
+                            mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
                     }
                 });
                 findGuideBtn.setAttribute('data-handler-added', 'true');
                 console.log('✅ Find Guide button handler added');
             }
             
+            // 4. Hero buttons - Contact
+            const contactBtn = document.getElementById('contactBtn');
             if (contactBtn && !contactBtn.hasAttribute('data-handler-added')) {
+                // Remove any existing onclick to prevent conflicts
+                contactBtn.onclick = null;
+                
                 contactBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🎯 Contact button clicked - opening contact page');
-                    window.open('chat.html', '_blank');
+                    console.log('🎯 Contact button clicked - opening contact modal');
+                    
+                    // Try to open contact modal if it exists
+                    const contactModal = document.getElementById('contactModal');
+                    if (contactModal) {
+                        const modal = new bootstrap.Modal(contactModal);
+                        modal.show();
+                    } else {
+                        // Fallback - open chat page
+                        window.open('chat.html', '_blank');
+                    }
                 });
                 contactBtn.setAttribute('data-handler-added', 'true');
                 console.log('✅ Contact button handler added');
             }
-        };
+            
+            // 5. Search button - Remove duplicate onclick and use clean addEventListener
+            const searchBtn = document.getElementById('searchBtn');
+            if (searchBtn && !searchBtn.hasAttribute('data-clean-handler')) {
+                // Remove the onclick attribute to prevent conflicts
+                searchBtn.removeAttribute('onclick');
+                
+                searchBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Search button clicked - filtering guides');
+                    if (typeof window.filterGuides === 'function') {
+                        window.filterGuides();
+                    } else {
+                        console.error('❌ filterGuides function not found');
+                        alert('検索機能を準備中です。しばらくお待ちください。');
+                    }
+                });
+                searchBtn.setAttribute('data-clean-handler', 'true');
+                console.log('✅ Search button clean handler added');
+            }
+            
+            console.log('✅ All button event handlers setup complete');
+        }
         
-        // DIRECT BUTTON HANDLERS - Immediate setup without module conflicts
-        console.log('🔧 Setting up DIRECT button handlers');
+        // Call setup immediately and after DOM loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupAllButtons);
+        } else {
+            setupAllButtons();
+        }
         
-        // Force immediate button setup
+        // Also setup with short delay to ensure all elements are ready
+        setTimeout(setupAllButtons, 500);
+        
+        // Force immediate button setup (keeping original code but cleaning it)
         setTimeout(function() {
-            // Hero buttons
+            // Hero buttons (legacy support - cleaned)
             const findGuideBtn = document.getElementById('findGuideBtn');
             const contactBtn = document.getElementById('contactBtn');
             
-            if (findGuideBtn) {
+            if (findGuideBtn && !findGuideBtn.hasAttribute('data-handler-added')) {
                 findGuideBtn.onclick = function(e) {
                     e.preventDefault();
-                    console.log('🎯 Find Guide clicked - scrolling to guides');
+                    console.log('🎯 Find Guide clicked (legacy) - scrolling to guides');
                     
                     // Always scroll to guides section (no registration check)
                     let target = document.getElementById('guides-section') || 
