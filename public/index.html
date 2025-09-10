@@ -6190,8 +6190,124 @@
         }, 300);
     </script>
     
-    <!-- Main application initialization -->
-    <script type="module" src="/assets/js/app-init.mjs"></script>
+    <!-- Import and initialize guide renderer with filter functionality -->
+    <script type="module">
+        import { renderGuideCards, updateGuideCounters } from '/assets/js/ui/guide-renderer.mjs';
+        import { defaultGuideData } from '/assets/js/data/default-guides.mjs';
+        
+        console.log('🚀 TomoTrip Guide System Loading...');
+        
+        // Global state
+        window.allGuides = defaultGuideData;
+        window.renderGuideCards = renderGuideCards;
+        window.updateGuideCounters = updateGuideCounters;
+        
+        // Filter functionality with Japanese language support
+        window.filterGuides = function() {
+            console.log('🔍 filterGuides called');
+            try {
+                const location = document.getElementById('locationFilter')?.value || '';
+                const language = document.getElementById('languageFilter')?.value || '';
+                const price = document.getElementById('priceFilter')?.value || '';
+                const keyword = document.getElementById('keywordInput')?.value?.toLowerCase() || '';
+                
+                console.log('🔍 Filter values:', { location, language, price, keyword });
+                
+                // Language mapping from HTML filter values to data codes
+                const languageMap = {
+                    'japanese': 'ja', 'english': 'en', 'chinese': 'zh',
+                    'korean': 'ko', 'spanish': 'es', 'french': 'fr',
+                    'german': 'de', 'russian': 'ru'
+                };
+                
+                // Apply filters
+                let filtered = defaultGuideData.filter(guide => {
+                    const locationMatch = !location || guide.location === location;
+                    
+                    const targetLanguage = languageMap[language] || language;
+                    const languageMatch = !language || (Array.isArray(guide.languages) 
+                        ? guide.languages.includes(targetLanguage) 
+                        : guide.languages === targetLanguage);
+                    
+                    const priceMatch = !price || (
+                        price === 'budget' && guide.price >= 6000 && guide.price <= 10000 ||
+                        price === 'premium' && guide.price >= 10001 && guide.price <= 20000 ||
+                        price === 'luxury' && guide.price >= 20001
+                    );
+                    
+                    const keywordMatch = !keyword || 
+                        guide.name.toLowerCase().includes(keyword) ||
+                        (guide.specialties && guide.specialties.some(s => s.toLowerCase().includes(keyword)));
+                    
+                    return locationMatch && languageMatch && priceMatch && keywordMatch;
+                });
+                
+                console.log(`✅ Filtered guides: ${filtered.length} out of ${defaultGuideData.length}`);
+                
+                renderGuideCards(filtered);
+                updateGuideCounters(filtered.length, defaultGuideData.length);
+                
+            } catch (error) {
+                console.error('❌ Filter error:', error);
+                alert('検索中にエラーが発生しました');
+            }
+        };
+        
+        window.resetFilters = function() {
+            console.log('🔄 resetFilters called');
+            try {
+                const locationFilter = document.getElementById('locationFilter');
+                const languageFilter = document.getElementById('languageFilter');
+                const priceFilter = document.getElementById('priceFilter');
+                const keywordInput = document.getElementById('keywordInput');
+                
+                if (locationFilter) locationFilter.value = '';
+                if (languageFilter) languageFilter.value = '';
+                if (priceFilter) priceFilter.value = '';
+                if (keywordInput) keywordInput.value = '';
+                
+                renderGuideCards(defaultGuideData);
+                updateGuideCounters(defaultGuideData.length, defaultGuideData.length);
+                
+                console.log('✅ Filters reset successfully');
+                
+            } catch (error) {
+                console.error('❌ Reset error:', error);
+                location.reload();
+            }
+        };
+        
+        // Initialize on DOM ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('📋 DOM ready - initializing guides');
+            
+            // Render initial guides
+            renderGuideCards(defaultGuideData);
+            updateGuideCounters(defaultGuideData.length, defaultGuideData.length);
+            
+            // Setup filter event listeners
+            const locationFilter = document.getElementById('locationFilter');
+            const languageFilter = document.getElementById('languageFilter');
+            const priceFilter = document.getElementById('priceFilter');
+            const keywordInput = document.getElementById('keywordInput');
+            
+            if (locationFilter) locationFilter.addEventListener('change', window.filterGuides);
+            if (languageFilter) languageFilter.addEventListener('change', window.filterGuides);
+            if (priceFilter) priceFilter.addEventListener('change', window.filterGuides);
+            if (keywordInput) keywordInput.addEventListener('input', window.filterGuides);
+            
+            // Setup search and reset buttons
+            const searchBtn = document.getElementById('searchBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            if (searchBtn) searchBtn.addEventListener('click', window.filterGuides);
+            if (resetBtn) resetBtn.addEventListener('click', window.resetFilters);
+            
+            console.log('✅ Guide system initialized successfully');
+        });
+        
+        console.log('🎉 TomoTrip Guide System Loaded');
+    </script>
     <script>
         // Check for unlock notification flag after registration
         document.addEventListener('DOMContentLoaded', function() {

@@ -29,7 +29,24 @@ export function renderGuideCards(guidesToRender = null) {
 function createGuideCardHTML(guide) {
     const price = Number(guide.price);
     const formattedPrice = isNaN(price) ? '料金応相談' : `¥${price.toLocaleString()}`;
-    const languages = guide.languages?.join(', ') || '日本語';
+    
+    // Language mapping for Japanese display
+    const languageMap = {
+        'ja': '日本語', 'japanese': '日本語',
+        'en': '英語', 'english': '英語', 
+        'zh': '中国語', 'chinese': '中国語',
+        'ko': '韓国語', 'korean': '韓国語',
+        'es': 'スペイン語', 'spanish': 'スペイン語',
+        'fr': 'フランス語', 'french': 'フランス語',
+        'de': 'ドイツ語', 'german': 'ドイツ語',
+        'ru': 'ロシア語', 'russian': 'ロシア語',
+        'thai': 'タイ語', 'vietnamese': 'ベトナム語'
+    };
+    
+    const languages = Array.isArray(guide.languages) 
+        ? guide.languages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ')
+        : guide.languages || '日本語';
+    
     const tags = guide.tags?.slice(0, 3).join(', ') || '';
     
     return `
