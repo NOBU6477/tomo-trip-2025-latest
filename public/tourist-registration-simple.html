@@ -784,12 +784,23 @@
                     return;
                 }
 
-                // Add to parent window if available
+                // Send registration completion message to parent window
                 if (window.opener) {
+                    console.log('📨 Sending registration complete message to parent window');
                     window.opener.postMessage({
-                        type: 'touristRegistered',
-                        data: formData
+                        type: 'registrationComplete',
+                        data: formData,
+                        timestamp: new Date().toISOString()
                     }, '*');
+                    
+                    // Also trigger a custom event for compatibility
+                    try {
+                        window.opener.dispatchEvent(new CustomEvent('touristRegistrationComplete', {
+                            detail: { data: formData, timestamp: new Date().toISOString() }
+                        }));
+                    } catch (e) {
+                        console.log('Custom event dispatch failed:', e);
+                    }
                 }
 
             } catch (error) {
