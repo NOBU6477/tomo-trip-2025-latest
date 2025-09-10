@@ -5723,50 +5723,7 @@
                 console.log('✅ Contact button setup');
             }
             
-            // REMOVED - This is now handled by the unified event delegation below
-                        
-                        // Create registration prompt modal
-                        const promptHtml = `
-                            <div class="modal fade" id="registrationPromptModal" tabindex="-1">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
-                                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
-                                            <h5 class="modal-title fw-bold">
-                                                <i class="bi bi-info-circle-fill me-2"></i>ガイドサービスのご利用について
-                                            </h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                        </div>
-                                        <div class="modal-body p-4 text-center">
-                                            <div class="mb-4">
-                                                <i class="bi bi-person-check" style="font-size: 4rem; color: #667eea; opacity: 0.8;"></i>
-                                            </div>
-                                            <h6 class="fw-bold mb-3" style="color: #2c3e50;">観光客登録が必要です</h6>
-                                            <p class="text-muted mb-4" style="line-height: 1.6;">
-                                                TomoTripでは、信頼できる地元ガイドとの安全な出会いをサポートしています。<br>
-                                                ガイドの詳細情報閲覧やお問い合わせをご利用いただくため、観光客としての登録をお願いいたします。
-                                            </p>
-                                            <div class="mb-4">
-                                                <div class="row text-start">
-                                                    <div class="col-12 mb-2">
-                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                        <small>ガイドの詳細プロフィール閲覧</small>
-                                                    </div>
-                                                    <div class="col-12 mb-2">
-                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                        <small>ガイドへの直接お問い合わせ</small>
-                                                    </div>
-                                                    <div class="col-12 mb-2">
-                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                        <small>ツアー予約と日程調整</small>
-                                                    </div>
-                                                    <div class="col-12">
-                                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                                        <small>安全で信頼できるガイドマッチング</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0 pt-0">
+            // REMOVED - Old duplicate event handler cleaned up
                                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                                 <i class="bi bi-x-circle me-1"></i>キャンセル
                                             </button>
