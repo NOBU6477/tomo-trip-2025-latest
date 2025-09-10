@@ -1027,7 +1027,7 @@
                     </p>
                 </div>
                 
-                <div class="row g-4" id="guidesContainer">
+                <div class="row g-4" id="guideCardsContainer">
                     <!-- Guides will be populated here -->
                 </div>
                 
@@ -1596,6 +1596,152 @@
         function showCompliance() {
             alert('法的遵守情報は近日公開予定です。');
         }
+
+        // ==== WORKING GUIDE CARD SYSTEM FROM INDEX.HTML ====
+        
+        // Default guide data for Japanese page
+        const defaultGuides = [
+            { id: 1, name: "田中健太", location: "tokyo", rating: 4.8, price: 8000, image: "/assets/img/guides/default-1.svg", languages: ["日本語", "英語"], specialty: "歴史文化", description: "東京の歴史と文化を専門とするガイドです。" },
+            { id: 2, name: "佐藤美咲", location: "osaka", rating: 4.9, price: 7500, image: "/assets/img/guides/default-2.svg", languages: ["日本語", "英語", "中国語"], specialty: "グルメ", description: "大阪の美味しいグルメスポットをご案内します。" },
+            { id: 3, name: "鈴木一郎", location: "kyoto", rating: 4.7, price: 9000, image: "/assets/img/guides/default-3.svg", languages: ["日本語", "英語"], specialty: "寺院・伝統", description: "京都の寺院と伝統文化の専門ガイドです。" },
+            { id: 4, name: "山田花子", location: "osaka", rating: 4.6, price: 7000, image: "/assets/img/guides/default-4.svg", languages: ["日本語", "英語"], specialty: "ショッピング", description: "大阪のショッピングエリアをご案内します。" },
+            { id: 5, name: "Johnson Mike", location: "tokyo", rating: 4.8, price: 8500, image: "/assets/img/guides/default-5.svg", languages: ["英語", "日本語"], specialty: "ビジネス", description: "東京のビジネス街と現代文化のガイドです。" },
+            { id: 6, name: "李美麗", location: "kyoto", rating: 4.9, price: 8800, image: "attached_assets/image_1754399234136.png", languages: ["中国語", "日本語", "英語"], specialty: "文化・寺院", description: "京都の文化と寺院を詳しくご紹介します。" },
+            { id: 7, name: "高橋翔太", location: "hokkaido", rating: 4.7, price: 9500, image: "attached_assets/image_1754399234136.png", languages: ["日本語", "英語"], specialty: "自然・スキー", description: "北海道の自然とスキーのエキスパートです。" },
+            { id: 8, name: "Anderson Sarah", location: "okinawa", rating: 4.8, price: 8200, image: "attached_assets/image_1754399234136.png", languages: ["英語", "日本語"], specialty: "ビーチ・ダイビング", description: "沖縄の美しいビーチとダイビングスポットをご案内。" },
+            { id: 9, name: "金成民", location: "tokyo", rating: 4.6, price: 7800, image: "attached_assets/image_1754399234136.png", languages: ["韓国語", "日本語", "英語"], specialty: "K-POP・現代文化", description: "東京のK-POPと現代文化のガイドです。" },
+            { id: 10, name: "伊藤優子", location: "nara", rating: 4.9, price: 8600, image: "attached_assets/image_1754399234136.png", languages: ["日本語", "英語"], specialty: "鹿・寺院", description: "奈良の鹿と古代寺院の専門ガイドです。" },
+            { id: 11, name: "Rodriguez Carlos", location: "hiroshima", rating: 4.7, price: 8300, image: "attached_assets/image_1754399234136.png", languages: ["スペイン語", "日本語", "英語"], specialty: "歴史・平和", description: "広島の歴史と平和の重要性をお伝えします。" },
+            { id: 12, name: "中村孝", location: "fukuoka", rating: 4.8, price: 7900, image: "attached_assets/image_1754399234136.png", languages: ["日本語", "英語"], specialty: "ラーメン・地元文化", description: "福岡のラーメンと地元文化をご紹介します。" }
+        ];
+
+        // Location mapping
+        const locationNames = {
+            hokkaido: "北海道", tokyo: "東京都", osaka: "大阪府", kyoto: "京都府", 
+            nara: "奈良県", hiroshima: "広島県", fukuoka: "福岡県", okinawa: "沖縄県"
+        };
+
+        // Variables for pagination and state
+        let currentGuides = defaultGuides;
+        let allGuides = defaultGuides;
+        let currentPage = 1;
+        const guidesPerPage = 12;
+        let displayedGuides = [];
+
+        // Get localized text for Japanese page
+        function getLocalizedText(key) {
+            const translations = {
+                viewDetails: '詳細を見る',
+                perDay: '1日あたり'
+            };
+            return translations[key] || key;
+        }
+
+        // Generate guide card HTML
+        function createGuideCard(guide) {
+            return `
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 guide-card" style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
+                        <img src="${guide.image}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="${guide.name}">
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-1">${guide.name}</h5>
+                                <div class="d-flex gap-1">
+                                    <button class="btn btn-sm btn-outline-warning bookmark-btn" data-guide-id="${guide.id}" title="Bookmark">⭐</button>
+                                    <button class="btn btn-sm btn-outline-success compare-btn" data-guide-id="${guide.id}" title="Add to compare">✓</button>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location}</span>
+                                <span class="badge bg-secondary">${guide.specialty}</span>
+                            </div>
+                            <p class="card-text text-muted small mb-2">${guide.description}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <div>
+                                    <span class="text-warning">★</span>
+                                    <span class="fw-bold">${guide.rating}</span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</div>
+                                    <small class="text-muted">${getLocalizedText('perDay')}</small>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
+                                    ${getLocalizedText('viewDetails')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Display guides with pagination
+        function displayGuides(allGuides, page = 1) {
+            currentPage = page;
+            const startIndex = (page - 1) * guidesPerPage;
+            const endIndex = startIndex + guidesPerPage;
+            const pageGuides = allGuides.slice(startIndex, endIndex);
+            
+            displayedGuides = pageGuides;
+            const container = document.getElementById('guideCardsContainer');
+            if (container) {
+                container.innerHTML = pageGuides.map(guide => createGuideCard(guide)).join('');
+                
+                // Re-add event listeners after DOM update
+                setTimeout(() => {
+                    addCardEventListeners();
+                }, 100);
+            }
+        }
+
+        // Add event listeners to cards
+        function addCardEventListeners() {
+            const viewDetailButtons = document.querySelectorAll('.view-detail-btn');
+            
+            viewDetailButtons.forEach((btn, index) => {
+                const guideId = btn.getAttribute('data-guide-id');
+                
+                // Remove existing listeners
+                btn.replaceWith(btn.cloneNode(true));
+                const newBtn = document.querySelectorAll('.view-detail-btn')[index];
+                
+                newBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🔥 View Details button clicked for guide:', guideId);
+                    viewGuideDetail(guideId);
+                });
+            });
+
+            // Bookmark buttons
+            document.querySelectorAll('.bookmark-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const guideId = this.getAttribute('data-guide-id');
+                    console.log('Bookmark clicked for guide:', guideId);
+                });
+            });
+
+            // Compare buttons
+            document.querySelectorAll('.compare-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const guideId = this.getAttribute('data-guide-id');
+                    console.log('Compare clicked for guide:', guideId);
+                });
+            });
+        }
+
+        // Initialize guide display on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Initializing Japanese guide page');
+            currentGuides = defaultGuides;
+            allGuides = defaultGuides;
+            displayGuides(defaultGuides);
+        });
+
     </script>
 </body>
 </html>
