@@ -5346,7 +5346,7 @@
                     <ul class="list-unstyled">
                         <li class="mb-2"><a href="#guides-section" class="text-muted text-decoration-none hover-link" onclick="scrollToGuides()">ガイドを探す</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showGuideRegistrationModal()">ガイドになる</a></li>
-                        <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showTouristRegistrationModal()">観光客登録</a></li>
+                        <li class="mb-2"><a href="/tourist-registration-simple.html" class="text-muted text-decoration-none hover-link" target="_blank">観光客登録</a></li>
                         <li class="mb-2"><a href="#" class="text-muted text-decoration-none hover-link" onclick="showManagementCenter()">予約管理</a></li>
                         <li class="mb-2"><a href="sponsor-registration.html" class="text-muted text-decoration-none hover-link">スポンサー登録</a></li>
                     </ul>
@@ -6110,15 +6110,12 @@
         
         // Global functions for registration choice
         window.openTouristRegistration = function() {
-            console.log('🎯 Tourist registration selected - showing advanced 3-step modal');
+            console.log('🎯 Tourist registration selected - opening registration page');
             hideRegistrationChoice();
             
-            // Show the updated registration modal with 3-step process
-            setTimeout(() => {
-                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                registrationModal.show();
-                console.log('✅ Advanced tourist registration modal opened');
-            }, 300);
+            // Open tourist registration page
+            window.open('/tourist-registration-simple.html', '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
+            console.log('✅ Tourist registration page opened');
         };
         
         window.openGuideRegistration = function() {

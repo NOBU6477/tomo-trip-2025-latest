@@ -41,14 +41,54 @@
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.4);
             padding: 3rem;
-            max-width: 500px;
+            max-width: 650px;
             width: 100%;
             margin: auto;
             position: relative;
         }
 
+        .registration-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #fd7f3d, #e55f24, #74b9ff, #0984e3);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step-indicator .step-item {
+            display: flex;
+            align-items: center;
+            color: #6c757d;
+        }
+        
+        .step-indicator .step-item.active {
+            color: #0984e3;
+            font-weight: bold;
+        }
+        
+        .step-indicator .step-item.completed {
+            color: #28a745;
+        }
+
         .form-control {
-            border-radius: 12px;
+            border-radius: 15px;
             border: 2px solid #e9ecef;
             padding: 12px 15px;
             font-size: 16px;
@@ -80,6 +120,74 @@
             font-weight: 600;
         }
 
+        .document-type-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .document-type-card:hover {
+            border-color: #007bff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+        }
+        
+        .document-type-card.selected {
+            border-color: #28a745;
+            background-color: #f8fff9;
+        }
+
+        .selection-check {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #28a745;
+            font-size: 1.5rem;
+            display: none;
+        }
+
+        .document-type-card.selected .selection-check {
+            display: block;
+        }
+
+        .document-upload-area {
+            border: 2px dashed #0984e3;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .document-upload-area:hover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+        }
+        
+        .document-upload-area.dragover {
+            background: #e3f2fd;
+            border-color: #1976d2;
+            transform: scale(1.02);
+        }
+
+        .verification-code-input {
+            font-size: 1.5rem;
+            text-align: center;
+            letter-spacing: 0.5rem;
+        }
+
+        .upload-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
         .success-animation {
             animation: successPulse 0.6s ease-out;
         }
@@ -100,32 +208,56 @@
 <body>
     <div class="registration-card">
         <div class="text-center mb-4">
-            <h2 class="mb-3" style="color: #2d3436; font-weight: 700;">
-                <i class="bi bi-person-plus-fill me-2 text-primary"></i>観光客登録
-            </h2>
-            <p class="text-muted">簡単な情報で今すぐ登録できます</p>
+            <h2 class="mb-3" style="color: #2d3436; font-weight: 700;">観光客登録</h2>
+            <p class="text-muted">電話認証と身分証明書の提出が必要です</p>
         </div>
         
-        <!-- Registration Form -->
-        <form id="registrationForm">
-            <div class="mb-3">
-                <label for="fullName" class="form-label">
-                    <i class="bi bi-person me-2"></i>お名前
-                </label>
-                <input type="text" class="form-control" id="fullName" placeholder="山田 太郎" required>
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+            <div class="step-item active" id="step1-indicator">
+                <span class="badge bg-primary rounded-circle me-2">1</span>
+                基本情報
+            </div>
+            <div class="mx-3">→</div>
+            <div class="step-item" id="step2-indicator">
+                <span class="badge bg-secondary rounded-circle me-2">2</span>
+                電話認証
+            </div>
+            <div class="mx-3">→</div>
+            <div class="step-item" id="step3-indicator">
+                <span class="badge bg-secondary rounded-circle me-2">3</span>
+                身分証明書
+            </div>
+        </div>
+
+        <!-- Step 1: Basic Information -->
+        <div class="step active" id="step1">
+            <h4 class="mb-3">基本情報を入力してください</h4>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="firstName" class="form-label">名</label>
+                    <input type="text" class="form-control" id="firstName" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="lastName" class="form-label">姓</label>
+                    <input type="text" class="form-control" id="lastName" required>
+                </div>
             </div>
             
             <div class="mb-3">
-                <label for="email" class="form-label">
-                    <i class="bi bi-envelope me-2"></i>メールアドレス
-                </label>
-                <input type="email" class="form-control" id="email" placeholder="yamada@example.com" required>
+                <label for="email" class="form-label">メールアドレス</label>
+                <input type="email" class="form-control" id="email" required>
             </div>
             
             <div class="mb-3">
-                <label for="nationality" class="form-label">
-                    <i class="bi bi-globe me-2"></i>国籍・地域
-                </label>
+                <label for="phone" class="form-label">電話番号</label>
+                <input type="tel" class="form-control" id="phone" placeholder="090-1234-5678" required 
+                       style="font-size: 16px; padding: 12px;" autocomplete="tel">
+                <div class="form-text">SMS認証コードを受信する電話番号を入力してください</div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="nationality" class="form-label">国籍</label>
                 <select class="form-control" id="nationality" required>
                     <option value="">選択してください</option>
                     <option value="japan">日本</option>
@@ -142,33 +274,156 @@
                     <option value="other">その他</option>
                 </select>
             </div>
+            
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">戻る</button>
+                <button type="button" class="btn btn-primary" onclick="goToNextStep()">次へ</button>
+            </div>
+        </div>
 
-            <div class="mb-4">
-                <label for="interests" class="form-label">
-                    <i class="bi bi-heart me-2"></i>興味のある観光
-                </label>
-                <select class="form-control" id="interests" required>
-                    <option value="">選択してください</option>
-                    <option value="culture">文化・歴史ツアー</option>
-                    <option value="nature">自然・景色</option>
-                    <option value="food">グルメ・食べ歩き</option>
-                    <option value="shopping">ショッピング</option>
-                    <option value="nightlife">ナイトライフ</option>
-                    <option value="family">ファミリー向け</option>
-                    <option value="adventure">アドベンチャー</option>
-                    <option value="traditional">伝統体験</option>
-                </select>
+        <!-- Step 2: Phone Verification -->
+        <div class="step" id="step2">
+            <h4 class="mb-3">📱 電話番号認証</h4>
+            
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle me-2"></i>
+                入力された電話番号にSMS認証コードを送信します
+            </div>
+            
+            <div class="bg-light rounded p-3 mb-3">
+                <div class="text-center">
+                    <i class="bi bi-phone me-2 text-primary"></i>
+                    <strong>認証対象電話番号:</strong>
+                    <span class="ms-2 text-primary" id="phoneDisplay"></span>
+                </div>
+            </div>
+            
+            <div id="phoneVerificationArea">
+                <div class="mb-3">
+                    <label for="verificationPhone" class="form-label">認証用電話番号</label>
+                    <input type="tel" class="form-control" id="verificationPhone" placeholder="090-1234-5678" 
+                           style="font-size: 16px; padding: 12px;">
+                    <div class="form-text">電話番号認証が必要です</div>
+                </div>
+                
+                <button type="button" class="btn btn-primary w-100 mb-3" id="sendSMSBtn">
+                    <i class="bi bi-send me-2"></i>認証コードを送信
+                </button>
+                
+                <div id="verificationCodeArea" style="display: none;">
+                    <div class="mb-3">
+                        <label for="verificationCode" class="form-label">認証コード（6桁）</label>
+                        <input type="text" class="form-control verification-code-input" id="verificationCode" 
+                               maxlength="6" placeholder="123456">
+                        <div class="form-text">SMSで送信された6桁のコードを入力してください</div>
+                    </div>
+                    
+                    <button type="button" class="btn btn-success w-100 mb-3" id="verifyCodeBtn">
+                        <i class="bi bi-check-circle me-2"></i>認証コードを確認
+                    </button>
+                </div>
             </div>
             
             <div class="d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-secondary" onclick="window.history.back()">
-                    <i class="bi bi-arrow-left me-2"></i>戻る
-                </button>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle me-2"></i>登録完了
-                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="goToPreviousStep()">戻る</button>
+                <button type="button" class="btn btn-primary" id="nextToStep3" onclick="goToNextStep()" disabled>次へ</button>
             </div>
-        </form>
+        </div>
+
+        <!-- Step 3: Document Upload -->
+        <div class="step" id="step3">
+            <h4 class="mb-3">📄 身分証明書提出</h4>
+            
+            <div class="alert alert-warning mb-4">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                身分証明書の種類を選択し、必要な書類をアップロードしてください
+            </div>
+
+            <!-- Document Type Selection -->
+            <div class="mb-4">
+                <h6 class="mb-3">証明書の種類を選択してください</h6>
+                
+                <div class="document-type-card" onclick="selectDocumentType('passport')">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-passport text-primary me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="mb-1">パスポート</h6>
+                            <small class="text-muted">外国籍の方</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-check-circle-fill selection-check"></i>
+                </div>
+
+                <div class="document-type-card" onclick="selectDocumentType('license')">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-credit-card text-primary me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="mb-1">運転免許証</h6>
+                            <small class="text-muted">日本国内有効</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-check-circle-fill selection-check"></i>
+                </div>
+
+                <div class="document-type-card" onclick="selectDocumentType('residence')">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-card-text text-primary me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="mb-1">在留カード</h6>
+                            <small class="text-muted">外国人登録証</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-check-circle-fill selection-check"></i>
+                </div>
+
+                <div class="document-type-card" onclick="selectDocumentType('special')">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-award text-primary me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="mb-1">特別永住者証明書</h6>
+                            <small class="text-muted">韓国・朝鮮等</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-check-circle-fill selection-check"></i>
+                </div>
+
+                <div class="document-type-card" onclick="selectDocumentType('student')">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-mortarboard text-primary me-3" style="font-size: 2rem;"></i>
+                        <div>
+                            <h6 class="mb-1">学生証</h6>
+                            <small class="text-muted">有効期限内のもの</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-check-circle-fill selection-check"></i>
+                </div>
+            </div>
+
+            <!-- Document Upload Area -->
+            <div class="mb-4" id="uploadSection" style="display: none;">
+                <div class="bg-light rounded p-3 mb-3">
+                    提出方法：上で選択した証明書の種類に応じて、必要な面をアップロードしてください
+                </div>
+                
+                <div class="document-upload-area" id="uploadArea">
+                    <i class="bi bi-cloud-upload text-primary" style="font-size: 3rem;"></i>
+                    <h6 class="mt-3 mb-2">身分証明書をアップロード</h6>
+                    <p class="text-muted mb-3">ファイルをドラッグ&ドロップまたは下のボタンをクリック</p>
+                    <button type="button" class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        <i class="bi bi-camera me-2"></i>写真を選択・撮影
+                    </button>
+                    <input type="file" id="fileInput" style="display: none;" accept="image/*,application/pdf" capture="environment">
+                    <div class="form-text mt-2">対応形式: JPG, PNG, PDF (最大5MB)</div>
+                </div>
+                
+                <div id="uploadPreview" style="display: none;"></div>
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary" onclick="goToPreviousStep()">戻る</button>
+                <button type="button" class="btn btn-primary" id="completeRegistration" onclick="completeRegistration()" disabled>登録完了</button>
+            </div>
+        </div>
 
         <!-- Success Message (initially hidden) -->
         <div id="successMessage" style="display: none;">
@@ -185,35 +440,235 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        let currentStep = 1;
+        let selectedDocumentType = '';
+        let phoneVerified = false;
+        let documentUploaded = false;
+
+        // Step navigation functions
+        function goToNextStep() {
+            if (currentStep === 1) {
+                if (validateStep1()) {
+                    updateStepIndicator(2);
+                    showStep(2);
+                    displayPhoneNumber();
+                }
+            } else if (currentStep === 2) {
+                if (phoneVerified) {
+                    updateStepIndicator(3);
+                    showStep(3);
+                }
+            }
+        }
+
+        function goToPreviousStep() {
+            if (currentStep === 2) {
+                updateStepIndicator(1);
+                showStep(1);
+            } else if (currentStep === 3) {
+                updateStepIndicator(2);
+                showStep(2);
+            }
+        }
+
+        function showStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            currentStep = stepNumber;
+        }
+
+        function updateStepIndicator(activeStep) {
+            document.querySelectorAll('.step-item').forEach((item, index) => {
+                const stepNum = index + 1;
+                const badge = item.querySelector('.badge');
+                
+                item.classList.remove('active', 'completed');
+                badge.classList.remove('bg-primary', 'bg-success', 'bg-secondary');
+                
+                if (stepNum < activeStep) {
+                    item.classList.add('completed');
+                    badge.classList.add('bg-success');
+                } else if (stepNum === activeStep) {
+                    item.classList.add('active');
+                    badge.classList.add('bg-primary');
+                } else {
+                    badge.classList.add('bg-secondary');
+                }
+            });
+        }
+
+        // Step 1 validation
+        function validateStep1() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const nationality = document.getElementById('nationality').value;
+
+            if (!firstName || !lastName || !email || !phone || !nationality) {
+                alert('すべての項目を入力してください。');
+                return false;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('有効なメールアドレスを入力してください。');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Phone verification
+        function displayPhoneNumber() {
+            const phone = document.getElementById('phone').value;
+            document.getElementById('phoneDisplay').textContent = phone;
+            document.getElementById('verificationPhone').value = phone;
+        }
+
+        document.getElementById('sendSMSBtn').addEventListener('click', function() {
+            const phone = document.getElementById('verificationPhone').value;
+            if (!phone) {
+                alert('電話番号を入力してください。');
+                return;
+            }
+
+            // Simulate SMS sending
+            this.disabled = true;
+            this.innerHTML = '<i class="bi bi-clock me-2"></i>送信中...';
             
+            setTimeout(() => {
+                this.innerHTML = '<i class="bi bi-check me-2"></i>送信完了';
+                document.getElementById('verificationCodeArea').style.display = 'block';
+                
+                // Auto-fill verification code for demo
+                setTimeout(() => {
+                    document.getElementById('verificationCode').value = '123456';
+                }, 1000);
+            }, 2000);
+        });
+
+        document.getElementById('verifyCodeBtn').addEventListener('click', function() {
+            const code = document.getElementById('verificationCode').value;
+            if (code === '123456' || code.length === 6) {
+                phoneVerified = true;
+                this.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証完了';
+                this.classList.remove('btn-success');
+                this.classList.add('btn-success');
+                this.disabled = true;
+                
+                document.getElementById('nextToStep3').disabled = false;
+                
+                alert('電話認証が完了しました！');
+            } else {
+                alert('正しい認証コードを入力してください。');
+            }
+        });
+
+        // Document type selection
+        function selectDocumentType(type) {
+            document.querySelectorAll('.document-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+            selectedDocumentType = type;
+            
+            document.getElementById('uploadSection').style.display = 'block';
+            console.log('Selected document type:', type);
+        }
+
+        // File upload handling
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFileUpload(file);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            if (file.size > maxSize) {
+                alert('ファイルサイズは5MB以下にしてください。');
+                return;
+            }
+
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('JPG、PNG、またはPDFファイルを選択してください。');
+                return;
+            }
+
+            // Show upload preview
+            const previewArea = document.getElementById('uploadPreview');
+            previewArea.innerHTML = `
+                <div class="alert alert-success mt-3">
+                    <i class="bi bi-check-circle me-2"></i>
+                    <strong>アップロード完了:</strong> ${file.name}
+                    <br><small>ファイルサイズ: ${(file.size / 1024 / 1024).toFixed(2)}MB</small>
+                </div>
+            `;
+            previewArea.style.display = 'block';
+            
+            documentUploaded = true;
+            document.getElementById('completeRegistration').disabled = false;
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+        
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        // Complete registration
+        function completeRegistration() {
+            if (!selectedDocumentType || !documentUploaded) {
+                alert('証明書の種類を選択し、ファイルをアップロードしてください。');
+                return;
+            }
+
             // Get form data
             const formData = {
-                fullName: document.getElementById('fullName').value,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
                 email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
                 nationality: document.getElementById('nationality').value,
-                interests: document.getElementById('interests').value,
+                documentType: selectedDocumentType,
+                phoneVerified: phoneVerified,
+                documentUploaded: documentUploaded,
                 registrationDate: new Date().toISOString(),
                 isRegistered: true
             };
-            
-            // Validate required fields
-            if (!formData.fullName || !formData.email || !formData.nationality || !formData.interests) {
-                alert('すべての項目を入力してください。');
-                return;
-            }
-            
+
             // Save registration data
             localStorage.setItem('touristRegistration', JSON.stringify(formData));
             localStorage.setItem('isRegisteredTourist', 'true');
-            
+
             console.log('Tourist registration completed:', formData);
-            
+
             // Show success message
-            document.querySelector('form').style.display = 'none';
+            document.querySelector('.registration-card').style.display = 'none';
             document.getElementById('successMessage').style.display = 'block';
-            
+
             // Add to parent window if available
             if (window.opener) {
                 window.opener.postMessage({
@@ -221,8 +676,8 @@
                     data: formData
                 }, '*');
             }
-        });
-        
+        }
+
         function returnToMainPage() {
             // Close modal if in popup
             if (window.opener) {
@@ -233,17 +688,18 @@
                 window.location.href = '/index.html';
             }
         }
-        
+
         // Auto-fill if user has previous data
         window.addEventListener('load', function() {
             const existingData = localStorage.getItem('touristRegistration');
             if (existingData) {
                 try {
                     const data = JSON.parse(existingData);
-                    document.getElementById('fullName').value = data.fullName || '';
+                    document.getElementById('firstName').value = data.firstName || '';
+                    document.getElementById('lastName').value = data.lastName || '';
                     document.getElementById('email').value = data.email || '';
+                    document.getElementById('phone').value = data.phone || '';
                     document.getElementById('nationality').value = data.nationality || '';
-                    document.getElementById('interests').value = data.interests || '';
                 } catch (e) {
                     console.log('No previous registration data found');
                 }
