@@ -411,31 +411,21 @@ function openTouristRegistration() {
 }
 
 function openGuideRegistration() {
-    console.log('🎯 Guide registration selected - opening detailed form');
+    console.log('🎯 Guide registration selected - opening PERFECT detailed form');
     hideRegistrationChoice();
     
-    // Show the detailed guide registration form with phone verification & document upload
-    const formContainer = document.getElementById('registrationFormContainer');
-    const originalForm = document.getElementById('detailedGuideRegistrationForm');
-    
-    if (formContainer && originalForm) {
-        formContainer.innerHTML = '';
-        formContainer.appendChild(originalForm);
-        originalForm.style.display = 'block';
-        formContainer.style.display = 'block';
-        
-        // Scroll to form
-        setTimeout(() => {
-            formContainer.scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }, 100);
-        
-        console.log('✅ Detailed guide registration form displayed');
-    } else {
-        console.warn('⚠️ Form container or detailed form not found');
-        alert('ガイド登録フォームの読み込みに失敗しました。ページを再読み込みしてください。');
+    // Open the perfect guide registration form in new window
+    try {
+        const newWindow = window.open('guide-registration-perfect.html', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
+        if (newWindow) {
+            console.log('✅ Perfect guide registration form opened in new window');
+        } else {
+            // Fallback: redirect in same window
+            window.location.href = 'guide-registration-perfect.html';
+        }
+    } catch (error) {
+        console.error('❌ Error opening perfect guide registration form:', error);
+        alert('ガイド登録フォームの表示に問題が発生しました。');
     }
 }
 

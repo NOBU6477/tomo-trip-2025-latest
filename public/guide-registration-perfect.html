@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ガイド登録 - TomoTrip</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .guide-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            margin: 2rem 0;
+        }
+        
+        .guide-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            text-align: center;
+        }
+        
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+        
+        .btn-guide {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .btn-guide:hover {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            color: white;
+        }
+
+        /* Document Upload Styles */
+        .document-upload {
+            border: 2px dashed #28a745;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            margin: 1rem 0;
+        }
+
+        .verification-step {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="guide-container">
+                    <div class="guide-header">
+                        <h1><i class="bi bi-person-plus-fill me-2"></i>新規ガイド登録</h1>
+                        <p class="mb-0">TomoTrip - 観光ガイド募集（電話認証・身分証明書提出必須）</p>
+                    </div>
+                    
+                    <div class="p-4">
+                        <!-- Step 1: Basic Information -->
+                        <div class="verification-step">
+                            <h5 class="text-primary mb-3"><i class="bi bi-1-circle-fill me-2"></i>基本情報</h5>
+                            
+                            <form id="guideRegistrationForm">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="guideName" required>
+                                            <label for="guideName"><i class="bi bi-person me-1"></i>ガイド名</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="email" class="form-control" id="guideEmail" required>
+                                            <label for="guideEmail"><i class="bi bi-envelope me-1"></i>メールアドレス</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <select class="form-control" id="guideGender" required>
+                                                <option value="">選択してください</option>
+                                                <option value="male">男性</option>
+                                                <option value="female">女性</option>
+                                                <option value="other">その他</option>
+                                            </select>
+                                            <label for="guideGender"><i class="bi bi-people me-1"></i>性別</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="number" class="form-control" id="guideAge" min="18" max="80" required>
+                                            <label for="guideAge"><i class="bi bi-calendar me-1"></i>年齢</label>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+
+                        <!-- Step 2: Phone Verification -->
+                        <div class="verification-step">
+                            <h5 class="text-success mb-3"><i class="bi bi-2-circle-fill me-2"></i>電話認証</h5>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="tel" class="form-control" id="guidePhone" required>
+                                        <label for="guidePhone"><i class="bi bi-telephone me-1"></i>電話番号</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-outline-success w-100" id="sendVerificationCode">
+                                        <i class="bi bi-send me-1"></i>認証コード送信
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="row mt-3" id="verificationCodeArea" style="display:none;">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="verificationCode" placeholder="6桁の認証コード">
+                                        <label for="verificationCode"><i class="bi bi-shield-check me-1"></i>認証コード</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn btn-success w-100" id="verifyPhone">
+                                        <i class="bi bi-check-circle me-1"></i>認証確認
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Document Verification -->
+                        <div class="verification-step">
+                            <h5 class="text-warning mb-3"><i class="bi bi-3-circle-fill me-2"></i>身分証明書</h5>
+                            
+                            <div class="form-floating mb-3">
+                                <select class="form-control" id="documentType" required>
+                                    <option value="">選択してください</option>
+                                    <option value="drivers_license">運転免許証（表面・裏面の2枚必須）</option>
+                                    <option value="passport">パスポート（写真ページ1枚）</option>
+                                    <option value="residence_card">住民票（1枚）</option>
+                                    <option value="insurance_card">健康保険証（表面・裏面の2枚必須）</option>
+                                    <option value="mynumber_card">マイナンバーカード（表面のみ1枚）</option>
+                                </select>
+                                <label for="documentType"><i class="bi bi-card-list me-1"></i>提出する証明書タイプ</label>
+                            </div>
+
+                            <div class="document-upload">
+                                <i class="bi bi-cloud-upload text-success" style="font-size: 3rem;"></i>
+                                <h6 class="mt-3">身分証明書をアップロード</h6>
+                                <p class="text-muted">JPG、PNG形式対応（最大5MB）</p>
+                                <input type="file" class="form-control" id="documentFile" accept="image/*" multiple>
+                            </div>
+                        </div>
+
+                        <!-- Professional Information -->
+                        <div class="mt-4">
+                            <h5 class="text-info mb-3"><i class="bi bi-briefcase-fill me-2"></i>ガイド情報</h5>
+                            
+                            <div class="form-floating">
+                                <select class="form-control" id="guideExperience" required>
+                                    <option value="">選択してください</option>
+                                    <option value="beginner">初心者（1年未満）</option>
+                                    <option value="intermediate">中級者（1-3年）</option>
+                                    <option value="advanced">上級者（3年以上）</option>
+                                </select>
+                                <label for="guideExperience"><i class="bi bi-award me-1"></i>経験レベル</label>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <select class="form-control" id="guideLanguages" multiple required style="min-height: 120px;">
+                                    <option value="japanese">日本語</option>
+                                    <option value="english">英語</option>
+                                    <option value="chinese">中国語</option>
+                                    <option value="korean">韓国語</option>
+                                    <option value="spanish">スペイン語</option>
+                                    <option value="french">フランス語</option>
+                                    <option value="german">ドイツ語</option>
+                                    <option value="italian">イタリア語</option>
+                                </select>
+                                <label for="guideLanguages"><i class="bi bi-translate me-1"></i>対応言語（複数選択可）</label>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <textarea class="form-control" id="guideIntroduction" style="height: 120px;" required></textarea>
+                                <label for="guideIntroduction"><i class="bi bi-chat-text me-1"></i>自己紹介・アピールポイント</label>
+                            </div>
+                            
+                            <div class="form-floating">
+                                <textarea class="form-control" id="guideSpecialties" style="height: 100px;" required></textarea>
+                                <label for="guideSpecialties"><i class="bi bi-star me-1"></i>得意分野・専門エリア</label>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="number" class="form-control" id="guideSessionRate" min="6000" max="25000" step="500" required>
+                                        <label for="guideSessionRate"><i class="bi bi-currency-yen me-1"></i>希望セッション料金（円）</label>
+                                        <small class="text-muted">1セッション（2〜3時間程度）の料金を設定してください（￥6,000〜）</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select class="form-control" id="guideAvailability" required>
+                                            <option value="">選択してください</option>
+                                            <option value="weekdays">平日のみ</option>
+                                            <option value="weekends">週末のみ</option>
+                                            <option value="both">平日・週末両方</option>
+                                        </select>
+                                        <label for="guideAvailability"><i class="bi bi-calendar-week me-1"></i>稼働可能日</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Profile Photo Upload -->
+                            <div class="mt-4">
+                                <h6 class="text-primary mb-3"><i class="bi bi-camera me-2"></i>プロフィール写真</h6>
+                                <div class="document-upload">
+                                    <i class="bi bi-person-square text-primary" style="font-size: 3rem;"></i>
+                                    <h6 class="mt-3">ガイドカードに表示される写真</h6>
+                                    <p class="text-muted">風景・人物・任意の写真OK（JPG、PNG対応）</p>
+                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                ガイド規約及び利用規約に同意します
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-guide">
+                                <i class="bi bi-check-circle me-2"></i>完全なガイド登録申請
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="window.close();">
+                                <i class="bi bi-arrow-left me-2"></i>キャンセル
+                            </button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Phone verification simulation
+        document.getElementById('sendVerificationCode').addEventListener('click', function() {
+            const phone = document.getElementById('guidePhone').value;
+            if (!phone) {
+                alert('電話番号を入力してください');
+                return;
+            }
+            
+            // Simulate sending SMS
+            alert(`認証コードを ${phone} に送信しました`);
+            document.getElementById('verificationCodeArea').style.display = 'block';
+        });
+
+        document.getElementById('verifyPhone').addEventListener('click', function() {
+            const code = document.getElementById('verificationCode').value;
+            if (code === '123456' || code.length === 6) {
+                alert('電話認証が完了しました！');
+                document.getElementById('verifyPhone').classList.add('btn-success');
+                document.getElementById('verifyPhone').innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+            } else {
+                alert('認証コードが正しくありません');
+            }
+        });
+
+        // Form submission
+        document.getElementById('guideRegistrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Get selected languages
+            const languageSelect = document.getElementById('guideLanguages');
+            const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
+            data.languages = selectedLanguages;
+            
+            console.log('Perfect guide registration:', data);
+            
+            // Simulate API call
+            setTimeout(() => {
+                const guideId = 'GUIDE_' + Date.now().toString(36).toUpperCase();
+                alert(`完全なガイド登録申請を受け付けました！\n\nガイドID: ${guideId}\n登録名: ${data.guideName}\n対応言語: ${selectedLanguages.join(', ')}\n料金: ¥${Number(data.guideSessionRate).toLocaleString()}\n\n審査完了後、メールでご連絡いたします。`);
+                
+                // Redirect back to main page
+                if (window.opener) {
+                    window.opener.location.reload();
+                    window.close();
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
