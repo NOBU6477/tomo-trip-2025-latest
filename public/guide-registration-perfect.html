@@ -268,57 +268,228 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Phone verification simulation
-        document.getElementById('sendVerificationCode').addEventListener('click', function() {
+        // Phone verification with real API
+        let sessionId = null;
+        
+        document.getElementById('sendVerificationCode').addEventListener('click', async function() {
             const phone = document.getElementById('guidePhone').value;
             if (!phone) {
-                alert('電話番号を入力してください');
+                showToast('電話番号を入力してください', 'error');
                 return;
             }
             
-            // Simulate sending SMS
-            alert(`認証コードを ${phone} に送信しました`);
-            document.getElementById('verificationCodeArea').style.display = 'block';
-        });
-
-        document.getElementById('verifyPhone').addEventListener('click', function() {
-            const code = document.getElementById('verificationCode').value;
-            if (code === '123456' || code.length === 6) {
-                alert('電話認証が完了しました！');
-                document.getElementById('verifyPhone').classList.add('btn-success');
-                document.getElementById('verifyPhone').innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
-            } else {
-                alert('認証コードが正しくありません');
+            // Disable button and show loading
+            const sendBtn = this;
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>送信中...';
+            
+            try {
+                const response = await fetch('/api/guides/send-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message || 'SMS認証コードを送信しました', 'success');
+                    document.getElementById('verificationCodeArea').style.display = 'block';
+                    
+                    // Show simulation code if available (development mode)
+                    if (result.simulationCode) {
+                        showToast(`開発モード: 認証コードは ${result.simulationCode} です`, 'info');
+                    }
+                } else {
+                    showToast(result.message || 'SMS送信に失敗しました', 'error');
+                }
+            } catch (error) {
+                console.error('SMS送信エラー:', error);
+                showToast('ネットワークエラーが発生しました', 'error');
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '<i class="bi bi-phone me-1"></i>認証コード送信';
             }
         });
 
-        // Form submission
-        document.getElementById('guideRegistrationForm').addEventListener('submit', function(e) {
+        document.getElementById('verifyPhone').addEventListener('click', async function() {
+            const phone = document.getElementById('guidePhone').value;
+            const code = document.getElementById('verificationCode').value;
+            
+            if (!code) {
+                showToast('認証コードを入力してください', 'error');
+                return;
+            }
+            
+            // Disable button and show loading
+            const verifyBtn = this;
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>認証中...';
+            
+            try {
+                const response = await fetch('/api/guides/verify-phone', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ phoneNumber: phone, code })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    sessionId = result.sessionId;
+                    showToast(result.message || '電話認証が完了しました！', 'success');
+                    verifyBtn.classList.remove('btn-primary');
+                    verifyBtn.classList.add('btn-success');
+                    verifyBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                    verifyBtn.disabled = true;
+                } else {
+                    showToast(result.message || '認証コードが正しくありません', 'error');
+                    verifyBtn.disabled = false;
+                    verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証';
+                }
+            } catch (error) {
+                console.error('認証エラー:', error);
+                showToast('ネットワークエラーが発生しました', 'error');
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証';
+            }
+        });
+
+        // Form submission with real API
+        document.getElementById('guideRegistrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            if (!sessionId) {
+                showToast('電話認証を完了してください', 'error');
+                return;
+            }
             
-            // Get selected languages
-            const languageSelect = document.getElementById('guideLanguages');
-            const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
-            data.languages = selectedLanguages;
+            // Disable submit button
+            const submitBtn = document.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
             
-            console.log('Perfect guide registration:', data);
-            
-            // Simulate API call
-            setTimeout(() => {
-                const guideId = 'GUIDE_' + Date.now().toString(36).toUpperCase();
-                alert(`完全なガイド登録申請を受け付けました！\n\nガイドID: ${guideId}\n登録名: ${data.guideName}\n対応言語: ${selectedLanguages.join(', ')}\n料金: ¥${Number(data.guideSessionRate).toLocaleString()}\n\n審査完了後、メールでご連絡いたします。`);
+            try {
+                const formData = new FormData(this);
+                const data = Object.fromEntries(formData);
                 
-                // Redirect back to main page
-                if (window.opener) {
-                    window.opener.location.reload();
-                    window.close();
+                // Get selected languages
+                const languageSelect = document.getElementById('guideLanguages');
+                const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
+                data.guideLanguages = selectedLanguages;
+                
+                console.log('Complete guide registration data:', data);
+                
+                const response = await fetch('/api/guides/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sessionId: sessionId,
+                        guideData: data
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(result.message || 'ガイド登録が完了しました！', 'success');
+                    
+                    // Show success modal
+                    setTimeout(() => {
+                        alert(`ガイド登録申請を受け付けました！\n\nガイドID: ${result.guideId}\n登録名: ${data.guideName}\n対応言語: ${selectedLanguages.join(', ')}\n料金: ¥${Number(data.guideSessionRate).toLocaleString()}\n\n審査完了後、メールでご連絡いたします。`);
+                        
+                        // Redirect back to main page
+                        if (window.opener) {
+                            window.opener.location.reload();
+                            window.close();
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                    }, 1000);
                 } else {
-                    window.location.href = 'index.html';
+                    showToast(result.message || '登録に失敗しました', 'error');
                 }
-            }, 1000);
+            } catch (error) {
+                console.error('登録エラー:', error);
+                showToast('ネットワークエラーが発生しました', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        });
+        
+        // Toast notification system
+        function showToast(message, type = 'info') {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast-container');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toastColor = {
+                'success': 'bg-success',
+                'error': 'bg-danger',
+                'info': 'bg-info',
+                'warning': 'bg-warning'
+            }[type] || 'bg-info';
+            
+            const toastIcon = {
+                'success': 'check-circle-fill',
+                'error': 'exclamation-triangle-fill',
+                'info': 'info-circle-fill',
+                'warning': 'exclamation-triangle-fill'
+            }[type] || 'info-circle-fill';
+            
+            const toastHTML = `
+                <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 2000;">
+                    <div class="toast show ${toastColor} text-white" role="alert">
+                        <div class="toast-body">
+                            <i class="bi bi-${toastIcon} me-2"></i>${message}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', toastHTML);
+            
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                const toastContainer = document.querySelector('.toast-container');
+                if (toastContainer) {
+                    toastContainer.remove();
+                }
+            }, 4000);
+        }
+        
+        // Document upload handling placeholder
+        function handleDocumentUpload(inputElement) {
+            const files = inputElement.files;
+            if (files && files.length > 0) {
+                showToast(`${files.length}個のファイルが選択されました`, 'info');
+                // TODO: Implement actual file upload to API
+            }
+        }
+        
+        // Profile photo preview
+        document.getElementById('guideProfilePhoto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('profilePhotoPreview');
+                    if (preview) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    }
+                };
+                reader.readAsDataURL(file);
+                showToast('プロフィール写真が選択されました', 'info');
+            }
         });
     </script>
 </body>
