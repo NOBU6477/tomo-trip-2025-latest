@@ -6379,6 +6379,9 @@
             document.getElementById('proceedToRegistration').addEventListener('click', function() {
                 console.log('🚀 User confirmed - proceeding to registration');
                 
+                // Hide modal first
+                modal.hide();
+                
                 // Store the target guide ID for after registration
                 sessionStorage.setItem('targetGuideId', guideId);
                 
@@ -6416,34 +6419,13 @@
                         }, 3000);
                     }
                 });
-                
-                return;
-            }
+            });
             
-            console.log('❌ User declined registration');
-            
-            // Setup proceed button event
-            const proceedBtn = document.getElementById('proceedToRegistration');
-            if (proceedBtn) {
-                proceedBtn.addEventListener('click', function() {
-                    const targetGuideId = this.getAttribute('data-guide-id');
-                    console.log('🚀 Proceeding to registration for guide:', targetGuideId);
-                    
-                    // Store the target guide ID for after registration
-                    sessionStorage.setItem('targetGuideId', targetGuideId);
-                    
-                    // Close modal
-                    modal.hide();
-                    
-                    // Open tourist registration in a centered window
-                    setTimeout(() => {
-                        const width = 800;
-                        const height = 900;
-                        const left = (screen.width - width) / 2;
-                        const top = (screen.height - height) / 2;
-                        
-                        const registrationWindow = window.open(
-                            '/tourist-registration-simple.html',
+            // Clean up modal when hidden
+            document.getElementById('registrationPromptModal').addEventListener('hidden.bs.modal', function() {
+                console.log('🧹 Cleaning up registration prompt modal');
+                this.remove();
+            });
                             'touristRegistration',
                             `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
                         );
