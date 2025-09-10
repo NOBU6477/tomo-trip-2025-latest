@@ -56,6 +56,30 @@
             margin: 1rem 0;
         }
 
+        .photo-preview {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            border: 2px solid #28a745;
+            margin: 10px;
+            object-fit: cover;
+        }
+
+        .dual-upload {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .upload-section {
+            border: 2px dashed #28a745;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            background: #f8f9fa;
+        }
+
         .verification-step {
             background: linear-gradient(135deg, #e3f2fd, #bbdefb);
             border-radius: 15px;
@@ -165,11 +189,41 @@
                                 <label for="documentType"><i class="bi bi-card-list me-1"></i>提出する証明書タイプ</label>
                             </div>
 
-                            <div class="document-upload">
-                                <i class="bi bi-cloud-upload text-success" style="font-size: 3rem;"></i>
-                                <h6 class="mt-3">身分証明書をアップロード</h6>
-                                <p class="text-muted">JPG、PNG形式対応（最大5MB）</p>
-                                <input type="file" class="form-control" id="documentFile" accept="image/*" multiple>
+                            <div id="documentUploadArea">
+                                <div class="document-upload" id="singleUpload">
+                                    <i class="bi bi-cloud-upload text-success" style="font-size: 3rem;"></i>
+                                    <h6 class="mt-3">身分証明書をアップロード</h6>
+                                    <p class="text-muted">JPG、PNG形式対応（最大5MB）</p>
+                                    <input type="file" class="form-control" id="documentFile" accept="image/*">
+                                    <div id="documentPreview" class="mt-3" style="display:none;">
+                                        <img id="previewImage" class="photo-preview" alt="プレビュー">
+                                        <p class="text-success mt-2"><i class="bi bi-check-circle"></i> アップロード完了</p>
+                                    </div>
+                                </div>
+                                
+                                <div id="dualUpload" style="display:none;">
+                                    <h6 class="text-center mb-3">表面と裏面の両方をアップロードしてください</h6>
+                                    <div class="dual-upload">
+                                        <div class="upload-section">
+                                            <i class="bi bi-card-image text-primary" style="font-size: 2rem;"></i>
+                                            <h6 class="mt-2">表面</h6>
+                                            <input type="file" class="form-control" id="documentFront" accept="image/*">
+                                            <div id="frontPreview" class="mt-2" style="display:none;">
+                                                <img id="frontImage" class="photo-preview" alt="表面プレビュー">
+                                                <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
+                                            </div>
+                                        </div>
+                                        <div class="upload-section">
+                                            <i class="bi bi-card-image text-secondary" style="font-size: 2rem;"></i>
+                                            <h6 class="mt-2">裏面</h6>
+                                            <input type="file" class="form-control" id="documentBack" accept="image/*">
+                                            <div id="backPreview" class="mt-2" style="display:none;">
+                                                <img id="backImage" class="photo-preview" alt="裏面プレビュー">
+                                                <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -240,6 +294,10 @@
                                     <h6 class="mt-3">ガイドカードに表示される写真</h6>
                                     <p class="text-muted">風景・人物・任意の写真OK（JPG、PNG対応）</p>
                                     <input type="file" class="form-control" id="profilePhoto" accept="image/*" required>
+                                    <div id="profilePreview" class="mt-3" style="display:none;">
+                                        <img id="profileImage" class="photo-preview" alt="プロフィール写真プレビュー">
+                                        <p class="text-success mt-2"><i class="bi bi-check-circle"></i> プロフィール写真アップロード完了</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,6 +326,92 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Phone number formatting utility
+        function formatPhoneNumber(phone) {
+            // Remove all non-digits
+            const digitsOnly = phone.replace(/\D/g, '');
+            
+            // Convert Japanese mobile numbers to international format
+            if (digitsOnly.startsWith('090') || digitsOnly.startsWith('080') || digitsOnly.startsWith('070')) {
+                if (digitsOnly.length === 11) {
+                    return '+81' + digitsOnly.slice(1); // Remove leading 0 and add +81
+                }
+            }
+            
+            // If already international format
+            if (digitsOnly.startsWith('81') && digitsOnly.length === 12) {
+                return '+' + digitsOnly;
+            }
+            
+            return null; // Invalid format
+        }
+
+        // Document type handling and photo preview
+        function setupDocumentUpload() {
+            const documentType = document.getElementById('documentType');
+            const singleUpload = document.getElementById('singleUpload');
+            const dualUpload = document.getElementById('dualUpload');
+            
+            documentType.addEventListener('change', function() {
+                const selectedType = this.value;
+                
+                if (selectedType === 'drivers_license' || selectedType === 'insurance_card') {
+                    // Show dual upload for front/back
+                    singleUpload.style.display = 'none';
+                    dualUpload.style.display = 'block';
+                } else {
+                    // Show single upload
+                    singleUpload.style.display = 'block';
+                    dualUpload.style.display = 'none';
+                }
+            });
+            
+            // Setup preview for single document
+            setupImagePreview('documentFile', 'documentPreview', 'previewImage');
+            
+            // Setup preview for dual documents
+            setupImagePreview('documentFront', 'frontPreview', 'frontImage');
+            setupImagePreview('documentBack', 'backPreview', 'backImage');
+            
+            // Setup profile photo preview
+            setupImagePreview('profilePhoto', 'profilePreview', 'profileImage');
+        }
+        
+        function setupImagePreview(inputId, previewId, imageId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const image = document.getElementById(imageId);
+            
+            if (!input || !preview || !image) return;
+            
+            input.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    // Validate file size (5MB max)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showToast('ファイルサイズが大きすぎます（最大5MB）', 'error');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    // Validate file type
+                    if (!file.type.match('image.*')) {
+                        showToast('画像ファイルを選択してください', 'error');
+                        input.value = '';
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        image.src = e.target.result;
+                        preview.style.display = 'block';
+                        showToast('画像がアップロードされました', 'success');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
         // Phone verification with real API
         let sessionId = null;
         
@@ -275,6 +419,13 @@
             const phone = document.getElementById('guidePhone').value;
             if (!phone) {
                 showToast('電話番号を入力してください', 'error');
+                return;
+            }
+            
+            // Convert Japanese phone number to international format
+            const formattedPhone = formatPhoneNumber(phone);
+            if (!formattedPhone) {
+                showToast('有効な電話番号を入力してください（例：090-1234-5678）', 'error');
                 return;
             }
             
@@ -289,7 +440,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ phoneNumber: phone })
+                    body: JSON.stringify({ phoneNumber: formattedPhone })
                 });
                 
                 const result = await response.json();
@@ -315,7 +466,7 @@
         });
 
         document.getElementById('verifyPhone').addEventListener('click', async function() {
-            const phone = document.getElementById('guidePhone').value;
+            const phone = formatPhoneNumber(document.getElementById('guidePhone').value);
             const code = document.getElementById('verificationCode').value;
             
             if (!code) {
@@ -490,6 +641,10 @@
                 reader.readAsDataURL(file);
                 showToast('プロフィール写真が選択されました', 'info');
             }
+        });
+        // Initialize document upload system
+        document.addEventListener('DOMContentLoaded', function() {
+            setupDocumentUpload();
         });
     </script>
 </body>
