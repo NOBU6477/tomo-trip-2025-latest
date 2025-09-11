@@ -491,12 +491,28 @@
                 
                 if (result.success) {
                     loadingModal.hide();
-                    alert('ガイド情報を正常に更新しました！');
+                    showToast('ガイド情報を正常に更新しました！', 'success');
                     
                     // メインページをリロードして最新情報を反映
                     if (window.opener) {
-                        window.opener.location.reload();
+                        // Use the global refresh function if available
+                        if (window.opener.refreshGuideData) {
+                            await window.opener.refreshGuideData();
+                        } else {
+                            window.opener.location.reload();
+                        }
                     }
+                    
+                    // Optionally redirect back to main page after a delay
+                    setTimeout(() => {
+                        if (confirm('編集が完了しました。メインページに戻りますか？')) {
+                            if (window.opener) {
+                                window.close();
+                            } else {
+                                window.location.href = 'index.html';
+                            }
+                        }
+                    }, 2000);
                     
                 } else {
                     throw new Error(result.message || '更新に失敗しました');

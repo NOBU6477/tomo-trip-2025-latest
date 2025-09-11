@@ -20,13 +20,53 @@ if (isReplitIframe) {
     log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
 }
 
+// Dynamic guide data loading from API
+async function loadGuidesFromAPI() {
+    try {
+        const response = await fetch('/api/guides');
+        const result = await response.json();
+        
+        if (result.success && result.guides) {
+            // Convert server format to frontend format
+            const apiGuides = result.guides.map(guide => ({
+                id: guide.id,
+                name: guide.name || guide.guideName,
+                location: guide.location || 'tokyo',
+                rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.5,
+                price: guide.sessionRate || guide.guideSessionRate || 0,
+                image: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                languages: Array.isArray(guide.languages) ? guide.languages : (guide.guideLanguages || ['日本語']),
+                specialties: guide.specialties ? guide.specialties.split(',').map(s => s.trim()) : (guide.guideSpecialties ? guide.guideSpecialties.split(',').map(s => s.trim()) : []),
+                photo: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                tags: guide.specialties ? guide.specialties.split(',').map(s => s.trim()) : [],
+                availability: guide.availability || guide.guideAvailability || 'weekdays',
+                experience: guide.experience || guide.guideExperience || 'intermediate',
+                introduction: guide.introduction || guide.guideIntroduction || '',
+                email: guide.email || guide.guideEmail,
+                phone: guide.phoneNumber,
+                status: guide.status || 'approved'
+            }));
+            
+            console.log(`✅ Loaded ${apiGuides.length} guides from API`);
+            return [...defaultGuideData, ...apiGuides.filter(guide => guide.status === 'approved')];
+        }
+        
+        console.log('📋 Using default guide data - API returned no results');
+        return defaultGuideData;
+        
+    } catch (error) {
+        console.error('❌ Error loading guides from API:', error);
+        console.log('📋 Falling back to default guide data');
+        return defaultGuideData;
+    }
+}
+
 /** Main application initialization function - TDZ safe with AppState */
-function appInit() {
+async function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
     
-    // 1) Force use default guide data for consistency across all environments
-    // This eliminates localStorage differences between editor and separate tabs
-    const guides = defaultGuideData;
+    // 1) Load guides dynamically from API + default data
+    const guides = await loadGuidesFromAPI();
     
     // Clear any localStorage differences that might affect guide count
     localStorage.removeItem('registeredGuides');
@@ -34,7 +74,7 @@ function appInit() {
     
     console.log('🎯 Environment Data Sync:', {
         guides: guides.length,
-        source: 'defaultGuideData (forced)',
+        source: 'API + defaultGuideData (dynamic)',
         localStorage_cleared: true
     });
 
@@ -68,8 +108,64 @@ function appInit() {
     wireSponsorButtons();
     wireLanguageSwitcher();
     
-    log.ok('✅ Application initialized successfully with AppState');
+    // 5) Setup automatic refresh for new guides every 30 seconds
+    setInterval(async () => {
+        await refreshGuideData();
+    }, 30000);
+    
+    log.ok('✅ Application initialized successfully with dynamic guide data');
 }
+
+// Refresh guide data and update display
+async function refreshGuideData() {
+    try {
+        const newGuides = await loadGuidesFromAPI();
+        const currentCount = AppState.guides.length;
+        const newCount = newGuides.length;
+        
+        if (newCount !== currentCount) {
+            console.log(`🔄 Guide data updated: ${currentCount} → ${newCount} guides`);
+            AppState.guides = newGuides;
+            renderGuideCards(newGuides);
+            displayGuides(AppState.currentPage, AppState);
+            
+            // Show notification for new guides
+            if (newCount > currentCount) {
+                showNewGuideNotification(newCount - currentCount);
+            }
+        }
+    } catch (error) {
+        console.error('❌ Error refreshing guide data:', error);
+    }
+}
+
+// Show notification for newly added guides
+function showNewGuideNotification(count) {
+    const notification = document.createElement('div');
+    notification.className = 'toast-container position-fixed top-0 end-0 p-3';
+    notification.style.zIndex = '9999';
+    notification.innerHTML = `
+        <div class="toast show" role="alert">
+            <div class="toast-header">
+                <i class="bi bi-person-plus-fill text-success me-2"></i>
+                <strong class="me-auto">TomoTrip</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                ${count}名の新しいガイドが追加されました！
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 5000);
+}
+
+// Make refresh function globally available for guide edit page
+window.refreshGuideData = refreshGuideData;
 
 // Call initialization when module loads
 if (document.readyState === 'loading') {
