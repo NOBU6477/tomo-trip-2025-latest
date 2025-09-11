@@ -17,26 +17,24 @@ console.log('🚀 Starting TomoTrip integrated server...');
 // Create Express app
 const app = express();
 
-// Middleware setup - Restrict CORS for security
-const allowedOrigins = process.env.ALLOWED_ORIGINS ? 
-  process.env.ALLOWED_ORIGINS.split(',') : 
-  ['http://localhost:5000', 'https://*.repl.co', 'https://*.replit.dev'];
-
+// Middleware setup - Allow all origins for development (fix CORS issues)
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
-    // Check if origin is allowed
-    const isAllowed = allowedOrigins.some(allowedOrigin => {
-      if (allowedOrigin.includes('*')) {
-        const pattern = allowedOrigin.replace(/\*/g, '.*');
-        return new RegExp(pattern).test(origin);
-      }
-      return allowedOrigin === origin;
-    });
+    // In development, allow all replit.dev domains and localhost
+    const allowedPatterns = [
+      /^https:\/\/.*\.replit\.dev$/,
+      /^https:\/\/.*\.repl\.co$/,
+      /^http:\/\/localhost:\d+$/,
+      /^http:\/\/127\.0\.0\.1:\d+$/
+    ];
+    
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
     
     if (isAllowed) {
+      console.log(`✅ CORS allowed origin: ${origin}`);
       callback(null, true);
     } else {
       console.warn(`🚫 CORS blocked origin: ${origin}`);

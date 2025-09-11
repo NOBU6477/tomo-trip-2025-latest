@@ -1,0 +1,24 @@
+[
+  {
+    "id": "577f0c89-fa4f-44e8-8f7f-a4ddb9431767",
+    "guideName": "テスト太郎",
+    "guideEmail": "test@example.com",
+    "guideGender": "male",
+    "guideAge": "30",
+    "guideExperience": "intermediate",
+    "guideLanguages": [
+      "日本語",
+      "英語"
+    ],
+    "guideIntroduction": "地元の魅力をお伝えします",
+    "guideSpecialties": "グルメ, 歴史",
+    "guideSessionRate": "8000",
+    "guideAvailability": "both",
+    "phoneNumber": "+819012345678",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-11T14:36:00.310Z",
+    "updatedAt": "2025-09-11T14:36:00.310Z"
+  }
+]

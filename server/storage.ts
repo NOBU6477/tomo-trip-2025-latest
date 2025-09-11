@@ -149,6 +149,14 @@ export class DatabaseStorage implements IStorage {
     return guide;
   }
 
+  async getAllTourismGuides(): Promise<TourismGuide[]> {
+    return await db
+      .select()
+      .from(tourismGuides)
+      .where(eq(tourismGuides.isAvailable, true))
+      .orderBy(desc(tourismGuides.createdAt));
+  }
+
   // Experience Program operations
   async createExperienceProgram(program: InsertExperienceProgram): Promise<ExperienceProgram> {
     const [newProgram] = await db

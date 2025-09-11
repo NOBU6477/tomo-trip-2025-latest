@@ -3,6 +3,9 @@
 const { smsService } = require('./smsService');
 const { ObjectStorageService } = require('./objectStorage');
 const { adminAuthService } = require('./adminAuth');
+// Database storage - use simple file storage for now
+const fs = require('fs');
+const path = require('path');
 const multer = require('multer');
 const { randomUUID } = require('crypto');
 
@@ -26,8 +29,65 @@ const upload = multer({
 class GuideAPIService {
   constructor() {
     this.objectStorage = new ObjectStorageService();
-    this.guides = new Map(); // In-memory storage (use database in production)
+    this.guidesFilePath = path.join(__dirname, '../data/guides.json');
     this.pendingRegistrations = new Map(); // Temporary storage for incomplete registrations
+    this.ensureDataDirectory();
+  }
+
+  // Ensure data directory exists
+  ensureDataDirectory() {
+    const dataDir = path.join(__dirname, '../data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    if (!fs.existsSync(this.guidesFilePath)) {
+      fs.writeFileSync(this.guidesFilePath, JSON.stringify([], null, 2));
+    }
+  }
+
+  // Load guides from file
+  loadGuides() {
+    try {
+      const data = fs.readFileSync(this.guidesFilePath, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error loading guides:', error);
+      return [];
+    }
+  }
+
+  // Save guides to file
+  saveGuides(guides) {
+    try {
+      fs.writeFileSync(this.guidesFilePath, JSON.stringify(guides, null, 2));
+    } catch (error) {
+      console.error('Error saving guides:', error);
+    }
+  }
+
+  // Add guide to storage
+  addGuide(guide) {
+    const guides = this.loadGuides();
+    guides.push(guide);
+    this.saveGuides(guides);
+  }
+
+  // Update guide in storage
+  updateGuideInStorage(guideId, updates) {
+    const guides = this.loadGuides();
+    const index = guides.findIndex(g => g.id === guideId);
+    if (index !== -1) {
+      guides[index] = { ...guides[index], ...updates, updatedAt: new Date().toISOString() };
+      this.saveGuides(guides);
+      return guides[index];
+    }
+    return null;
+  }
+
+  // Get guide by ID from storage
+  getGuideFromStorage(guideId) {
+    const guides = this.loadGuides();
+    return guides.find(g => g.id === guideId);
   }
 
   // Initialize API routes
@@ -333,8 +393,8 @@ class GuideAPIService {
         updatedAt: new Date().toISOString()
       };
 
-      // Store guide (in production, save to database)
-      this.guides.set(guideId, guide);
+      // Store guide in file storage for persistence
+      this.addGuide(guide);
 
       // Clean up session
       this.pendingRegistrations.delete(sessionId);
@@ -367,21 +427,24 @@ class GuideAPIService {
   // Get public guide list (approved guides only)
   async getGuides(req, res) {
     try {
-      const approvedGuides = Array.from(this.guides.values())
+      // Get all approved guides from file storage
+      const allGuides = this.loadGuides();
+      
+      const approvedGuides = allGuides
         .filter(guide => guide.status === 'approved')
         .map(guide => ({
           id: guide.id,
           name: guide.guideName,
           email: guide.guideEmail,
-          location: guide.guideLocation || 'tokyo',
-          languages: guide.guideLanguages,
+          location: 'tokyo', // Default location for now
+          languages: Array.isArray(guide.guideLanguages) ? guide.guideLanguages : [guide.guideLanguages],
           specialties: guide.guideSpecialties,
           experience: guide.guideExperience,
           sessionRate: guide.guideSessionRate,
           availability: guide.guideAvailability,
           profilePhoto: guide.profilePhoto?.fileName,
           introduction: guide.guideIntroduction,
-          averageRating: guide.averageRating || 4.8,
+          averageRating: 4.8,
           status: guide.status,
           registeredAt: guide.registeredAt
         }))
@@ -560,7 +623,7 @@ class GuideAPIService {
   async getGuideById(req, res) {
     try {
       const { id } = req.params;
-      const guide = this.guides.get(id);
+      const guide = this.getGuideFromStorage(id);
       
       if (!guide) {
         return res.status(404).json({
@@ -589,7 +652,7 @@ class GuideAPIService {
       const { id } = req.params;
       const updates = req.body;
       
-      const existingGuide = this.guides.get(id);
+      const existingGuide = this.getGuideFromStorage(id);
       if (!existingGuide) {
         return res.status(404).json({
           success: false,
@@ -598,34 +661,34 @@ class GuideAPIService {
       }
 
       // Update guide data while preserving critical fields
-      const updatedGuide = {
-        ...existingGuide,
+      const updatedGuide = this.updateGuideInStorage(id, {
         ...updates,
-        id: existingGuide.id, // Preserve ID
-        phoneNumber: existingGuide.phoneNumber, // Preserve phone
-        guideEmail: existingGuide.guideEmail, // Preserve email
-        phoneVerified: existingGuide.phoneVerified, // Preserve verification status
-        documents: existingGuide.documents, // Preserve documents
-        registeredAt: existingGuide.registeredAt, // Preserve registration date
-        updatedAt: new Date().toISOString() // Update timestamp
-      };
-
-      // Save updated guide
-      this.guides.set(id, updatedGuide);
-
-      console.log(`✅ Guide updated: ${updatedGuide.guideName} (${id})`);
-
-      res.json({
-        success: true,
-        message: 'ガイド情報が正常に更新されました',
-        guide: {
-          id: updatedGuide.id,
-          name: updatedGuide.guideName,
-          email: updatedGuide.guideEmail,
-          status: updatedGuide.status,
-          updatedAt: updatedGuide.updatedAt
-        }
+        // Preserve critical fields
+        id: existingGuide.id,
+        phoneNumber: existingGuide.phoneNumber,
+        guideEmail: existingGuide.guideEmail,
+        phoneVerified: existingGuide.phoneVerified,
+        documents: existingGuide.documents,
+        registeredAt: existingGuide.registeredAt
       });
+
+      if (updatedGuide) {
+        console.log(`✅ Guide updated: ${updatedGuide.guideName} (${id})`);
+
+        res.json({
+          success: true,
+          message: 'ガイド情報が正常に更新されました',
+          guide: {
+            id: updatedGuide.id,
+            name: updatedGuide.guideName,
+            email: updatedGuide.guideEmail,
+            status: updatedGuide.status,
+            updatedAt: updatedGuide.updatedAt
+          }
+        });
+      } else {
+        throw new Error('Guide update failed');
+      }
 
     } catch (error) {
       console.error('❌ Error updating guide:', error);
