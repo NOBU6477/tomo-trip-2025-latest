@@ -607,16 +607,21 @@
                 if (result.success) {
                     showToast(result.message || 'ガイド登録が完了しました！', 'success');
                     
-                    // Show success modal
+                    // Show success modal with edit option
                     setTimeout(() => {
-                        alert(`ガイド登録申請を受け付けました！\n\nガイドID: ${result.guideId}\n登録名: ${data.guideName}\n対応言語: ${selectedLanguages.join(', ')}\n料金: ¥${Number(data.guideSessionRate).toLocaleString()}\n\n審査完了後、メールでご連絡いたします。`);
+                        const userChoice = confirm(`ガイド登録申請を受け付けました！\n\nガイドID: ${result.guideId}\n登録名: ${data.guideName}\n対応言語: ${selectedLanguages.join(', ')}\n料金: ¥${Number(data.guideSessionRate).toLocaleString()}\n\n[OK] ガイド情報を編集する\n[キャンセル] メインページに戻る`);
                         
-                        // Redirect back to main page
-                        if (window.opener) {
-                            window.opener.location.reload();
-                            window.close();
+                        if (userChoice) {
+                            // ガイド編集画面に遷移
+                            window.location.href = `guide-edit.html?id=${result.guideId}`;
                         } else {
-                            window.location.href = 'index.html';
+                            // Redirect back to main page
+                            if (window.opener) {
+                                window.opener.location.reload();
+                                window.close();
+                            } else {
+                                window.location.href = 'index.html';
+                            }
                         }
                     }, 1000);
                 } else {

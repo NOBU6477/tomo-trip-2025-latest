@@ -43,7 +43,10 @@ class GuideAPIService {
     // Guide registration endpoints
     app.post('/api/guides/register', this.registerGuide.bind(this));
     app.get('/api/guides', this.getGuides.bind(this));
-    app.get('/api/guides/:id', this.getGuide.bind(this));
+    
+    // Guide editing endpoints
+    app.get('/api/guides/:id', this.getGuideById.bind(this));
+    app.put('/api/guides/:id/edit', this.updateGuide.bind(this));
     
     // Admin endpoints
     app.get('/api/admin/guides', adminAuthService.requireAuth('support'), this.getGuidesAdmin.bind(this));
@@ -542,6 +545,86 @@ class GuideAPIService {
         success: false,
         error: 'REJECTION_ERROR',
         message: 'ガイド拒否中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Get guide by ID for editing
+  async getGuideById(req, res) {
+    try {
+      const { id } = req.params;
+      const guide = this.guides.get(id);
+      
+      if (!guide) {
+        return res.status(404).json({
+          success: false,
+          message: 'ガイドが見つかりません'
+        });
+      }
+
+      res.json({
+        success: true,
+        guide: guide
+      });
+
+    } catch (error) {
+      console.error('❌ Error getting guide:', error);
+      res.status(500).json({
+        success: false,
+        message: 'ガイド情報の取得中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Update guide information
+  async updateGuide(req, res) {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      
+      const existingGuide = this.guides.get(id);
+      if (!existingGuide) {
+        return res.status(404).json({
+          success: false,
+          message: 'ガイドが見つかりません'
+        });
+      }
+
+      // Update guide data while preserving critical fields
+      const updatedGuide = {
+        ...existingGuide,
+        ...updates,
+        id: existingGuide.id, // Preserve ID
+        phoneNumber: existingGuide.phoneNumber, // Preserve phone
+        guideEmail: existingGuide.guideEmail, // Preserve email
+        phoneVerified: existingGuide.phoneVerified, // Preserve verification status
+        documents: existingGuide.documents, // Preserve documents
+        registeredAt: existingGuide.registeredAt, // Preserve registration date
+        updatedAt: new Date().toISOString() // Update timestamp
+      };
+
+      // Save updated guide
+      this.guides.set(id, updatedGuide);
+
+      console.log(`✅ Guide updated: ${updatedGuide.guideName} (${id})`);
+
+      res.json({
+        success: true,
+        message: 'ガイド情報が正常に更新されました',
+        guide: {
+          id: updatedGuide.id,
+          name: updatedGuide.guideName,
+          email: updatedGuide.guideEmail,
+          status: updatedGuide.status,
+          updatedAt: updatedGuide.updatedAt
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Error updating guide:', error);
+      res.status(500).json({
+        success: false,
+        message: 'ガイド情報の更新中にエラーが発生しました'
       });
     }
   }
