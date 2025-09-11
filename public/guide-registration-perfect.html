@@ -238,7 +238,7 @@
                             <h5 class="text-info mb-3"><i class="bi bi-briefcase-fill me-2"></i>ガイド情報</h5>
                             
                             <div class="form-floating">
-                                <select class="form-control" id="guideExperience" required>
+                                <select class="form-control" id="guideExperience" name="guideExperience" required>
                                     <option value="">選択してください</option>
                                     <option value="beginner">初心者（1年未満）</option>
                                     <option value="intermediate">中級者（1-3年）</option>
@@ -262,12 +262,12 @@
                             </div>
                             
                             <div class="form-floating">
-                                <textarea class="form-control" id="guideIntroduction" style="height: 120px;" required></textarea>
+                                <textarea class="form-control" id="guideIntroduction" name="guideIntroduction" style="height: 120px;" required></textarea>
                                 <label for="guideIntroduction"><i class="bi bi-chat-text me-1"></i>自己紹介・アピールポイント</label>
                             </div>
                             
                             <div class="form-floating">
-                                <textarea class="form-control" id="guideSpecialties" style="height: 100px;" required></textarea>
+                                <textarea class="form-control" id="guideSpecialties" name="guideSpecialties" style="height: 100px;" required></textarea>
                                 <label for="guideSpecialties"><i class="bi bi-star me-1"></i>得意分野・専門エリア</label>
                             </div>
                             
@@ -281,7 +281,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <select class="form-control" id="guideAvailability" required>
+                                        <select class="form-control" id="guideAvailability" name="guideAvailability" required>
                                             <option value="">選択してください</option>
                                             <option value="weekdays">平日のみ</option>
                                             <option value="weekends">週末のみ</option>
@@ -309,7 +309,7 @@
                         </div>
                         
                         <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                            <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
                             <label class="form-check-label" for="agreeTerms">
                                 ガイド規約及び利用規約に同意します
                             </label>
@@ -589,6 +589,7 @@
                 data.guideLanguages = selectedLanguages;
                 
                 console.log('Complete guide registration data:', data);
+                console.log('FormData keys:', Object.keys(data));
                 
                 const response = await fetch('/api/guides/register', {
                     method: 'POST',
