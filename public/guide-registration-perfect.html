@@ -607,22 +607,9 @@
                 if (result.success) {
                     showToast(result.message || 'ガイド登録が完了しました！', 'success');
                     
-                    // Show success modal with edit option
+                    // Show beautiful success modal with edit option
                     setTimeout(() => {
-                        const userChoice = confirm(`ガイド登録申請を受け付けました！\n\nガイドID: ${result.guideId}\n登録名: ${data.guideName}\n対応言語: ${selectedLanguages.join(', ')}\n料金: ¥${Number(data.guideSessionRate).toLocaleString()}\n\n[OK] ガイド情報を編集する\n[キャンセル] メインページに戻る`);
-                        
-                        if (userChoice) {
-                            // ガイド編集画面に遷移
-                            window.location.href = `guide-edit.html?id=${result.guideId}`;
-                        } else {
-                            // Redirect back to main page
-                            if (window.opener) {
-                                window.opener.location.reload();
-                                window.close();
-                            } else {
-                                window.location.href = 'index.html';
-                            }
-                        }
+                        showRegistrationCompleteModal(result.guideId, data.guideName, selectedLanguages, data.guideSessionRate);
                     }, 1000);
                 } else {
                     processServerError(result.message || '登録に失敗しました');
@@ -761,6 +748,176 @@
             console.log('Initializing TomoTrip guide registration...');
             setupDocumentUpload();
         });
+        // Beautiful Registration Complete Modal
+        function showRegistrationCompleteModal(guideId, guideName, selectedLanguages, sessionRate) {
+            // Create modal HTML
+            const modalHTML = `
+                <div class="modal fade" id="registrationCompleteModal" tabindex="-1" aria-hidden="true" style="z-index: 3000;">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content" style="border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                            <div class="modal-body p-0" style="border-radius: 20px; overflow: hidden; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <!-- Header Section -->
+                                <div class="text-center py-5 px-4" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+                                    <div class="mb-4">
+                                        <div class="success-icon-container" style="display: inline-block; animation: bounce 1s ease-in-out;">
+                                            <i class="bi bi-check-circle-fill" style="font-size: 4rem; color: #00E676; text-shadow: 0 0 20px rgba(0,230,118,0.5);"></i>
+                                        </div>
+                                    </div>
+                                    <h2 class="text-white fw-bold mb-3" style="text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
+                                        🎉 ガイド登録完了！
+                                    </h2>
+                                    <p class="text-white-50 mb-0" style="font-size: 1.1rem;">
+                                        ガイド情報の登録が正常に完了しました
+                                    </p>
+                                </div>
+                                
+                                <!-- Guide Info Section -->
+                                <div class="px-5 py-4" style="background: rgba(255,255,255,0.95);">
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-person-circle text-white"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">ガイド名</small>
+                                                    <div class="fw-bold">${guideName}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #ff6b6b, #ee5a24); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-currency-yen text-white"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">セッション料金</small>
+                                                    <div class="fw-bold">¥${Number(sessionRate).toLocaleString()}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #00d2ff, #3a7bd5); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-translate text-white"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">対応言語</small>
+                                                    <div class="fw-bold">${selectedLanguages.join(', ')}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex align-items-center">
+                                                <div class="me-3" style="width: 40px; height: 40px; background: linear-gradient(135deg, #a8e6cf, #88d8c0); border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                    <i class="bi bi-key text-white"></i>
+                                                </div>
+                                                <div>
+                                                    <small class="text-muted">ガイドID</small>
+                                                    <div class="fw-bold font-monospace">${guideId}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px;">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <strong>次にやること：</strong> ガイド情報をさらに詳しく編集するか、メインページでガイド一覧を確認できます。
+                                    </div>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="p-4" style="background: #f8f9fa;">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-lg w-100 py-3" onclick="redirectToEditPage('${guideId}')" 
+                                                    style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 15px; color: white; font-weight: 600; box-shadow: 0 8px 20px rgba(102,126,234,0.3); transition: all 0.3s ease;"
+                                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(102,126,234,0.4)'"
+                                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(102,126,234,0.3)'">
+                                                <i class="bi bi-pencil-square me-2"></i>
+                                                ガイド情報を編集する
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-lg w-100 py-3" onclick="redirectToMainPage()" 
+                                                    style="background: linear-gradient(135deg, #6c757d, #495057); border: none; border-radius: 15px; color: white; font-weight: 600; box-shadow: 0 8px 20px rgba(108,117,125,0.3); transition: all 0.3s ease;"
+                                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(108,117,125,0.4)'"
+                                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(108,117,125,0.3)'">
+                                                <i class="bi bi-house me-2"></i>
+                                                メインページに戻る
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <style>
+                @keyframes bounce {
+                    0%, 20%, 53%, 80%, 100% { transform: translate3d(0,0,0); }
+                    40%, 43% { transform: translate3d(0,-30px,0); }
+                    70% { transform: translate3d(0,-15px,0); }
+                    90% { transform: translate3d(0,-4px,0); }
+                }
+                
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translate3d(0, 40px, 0);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translate3d(0, 0, 0);
+                    }
+                }
+                
+                .modal.show .modal-dialog {
+                    animation: fadeInUp 0.5s ease-out;
+                }
+                </style>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('registrationCompleteModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('registrationCompleteModal'), {
+                backdrop: 'static',
+                keyboard: false
+            });
+            modal.show();
+        }
+        
+        function redirectToEditPage(guideId) {
+            window.location.href = `guide-edit.html?id=${guideId}`;
+        }
+        
+        function redirectToMainPage() {
+            // Close modal first
+            const modal = bootstrap.Modal.getInstance(document.getElementById('registrationCompleteModal'));
+            if (modal) modal.hide();
+            
+            // Redirect back to main page
+            if (window.opener && window.opener.refreshGuideData) {
+                // If opened from main page, refresh it and close this window
+                window.opener.refreshGuideData();
+                setTimeout(() => window.close(), 500);
+            } else if (window.opener) {
+                window.opener.location.reload();
+                setTimeout(() => window.close(), 500);
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
     </script>
 </body>
 </html>

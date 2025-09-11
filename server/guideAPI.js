@@ -328,7 +328,7 @@ class GuideAPIService {
         phoneVerified: true,
         documents: session.documents || [],
         profilePhoto: session.profilePhoto,
-        status: 'pending', // pending, approved, rejected
+        status: 'approved', // Auto-approve for development/demo
         registeredAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
@@ -372,13 +372,20 @@ class GuideAPIService {
         .map(guide => ({
           id: guide.id,
           name: guide.guideName,
+          email: guide.guideEmail,
+          location: guide.guideLocation || 'tokyo',
           languages: guide.guideLanguages,
           specialties: guide.guideSpecialties,
           experience: guide.guideExperience,
           sessionRate: guide.guideSessionRate,
           availability: guide.guideAvailability,
-          profilePhoto: guide.profilePhoto?.fileName
-        }));
+          profilePhoto: guide.profilePhoto?.fileName,
+          introduction: guide.guideIntroduction,
+          averageRating: guide.averageRating || 4.8,
+          status: guide.status,
+          registeredAt: guide.registeredAt
+        }))
+        .sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt)); // Newest first
 
       res.json({
         success: true,

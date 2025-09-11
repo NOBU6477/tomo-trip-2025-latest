@@ -48,7 +48,9 @@ async function loadGuidesFromAPI() {
             }));
             
             console.log(`✅ Loaded ${apiGuides.length} guides from API`);
-            return [...defaultGuideData, ...apiGuides.filter(guide => guide.status === 'approved')];
+            // Sort to put newest guides first (top-left positioning)
+            const approvedGuides = apiGuides.filter(guide => guide.status === 'approved');
+            return [...approvedGuides.reverse(), ...defaultGuideData];
         }
         
         console.log('📋 Using default guide data - API returned no results');
