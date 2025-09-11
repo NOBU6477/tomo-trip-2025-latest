@@ -86,6 +86,13 @@
             padding: 1.5rem;
             margin: 1rem 0;
         }
+        /* Field error highlight animation */
+        .field-error-highlight {
+            border: 2px solid #dc3545 !important;
+            box-shadow: 0 0 10px rgba(220, 53, 69, 0.5) !important;
+            background-color: rgba(220, 53, 69, 0.05) !important;
+            transition: all 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -533,14 +540,14 @@
             e.preventDefault();
             
             if (!sessionId) {
-                showToast('電話認証を完了してください', 'error');
+                showToast('電話認証を完了してください', 'error', 'phoneNumber');
                 return;
             }
             
             // Validate document upload based on type
             const documentType = document.getElementById('documentType').value;
             if (!documentType) {
-                showToast('証明書タイプを選択してください', 'error');
+                showToast('証明書タイプを選択してください', 'error', 'documentType');
                 return;
             }
             
@@ -550,18 +557,18 @@
                 const backFile = document.getElementById('documentBack').files[0];
                 
                 if (!frontFile) {
-                    showToast('証明書の表面写真をアップロードしてください', 'error');
+                    showToast('証明書の表面写真をアップロードしてください', 'error', 'documentFront');
                     return;
                 }
                 if (!backFile) {
-                    showToast('証明書の裏面写真をアップロードしてください', 'error');
+                    showToast('証明書の裏面写真をアップロードしてください', 'error', 'documentBack');
                     return;
                 }
             } else {
                 // Single upload validation
                 const documentFile = document.getElementById('documentFile').files[0];
                 if (!documentFile) {
-                    showToast('証明書をアップロードしてください', 'error');
+                    showToast('証明書をアップロードしてください', 'error', 'documentFile');
                     return;
                 }
             }
@@ -612,7 +619,7 @@
                         }
                     }, 1000);
                 } else {
-                    showToast(result.message || '登録に失敗しました', 'error');
+                    processServerError(result.message || '登録に失敗しました');
                 }
             } catch (error) {
                 console.error('登録エラー:', error);
@@ -623,11 +630,16 @@
             }
         });
         
-        // Toast notification system
-        function showToast(message, type = 'info') {
+        // Toast notification system with field scroll
+        function showToast(message, type = 'info', fieldId = null) {
             // Remove existing toasts
             const existingToasts = document.querySelectorAll('.toast-container');
             existingToasts.forEach(toast => toast.remove());
+            
+            // Scroll to and highlight field if specified
+            if (fieldId) {
+                scrollToField(fieldId);
+            }
             
             const toastColor = {
                 'success': 'bg-success',
@@ -662,6 +674,70 @@
                     toastContainer.remove();
                 }
             }, 4000);
+        }
+
+        // Field scroll and highlight function
+        function scrollToField(fieldId) {
+            const field = document.getElementById(fieldId);
+            if (!field) return;
+            
+            // Remove existing highlights
+            document.querySelectorAll('.field-error-highlight').forEach(el => {
+                el.classList.remove('field-error-highlight');
+            });
+            
+            // Scroll to field with smooth animation
+            field.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center',
+                inline: 'nearest'
+            });
+            
+            // Add highlight class
+            field.classList.add('field-error-highlight');
+            
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+                field.classList.remove('field-error-highlight');
+            }, 3000);
+            
+            // Focus the field if it's an input
+            setTimeout(() => {
+                if (field.tagName === 'INPUT' || field.tagName === 'SELECT' || field.tagName === 'TEXTAREA') {
+                    field.focus();
+                }
+            }, 500);
+        }
+
+        // Process server validation errors
+        function processServerError(errorMessage) {
+            // Extract field name from error message pattern: "必須フィールドが不足しています: fieldName"
+            const fieldMatch = errorMessage.match(/必須フィールドが不足しています:\s*(\w+)/);
+            if (fieldMatch) {
+                const fieldName = fieldMatch[1];
+                showToast(errorMessage, 'error', fieldName);
+                return;
+            }
+            
+            // Check for other field-specific errors
+            const fieldMappings = {
+                'guideName': ['ガイド名', '名前'],
+                'phoneNumber': ['電話番号', '電話'],
+                'guideEmail': ['メール', 'メールアドレス'],
+                'documentType': ['証明書', '身分証明書'],
+                'guideLanguages': ['言語', '対応言語'],
+                'guideSessionRate': ['料金', 'セッション料金']
+            };
+            
+            for (const [fieldId, keywords] of Object.entries(fieldMappings)) {
+                if (keywords.some(keyword => errorMessage.includes(keyword))) {
+                    showToast(errorMessage, 'error', fieldId);
+                    return;
+                }
+            }
+            
+            // Default error without field scroll
+            showToast(errorMessage, 'error');
         }
         
         // Document upload handling placeholder
