@@ -113,13 +113,13 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="text" class="form-control" id="guideName" required>
+                                            <input type="text" class="form-control" id="guideName" name="guideName" required>
                                             <label for="guideName"><i class="bi bi-person me-1"></i>ガイド名</label>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="email" class="form-control" id="guideEmail" required>
+                                            <input type="email" class="form-control" id="guideEmail" name="guideEmail" required>
                                             <label for="guideEmail"><i class="bi bi-envelope me-1"></i>メールアドレス</label>
                                         </div>
                                     </div>
@@ -128,7 +128,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <select class="form-control" id="guideGender" required>
+                                            <select class="form-control" id="guideGender" name="guideGender" required>
                                                 <option value="">選択してください</option>
                                                 <option value="male">男性</option>
                                                 <option value="female">女性</option>
@@ -139,7 +139,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-floating">
-                                            <input type="number" class="form-control" id="guideAge" min="18" max="80" required>
+                                            <input type="number" class="form-control" id="guideAge" name="guideAge" min="18" max="80" required>
                                             <label for="guideAge"><i class="bi bi-calendar me-1"></i>年齢</label>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="tel" class="form-control" id="guidePhone" required>
+                                        <input type="tel" class="form-control" id="guidePhone" name="phoneNumber" required>
                                         <label for="guidePhone"><i class="bi bi-telephone me-1"></i>電話番号</label>
                                     </div>
                                 </div>
@@ -167,7 +167,7 @@
                             <div class="row mt-3" id="verificationCodeArea" style="display:none;">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="verificationCode" placeholder="6桁の認証コード">
+                                        <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder="6桁の認証コード">
                                         <label for="verificationCode"><i class="bi bi-shield-check me-1"></i>認証コード</label>
                                     </div>
                                 </div>
@@ -184,7 +184,7 @@
                             <h5 class="text-warning mb-3"><i class="bi bi-3-circle-fill me-2"></i>身分証明書</h5>
                             
                             <div class="form-floating mb-3">
-                                <select class="form-control" id="documentType" required>
+                                <select class="form-control" id="documentType" name="documentType" required>
                                     <option value="">選択してください</option>
                                     <option value="drivers_license">運転免許証（表面・裏面の2枚必須）</option>
                                     <option value="passport">パスポート（写真ページ1枚）</option>
@@ -200,7 +200,7 @@
                                     <i class="bi bi-cloud-upload text-success" style="font-size: 3rem;"></i>
                                     <h6 class="mt-3">身分証明書をアップロード</h6>
                                     <p class="text-muted">JPG、PNG形式対応（最大5MB）</p>
-                                    <input type="file" class="form-control" id="documentFile" accept="image/*" capture="environment">
+                                    <input type="file" class="form-control" id="documentFile" name="documentFile" accept="image/*" capture="environment">
                                     <div id="documentPreview" class="mt-3" style="display:none;">
                                         <img id="previewImage" class="photo-preview" alt="プレビュー">
                                         <p class="text-success mt-2"><i class="bi bi-check-circle"></i> アップロード完了</p>
@@ -213,7 +213,7 @@
                                         <div class="upload-section">
                                             <i class="bi bi-card-image text-primary" style="font-size: 2rem;"></i>
                                             <h6 class="mt-2">表面</h6>
-                                            <input type="file" class="form-control" id="documentFront" accept="image/*" capture="environment">
+                                            <input type="file" class="form-control" id="documentFront" name="documentFront" accept="image/*" capture="environment">
                                             <div id="frontPreview" class="mt-2" style="display:none;">
                                                 <img id="frontImage" class="photo-preview" alt="表面プレビュー">
                                                 <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
@@ -222,7 +222,7 @@
                                         <div class="upload-section">
                                             <i class="bi bi-card-image text-secondary" style="font-size: 2rem;"></i>
                                             <h6 class="mt-2">裏面</h6>
-                                            <input type="file" class="form-control" id="documentBack" accept="image/*" capture="environment">
+                                            <input type="file" class="form-control" id="documentBack" name="documentBack" accept="image/*" capture="environment">
                                             <div id="backPreview" class="mt-2" style="display:none;">
                                                 <img id="backImage" class="photo-preview" alt="裏面プレビュー">
                                                 <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
@@ -248,7 +248,7 @@
                             </div>
                             
                             <div class="form-floating">
-                                <select class="form-control" id="guideLanguages" multiple required style="min-height: 120px;">
+                                <select class="form-control" id="guideLanguages" name="guideLanguages" multiple required style="min-height: 120px;">
                                     <option value="japanese">日本語</option>
                                     <option value="english">英語</option>
                                     <option value="chinese">中国語</option>
@@ -274,7 +274,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="number" class="form-control" id="guideSessionRate" min="6000" max="25000" step="500" required>
+                                        <input type="number" class="form-control" id="guideSessionRate" name="guideSessionRate" min="6000" max="25000" step="500" required>
                                         <label for="guideSessionRate"><i class="bi bi-currency-yen me-1"></i>希望セッション料金（円）</label>
                                         <small class="text-muted">1セッション（2〜3時間程度）の料金を設定してください（￥6,000〜）</small>
                                     </div>
@@ -299,7 +299,7 @@
                                     <i class="bi bi-person-square text-primary" style="font-size: 3rem;"></i>
                                     <h6 class="mt-3">ガイドカードに表示される写真</h6>
                                     <p class="text-muted">風景・人物・任意の写真OK（JPG、PNG対応）</p>
-                                    <input type="file" class="form-control" id="profilePhoto" accept="image/*" capture="environment" required>
+                                    <input type="file" class="form-control" id="profilePhoto" name="profilePhoto" accept="image/*" capture="environment" required>
                                     <div id="profilePreview" class="mt-3" style="display:none;">
                                         <img id="profileImage" class="photo-preview" alt="プロフィール写真プレビュー">
                                         <p class="text-success mt-2"><i class="bi bi-check-circle"></i> プロフィール写真アップロード完了</p>
