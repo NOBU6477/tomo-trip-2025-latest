@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://replit.com https://*.replit.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self' https://*.replit.dev https://replit.com; report-uri /csp-report;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self' https://*.replit.dev https://replit.com; report-uri /csp-report;">
     <title>TomoTrip - 地元ガイドと特別な旅を発見</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- CSP compatibility fixes -->
@@ -6017,51 +6017,6 @@
             }
             
             // REMOVED - Old duplicate event handler cleaned up
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                                <i class="bi bi-x-circle me-1"></i>キャンセル
-                                            </button>
-                                            <button type="button" class="btn btn-primary" id="proceedToRegistration" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
-                                                <i class="bi bi-person-plus me-1"></i>観光客登録を開始
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        
-                        // Remove existing prompt modal if exists
-                        const existingPrompt = document.getElementById('registrationPromptModal');
-                        if (existingPrompt) existingPrompt.remove();
-                        
-                        // Add prompt modal to body
-                        document.body.insertAdjacentHTML('beforeend', promptHtml);
-                        
-                        // Show prompt modal
-                        const promptModal = new bootstrap.Modal(document.getElementById('registrationPromptModal'));
-                        promptModal.show();
-                        
-                        // Setup proceed button handler
-                        document.getElementById('proceedToRegistration').addEventListener('click', function() {
-                            // Hide prompt modal
-                            promptModal.hide();
-                            
-                            // Wait for modal to hide, then show registration modal
-                            setTimeout(() => {
-                                document.getElementById('registrationPromptModal').remove();
-                                
-                                // Open tourist registration modal
-                                const registrationModal = new bootstrap.Modal(document.getElementById('registrationModal'));
-                                registrationModal.show();
-                                console.log('✅ Registration modal opened from guide detail');
-                            }, 300);
-                        });
-                        
-                        // Clean up prompt modal on hide
-                        document.getElementById('registrationPromptModal').addEventListener('hidden.bs.modal', function() {
-                            this.remove();
-                        });
-                    }
-                }
             }, true); // Use capture phase
             
             console.log('✅ Guide detail delegation setup');
