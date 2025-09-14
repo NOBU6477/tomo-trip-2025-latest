@@ -905,16 +905,24 @@
             const modal = bootstrap.Modal.getInstance(document.getElementById('registrationCompleteModal'));
             if (modal) modal.hide();
             
-            // Redirect back to main page
+            // Redirect back to main page with immediate refresh
             if (window.opener && window.opener.refreshGuideData) {
                 // If opened from main page, refresh it and close this window
+                console.log('🔄 Triggering immediate guide data refresh');
                 window.opener.refreshGuideData();
+                // Also trigger a visual refresh notification
+                if (window.opener.showNewGuideNotification) {
+                    window.opener.showNewGuideNotification(1);
+                }
                 setTimeout(() => window.close(), 500);
             } else if (window.opener) {
+                // Force full page reload to ensure new data is fetched
                 window.opener.location.reload();
                 setTimeout(() => window.close(), 500);
             } else {
-                window.location.href = 'index.html';
+                // Redirect to root with cache-busting parameters
+                console.log('🏠 Redirecting to main page with refresh');
+                window.location.href = '/?refresh=new_guide&t=' + Date.now();
             }
         }
 

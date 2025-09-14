@@ -1,7 +1,7 @@
 // Guide rendering module - CSP compliant
 import { defaultGuideData } from '../data/default-guides.mjs';
 
-// Global guide rendering function
+// Global guide rendering function with performance optimization
 export function renderGuideCards(guidesToRender = null) {
     const guides = guidesToRender || (window.AppState?.guides || defaultGuideData);
     const container = document.getElementById('guideCardsContainer');
@@ -13,16 +13,54 @@ export function renderGuideCards(guidesToRender = null) {
     
     console.log(`🎨 Rendering ${guides.length} guide cards`);
     
-    // Generate HTML for all guide cards
-    const cardsHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
-    
-    // Update container with new cards
-    container.innerHTML = cardsHTML;
+    // Performance optimization for large guide lists
+    if (guides.length > 50) {
+        console.log('📊 Large guide list detected, using optimized rendering');
+        renderGuideCardsOptimized(guides, container);
+    } else {
+        // Standard rendering for smaller lists
+        const cardsHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
+        container.innerHTML = cardsHTML;
+    }
     
     // Update counters
     updateGuideCounters(guides.length, window.AppState?.guides?.length || defaultGuideData.length);
     
     console.log(`✅ Rendered ${guides.length} guide cards successfully`);
+}
+
+// Optimized rendering for large guide lists (50+ guides)
+function renderGuideCardsOptimized(guides, container) {
+    // Use DocumentFragment for better performance
+    const fragment = document.createDocumentFragment();
+    
+    // Batch process in chunks to avoid blocking UI
+    const CHUNK_SIZE = 10;
+    let index = 0;
+    
+    function renderChunk() {
+        const endIndex = Math.min(index + CHUNK_SIZE, guides.length);
+        
+        for (let i = index; i < endIndex; i++) {
+            const cardHTML = createGuideCardHTML(guides[i]);
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = cardHTML;
+            fragment.appendChild(tempDiv.firstElementChild);
+        }
+        
+        index = endIndex;
+        
+        if (index < guides.length) {
+            // Schedule next chunk
+            requestAnimationFrame(renderChunk);
+        } else {
+            // All chunks processed, update container
+            container.innerHTML = '';
+            container.appendChild(fragment);
+        }
+    }
+    
+    renderChunk();
 }
 
 // Create HTML for individual guide card  

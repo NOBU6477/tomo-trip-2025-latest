@@ -48,5 +48,35 @@
     "status": "approved",
     "registeredAt": "2025-09-14T12:32:57.229Z",
     "updatedAt": "2025-09-14T12:32:57.229Z"
+  },
+  {
+    "id": "cc51ea1f-f285-440a-9159-fce867090e3b",
+    "guideName": "仲宗根　りん",
+    "guideEmail": "test1300@gmail.com",
+    "guideGender": "female",
+    "guideAge": "40",
+    "phoneNumber": "+819012345678",
+    "verificationCode": "146605",
+    "documentType": "passport",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "intermediate",
+    "guideLanguages": [
+      "japanese",
+      "english",
+      "chinese",
+      "korean"
+    ],
+    "guideIntroduction": "英語・中国語・韓国語のご案内も可能です",
+    "guideSpecialties": "グルメ・写真スポット",
+    "guideSessionRate": "12000",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-14T12:51:14.413Z",
+    "updatedAt": "2025-09-14T12:51:14.413Z"
   }
 ]

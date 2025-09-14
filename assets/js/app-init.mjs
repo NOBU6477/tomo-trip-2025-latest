@@ -20,13 +20,35 @@ if (isReplitIframe) {
     log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
 }
 
-// Dynamic guide data loading from API
+// Dynamic guide data loading from API with error handling and caching
 async function loadGuidesFromAPI() {
     try {
-        const response = await fetch('/api/guides');
+        // Add timeout and cache-busting for reliability
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        const response = await fetch('/api/guides?' + new Date().getTime(), {
+            signal: controller.signal,
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
         const result = await response.json();
         
-        if (result.success && result.guides) {
+        // Validate API response structure
+        if (!result || typeof result !== 'object') {
+            throw new Error('Invalid API response format');
+        }
+        
+        if (result.success && Array.isArray(result.guides)) {
             // Language mapping helper
             const languageMap = {
                 'japanese': '日本語',
@@ -93,23 +115,63 @@ async function loadGuidesFromAPI() {
                 price: g.price
             })));
             
-            // Combine API guides (newest first) with default guides
-            return [...approvedGuides, ...defaultGuideData];
+            // Smart merging: avoid duplicates within API guides, preserve default guides
+            const deduplicatedApiGuides = removeDuplicateGuides(approvedGuides);
+            const combinedGuides = [...deduplicatedApiGuides, ...defaultGuideData];
+            
+            // Performance warning for very large guide lists
+            if (combinedGuides.length > 100) {
+                console.warn(`⚠️ Large guide list (${combinedGuides.length} guides) - performance optimizations active`);
+            }
+            
+            return combinedGuides;
         }
         
         console.log('📋 Using default guide data - API returned no results');
         return defaultGuideData;
         
     } catch (error) {
-        console.error('❌ Error loading guides from API:', error);
+        if (error.name === 'AbortError') {
+            console.error('❌ API request timeout - server may be slow');
+        } else {
+            console.error('❌ Error loading guides from API:', error);
+        }
         console.log('📋 Falling back to default guide data');
         return defaultGuideData;
     }
 }
 
+// Remove duplicate guides based on ID or email (only for API guides with proper identifiers)
+function removeDuplicateGuides(guides) {
+    const seen = new Set();
+    return guides.filter(guide => {
+        const identifier = guide.id || guide.email;
+        // Only deduplicate guides that have valid identifiers
+        if (!identifier) {
+            return true; // Keep guides without identifiers (like default guides)
+        }
+        if (seen.has(identifier)) {
+            return false;
+        }
+        seen.add(identifier);
+        return true;
+    });
+}
+
 /** Main application initialization function - TDZ safe with AppState */
 async function appInit() {
     log.ok('🌴 TomoTrip Application Starting...');
+    
+    // Check for refresh parameters from registration completion
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldRefresh = urlParams.get('refresh');
+    const isNewGuide = shouldRefresh === 'new_guide';
+    
+    if (shouldRefresh) {
+        console.log('🔄 Page loaded with refresh parameter:', shouldRefresh);
+        // Clean URL after processing
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
     
     // 1) Load guides dynamically from API + default data
     const guides = await loadGuidesFromAPI();
@@ -154,51 +216,87 @@ async function appInit() {
     wireSponsorButtons();
     wireLanguageSwitcher();
     
-    // 5) Setup automatic refresh for new guides every 30 seconds
+    // 5) Setup adaptive refresh intervals based on guide count
+    const refreshInterval = guides.length > 50 ? 60000 : 30000; // Slower refresh for large lists
+    console.log(`⏰ Setting refresh interval to ${refreshInterval/1000} seconds`);
+    
     setInterval(async () => {
         await refreshGuideData();
-    }, 30000);
+    }, refreshInterval);
+    
+    // 6) Show notification if loaded after new guide registration
+    if (isNewGuide) {
+        setTimeout(() => {
+            showNewGuideNotification(1, true); // Show with registration message
+        }, 1000);
+    }
     
     log.ok('✅ Application initialized successfully with dynamic guide data');
 }
 
-// Refresh guide data and update display
-async function refreshGuideData() {
-    try {
-        const newGuides = await loadGuidesFromAPI();
-        const currentCount = AppState.guides.length;
-        const newCount = newGuides.length;
-        
-        if (newCount !== currentCount) {
-            console.log(`🔄 Guide data updated: ${currentCount} → ${newCount} guides`);
-            AppState.guides = newGuides;
-            renderGuideCards(newGuides);
-            displayGuides(AppState.currentPage, AppState);
+// Refresh guide data and update display (enhanced with retry mechanism)
+async function refreshGuideData(maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`🔄 Refreshing guide data (attempt ${attempt}/${maxRetries})`);
+            const newGuides = await loadGuidesFromAPI();
+            const currentCount = AppState.guides.length;
+            const newCount = newGuides.length;
             
-            // Show notification for new guides
-            if (newCount > currentCount) {
-                showNewGuideNotification(newCount - currentCount);
+            if (newCount !== currentCount) {
+                console.log(`🔄 Guide data updated: ${currentCount} → ${newCount} guides`);
+                AppState.guides = newGuides;
+                renderGuideCards(newGuides);
+                displayGuides(AppState.currentPage, AppState);
+                
+                // Show notification for new guides (not during initial load)
+                if (newCount > currentCount && currentCount > 0) {
+                    showNewGuideNotification(newCount - currentCount);
+                }
+                
+                return true; // Success
+            }
+            
+            return true; // No changes, but successful
+            
+        } catch (error) {
+            console.error(`❌ Error refreshing guide data (attempt ${attempt}):`, error);
+            
+            if (attempt < maxRetries) {
+                // Wait before retry (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            } else {
+                console.error('❌ Failed to refresh guide data after all retries');
             }
         }
-    } catch (error) {
-        console.error('❌ Error refreshing guide data:', error);
     }
+    
+    return false; // All attempts failed
 }
 
 // Show notification for newly added guides
-function showNewGuideNotification(count) {
+function showNewGuideNotification(count, isRegistrationComplete = false) {
     const notification = document.createElement('div');
     notification.className = 'toast-container position-fixed top-0 end-0 p-3';
     notification.style.zIndex = '9999';
+    
+    const message = isRegistrationComplete 
+        ? 'ガイド登録が完了しました！新しいガイドカードが追加されました。'
+        : `${count}名の新しいガイドが追加されました！`;
+    
+    const icon = isRegistrationComplete 
+        ? 'bi-check-circle-fill text-success'
+        : 'bi-person-plus-fill text-success';
+    
     notification.innerHTML = `
-        <div class="toast show" role="alert">
-            <div class="toast-header">
-                <i class="bi bi-person-plus-fill text-success me-2"></i>
+        <div class="toast show" role="alert" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white;">
+            <div class="toast-header" style="background: rgba(255,255,255,0.1); border: none; color: white;">
+                <i class="bi ${icon} me-2"></i>
                 <strong class="me-auto">TomoTrip</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
-            <div class="toast-body">
-                ${count}名の新しいガイドが追加されました！
+            <div class="toast-body" style="color: white;">
+                ${message}
             </div>
         </div>
     `;
@@ -207,11 +305,12 @@ function showNewGuideNotification(count) {
     
     setTimeout(() => {
         notification.remove();
-    }, 5000);
+    }, 7000);
 }
 
-// Make refresh function globally available for guide edit page
+// Make functions globally available for guide edit page and registration completion
 window.refreshGuideData = refreshGuideData;
+window.showNewGuideNotification = showNewGuideNotification;
 
 // Call initialization when module loads
 if (document.readyState === 'loading') {
