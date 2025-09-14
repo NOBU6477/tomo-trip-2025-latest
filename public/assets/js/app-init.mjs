@@ -130,8 +130,8 @@ async function loadGuidesFromAPI() {
             return deduplicatedApiGuides;
         }
         
-        console.log('📋 Using default guide data - API returned no results');
-        return defaultGuideData;
+        console.log('📋 API returned no results - returning empty array');
+        return [];
         
     } catch (error) {
         if (error.name === 'AbortError') {
@@ -139,8 +139,8 @@ async function loadGuidesFromAPI() {
         } else {
             console.error('❌ Error loading guides from API:', error);
         }
-        console.log('📋 Falling back to default guide data');
-        return defaultGuideData;
+        console.log('📋 API error - returning empty array');
+        return [];
     }
 }
 
@@ -254,10 +254,10 @@ async function refreshGuideData(maxRetries = 3) {
             // Reload API guides
             const apiGuides = await loadGuidesFromAPI();
             
-            // Use API guides exclusively when available (no merging with defaults)
+            // Use API guides exclusively when available (no fallback to defaults)
             const finalGuides = apiGuides && apiGuides.length > 0 
                 ? apiGuides
-                : defaultGuideData;
+                : [];
                 
             const currentCount = AppState.guides.length;
             const newCount = finalGuides.length;
