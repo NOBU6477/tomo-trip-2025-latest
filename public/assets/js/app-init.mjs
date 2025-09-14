@@ -7,7 +7,7 @@ console.log('🔥 URGENT TEST: app-init.mjs is executing!');
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
 import './emergency-buttons.mjs';
 import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
-import { defaultGuideData } from './data/default-guides.mjs';
+// import { defaultGuideData } from './data/default-guides.mjs'; // REMOVED - prevents duplicate rendering
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
@@ -210,9 +210,9 @@ async function appInit() {
     // 3) Setup location names in AppState
     setupLocationNames(state);
 
-    // 4) Pass state to functions and display guides immediately
-    loadAllGuides(state.guides);
-    initializeGuidePagination(state);
+    // 4) Setup event listeners only - DISABLE LEGACY RENDERING to prevent duplicates
+    // loadAllGuides(state.guides); // DISABLED - causes duplicate rendering with defaults  
+    // initializeGuidePagination(state); // DISABLED - causes duplicate rendering
     setupEventListeners(state);
     
     // Wait for DOM to be fully ready before rendering guides

@@ -1,9 +1,9 @@
 // Guide rendering module - CSP compliant
-import { defaultGuideData } from '../data/default-guides.mjs';
+// Removed defaultGuideData import to prevent duplicate rendering
 
 // Global guide rendering function with performance optimization
 export function renderGuideCards(guidesToRender = null) {
-    const guides = guidesToRender || (window.AppState?.guides || defaultGuideData);
+    const guides = guidesToRender ?? window.AppState?.guides ?? [];
     
     // Try multiple ways to find the container
     let container = document.getElementById('guidesContainer');
@@ -75,25 +75,6 @@ export function renderGuideCards(guidesToRender = null) {
     
     // Setup view details event listeners
     setupViewDetailsEventListeners();
-    
-    // Add visual debug overlay
-    const debugOverlay = document.createElement('div');
-    debugOverlay.innerHTML = `
-        <div style="position:fixed;top:50px;left:10px;background:rgba(0,255,0,0.8);color:black;padding:10px;z-index:99999;font-size:12px;border-radius:5px;">
-            ✅ renderGuideCards: ${guides.length} cards rendered<br>
-            📍 Container: ${container.id}<br>
-            🔢 Child count: ${container.children.length}<br>
-            📐 Container size: ${container.offsetWidth}x${container.offsetHeight}
-        </div>
-    `;
-    document.body.appendChild(debugOverlay);
-    
-    // Add visual border to container
-    container.style.border = '2px dashed lime';
-    container.style.minHeight = '200px';
-    
-    // Remove debug overlay after 10 seconds
-    setTimeout(() => debugOverlay.remove(), 10000);
     
     console.log(`✅ Rendered ${guides.length} guide cards successfully`);
 }
