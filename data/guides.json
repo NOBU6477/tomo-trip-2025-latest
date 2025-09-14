@@ -20,5 +20,33 @@
     "status": "approved",
     "registeredAt": "2025-09-11T14:36:00.310Z",
     "updatedAt": "2025-09-11T14:36:00.310Z"
+  },
+  {
+    "id": "fa12dc14-1899-4bd5-bbd3-8ce0a2c359e9",
+    "guideName": "林修",
+    "guideEmail": "test1200@gmail.com",
+    "guideGender": "male",
+    "guideAge": "40",
+    "phoneNumber": "+819012345678",
+    "verificationCode": "863025",
+    "documentType": "drivers_license",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "intermediate",
+    "guideLanguages": [
+      "japanese",
+      "english"
+    ],
+    "guideIntroduction": "英語での案内も可能です",
+    "guideSpecialties": "グルメ・歴史",
+    "guideSessionRate": "10000",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-14T12:32:57.229Z",
+    "updatedAt": "2025-09-14T12:32:57.229Z"
   }
 ]

@@ -27,30 +27,74 @@ async function loadGuidesFromAPI() {
         const result = await response.json();
         
         if (result.success && result.guides) {
+            // Language mapping helper
+            const languageMap = {
+                'japanese': '日本語',
+                'english': '英語', 
+                'chinese': '中国語',
+                'korean': '韓国語',
+                'spanish': 'スペイン語',
+                'french': 'フランス語',
+                'german': 'ドイツ語',
+                'italian': 'イタリア語',
+                'portuguese': 'ポルトガル語',
+                '日本語': '日本語',
+                '英語': '英語'
+            };
+
             // Convert server format to frontend format
-            const apiGuides = result.guides.map(guide => ({
-                id: guide.id,
-                name: guide.name || guide.guideName,
-                location: guide.location || 'tokyo',
-                rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.5,
-                price: guide.sessionRate || guide.guideSessionRate || 0,
-                image: guide.profilePhoto || '/assets/img/guides/default-1.svg',
-                languages: Array.isArray(guide.languages) ? guide.languages : (guide.guideLanguages || ['日本語']),
-                specialties: guide.specialties ? guide.specialties.split(',').map(s => s.trim()) : (guide.guideSpecialties ? guide.guideSpecialties.split(',').map(s => s.trim()) : []),
-                photo: guide.profilePhoto || '/assets/img/guides/default-1.svg',
-                tags: guide.specialties ? guide.specialties.split(',').map(s => s.trim()) : [],
-                availability: guide.availability || guide.guideAvailability || 'weekdays',
-                experience: guide.experience || guide.guideExperience || 'intermediate',
-                introduction: guide.introduction || guide.guideIntroduction || '',
-                email: guide.email || guide.guideEmail,
-                phone: guide.phoneNumber,
-                status: guide.status || 'approved'
-            }));
+            const apiGuides = result.guides.map(guide => {
+                // Handle languages properly
+                let processedLanguages = ['日本語']; // Default
+                if (Array.isArray(guide.languages)) {
+                    processedLanguages = guide.languages.map(lang => 
+                        languageMap[lang] || lang || '日本語'
+                    );
+                } else if (Array.isArray(guide.guideLanguages)) {
+                    processedLanguages = guide.guideLanguages;
+                } else if (guide.languages) {
+                    processedLanguages = [languageMap[guide.languages] || guide.languages];
+                }
+
+                return {
+                    id: guide.id,
+                    name: guide.name || guide.guideName,
+                    city: guide.location || 'tokyo',
+                    location: guide.location || 'tokyo', 
+                    rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.5,
+                    price: parseInt(guide.sessionRate || guide.guideSessionRate || 0),
+                    image: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                    photo: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                    languages: processedLanguages,
+                    specialties: guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : [],
+                    tags: guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : [],
+                    availability: guide.availability || guide.guideAvailability || 'weekdays',
+                    experience: guide.experience || guide.guideExperience || 'intermediate', 
+                    introduction: guide.introduction || guide.guideIntroduction || '',
+                    description: guide.introduction || guide.guideIntroduction || '地域の魅力をご案内します',
+                    email: guide.email || guide.guideEmail,
+                    phone: guide.phoneNumber,
+                    status: guide.status || 'approved',
+                    registeredAt: guide.registeredAt
+                };
+            });
             
             console.log(`✅ Loaded ${apiGuides.length} guides from API`);
+            
             // Sort to put newest guides first (top-left positioning)
-            const approvedGuides = apiGuides.filter(guide => guide.status === 'approved');
-            return [...approvedGuides.reverse(), ...defaultGuideData];
+            const approvedGuides = apiGuides
+                .filter(guide => guide.status === 'approved')
+                .sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt));
+            
+            console.log(`📋 API Guides (newest first):`, approvedGuides.map(g => ({
+                name: g.name, 
+                registeredAt: g.registeredAt,
+                languages: g.languages,
+                price: g.price
+            })));
+            
+            // Combine API guides (newest first) with default guides
+            return [...approvedGuides, ...defaultGuideData];
         }
         
         console.log('📋 Using default guide data - API returned no results');

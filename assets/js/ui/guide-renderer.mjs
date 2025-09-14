@@ -25,12 +25,12 @@ export function renderGuideCards(guidesToRender = null) {
     console.log(`✅ Rendered ${guides.length} guide cards successfully`);
 }
 
-// Create HTML for individual guide card
+// Create HTML for individual guide card  
 function createGuideCardHTML(guide) {
     const price = Number(guide.price);
-    const formattedPrice = isNaN(price) ? '料金応相談' : `¥${price.toLocaleString()}`;
-    const languages = guide.languages?.join(', ') || '日本語';
-    const tags = guide.tags?.slice(0, 3).join(', ') || '';
+    const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
+    const languages = Array.isArray(guide.languages) ? guide.languages.join(', ') : (guide.languages || '日本語');
+    const tags = Array.isArray(guide.tags) ? guide.tags.slice(0, 3).join(', ') : (guide.specialties || '');
     
     return `
         <div class="col-md-6 col-lg-4 mb-4">
