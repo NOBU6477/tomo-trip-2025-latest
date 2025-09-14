@@ -115,16 +115,16 @@ async function loadGuidesFromAPI() {
                 price: g.price
             })));
             
-            // Smart merging: avoid duplicates within API guides, preserve default guides
+            // Use API guides exclusively when available (no merging with defaults)
             const deduplicatedApiGuides = removeDuplicateGuides(approvedGuides);
-            const combinedGuides = [...deduplicatedApiGuides, ...defaultGuideData];
             
             // Performance warning for very large guide lists
-            if (combinedGuides.length > 100) {
-                console.warn(`⚠️ Large guide list (${combinedGuides.length} guides) - performance optimizations active`);
+            if (deduplicatedApiGuides.length > 100) {
+                console.warn(`⚠️ Large guide list (${deduplicatedApiGuides.length} guides) - performance optimizations active`);
             }
             
-            return combinedGuides;
+            console.log(`🎯 Using API guides ONLY: ${deduplicatedApiGuides.length} guides (no default merging)`);
+            return deduplicatedApiGuides;
         }
         
         console.log('📋 Using default guide data - API returned no results');
@@ -182,7 +182,7 @@ async function appInit() {
     
     console.log('🎯 Environment Data Sync:', {
         guides: guides.length,
-        source: 'API + defaultGuideData (dynamic)',
+        source: 'API-only (no default merging)',
         localStorage_cleared: true
     });
 
@@ -243,16 +243,16 @@ async function refreshGuideData(maxRetries = 3) {
             // Reload API guides
             const apiGuides = await loadGuidesFromAPI();
             
-            // Merge API guides with default data (API guides first, for top-left positioning)
-            const mergedGuides = apiGuides && apiGuides.length > 0 
-                ? [...apiGuides, ...defaultGuideData]
-                : [...defaultGuideData];
+            // Use API guides exclusively when available (no merging with defaults)
+            const finalGuides = apiGuides && apiGuides.length > 0 
+                ? apiGuides
+                : defaultGuideData;
                 
             const currentCount = AppState.guides.length;
-            const newCount = mergedGuides.length;
+            const newCount = finalGuides.length;
             
             // Always update guides data
-            AppState.guides = mergedGuides;
+            AppState.guides = finalGuides;
             
             // Re-render guide cards
             if (typeof renderGuideCards === 'function') {
@@ -269,7 +269,7 @@ async function refreshGuideData(maxRetries = 3) {
                 updateGuideCounters();
             }
             
-            console.log(`✅ Guide data refreshed successfully: ${mergedGuides.length} total guides`);
+            console.log(`✅ Guide data refreshed successfully: ${finalGuides.length} total guides (API-only)`);
             return true; // Success
             
         } catch (error) {
