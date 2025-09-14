@@ -2344,7 +2344,7 @@
             console.log('Opening guide detail page for guide:', guideId);
             
             // Check if user is registered
-            const touristData = localStorage.getItem('touristData');
+            const touristData = localStorage.getItem('touristRegistrationData');
             console.log('Tourist registration status:', touristData ? 'REGISTERED' : 'NOT REGISTERED');
             
             if (!touristData) {
@@ -2787,7 +2787,7 @@
                         id: Date.now()
                     };
                     
-                    localStorage.setItem('touristData', JSON.stringify(touristData));
+                    localStorage.setItem('touristRegistrationData', JSON.stringify(touristData));
                     
                     // Close modal
                     const registrationModal = bootstrap.Modal.getInstance(document.getElementById('registrationModal'));
@@ -7114,6 +7114,53 @@
                 });
             } else {
                 console.error('❌ Login dropdown elements not found');
+            }
+            
+            // Setup individual login buttons in dropdown
+            const touristLoginBtn = document.getElementById('directTouristLoginBtn');
+            const guideLoginBtn = document.getElementById('directGuideLoginBtn');
+            const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            
+            if (touristLoginBtn) {
+                console.log('✅ Tourist login button found');
+                touristLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔑 Tourist login clicked!');
+                    customLoginDropdown.style.display = 'none';
+                    const touristLoginModal = new bootstrap.Modal(document.getElementById('touristLoginModal'));
+                    touristLoginModal.show();
+                });
+            }
+            
+            if (guideLoginBtn) {
+                console.log('✅ Guide login button found');
+                guideLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔑 Guide login clicked!');
+                    customLoginDropdown.style.display = 'none';
+                    const guideLoginModal = new bootstrap.Modal(document.getElementById('guideLoginModal'));
+                    guideLoginModal.show();
+                });
+            }
+            
+            if (sponsorLoginBtn) {
+                console.log('✅ Sponsor login button found');
+                sponsorLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔑 Sponsor login clicked!');
+                    customLoginDropdown.style.display = 'none';
+                    alert('スポンサーログイン機能は開発中です');
+                });
+            }
+            
+            if (registerBtn) {
+                console.log('✅ Register button found');
+                registerBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🎯 Register button clicked!');
+                    window.open('guide-registration-perfect.html', '_blank');
+                });
             }
             
             console.log('🚨 Emergency button test completed');

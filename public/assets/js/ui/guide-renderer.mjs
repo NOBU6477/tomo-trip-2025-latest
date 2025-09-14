@@ -26,6 +26,9 @@ export function renderGuideCards(guidesToRender = null) {
     // Update counters
     updateGuideCounters(guides.length, window.AppState?.guides?.length || defaultGuideData.length);
     
+    // Setup view details event listeners
+    setupViewDetailsEventListeners();
+    
     console.log(`✅ Rendered ${guides.length} guide cards successfully`);
 }
 
@@ -57,6 +60,9 @@ function renderGuideCardsOptimized(guides, container) {
             // All chunks processed, update container
             container.innerHTML = '';
             container.appendChild(fragment);
+            
+            // Setup event listeners after all cards are rendered
+            setupViewDetailsEventListeners();
         }
     }
     
@@ -111,7 +117,7 @@ function createGuideCardHTML(guide) {
                     </div>
                     
                     <div class="d-grid gap-2">
-                        <button class="btn btn-primary" 
+                        <button class="btn btn-primary view-details-btn" 
                                 data-action="view-details" 
                                 data-guide-id="${guide.id}"
                                 style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
@@ -138,8 +144,50 @@ export function updateGuideCounters(filtered, total) {
     }
 }
 
+// Setup event listeners for view details buttons
+function setupViewDetailsEventListeners() {
+    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
+    
+    viewDetailsButtons.forEach(button => {
+        // Remove any existing listeners
+        button.removeEventListener('click', handleViewDetailsClick);
+        
+        // Add click listener
+        button.addEventListener('click', handleViewDetailsClick);
+    });
+    
+    console.log(`🔗 Setup ${viewDetailsButtons.length} view details event listeners`);
+}
+
+// Handle view details button click
+function handleViewDetailsClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    const guideId = event.currentTarget.getAttribute('data-guide-id');
+    
+    if (!guideId) {
+        console.error('❌ No guide ID found on clicked button');
+        return;
+    }
+    
+    console.log('🔍 View details clicked for guide:', guideId);
+    
+    // Call the authentication flow from window scope
+    if (window.viewGuideDetail) {
+        window.viewGuideDetail(guideId);
+    } else if (window.handleGuideDetailAccess) {
+        window.handleGuideDetailAccess(guideId);
+    } else {
+        console.error('❌ No guide detail handler found');
+        // Fallback - direct redirect without auth check
+        window.location.href = `/guide-detail.html?id=${guideId}`;
+    }
+}
+
 // Make functions globally available for filter system
 if (typeof window !== 'undefined') {
     window.renderGuideCards = renderGuideCards;
     window.updateGuideCounters = updateGuideCounters;
+    window.setupViewDetailsEventListeners = setupViewDetailsEventListeners;
 }
