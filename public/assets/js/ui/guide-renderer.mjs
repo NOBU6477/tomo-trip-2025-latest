@@ -1,23 +1,27 @@
 // Guide rendering module - CSP compliant
 import { defaultGuideData } from '../data/default-guides.mjs';
 
-// Global guide rendering function
+// Global guide rendering function with performance optimization
 export function renderGuideCards(guidesToRender = null) {
     const guides = guidesToRender || (window.AppState?.guides || defaultGuideData);
-    const container = document.getElementById('guidesContainer') || document.getElementById('guideCardsContainer');
+    const container = document.getElementById('guideCardsContainer');
     
     if (!container) {
-        console.error('Guide cards container not found - neither guidesContainer nor guideCardsContainer exists');
+        console.error('Guide cards container not found');
         return;
     }
     
     console.log(`🎨 Rendering ${guides.length} guide cards`);
     
-    // Generate HTML for all guide cards
-    const cardsHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
-    
-    // Update container with new cards
-    container.innerHTML = cardsHTML;
+    // Performance optimization for large guide lists
+    if (guides.length > 50) {
+        console.log('📊 Large guide list detected, using optimized rendering');
+        renderGuideCardsOptimized(guides, container);
+    } else {
+        // Standard rendering for smaller lists
+        const cardsHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
+        container.innerHTML = cardsHTML;
+    }
     
     // Update counters
     updateGuideCounters(guides.length, window.AppState?.guides?.length || defaultGuideData.length);
@@ -25,29 +29,46 @@ export function renderGuideCards(guidesToRender = null) {
     console.log(`✅ Rendered ${guides.length} guide cards successfully`);
 }
 
-// Create HTML for individual guide card
+// Optimized rendering for large guide lists (50+ guides)
+function renderGuideCardsOptimized(guides, container) {
+    // Use DocumentFragment for better performance
+    const fragment = document.createDocumentFragment();
+    
+    // Batch process in chunks to avoid blocking UI
+    const CHUNK_SIZE = 10;
+    let index = 0;
+    
+    function renderChunk() {
+        const endIndex = Math.min(index + CHUNK_SIZE, guides.length);
+        
+        for (let i = index; i < endIndex; i++) {
+            const cardHTML = createGuideCardHTML(guides[i]);
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = cardHTML;
+            fragment.appendChild(tempDiv.firstElementChild);
+        }
+        
+        index = endIndex;
+        
+        if (index < guides.length) {
+            // Schedule next chunk
+            requestAnimationFrame(renderChunk);
+        } else {
+            // All chunks processed, update container
+            container.innerHTML = '';
+            container.appendChild(fragment);
+        }
+    }
+    
+    renderChunk();
+}
+
+// Create HTML for individual guide card  
 function createGuideCardHTML(guide) {
     const price = Number(guide.price);
-    const formattedPrice = isNaN(price) ? '料金応相談' : `¥${price.toLocaleString()}`;
-    
-    // Language mapping for Japanese display
-    const languageMap = {
-        'ja': '日本語', 'japanese': '日本語',
-        'en': '英語', 'english': '英語', 
-        'zh': '中国語', 'chinese': '中国語',
-        'ko': '韓国語', 'korean': '韓国語',
-        'es': 'スペイン語', 'spanish': 'スペイン語',
-        'fr': 'フランス語', 'french': 'フランス語',
-        'de': 'ドイツ語', 'german': 'ドイツ語',
-        'ru': 'ロシア語', 'russian': 'ロシア語',
-        'thai': 'タイ語', 'vietnamese': 'ベトナム語'
-    };
-    
-    const languages = Array.isArray(guide.languages) 
-        ? guide.languages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ')
-        : guide.languages || '日本語';
-    
-    const tags = guide.tags?.slice(0, 3).join(', ') || '';
+    const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
+    const languages = Array.isArray(guide.languages) ? guide.languages.join(', ') : (guide.languages || '日本語');
+    const tags = Array.isArray(guide.tags) ? guide.tags.slice(0, 3).join(', ') : (guide.specialties || '');
     
     return `
         <div class="col-md-6 col-lg-4 mb-4">
@@ -89,26 +110,12 @@ function createGuideCardHTML(guide) {
                         ` : ''}
                     </div>
                     
-                    <div class="d-flex gap-2 mb-2">
-                        <button class="btn btn-primary flex-grow-1" 
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" 
                                 data-action="view-details" 
                                 data-guide-id="${guide.id}"
                                 style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
                             詳しく見る
-                        </button>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-outline-warning bookmark-btn flex-grow-1" 
-                                data-guide-id="${guide.id}"
-                                data-action="bookmark"
-                                style="border-radius: 10px; padding: 8px; font-weight: 600;">
-                            <i class="bi bi-bookmark-star me-1"></i>⭐
-                        </button>
-                        <button class="btn btn-outline-success compare-btn flex-grow-1" 
-                                data-guide-id="${guide.id}"
-                                data-action="compare"
-                                style="border-radius: 10px; padding: 8px; font-weight: 600;">
-                            <i class="bi bi-bar-chart-line me-1"></i>✓
                         </button>
                     </div>
                 </div>

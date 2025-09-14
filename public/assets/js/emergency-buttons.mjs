@@ -26,18 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ English button setup complete');
     }
     
-    // Sponsor buttons (floating buttons - different IDs from dropdown)
+    // Sponsor buttons
     const sponsorRegBtn = document.getElementById('sponsorRegBtn');
-    const sponsorLoginBtn = document.getElementById('sponsorLoginBtnFloat');
-    const sponsorRegBtnMobile = document.getElementById('sponsorRegBtnMobile');
-    const sponsorLoginBtnMobile = document.getElementById('sponsorLoginBtnMobileFloat');
+    const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
     
     if (sponsorRegBtn && !sponsorRegBtn.hasAttribute('data-listener-added')) {
         sponsorRegBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Sponsor registration clicked - redirecting to new registration page');
-            // Force new page load with cache busting
-            window.location.href = 'sponsor-registration.html?v=' + Date.now();
+            console.log('Sponsor registration clicked - redirecting');
+            window.location.href = 'sponsor-registration.html';
         });
         sponsorRegBtn.setAttribute('data-listener-added', 'true');
         console.log('✅ Registration button setup complete');
@@ -46,33 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (sponsorLoginBtn && !sponsorLoginBtn.hasAttribute('data-listener-added')) {
         sponsorLoginBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            console.log('Sponsor login clicked - redirecting to operations login');
-            window.location.href = 'operations-login.html';
+            console.log('Sponsor login clicked');
+            alert('協賛店ログインモーダルを準備中です');
         });
         sponsorLoginBtn.setAttribute('data-listener-added', 'true');
         console.log('✅ Login button setup complete');
-    }
-    
-    // Mobile sponsor buttons
-    if (sponsorRegBtnMobile && !sponsorRegBtnMobile.hasAttribute('data-listener-added')) {
-        sponsorRegBtnMobile.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Mobile sponsor registration clicked - redirecting to registration page');
-            // Force new page load with cache busting
-            window.location.href = 'sponsor-registration.html?v=' + Date.now();
-        });
-        sponsorRegBtnMobile.setAttribute('data-listener-added', 'true');
-        console.log('✅ Mobile registration button setup complete');
-    }
-    
-    if (sponsorLoginBtnMobile && !sponsorLoginBtnMobile.hasAttribute('data-listener-added')) {
-        sponsorLoginBtnMobile.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Mobile sponsor login clicked - redirecting to operations login');
-            window.location.href = 'operations-login.html';
-        });
-        sponsorLoginBtnMobile.setAttribute('data-listener-added', 'true');
-        console.log('✅ Mobile login button setup complete');
     }
     
     console.log('🎯 Emergency button setup finished');

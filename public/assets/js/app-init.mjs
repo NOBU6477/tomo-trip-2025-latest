@@ -1,614 +1,352 @@
-// TomoTrip Application Initialization - Direct Implementation
-// No imports - all functions defined directly to prevent loading issues
+// TomoTrip Application Initialization - CSP Compliant
+// Consolidated from inline scripts in index.html
 
-console.log('🚀 TomoTrip app-init.mjs loading...');
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
+import './emergency-buttons.mjs';
+import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
+import { defaultGuideData } from './data/default-guides.mjs';
+import AppState from './state/app-state.mjs';
+import { setupLocationNames } from './locations/location-setup.mjs';
+import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
+import { APP_CONFIG } from '../../env/app-config.mjs';
 
-// Early detection for iframe
-const isReplitIframe = window.self !== window.top;
+// Early detection for Replit preview iframe to suppress footer emergency logs
+const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
 
+// Suppress footer emergency scripts in iframe context
 if (isReplitIframe) {
+    // Block any footer emergency script execution
     window.FOOTER_EMERGENCY_DISABLED = true;
-    console.log('🔇 Iframe context detected');
+    log.debug('🔇 Iframe context detected - footer emergency scripts disabled');
 }
 
-// Default guide data - simplified
-const defaultGuideData = [
-    { id: 1, name: "田中健太", location: "東京都", rating: 4.8, price: 8000, photo: "/assets/img/guides/default-1.svg", languages: ["日本語", "英語"], specialties: ["history", "culture"] },
-    { id: 2, name: "佐藤美咲", location: "大阪府", rating: 4.9, price: 7500, photo: "/assets/img/guides/default-2.svg", languages: ["日本語", "英語", "中国語"], specialties: ["food", "local"] },
-    { id: 3, name: "鈴木一郎", location: "京都府", rating: 4.7, price: 9000, photo: "/assets/img/guides/default-3.svg", languages: ["日本語", "英語"], specialties: ["temples", "traditional"] },
-    { id: 4, name: "山田花子", location: "大阪府", rating: 4.6, price: 7000, photo: "/assets/img/guides/default-4.svg", languages: ["日本語", "英語"], specialties: ["shopping", "food"] },
-    { id: 5, name: "Johnson Mike", location: "東京都", rating: 4.8, price: 8500, photo: "/assets/img/guides/default-5.svg", languages: ["英語", "日本語"], specialties: ["business", "modern"] },
-    { id: 6, name: "李美麗", location: "京都府", rating: 4.9, price: 8800, photo: "attached_assets/image_1754399234136.png", languages: ["中国語", "日本語", "英語"], specialties: ["culture", "temples"] },
-    { id: 7, name: "高橋翔太", location: "北海道", rating: 4.7, price: 9500, photo: "attached_assets/image_1754399234136.png", languages: ["日本語", "英語"], specialties: ["nature", "skiing"] },
-    { id: 8, name: "Anderson Sarah", location: "沖縄県", rating: 4.8, price: 8200, photo: "attached_assets/image_1754399234136.png", languages: ["英語", "日本語"], specialties: ["beach", "diving"] },
-    { id: 9, name: "金成民", location: "東京都", rating: 4.6, price: 7800, photo: "attached_assets/image_1754399234136.png", languages: ["韓国語", "日本語", "英語"], specialties: ["kpop", "modern"] },
-    { id: 10, name: "伊藤優子", location: "奈良県", rating: 4.9, price: 8600, photo: "attached_assets/image_1754399234136.png", languages: ["日本語", "英語"], specialties: ["deer", "temples"] },
-    { id: 11, name: "Rodriguez Carlos", location: "広島県", rating: 4.7, price: 8300, photo: "attached_assets/image_1754399234136.png", languages: ["スペイン語", "日本語", "英語"], specialties: ["history", "peace"] },
-    { id: 12, name: "中村孝", location: "福岡県", rating: 4.8, price: 7900, photo: "attached_assets/image_1754399234136.png", languages: ["日本語", "英語"], specialties: ["ramen", "local"] }
-];
-
-// Simple guide card renderer
-function renderGuideCards(guides) {
-    const container = document.getElementById('guidesContainer') || document.getElementById('guideCardsContainer');
-    if (!container) {
-        console.error('❌ Guide container not found');
-        return;
-    }
-    
-    console.log(`🎨 Rendering ${guides.length} guide cards to container:`, container.id);
-    
-    const html = guides.map(guide => `
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
-                <div class="position-relative">
-                    <img src="${guide.photo || '/assets/img/guides/default-1.svg'}" 
-                         class="card-img-top" 
-                         alt="${guide.name}" 
-                         style="height: 250px; object-fit: cover;">
-                    <div class="position-absolute top-0 end-0 m-2">
-                        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
-                            評価 ${guide.rating || '4.8'} ⭐
-                        </span>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.name}</h5>
-                    <p class="text-muted mb-2">
-                        <i class="bi bi-geo-alt"></i> ${guide.location || ''}
-                    </p>
-                    <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
-                        地域の魅力をご案内します
-                    </p>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-muted">対応言語</small>
-                            <small class="fw-semibold">${Array.isArray(guide.languages) ? guide.languages.join(', ') : guide.languages || '日本語'}</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-muted">料金</small>
-                            <small class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</small>
-                        </div>
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" 
-                                data-action="view-details" 
-                                data-guide-id="${guide.id}"
-                                style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
-                            詳しく見る
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `).join('');
-    
-    container.innerHTML = html;
-    console.log(`✅ Rendered ${guides.length} guide cards`);
-}
-
-// Update guide counters
-function updateGuideCounters(displayed, total) {
-    // Find the guide counter text element
-    const guideTitle = document.querySelector('h2.display-5.fw-bold.text-dark');
-    const badgeElement = document.querySelector('.badge.bg-info.text-white');
-    
-    if (guideTitle) {
-        guideTitle.innerHTML = `<i class="bi bi-people me-3" style="color: #007bff;"></i>${displayed}人のガイドが見つかりました`;
-    }
-    
-    if (badgeElement) {
-        badgeElement.innerHTML = `<i class="bi bi-clock me-1"></i>総計: ${total}人`;
-    }
-    
-    console.log(`📊 Guide counters updated: ${displayed}/${total}`);
-}
-
-// Language mapping
-const languageMapping = {
-    'ja': '日本語',
-    'en': '英語', 
-    'zh': '中国語',
-    'ko': '韓国語',
-    'es': 'スペイン語',
-    'fr': 'フランス語',
-    'de': 'ドイツ語',
-    'ru': 'ロシア語',
-    'thai': 'タイ語',
-    'vietnamese': 'ベトナム語'
-};
-
-// Convert guide languages for display - now guides already have Japanese languages
-function convertGuideLanguages(guides) {
-    return guides.map(guide => ({
-        ...guide,
-        languages: Array.isArray(guide.languages) ? guide.languages : [guide.languages || '日本語']
-    }));
-}
-
-// Main application initialization function
-function appInit() {
-    console.log('🌴 TomoTrip Application Starting...');
-    
-    // Initialize with default guide data
-    const guides = defaultGuideData;
-    window.defaultGuides = convertGuideLanguages(guides);
-    
-    console.log('🎯 Environment Data Sync:', {
-        guides: guides.length,
-        source: 'defaultGuideData (direct)',
-    });
-
-    // Render initial guide cards
-    renderGuideCards(window.defaultGuides);
-    updateGuideCounters(guides.length, guides.length);
-
-    // Setup global functions for window object
-    setupGlobalFunctions();
-    
-    console.log('✅ TomoTrip Application Ready!');
-}
-
-// Setup all global functions
-function setupGlobalFunctions() {
-    console.log('🔧 Setting up global functions...');
-    
-    // Make renderer functions globally available
-    window.renderGuideCards = renderGuideCards;
-    window.updateGuideCounters = updateGuideCounters;
-    
-    // Filter functions with full implementation
-    window.filterGuides = function() {
-        console.log('🔍 filterGuides called');
-        try {
-            const location = document.getElementById('locationFilter')?.value || '';
-            const language = document.getElementById('languageFilter')?.value || '';
-            const price = document.getElementById('priceFilter')?.value || '';
-            const keyword = document.getElementById('keywordInput')?.value?.toLowerCase() || '';
-            
-            console.log('🔍 Filter values:', { location, language, price, keyword });
-            
-            // Get all guides (use original data for filtering, then convert for display)
-            const originalGuides = defaultGuideData || [];
-            
-            // Language mapping from HTML filter values to data codes
-            const languageMap = {
-                'japanese': 'ja',
-                'english': 'en',
-                'chinese': 'zh',
-                'chinese_traditional': 'zh',
-                'korean': 'ko', 
-                'spanish': 'es',
-                'french': 'fr',
-                'german': 'de',
-                'russian': 'ru',
-                'thai': 'thai',
-                'vietnamese': 'vietnamese'
-            };
-            
-            // Apply filters to original data
-            let filtered = originalGuides.filter(guide => {
-                const locationMatch = !location || guide.location === location;
-                
-                // Fix language filter: map HTML value to data code
-                const targetLanguage = languageMap[language] || language;
-                const languageMatch = !language || (Array.isArray(guide.languages) ? guide.languages.includes(targetLanguage) : guide.languages === targetLanguage);
-                
-                // Fix price filter: map HTML values to actual price ranges
-                const priceMatch = !price || (
-                    price === 'budget' && guide.price >= 6000 && guide.price <= 10000 ||
-                    price === 'premium' && guide.price >= 10001 && guide.price <= 20000 ||
-                    price === 'luxury' && guide.price >= 20001
-                );
-                
-                const keywordMatch = !keyword || 
-                    guide.name.toLowerCase().includes(keyword) ||
-                    (guide.specialties && guide.specialties.some(s => s.toLowerCase().includes(keyword)));
-                
-                return locationMatch && languageMatch && priceMatch && keywordMatch;
-            });
-            
-            console.log(`✅ Filtered guides: ${filtered.length} out of ${originalGuides.length}`);
-            
-            // Convert languages for display and render
-            const filteredWithJapanese = convertGuideLanguages(filtered);
-            renderGuideCards(filteredWithJapanese);
-            updateGuideCounters(filtered.length, originalGuides.length);
-            
-        } catch (error) {
-            console.error('❌ Filter error:', error);
-            alert('検索中にエラーが発生しました');
-        }
-    };
-    
-    window.resetFilters = function() {
-        console.log('🔄 resetFilters called');
-        try {
-            // Clear all filter inputs
-            const locationFilter = document.getElementById('locationFilter');
-            const languageFilter = document.getElementById('languageFilter');
-            const priceFilter = document.getElementById('priceFilter');
-            const keywordInput = document.getElementById('keywordInput');
-            
-            if (locationFilter) locationFilter.value = '';
-            if (languageFilter) languageFilter.value = '';
-            if (priceFilter) priceFilter.value = '';
-            if (keywordInput) keywordInput.value = '';
-            
-            // Reset to show all guides
-            const allGuides = window.defaultGuides || [];
-            
-            renderGuideCards(allGuides);
-            updateGuideCounters(allGuides.length, allGuides.length);
-            
-            console.log('✅ Filters reset successfully');
-            
-        } catch (error) {
-            console.error('❌ Reset error:', error);
-            location.reload();
-        }
-    };
-    
-    window.handleSponsorRegistration = function() {
-        console.log('🏪 handleSponsorRegistration called');
-        window.location.href = '/sponsor-registration.html';
-    };
-    
-    // Tourist registration modal functions
-    window.goToStep2Modal = function() {
-        console.log('🎯 goToStep2Modal called');
+// Dynamic guide data loading from API with error handling and caching
+async function loadGuidesFromAPI() {
+    try {
+        // Add timeout and cache-busting for reliability
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         
-        const phoneInput = document.getElementById('touristPhone');
-        const firstNameInput = document.getElementById('touristFirstName');
-        const lastNameInput = document.getElementById('touristLastName');
-        const emailInput = document.getElementById('touristEmail');
-        
-        // Basic validation
-        if (!firstNameInput?.value?.trim()) {
-            alert('名前を入力してください');
-            return;
-        }
-        if (!lastNameInput?.value?.trim()) {
-            alert('姓を入力してください');
-            return;
-        }
-        if (!emailInput?.value?.trim()) {
-            alert('メールアドレスを入力してください');
-            return;
-        }
-        if (!phoneInput?.value?.trim()) {
-            alert('電話番号を入力してください');
-            return;
-        }
-        
-        // Hide step 1, show step 2
-        const step1 = document.getElementById('step1Content');
-        const step2 = document.getElementById('step2Content');
-        if (step1) step1.style.display = 'none';
-        if (step2) step2.style.display = 'block';
-        
-        // Update step indicators
-        const step1Indicator = document.getElementById('step1-indicator');
-        const step2Indicator = document.getElementById('step2-indicator');
-        if (step1Indicator?.querySelector('.badge')) {
-            step1Indicator.querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
-        }
-        if (step2Indicator?.querySelector('.badge')) {
-            step2Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
-        }
-        
-        // Update phone display
-        const phoneDisplay = document.getElementById('phoneDisplayModal');
-        if (phoneDisplay) {
-            phoneDisplay.textContent = '電話番号: ' + phoneInput.value;
-        }
-        
-        console.log('✅ Successfully moved to step 2');
-    };
-    
-    window.clearRegistrationModal = function() {
-        console.log('🧹 Clearing registration modal data');
-        
-        // Clear all form inputs
-        const inputs = ['touristFirstName', 'touristLastName', 'touristEmail', 'touristPhone', 'touristCountry', 
-                       'touristVisitDuration', 'touristPreferredLanguage', 'touristSpecialRequests'];
-        
-        inputs.forEach(id => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.value = '';
+        const response = await fetch('/api/guides?' + new Date().getTime(), {
+            signal: controller.signal,
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
             }
         });
         
-        // Clear checkboxes
-        const checkboxes = document.querySelectorAll('#registrationModal input[type="checkbox"]');
-        checkboxes.forEach(cb => cb.checked = false);
+        clearTimeout(timeoutId);
         
-        // Reset to step 1
-        const step1 = document.getElementById('step1Content');
-        const step2 = document.getElementById('step2Content');
-        const step3 = document.getElementById('step3Content');
-        if (step1) step1.style.display = 'block';
-        if (step2) step2.style.display = 'none';
-        if (step3) step3.style.display = 'none';
-        
-        // Reset indicators
-        const step1Indicator = document.getElementById('step1-indicator');
-        const step2Indicator = document.getElementById('step2-indicator');
-        const step3Indicator = document.getElementById('step3-indicator');
-        
-        if (step1Indicator?.querySelector('.badge')) {
-            step1Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
-        }
-        if (step2Indicator?.querySelector('.badge')) {
-            step2Indicator.querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
-        }
-        if (step3Indicator?.querySelector('.badge')) {
-            step3Indicator.querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
-        console.log('✅ Registration modal cleared');
-    };
-    
-    // Additional tourist registration functions
-    window.goToStep1Modal = function() {
-        const step1 = document.getElementById('step1Content');
-        const step2 = document.getElementById('step2Content');
-        if (step1) step1.style.display = 'block';
-        if (step2) step2.style.display = 'none';
+        const result = await response.json();
         
-        const step1Indicator = document.getElementById('step1-indicator');
-        const step2Indicator = document.getElementById('step2-indicator');
-        if (step1Indicator?.querySelector('.badge')) {
-            step1Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
+        // Validate API response structure
+        if (!result || typeof result !== 'object') {
+            throw new Error('Invalid API response format');
         }
-        if (step2Indicator?.querySelector('.badge')) {
-            step2Indicator.querySelector('.badge').className = 'badge bg-secondary rounded-circle me-2';
-        }
-        console.log('✅ Returned to step 1');
-    };
-    
-    window.goToStep3Modal = function() {
-        const step2 = document.getElementById('step2Content');
-        const step3 = document.getElementById('step3Content');
-        if (step2) step2.style.display = 'none';
-        if (step3) step3.style.display = 'block';
         
-        const step2Indicator = document.getElementById('step2-indicator');
-        const step3Indicator = document.getElementById('step3-indicator');
-        if (step2Indicator?.querySelector('.badge')) {
-            step2Indicator.querySelector('.badge').className = 'badge bg-success rounded-circle me-2';
-        }
-        if (step3Indicator?.querySelector('.badge')) {
-            step3Indicator.querySelector('.badge').className = 'badge bg-primary rounded-circle me-2';
-        }
-        console.log('✅ Moved to step 3');
-    };
-    
-    // Tourist registration status management
-    window.checkTouristRegistration = function() {
-        const registrationData = localStorage.getItem('touristRegistrationData');
-        return registrationData ? JSON.parse(registrationData) : null;
-    };
+        if (result.success && Array.isArray(result.guides)) {
+            // Language mapping helper
+            const languageMap = {
+                'japanese': '日本語',
+                'english': '英語', 
+                'chinese': '中国語',
+                'korean': '韓国語',
+                'spanish': 'スペイン語',
+                'french': 'フランス語',
+                'german': 'ドイツ語',
+                'italian': 'イタリア語',
+                'portuguese': 'ポルトガル語',
+                '日本語': '日本語',
+                '英語': '英語'
+            };
 
-    window.setTouristRegistration = function(data) {
-        localStorage.setItem('touristRegistrationData', JSON.stringify(data));
-        console.log('✅ Tourist registration saved:', data);
-    };
-
-    // Handle guide detail access with registration check
-    window.handleGuideDetailAccess = function(guideId) {
-        console.log('🎯 Checking tourist registration for guide access:', guideId);
-        
-        const registrationData = window.checkTouristRegistration();
-        
-        if (!registrationData) {
-            // Show registration prompt modal
-            window.showRegistrationPromptModal(guideId);
-            return;
-        }
-        
-        // User is registered, show guide details
-        console.log('✅ Tourist registered, showing guide details');
-        if (typeof showGuideDetailModalById === 'function') {
-            showGuideDetailModalById(guideId);
-        } else if (typeof showGuideDetailModal === 'function') {
-            showGuideDetailModal(guideId);
-        } else {
-            console.error('❌ Guide detail modal function not found');
-            window.open(`/guide-detail.html?id=${guideId}`, '_blank');
-        }
-    };
-
-    // Show registration prompt modal
-    window.showRegistrationPromptModal = function(guideId) {
-        console.log('📋 Showing registration prompt modal for guide:', guideId);
-        
-        // Remove existing modal if present
-        const existingModal = document.querySelector('#registrationPromptModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-        
-        // Create registration prompt modal HTML
-        const modalHTML = `
-            <div class="modal fade" id="registrationPromptModal" tabindex="-1" aria-labelledby="registrationPromptModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border-radius: 15px 15px 0 0;">
-                            <h5 class="modal-title fw-bold" id="registrationPromptModalLabel">
-                                <i class="bi bi-lock me-2"></i>観光客登録が必要です
-                            </h5>
-                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body p-4 text-center">
-                            <div class="mb-4">
-                                <i class="bi bi-person-plus-fill text-primary" style="font-size: 4rem;"></i>
-                            </div>
-                            <h6 class="fw-bold mb-3">ガイド詳細を閲覧するには観光客登録が必要です</h6>
-                            <p class="text-muted mb-4">
-                                ガイドの詳細情報、料金プラン、予約機能をご利用いただくために、<br>
-                                まず観光客として登録をお願いいたします。<br><br>
-                                <strong>登録は簡単で、数分で完了します。</strong>
-                            </p>
-                            <div class="d-grid gap-3">
-                                <button type="button" class="btn btn-primary btn-lg" id="proceedToRegistration" data-guide-id="${guideId}" style="border-radius: 25px; padding: 15px; font-weight: 500; background: linear-gradient(135deg, #007bff, #0056b3); border: none;">
-                                    <i class="bi bi-arrow-right-circle me-2"></i>観光客登録へ進む
-                                </button>
-                                <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal" style="border-radius: 25px; padding: 15px; font-weight: 500;">
-                                    <i class="bi bi-x-circle me-2"></i>後で登録する
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Add modal to document
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
-        
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('registrationPromptModal'));
-        modal.show();
-        
-        // Setup proceed button event
-        const proceedBtn = document.getElementById('proceedToRegistration');
-        if (proceedBtn) {
-            proceedBtn.addEventListener('click', function() {
-                const targetGuideId = this.getAttribute('data-guide-id');
-                console.log('🚀 Proceeding to registration for guide:', targetGuideId);
-                
-                // Store the target guide ID for after registration
-                sessionStorage.setItem('targetGuideId', targetGuideId);
-                
-                // Close modal
-                modal.hide();
-                
-                // Open tourist registration in a centered window
-                setTimeout(() => {
-                    const width = 800;
-                    const height = 900;
-                    const left = (screen.width - width) / 2;
-                    const top = (screen.height - height) / 2;
-                    
-                    const registrationWindow = window.open(
-                        '/tourist-registration-simple.html',
-                        'touristRegistration',
-                        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+            // Convert server format to frontend format
+            const apiGuides = result.guides.map(guide => {
+                // Handle languages properly
+                let processedLanguages = ['日本語']; // Default
+                if (Array.isArray(guide.languages)) {
+                    processedLanguages = guide.languages.map(lang => 
+                        languageMap[lang] || lang || '日本語'
                     );
-                    
-                    // Listen for registration completion
-                    window.addEventListener('message', function(event) {
-                        if (event.data.type === 'registrationComplete') {
-                            console.log('✅ Registration completed:', event.data);
-                            
-                            // Save registration data
-                            window.setTouristRegistration(event.data.data);
-                            
-                            // Show service unlock notification
-                            window.showServiceUnlockNotification();
-                            
-                            // Close registration window
-                            if (registrationWindow && !registrationWindow.closed) {
-                                registrationWindow.close();
-                            }
-                        }
-                    });
-                }, 300);
+                } else if (Array.isArray(guide.guideLanguages)) {
+                    processedLanguages = guide.guideLanguages;
+                } else if (guide.languages) {
+                    processedLanguages = [languageMap[guide.languages] || guide.languages];
+                }
+
+                return {
+                    id: guide.id,
+                    name: guide.name || guide.guideName,
+                    city: guide.location || 'tokyo',
+                    location: guide.location || 'tokyo', 
+                    rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.5,
+                    price: parseInt(guide.sessionRate || guide.guideSessionRate || 0),
+                    image: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                    photo: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                    languages: processedLanguages,
+                    specialties: guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : [],
+                    tags: guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : [],
+                    availability: guide.availability || guide.guideAvailability || 'weekdays',
+                    experience: guide.experience || guide.guideExperience || 'intermediate', 
+                    introduction: guide.introduction || guide.guideIntroduction || '',
+                    description: guide.introduction || guide.guideIntroduction || '地域の魅力をご案内します',
+                    email: guide.email || guide.guideEmail,
+                    phone: guide.phoneNumber,
+                    status: guide.status || 'approved',
+                    registeredAt: guide.registeredAt
+                };
             });
+            
+            console.log(`✅ Loaded ${apiGuides.length} guides from API`);
+            
+            // Sort to put newest guides first (top-left positioning)
+            const approvedGuides = apiGuides
+                .filter(guide => guide.status === 'approved')
+                .sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt));
+            
+            console.log(`📋 API Guides (newest first):`, approvedGuides.map(g => ({
+                name: g.name, 
+                registeredAt: g.registeredAt,
+                languages: g.languages,
+                price: g.price
+            })));
+            
+            // Smart merging: avoid duplicates within API guides, preserve default guides
+            const deduplicatedApiGuides = removeDuplicateGuides(approvedGuides);
+            const combinedGuides = [...deduplicatedApiGuides, ...defaultGuideData];
+            
+            // Performance warning for very large guide lists
+            if (combinedGuides.length > 100) {
+                console.warn(`⚠️ Large guide list (${combinedGuides.length} guides) - performance optimizations active`);
+            }
+            
+            return combinedGuides;
         }
-    };
-
-    // Show service unlock notification
-    window.showServiceUnlockNotification = function() {
-        console.log('🎉 Showing service unlock notification');
         
-        // Remove existing notification if present
-        const existingNotification = document.querySelector('#serviceUnlockModal');
-        if (existingNotification) {
-            existingNotification.remove();
+        console.log('📋 Using default guide data - API returned no results');
+        return defaultGuideData;
+        
+    } catch (error) {
+        if (error.name === 'AbortError') {
+            console.error('❌ API request timeout - server may be slow');
+        } else {
+            console.error('❌ Error loading guides from API:', error);
         }
-        
-        // Create service unlock notification HTML
-        const notificationHTML = `
-            <div class="modal fade" id="serviceUnlockModal" tabindex="-1" aria-labelledby="serviceUnlockModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
-                        <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
-                            <h5 class="modal-title fw-bold" id="serviceUnlockModalLabel">
-                                <i class="bi bi-check-circle me-2"></i>登録完了！
-                            </h5>
-                        </div>
-                        <div class="modal-body p-4 text-center">
-                            <div class="mb-4">
-                                <i class="bi bi-unlock-fill text-success" style="font-size: 4rem;"></i>
-                            </div>
-                            <h6 class="fw-bold mb-3 text-success">🎉 すべてのサービスがアンロックされました！</h6>
-                            <div class="alert alert-success" role="alert">
-                                <i class="bi bi-star-fill me-2"></i>
-                                <strong>ご利用いただける機能：</strong>
-                                <ul class="list-unstyled mt-2 mb-0">
-                                    <li>✅ ガイド詳細の閲覧</li>
-                                    <li>✅ 料金プランの確認</li>
-                                    <li>✅ ガイドへの予約・問い合わせ</li>
-                                    <li>✅ ブックマーク機能</li>
-                                    <li>✅ ガイド比較機能</li>
-                                </ul>
-                            </div>
-                            <p class="text-muted mb-4">
-                                登録ありがとうございます！<br>
-                                これで「ガイド詳細を見る」ボタンからガイドの詳細情報をご確認いただけます。
-                            </p>
-                            <button type="button" class="btn btn-success btn-lg" data-bs-dismiss="modal" style="border-radius: 25px; padding: 15px 30px; font-weight: 500; background: linear-gradient(135deg, #28a745, #20c997); border: none;">
-                                <i class="bi bi-arrow-right-circle me-2"></i>ガイドを探す
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Add notification to document
-        document.body.insertAdjacentHTML('beforeend', notificationHTML);
-        
-        // Show notification
-        const notification = new bootstrap.Modal(document.getElementById('serviceUnlockModal'));
-        notification.show();
-        
-        // Auto close after 10 seconds
-        setTimeout(() => {
-            notification.hide();
-            setTimeout(() => {
-                document.querySelector('#serviceUnlockModal')?.remove();
-            }, 300);
-        }, 10000);
-    };
+        console.log('📋 Falling back to default guide data');
+        return defaultGuideData;
+    }
+}
 
-    // Main view guide detail function - now uses new registration check logic
-    window.viewGuideDetail = function(guideId) {
-        console.log('🔍 viewGuideDetail called for guide:', guideId);
-        return window.handleGuideDetailAccess(guideId);
-    };
-    
-    console.log('✅ All global functions set up successfully:', {
-        filterGuides: typeof window.filterGuides,
-        resetFilters: typeof window.resetFilters,
-        goToStep2Modal: typeof window.goToStep2Modal,
-        clearRegistrationModal: typeof window.clearRegistrationModal,
-        handleSponsorRegistration: typeof window.handleSponsorRegistration,
-        viewGuideDetail: typeof window.viewGuideDetail,
-        handleGuideDetailAccess: typeof window.handleGuideDetailAccess,
-        checkTouristRegistration: typeof window.checkTouristRegistration
+// Remove duplicate guides based on ID or email (only for API guides with proper identifiers)
+function removeDuplicateGuides(guides) {
+    const seen = new Set();
+    return guides.filter(guide => {
+        const identifier = guide.id || guide.email;
+        // Only deduplicate guides that have valid identifiers
+        if (!identifier) {
+            return true; // Keep guides without identifiers (like default guides)
+        }
+        if (seen.has(identifier)) {
+            return false;
+        }
+        seen.add(identifier);
+        return true;
     });
 }
 
-// Initialize when DOM is ready
+/** Main application initialization function - TDZ safe with AppState */
+async function appInit() {
+    log.ok('🌴 TomoTrip Application Starting...');
+    
+    // Check for refresh parameters from registration completion
+    const urlParams = new URLSearchParams(window.location.search);
+    const shouldRefresh = urlParams.get('refresh');
+    const isNewGuide = shouldRefresh === 'new_guide';
+    
+    if (shouldRefresh) {
+        console.log('🔄 Page loaded with refresh parameter:', shouldRefresh);
+        // Clean URL after processing
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // 1) Load guides dynamically from API + default data
+    const guides = await loadGuidesFromAPI();
+    
+    // Clear any localStorage differences that might affect guide count
+    localStorage.removeItem('registeredGuides');
+    localStorage.removeItem('guideFilters');
+    
+    console.log('🎯 Environment Data Sync:', {
+        guides: guides.length,
+        source: 'API + defaultGuideData (dynamic)',
+        localStorage_cleared: true
+    });
+
+    // 2) Initialize centralized state BEFORE any function calls - prevents TDZ
+    // Force clear localStorage/sessionStorage environment differences
+    if (window.location.search.includes('clear-cache')) {
+        localStorage.clear();
+        sessionStorage.clear();
+        console.log('🧹 Storage cleared due to clear-cache parameter');
+    }
+    
+    AppState.guides = guides;
+    AppState.pageSize = 12; // Fixed pageSize for all environments
+    AppState.currentPage = 1;
+    AppState.filters = {}; // Reset filters to default
+    const state = AppState;
+
+    // 3) Setup location names in AppState
+    setupLocationNames(state);
+
+    // 4) Pass state to functions and display guides immediately
+    loadAllGuides(state.guides);
+    initializeGuidePagination(state);
+    setupEventListeners(state);
+    
+    // Render initial guide cards and display guides
+    renderGuideCards(guides);
+    displayGuides(1, state);
+    
+    // Setup button handlers
+    wireSponsorButtons();
+    wireLanguageSwitcher();
+    
+    // 5) Setup adaptive refresh intervals based on guide count
+    const refreshInterval = guides.length > 50 ? 60000 : 30000; // Slower refresh for large lists
+    console.log(`⏰ Setting refresh interval to ${refreshInterval/1000} seconds`);
+    
+    setInterval(async () => {
+        await refreshGuideData();
+    }, refreshInterval);
+    
+    // 6) Show notification if loaded after new guide registration
+    if (isNewGuide) {
+        setTimeout(() => {
+            showNewGuideNotification(1, true); // Show with registration message
+        }, 1000);
+    }
+    
+    log.ok('✅ Application initialized successfully with dynamic guide data');
+}
+
+// Refresh guide data and update display (enhanced with retry mechanism)
+async function refreshGuideData(maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.log(`🔄 Refreshing guide data (attempt ${attempt}/${maxRetries})`);
+            
+            // Reload API guides
+            const apiGuides = await loadGuidesFromAPI();
+            
+            // Merge API guides with default data (API guides first, for top-left positioning)
+            const mergedGuides = apiGuides && apiGuides.length > 0 
+                ? [...apiGuides, ...defaultGuideData]
+                : [...defaultGuideData];
+                
+            const currentCount = AppState.guides.length;
+            const newCount = mergedGuides.length;
+            
+            // Always update guides data
+            AppState.guides = mergedGuides;
+            
+            // Re-render guide cards
+            if (typeof renderGuideCards === 'function') {
+                renderGuideCards(AppState.guides, false, false);
+            }
+            
+            // Update display
+            if (typeof displayGuides === 'function') {
+                displayGuides(AppState.currentPage, AppState);
+            }
+            
+            // Update counters
+            if (typeof updateGuideCounters === 'function') {
+                updateGuideCounters();
+            }
+            
+            console.log(`✅ Guide data refreshed successfully: ${mergedGuides.length} total guides`);
+            return true; // Success
+            
+        } catch (error) {
+            console.error(`❌ Error refreshing guide data (attempt ${attempt}):`, error);
+            
+            if (attempt < maxRetries) {
+                // Wait before retry (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+            } else {
+                console.error('❌ Failed to refresh guide data after all retries');
+            }
+        }
+    }
+    
+    return false; // All attempts failed
+}
+
+
+// Show notification for newly added guides
+function showNewGuideNotification(count, isRegistrationComplete = false, customMessage = null) {
+    const notification = document.createElement('div');
+    notification.className = 'toast-container position-fixed top-0 end-0 p-3';
+    notification.style.zIndex = '9999';
+    
+    const message = customMessage || 
+        (isRegistrationComplete 
+            ? 'ガイド登録が完了しました！新しいガイドカードが追加されました。'
+            : `${count}名の新しいガイドが追加されました！`);
+    
+    const icon = isRegistrationComplete 
+        ? 'bi-check-circle-fill text-success'
+        : 'bi-person-plus-fill text-success';
+    
+    notification.innerHTML = `
+        <div class="toast show" role="alert" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white;">
+            <div class="toast-header" style="background: rgba(255,255,255,0.1); border: none; color: white;">
+                <i class="bi ${icon} me-2"></i>
+                <strong class="me-auto">TomoTrip</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" style="color: white;">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 7000);
+}
+
+// Make functions globally available for guide edit page and registration completion
+window.refreshGuideData = refreshGuideData;
+window.showNewGuideNotification = showNewGuideNotification;
+
+// Call initialization when module loads
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', appInit);
 } else {
     appInit();
 }
 
-console.log('🎉 TomoTrip app-init.mjs loaded successfully');
+// Location mapping for display - unified to prevent conflicts
+if (!window.locationNames) {
+    window.locationNames = {
+        hokkaido: "北海道", aomori: "青森県", iwate: "岩手県", miyagi: "宮城県", akita: "秋田県", yamagata: "山形県", fukushima: "福島県",
+        ibaraki: "茨城県", tochigi: "栃木県", gunma: "群馬県", saitama: "埼玉県", chiba: "千葉県", tokyo: "東京都", kanagawa: "神奈川県",
+        niigata: "新潟県", toyama: "富山県", ishikawa: "石川県", fukui: "福井県", yamanashi: "山梨県", nagano: "長野県", gifu: "岐阜県", shizuoka: "静岡県", aichi: "愛知県",
+        mie: "三重県", shiga: "滋賀県", kyoto: "京都府", osaka: "大阪府", hyogo: "兵庫県", nara: "奈良県", wakayama: "和歌山県",
+        tottori: "鳥取県", shimane: "島根県", okayama: "岡山県", hiroshima: "広島県", yamaguchi: "山口県", tokushima: "徳島県", kagawa: "香川県", ehime: "愛媛県", kochi: "高知県",
+        fukuoka: "福岡県", saga: "佐賀県", nagasaki: "長崎県", kumamoto: "熊本県", oita: "大分県", miyazaki: "宮崎県", kagoshima: "鹿児島県", okinawa: "沖縄県",
+        ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
+    };
+    console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
+}
+
+// Remove all global state variables - managed by AppState now
+// All display functions moved to event-handlers.mjs to prevent conflicts

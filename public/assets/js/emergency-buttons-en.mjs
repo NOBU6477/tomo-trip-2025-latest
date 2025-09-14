@@ -1,17 +1,8 @@
 // Emergency button handlers for new tab compatibility (English version)
 // Ensures buttons work in all browser contexts, including new tabs
 
-// Initialize auth flow for English version
-async function initAuthFlow() {
-    const { AuthFlowManager } = await import('./auth-flow.mjs');
-    window.authFlowManager = new AuthFlowManager();
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🔧 Emergency button setup started (English)');
-    
-    // Initialize authentication flow
-    initAuthFlow().catch(console.error);
     
     // Language switcher buttons
     const jpBtn = document.getElementById('jpBtn');

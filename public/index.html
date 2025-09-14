@@ -19,10 +19,8 @@
     <script src="env/csp-fix.js"></script>
     <script src="webgl-fix.js" defer></script>
     <script src="error_suppressor.js" defer></script>
-    <script src="management.js" defer></script>
-    
-    <!-- Unified Button Setup - Must load after management.js -->
-    <script src="button-setup.js" defer></script>
+    <!-- Main application initialization -->
+    <script type="module" src="assets/js/app-init.mjs" defer></script>
     
     <!-- CSS Load Order: Bootstrap CSS → Local Icons → Custom CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -2613,8 +2611,52 @@
 
         // Global functions now handled by app-init.mjs to prevent conflicts
 
+        // Emergency button setup for immediate functionality
+        function setupEmergencyButtons() {
+            console.log('🚨 Emergency button setup started');
+            
+            // Dashboard button
+            const dashboardBtn = document.getElementById('dashboardBtn');
+            if (dashboardBtn && !dashboardBtn.hasAttribute('data-emergency-setup')) {
+                dashboardBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🏪 Dashboard clicked');
+                    window.open('sponsor-dashboard.html', '_blank');
+                });
+                dashboardBtn.setAttribute('data-emergency-setup', 'true');
+                console.log('✅ Dashboard button setup');
+            }
+            
+            // Login dropdown
+            const loginDropdown = document.getElementById('loginDropdown');
+            const customLoginDropdown = document.getElementById('customLoginDropdown');
+            if (loginDropdown && customLoginDropdown && !loginDropdown.hasAttribute('data-emergency-setup')) {
+                loginDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔑 Login dropdown clicked');
+                    const isVisible = customLoginDropdown.style.display === 'block';
+                    customLoginDropdown.style.display = isVisible ? 'none' : 'block';
+                });
+                loginDropdown.setAttribute('data-emergency-setup', 'true');
+                console.log('✅ Login dropdown setup');
+            }
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (customLoginDropdown && !loginDropdown.contains(e.target) && !customLoginDropdown.contains(e.target)) {
+                    customLoginDropdown.style.display = 'none';
+                }
+            });
+            
+            console.log('✅ Emergency button setup completed');
+        }
+        
+        // Run emergency setup immediately and after DOM loads
+        setupEmergencyButtons();
+        
         // Initialize page - manual event listeners (app-init.mjs handles main initialization)
         document.addEventListener('DOMContentLoaded', function() {
+            setupEmergencyButtons(); // Run again after DOM loads
             // Event listeners for search and filter functionality
             const searchBtn = document.getElementById('searchBtn');
             if (searchBtn) {
@@ -7034,6 +7076,48 @@
                 if (toastElement) toastElement.remove();
             }, 5000);
         }
+    </script>
+    
+    <!-- Emergency Button Test -->
+    <script>
+        console.log('🚨 Emergency button test script loaded');
+        
+        // Test if JavaScript is working at all
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚨 DOM loaded - testing buttons');
+            
+            // Test Dashboard button
+            const dashboardBtn = document.getElementById('dashboardBtn');
+            if (dashboardBtn) {
+                console.log('✅ Dashboard button found');
+                dashboardBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🏪 Dashboard clicked!');
+                    alert('Dashboard button works!');
+                    window.open('sponsor-dashboard.html', '_blank');
+                });
+            } else {
+                console.error('❌ Dashboard button not found');
+            }
+            
+            // Test Login dropdown
+            const loginDropdown = document.getElementById('loginDropdown');
+            const customLoginDropdown = document.getElementById('customLoginDropdown');
+            if (loginDropdown && customLoginDropdown) {
+                console.log('✅ Login dropdown elements found');
+                loginDropdown.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('🔑 Login dropdown clicked!');
+                    const isVisible = customLoginDropdown.style.display === 'block';
+                    customLoginDropdown.style.display = isVisible ? 'none' : 'block';
+                    console.log('Dropdown display:', customLoginDropdown.style.display);
+                });
+            } else {
+                console.error('❌ Login dropdown elements not found');
+            }
+            
+            console.log('🚨 Emergency button test completed');
+        });
     </script>
 </body>
 </html>
