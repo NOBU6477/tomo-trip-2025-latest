@@ -1,5 +1,8 @@
-// TomoTrip Application Initialization - CSP Compliant
+// TomoTrip Application Initialization - CSP Compliant  
 // Consolidated from inline scripts in index.html
+
+// IMMEDIATE TEST: This should appear first in browser console
+console.log('🔥 URGENT TEST: app-init.mjs is executing!');
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher, loadAllGuides, initializeGuidePagination, displayGuides } from './events/event-handlers.mjs';
 import './emergency-buttons.mjs';
@@ -160,6 +163,7 @@ function removeDuplicateGuides(guides) {
 
 /** Main application initialization function - TDZ safe with AppState */
 async function appInit() {
+    console.log('🎯 appInit called - starting initialization');
     log.ok('🌴 TomoTrip Application Starting...');
     
     // Check for refresh parameters from registration completion
@@ -198,6 +202,9 @@ async function appInit() {
     AppState.pageSize = 12; // Fixed pageSize for all environments
     AppState.currentPage = 1;
     AppState.filters = {}; // Reset filters to default
+    
+    // Ensure AppState is available globally
+    window.AppState = AppState;
     const state = AppState;
 
     // 3) Setup location names in AppState
@@ -327,10 +334,15 @@ function showNewGuideNotification(count, isRegistrationComplete = false, customM
 window.refreshGuideData = refreshGuideData;
 window.showNewGuideNotification = showNewGuideNotification;
 
+// Debug: Module loading confirmation
+console.log('🚀 app-init.mjs module loaded');
+
 // Call initialization when module loads
 if (document.readyState === 'loading') {
+    console.log('⏰ DOM loading - waiting for DOMContentLoaded');
     document.addEventListener('DOMContentLoaded', appInit);
 } else {
+    console.log('⏰ DOM ready - calling appInit immediately');
     appInit();
 }
 

@@ -15,13 +15,13 @@
              "frame-ancestors 'self' https://*.replit.com; " +
              "base-uri 'self'; form-action 'self'; upgrade-insecure-requests";
 
-  // dev（Replit プレビュー用：beacon.js を許可）
+  // dev（Replit プレビュー用：beacon.js を許可 + 'unsafe-inline' for debugging）
   var dev = "default-src 'self'; " +
             "img-src 'self' data: https:; " +
             "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
             "font-src 'self' data: https://fonts.gstatic.com; " +
-            "script-src 'self' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; " +
-            "script-src-elem 'self' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; " +
+            "script-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; " +
             "connect-src 'self' https://api.emailjs.com https://replit.com https://*.replit.com; " +
             "frame-ancestors 'self' https://*.replit.com; " +
             "base-uri 'self'; form-action 'self'";

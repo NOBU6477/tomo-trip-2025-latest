@@ -7,11 +7,18 @@ export function renderGuideCards(guidesToRender = null) {
     const container = document.getElementById('guidesContainer');
     
     if (!container) {
-        console.error('Guide cards container not found');
+        console.error('❌ Guide cards container not found');
         return;
     }
     
-    console.log(`🎨 Rendering ${guides.length} guide cards`);
+    if (!Array.isArray(guides) || guides.length === 0) {
+        console.warn('⚠️ No guides to render');
+        container.innerHTML = '<div class="text-center p-4"><p class="text-muted">ガイドが見つかりません</p></div>';
+        updateGuideCounters(0, 0);
+        return;
+    }
+    
+    console.log(`🎨 Rendering ${guides.length} guide cards`, guides.map(g => g.name));
     
     // Performance optimization for large guide lists
     if (guides.length > 50) {
@@ -23,8 +30,9 @@ export function renderGuideCards(guidesToRender = null) {
         container.innerHTML = cardsHTML;
     }
     
-    // Update counters
-    updateGuideCounters(guides.length, window.AppState?.guides?.length || defaultGuideData.length);
+    // Update counters with safe fallback
+    const totalGuides = guides.length;
+    updateGuideCounters(totalGuides, totalGuides);
     
     // Setup view details event listeners
     setupViewDetailsEventListeners();
@@ -130,17 +138,23 @@ function createGuideCardHTML(guide) {
     `;
 }
 
-// Update guide counters - SINGLE DEFINITION
+// Update guide counters - SINGLE DEFINITION  
 export function updateGuideCounters(filtered, total) {
+    // Safety check for undefined values
+    const safeFiltered = filtered !== undefined ? filtered : 0;
+    const safeTotal = total !== undefined ? total : 0;
+    
+    console.log(`📊 Updating guide counters: ${safeFiltered} filtered, ${safeTotal} total`);
+    
     const guideCounter = document.getElementById('guideCounter');
     const totalGuideCounter = document.getElementById('totalGuideCounter');
     
     if (guideCounter) {
-        guideCounter.textContent = `${filtered}人のガイドが見つかりました（全${total}人中）`;
+        guideCounter.textContent = `${safeFiltered}人のガイドが見つかりました（全${safeTotal}人中）`;
     }
     
     if (totalGuideCounter) {
-        totalGuideCounter.textContent = `総数: ${total}人`;
+        totalGuideCounter.textContent = `総数: ${safeTotal}人`;
     }
 }
 
