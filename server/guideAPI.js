@@ -100,8 +100,9 @@ class GuideAPIService {
     app.post('/api/guides/upload-document', upload.array('documents', 3), this.uploadDocuments.bind(this));
     app.post('/api/guides/upload-profile-photo', upload.single('profilePhoto'), this.uploadProfilePhoto.bind(this));
     
-    // Guide registration endpoints
+    // Guide registration and authentication endpoints
     app.post('/api/guides/register', this.registerGuide.bind(this));
+    app.post('/api/guides/login', this.guideLogin.bind(this));
     app.get('/api/guides', this.getGuides.bind(this));
     
     // Guide editing endpoints
@@ -340,6 +341,79 @@ class GuideAPIService {
         success: false,
         error: 'UPLOAD_ERROR',
         message: 'プロフィール写真アップロード中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Guide login authentication
+  async guideLogin(req, res) {
+    try {
+      const { identifier, phone } = req.body;
+      
+      if (!identifier || !phone) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_CREDENTIALS',
+          message: 'ガイドIDまたはメールアドレスと電話番号が必要です'
+        });
+      }
+      
+      // Load all guides from storage
+      const guides = this.loadGuides();
+      
+      // Find guide by identifier (ID, email, or name) and phone
+      const guide = guides.find(g => {
+        const matchesIdentifier = (
+          g.id === identifier || 
+          g.email === identifier || 
+          g.guideEmail === identifier ||
+          g.name === identifier ||
+          g.guideName === identifier
+        );
+        
+        const matchesPhone = (
+          g.phoneNumber === phone || 
+          g.phone === phone
+        );
+        
+        return matchesIdentifier && matchesPhone;
+      });
+      
+      if (!guide) {
+        return res.status(401).json({
+          success: false,
+          error: 'INVALID_CREDENTIALS',
+          message: 'ガイドIDまたは電話番号が正しくありません'
+        });
+      }
+      
+      // Return sanitized guide data for login
+      const loginGuideData = {
+        id: guide.id,
+        name: guide.name || guide.guideName,
+        email: guide.email || guide.guideEmail,
+        location: guide.location,
+        introduction: guide.introduction || guide.guideIntroduction,
+        experience: guide.experience || guide.guideExperience,
+        sessionRate: guide.sessionRate || guide.guideSessionRate,
+        status: guide.status,
+        registeredAt: guide.registeredAt
+      };
+      
+      console.log(`✅ Guide login successful: ${loginGuideData.name} (${guide.id})`);
+      
+      res.json({
+        success: true,
+        message: 'ログインに成功しました',
+        guide: loginGuideData
+      });
+      
+    } catch (error) {
+      console.error('❌ Guide login error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'LOGIN_ERROR',
+        message: 'ログイン中にエラーが発生しました'
       });
     }
   }

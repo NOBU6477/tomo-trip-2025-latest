@@ -142,5 +142,33 @@
     "hospitalitySupport": true,
     "emergencySupport": false,
     "localExpert": false
+  },
+  {
+    "id": "6b89b2b4-d00f-49e7-b2bb-cf168b1d9701",
+    "guideName": "金城みどり",
+    "guideEmail": "test1800@gmaill.com",
+    "guideGender": "female",
+    "guideAge": "55",
+    "phoneNumber": "+819012345678",
+    "verificationCode": "172457",
+    "documentType": "passport",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "intermediate",
+    "guideLanguages": [
+      "japanese",
+      "chinese"
+    ],
+    "guideIntroduction": "中国語でのご案内も可能です",
+    "guideSpecialties": "グルメ・写真スポット",
+    "guideSessionRate": "12000",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-14T14:34:57.867Z",
+    "updatedAt": "2025-09-14T14:34:57.867Z"
   }
 ]

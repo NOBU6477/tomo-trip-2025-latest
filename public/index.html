@@ -6982,16 +6982,22 @@
                     throw new Error('有効な電話番号を入力してください。');
                 }
                 
-                // Try to authenticate guide using API
-                const response = await fetch('/api/guides');
+                // Try to authenticate guide using dedicated login API
+                const response = await fetch('/api/guides/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        identifier: identifier,
+                        phone: formattedPhone
+                    })
+                });
+                
                 const result = await response.json();
                 
-                if (result.success && result.guides) {
-                    // Find guide by identifier (ID or email) and phone
-                    const guide = result.guides.find(g => 
-                        (g.id === identifier || g.email === identifier || g.name === identifier) && 
-                        (g.phoneNumber === formattedPhone || g.phone === formattedPhone)
-                    );
+                if (result.success && result.guide) {
+                    const guide = result.guide;
                     
                     if (guide) {
                         console.log('✅ Guide authentication successful');
