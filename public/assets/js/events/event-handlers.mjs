@@ -357,7 +357,7 @@ function createGuideCard(guide) {
                 <h5 class="card-title">${guide.name}</h5>
                 <p class="card-text text-muted small">${window.locationNames ? (window.locationNames[guide.location] || guide.location) : guide.location}</p>
                 <div class="mb-2">
-                    <span class="badge bg-primary me-1">¥${Number(guide?.price || 0).toLocaleString()}</span>
+                    <span class="badge bg-primary me-1">¥${Number(guide?.sessionRate || guide?.price || 0).toLocaleString()}</span>
                     <span class="badge bg-warning text-dark">★${guide.rating}</span>
                 </div>
                 <div class="mt-auto">
@@ -583,21 +583,36 @@ function applyCurrentFilters(keyword = '') {
             );
         }
         
-        // Apply language filter
+        // Apply language filter  
         if (languageValue) {
-            filteredGuides = filteredGuides.filter(guide => 
-                guide.languages && guide.languages.includes(languageValue)
-            );
+            filteredGuides = filteredGuides.filter(guide => {
+                const languageMap = {
+                    'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
+                    'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語'
+                };
+                
+                // Use guides.json field names
+                const guideLangs = guide.guideLanguages || guide.languages || [];
+                if (Array.isArray(guideLangs)) {
+                    return guideLangs.some(lang => {
+                        // Check exact match, mapped value, or case-insensitive match
+                        return lang === languageValue || 
+                               languageMap[lang.toLowerCase()] === languageValue ||
+                               lang.toLowerCase() === languageValue.toLowerCase();
+                    });
+                }
+                return false;
+            });
         }
         
         // Apply keyword search
         if (searchKeyword) {
             filteredGuides = filteredGuides.filter(guide => {
-                const name = (guide.name || '').toLowerCase();
-                const description = (guide.description || '').toLowerCase();
+                const name = (guide.guideName || guide.name || '').toLowerCase();
+                const description = (guide.guideIntroduction || guide.description || '').toLowerCase();
                 const location = (guide.location || '').toLowerCase();
                 const city = (guide.city || '').toLowerCase();
-                const specialties = Array.isArray(guide.specialties) ? guide.specialties.join(' ').toLowerCase() : (guide.specialties || '').toLowerCase();
+                const specialties = (guide.guideSpecialties || guide.specialties || '').toLowerCase();
                 const tags = Array.isArray(guide.tags) ? guide.tags.join(' ').toLowerCase() : (guide.tags || '').toLowerCase();
                 
                 return name.includes(searchKeyword) || 
@@ -612,7 +627,8 @@ function applyCurrentFilters(keyword = '') {
         // Apply price filter
         if (priceValue) {
             filteredGuides = filteredGuides.filter(guide => {
-                const price = guide.price;
+                // Use guides.json field name
+                const price = parseInt(guide.guideSessionRate || guide.price || 0);
                 switch(priceValue) {
                     case 'budget': return price >= 6000 && price <= 10000;
                     case 'premium': return price >= 10001 && price <= 20000;

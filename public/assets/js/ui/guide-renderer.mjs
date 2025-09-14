@@ -118,10 +118,31 @@ function renderGuideCardsOptimized(guides, container) {
 
 // Create HTML for individual guide card  
 function createGuideCardHTML(guide) {
-    const price = Number(guide.price);
+    // Use API response field names
+    const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
     const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
-    const languages = Array.isArray(guide.languages) ? guide.languages.join(', ') : (guide.languages || '日本語');
-    const tags = Array.isArray(guide.tags) ? guide.tags.slice(0, 3).join(', ') : (guide.specialties || '');
+    
+    // Language mapping for Japanese display  
+    const languageMap = {
+        'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
+        'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語'
+    };
+    
+    let languages = '日本語'; // Default
+    // API returns languages field (already mapped from guideLanguages)
+    if (Array.isArray(guide.languages) && guide.languages.length > 0) {
+        languages = guide.languages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
+    } else if (Array.isArray(guide.guideLanguages) && guide.guideLanguages.length > 0) {
+        languages = guide.guideLanguages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
+    } else if (guide.languages && typeof guide.languages === 'string') {
+        languages = languageMap[guide.languages.toLowerCase()] || guide.languages;
+    }
+    
+    // Handle specialties from API response
+    const specialties = guide.specialties || guide.guideSpecialties || '';
+    const tags = typeof specialties === 'string' ? 
+        specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s).slice(0, 3).join(', ') :
+        Array.isArray(specialties) ? specialties.slice(0, 3).join(', ') : '';
     
     return `
         <div class="col-md-6 col-lg-4 mb-4">
@@ -140,10 +161,10 @@ function createGuideCardHTML(guide) {
                 <div class="card-body p-4">
                     <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.name}</h5>
                     <p class="text-muted mb-2">
-                        <i class="bi bi-geo-alt"></i> ${guide.city || guide.location}
+                        <i class="bi bi-geo-alt"></i> ${guide.location || guide.city || '東京'}
                     </p>
                     <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
-                        ${guide.description || '地域の魅力をご案内します'}
+                        ${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}
                     </p>
                     
                     <div class="mb-3">

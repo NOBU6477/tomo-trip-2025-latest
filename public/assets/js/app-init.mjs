@@ -69,16 +69,22 @@ async function loadGuidesFromAPI() {
 
             // Convert server format to frontend format
             const apiGuides = result.guides.map(guide => {
-                // Handle languages properly
+                // Handle languages properly with consistent mapping
                 let processedLanguages = ['日本語']; // Default
-                if (Array.isArray(guide.languages)) {
-                    processedLanguages = guide.languages.map(lang => 
-                        languageMap[lang] || lang || '日本語'
+                if (Array.isArray(guide.guideLanguages)) {
+                    // Primary field from guides.json
+                    processedLanguages = guide.guideLanguages.map(lang => 
+                        languageMap[lang.toLowerCase()] || lang || '日本語'
                     );
-                } else if (Array.isArray(guide.guideLanguages)) {
-                    processedLanguages = guide.guideLanguages;
+                } else if (Array.isArray(guide.languages)) {
+                    // Fallback field
+                    processedLanguages = guide.languages.map(lang => 
+                        languageMap[lang.toLowerCase()] || lang || '日本語'
+                    );
+                } else if (guide.guideLanguages) {
+                    processedLanguages = [languageMap[guide.guideLanguages.toLowerCase()] || guide.guideLanguages];
                 } else if (guide.languages) {
-                    processedLanguages = [languageMap[guide.languages] || guide.languages];
+                    processedLanguages = [languageMap[guide.languages.toLowerCase()] || guide.languages];
                 }
 
                 return {
@@ -91,8 +97,11 @@ async function loadGuidesFromAPI() {
                     image: guide.profilePhoto || '/assets/img/guides/default-1.svg',
                     photo: guide.profilePhoto || '/assets/img/guides/default-1.svg',
                     languages: processedLanguages,
-                    specialties: guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : [],
-                    tags: guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : [],
+                    // Use correct field names from guides.json
+                    specialties: guide.guideSpecialties ? guide.guideSpecialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : 
+                                (guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : []),
+                    tags: guide.guideSpecialties ? guide.guideSpecialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : 
+                         (guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : []),
                     availability: guide.availability || guide.guideAvailability || 'weekdays',
                     experience: guide.experience || guide.guideExperience || 'intermediate', 
                     introduction: guide.introduction || guide.guideIntroduction || '',
