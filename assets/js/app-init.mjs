@@ -275,14 +275,15 @@ async function refreshGuideData(maxRetries = 3) {
 }
 
 // Show notification for newly added guides
-function showNewGuideNotification(count, isRegistrationComplete = false) {
+function showNewGuideNotification(count, isRegistrationComplete = false, customMessage = null) {
     const notification = document.createElement('div');
     notification.className = 'toast-container position-fixed top-0 end-0 p-3';
     notification.style.zIndex = '9999';
     
-    const message = isRegistrationComplete 
-        ? 'ガイド登録が完了しました！新しいガイドカードが追加されました。'
-        : `${count}名の新しいガイドが追加されました！`;
+    const message = customMessage || 
+        (isRegistrationComplete 
+            ? 'ガイド登録が完了しました！新しいガイドカードが追加されました。'
+            : `${count}名の新しいガイドが追加されました！`);
     
     const icon = isRegistrationComplete 
         ? 'bi-check-circle-fill text-success'

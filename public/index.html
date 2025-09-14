@@ -5581,24 +5581,25 @@
                         <div class="alert alert-success">
                             <i class="bi bi-shield-check me-2"></i>
                             <strong>ガイド専用</strong><br>
-                            <small>登録時に発行されたガイドIDとパスワードでログインしてください。</small>
+                            <small>ガイドIDと電話番号でログインしてください。</small>
                         </div>
                     </div>
                     
-                    <form id="guideLoginForm">
+                    <form id="guideLoginForm" onsubmit="handleGuideLogin(event)">
                         <div class="mb-3">
-                            <label for="guideId" class="form-label fw-bold">
-                                <i class="bi bi-card-text me-1"></i>ガイドID
+                            <label for="guideIdentifier" class="form-label fw-bold">
+                                <i class="bi bi-person me-1"></i>ガイドIDまたはメールアドレス
                             </label>
-                            <input type="text" class="form-control" id="guideId" placeholder="GD-XXXXXXXXXX" required style="border-radius: 10px; padding: 12px; font-family: monospace;">
-                            <small class="text-muted">例: GD-1A2B3C4D5E-FGHIJ</small>
+                            <input type="text" class="form-control" id="guideIdentifier" placeholder="ガイドIDまたはメールアドレスを入力" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">登録時に発行されたガイドIDまたは登録メールアドレス</small>
                         </div>
                         
                         <div class="mb-4">
-                            <label for="guidePassword" class="form-label fw-bold">
-                                <i class="bi bi-lock me-1"></i>パスワード
+                            <label for="guidePhone" class="form-label fw-bold">
+                                <i class="bi bi-telephone me-1"></i>電話番号
                             </label>
-                            <input type="password" class="form-control" id="guidePassword" placeholder="パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                            <input type="tel" class="form-control" id="guidePhone" placeholder="080-1234-5678" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">登録時に使用した電話番号</small>
                         </div>
                         
                         <div class="d-grid gap-2">
@@ -5607,9 +5608,9 @@
                             </button>
                             <div class="text-center mt-3">
                                 <small class="text-muted">ガイド登録がお済みでない場合は</small><br>
-                                <button type="button" class="btn btn-link" id="showGuideRegistration">
+                                <a href="guide-registration-perfect.html" class="btn btn-link" target="_blank">
                                     <i class="bi bi-person-badge me-1"></i>ガイド登録はこちら
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </form>
@@ -6164,8 +6165,17 @@
             if (guideLoginBtn && !guideLoginBtn.hasAttribute('data-handler-added')) {
                 guideLoginBtn.addEventListener('click', function(e) {
                     e.preventDefault();
-                    console.log('🎯 Guide login clicked');
-                    alert('ガイドログイン機能は準備中です');
+                    console.log('🎯 Guide login clicked - opening modal');
+                    
+                    // Close dropdown first
+                    const dropdown = document.getElementById('customLoginDropdown');
+                    if (dropdown) {
+                        dropdown.style.display = 'none';
+                    }
+                    
+                    // Open guide login modal
+                    const guideLoginModal = new bootstrap.Modal(document.getElementById('guideLoginModal'));
+                    guideLoginModal.show();
                 });
                 guideLoginBtn.setAttribute('data-handler-added', 'true');
             }
@@ -6864,6 +6874,131 @@
         });
         
         console.log('✅ Button state management initialized');
+    </script>
+    
+    <!-- Guide Login Handler -->
+    <script>
+        // Guide login handler
+        async function handleGuideLogin(event) {
+            event.preventDefault();
+            
+            const identifier = document.getElementById('guideIdentifier').value;
+            const phone = document.getElementById('guidePhone').value;
+            
+            if (!identifier || !phone) {
+                alert('すべての項目を入力してください。');
+                return;
+            }
+            
+            // Show loading state
+            const submitButton = event.target.querySelector('button[type="submit"]');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>ログイン中...';
+            submitButton.disabled = true;
+            
+            try {
+                console.log('🔐 Attempting guide login...');
+                
+                // Format phone number to international format
+                const formattedPhone = formatPhoneNumber(phone);
+                if (!formattedPhone) {
+                    throw new Error('有効な電話番号を入力してください。');
+                }
+                
+                // Try to authenticate guide using API
+                const response = await fetch('/api/guides');
+                const result = await response.json();
+                
+                if (result.success && result.guides) {
+                    // Find guide by identifier (ID or email) and phone
+                    const guide = result.guides.find(g => 
+                        (g.id === identifier || g.email === identifier || g.name === identifier) && 
+                        (g.phoneNumber === formattedPhone || g.phone === formattedPhone)
+                    );
+                    
+                    if (guide) {
+                        console.log('✅ Guide authentication successful');
+                        
+                        // Store login session
+                        const loginSession = {
+                            guideId: guide.id,
+                            guideName: guide.name,
+                            loginTime: new Date().toISOString(),
+                            sessionType: 'guide'
+                        };
+                        localStorage.setItem('guideLoginSession', JSON.stringify(loginSession));
+                        
+                        // Close modal
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('guideLoginModal'));
+                        if (modal) modal.hide();
+                        
+                        // Show success message
+                        showLoginSuccessToast(guide.name);
+                        
+                        // Redirect to guide edit page
+                        setTimeout(() => {
+                            window.open(`guide-edit.html?id=${guide.id}`, '_blank');
+                        }, 1000);
+                        
+                    } else {
+                        throw new Error('ガイドIDまたは電話番号が正しくありません。');
+                    }
+                } else {
+                    throw new Error('ガイド情報の取得に失敗しました。');
+                }
+                
+            } catch (error) {
+                console.error('❌ Guide login error:', error);
+                alert(`ログインに失敗しました: ${error.message}`);
+            } finally {
+                // Restore button state
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+            }
+        }
+
+        // Format phone number for authentication
+        function formatPhoneNumber(phone) {
+            const digitsOnly = phone.replace(/\D/g, '');
+            
+            if (digitsOnly.startsWith('090') || digitsOnly.startsWith('080') || digitsOnly.startsWith('070')) {
+                if (digitsOnly.length === 11) {
+                    return '+81' + digitsOnly.slice(1);
+                }
+            }
+            
+            if (digitsOnly.startsWith('81') && digitsOnly.length === 12) {
+                return '+' + digitsOnly;
+            }
+            
+            return null;
+        }
+
+        // Show login success toast
+        function showLoginSuccessToast(guideName) {
+            const toastHtml = `
+                <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+                    <div class="toast show" role="alert" style="background: linear-gradient(135deg, #28a745, #20c997); border: none; color: white;">
+                        <div class="toast-header" style="background: rgba(255,255,255,0.1); border: none; color: white;">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong class="me-auto">TomoTrip</strong>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+                        </div>
+                        <div class="toast-body" style="color: white;">
+                            ${guideName}さん、ログインしました！<br>
+                            ガイド編集ページを開いています...
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', toastHtml);
+            
+            setTimeout(() => {
+                const toastElement = document.querySelector('.toast-container');
+                if (toastElement) toastElement.remove();
+            }, 5000);
+        }
     </script>
 </body>
 </html>

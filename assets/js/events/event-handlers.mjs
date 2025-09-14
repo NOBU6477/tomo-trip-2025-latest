@@ -1,6 +1,24 @@
 // Event handlers - centralized setup with AppState support
 import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal.mjs';
 
+// Global guide detail function - opens guide detail page
+async function showGuideDetailModalById(guideId) {
+    console.log('🔍 Opening guide detail for ID:', guideId);
+    
+    try {
+        // Open guide detail page - it will load data from API
+        const detailUrl = `guide-detail.html?id=${guideId}`;
+        window.open(detailUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
+        
+    } catch (error) {
+        console.error('❌ Error opening guide details:', error);
+        alert('ガイド詳細を開けませんでした。もう一度お試しください。');
+    }
+}
+
+// Make function globally available
+window.showGuideDetailModalById = showGuideDetailModalById;
+
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     

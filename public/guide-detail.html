@@ -338,7 +338,7 @@
         }
 
         // Load guide data
-        function loadGuideData() {
+        async function loadGuideData() {
             const guideId = getGuideId();
             if (!guideId) {
                 alert('ガイドIDが指定されていません。');
@@ -357,8 +357,8 @@
             
             console.log('✅ Tourist registration verified:', JSON.parse(touristData));
 
-            // Load guide data from localStorage or fetch from server
-            const guideData = getGuideData(guideId);
+            // Load guide data from API (with personal info removed)
+            const guideData = await getGuideData(guideId);
             if (!guideData) {
                 alert('ガイド情報が見つかりません。');
                 goBack();
@@ -368,67 +368,113 @@
             displayGuideData(guideData);
         }
 
-        // Get guide data (from localStorage or server)
-        function getGuideData(guideId) {
+        // Get guide data (from API with fallback to stored data)
+        async function getGuideData(guideId) {
             try {
-                // First try to get from allGuides (set by index page)
-                let allGuides = [];
-                const storedAllGuides = localStorage.getItem('allGuides');
-                if (storedAllGuides) {
-                    allGuides = JSON.parse(storedAllGuides);
-                }
+                console.log('🔍 Loading guide data for ID:', guideId);
                 
-                // If not found, load from registered guides + default guides
-                if (allGuides.length === 0) {
-                    const defaultGuides = getDefaultGuides();
-                    const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
+                // Primary: Try to get guide data from API
+                try {
+                    const response = await fetch(`/api/guides/${guideId}`);
+                    const result = await response.json();
                     
-                    // Also check new registration format (from new guide registration system)
-                    const newRegisteredGuides = JSON.parse(localStorage.getItem('newRegisteredGuides') || '[]');
-                    
-                    // Check individual guide storage
-                    const individualGuide = localStorage.getItem(`guide_${guideId}`);
-                    if (individualGuide) {
-                        const guide = JSON.parse(individualGuide);
-                        console.log('Found individual guide data:', guide);
-                        return guide;
+                    if (result.success && result.guide) {
+                        console.log('✅ Loaded guide from API:', result.guide);
+                        // Remove personal information for tourist view
+                        return sanitizeGuideDataForTourists(result.guide);
                     }
+                } catch (apiError) {
+                    console.warn('⚠️ API request failed, trying fallback:', apiError);
+                }
+                
+                // Fallback: Try to get all guides from API
+                try {
+                    const response = await fetch('/api/guides');
+                    const result = await response.json();
                     
-                    allGuides = [...defaultGuides, ...registeredGuides, ...newRegisteredGuides];
-                    console.log(`Total guides loaded: ${allGuides.length} (${defaultGuides.length} default + ${registeredGuides.length} registered + ${newRegisteredGuides.length} new)`);
+                    if (result.success && result.guides) {
+                        const guide = result.guides.find(g => g.id === guideId);
+                        if (guide) {
+                            console.log('✅ Found guide in all guides list:', guide);
+                            return sanitizeGuideDataForTourists(guide);
+                        }
+                    }
+                } catch (fallbackError) {
+                    console.warn('⚠️ Fallback API request failed:', fallbackError);
                 }
                 
-                // Try to get from opener window
-                if (allGuides.length === 0 && window.opener && window.opener.defaultGuides) {
-                    allGuides = window.opener.defaultGuides;
+                // Final fallback: Check opener window or stored data
+                if (window.opener && window.opener.AppState && window.opener.AppState.guides) {
+                    const guide = window.opener.AppState.guides.find(g => g.id === guideId);
+                    if (guide) {
+                        console.log('✅ Found guide in opener window state:', guide);
+                        return sanitizeGuideDataForTourists(guide);
+                    }
                 }
                 
-                const guide = allGuides.find(guide => guide.id == guideId);
-                if (guide) {
-                    console.log('Found guide:', guide);
-                    return guide;
-                }
-                
-                console.warn('Guide not found with ID:', guideId);
+                console.error('❌ Guide not found with ID:', guideId);
                 return null;
                 
             } catch (error) {
-                console.error('Error loading guide data:', error);
+                console.error('❌ Error loading guide data:', error);
                 return null;
             }
+        }
+
+        // Remove personal information for tourist view
+        function sanitizeGuideDataForTourists(guide) {
+            // Create a sanitized copy without personal information
+            const sanitized = {
+                ...guide,
+                // Remove personal contact information
+                phone: undefined,
+                phoneNumber: undefined,
+                guideEmail: undefined,
+                email: undefined,
+                // Keep public profile information
+                id: guide.id,
+                name: guide.name || guide.guideName,
+                profileImage: guide.profilePhoto || guide.profileImage,
+                location: guide.location || guide.city || 'tokyo',
+                introduction: guide.introduction || guide.guideIntroduction,
+                experience: guide.experience || guide.guideExperience,
+                languages: guide.languages || guide.guideLanguages || ['日本語'],
+                specialties: guide.specialties || guide.guideSpecialties || [],
+                sessionRate: guide.sessionRate || guide.guideSessionRate || guide.price,
+                availability: guide.availability || guide.guideAvailability,
+                rating: guide.rating || guide.averageRating || 4.8,
+                status: guide.status
+            };
+            
+            console.log('🔒 Sanitized guide data for tourist view');
+            return sanitized;
         }
 
         // Display guide data
         function displayGuideData(guide) {
             document.title = `${guide.name} - ガイド詳細 - TomoTrip`;
             
-            // Basic info
+            // Basic info (personal information excluded for tourist view)
             document.getElementById('guideName').textContent = guide.name || '名前未設定';
             document.getElementById('guideProfileImg').src = guide.profileImage || '/assets/images/default-avatar.jpg';
             document.getElementById('guideLocation').innerHTML = `<i class="bi bi-geo-alt me-2"></i>${guide.location || '場所未設定'}`;
-            document.getElementById('guidePrice').textContent = guide.price || '0';
-            document.getElementById('guidePhone').textContent = guide.phone || '非公開';
-            document.getElementById('guideEmail').textContent = guide.email || '非公開';
+            document.getElementById('guidePrice').textContent = guide.sessionRate || guide.price || '0';
+            
+            // Hide personal contact information from tourists
+            const phoneElement = document.getElementById('guidePhone');
+            const emailElement = document.getElementById('guideEmail');
+            
+            if (phoneElement) {
+                phoneElement.textContent = '予約確定後にお知らせします';
+                phoneElement.style.fontStyle = 'italic';
+                phoneElement.style.color = '#6c757d';
+            }
+            
+            if (emailElement) {
+                emailElement.textContent = '予約確定後にお知らせします';
+                emailElement.style.fontStyle = 'italic';
+                emailElement.style.color = '#6c757d';
+            }
             
             // Rating
             const rating = guide.rating || 4.5;

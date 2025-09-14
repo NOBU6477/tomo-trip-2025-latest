@@ -501,18 +501,22 @@
                         } else {
                             window.opener.location.reload();
                         }
+                        
+                        // Show success notification in parent window
+                        if (window.opener.showNewGuideNotification) {
+                            window.opener.showNewGuideNotification(1, false, 'ガイド情報が更新されました！');
+                        }
                     }
                     
-                    // Optionally redirect back to main page after a delay
+                    // 自動的にメインページ（ガイドカード表示）に戻る
                     setTimeout(() => {
-                        if (confirm('編集が完了しました。メインページに戻りますか？')) {
-                            if (window.opener) {
-                                window.close();
-                            } else {
-                                window.location.href = 'index.html';
-                            }
+                        console.log('✅ ガイド編集完了 - 自動的にメインページに戻ります');
+                        if (window.opener) {
+                            window.close();
+                        } else {
+                            window.location.href = 'index.html';
                         }
-                    }, 2000);
+                    }, 1500);
                     
                 } else {
                     throw new Error(result.message || '更新に失敗しました');
