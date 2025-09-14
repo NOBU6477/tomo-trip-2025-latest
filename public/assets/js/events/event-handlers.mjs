@@ -576,11 +576,14 @@ function applyCurrentFilters(keyword = '') {
     if (window.AppState && window.AppState.guides) {
         let filteredGuides = [...window.AppState.guides];
         
-        // Apply location filter
+        // Apply location filter with flexible matching
         if (locationValue) {
-            filteredGuides = filteredGuides.filter(guide => 
-                guide.location === locationValue || guide.prefecture === locationValue
-            );
+            filteredGuides = filteredGuides.filter(guide => {
+                const guideLocation = guide.location || guide.city || '';
+                // Support partial matching for Japanese locations
+                return guideLocation.includes(locationValue) || 
+                       locationValue.includes(guideLocation.split(' ')[0]); // Match prefecture
+            });
         }
         
         // Apply language filter  
@@ -627,12 +630,12 @@ function applyCurrentFilters(keyword = '') {
         // Apply price filter
         if (priceValue) {
             filteredGuides = filteredGuides.filter(guide => {
-                // Use guides.json field name
-                const price = parseInt(guide.guideSessionRate || guide.price || 0);
+                // Use consistent field names (sessionRate from API response)
+                const price = parseInt(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
                 switch(priceValue) {
-                    case 'budget': return price >= 6000 && price <= 10000;
-                    case 'premium': return price >= 10001 && price <= 20000;
-                    case 'luxury': return price >= 20001;
+                    case 'budget': return price >= 5000 && price <= 10000;
+                    case 'premium': return price >= 10001 && price <= 15000;
+                    case 'luxury': return price >= 15001;
                     default: return true;
                 }
             });

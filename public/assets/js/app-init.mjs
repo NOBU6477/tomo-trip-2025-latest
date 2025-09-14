@@ -67,47 +67,52 @@ async function loadGuidesFromAPI() {
                 '英語': '英語'
             };
 
-            // Convert server format to frontend format
+            // Convert server format to frontend format  
             const apiGuides = result.guides.map(guide => {
                 // Handle languages properly with consistent mapping
                 let processedLanguages = ['日本語']; // Default
-                if (Array.isArray(guide.guideLanguages)) {
-                    // Primary field from guides.json
-                    processedLanguages = guide.guideLanguages.map(lang => 
-                        languageMap[lang.toLowerCase()] || lang || '日本語'
-                    );
-                } else if (Array.isArray(guide.languages)) {
-                    // Fallback field
-                    processedLanguages = guide.languages.map(lang => 
-                        languageMap[lang.toLowerCase()] || lang || '日本語'
-                    );
-                } else if (guide.guideLanguages) {
-                    processedLanguages = [languageMap[guide.guideLanguages.toLowerCase()] || guide.guideLanguages];
-                } else if (guide.languages) {
-                    processedLanguages = [languageMap[guide.languages.toLowerCase()] || guide.languages];
+                
+                // Process API response languages field
+                if (Array.isArray(guide.languages) && guide.languages.length > 0) {
+                    // Filter out empty strings and null values
+                    const cleanLanguages = guide.languages.filter(lang => lang && lang.trim());
+                    if (cleanLanguages.length > 0) {
+                        processedLanguages = cleanLanguages.map(lang => {
+                            if (typeof lang === 'string') {
+                                return languageMap[lang.toLowerCase()] || lang;
+                            }
+                            return '日本語';
+                        });
+                    }
                 }
 
+                // Normalize location data - use actual location from API now
+                const locationData = guide.location || '東京都 東京';
+                
                 return {
                     id: guide.id,
-                    name: guide.name || guide.guideName,
-                    city: guide.location || 'tokyo',
-                    location: guide.location || 'tokyo', 
-                    rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.5,
-                    price: parseInt(guide.sessionRate || guide.guideSessionRate || 0),
-                    image: guide.profilePhoto || '/assets/img/guides/default-1.svg',
-                    photo: guide.profilePhoto || '/assets/img/guides/default-1.svg',
+                    name: guide.name,
+                    city: locationData,
+                    location: locationData, 
+                    rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.8,
+                    price: parseInt(guide.sessionRate || 0),
+                    sessionRate: parseInt(guide.sessionRate || 0),
+                    image: guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg',
+                    photo: guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg',
                     languages: processedLanguages,
-                    // Use correct field names from guides.json
-                    specialties: guide.guideSpecialties ? guide.guideSpecialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : 
-                                (guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : []),
-                    tags: guide.guideSpecialties ? guide.guideSpecialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : 
-                         (guide.specialties ? guide.specialties.split(/[,・]/).map(s => s.trim()).filter(s => s) : []),
-                    availability: guide.availability || guide.guideAvailability || 'weekdays',
-                    experience: guide.experience || guide.guideExperience || 'intermediate', 
-                    introduction: guide.introduction || guide.guideIntroduction || '',
-                    description: guide.introduction || guide.guideIntroduction || '地域の魅力をご案内します',
-                    email: guide.email || guide.guideEmail,
-                    phone: guide.phoneNumber,
+                    // Process specialties string from API
+                    specialties: guide.specialties ? 
+                        (typeof guide.specialties === 'string' ? guide.specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s) : guide.specialties) :
+                        [],
+                    tags: guide.specialties ? 
+                        (typeof guide.specialties === 'string' ? guide.specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s) : guide.specialties) :
+                        [],
+                    availability: guide.availability || 'weekdays',
+                    experience: guide.experience || 'intermediate', 
+                    introduction: guide.introduction || '地域の魅力をご案内します',
+                    description: guide.introduction || '地域の魅力をご案内します',
+                    email: guide.email,
+                    phone: guide.phone,
                     status: guide.status || 'approved',
                     registeredAt: guide.registeredAt
                 };

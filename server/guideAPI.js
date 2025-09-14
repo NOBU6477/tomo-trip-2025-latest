@@ -510,7 +510,7 @@ class GuideAPIService {
           id: guide.id,
           name: guide.guideName,
           email: guide.guideEmail,
-          location: 'tokyo', // Default location for now
+          location: guide.location || guide.prefecture || '東京都 東京',
           languages: Array.isArray(guide.guideLanguages) ? guide.guideLanguages : [guide.guideLanguages],
           specialties: guide.guideSpecialties,
           experience: guide.guideExperience,
