@@ -4,7 +4,7 @@ import { defaultGuideData } from '../data/default-guides.mjs';
 // Global guide rendering function with performance optimization
 export function renderGuideCards(guidesToRender = null) {
     const guides = guidesToRender || (window.AppState?.guides || defaultGuideData);
-    const container = document.getElementById('guideCardsContainer');
+    const container = document.getElementById('guidesContainer');
     
     if (!container) {
         console.error('Guide cards container not found');
