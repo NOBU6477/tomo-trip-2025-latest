@@ -1000,8 +1000,8 @@
                             </div>
                             
                             <div class="d-flex gap-2">
-                                <button class="btn btn-primary" id="searchBtn">検索</button>
-                                <button class="btn btn-outline-secondary" id="resetBtn" onclick="resetFilters()">リセット</button>
+                                <button class="btn btn-primary" id="searchBtn" data-action="search">検索</button>
+                                <button class="btn btn-outline-secondary" id="resetBtn" data-action="reset">リセット</button>
                             </div>
                         </div>
                         
@@ -2872,7 +2872,7 @@
 
             // Guide phone verification
             document.getElementById('guideSendVerificationBtn').addEventListener('click', function() {
-                const phone = document.getElementById('guidePhone').value;
+                const phone = document.getElementById('guidePhoneLogin').value;
                 if (phone.match(/^[0-9+\-()]+$/)) {
                     document.getElementById('guideVerificationCodeSection').style.display = 'block';
                     this.disabled = true;
@@ -2975,7 +2975,7 @@
                     // Validate required fields
                     const guideName = document.getElementById('guideName').value.trim();
                     const guideEmail = document.getElementById('guideEmail').value.trim();
-                    const guidePhone = document.getElementById('guidePhone').value.trim();
+                    const guidePhone = document.getElementById('guidePhoneReg').value.trim();
                     const guideLocation = document.getElementById('guideLocation').value;
                     const guidePrice = document.getElementById('guidePrice').value;
                     const guideDescription = document.getElementById('guideDescription').value.trim();
@@ -5643,10 +5643,10 @@
                         </div>
                         
                         <div class="mb-4">
-                            <label for="guidePhone" class="form-label fw-bold">
+                            <label for="guidePhoneLogin" class="form-label fw-bold">
                                 <i class="bi bi-telephone me-1"></i>電話番号
                             </label>
-                            <input type="tel" class="form-control" id="guidePhone" placeholder="080-1234-5678" required style="border-radius: 10px; padding: 12px;">
+                            <input type="tel" class="form-control" id="guidePhoneLogin" placeholder="080-1234-5678" required style="border-radius: 10px; padding: 12px;">
                             <small class="text-muted">登録時に使用した電話番号</small>
                         </div>
                         
@@ -5689,8 +5689,8 @@
                                 <input type="email" class="form-control" id="guideEmail" required style="border-radius: 10px;">
                             </div>
                             <div class="col-md-6">
-                                <label for="guidePhone" class="form-label">電話番号 <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" id="guidePhone" required style="border-radius: 10px;">
+                                <label for="guidePhoneReg" class="form-label">電話番号 <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="guidePhoneReg" required style="border-radius: 10px;">
                             </div>
                             <div class="col-md-6">
                                 <label for="guideLocation" class="form-label">活動地域 <span class="text-danger">*</span></label>

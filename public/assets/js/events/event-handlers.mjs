@@ -361,7 +361,7 @@ function createGuideCard(guide) {
                     <span class="badge bg-warning text-dark">★${guide.rating}</span>
                 </div>
                 <div class="mt-auto">
-                    <button class="btn btn-outline-primary btn-sm" onclick="viewGuideDetails('${guide.id}')">詳細を見る</button>
+                    <button class="btn btn-outline-primary btn-sm" data-action="view-details" data-guide-id="${guide.id}">詳細を見る</button>
                 </div>
             </div>
         </div>
@@ -512,7 +512,16 @@ function switchToEnglish() {
 // CSP-compliant filter and search handlers
 function handleSearchAction() {
     console.log('🔍 Search action triggered');
-    applyCurrentFilters();
+    
+    // Get search keyword
+    const keywordInput = document.getElementById('keywordInput');
+    const keyword = keywordInput?.value?.trim().toLowerCase() || '';
+    
+    if (keyword) {
+        console.log(`🔍 Searching for keyword: "${keyword}"`);
+    }
+    
+    applyCurrentFilters(keyword);
 }
 
 function handleResetFilters() {
@@ -522,13 +531,31 @@ function handleResetFilters() {
     const locationFilter = document.getElementById('locationFilter');
     const languageFilter = document.getElementById('languageFilter');  
     const priceFilter = document.getElementById('priceFilter');
+    const keywordInput = document.getElementById('keywordInput');
     
     if (locationFilter) locationFilter.value = '';
     if (languageFilter) languageFilter.value = '';
     if (priceFilter) priceFilter.value = '';
+    if (keywordInput) keywordInput.value = '';
     
-    // Trigger filter application
-    applyCurrentFilters();
+    console.log('✅ All filters reset');
+    
+    // Show all guides (reset to original state)
+    if (window.AppState && window.AppState.guides) {
+        console.log(`🔄 Displaying all ${window.AppState.guides.length} guides`);
+        
+        // Re-render all guide cards 
+        if (window.renderGuideCards) {
+            window.renderGuideCards(window.AppState.guides);
+        }
+        
+        // Update counters
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(window.AppState.guides.length, window.AppState.guides.length);
+        }
+    } else {
+        console.warn('⚠️ AppState or guides not available for reset');
+    }
 }
 
 function handleFilterChange() {
@@ -536,13 +563,14 @@ function handleFilterChange() {
     applyCurrentFilters();
 }
 
-function applyCurrentFilters() {
+function applyCurrentFilters(keyword = '') {
     // Get current filter values
     const locationValue = document.getElementById('locationFilter')?.value || '';
     const languageValue = document.getElementById('languageFilter')?.value || '';
     const priceValue = document.getElementById('priceFilter')?.value || '';
+    const searchKeyword = keyword || document.getElementById('keywordInput')?.value?.trim().toLowerCase() || '';
     
-    console.log('🎯 Applying filters:', { locationValue, languageValue, priceValue });
+    console.log('🎯 Applying filters:', { locationValue, languageValue, priceValue, searchKeyword });
     
     // Get current guides from AppState
     if (window.AppState && window.AppState.guides) {
@@ -560,6 +588,25 @@ function applyCurrentFilters() {
             filteredGuides = filteredGuides.filter(guide => 
                 guide.languages && guide.languages.includes(languageValue)
             );
+        }
+        
+        // Apply keyword search
+        if (searchKeyword) {
+            filteredGuides = filteredGuides.filter(guide => {
+                const name = (guide.name || '').toLowerCase();
+                const description = (guide.description || '').toLowerCase();
+                const location = (guide.location || '').toLowerCase();
+                const city = (guide.city || '').toLowerCase();
+                const specialties = Array.isArray(guide.specialties) ? guide.specialties.join(' ').toLowerCase() : (guide.specialties || '').toLowerCase();
+                const tags = Array.isArray(guide.tags) ? guide.tags.join(' ').toLowerCase() : (guide.tags || '').toLowerCase();
+                
+                return name.includes(searchKeyword) || 
+                       description.includes(searchKeyword) || 
+                       location.includes(searchKeyword) ||
+                       city.includes(searchKeyword) ||
+                       specialties.includes(searchKeyword) ||
+                       tags.includes(searchKeyword);
+            });
         }
         
         // Apply price filter
@@ -588,6 +635,17 @@ function applyCurrentFilters() {
         }
     }
 }
+
+// Global function exports for HTML compatibility (backwards compatibility)
+window.resetFilters = function() {
+    console.log('🔄 Global resetFilters called');
+    handleResetFilters();
+};
+
+window.viewGuideDetails = function(guideId) {
+    console.log('🔍 Global viewGuideDetails called for ID:', guideId);
+    showGuideDetailModalById(guideId);
+};
 
 // Management center handler
 function handleManagementCenter() {
