@@ -215,9 +215,13 @@ async function appInit() {
     initializeGuidePagination(state);
     setupEventListeners(state);
     
-    // Render initial guide cards and display guides
-    renderGuideCards(guides);
-    displayGuides(1, state);
+    // Wait for DOM to be fully ready before rendering guides
+    setTimeout(() => {
+        console.log('🎯 Starting guide rendering with delay for DOM readiness');
+        renderGuideCards(guides);
+        // displayGuides is now integrated with renderGuideCards - no separate call needed
+        // displayGuides(1, state); // DISABLED - causes container conflicts
+    }, 500); // Small delay to ensure DOM is fully loaded
     
     // Setup button handlers
     wireSponsorButtons();

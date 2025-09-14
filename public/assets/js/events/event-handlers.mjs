@@ -305,8 +305,11 @@ export function displayGuides(page, state) {
     const currentState = state || window.AppState;
     if (!currentState) return;
     
-    const container = document.getElementById('guideCardsContainer');
-    if (!container) return;
+    const container = document.getElementById('guidesContainer');
+    if (!container) {
+        console.error('❌ displayGuides: guidesContainer not found');
+        return;
+    }
     
     // Force pageSize to 12 for consistency across all environments
     currentState.pageSize = 12;
