@@ -345,13 +345,22 @@
     <script>
         let currentGuideId = null;
         
-        // URLから guide ID を取得
+        // URLから guide ID を取得 (デバッグ情報追加)
+        console.log('🔍 Current URL:', window.location.href);
+        console.log('🔍 Search params:', window.location.search);
+        
         const urlParams = new URLSearchParams(window.location.search);
         currentGuideId = urlParams.get('id');
         
-        if (!currentGuideId) {
-            alert('ガイドIDが指定されていません');
+        console.log('🔍 Extracted guide ID:', currentGuideId);
+        console.log('🔍 All URL params:', Object.fromEntries(urlParams));
+        
+        if (!currentGuideId || currentGuideId.trim() === '') {
+            console.error('❌ No guide ID found in URL parameters');
+            alert('ガイドIDが指定されていません。URLパラメータを確認してください。\n\nURL: ' + window.location.href);
             window.location.href = 'index.html';
+        } else {
+            console.log('✅ Guide ID validated:', currentGuideId);
         }
 
         // ページ読み込み時にガイド情報を取得
@@ -363,18 +372,28 @@
         // ガイド情報を読み込み
         async function loadGuideData() {
             try {
+                console.log('🔍 Loading guide data for ID:', currentGuideId);
                 const response = await fetch(`/api/guides/${currentGuideId}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                console.log('📥 API Response:', result);
                 
                 if (result.success && result.guide) {
+                    console.log('✅ Guide data loaded successfully');
                     populateForm(result.guide);
                 } else {
-                    alert('ガイド情報の取得に失敗しました');
+                    console.error('❌ Failed to get guide data:', result);
+                    alert('ガイド情報の取得に失敗しました: ' + (result.message || '不明なエラー'));
                     window.location.href = 'index.html';
                 }
             } catch (error) {
-                console.error('Error loading guide data:', error);
-                alert('ガイド情報の読み込み中にエラーが発生しました');
+                console.error('❌ Error loading guide data:', error);
+                alert('ガイド情報の読み込み中にエラーが発生しました: ' + error.message);
+                window.location.href = 'index.html';
             }
         }
 
@@ -495,6 +514,19 @@
                     
                     // メインページをリロードして最新情報を反映
                     if (window.opener) {
+                        // Send message to parent window to trigger refresh
+                        try {
+                            window.opener.postMessage({
+                                type: 'guideUpdated',
+                                guideId: currentGuideId,
+                                action: 'edit',
+                                message: 'ガイド情報が更新されました！'
+                            }, '*');
+                            console.log('✅ Update message sent to parent window');
+                        } catch (messageError) {
+                            console.warn('⚠️ Failed to send message to parent:', messageError);
+                        }
+                        
                         // Use the global refresh function if available
                         if (window.opener.refreshGuideData) {
                             await window.opener.refreshGuideData();

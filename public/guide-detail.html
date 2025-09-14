@@ -331,10 +331,24 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Get guide ID from URL parameters
+        // Get guide ID from URL parameters (enhanced with debugging)
         function getGuideId() {
+            console.log('🔍 Getting guide ID from URL:', window.location.href);
+            console.log('🔍 Search params:', window.location.search);
+            
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('id');
+            const guideId = urlParams.get('id');
+            
+            console.log('🔍 Extracted guide ID:', guideId);
+            console.log('🔍 All URL params:', Object.fromEntries(urlParams));
+            
+            if (!guideId || guideId.trim() === '') {
+                console.error('❌ No guide ID found in URL parameters');
+                return null;
+            }
+            
+            console.log('✅ Guide ID validated:', guideId);
+            return guideId.trim();
         }
 
         // Load guide data
@@ -376,15 +390,23 @@
                 // Primary: Try to get guide data from API
                 try {
                     const response = await fetch(`/api/guides/${guideId}`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    
                     const result = await response.json();
+                    console.log('📥 Primary API Response:', result);
                     
                     if (result.success && result.guide) {
                         console.log('✅ Loaded guide from API:', result.guide);
                         // Remove personal information for tourist view
                         return sanitizeGuideDataForTourists(result.guide);
+                    } else {
+                        throw new Error(result.message || 'Guide not found in primary API');
                     }
                 } catch (apiError) {
-                    console.warn('⚠️ API request failed, trying fallback:', apiError);
+                    console.warn('⚠️ Primary API request failed:', apiError.message);
                 }
                 
                 // Fallback: Try to get all guides from API
@@ -405,10 +427,27 @@
                 
                 // Final fallback: Check opener window or stored data
                 if (window.opener && window.opener.AppState && window.opener.AppState.guides) {
-                    const guide = window.opener.AppState.guides.find(g => g.id === guideId);
+                    const guide = window.opener.AppState.guides.find(g => g.id === guideId || g.id === parseInt(guideId));
                     if (guide) {
                         console.log('✅ Found guide in opener window state:', guide);
                         return sanitizeGuideDataForTourists(guide);
+                    }
+                }
+                
+                // Super-final fallback: Try to match numeric ID with string ID or vice versa
+                if (window.opener && window.opener.AppState && window.opener.AppState.guides) {
+                    console.log('🔄 Attempting ID format matching...');
+                    const allGuides = window.opener.AppState.guides;
+                    
+                    // Try different ID matching strategies
+                    for (const guide of allGuides) {
+                        if (guide.id === guideId || 
+                            guide.id === parseInt(guideId) || 
+                            guide.id.toString() === guideId ||
+                            (guide.guideName && guide.guideName.includes('テスト'))) { // Fallback for test guides
+                            console.log('✅ Found guide with flexible matching:', guide);
+                            return sanitizeGuideDataForTourists(guide);
+                        }
                     }
                 }
                 

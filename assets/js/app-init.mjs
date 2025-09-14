@@ -239,25 +239,38 @@ async function refreshGuideData(maxRetries = 3) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             console.log(`🔄 Refreshing guide data (attempt ${attempt}/${maxRetries})`);
-            const newGuides = await loadGuidesFromAPI();
-            const currentCount = AppState.guides.length;
-            const newCount = newGuides.length;
             
-            if (newCount !== currentCount) {
-                console.log(`🔄 Guide data updated: ${currentCount} → ${newCount} guides`);
-                AppState.guides = newGuides;
-                renderGuideCards(newGuides);
-                displayGuides(AppState.currentPage, AppState);
+            // Reload API guides
+            const apiGuides = await loadGuidesFromAPI();
+            
+            // Merge API guides with default data (API guides first, for top-left positioning)
+            const mergedGuides = apiGuides && apiGuides.length > 0 
+                ? [...apiGuides, ...defaultGuideData]
+                : [...defaultGuideData];
                 
-                // Show notification for new guides (not during initial load)
-                if (newCount > currentCount && currentCount > 0) {
-                    showNewGuideNotification(newCount - currentCount);
-                }
-                
-                return true; // Success
+            const currentCount = AppState.guides.length;
+            const newCount = mergedGuides.length;
+            
+            // Always update guides data
+            AppState.guides = mergedGuides;
+            
+            // Re-render guide cards
+            if (typeof renderGuideCards === 'function') {
+                renderGuideCards(AppState.guides, false, false);
             }
             
-            return true; // No changes, but successful
+            // Update display
+            if (typeof displayGuides === 'function') {
+                displayGuides(AppState.currentPage, AppState);
+            }
+            
+            // Update counters
+            if (typeof updateGuideCounters === 'function') {
+                updateGuideCounters();
+            }
+            
+            console.log(`✅ Guide data refreshed successfully: ${mergedGuides.length} total guides`);
+            return true; // Success
             
         } catch (error) {
             console.error(`❌ Error refreshing guide data (attempt ${attempt}):`, error);
@@ -273,6 +286,7 @@ async function refreshGuideData(maxRetries = 3) {
     
     return false; // All attempts failed
 }
+
 
 // Show notification for newly added guides
 function showNewGuideNotification(count, isRegistrationComplete = false, customMessage = null) {

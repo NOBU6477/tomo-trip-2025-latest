@@ -6876,6 +6876,41 @@
         console.log('✅ Button state management initialized');
     </script>
     
+    <!-- Guide Update Message Listener -->
+    <script>
+        // Listen for guide update messages from edit window
+        window.addEventListener('message', async function(event) {
+            try {
+                const { type, guideId, action, message } = event.data;
+                
+                if (type === 'guideUpdated') {
+                    console.log(`📨 Received guide update message: ${action} for guide ${guideId}`);
+                    
+                    // Trigger guide data refresh
+                    if (typeof window.refreshGuideData === 'function') {
+                        console.log('🔄 Triggering guide data refresh...');
+                        await window.refreshGuideData();
+                        console.log('✅ Guide data refreshed successfully');
+                    } else {
+                        console.warn('⚠️ refreshGuideData function not available, reloading page');
+                        location.reload();
+                    }
+                    
+                    // Show notification if function available
+                    if (typeof window.showNewGuideNotification === 'function' && message) {
+                        window.showNewGuideNotification(1, false, message);
+                    }
+                    
+                    console.log('✅ Guide update message handled successfully');
+                }
+            } catch (error) {
+                console.error('❌ Error handling guide update message:', error);
+            }
+        }, false);
+        
+        console.log('✅ Guide update message listener initialized');
+    </script>
+    
     <!-- Guide Login Handler -->
     <script>
         // Guide login handler
