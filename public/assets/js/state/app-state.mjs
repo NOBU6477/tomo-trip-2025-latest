@@ -5,6 +5,7 @@ const AppState = (window.AppState ??= {
   locale: 'ja',
   page: 1,
   guides: [],
+  originalGuides: [], // Preserve original guides for filter reset
   pageSize: 12,
   currentPage: 1,
   filters: {},
@@ -32,8 +33,12 @@ const AppState = (window.AppState ??= {
   },
   
   setGuides(guides) {
-    this.guides = Array.isArray(guides) ? guides : [];
+    const validGuides = Array.isArray(guides) ? guides : [];
+    this.guides = validGuides;
+    // Preserve original guides for filter reset functionality  
+    this.originalGuides = [...validGuides];
     this.currentPage = 1;
+    console.log(`📚 AppState: Set ${validGuides.length} guides (${this.originalGuides.length} preserved as original)`);
     return this;
   }
 });

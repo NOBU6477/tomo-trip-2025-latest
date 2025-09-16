@@ -57,26 +57,74 @@ export function renderGuideCards(guidesToRender = null) {
         return;
     }
     
-    console.log(`🎨 Rendering ${guides.length} guide cards`, guides.map(g => g.name));
+    console.log(`🎨 Rendering ${guides.length} guide cards`, guides.map(g => g.name || g.guideName || 'Unknown'));
+    
+    // Get pagination settings
+    const currentPage = window.AppState?.currentPage || 1;
+    const pageSize = 12; // Standard page size
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    
+    // Slice guides for current page
+    const guidesForPage = guides.slice(startIndex, endIndex);
+    
+    console.log(`📄 Pagination: page ${currentPage}, showing ${guidesForPage.length} of ${guides.length} guides (${startIndex + 1}-${Math.min(endIndex, guides.length)})`);
     
     // Performance optimization for large guide lists
-    if (guides.length > 50) {
-        console.log('📊 Large guide list detected, using optimized rendering');
-        renderGuideCardsOptimized(guides, container);
+    if (guidesForPage.length > 30) {
+        console.log('📊 Large guide page detected, using optimized rendering');
+        renderGuideCardsOptimized(guidesForPage, container);
     } else {
-        // Standard rendering for smaller lists
-        const cardsHTML = guides.map(guide => createGuideCardHTML(guide)).join('');
+        // Standard rendering for current page
+        const cardsHTML = guidesForPage.map(guide => createGuideCardHTML(guide)).join('');
         container.innerHTML = cardsHTML;
     }
     
-    // Update counters with safe fallback
-    const totalGuides = guides.length;
-    updateGuideCounters(totalGuides, totalGuides);
+    // Update counters with pagination info  
+    updateGuideCounters(guidesForPage.length, guides.length);
     
     // Setup view details event listeners
     setupViewDetailsEventListeners();
     
-    console.log(`✅ Rendered ${guides.length} guide cards successfully`);
+    // Update pagination display
+    updatePaginationDisplay(currentPage, guides.length, pageSize);
+    
+    console.log(`✅ Rendered ${guidesForPage.length} guide cards for page ${currentPage} of ${Math.ceil(guides.length / pageSize)}`);
+}
+
+// Update pagination display elements
+function updatePaginationDisplay(currentPage, totalGuides, pageSize) {
+    const totalPages = Math.ceil(totalGuides / pageSize);
+    
+    // Update page info
+    const pageInfo = document.getElementById('pageInfo');
+    if (pageInfo) {
+        pageInfo.textContent = `ページ ${currentPage}`;
+    }
+    
+    // Update display range
+    const displayRange = document.getElementById('displayRange');
+    if (displayRange) {
+        const startIndex = (currentPage - 1) * pageSize + 1;
+        const endIndex = Math.min(currentPage * pageSize, totalGuides);
+        displayRange.textContent = `${startIndex}-${endIndex}`;
+    }
+    
+    // Update pagination buttons
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+    
+    if (prevBtn) {
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.classList.toggle('disabled', currentPage === 1);
+    }
+    
+    if (nextBtn) {
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.classList.toggle('disabled', currentPage === totalPages);
+    }
+    
+    console.log(`📄 Pagination updated: page ${currentPage}/${totalPages}, showing ${totalGuides} total guides`);
 }
 
 // Optimized rendering for large guide lists (50+ guides)

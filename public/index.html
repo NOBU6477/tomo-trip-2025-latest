@@ -2884,15 +2884,23 @@
             setupCustomDropdownListeners();
             
             document.getElementById('prevPageBtn').addEventListener('click', () => {
-                if (currentPage > 1) {
-                    displayGuides(currentGuides, currentPage - 1);
+                if (window.AppState && window.AppState.currentPage > 1) {
+                    window.AppState.currentPage -= 1;
+                    if (window.renderGuideCards) {
+                        window.renderGuideCards(window.AppState.guides);
+                    }
                 }
             });
             
             document.getElementById('nextPageBtn').addEventListener('click', () => {
-                const totalPages = Math.ceil(currentGuides.length / guidesPerPage);
-                if (currentPage < totalPages) {
-                    displayGuides(currentGuides, currentPage + 1);
+                if (window.AppState && window.AppState.guides) {
+                    const totalPages = Math.ceil(window.AppState.guides.length / 12);
+                    if (window.AppState.currentPage < totalPages) {
+                        window.AppState.currentPage += 1;
+                        if (window.renderGuideCards) {
+                            window.renderGuideCards(window.AppState.guides);
+                        }
+                    }
                 }
             });
 

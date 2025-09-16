@@ -139,7 +139,16 @@ window.filterGuides = function() {
     // Update state and display
     state.guides = filteredGuides;
     state.currentPage = 1; // Reset to first page
-    displayGuides(1, state);
+    
+    // Render with new modular system
+    if (window.renderGuideCards) {
+        window.renderGuideCards(filteredGuides);
+    }
+    
+    // Update counters
+    if (window.updateGuideCounters) {
+        window.updateGuideCounters(filteredGuides.length, state.originalGuides ? state.originalGuides.length : filteredGuides.length);
+    }
     
     console.log(`✅ Filter complete: ${filteredGuides.length} guides found`);
 };
@@ -159,7 +168,17 @@ window.resetFilters = function() {
     // Reload all guides
     if (window.AppState && window.AppState.originalGuides) {
         window.AppState.guides = [...window.AppState.originalGuides];
-        displayGuides(1, window.AppState);
+        window.AppState.currentPage = 1;
+        
+        // Render with new modular system
+        if (window.renderGuideCards) {
+            window.renderGuideCards(window.AppState.guides);
+        }
+        
+        // Update counters
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(window.AppState.guides.length, window.AppState.guides.length);
+        }
     } else {
         location.reload();
     }
@@ -444,8 +463,10 @@ export function initializeGuidePagination(state) {
         guides: state.guides.length
     });
     
-    // Display initial page
-    displayGuides(state.currentPage, state);
+    // Display initial page with pagination
+    if (window.renderGuideCards) {
+        window.renderGuideCards(state.guides);
+    }
 }
 
 // Display guides for current page using AppState
@@ -518,7 +539,9 @@ function updatePaginationInfo(page, state) {
         prevBtn.onclick = () => {
             if (page > 1) {
                 currentState.currentPage = page - 1;
-                displayGuides(currentState.currentPage, currentState);
+                if (window.renderGuideCards) {
+                    window.renderGuideCards(currentState.guides);
+                }
             }
         };
     }
@@ -528,7 +551,9 @@ function updatePaginationInfo(page, state) {
         nextBtn.onclick = () => {
             if (page < totalPages) {
                 currentState.currentPage = page + 1;
-                displayGuides(currentState.currentPage, currentState);
+                if (window.renderGuideCards) {
+                    window.renderGuideCards(currentState.guides);
+                }
             }
         };
     }
@@ -726,6 +751,9 @@ function applyCurrentFilters(keyword = '') {
                         lang.toLowerCase().includes(languageValue.toLowerCase())
                     );
                 }
+                return false;
+            });
+        }
         // Apply price filter
         if (priceValue) {
             filteredGuides = filteredGuides.filter(guide => {
@@ -773,58 +801,6 @@ function applyCurrentFilters(keyword = '') {
         
     } else {
         console.warn('⚠️ AppState or guides not available for filtering');
-    }
-}
-        // Apply keyword search
-        if (searchKeyword) {
-            filteredGuides = filteredGuides.filter(guide => {
-                const name = (guide.guideName || guide.name || '').toLowerCase();
-                const description = (guide.guideIntroduction || guide.description || '').toLowerCase();
-                const location = (guide.location || '').toLowerCase();
-                const city = (guide.city || '').toLowerCase();
-                const specialties = (guide.guideSpecialties || guide.specialties || '').toLowerCase();
-                const tags = Array.isArray(guide.tags) ? guide.tags.join(' ').toLowerCase() : (guide.tags || '').toLowerCase();
-                
-                console.log('🔍 Keyword search checking:', { 
-                    keyword: searchKeyword, 
-                    guideName: name,
-                    location: location
-                });
-                
-                return name.includes(searchKeyword) || 
-                       description.includes(searchKeyword) || 
-                       location.includes(searchKeyword) ||
-                       city.includes(searchKeyword) ||
-                       specialties.includes(searchKeyword) ||
-                       tags.includes(searchKeyword);
-            });
-        }
-        
-        // Apply price filter
-        if (priceValue) {
-            filteredGuides = filteredGuides.filter(guide => {
-                // Use consistent field names (sessionRate from API response)
-                const price = parseInt(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
-                switch(priceValue) {
-                    case 'budget': return price >= 5000 && price <= 10000;
-                    case 'premium': return price >= 10001 && price <= 15000;
-                    case 'luxury': return price >= 15001;
-                    default: return true;
-                }
-            });
-        }
-        
-        console.log(`✅ Filtered: ${filteredGuides.length}/${window.AppState.guides.length} guides`);
-        
-        // Re-render guide cards with filtered results
-        if (window.renderGuideCards) {
-            window.renderGuideCards(filteredGuides);
-        }
-        
-        // Update counters using guide-renderer function
-        if (window.updateGuideCounters) {
-            window.updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
-        }
     }
 }
 
