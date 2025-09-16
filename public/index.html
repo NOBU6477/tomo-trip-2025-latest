@@ -2389,9 +2389,8 @@
             
             if (guideBtn && !guideBtn.hasAttribute('data-handler-added')) {
                 guideBtn.onclick = function() {
-                    console.log('🎯 Guide login clicked');
-                    showLoginModal('guide').catch(() => {});
-                    document.getElementById('customLoginDropdown').style.display = 'none';
+                    console.log('🎯 Guide login clicked - redirecting to guide registration/login');
+                    window.open('guide-registration-perfect.html', '_blank', 'width=900,height=1000,scrollbars=yes,resizable=yes');
                     return false;
                 };
                 guideBtn.setAttribute('data-handler-added', 'true');

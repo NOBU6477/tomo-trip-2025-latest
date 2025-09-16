@@ -316,12 +316,20 @@ window.filterGuides = function() {
             // Use guideLanguages as per actual data structure
             const languages = guide.guideLanguages || guide.languages || [];
             
-            // Language mapping for filter values
+            // Enhanced language mapping for both Japanese and English forms
             const languageMapping = {
-                'japanese': ['japanese', 'ja', '日本語', 'japan'],
-                'english': ['english', 'en', '英語', 'english'],
-                'chinese': ['chinese', 'zh', '中国語', 'chinese'],
-                'korean': ['korean', 'ko', '韓国語', 'korean']
+                'japanese': ['japanese', 'ja', '日本語', 'japan', 'jpn'],
+                'english': ['english', 'en', '英語', 'eng'],
+                'chinese': ['chinese', 'zh', '中国語', 'chinese', 'chn', '中国語（簡体）'],
+                'chinese_traditional': ['chinese_traditional', 'zh-tw', '中国語（繁体）', 'traditional chinese'],
+                'korean': ['korean', 'ko', '韓国語', 'korea', 'kor'],
+                'thai': ['thai', 'th', 'タイ語', 'thailand'],
+                'vietnamese': ['vietnamese', 'vi', 'ベトナム語', 'vietnam'],
+                'indonesian': ['indonesian', 'id', 'インドネシア語', 'indonesia'],
+                'spanish': ['spanish', 'es', 'スペイン語', 'spain'],
+                'french': ['french', 'fr', 'フランス語', 'france'],
+                'german': ['german', 'de', 'ドイツ語', 'germany'],
+                'portuguese': ['portuguese', 'pt', 'ポルトガル語', 'portugal']
             };
             
             const mappedLanguages = languageMapping[selectedLanguage] || [selectedLanguage];
