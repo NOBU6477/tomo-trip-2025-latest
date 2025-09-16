@@ -770,11 +770,7 @@ function applyCurrentFilters(keyword = '') {
         // Apply keyword search
         if (keyword) {
             filteredGuides = filteredGuides.filter(guide => {
-                const searchText = [
-                    guide.name, guide.guideName,
-                    guide.description, guide.bio, guide.introduction,
-                    guide.specialty, guide.specialties
-                ].join(' ').toLowerCase();
+                const searchText = (guide.name || guide.guideName || '').toLowerCase();
                 return searchText.includes(keyword);
             });
         }
