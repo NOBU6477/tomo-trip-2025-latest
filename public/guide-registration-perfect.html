@@ -347,7 +347,7 @@
                             <button type="submit" class="btn btn-guide">
                                 <i class="bi bi-check-circle me-2"></i>完全なガイド登録申請
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="cancelRegistration();">
+                            <button type="button" class="btn btn-outline-secondary" id="cancelRegistrationBtn">
                                 <i class="bi bi-arrow-left me-2"></i>キャンセル
                             </button>
                         </div>
@@ -966,6 +966,18 @@
                 }
             }
         }
+        
+        // Setup cancel button event listener (CSP compliant)
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelBtn = document.getElementById('cancelRegistrationBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    cancelRegistration();
+                });
+                console.log('✅ Cancel button event listener setup complete');
+            }
+        });
         
     </script>
 </body>
