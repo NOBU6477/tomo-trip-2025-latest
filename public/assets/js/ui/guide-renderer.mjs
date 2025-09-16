@@ -304,25 +304,7 @@ export function createGuideCardHTML(guide) {
     `;
 }
 
-// Update guide counters - SINGLE DEFINITION  
-export function updateGuideCounters(filtered, total) {
-    // Safety check for undefined values
-    const safeFiltered = filtered !== undefined ? filtered : 0;
-    const safeTotal = total !== undefined ? total : 0;
-    
-    console.log(`📊 Updating guide counters: ${safeFiltered} filtered, ${safeTotal} total`);
-    
-    const guideCounter = document.getElementById('guideCounter');
-    const totalGuideCounter = document.getElementById('totalGuideCounter');
-    
-    if (guideCounter) {
-        guideCounter.textContent = `${safeFiltered}人のガイドが見つかりました（全${safeTotal}人中）`;
-    }
-    
-    if (totalGuideCounter) {
-        totalGuideCounter.textContent = `総数: ${safeTotal}人`;
-    }
-}
+// Duplicate function removed - using the one at line 168
 
 // Setup event listeners for view details buttons
 function setupViewDetailsEventListeners() {
