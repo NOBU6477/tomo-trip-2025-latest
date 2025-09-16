@@ -27,41 +27,216 @@ async function showGuideDetailModalById(guideId) {
     }
 }
 
-// Show tourist registration prompt modal
+// Show comprehensive tourist registration modal
 function showTouristRegistrationPrompt(guideId) {
-    // Create and show Bootstrap modal
+    // Create detailed registration modal
     const modalHTML = `
-        <div class="modal fade" id="touristAuthModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">観光客登録が必要です</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal fade" id="touristRegistrationModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-person-plus me-2"></i>観光客登録
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
                     </div>
-                    <div class="modal-body">
-                        <p>ガイドの詳細情報をご覧いただくには、観光客としての登録が必要です。</p>
-                        <p>登録は無料で、数分で完了します。</p>
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <div>
+                                <strong>ガイド詳細をご覧いただくには観光客登録が必要です</strong><br>
+                                <small>登録は無料で、安全にガイドとやり取りできます</small>
+                            </div>
+                        </div>
+                        
+                        <form id="touristRegistrationForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="touristName" class="form-label fw-bold">
+                                        <i class="bi bi-person me-1"></i>お名前 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" class="form-control" id="touristName" required 
+                                           style="border-radius: 10px;" placeholder="田中太郎">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="touristEmail" class="form-label fw-bold">
+                                        <i class="bi bi-envelope me-1"></i>メールアドレス <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="email" class="form-control" id="touristEmail" required 
+                                           style="border-radius: 10px;" placeholder="example@email.com">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="touristPhone" class="form-label fw-bold">
+                                        <i class="bi bi-telephone me-1"></i>電話番号 <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="tel" class="form-control" id="touristPhone" required 
+                                           style="border-radius: 10px;" placeholder="090-1234-5678">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="touristAge" class="form-label fw-bold">
+                                        <i class="bi bi-calendar me-1"></i>年齢層
+                                    </label>
+                                    <select class="form-select" id="touristAge" style="border-radius: 10px;">
+                                        <option value="">選択してください</option>
+                                        <option value="18-25">18-25歳</option>
+                                        <option value="26-35">26-35歳</option>
+                                        <option value="36-45">36-45歳</option>
+                                        <option value="46-55">46-55歳</option>
+                                        <option value="56-65">56-65歳</option>
+                                        <option value="66+">66歳以上</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <label for="touristInterests" class="form-label fw-bold">
+                                        <i class="bi bi-heart me-1"></i>興味のある観光内容
+                                    </label>
+                                    <div class="row g-2">
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="interest1" value="gourmet">
+                                                <label class="form-check-label" for="interest1">グルメ</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="interest2" value="history">
+                                                <label class="form-check-label" for="interest2">歴史・文化</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="interest3" value="nature">
+                                                <label class="form-check-label" for="interest3">自然・景色</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="interest4" value="shopping">
+                                                <label class="form-check-label" for="interest4">ショッピング</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="interest5" value="nightlife">
+                                                <label class="form-check-label" for="interest5">ナイトライフ</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="interest6" value="adventure">
+                                                <label class="form-check-label" for="interest6">アドベンチャー</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check mt-3">
+                                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                        <label class="form-check-label" for="agreeTerms">
+                                            <a href="#" onclick="showTerms(); return false;">利用規約</a>と<a href="#" onclick="showPrivacy(); return false;">プライバシーポリシー</a>に同意します <span class="text-danger">*</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
-                        <button type="button" class="btn btn-primary" onclick="redirectToRegistration('${guideId}')">登録する</button>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 25px;">
+                            <i class="bi bi-x-circle me-1"></i>キャンセル
+                        </button>
+                        <button type="button" class="btn btn-primary px-4" onclick="processTouristRegistration('${guideId}')" style="border-radius: 25px; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
+                            <i class="bi bi-check-circle me-1"></i>登録してガイド詳細を見る
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     `;
     
-    // Add modal to page if not exists
-    if (!document.getElementById('touristAuthModal')) {
-        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    // Remove existing modal if it exists and add new one
+    const existingModal = document.getElementById('touristRegistrationModal');
+    if (existingModal) {
+        existingModal.remove();
     }
     
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
     // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('touristAuthModal'));
+    const modal = new bootstrap.Modal(document.getElementById('touristRegistrationModal'));
     modal.show();
 }
 
-// Make redirect function globally available
+// Process tourist registration form
+window.processTouristRegistration = function(guideId) {
+    const form = document.getElementById('touristRegistrationForm');
+    
+    // Validate required fields
+    const name = document.getElementById('touristName').value.trim();
+    const email = document.getElementById('touristEmail').value.trim();
+    const phone = document.getElementById('touristPhone').value.trim();
+    const agreeTerms = document.getElementById('agreeTerms').checked;
+    
+    if (!name || !email || !phone) {
+        alert('必須項目を入力してください。');
+        return;
+    }
+    
+    if (!agreeTerms) {
+        alert('利用規約とプライバシーポリシーに同意してください。');
+        return;
+    }
+    
+    // Collect form data
+    const age = document.getElementById('touristAge').value;
+    const interests = [];
+    
+    // Collect selected interests
+    for (let i = 1; i <= 6; i++) {
+        const checkbox = document.getElementById(`interest${i}`);
+        if (checkbox && checkbox.checked) {
+            interests.push(checkbox.value);
+        }
+    }
+    
+    const touristData = {
+        id: 'tourist_' + Date.now(),
+        name: name,
+        email: email,
+        phone: phone,
+        age: age,
+        interests: interests,
+        registeredAt: new Date().toISOString(),
+        status: 'active'
+    };
+    
+    // Save authentication status only (no PII stored)
+    sessionStorage.setItem('touristAuth', 'true');
+    sessionStorage.setItem('touristAuthTimestamp', Date.now().toString());
+    sessionStorage.setItem('pendingGuideId', guideId);
+    
+    // In production: Send to backend API, don't store PII locally
+    console.log('🛡️ Tourist authentication set (PII not stored locally)');
+    
+    console.log('✅ Tourist registered:', touristData);
+    
+    // Close modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('touristRegistrationModal'));
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Show success message and navigate to guide details
+    alert('観光客登録が完了しました！\\nガイド詳細ページに移動します。');
+    
+    // Same-tab navigation to avoid popup blockers
+    if (guideId) {
+        window.location.href = `guide-detail.html?id=${guideId}`;
+    } else {
+        console.log('✅ Tourist registration completed successfully');
+    }
+};
+
+// Legacy redirect function for compatibility
 window.redirectToRegistration = function(guideId) {
     sessionStorage.setItem('pendingGuideId', guideId);
     window.location.href = '/tourist-registration-simple.html';
@@ -80,37 +255,70 @@ window.filterGuides = function() {
         return;
     }
     
-    // Get filter values
-    const regionSelect = document.getElementById('regionSelect');
-    const languageSelect = document.getElementById('languageSelect');
-    const priceSelect = document.getElementById('priceSelect');
+    // Get filter values - using correct element IDs
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter');
+    const priceFilter = document.getElementById('priceFilter');
     
-    const selectedRegion = regionSelect?.value || '';
-    const selectedLanguage = languageSelect?.value || '';
-    const selectedPrice = priceSelect?.value || '';
+    const selectedLocation = locationFilter?.value || '';
+    const selectedLanguage = languageFilter?.value || '';
+    const selectedPrice = priceFilter?.value || '';
     
-    console.log('🎯 Filter criteria:', { selectedRegion, selectedLanguage, selectedPrice });
+    console.log('🎯 Filter criteria:', { selectedLocation, selectedLanguage, selectedPrice });
     
     // Start with all guides
     let filteredGuides = [...state.guides];
     
-    // Apply region filter
-    if (selectedRegion && selectedRegion !== '') {
+    // Location mapping for filter values to actual location strings
+    const locationMapping = {
+        'tokyo': ['東京都', '東京', 'tokyo'],
+        'kyoto': ['京都府', '京都', 'kyoto'],
+        'okinawa': ['沖縄県', '沖縄', 'okinawa'], 
+        'osaka': ['大阪府', '大阪', 'osaka'],
+        'kanagawa': ['神奈川県', '神奈川', 'kanagawa'],
+        'hokkaido': ['北海道', 'hokkaido'],
+        'fukuoka': ['福岡県', '福岡', 'fukuoka']
+    };
+    
+    // Apply location filter
+    if (selectedLocation && selectedLocation !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const guideLocation = guide.location || guide.guideLocation || '';
-            return guideLocation.toLowerCase() === selectedRegion.toLowerCase();
+            const mappedLocations = locationMapping[selectedLocation] || [selectedLocation];
+            
+            return mappedLocations.some(loc => 
+                guideLocation.toLowerCase().includes(loc.toLowerCase()) ||
+                guideLocation.includes(loc)
+            );
         });
-        console.log(`📍 Region filter applied: ${filteredGuides.length} guides match "${selectedRegion}"`);
+        console.log(`📍 Location filter applied: ${filteredGuides.length} guides match "${selectedLocation}"`);
     }
     
     // Apply language filter
     if (selectedLanguage && selectedLanguage !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const languages = guide.languages || guide.guideLanguages || [];
+            
+            // Language mapping for filter values
+            const languageMapping = {
+                'japanese': ['japanese', 'ja', '日本語', 'japan'],
+                'english': ['english', 'en', '英語', 'english'],
+                'chinese': ['chinese', 'zh', '中国語', 'chinese'],
+                'korean': ['korean', 'ko', '韓国語', 'korean']
+            };
+            
+            const mappedLanguages = languageMapping[selectedLanguage] || [selectedLanguage];
+            
             if (Array.isArray(languages)) {
-                return languages.some(lang => lang.toLowerCase().includes(selectedLanguage.toLowerCase()));
+                return languages.some(lang => 
+                    mappedLanguages.some(mapped => 
+                        lang.toLowerCase().includes(mapped.toLowerCase())
+                    )
+                );
             } else if (typeof languages === 'string') {
-                return languages.toLowerCase().includes(selectedLanguage.toLowerCase());
+                return mappedLanguages.some(mapped => 
+                    languages.toLowerCase().includes(mapped.toLowerCase())
+                );
             }
             return false;
         });
@@ -156,14 +364,14 @@ window.filterGuides = function() {
 window.resetFilters = function() {
     console.log('🔄 Resetting all filters...');
     
-    // Clear filter selections
-    const regionSelect = document.getElementById('regionSelect');
-    const languageSelect = document.getElementById('languageSelect');
-    const priceSelect = document.getElementById('priceSelect');
+    // Clear filter selections - using correct element IDs
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter');
+    const priceFilter = document.getElementById('priceFilter');
     
-    if (regionSelect) regionSelect.value = '';
-    if (languageSelect) languageSelect.value = '';
-    if (priceSelect) priceSelect.value = '';
+    if (locationFilter) locationFilter.value = '';
+    if (languageFilter) languageFilter.value = '';
+    if (priceFilter) priceFilter.value = '';
     
     // Reload all guides
     if (window.AppState && window.AppState.originalGuides) {
@@ -387,14 +595,37 @@ function setupDataActionHandlers() {
     console.log('%cData-action handlers setup complete', 'color: #28a745;');
 }
 
-// CSP compliant sponsor button event setup
+// CSP compliant header button event setup
 function setupSponsorButtonEvents() {
+    // Header buttons (use correct IDs from HTML)
+    const registerBtn = document.getElementById('registerBtn');
+    const loginDropdown = document.getElementById('loginDropdown');
+    
+    // Original sponsor buttons (if they exist)
     const regBtn = document.getElementById('sponsorRegBtn');
     const loginBtn = document.getElementById('sponsorLoginBtn');
     const regBtnMobile = document.getElementById('sponsorRegBtnMobile');
     const loginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
     
-    // Desktop buttons
+    // Header register button - show registration choice modal
+    if (registerBtn) {
+        registerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🎯 Header register button clicked - showing registration choices');
+            showRegistrationChoiceModal();
+        });
+    }
+    
+    // Header login dropdown - setup toggle functionality
+    if (loginDropdown) {
+        loginDropdown.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🎯 Header login dropdown clicked');
+            toggleLoginDropdown();
+        });
+    }
+    
+    // Original sponsor buttons (if they exist)
     if (regBtn) {
         regBtn.addEventListener('click', (e) => {
             e.preventDefault();
@@ -429,6 +660,155 @@ function setupSponsorButtonEvents() {
     }
     
     console.log('%cSponsor button events setup complete', 'color: #28a745;');
+}
+
+// Show registration choice modal for header register button
+function showRegistrationChoiceModal() {
+    const modalHTML = `
+        <div class="modal fade" id="registrationChoiceModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-person-plus me-2"></i>新規登録
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <div>
+                                <strong>ご登録の種類をお選びください</strong><br>
+                                <small>それぞれ異なるサービスをご利用いただけます</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="selectRegistrationType('tourist')">
+                                    <div class="card-body text-center p-4">
+                                        <i class="bi bi-person-circle text-primary mb-3" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
+                                        <p class="text-muted small mb-3">ガイドを探して旅行を楽しみます</p>
+                                        <div class="mt-3">
+                                            <span class="badge bg-primary">無料</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="selectRegistrationType('guide')">
+                                    <div class="card-body text-center p-4">
+                                        <i class="bi bi-person-badge text-success mb-3" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
+                                        <p class="text-muted small mb-3">地元ガイドとして観光客にサービスを提供します</p>
+                                        <div class="mt-3">
+                                            <span class="badge bg-success">収入機会</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card h-100 border-warning choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="selectRegistrationType('sponsor')">
+                                    <div class="card-body text-center p-4">
+                                        <i class="bi bi-shop text-warning mb-3" style="font-size: 3rem;"></i>
+                                        <h6 class="fw-bold text-warning mb-2">スポンサー登録</h6>
+                                        <p class="text-muted small mb-3">店舗・施設として観光客を集客します</p>
+                                        <div class="mt-3">
+                                            <span class="badge bg-warning text-dark">ビジネス</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 25px;">
+                            <i class="bi bi-x-circle me-1"></i>キャンセル
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if it exists and add new one
+    const existingModal = document.getElementById('registrationChoiceModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('registrationChoiceModal'));
+    modal.show();
+}
+
+// Handle registration type selection
+window.selectRegistrationType = function(type) {
+    const modal = bootstrap.Modal.getInstance(document.getElementById('registrationChoiceModal'));
+    if (modal) {
+        modal.hide();
+    }
+    
+    console.log('🎯 Registration type selected:', type);
+    
+    setTimeout(() => {
+        switch(type) {
+            case 'tourist':
+                showTouristRegistrationPrompt(null); // Show tourist registration modal
+                break;
+            case 'guide':
+                // Open guide registration modal that should exist
+                const guideModal = document.getElementById('guideRegistrationModal');
+                if (guideModal) {
+                    const modal = new bootstrap.Modal(guideModal);
+                    modal.show();
+                } else {
+                    console.warn('Guide registration modal not found');
+                    alert('ガイド登録機能を準備中です。しばらくお待ちください。');
+                }
+                break;
+            case 'sponsor':
+                window.location.href = 'sponsor-registration.html';
+                break;
+            default:
+                console.error('Unknown registration type:', type);
+        }
+    }, 300);
+};
+
+// Toggle login dropdown
+function toggleLoginDropdown() {
+    const dropdown = document.getElementById('customLoginDropdown');
+    if (!dropdown) {
+        console.warn('Login dropdown not found');
+        return;
+    }
+    
+    const isVisible = dropdown.style.display === 'block';
+    
+    if (isVisible) {
+        dropdown.style.display = 'none';
+        console.log('🔽 Login dropdown hidden');
+    } else {
+        dropdown.style.display = 'block';
+        console.log('🔼 Login dropdown shown');
+        
+        // Close dropdown when clicking outside
+        setTimeout(() => {
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!dropdown.contains(e.target) && !document.getElementById('loginDropdown').contains(e.target)) {
+                    dropdown.style.display = 'none';
+                    document.removeEventListener('click', closeDropdown);
+                    console.log('🔽 Login dropdown auto-closed');
+                }
+            });
+        }, 100);
+    }
 }
 
 // Language switch button events - delegated to emergency-buttons.mjs to prevent conflicts
