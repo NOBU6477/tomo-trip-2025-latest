@@ -306,20 +306,7 @@ export function createGuideCardHTML(guide) {
 
 // Duplicate function removed - using the one at line 168
 
-// Setup event listeners for view details buttons
-function setupViewDetailsEventListeners() {
-    const viewDetailsButtons = document.querySelectorAll('.view-details-btn');
-    
-    viewDetailsButtons.forEach(button => {
-        // Remove any existing listeners
-        button.removeEventListener('click', handleViewDetailsClick);
-        
-        // Add click listener
-        button.addEventListener('click', handleViewDetailsClick);
-    });
-    
-    console.log(`🔗 Setup ${viewDetailsButtons.length} view details event listeners`);
-}
+// Function removed - using the exported version at line 188
 
 // Handle view details button click with authentication check
 function handleViewDetailsClick(event) {
