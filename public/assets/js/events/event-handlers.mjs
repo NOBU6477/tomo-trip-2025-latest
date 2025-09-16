@@ -281,19 +281,18 @@ window.filterGuides = function() {
     // Start with all guides
     let filteredGuides = [...state.guides];
     
-    // Location mapping for filter values to actual location strings (Updated for Prefecture System)
+    // Location mapping for filter values to actual location strings (Prefecture System)
     const locationMapping = {
         'tokyo': ['東京都', '東京', 'tokyo'],
         'osaka': ['大阪府', '大阪市', '大阪', 'osaka'],
         'kyoto': ['京都府', '京都市', '京都', 'kyoto'],
-        'kanagawa-yokohama': ['神奈川県', '横浜市', '神奈川', 'yokohama'],
-        'hyogo-kobe': ['兵庫県', '神戸市', '兵庫', 'kobe'],
-        'aichi-nagoya': ['愛知県', '名古屋市', '愛知', 'nagoya'],
+        'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa', 'yokohama'],
+        'hyogo': ['兵庫県', '神戸市', '兵庫', 'hyogo', 'kobe'],
+        'aichi': ['愛知県', '名古屋市', '愛知', 'aichi', 'nagoya'],
         'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka'],
-        'okinawa-naha': ['沖縄県', '那覇市', '沖縄', 'naha'],
-        'okinawa-ishigaki': ['沖縄県', '石垣市', '石垣', 'ishigaki'],
-        'hokkaido-sapporo': ['北海道', '札幌市', 'hokkaido', 'sapporo'],
-        'miyagi-sendai': ['宮城県', '仙台市', '宮城', 'sendai'],
+        'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa', 'naha', 'ishigaki'],
+        'hokkaido': ['北海道', '札幌市', 'hokkaido', 'sapporo'],
+        'miyagi': ['宮城県', '仙台市', '宮城', 'miyagi', 'sendai'],
         'hiroshima': ['広島県', '広島市', '広島', 'hiroshima']
     };
     
