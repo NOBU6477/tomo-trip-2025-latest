@@ -2380,9 +2380,8 @@
             
             if (touristBtn && !touristBtn.hasAttribute('data-handler-added')) {
                 touristBtn.onclick = function() {
-                    console.log('🎯 Tourist login clicked');
-                    showLoginModal('tourist').catch(() => {});
-                    document.getElementById('customLoginDropdown').style.display = 'none';
+                    console.log('🎯 Tourist login clicked - redirecting to full registration');
+                    window.open('tourist-registration-simple.html', '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
                     return false;
                 };
                 touristBtn.setAttribute('data-handler-added', 'true');
