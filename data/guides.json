@@ -209,5 +209,35 @@
     "hospitalitySupport": true,
     "emergencySupport": false,
     "localExpert": false
+  },
+  {
+    "id": "fd4d3697-2c82-4900-8011-79296873d2c5",
+    "guideName": "仲間林太郎",
+    "guideEmail": "test1600@gmail.com",
+    "guideGender": "male",
+    "guideAge": "43",
+    "location": "東京都 東京",
+    "phoneNumber": "+819012345678",
+    "verificationCode": "541458",
+    "documentType": "drivers_license",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "beginner",
+    "guideLanguages": [
+      "japanese",
+      "english",
+      "chinese"
+    ],
+    "guideIntroduction": "中国語・英語・日本語でのご案内も可能です",
+    "guideSpecialties": "写真スポット・グルメ・ナイトツアー",
+    "guideSessionRate": "18000",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-16T16:14:25.271Z",
+    "updatedAt": "2025-09-16T16:14:25.271Z"
   }
 ]
