@@ -320,10 +320,17 @@ export function displayGuides(page, state) {
     
     container.innerHTML = '';
     
-    guidesForPage.forEach(guide => {
-        const guideCard = createGuideCard(guide);
-        container.appendChild(guideCard);
-    });
+    // Use guide-renderer.mjs function for consistent detailed display
+    const cardsHTML = guidesForPage.map(guide => {
+        // Import and use createGuideCardHTML from guide-renderer.mjs
+        if (window.createGuideCardHTML) {
+            return window.createGuideCardHTML(guide);
+        }
+        // Fallback: create inline HTML
+        return createGuideCardInline(guide);
+    }).join('');
+    
+    container.innerHTML = cardsHTML;
     
     // Update guide count displays with actual rendered card count
     if (window.updateGuideCounters) {
@@ -345,29 +352,87 @@ export function displayGuides(page, state) {
     updatePaginationInfo(page, currentState);
 }
 
-// Create guide card element
-function createGuideCard(guide) {
-    const col = document.createElement('div');
-    col.className = 'col-md-6 col-lg-4 mb-4';
+// Inline guide card creator for fallback (detailed version like guide-renderer.mjs)
+function createGuideCardInline(guide) {
+    // Use API response field names
+    const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
+    const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
     
-    col.innerHTML = `
-        <div class="card guide-card h-100 shadow-sm">
-            <img src="${guide.image || 'assets/images/default-guide.jpg'}" class="card-img-top" alt="${guide.name}" style="height: 200px; object-fit: cover;">
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title">${guide.name}</h5>
-                <p class="card-text text-muted small">${window.locationNames ? (window.locationNames[guide.location] || guide.location) : guide.location}</p>
-                <div class="mb-2">
-                    <span class="badge bg-primary me-1">¥${Number(guide?.sessionRate || guide?.price || 0).toLocaleString()}</span>
-                    <span class="badge bg-warning text-dark">★${guide.rating}</span>
+    // Language mapping for Japanese display  
+    const languageMap = {
+        'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
+        'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語'
+    };
+    
+    let languages = '日本語'; // Default
+    // API returns languages field (already mapped from guideLanguages)
+    if (Array.isArray(guide.guideLanguages) && guide.guideLanguages.length > 0) {
+        languages = guide.guideLanguages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
+    } else if (Array.isArray(guide.languages) && guide.languages.length > 0) {
+        languages = guide.languages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
+    } else if (guide.languages && typeof guide.languages === 'string') {
+        languages = languageMap[guide.languages.toLowerCase()] || guide.languages;
+    }
+    
+    // Handle specialties from API response
+    const specialties = guide.guideSpecialties || guide.specialties || '';
+    const tags = typeof specialties === 'string' ? 
+        specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s).slice(0, 3).join(', ') :
+        Array.isArray(specialties) ? specialties.slice(0, 3).join(', ') : '';
+    
+    return `
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
+                <div class="position-relative">
+                    <img src="${guide.photo || guide.profilePhoto || guide.image || '/assets/img/guides/default-1.svg'}" 
+                         class="card-img-top" 
+                         alt="${guide.guideName || guide.name}" 
+                         style="height: 250px; object-fit: cover;"
+                         onerror="this.src='/assets/img/guides/default-1.svg';">
+                    <div class="position-absolute top-0 end-0 m-2">
+                        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
+                            評価 ${guide.rating || '4.8'} ⭐
+                        </span>
+                    </div>
                 </div>
-                <div class="mt-auto">
-                    <button class="btn btn-outline-primary btn-sm" data-action="view-details" data-guide-id="${guide.id}">詳細を見る</button>
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.guideName || guide.name}</h5>
+                    <p class="text-muted mb-2">
+                        <i class="bi bi-geo-alt"></i> ${guide.location || guide.city || '東京'}
+                    </p>
+                    <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
+                        ${guide.guideIntroduction || guide.introduction || guide.description || '地域の魅力をご案内します'}
+                    </p>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">対応言語</small>
+                            <small class="fw-semibold">${languages}</small>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">料金</small>
+                            <small class="fw-bold text-primary">${formattedPrice}</small>
+                        </div>
+                        ${tags ? `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">特徴</small>
+                            <small class="text-info">${tags}</small>
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary view-details-btn" 
+                                data-action="view-details" 
+                                data-guide-id="${guide.id}"
+                                style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
+                            詳しく見る
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     `;
-    
-    return col;
 }
 
 // Counter displays handled by guide-renderer.mjs to avoid duplication
@@ -580,28 +645,110 @@ function applyCurrentFilters(keyword = '') {
         if (locationValue) {
             filteredGuides = filteredGuides.filter(guide => {
                 const guideLocation = guide.location || guide.city || '';
-                // Support partial matching for Japanese locations
+                
+                // Location mapping for filter compatibility
+                const locationMap = {
+                    'hokkaido': ['北海道', 'hokkaido'],
+                    'aomori': ['青森県', 'aomori'],
+                    'iwate': ['岩手県', 'iwate'], 
+                    'miyagi': ['宮城県', 'miyagi'],
+                    'akita': ['秋田県', 'akita'],
+                    'yamagata': ['山形県', 'yamagata'],
+                    'fukushima': ['福島県', 'fukushima'],
+                    'ibaraki': ['茨城県', 'ibaraki'],
+                    'tochigi': ['栃木県', 'tochigi'],
+                    'gunma': ['群馬県', 'gunma'],
+                    'saitama': ['埼玉県', 'saitama'],
+                    'chiba': ['千葉県', 'chiba'],
+                    'tokyo': ['東京都', 'tokyo', '東京', '渋谷', '新宿', '池袋'],
+                    'kanagawa': ['神奈川県', 'kanagawa', '横浜', '川崎'],
+                    'niigata': ['新潟県', 'niigata'],
+                    'toyama': ['富山県', 'toyama'],
+                    'ishikawa': ['石川県', 'ishikawa'],
+                    'fukui': ['福井県', 'fukui'],
+                    'yamanashi': ['山梨県', 'yamanashi'],
+                    'nagano': ['長野県', 'nagano'],
+                    'gifu': ['岐阜県', 'gifu'],
+                    'shizuoka': ['静岡県', 'shizuoka'],
+                    'aichi': ['愛知県', 'aichi', '名古屋'],
+                    'mie': ['三重県', 'mie'],
+                    'shiga': ['滋賀県', 'shiga'],
+                    'kyoto': ['京都府', 'kyoto', '京都'],
+                    'osaka': ['大阪府', 'osaka', '大阪'],
+                    'hyogo': ['兵庫県', 'hyogo', '神戸'],
+                    'nara': ['奈良県', 'nara'],
+                    'wakayama': ['和歌山県', 'wakayama'],
+                    'tottori': ['鳥取県', 'tottori'],
+                    'shimane': ['島根県', 'shimane'],
+                    'okayama': ['岡山県', 'okayama'],
+                    'hiroshima': ['広島県', 'hiroshima'],
+                    'yamaguchi': ['山口県', 'yamaguchi'],
+                    'tokushima': ['徳島県', 'tokushima'],
+                    'kagawa': ['香川県', 'kagawa'],
+                    'ehime': ['愛媛県', 'ehime'],
+                    'kochi': ['高知県', 'kochi'],
+                    'fukuoka': ['福岡県', 'fukuoka'],
+                    'saga': ['佐賀県', 'saga'],
+                    'nagasaki': ['長崎県', 'nagasaki'],
+                    'kumamoto': ['熊本県', 'kumamoto'],
+                    'oita': ['大分県', 'oita'],
+                    'miyazaki': ['宮崎県', 'miyazaki'],
+                    'kagoshima': ['鹿児島県', 'kagoshima'],
+                    'okinawa': ['沖縄県', 'okinawa', '石垣', '那覇']
+                };
+                
+                // Check if location matches any of the mapped values
+                if (locationMap[locationValue]) {
+                    return locationMap[locationValue].some(loc => 
+                        guideLocation.toLowerCase().includes(loc.toLowerCase()) ||
+                        loc.toLowerCase().includes(guideLocation.toLowerCase())
+                    );
+                }
+                
+                // Fallback: direct string matching
                 return guideLocation.includes(locationValue) || 
-                       locationValue.includes(guideLocation.split(' ')[0]); // Match prefecture
+                       locationValue.includes(guideLocation.split(' ')[0]);
             });
         }
         
         // Apply language filter  
         if (languageValue) {
             filteredGuides = filteredGuides.filter(guide => {
-                const languageMap = {
-                    'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
-                    'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語'
-                };
-                
-                // Use guides.json field names
+                // Use guides.json field names - check both possibilities
                 const guideLangs = guide.guideLanguages || guide.languages || [];
+                
+                console.log('🔍 Language filter checking:', { 
+                    filterValue: languageValue, 
+                    guideLangs: guideLangs,
+                    guideName: guide.guideName || guide.name 
+                });
+                
                 if (Array.isArray(guideLangs)) {
                     return guideLangs.some(lang => {
-                        // Check exact match, mapped value, or case-insensitive match
-                        return lang === languageValue || 
-                               languageMap[lang.toLowerCase()] === languageValue ||
-                               lang.toLowerCase() === languageValue.toLowerCase();
+                        // Direct match for English keys (japanese, english, chinese, etc.)
+                        if (lang.toLowerCase() === languageValue.toLowerCase()) {
+                            return true;
+                        }
+                        
+                        // Match Japanese values (日本語, 英語, etc.)
+                        const languageMap = {
+                            'japanese': ['日本語', 'japanese'],
+                            'english': ['英語', 'english'], 
+                            'chinese': ['中国語', 'chinese'],
+                            'korean': ['韓国語', 'korean'],
+                            'spanish': ['スペイン語', 'spanish'],
+                            'french': ['フランス語', 'french'],
+                            'german': ['ドイツ語', 'german']
+                        };
+                        
+                        // Check if the language value matches any mapped language
+                        for (const [key, values] of Object.entries(languageMap)) {
+                            if (languageValue === key && values.includes(lang)) {
+                                return true;
+                            }
+                        }
+                        
+                        return false;
                     });
                 }
                 return false;
@@ -617,6 +764,12 @@ function applyCurrentFilters(keyword = '') {
                 const city = (guide.city || '').toLowerCase();
                 const specialties = (guide.guideSpecialties || guide.specialties || '').toLowerCase();
                 const tags = Array.isArray(guide.tags) ? guide.tags.join(' ').toLowerCase() : (guide.tags || '').toLowerCase();
+                
+                console.log('🔍 Keyword search checking:', { 
+                    keyword: searchKeyword, 
+                    guideName: name,
+                    location: location
+                });
                 
                 return name.includes(searchKeyword) || 
                        description.includes(searchKeyword) || 

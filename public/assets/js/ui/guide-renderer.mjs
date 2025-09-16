@@ -234,7 +234,7 @@ function setupViewDetailsEventListeners() {
     console.log(`🔗 Setup ${viewDetailsButtons.length} view details event listeners`);
 }
 
-// Handle view details button click
+// Handle view details button click with authentication check
 function handleViewDetailsClick(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -248,21 +248,200 @@ function handleViewDetailsClick(event) {
     
     console.log('🔍 View details clicked for guide:', guideId);
     
-    // Call the authentication flow from window scope
-    if (window.viewGuideDetail) {
-        window.viewGuideDetail(guideId);
-    } else if (window.handleGuideDetailAccess) {
-        window.handleGuideDetailAccess(guideId);
+    // Check tourist authentication status
+    checkTouristAuthAndRedirect(guideId);
+}
+
+// Tourist authentication check and redirect system
+function checkTouristAuthAndRedirect(guideId) {
+    console.log('🔐 Checking tourist authentication for guide:', guideId);
+    
+    // Check if tourist is logged in (check localStorage/sessionStorage)
+    const touristAuth = localStorage.getItem('touristAuth') || sessionStorage.getItem('touristAuth');
+    const touristData = localStorage.getItem('touristData') || sessionStorage.getItem('touristData');
+    
+    if (touristAuth && touristData) {
+        console.log('✅ Tourist is authenticated, redirecting to guide detail');
+        // User is authenticated, proceed to guide detail page
+        redirectToGuideDetail(guideId);
     } else {
-        console.error('❌ No guide detail handler found');
-        // Fallback - direct redirect without auth check
-        window.location.href = `/guide-detail.html?id=${guideId}`;
+        console.log('⚠️ Tourist not authenticated, showing registration prompt');
+        // User is not authenticated, show registration modal
+        showTouristRegistrationPrompt(guideId);
     }
 }
+
+// Show tourist registration prompt modal
+function showTouristRegistrationPrompt(guideId) {
+    // Create modal for tourist registration prompt
+    const modalHTML = `
+        <div class="modal fade" id="touristAuthModal" tabindex="-1" aria-labelledby="touristAuthModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 20px; border: none;">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px 20px 0 0;">
+                        <h5 class="modal-title" id="touristAuthModalLabel">
+                            <i class="bi bi-person-check me-2"></i>観光客登録が必要です
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-info-circle text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        
+                        <p class="text-center mb-4">
+                            ガイドの詳細情報を閲覧するには観光客登録が必要です。<br>
+                            簡単な登録でガイドとの連絡やお気に入り機能をご利用いただけます。
+                        </p>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg" onclick="openTouristRegistrationWithReturn('${guideId}')" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 15px;">
+                                <i class="bi bi-person-plus me-2"></i>観光客登録を行う
+                            </button>
+                            <button class="btn btn-outline-secondary" data-bs-dismiss="modal" style="border-radius: 15px;">
+                                キャンセル
+                            </button>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                既に登録済みの場合は<br>
+                                <a href="#" onclick="showTouristLoginModal('${guideId}')" class="text-primary">こちらからログイン</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if present
+    const existingModal = document.getElementById('touristAuthModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('touristAuthModal'));
+    modal.show();
+}
+
+// Redirect to guide detail page
+function redirectToGuideDetail(guideId) {
+    console.log('🔗 Redirecting to guide detail page for guide:', guideId);
+    window.location.href = `/guide-detail.html?id=${guideId}`;
+}
+
+// Global functions for tourist registration with return capability
+window.openTouristRegistrationWithReturn = function(guideId) {
+    console.log('🔗 Opening tourist registration with return to guide:', guideId);
+    
+    // Store the guide ID for return after registration
+    sessionStorage.setItem('returnToGuideId', guideId);
+    
+    // Close the auth modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('touristAuthModal'));
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Open tourist registration page
+    window.location.href = 'tourist-registration-simple.html';
+};
+
+window.showTouristLoginModal = function(guideId) {
+    console.log('🔐 Showing tourist login modal for guide:', guideId);
+    
+    // Close the auth modal first
+    const modal = bootstrap.Modal.getInstance(document.getElementById('touristAuthModal'));
+    if (modal) {
+        modal.hide();
+    }
+    
+    // Create simple login modal
+    const loginModalHTML = `
+        <div class="modal fade" id="touristLoginModal" tabindex="-1" aria-labelledby="touristLoginModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 20px; border: none;">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 20px 20px 0 0;">
+                        <h5 class="modal-title" id="touristLoginModalLabel">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>観光客ログイン
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="touristLoginForm">
+                            <div class="mb-3">
+                                <label for="touristEmail" class="form-label">メールアドレス</label>
+                                <input type="email" class="form-control" id="touristEmail" required style="border-radius: 10px;">
+                            </div>
+                            <div class="mb-3">
+                                <label for="touristPassword" class="form-label">パスワード</label>
+                                <input type="password" class="form-control" id="touristPassword" required style="border-radius: 10px;">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg" style="background: linear-gradient(135deg, #28a745, #20c997); border: none; border-radius: 15px;">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                アカウントをお持ちでない方は<br>
+                                <a href="#" onclick="openTouristRegistrationWithReturn('${guideId}')" class="text-primary">新規登録</a>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if present
+    const existingModal = document.getElementById('touristLoginModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to DOM
+    document.body.insertAdjacentHTML('beforeend', loginModalHTML);
+    
+    // Setup form submission
+    document.getElementById('touristLoginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('touristEmail').value;
+        const password = document.getElementById('touristPassword').value;
+        
+        // Simple demo authentication (replace with actual API call)
+        if (email && password) {
+            // Store authentication data
+            sessionStorage.setItem('touristAuth', 'true');
+            sessionStorage.setItem('touristData', JSON.stringify({ email: email }));
+            
+            // Close modal
+            const loginModal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
+            loginModal.hide();
+            
+            // Redirect to guide detail
+            redirectToGuideDetail(guideId);
+        }
+    });
+    
+    // Show modal
+    const loginModal = new bootstrap.Modal(document.getElementById('touristLoginModal'));
+    loginModal.show();
+};
 
 // Make functions globally available for filter system
 if (typeof window !== 'undefined') {
     window.renderGuideCards = renderGuideCards;
     window.updateGuideCounters = updateGuideCounters;
     window.setupViewDetailsEventListeners = setupViewDetailsEventListeners;
+    window.createGuideCardHTML = createGuideCardHTML;  // Export for consistency
+    window.checkTouristAuthAndRedirect = checkTouristAuthAndRedirect;
+    window.redirectToGuideDetail = redirectToGuideDetail;
 }

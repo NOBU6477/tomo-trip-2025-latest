@@ -163,8 +163,8 @@
                         <button class="btn btn-light btn-lg w-100 mb-2" onclick="bookGuide()">
                             <i class="bi bi-calendar-check me-2"></i>予約する
                         </button>
-                        <button class="btn btn-outline-light w-100" onclick="contactGuide()">
-                            <i class="bi bi-chat-dots me-2"></i>問い合わせ
+                        <button class="btn btn-outline-light w-100" onclick="openChatWithGuide()">
+                            <i class="bi bi-chat-dots me-2"></i>チャットで相談
                         </button>
                     </div>
                 </div>
@@ -296,10 +296,67 @@
                             <i class="bi bi-envelope me-2"></i>
                             <span id="guideEmail"></span>
                         </p>
-                        <p class="mb-0">
+                        <p class="mb-3">
                             <i class="bi bi-clock me-2"></i>
                             対応時間: <span id="guideAvailability">9:00 - 18:00</span>
                         </p>
+                        
+                        <!-- Chat Button -->
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg" onclick="openChatWithGuide()" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 15px;">
+                                <i class="bi bi-chat-heart me-2"></i>リアルタイムチャット開始
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Widget Container -->
+                <div id="chatWidget" style="display: none;">
+                    <div class="guide-info-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-chat-dots me-2"></i>ガイドとチャット
+                            </h5>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="closeChatWidget()">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Messages Container -->
+                        <div id="chatMessages" style="height: 300px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 15px; margin-bottom: 15px; background: #f8f9fa;">
+                            <div class="chat-message system mb-3">
+                                <div class="d-flex align-items-start">
+                                    <div class="me-2">
+                                        <i class="bi bi-robot" style="color: #6c757d; font-size: 1.2rem;"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="bg-light rounded p-2 small">
+                                            <strong>システム:</strong> ガイドとのチャットが開始されました。お気軽にご質問ください。
+                                        </div>
+                                        <small class="text-muted">${new Date().toLocaleTimeString('ja-JP')}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat Input -->
+                        <div class="d-flex gap-2">
+                            <input type="text" id="chatInput" class="form-control" placeholder="メッセージを入力..." style="border-radius: 20px;" onkeypress="handleChatKeyPress(event)">
+                            <button class="btn btn-primary" onclick="sendChatMessage()" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 20px; padding: 8px 16px;">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Quick Reply Buttons -->
+                        <div class="mt-3">
+                            <small class="text-muted">よく使われる質問:</small>
+                            <div class="mt-2">
+                                <button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="sendQuickReply('料金について詳しく教えてください')">料金について</button>
+                                <button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="sendQuickReply('観光スポットのおすすめを教えてください')">おすすめスポット</button>
+                                <button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="sendQuickReply('時間や内容の変更は可能ですか？')">時間・内容変更</button>
+                                <button class="btn btn-sm btn-outline-primary me-2 mb-2" onclick="sendQuickReply('今度の休日は空いていますか？')">空き状況</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -680,6 +737,189 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', loadGuideData);
+
+        // Chat functionality
+        let chatMessages = [];
+        let guideOnline = Math.random() > 0.3; // Simulate guide online status
+
+        function openChatWithGuide() {
+            console.log('🗨️ Opening chat with guide');
+            
+            const chatWidget = document.getElementById('chatWidget');
+            if (chatWidget) {
+                chatWidget.style.display = 'block';
+                
+                // Initialize chat if first time opening
+                if (chatMessages.length === 0) {
+                    initializeChat();
+                }
+                
+                // Scroll to chat widget
+                chatWidget.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function closeChatWidget() {
+            console.log('🗨️ Closing chat widget');
+            const chatWidget = document.getElementById('chatWidget');
+            if (chatWidget) {
+                chatWidget.style.display = 'none';
+            }
+        }
+
+        function initializeChat() {
+            console.log('🗨️ Initializing chat');
+            
+            // Add welcome message from guide
+            setTimeout(() => {
+                const guideName = document.getElementById('guideName')?.textContent || 'ガイド';
+                addChatMessage('guide', `こんにちは！${guideName}です。ご質問やご要望がございましたら、お気軽にどうぞ！`, true);
+            }, 1000);
+            
+            // Show guide status
+            setTimeout(() => {
+                const statusMessage = guideOnline ? 
+                    'ガイドは現在オンラインです 🟢' : 
+                    'ガイドは現在オフラインです 🔴 返信に時間がかかる場合があります';
+                addChatMessage('system', statusMessage, false);
+            }, 2000);
+        }
+
+        function sendChatMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            
+            if (!message) return;
+            
+            console.log('🗨️ Sending message:', message);
+            
+            // Add user message
+            addChatMessage('user', message, true);
+            chatInput.value = '';
+            
+            // Simulate guide response
+            simulateGuideResponse(message);
+        }
+
+        function sendQuickReply(message) {
+            console.log('🗨️ Sending quick reply:', message);
+            
+            // Add user message
+            addChatMessage('user', message, true);
+            
+            // Simulate guide response
+            simulateGuideResponse(message);
+        }
+
+        function addChatMessage(sender, message, showTime) {
+            console.log('🗨️ Adding chat message:', sender, message);
+            
+            const chatMessagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender} mb-3`;
+            
+            const currentTime = new Date().toLocaleTimeString('ja-JP');
+            
+            let senderIcon = '';
+            let senderName = '';
+            let messageClass = '';
+            
+            switch(sender) {
+                case 'user':
+                    senderIcon = '<i class="bi bi-person-circle" style="color: #007bff; font-size: 1.2rem;"></i>';
+                    senderName = 'あなた';
+                    messageClass = 'bg-primary text-white ms-auto';
+                    break;
+                case 'guide':
+                    senderIcon = '<i class="bi bi-person-badge" style="color: #28a745; font-size: 1.2rem;"></i>';
+                    senderName = document.getElementById('guideName')?.textContent || 'ガイド';
+                    messageClass = 'bg-light';
+                    break;
+                case 'system':
+                    senderIcon = '<i class="bi bi-info-circle" style="color: #6c757d; font-size: 1.2rem;"></i>';
+                    senderName = 'システム';
+                    messageClass = 'bg-warning';
+                    break;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="d-flex align-items-start ${sender === 'user' ? 'justify-content-end' : ''}">
+                    ${sender !== 'user' ? `<div class="me-2">${senderIcon}</div>` : ''}
+                    <div class="flex-grow-1 ${sender === 'user' ? 'text-end' : ''}">
+                        <div class="${messageClass} rounded p-2 small" style="max-width: 80%; ${sender === 'user' ? 'margin-left: auto;' : ''}">
+                            ${sender !== 'user' ? `<strong>${senderName}:</strong> ` : ''}${message}
+                        </div>
+                        ${showTime ? `<small class="text-muted">${currentTime}</small>` : ''}
+                    </div>
+                    ${sender === 'user' ? `<div class="ms-2">${senderIcon}</div>` : ''}
+                </div>
+            `;
+            
+            chatMessagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+            
+            // Add to chat history
+            chatMessages.push({
+                sender,
+                message,
+                timestamp: currentTime
+            });
+        }
+
+        function simulateGuideResponse(userMessage) {
+            if (!guideOnline) return;
+            
+            // Simulate typing delay
+            setTimeout(() => {
+                let response = getGuideResponse(userMessage);
+                addChatMessage('guide', response, true);
+            }, Math.random() * 2000 + 1000); // 1-3 seconds delay
+        }
+
+        function getGuideResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            // Predefined responses based on keywords
+            if (message.includes('料金') || message.includes('価格') || message.includes('費用')) {
+                return 'ガイド料金は時間制となっております。詳細については個別にご相談させていただきますが、基本的には表示されている料金が目安となります。交通費等は別途実費をお願いしています。';
+            }
+            
+            if (message.includes('おすすめ') || message.includes('スポット') || message.includes('観光')) {
+                return 'この地域には素晴らしい観光スポットがたくさんあります！お客様の興味やご希望に合わせて、最適なコースをご提案いたします。歴史、グルメ、自然、文化など、何に興味がおありでしょうか？';
+            }
+            
+            if (message.includes('時間') || message.includes('変更') || message.includes('内容')) {
+                return 'はい、時間や内容の変更は可能です！お客様のご都合や興味に合わせて柔軟に対応いたします。事前にご相談いただければ、最適なプランを一緒に考えさせていただきます。';
+            }
+            
+            if (message.includes('空い') || message.includes('予約') || message.includes('日程')) {
+                return '空き状況については、具体的なご希望日時をお教えいただければ確認いたします。平日・土日問わず対応可能ですが、人気の時期は早めのご予約をおすすめします。';
+            }
+            
+            if (message.includes('言語') || message.includes('英語') || message.includes('中国語')) {
+                return '多言語対応しております！プロフィールに記載の言語でガイドできますので、お客様のご希望言語でご案内いたします。';
+            }
+            
+            // Default responses
+            const defaultResponses = [
+                'ありがとうございます！詳しくお話をお聞かせください。',
+                'お気軽にご質問ください。この地域のことでしたら何でもお答えします！',
+                'ご要望に合わせて最適なプランをご提案いたします。',
+                'お客様に素晴らしい体験をしていただけるよう努めます！',
+                'どのようなことでもお気軽にお尋ねください。'
+            ];
+            
+            return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendChatMessage();
+            }
+        }
     </script>
 </body>
 </html>
