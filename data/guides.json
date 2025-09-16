@@ -239,5 +239,35 @@
     "status": "approved",
     "registeredAt": "2025-09-16T16:14:25.271Z",
     "updatedAt": "2025-09-16T16:14:25.271Z"
+  },
+  {
+    "id": "a08616f5-4078-4c6e-820d-8a0349c050b5",
+    "guideName": "金城直樹",
+    "guideEmail": "test1600@gmail.com",
+    "guideGender": "male",
+    "guideAge": "45",
+    "location": "広島県 広島市",
+    "phoneNumber": "+819012345678",
+    "verificationCode": "498051",
+    "documentType": "passport",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "beginner",
+    "guideLanguages": [
+      "japanese",
+      "chinese",
+      "korean"
+    ],
+    "guideIntroduction": "中国語・韓国語のご案内も可能です",
+    "guideSpecialties": "グルメ・ナイトツアー",
+    "guideSessionRate": "18000",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-16T16:41:38.808Z",
+    "updatedAt": "2025-09-16T16:41:38.808Z"
   }
 ]
