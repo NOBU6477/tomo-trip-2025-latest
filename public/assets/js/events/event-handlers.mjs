@@ -70,6 +70,103 @@ window.redirectToRegistration = function(guideId) {
 // Make function globally available
 window.showGuideDetailModalById = showGuideDetailModalById;
 
+// Global filter functions for search functionality
+window.filterGuides = function() {
+    console.log('🔍 Running guide filters...');
+    
+    const state = window.AppState;
+    if (!state || !state.guides) {
+        console.warn('❌ No guides available for filtering');
+        return;
+    }
+    
+    // Get filter values
+    const regionSelect = document.getElementById('regionSelect');
+    const languageSelect = document.getElementById('languageSelect');
+    const priceSelect = document.getElementById('priceSelect');
+    
+    const selectedRegion = regionSelect?.value || '';
+    const selectedLanguage = languageSelect?.value || '';
+    const selectedPrice = priceSelect?.value || '';
+    
+    console.log('🎯 Filter criteria:', { selectedRegion, selectedLanguage, selectedPrice });
+    
+    // Start with all guides
+    let filteredGuides = [...state.guides];
+    
+    // Apply region filter
+    if (selectedRegion && selectedRegion !== '') {
+        filteredGuides = filteredGuides.filter(guide => {
+            const guideLocation = guide.location || guide.guideLocation || '';
+            return guideLocation.toLowerCase() === selectedRegion.toLowerCase();
+        });
+        console.log(`📍 Region filter applied: ${filteredGuides.length} guides match "${selectedRegion}"`);
+    }
+    
+    // Apply language filter
+    if (selectedLanguage && selectedLanguage !== '') {
+        filteredGuides = filteredGuides.filter(guide => {
+            const languages = guide.languages || guide.guideLanguages || [];
+            if (Array.isArray(languages)) {
+                return languages.some(lang => lang.toLowerCase().includes(selectedLanguage.toLowerCase()));
+            } else if (typeof languages === 'string') {
+                return languages.toLowerCase().includes(selectedLanguage.toLowerCase());
+            }
+            return false;
+        });
+        console.log(`🗣️ Language filter applied: ${filteredGuides.length} guides match "${selectedLanguage}"`);
+    }
+    
+    // Apply price filter
+    if (selectedPrice && selectedPrice !== '') {
+        filteredGuides = filteredGuides.filter(guide => {
+            const price = Number(guide.price || guide.sessionRate || guide.guideSessionRate || 0);
+            const priceRange = selectedPrice.split('-');
+            
+            if (priceRange.length === 2) {
+                const minPrice = Number(priceRange[0]);
+                const maxPrice = Number(priceRange[1]);
+                return price >= minPrice && price <= maxPrice;
+            } else if (selectedPrice.includes('+')) {
+                const minPrice = Number(selectedPrice.replace('+', ''));
+                return price >= minPrice;
+            }
+            return true;
+        });
+        console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}"`);
+    }
+    
+    // Update state and display
+    state.guides = filteredGuides;
+    state.currentPage = 1; // Reset to first page
+    displayGuides(1, state);
+    
+    console.log(`✅ Filter complete: ${filteredGuides.length} guides found`);
+};
+
+window.resetFilters = function() {
+    console.log('🔄 Resetting all filters...');
+    
+    // Clear filter selections
+    const regionSelect = document.getElementById('regionSelect');
+    const languageSelect = document.getElementById('languageSelect');
+    const priceSelect = document.getElementById('priceSelect');
+    
+    if (regionSelect) regionSelect.value = '';
+    if (languageSelect) languageSelect.value = '';
+    if (priceSelect) priceSelect.value = '';
+    
+    // Reload all guides
+    if (window.AppState && window.AppState.originalGuides) {
+        window.AppState.guides = [...window.AppState.originalGuides];
+        displayGuides(1, window.AppState);
+    } else {
+        location.reload();
+    }
+    
+    console.log('✅ Filters reset');
+};
+
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     

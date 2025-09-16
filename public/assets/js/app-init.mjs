@@ -213,6 +213,7 @@ async function appInit() {
     }
     
     AppState.guides = guides;
+    AppState.originalGuides = [...guides]; // Keep original for reset
     AppState.pageSize = 12; // Fixed pageSize for all environments
     AppState.currentPage = 1;
     AppState.filters = {}; // Reset filters to default

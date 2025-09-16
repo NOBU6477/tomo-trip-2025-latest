@@ -1880,45 +1880,7 @@
         // Initialize location names for global access
         window.locationNames = locationNames;
 
-        // Generate guide card HTML
-        function createGuideCard(guide) {
-            return `
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100 guide-card" style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
-                        <img src="${guide.image}" class="card-img-top" style="height: 200px; object-fit: cover;" alt="${guide.name}">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h5 class="card-title mb-1">${guide.name}</h5>
-                                <div class="d-flex gap-2">
-                                    <button class="btn btn-sm btn-outline-warning bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク" style="font-size: 14px; padding: 6px 10px; min-width: 38px; border-width: 2px; font-weight: bold;">⭐</button>
-                                    <button class="btn btn-sm btn-outline-success compare-btn" data-guide-id="${guide.id}" title="比較に追加" style="font-size: 14px; padding: 6px 10px; min-width: 38px; border-width: 2px; font-weight: bold;">✓</button>
-                                </div>
-                            </div>
-                            <div class="mb-2">
-                                <span class="badge bg-primary me-1">${locationNames && locationNames[guide.location] ? locationNames[guide.location] : (guide.location || 'Unknown')}</span>
-                                <span class="badge bg-secondary">${guide.specialty}</span>
-                            </div>
-                            <p class="card-text text-muted small mb-2">${guide.description}</p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <div>
-                                    <span class="text-warning">★</span>
-                                    <span class="fw-bold">${guide.rating}</span>
-                                </div>
-                                <div class="text-end">
-                                    <div class="fw-bold text-primary">¥${Number(guide?.price || 0).toLocaleString()}</div>
-                                    <small class="text-muted">${getLocalizedText('perDay')}</small>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
-                                    ${getLocalizedText('viewDetails')}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
+        // Guide cards now handled by app-init.mjs module system
 
         // Display guides with pagination
         // Language detection for dynamic content
@@ -1958,29 +1920,7 @@
             return translations[lang][key] || key;
         }
 
-        function displayGuides(allGuides, page = 1) {
-            currentPage = page;
-            const startIndex = (page - 1) * guidesPerPage;
-            const endIndex = startIndex + guidesPerPage;
-            const pageGuides = allGuides.slice(startIndex, endIndex);
-            
-            displayedGuides = pageGuides;
-            const container = document.getElementById('guidesContainer');
-            // Use the proper ES6 module renderer instead of inline createGuideCard
-            if (window.renderGuideCards) {
-                window.renderGuideCards(pageGuides);
-            }
-            
-            updateCounter();
-            updatePaginationControls(allGuides.length);
-            
-            // Critical: Re-add event listeners after DOM update
-            console.log('🔧 Re-adding card event listeners after guide display');
-            setTimeout(() => {
-                addCardEventListeners();
-                console.log('✅ Card event listeners added');
-            }, 100);
-        }
+        // Guide display now handled by app-init.mjs module system
         
         // Update pagination controls
         function updatePaginationControls(totalGuides) {
