@@ -1,9 +1,20 @@
 // Event handlers - centralized setup with AppState support
 import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal.mjs';
+import { createGuideCardHTML } from '../ui/guide-renderer.mjs';
 
-// Global guide detail function - opens guide detail page
+// Global guide detail function - opens guide detail page with auth check
 async function showGuideDetailModalById(guideId) {
     console.log('🔍 Opening guide detail for ID:', guideId);
+    
+    // Check tourist authentication status
+    const touristAuth = localStorage.getItem('touristAuth') || sessionStorage.getItem('touristAuth');
+    const touristData = localStorage.getItem('touristRegistrationData') || sessionStorage.getItem('touristRegistrationData');
+    
+    if (!touristAuth && !touristData) {
+        console.log('⚠️ Tourist not authenticated, showing registration prompt');
+        showTouristRegistrationPrompt(guideId);
+        return;
+    }
     
     try {
         // Open guide detail page - it will load data from API
@@ -15,6 +26,46 @@ async function showGuideDetailModalById(guideId) {
         alert('ガイド詳細を開けませんでした。もう一度お試しください。');
     }
 }
+
+// Show tourist registration prompt modal
+function showTouristRegistrationPrompt(guideId) {
+    // Create and show Bootstrap modal
+    const modalHTML = `
+        <div class="modal fade" id="touristAuthModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">観光客登録が必要です</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>ガイドの詳細情報をご覧いただくには、観光客としての登録が必要です。</p>
+                        <p>登録は無料で、数分で完了します。</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+                        <button type="button" class="btn btn-primary" onclick="redirectToRegistration('${guideId}')">登録する</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page if not exists
+    if (!document.getElementById('touristAuthModal')) {
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('touristAuthModal'));
+    modal.show();
+}
+
+// Make redirect function globally available
+window.redirectToRegistration = function(guideId) {
+    sessionStorage.setItem('pendingGuideId', guideId);
+    window.location.href = '/tourist-registration-simple.html';
+};
 
 // Make function globally available
 window.showGuideDetailModalById = showGuideDetailModalById;
@@ -320,15 +371,8 @@ export function displayGuides(page, state) {
     
     container.innerHTML = '';
     
-    // Use guide-renderer.mjs function for consistent detailed display
-    const cardsHTML = guidesForPage.map(guide => {
-        // Import and use createGuideCardHTML from guide-renderer.mjs
-        if (window.createGuideCardHTML) {
-            return window.createGuideCardHTML(guide);
-        }
-        // Fallback: create inline HTML
-        return createGuideCardInline(guide);
-    }).join('');
+    // Use properly imported createGuideCardHTML function for consistent detailed display
+    const cardsHTML = guidesForPage.map(guide => createGuideCardHTML(guide)).join('');
     
     container.innerHTML = cardsHTML;
     
@@ -352,88 +396,6 @@ export function displayGuides(page, state) {
     updatePaginationInfo(page, currentState);
 }
 
-// Inline guide card creator for fallback (detailed version like guide-renderer.mjs)
-function createGuideCardInline(guide) {
-    // Use API response field names
-    const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
-    const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
-    
-    // Language mapping for Japanese display  
-    const languageMap = {
-        'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
-        'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語'
-    };
-    
-    let languages = '日本語'; // Default
-    // API returns languages field (already mapped from guideLanguages)
-    if (Array.isArray(guide.guideLanguages) && guide.guideLanguages.length > 0) {
-        languages = guide.guideLanguages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
-    } else if (Array.isArray(guide.languages) && guide.languages.length > 0) {
-        languages = guide.languages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
-    } else if (guide.languages && typeof guide.languages === 'string') {
-        languages = languageMap[guide.languages.toLowerCase()] || guide.languages;
-    }
-    
-    // Handle specialties from API response
-    const specialties = guide.guideSpecialties || guide.specialties || '';
-    const tags = typeof specialties === 'string' ? 
-        specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s).slice(0, 3).join(', ') :
-        Array.isArray(specialties) ? specialties.slice(0, 3).join(', ') : '';
-    
-    return `
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
-                <div class="position-relative">
-                    <img src="${guide.photo || guide.profilePhoto || guide.image || '/assets/img/guides/default-1.svg'}" 
-                         class="card-img-top" 
-                         alt="${guide.guideName || guide.name}" 
-                         style="height: 250px; object-fit: cover;"
-                         onerror="this.src='/assets/img/guides/default-1.svg';">
-                    <div class="position-absolute top-0 end-0 m-2">
-                        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
-                            評価 ${guide.rating || '4.8'} ⭐
-                        </span>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.guideName || guide.name}</h5>
-                    <p class="text-muted mb-2">
-                        <i class="bi bi-geo-alt"></i> ${guide.location || guide.city || '東京'}
-                    </p>
-                    <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
-                        ${guide.guideIntroduction || guide.introduction || guide.description || '地域の魅力をご案内します'}
-                    </p>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-muted">対応言語</small>
-                            <small class="fw-semibold">${languages}</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-muted">料金</small>
-                            <small class="fw-bold text-primary">${formattedPrice}</small>
-                        </div>
-                        ${tags ? `
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">特徴</small>
-                            <small class="text-info">${tags}</small>
-                        </div>
-                        ` : ''}
-                    </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary view-details-btn" 
-                                data-action="view-details" 
-                                data-guide-id="${guide.id}"
-                                style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
-                            詳しく見る
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-}
 
 // Counter displays handled by guide-renderer.mjs to avoid duplication
 
@@ -629,132 +591,93 @@ function handleFilterChange() {
 }
 
 function applyCurrentFilters(keyword = '') {
+    console.log('🎯 Applying current filters with keyword:', keyword);
+    
     // Get current filter values
-    const locationValue = document.getElementById('locationFilter')?.value || '';
-    const languageValue = document.getElementById('languageFilter')?.value || '';
-    const priceValue = document.getElementById('priceFilter')?.value || '';
-    const searchKeyword = keyword || document.getElementById('keywordInput')?.value?.trim().toLowerCase() || '';
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter'); 
+    const priceFilter = document.getElementById('priceFilter');
     
-    console.log('🎯 Applying filters:', { locationValue, languageValue, priceValue, searchKeyword });
+    const locationValue = locationFilter?.value || '';
+    const languageValue = languageFilter?.value || '';
+    const priceValue = priceFilter?.value || '';
     
-    // Get current guides from AppState
+    console.log('📊 Filter values:', { locationValue, languageValue, priceValue, keyword });
+    
+    // Apply filters if AppState is available
     if (window.AppState && window.AppState.guides) {
         let filteredGuides = [...window.AppState.guides];
         
-        // Apply location filter with flexible matching
+        // Apply location filter
         if (locationValue) {
             filteredGuides = filteredGuides.filter(guide => {
-                const guideLocation = guide.location || guide.city || '';
-                
-                // Location mapping for filter compatibility
-                const locationMap = {
-                    'hokkaido': ['北海道', 'hokkaido'],
-                    'aomori': ['青森県', 'aomori'],
-                    'iwate': ['岩手県', 'iwate'], 
-                    'miyagi': ['宮城県', 'miyagi'],
-                    'akita': ['秋田県', 'akita'],
-                    'yamagata': ['山形県', 'yamagata'],
-                    'fukushima': ['福島県', 'fukushima'],
-                    'ibaraki': ['茨城県', 'ibaraki'],
-                    'tochigi': ['栃木県', 'tochigi'],
-                    'gunma': ['群馬県', 'gunma'],
-                    'saitama': ['埼玉県', 'saitama'],
-                    'chiba': ['千葉県', 'chiba'],
-                    'tokyo': ['東京都', 'tokyo', '東京', '渋谷', '新宿', '池袋'],
-                    'kanagawa': ['神奈川県', 'kanagawa', '横浜', '川崎'],
-                    'niigata': ['新潟県', 'niigata'],
-                    'toyama': ['富山県', 'toyama'],
-                    'ishikawa': ['石川県', 'ishikawa'],
-                    'fukui': ['福井県', 'fukui'],
-                    'yamanashi': ['山梨県', 'yamanashi'],
-                    'nagano': ['長野県', 'nagano'],
-                    'gifu': ['岐阜県', 'gifu'],
-                    'shizuoka': ['静岡県', 'shizuoka'],
-                    'aichi': ['愛知県', 'aichi', '名古屋'],
-                    'mie': ['三重県', 'mie'],
-                    'shiga': ['滋賀県', 'shiga'],
-                    'kyoto': ['京都府', 'kyoto', '京都'],
-                    'osaka': ['大阪府', 'osaka', '大阪'],
-                    'hyogo': ['兵庫県', 'hyogo', '神戸'],
-                    'nara': ['奈良県', 'nara'],
-                    'wakayama': ['和歌山県', 'wakayama'],
-                    'tottori': ['鳥取県', 'tottori'],
-                    'shimane': ['島根県', 'shimane'],
-                    'okayama': ['岡山県', 'okayama'],
-                    'hiroshima': ['広島県', 'hiroshima'],
-                    'yamaguchi': ['山口県', 'yamaguchi'],
-                    'tokushima': ['徳島県', 'tokushima'],
-                    'kagawa': ['香川県', 'kagawa'],
-                    'ehime': ['愛媛県', 'ehime'],
-                    'kochi': ['高知県', 'kochi'],
-                    'fukuoka': ['福岡県', 'fukuoka'],
-                    'saga': ['佐賀県', 'saga'],
-                    'nagasaki': ['長崎県', 'nagasaki'],
-                    'kumamoto': ['熊本県', 'kumamoto'],
-                    'oita': ['大分県', 'oita'],
-                    'miyazaki': ['宮崎県', 'miyazaki'],
-                    'kagoshima': ['鹿児島県', 'kagoshima'],
-                    'okinawa': ['沖縄県', 'okinawa', '石垣', '那覇']
-                };
-                
-                // Check if location matches any of the mapped values
-                if (locationMap[locationValue]) {
-                    return locationMap[locationValue].some(loc => 
-                        guideLocation.toLowerCase().includes(loc.toLowerCase()) ||
-                        loc.toLowerCase().includes(guideLocation.toLowerCase())
-                    );
-                }
-                
-                // Fallback: direct string matching
-                return guideLocation.includes(locationValue) || 
-                       locationValue.includes(guideLocation.split(' ')[0]);
+                const guideLoc = (guide.location || guide.prefecture || guide.city || '').toLowerCase();
+                return guideLoc === locationValue.toLowerCase() || 
+                       guideLoc.includes(locationValue.toLowerCase());
             });
         }
         
-        // Apply language filter  
+        // Apply language filter 
         if (languageValue) {
             filteredGuides = filteredGuides.filter(guide => {
-                // Use guides.json field names - check both possibilities
-                const guideLangs = guide.guideLanguages || guide.languages || [];
-                
-                console.log('🔍 Language filter checking:', { 
-                    filterValue: languageValue, 
-                    guideLangs: guideLangs,
-                    guideName: guide.guideName || guide.name 
-                });
-                
-                if (Array.isArray(guideLangs)) {
-                    return guideLangs.some(lang => {
-                        // Direct match for English keys (japanese, english, chinese, etc.)
-                        if (lang.toLowerCase() === languageValue.toLowerCase()) {
-                            return true;
-                        }
-                        
-                        // Match Japanese values (日本語, 英語, etc.)
-                        const languageMap = {
-                            'japanese': ['日本語', 'japanese'],
-                            'english': ['英語', 'english'], 
-                            'chinese': ['中国語', 'chinese'],
-                            'korean': ['韓国語', 'korean'],
-                            'spanish': ['スペイン語', 'spanish'],
-                            'french': ['フランス語', 'french'],
-                            'german': ['ドイツ語', 'german']
-                        };
-                        
-                        // Check if the language value matches any mapped language
-                        for (const [key, values] of Object.entries(languageMap)) {
-                            if (languageValue === key && values.includes(lang)) {
-                                return true;
-                            }
-                        }
-                        
-                        return false;
-                    });
+                if (Array.isArray(guide.languages)) {
+                    return guide.languages.some(lang => 
+                        lang.toLowerCase().includes(languageValue.toLowerCase())
+                    );
+                } else if (Array.isArray(guide.guideLanguages)) {
+                    return guide.guideLanguages.some(lang => 
+                        lang.toLowerCase().includes(languageValue.toLowerCase())
+                    );
                 }
-                return false;
+        // Apply price filter
+        if (priceValue) {
+            filteredGuides = filteredGuides.filter(guide => {
+                const price = Number(guide.price || guide.sessionRate || guide.guideSessionRate || 0);
+                switch(priceValue) {
+                    case 'budget': return price >= 6000 && price <= 10000;
+                    case 'premium': return price >= 10001 && price <= 20000; 
+                    case 'luxury': return price >= 20001;
+                    default: return true;
+                }
             });
         }
         
+        // Apply keyword search
+        if (keyword) {
+            filteredGuides = filteredGuides.filter(guide => {
+                const searchText = [
+                    guide.name, guide.guideName,
+                    guide.description, guide.bio, guide.introduction,
+                    guide.specialty, guide.specialties
+                ].join(' ').toLowerCase();
+                return searchText.includes(keyword);
+            });
+        }
+        
+        console.log(`✅ Filtered: ${filteredGuides.length}/${window.AppState.guides.length} guides`);
+        
+        // Re-render guide cards
+        if (window.renderGuideCards) {
+            window.renderGuideCards(filteredGuides);
+        }
+        
+        // Update counters
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
+        }
+        
+        // Scroll to results
+        const guideSection = document.getElementById('guideSection') || 
+                             document.getElementById('guidesContainer') ||
+                             document.querySelector('.guide-cards-container');
+        if (guideSection) {
+            guideSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+    } else {
+        console.warn('⚠️ AppState or guides not available for filtering');
+    }
+}
         // Apply keyword search
         if (searchKeyword) {
             filteredGuides = filteredGuides.filter(guide => {

@@ -117,7 +117,7 @@ function renderGuideCardsOptimized(guides, container) {
 }
 
 // Create HTML for individual guide card  
-function createGuideCardHTML(guide) {
+export function createGuideCardHTML(guide) {
     // Use API response field names
     const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
     const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;

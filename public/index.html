@@ -1869,131 +1869,16 @@
             'miyazaki': 'Miyazaki', 'kagoshima': 'Kagoshima'
         };
 
-        // Default guides data (English version)
-        const defaultGuides = [
-            {
-                id: 1, name: "Hiroshi Tanaka", location: "tokyo", languages: ["japanese", "english"], 
-                price: 8000, rating: 4.8, specialty: "文化ツアー", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-                description: "観光客が知らない本物の東京を体験しよう"
-            },
-            {
-                id: 2, name: "Yuki Sato", location: "kyoto", languages: ["japanese", "english", "chinese"], 
-                price: 9500, rating: 4.9, specialty: "寺院・庭園", image: "https://images.unsplash.com/photo-1494790108755-2616c9a84d84?w=300&h=300&fit=crop&crop=face",
-                description: "京都の美しい寺院と庭園を発見しよう"
-            },
-            {
-                id: 3, name: "Kenji Yamamoto", location: "osaka", languages: ["japanese", "korean"], 
-                price: 7000, rating: 4.7, specialty: "Food Culture", image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-                description: "大阪の素晴らしい食文化を探索しよう"
-            },
-            {
-                id: 4, name: "Hanako Yamada", location: "hiroshima", languages: ["japanese", "english"], 
-                price: 8500, rating: 4.6, specialty: "Peace History", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
-                description: "平和と武島の歴史を学ぼう"
-            },
-            {
-                id: 5, name: "Shota Takahashi", location: "tokyo", languages: ["japanese", "english"], 
-                price: 12000, rating: 4.8, specialty: "Modern Culture", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face",
-                description: "最先端の東京文化を体験しよう"
-            },
-            {
-                id: 6, name: "Ai Nakamura", location: "kyoto", languages: ["japanese", "chinese"], 
-                price: 10500, rating: 4.9, specialty: "Traditional Crafts", image: "https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=300&h=300&fit=crop&crop=face",
-                description: "京都の伝統工芸を体験しよう"
-            },
-            {
-                id: 7, name: "Yuichi Watanabe", location: "osaka", languages: ["japanese", "english", "korean"], 
-                price: 6500, rating: 4.5, specialty: "Nightlife", image: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=300&h=300&fit=crop&crop=face",
-                description: "大阪の活気あるナイトライフを楽しもう"
-            },
-            {
-                id: 8, name: "Ayaka Hayashi", location: "hiroshima", languages: ["japanese", "english", "chinese"], 
-                price: 9000, rating: 4.7, specialty: "自然・景観", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face",
-                description: "広島の美しい自然を探索しよう"
-            },
-            {
-                id: 9, name: "Makoto Kobayashi", location: "tokyo", languages: ["japanese", "english"], 
-                price: 25000, rating: 4.9, specialty: "Luxury Experience", image: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=300&h=300&fit=crop&crop=face",
-                description: "プレミアムな東京体験を楽しもう"
-            },
-            {
-                id: 10, name: "Mai Inoue", location: "kyoto", languages: ["japanese", "english"], 
-                price: 9800, rating: 4.8, specialty: "Kimono Culture", image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&h=300&fit=crop&crop=face",
-                description: "着物で京都文化を体験しよう"
-            },
-            {
-                id: 11, name: "Ken Morita", location: "osaka", languages: ["japanese", "korean"], 
-                price: 7500, rating: 4.6, specialty: "Local Markets", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=300&h=300&fit=crop&crop=face",
-                description: "地元の市場や街を発見しよう"
-            },
-            {
-                id: 12, name: "Yui Shimizu", location: "hiroshima", languages: ["japanese", "english", "chinese"], 
-                price: 11000, rating: 4.8, specialty: "Island Hopping", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&crop=face",
-                description: "美しい瀬戸内海の島々を探索しよう"
-            },
-            {
-                id: 13, name: "Taro Aoki", location: "hokkaido", languages: ["japanese", "english", "russian"], 
-                price: 15000, rating: 4.7, specialty: "Snow Festival & Winter", image: "https://images.unsplash.com/photo-1559190394-90dfc4e2e3a8?w=300&h=300&fit=crop&crop=face",
-                description: "北海道の自然と冬の魅力を体験しよう"
-            },
-            {
-                id: 14, name: "Miyuki Ishikawa", location: "okinawa", languages: ["japanese", "english", "chinese"], 
-                price: 13500, rating: 4.9, specialty: "Marine Activities", image: "https://images.unsplash.com/photo-1554693166-fcc388b4bb45?w=300&h=300&fit=crop&crop=face",
-                description: "沖縄の美しい海と文化を楽しもう"
-            },
-            {
-                id: 15, name: "Kengo Matsumoto", location: "nagano", languages: ["japanese", "english", "german"], 
-                price: 11500, rating: 4.6, specialty: "Mountains & Hot Springs", image: "https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=300&h=300&fit=crop&crop=face",
-                description: "長野の山の美しさと温泉を発見しよう"
-            }
-        ];
+        // Guide data now managed by app-init.mjs - removed duplicate defaultGuides
 
-        // Initialize guides with registered guides included
-        let guideData = loadAllGuides();
-        let currentGuides = guideData;
-        let displayedGuides = [];
-        let currentPage = 1;
-        const guidesPerPage = 12;
+        // Make redirect function globally available
+        window.redirectToRegistration = function(guideId) {
+            sessionStorage.setItem('pendingGuideId', guideId);
+            window.location.href = '/tourist-registration-simple.html';
+        };
 
-        // Load all guides function
-        function loadAllGuides() {
-            try {
-                const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
-                const newRegisteredGuides = JSON.parse(localStorage.getItem('newRegisteredGuides') || '[]');
-                
-                // Check for individually stored guides (from new registration system)
-                const individualGuides = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && key.startsWith('guide_')) {
-                        try {
-                            const guide = JSON.parse(localStorage.getItem(key));
-                            if (guide && guide.id) {
-                                individualGuides.push(guide);
-                            }
-                        } catch (e) {
-                            console.warn('Error parsing individual guide:', key);
-                        }
-                    }
-                }
-                
-                console.log(`📊 Loaded ${registeredGuides.length} registered guides + ${newRegisteredGuides.length} new guides + ${individualGuides.length} individual guides`);
-                
-                const allGuides = [...defaultGuides, ...registeredGuides, ...newRegisteredGuides, ...individualGuides];
-                
-                // Remove duplicates based on ID
-                const uniqueGuides = allGuides.filter((guide, index, self) => 
-                    index === self.findIndex(g => g.id === guide.id)
-                );
-                
-                console.log(`📊 Total unique guides: ${uniqueGuides.length} (${defaultGuides.length} default + ${uniqueGuides.length - defaultGuides.length} dynamic)`);
-                
-                return uniqueGuides;
-            } catch (error) {
-                console.error('Error loading guides:', error);
-                return defaultGuides;
-            }
-        }
+        // Initialize location names for global access
+        window.locationNames = locationNames;
 
         // Generate guide card HTML
         function createGuideCard(guide) {
@@ -2606,13 +2491,13 @@
             const registeredGuides = JSON.parse(localStorage.getItem('registeredGuides') || '[]');
             
             // Combine default guides with registered guides
-            currentGuides = [...defaultGuides, ...registeredGuides];
+            currentGuides = [...registeredGuides];
             guideData = currentGuides;
             
             // Re-display guides
             displayGuides(currentGuides);
             
-            console.log(`📊 Updated guide display: ${defaultGuides.length} default + ${registeredGuides.length} registered = ${currentGuides.length} total`);
+            console.log(`📊 Updated guide display: ${registeredGuides.length} registered = ${currentGuides.length} total`);
         }
 
         // Global functions now handled by app-init.mjs to prevent conflicts
