@@ -152,9 +152,12 @@ guideAPIService.setupRoutes(app);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public'), {
-  setHeaders: (res, path) => {
-    // Set cache control headers
-    if (path.endsWith('.html')) {
+  setHeaders: (res, filepath) => {
+    // Set cache control headers with proper precedence for JavaScript modules
+    if (filepath.endsWith('.mjs') || filepath.endsWith('.js')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+    } else if (filepath.endsWith('.html')) {
       res.setHeader('Cache-Control', 'no-cache');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=3600');
