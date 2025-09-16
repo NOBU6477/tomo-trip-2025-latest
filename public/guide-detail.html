@@ -126,6 +126,16 @@
             display: inline-block;
             font-size: 0.9rem;
         }
+        
+        /* Pulse animation for chat button */
+        @keyframes pulse {
+            0%, 50%, 100% {
+                transform: scale(1);
+            }
+            25%, 75% {
+                transform: scale(1.05);
+            }
+        }
     </style>
 </head>
 <body>
@@ -163,8 +173,8 @@
                         <button class="btn btn-light btn-lg w-100 mb-2" onclick="bookGuide()">
                             <i class="bi bi-calendar-check me-2"></i>予約する
                         </button>
-                        <button class="btn btn-outline-light w-100" onclick="openChatWithGuide()">
-                            <i class="bi bi-chat-dots me-2"></i>チャットで相談
+                        <button class="btn btn-warning btn-lg w-100 fw-bold text-dark shadow" onclick="openChatWithGuide()" style="border: 2px solid #ffd700; animation: pulse 2s infinite;">
+                            <i class="bi bi-chat-dots me-2"></i>💬 チャットで相談
                         </button>
                     </div>
                 </div>
