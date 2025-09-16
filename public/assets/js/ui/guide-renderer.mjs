@@ -227,10 +227,11 @@ export function createGuideCardHTML(guide) {
     const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
     const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
     
-    // Language mapping for Japanese display  
+    // Language mapping for Japanese display (International Standard)
     const languageMap = {
         'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
-        'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語'
+        'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語', 'italian': 'イタリア語',
+        'portuguese': 'ポルトガル語', 'russian': 'ロシア語', 'arabic': 'アラビア語', 'thai': 'タイ語'
     };
     
     let languages = '日本語'; // Default

@@ -174,5 +174,40 @@
     "registeredAt": "2025-09-14T14:34:57.867Z",
     "updatedAt": "2025-09-14T14:34:57.867Z",
     "location": "沖縄県 石垣市"
+  },
+  {
+    "id": "2e240004-210a-4b5e-baed-02f9fe39fb9c",
+    "guideName": "仲間章",
+    "guideEmail": "test1500@gmail.com",
+    "guideGender": "male",
+    "guideAge": "45",
+    "location": "東京都 東京",
+    "phoneNumber": "+819012345678",
+    "verificationCode": "997600",
+    "documentType": "drivers_license",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "beginner",
+    "guideLanguages": [
+      "日本語",
+      "英語"
+    ],
+    "guideIntroduction": "ドイツ語・英語・日本語でのご案内も可能です。",
+    "guideSpecialties": "グルメガイド, ショッピング, 写真撮影",
+    "guideSessionRate": "15000",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-09-16T15:41:05.450Z",
+    "updatedAt": "2025-09-16T15:42:38.510Z",
+    "guideType": "day",
+    "achievements": "これまで20組以上の方をご案内しています。",
+    "multiLingual": true,
+    "hospitalitySupport": true,
+    "emergencySupport": false,
+    "localExpert": false
   }
 ]

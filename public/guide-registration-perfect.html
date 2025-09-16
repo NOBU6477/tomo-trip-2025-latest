@@ -281,6 +281,10 @@
                                     <option value="french">フランス語</option>
                                     <option value="german">ドイツ語</option>
                                     <option value="italian">イタリア語</option>
+                                    <option value="portuguese">ポルトガル語</option>
+                                    <option value="russian">ロシア語</option>
+                                    <option value="arabic">アラビア語</option>
+                                    <option value="thai">タイ語</option>
                                 </select>
                                 <label for="guideLanguages"><i class="bi bi-translate me-1"></i>対応言語（複数選択可）</label>
                             </div>
@@ -343,7 +347,7 @@
                             <button type="submit" class="btn btn-guide">
                                 <i class="bi bi-check-circle me-2"></i>完全なガイド登録申請
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="window.close();">
+                            <button type="button" class="btn btn-outline-secondary" onclick="cancelRegistration();">
                                 <i class="bi bi-arrow-left me-2"></i>キャンセル
                             </button>
                         </div>
@@ -950,6 +954,19 @@
             }
         }
 
+        // Cancel registration function
+        function cancelRegistration() {
+            if (confirm('登録を中止しますか？入力したデータは保存されません。')) {
+                // Check if we came from another page
+                if (document.referrer && document.referrer !== window.location.href) {
+                    window.history.back();
+                } else {
+                    // Go to main page if no referrer
+                    window.location.href = 'index.html';
+                }
+            }
+        }
+        
     </script>
 </body>
 </html>
