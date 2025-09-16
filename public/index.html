@@ -535,6 +535,54 @@
             box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
         }
 
+        /* Enhanced Login Buttons Styling */
+        .login-btn-tourist:hover {
+            background: linear-gradient(135deg, #00b4d8, #0096c7) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 209, 199, 0.5) !important;
+        }
+
+        .login-btn-guide:hover {
+            background: linear-gradient(135deg, #20c997, #198754) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.5) !important;
+        }
+
+        .login-btn-tourist::before,
+        .login-btn-guide::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .login-btn-tourist:hover::before,
+        .login-btn-guide:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* Mobile responsiveness for login buttons */
+        @media (max-width: 768px) {
+            .login-buttons-container {
+                flex-direction: column !important;
+                gap: 8px !important;
+            }
+            
+            .login-btn-tourist,
+            .login-btn-guide {
+                padding: 8px 16px !important;
+                font-size: 14px !important;
+                min-width: 120px;
+            }
+        }
+
         /* Management Center Button */
         .management-center {
             position: fixed;
@@ -824,15 +872,13 @@
                 <button class="btn btn-success me-2" id="dashboardBtn" title="Sponsor Management Dashboard">
                     <i class="bi bi-shop"></i> <span class="d-none d-md-inline">Dashboard</span>
                 </button>
-                <div class="dropdown me-2" style="position: relative;">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="loginDropdown" aria-expanded="false">
-                        ログイン
+                <div class="login-buttons-container d-flex gap-2 me-2">
+                    <button class="btn login-btn-tourist" id="directTouristLoginBtn" type="button" style="background: linear-gradient(135deg, #4fd1c7, #00b4d8); color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; box-shadow: 0 4px 15px rgba(79, 209, 199, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden;">
+                        <i class="bi bi-person-circle me-1"></i>観光客
                     </button>
-                    <div id="customLoginDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; z-index: 9999; background: white; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); min-width: 160px;">
-                        <button class="dropdown-item" id="directTouristLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">観光客ログイン</button>
-                        <button class="dropdown-item" id="directGuideLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">ガイドログイン</button>
-                        <button class="dropdown-item" id="sponsorLoginBtn" type="button" style="display: block; width: 100%; padding: 8px 16px; border: none; background: none; text-align: left; cursor: pointer; color: #333;">スポンサーログイン</button>
-                    </div>
+                    <button class="btn login-btn-guide" id="directGuideLoginBtn" type="button" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden;">
+                        <i class="bi bi-person-badge me-1"></i>ガイド
+                    </button>
                 </div>
                 <button class="btn btn-primary" id="registerBtn">新規登録</button>
             </div>
