@@ -116,6 +116,63 @@ function renderGuideCardsOptimized(guides, container) {
     renderChunk();
 }
 
+// Update guide counters for display
+export function updateGuideCounters(displayedCount, totalCount) {
+    // Update main counter displays
+    const guideCounterElement = document.getElementById('guideCounter');
+    const totalGuideCounterElement = document.getElementById('totalGuideCounter');
+    
+    if (guideCounterElement && totalGuideCounterElement) {
+        // Language detection for proper counter display
+        const isEnglish = window.location.pathname.includes('index-en.html');
+        
+        if (isEnglish) {
+            guideCounterElement.textContent = `${displayedCount || totalCount} guides shown`;
+            totalGuideCounterElement.textContent = `Total: ${totalCount} guides registered`;
+        } else {
+            guideCounterElement.textContent = `${displayedCount || totalCount}件表示中`;
+            totalGuideCounterElement.textContent = `全体: ${totalCount}名のガイドが登録済み`;
+        }
+    }
+}
+
+// Setup event listeners for view details buttons
+export function setupViewDetailsEventListeners() {
+    console.log('🔧 Setting up view details event listeners...');
+    
+    const viewDetailButtons = document.querySelectorAll('.view-detail-btn, [data-action="view-details"]');
+    console.log(`Found ${viewDetailButtons.length} view details buttons`);
+    
+    viewDetailButtons.forEach((btn, index) => {
+        // Remove existing listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        const guideId = newBtn.getAttribute('data-guide-id') || 
+                       newBtn.getAttribute('data-id') || 
+                       newBtn.closest('[data-guide-id]')?.getAttribute('data-guide-id');
+        
+        if (guideId) {
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔍 View Details clicked for guide:', guideId);
+                
+                if (window.showGuideDetailModalById) {
+                    window.showGuideDetailModalById(guideId);
+                } else {
+                    console.warn('❌ showGuideDetailModalById not available');
+                    // Fallback: direct navigation
+                    window.open(`guide-detail.html?id=${guideId}`, '_blank');
+                }
+            });
+            console.log(`✅ Setup button ${index + 1} for guide ID: ${guideId}`);
+        } else {
+            console.warn(`⚠️ Button ${index + 1} missing guide ID`);
+        }
+    });
+}
+
 // Create HTML for individual guide card  
 export function createGuideCardHTML(guide) {
     // Use API response field names
