@@ -290,7 +290,7 @@ async function refreshGuideData(maxRetries = 3) {
             
             // Update counters
             if (typeof updateGuideCounters === 'function') {
-                updateGuideCounters();
+                updateGuideCounters(finalGuides.length, finalGuides.length);
             }
             
             console.log(`✅ Guide data refreshed successfully: ${finalGuides.length} total guides (API-only)`);
