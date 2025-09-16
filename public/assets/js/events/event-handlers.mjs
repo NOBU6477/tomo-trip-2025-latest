@@ -7,14 +7,20 @@ async function showGuideDetailModalById(guideId) {
     console.log('🔍 Opening guide detail for ID:', guideId);
     
     // Check tourist authentication status
-    const touristAuth = localStorage.getItem('touristAuth') || sessionStorage.getItem('touristAuth');
-    const touristData = localStorage.getItem('touristRegistrationData') || sessionStorage.getItem('touristRegistrationData');
+    const touristAuth = sessionStorage.getItem('touristAuth');
+    const touristAuthTimestamp = sessionStorage.getItem('touristAuthTimestamp');
     
-    if (!touristAuth && !touristData) {
-        console.log('⚠️ Tourist not authenticated, showing registration prompt');
+    // Check if auth exists and is not too old (1 hour limit)
+    const isAuthValid = touristAuth && touristAuthTimestamp && 
+                       (Date.now() - parseInt(touristAuthTimestamp)) < (60 * 60 * 1000);
+    
+    if (!isAuthValid) {
+        console.log('❌ Tourist not authenticated or auth expired - showing registration prompt');
         showTouristRegistrationPrompt(guideId);
         return;
     }
+    
+    console.log('✅ Tourist authenticated - proceeding to guide details');
     
     try {
         // Open guide detail page - it will load data from API
@@ -217,7 +223,13 @@ window.processTouristRegistration = function(guideId) {
     // In production: Send to backend API, don't store PII locally
     console.log('🛡️ Tourist authentication set (PII not stored locally)');
     
-    console.log('✅ Tourist registered:', touristData);
+    // Log only non-PII metadata for debugging
+    console.log('✅ Tourist registered successfully:', {
+        id: touristData.id,
+        registeredAt: touristData.registeredAt,
+        interests: touristData.interests.length,
+        age: touristData.age || 'not specified'
+    });
     
     // Close modal
     const modal = bootstrap.Modal.getInstance(document.getElementById('touristRegistrationModal'));
@@ -297,7 +309,8 @@ window.filterGuides = function() {
     // Apply language filter
     if (selectedLanguage && selectedLanguage !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            const languages = guide.languages || guide.guideLanguages || [];
+            // Use guideLanguages as per actual data structure
+            const languages = guide.guideLanguages || guide.languages || [];
             
             // Language mapping for filter values
             const languageMapping = {
@@ -328,18 +341,29 @@ window.filterGuides = function() {
     // Apply price filter
     if (selectedPrice && selectedPrice !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            const price = Number(guide.price || guide.sessionRate || guide.guideSessionRate || 0);
-            const priceRange = selectedPrice.split('-');
+            // Use guideSessionRate as per actual data structure
+            const price = Number(guide.guideSessionRate || guide.sessionRate || guide.price || 0);
             
-            if (priceRange.length === 2) {
-                const minPrice = Number(priceRange[0]);
-                const maxPrice = Number(priceRange[1]);
-                return price >= minPrice && price <= maxPrice;
-            } else if (selectedPrice.includes('+')) {
-                const minPrice = Number(selectedPrice.replace('+', ''));
-                return price >= minPrice;
+            switch(selectedPrice) {
+                case '5000-10000':
+                    return price >= 5000 && price <= 10000;
+                case '10001-15000':
+                    return price >= 10001 && price <= 15000;
+                case '15001+':
+                    return price >= 15001;
+                default:
+                    // Handle range format like "5000-10000"
+                    const priceRange = selectedPrice.split('-');
+                    if (priceRange.length === 2) {
+                        const minPrice = Number(priceRange[0]);
+                        const maxPrice = Number(priceRange[1]);
+                        return price >= minPrice && price <= maxPrice;
+                    } else if (selectedPrice.includes('+')) {
+                        const minPrice = Number(selectedPrice.replace('+', ''));
+                        return price >= minPrice;
+                    }
+                    return true;
             }
-            return true;
         });
         console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}"`);
     }
@@ -659,6 +683,51 @@ function setupSponsorButtonEvents() {
         });
     }
     
+    // Setup login dropdown button events
+    const directTouristLoginBtn = document.getElementById('directTouristLoginBtn');
+    const directGuideLoginBtn = document.getElementById('directGuideLoginBtn');
+    const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
+    
+    if (directTouristLoginBtn) {
+        directTouristLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🔑 Tourist login clicked');
+            // Show tourist login modal that should exist in HTML
+            const touristLoginModal = document.getElementById('touristLoginModal');
+            if (touristLoginModal) {
+                const modal = new bootstrap.Modal(touristLoginModal);
+                modal.show();
+            } else {
+                console.warn('Tourist login modal not found');
+                alert('観光客ログイン機能を準備中です。');
+            }
+        });
+    }
+    
+    if (directGuideLoginBtn) {
+        directGuideLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🔑 Guide login clicked');
+            // Show guide login modal that should exist in HTML
+            const guideLoginModal = document.getElementById('guideLoginModal');
+            if (guideLoginModal) {
+                const modal = new bootstrap.Modal(guideLoginModal);
+                modal.show();
+            } else {
+                console.warn('Guide login modal not found');
+                alert('ガイドログイン機能を準備中です。');
+            }
+        });
+    }
+    
+    if (sponsorLoginBtn) {
+        sponsorLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🔑 Sponsor login clicked');
+            showSponsorLoginModal();
+        });
+    }
+    
     console.log('%cSponsor button events setup complete', 'color: #28a745;');
 }
 
@@ -762,15 +831,9 @@ window.selectRegistrationType = function(type) {
                 showTouristRegistrationPrompt(null); // Show tourist registration modal
                 break;
             case 'guide':
-                // Open guide registration modal that should exist
-                const guideModal = document.getElementById('guideRegistrationModal');
-                if (guideModal) {
-                    const modal = new bootstrap.Modal(guideModal);
-                    modal.show();
-                } else {
-                    console.warn('Guide registration modal not found');
-                    alert('ガイド登録機能を準備中です。しばらくお待ちください。');
-                }
+                // Redirect to latest 3-step guide registration file
+                console.log('🚀 Redirecting to latest guide registration (guide-registration-perfect.html)');
+                window.location.href = 'guide-registration-perfect.html';
                 break;
             case 'sponsor':
                 window.location.href = 'sponsor-registration.html';
