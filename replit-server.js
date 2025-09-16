@@ -53,6 +53,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use((req, res, next) => {
   if (req.path.endsWith('.mjs')) {
     res.type('application/javascript');
+    // Force no-cache for JavaScript modules during debugging
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
   }
   next();
 });
