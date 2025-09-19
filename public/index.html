@@ -2389,8 +2389,8 @@
             
             if (guideBtn && !guideBtn.hasAttribute('data-handler-added')) {
                 guideBtn.onclick = function() {
-                    console.log('🎯 Guide login clicked - redirecting to guide registration/login');
-                    window.open('guide-registration-perfect.html', '_blank', 'width=900,height=1000,scrollbars=yes,resizable=yes');
+                    console.log('🎯 Guide login clicked - redirecting to complete guide registration/login');
+                    window.open('guide-registration-complete.html', '_blank', 'width=900,height=1000,scrollbars=yes,resizable=yes');
                     return false;
                 };
                 guideBtn.setAttribute('data-handler-added', 'true');
@@ -5485,7 +5485,7 @@
                             </button>
                             <div class="text-center mt-3">
                                 <small class="text-muted">ガイド登録がお済みでない場合は</small><br>
-                                <a href="guide-registration-perfect.html" class="btn btn-link" target="_blank">
+                                <a href="guide-registration-complete.html" class="btn btn-link" target="_blank">
                                     <i class="bi bi-person-badge me-1"></i>ガイド登録はこちら
                                 </a>
                             </div>

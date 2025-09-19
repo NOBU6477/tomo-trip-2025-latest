@@ -843,9 +843,9 @@ window.selectRegistrationType = function(type) {
                 showTouristRegistrationPrompt(null); // Show tourist registration modal
                 break;
             case 'guide':
-                // Redirect to latest 3-step guide registration file
-                console.log('🚀 Redirecting to latest guide registration (guide-registration-perfect.html)');
-                window.location.href = 'guide-registration-perfect.html';
+                // Redirect to complete 3-step guide registration file
+                console.log('🚀 Redirecting to complete guide registration (guide-registration-complete.html)');
+                window.location.href = 'guide-registration-complete.html';
                 break;
             case 'sponsor':
                 window.location.href = 'sponsor-registration.html';
