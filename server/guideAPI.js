@@ -101,6 +101,20 @@ class GuideAPIService {
     this.saveGuides(guides);
   }
 
+  // Normalize phone number to international format
+  normalizePhoneNumber(phoneNumber) {
+    // Remove all non-digit characters except +
+    let normalizedPhone = phoneNumber.replace(/[-\s]/g, '');
+    
+    // Handle Japanese domestic format (starting with 0)
+    if (normalizedPhone.match(/^0[789]0\d{8}$/)) {
+      // Convert 090xxxxxxxx to +8190xxxxxxxx
+      normalizedPhone = '+81' + normalizedPhone.substring(1);
+    }
+    
+    return normalizedPhone;
+  }
+
   // Update guide in storage
   updateGuideInStorage(guideId, updates) {
     const guides = this.loadGuides();
