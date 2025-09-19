@@ -556,13 +556,16 @@ class GuideAPIService {
         });
       }
 
-      const result = smsService.verifyCode(phoneNumber, code);
+      // Normalize phone number (same as sendPhoneVerification)
+      const normalizedPhone = this.normalizePhoneNumber(phoneNumber);
+      
+      const result = smsService.verifyCode(normalizedPhone, code);
       
       if (result.success) {
         // Store tourist verification session
         const sessionId = randomUUID();
         this.pendingRegistrations.set(sessionId, {
-          phoneNumber,
+          phoneNumber: normalizedPhone, // Store normalized number
           phoneVerified: true,
           type: 'tourist',
           createdAt: new Date().toISOString(),
