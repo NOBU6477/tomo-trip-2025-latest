@@ -522,48 +522,108 @@
         }
 
         // Phone verification
+        let verificationSessionId = null;
+        
         function displayPhoneNumber() {
             const phone = document.getElementById('phone').value;
             document.getElementById('phoneDisplay').textContent = phone;
             document.getElementById('verificationPhone').value = phone;
         }
 
-        document.getElementById('sendSMSBtn').addEventListener('click', function() {
+        document.getElementById('sendSMSBtn').addEventListener('click', async function() {
             const phone = document.getElementById('verificationPhone').value;
             if (!phone) {
                 alert('電話番号を入力してください。');
                 return;
             }
 
-            // Simulate SMS sending
+            // Disable button and show loading
             this.disabled = true;
             this.innerHTML = '<i class="bi bi-clock me-2"></i>送信中...';
             
-            setTimeout(() => {
-                this.innerHTML = '<i class="bi bi-check me-2"></i>送信完了';
-                document.getElementById('verificationCodeArea').style.display = 'block';
+            try {
+                const response = await fetch('/api/tourists/send-verification', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    this.innerHTML = '<i class="bi bi-check me-2"></i>送信完了';
+                    document.getElementById('verificationCodeArea').style.display = 'block';
+                    
+                    // Show simulation code if available (for development)
+                    if (result.simulationCode) {
+                        console.log('🔢 Simulation Code:', result.simulationCode);
+                        // Auto-fill verification code for demo
+                        setTimeout(() => {
+                            document.getElementById('verificationCode').value = result.simulationCode;
+                        }, 1000);
+                    }
+                } else {
+                    throw new Error(result.message || 'SMS送信に失敗しました');
+                }
+            } catch (error) {
+                console.error('SMS sending error:', error);
+                alert(`SMS送信エラー: ${error.message}`);
                 
-                // Auto-fill verification code for demo
-                setTimeout(() => {
-                    document.getElementById('verificationCode').value = '123456';
-                }, 1000);
-            }, 2000);
+                // Re-enable button
+                this.disabled = false;
+                this.innerHTML = '<i class="bi bi-send me-2"></i>認証コードを送信';
+            }
         });
 
-        document.getElementById('verifyCodeBtn').addEventListener('click', function() {
+        document.getElementById('verifyCodeBtn').addEventListener('click', async function() {
             const code = document.getElementById('verificationCode').value;
-            if (code === '123456' || code.length === 6) {
-                phoneVerified = true;
-                this.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証完了';
-                this.classList.remove('btn-success');
-                this.classList.add('btn-success');
-                this.disabled = true;
+            const phone = document.getElementById('verificationPhone').value;
+            
+            if (!code || code.length !== 6) {
+                alert('6桁の認証コードを入力してください。');
+                return;
+            }
+
+            // Disable button and show loading
+            this.disabled = true;
+            this.innerHTML = '<i class="bi bi-clock me-2"></i>認証中...';
+            
+            try {
+                const response = await fetch('/api/tourists/verify-phone', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        phoneNumber: phone,
+                        code: code 
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    phoneVerified = true;
+                    verificationSessionId = result.sessionId;
+                    
+                    this.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証完了';
+                    this.classList.remove('btn-success');
+                    this.classList.add('btn-success');
+                    this.disabled = true;
+                    
+                    alert('電話認証が完了しました！');
+                } else {
+                    throw new Error(result.message || '認証に失敗しました');
+                }
+            } catch (error) {
+                console.error('Phone verification error:', error);
+                alert(`認証エラー: ${error.message}`);
                 
-                document.getElementById('nextToStep3').disabled = false;
-                
-                alert('電話認証が完了しました！');
-            } else {
-                alert('正しい認証コードを入力してください。');
+                // Re-enable button
+                this.disabled = false;
+                this.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証コードを確認';
             }
         });
 
@@ -699,7 +759,7 @@
         });
 
         // Complete registration
-        function completeRegistration() {
+        async function completeRegistration() {
             console.log('Starting registration completion...');
             
             // Validate required conditions
@@ -708,7 +768,7 @@
                 return;
             }
 
-            if (!phoneVerified) {
+            if (!phoneVerified || !verificationSessionId) {
                 alert('電話番号認証を完了してください。');
                 return;
             }
@@ -720,24 +780,45 @@
                 completeBtn.innerHTML = '<i class="bi bi-clock me-2"></i>処理中...';
 
                 // Get form data
-                const formData = {
+                const touristData = {
                     firstName: document.getElementById('firstName').value,
                     lastName: document.getElementById('lastName').value,
                     email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
                     nationality: document.getElementById('nationality').value,
                     documentType: selectedDocumentType,
                     phoneVerified: phoneVerified,
                     documentUploaded: documentUploaded,
-                    registrationDate: new Date().toISOString(),
-                    isRegistered: true
+                    registrationDate: new Date().toISOString()
                 };
 
-                // Save registration data
-                localStorage.setItem('touristRegistration', JSON.stringify(formData));
+                // Send registration to backend
+                const response = await fetch('/api/tourists/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        sessionId: verificationSessionId,
+                        touristData: touristData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.message || '登録に失敗しました');
+                }
+
+                // Save registration data locally as well for compatibility
+                const localData = {
+                    ...touristData,
+                    touristId: result.touristId,
+                    isRegistered: true
+                };
+                localStorage.setItem('touristRegistration', JSON.stringify(localData));
                 localStorage.setItem('isRegisteredTourist', 'true');
 
-                console.log('Tourist registration completed:', formData);
+                console.log('Tourist registration completed:', result);
 
                 // Show success message
                 console.log('Showing success message...');
@@ -805,7 +886,7 @@
 
             } catch (error) {
                 console.error('Registration completion error:', error);
-                alert('登録処理中にエラーが発生しました。再度お試しください。');
+                alert(`登録処理中にエラーが発生しました: ${error.message}`);
                 
                 // Re-enable button
                 const completeBtn = document.getElementById('completeRegistration');

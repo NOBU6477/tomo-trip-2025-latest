@@ -17,11 +17,11 @@ const upload = multer({
     files: 5 // Max 5 files per request
   },
   fileFilter: (req, file, cb) => {
-    // Allow images only
-    if (file.mimetype.startsWith('image/')) {
+    // Allow images and PDFs
+    if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
-      cb(new Error('画像ファイルのみアップロード可能です'), false);
+      cb(new Error('画像ファイル（JPG, PNG）またはPDFファイルのみアップロード可能です'), false);
     }
   }
 });
@@ -30,8 +30,10 @@ class GuideAPIService {
   constructor() {
     this.objectStorage = new ObjectStorageService();
     this.guidesFilePath = path.join(__dirname, '../data/guides.json');
+    this.touristsFilePath = path.join(__dirname, '../data/tourists.json');
     this.pendingRegistrations = new Map(); // Temporary storage for incomplete registrations
     this.ensureDataDirectory();
+    this.ensureTouristsFile();
   }
 
   // Ensure data directory exists
@@ -42,6 +44,13 @@ class GuideAPIService {
     }
     if (!fs.existsSync(this.guidesFilePath)) {
       fs.writeFileSync(this.guidesFilePath, JSON.stringify([], null, 2));
+    }
+  }
+
+  // Ensure tourists file exists
+  ensureTouristsFile() {
+    if (!fs.existsSync(this.touristsFilePath)) {
+      fs.writeFileSync(this.touristsFilePath, JSON.stringify([], null, 2));
     }
   }
 
@@ -62,6 +71,26 @@ class GuideAPIService {
       fs.writeFileSync(this.guidesFilePath, JSON.stringify(guides, null, 2));
     } catch (error) {
       console.error('Error saving guides:', error);
+    }
+  }
+
+  // Load tourists from file
+  loadTourists() {
+    try {
+      const data = fs.readFileSync(this.touristsFilePath, 'utf8');
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error loading tourists:', error);
+      return [];
+    }
+  }
+
+  // Save tourists to file
+  saveTourists(tourists) {
+    try {
+      fs.writeFileSync(this.touristsFilePath, JSON.stringify(tourists, null, 2));
+    } catch (error) {
+      console.error('Error saving tourists:', error);
     }
   }
 
@@ -92,13 +121,21 @@ class GuideAPIService {
 
   // Initialize API routes
   setupRoutes(app) {
-    // SMS verification endpoints
+    // SMS verification endpoints - shared for guides and tourists
     app.post('/api/guides/send-verification', this.sendPhoneVerification.bind(this));
     app.post('/api/guides/verify-phone', this.verifyPhone.bind(this));
     
-    // File upload endpoints
+    // Tourist SMS verification endpoints (same as guides but with different context)
+    app.post('/api/tourists/send-verification', this.sendPhoneVerification.bind(this));
+    app.post('/api/tourists/verify-phone', this.verifyTouristPhone.bind(this));
+    app.post('/api/tourists/register', this.registerTourist.bind(this));
+    
+    // File upload endpoints for guides
     app.post('/api/guides/upload-document', upload.array('documents', 3), this.uploadDocuments.bind(this));
     app.post('/api/guides/upload-profile-photo', upload.single('profilePhoto'), this.uploadProfilePhoto.bind(this));
+    
+    // File upload endpoints for tourists
+    app.post('/api/tourists/upload-document', upload.single('document'), this.uploadTouristDocument.bind(this));
     
     // Guide registration and authentication endpoints
     app.post('/api/guides/register', this.registerGuide.bind(this));
@@ -130,17 +167,25 @@ class GuideAPIService {
         });
       }
 
-      // Validate phone number format (basic validation)
+      // Normalize and validate phone number
+      let normalizedPhone = phoneNumber.replace(/[-\s]/g, '');
+      
+      // Convert Japanese domestic format to international format
+      if (normalizedPhone.match(/^0[789]0\d{8}$/)) {
+        normalizedPhone = '+81' + normalizedPhone.substring(1);
+      }
+      
+      // Validate normalized phone number format
       const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-      if (!phoneRegex.test(phoneNumber.replace(/[-\s]/g, ''))) {
+      if (!phoneRegex.test(normalizedPhone)) {
         return res.status(400).json({
           success: false,
           error: 'INVALID_PHONE',
-          message: '有効な電話番号を入力してください'
+          message: '有効な電話番号を入力してください（例: 090-1234-5678）'
         });
       }
 
-      const result = await smsService.sendVerificationCode(phoneNumber);
+      const result = await smsService.sendVerificationCode(normalizedPhone);
       
       if (result.success) {
         res.json({
@@ -494,6 +539,198 @@ class GuideAPIService {
         success: false,
         error: 'REGISTRATION_ERROR',
         message: 'ガイド登録中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Tourist phone verification (simpler version)
+  async verifyTouristPhone(req, res) {
+    try {
+      const { phoneNumber, code } = req.body;
+      
+      if (!phoneNumber || !code) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_DATA',
+          message: '電話番号と認証コードが必要です'
+        });
+      }
+
+      const result = smsService.verifyCode(phoneNumber, code);
+      
+      if (result.success) {
+        // Store tourist verification session
+        const sessionId = randomUUID();
+        this.pendingRegistrations.set(sessionId, {
+          phoneNumber,
+          phoneVerified: true,
+          type: 'tourist',
+          createdAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minutes
+        });
+
+        res.json({
+          success: true,
+          message: result.message,
+          sessionId
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          error: result.error,
+          message: result.message
+        });
+      }
+    } catch (error) {
+      console.error('❌ Tourist phone verification error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'INTERNAL_ERROR',
+        message: '認証コード確認中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Tourist registration
+  async registerTourist(req, res) {
+    try {
+      const { sessionId, touristData } = req.body;
+      
+      if (!sessionId) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_SESSION',
+          message: 'セッションIDが必要です'
+        });
+      }
+
+      const session = this.pendingRegistrations.get(sessionId);
+      if (!session || !session.phoneVerified || session.type !== 'tourist') {
+        return res.status(400).json({
+          success: false,
+          error: 'INVALID_SESSION',
+          message: '電話認証が完了していません'
+        });
+      }
+
+      // Validate required fields for tourists
+      const requiredFields = ['firstName', 'lastName', 'email', 'nationality'];
+      
+      for (const field of requiredFields) {
+        if (!touristData[field]) {
+          return res.status(400).json({
+            success: false,
+            error: 'MISSING_REQUIRED_FIELD',
+            message: `必須フィールドが不足しています: ${field}`
+          });
+        }
+      }
+
+      // Create tourist record
+      const touristId = randomUUID();
+      const tourist = {
+        id: touristId,
+        ...touristData,
+        phoneNumber: session.phoneNumber,
+        phoneVerified: true,
+        status: 'active',
+        registeredAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      // Store tourist data in file storage for persistence
+      const tourists = this.loadTourists();
+      tourists.push(tourist);
+      this.saveTourists(tourists);
+      
+      console.log(`✅ New tourist registered: ${tourist.firstName} ${tourist.lastName} (${touristId})`);
+
+      // Clean up session
+      this.pendingRegistrations.delete(sessionId);
+
+      res.json({
+        success: true,
+        message: '観光客登録が完了しました。ようこそTomoTripへ！',
+        touristId,
+        tourist: {
+          id: tourist.id,
+          name: `${tourist.firstName} ${tourist.lastName}`,
+          email: tourist.email,
+          status: tourist.status,
+          registeredAt: tourist.registeredAt
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Tourist registration error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'REGISTRATION_ERROR',
+        message: '観光客登録中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Upload tourist document
+  async uploadTouristDocument(req, res) {
+    try {
+      const { sessionId, documentType } = req.body;
+      
+      if (!sessionId) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_SESSION',
+          message: 'セッションIDが必要です'
+        });
+      }
+
+      const session = this.pendingRegistrations.get(sessionId);
+      if (!session || session.type !== 'tourist') {
+        return res.status(400).json({
+          success: false,
+          error: 'INVALID_SESSION',
+          message: '無効なセッションです'
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: 'NO_FILE',
+          message: 'ファイルがアップロードされていません'
+        });
+      }
+
+      const file = req.file;
+      const fileData = {
+        fileName: file.filename,
+        originalName: file.originalname,
+        mimeType: file.mimetype,
+        size: file.size,
+        uploadedAt: new Date().toISOString(),
+        documentType: documentType || 'identity'
+      };
+
+      // Add document to session
+      if (!session.documents) {
+        session.documents = [];
+      }
+      session.documents.push(fileData);
+      
+      console.log(`✅ Tourist document uploaded: ${file.originalname} for session ${sessionId}`);
+
+      res.json({
+        success: true,
+        message: 'ドキュメントのアップロードが完了しました',
+        document: fileData
+      });
+
+    } catch (error) {
+      console.error('❌ Tourist document upload error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'UPLOAD_ERROR',
+        message: 'ファイルアップロード中にエラーが発生しました'
       });
     }
   }
