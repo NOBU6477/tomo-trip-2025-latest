@@ -613,6 +613,13 @@
                     this.classList.add('btn-success');
                     this.disabled = true;
                     
+                    // Enable the "Next" button
+                    const nextButton = document.getElementById('nextToStep3');
+                    if (nextButton) {
+                        nextButton.disabled = false;
+                        console.log('✅ Next button enabled after phone verification');
+                    }
+                    
                     alert('電話認証が完了しました！');
                 } else {
                     throw new Error(result.message || '認証に失敗しました');
