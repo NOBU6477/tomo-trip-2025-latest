@@ -151,6 +151,9 @@ class GuideAPIService {
     // File upload endpoints for tourists
     app.post('/api/tourists/upload-document', upload.single('document'), this.uploadTouristDocument.bind(this));
     
+    // Image serving endpoint
+    app.get('/objects/*', this.serveUploadedImage.bind(this));
+    
     // Guide registration and authentication endpoints
     app.post('/api/guides/register', this.registerGuide.bind(this));
     app.post('/api/guides/login', this.guideLogin.bind(this));
@@ -477,6 +480,48 @@ class GuideAPIService {
     }
   }
 
+  // Serve uploaded images (profile photos, documents, etc.)
+  async serveUploadedImage(req, res) {
+    try {
+      const objectPath = req.path;
+      
+      console.log(`🖼️ Image request for: ${objectPath}`);
+      
+      // Get the file from object storage
+      const file = await this.objectStorage.getObjectEntityFile(objectPath);
+      
+      // Stream the file to response with proper headers
+      await this.objectStorage.downloadObject(file, res);
+      
+    } catch (error) {
+      console.error('❌ Error serving image:', error);
+      
+      if (error.name === 'ObjectNotFoundError') {
+        return res.status(404).json({
+          success: false,
+          error: 'IMAGE_NOT_FOUND',
+          message: '画像が見つかりません'
+        });
+      }
+      
+      res.status(500).json({
+        success: false,
+        error: 'IMAGE_SERVE_ERROR',
+        message: '画像の読み込み中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Generate profile photo URL from profilePhoto object
+  generateProfilePhotoUrl(profilePhoto) {
+    if (!profilePhoto || !profilePhoto.fileId) {
+      return null;
+    }
+    
+    // Construct the URL using the fileId
+    return `/objects/uploads/${profilePhoto.fileId}`;
+  }
+
   // Complete guide registration
   async registerGuide(req, res) {
     try {
@@ -763,6 +808,7 @@ class GuideAPIService {
         .map(guide => ({
           id: guide.id,
           name: guide.guideName,
+          guideName: guide.guideName, // Keep for compatibility
           email: guide.guideEmail,
           location: guide.location || guide.prefecture || '東京都 東京',
           languages: Array.isArray(guide.guideLanguages) ? guide.guideLanguages : [guide.guideLanguages],
@@ -770,7 +816,8 @@ class GuideAPIService {
           experience: guide.guideExperience,
           sessionRate: guide.guideSessionRate,
           availability: guide.guideAvailability,
-          profilePhoto: guide.profilePhoto?.fileName,
+          // Generate proper profile photo URL
+          profilePhoto: this.generateProfilePhotoUrl(guide.profilePhoto),
           introduction: guide.guideIntroduction,
           averageRating: 4.8,
           status: guide.status,
