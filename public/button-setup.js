@@ -172,11 +172,23 @@ function handleManualSearch() {
     if (window.AppState && window.AppState.guides) {
         let filteredGuides = [...window.AppState.guides];
         
-        // Apply filters
+        // Apply location filter with improved matching
         if (locationValue) {
-            filteredGuides = filteredGuides.filter(guide => 
-                guide.location === locationValue || guide.prefecture === locationValue
-            );
+            filteredGuides = filteredGuides.filter(guide => {
+                // Try to match location string to prefecture code
+                // This requires prefecture-selector.mjs to be loaded
+                try {
+                    // Basic matching for immediate filtering
+                    const prefectureName = window.locationNames[locationValue];
+                    return guide.location === locationValue || 
+                           guide.prefecture === locationValue ||
+                           (prefectureName && guide.location && guide.location.includes(prefectureName)) ||
+                           guide.location === prefectureName;
+                } catch (error) {
+                    console.warn('Location matching fallback:', error);
+                    return guide.location === locationValue || guide.prefecture === locationValue;
+                }
+            });
         }
         
         if (languageValue) {
@@ -187,7 +199,8 @@ function handleManualSearch() {
         
         if (priceValue) {
             filteredGuides = filteredGuides.filter(guide => {
-                const price = guide.price;
+                // Handle different price field names
+                const price = parseInt(guide.sessionRate) || parseInt(guide.price) || 0;
                 switch(priceValue) {
                     case 'budget': return price >= 6000 && price <= 10000;
                     case 'premium': return price >= 10001 && price <= 20000;

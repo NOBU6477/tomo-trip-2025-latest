@@ -12,6 +12,7 @@ import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
 import { APP_CONFIG } from '../../env/app-config.mjs';
+import { generatePrefectureOptions } from './ui/prefecture-selector.mjs';
 
 // Early detection for Replit preview iframe to suppress footer emergency logs
 const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
@@ -255,7 +256,19 @@ async function appInit() {
         }, 1000);
     }
     
+    // Initialize prefecture selector  
+    initializePrefectureSelector();
+    
     log.ok('✅ Application initialized successfully with dynamic guide data');
+}
+
+// Initialize prefecture selector with 47 prefectures + remote islands
+function initializePrefectureSelector() {
+    const locationFilter = document.getElementById('locationFilter');
+    if (locationFilter) {
+        locationFilter.innerHTML = generatePrefectureOptions();
+        console.log('✅ Prefecture selector initialized with 47 prefectures + remote islands');
+    }
 }
 
 // Refresh guide data and update display (enhanced with retry mechanism)
