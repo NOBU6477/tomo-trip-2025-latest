@@ -33,225 +33,28 @@ async function showGuideDetailModalById(guideId) {
     }
 }
 
-// Show comprehensive tourist registration modal
+// Show tourist registration prompt - redirect to new registration system
 function showTouristRegistrationPrompt(guideId) {
-    // Create detailed registration modal
-    const modalHTML = `
-        <div class="modal fade" id="touristRegistrationModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content" style="border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);">
-                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
-                        <h5 class="modal-title fw-bold">
-                            <i class="bi bi-person-plus me-2"></i>観光客登録
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
-                    </div>
-                    <div class="modal-body p-4">
-                        <div class="alert alert-info d-flex align-items-center mb-4" role="alert">
-                            <i class="bi bi-info-circle me-2"></i>
-                            <div>
-                                <strong>ガイド詳細をご覧いただくには観光客登録が必要です</strong><br>
-                                <small>登録は無料で、安全にガイドとやり取りできます</small>
-                            </div>
-                        </div>
-                        
-                        <form id="touristRegistrationForm">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="touristName" class="form-label fw-bold">
-                                        <i class="bi bi-person me-1"></i>お名前 <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="text" class="form-control" id="touristName" required 
-                                           style="border-radius: 10px;" placeholder="田中太郎">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="touristEmail" class="form-label fw-bold">
-                                        <i class="bi bi-envelope me-1"></i>メールアドレス <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="email" class="form-control" id="touristEmail" required 
-                                           style="border-radius: 10px;" placeholder="example@email.com">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="touristPhone" class="form-label fw-bold">
-                                        <i class="bi bi-telephone me-1"></i>電話番号 <span class="text-danger">*</span>
-                                    </label>
-                                    <input type="tel" class="form-control" id="touristPhone" required 
-                                           style="border-radius: 10px;" placeholder="090-1234-5678">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="touristAge" class="form-label fw-bold">
-                                        <i class="bi bi-calendar me-1"></i>年齢層
-                                    </label>
-                                    <select class="form-select" id="touristAge" style="border-radius: 10px;">
-                                        <option value="">選択してください</option>
-                                        <option value="18-25">18-25歳</option>
-                                        <option value="26-35">26-35歳</option>
-                                        <option value="36-45">36-45歳</option>
-                                        <option value="46-55">46-55歳</option>
-                                        <option value="56-65">56-65歳</option>
-                                        <option value="66+">66歳以上</option>
-                                    </select>
-                                </div>
-                                <div class="col-12">
-                                    <label for="touristInterests" class="form-label fw-bold">
-                                        <i class="bi bi-heart me-1"></i>興味のある観光内容
-                                    </label>
-                                    <div class="row g-2">
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="interest1" value="gourmet">
-                                                <label class="form-check-label" for="interest1">グルメ</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="interest2" value="history">
-                                                <label class="form-check-label" for="interest2">歴史・文化</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="interest3" value="nature">
-                                                <label class="form-check-label" for="interest3">自然・景色</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="interest4" value="shopping">
-                                                <label class="form-check-label" for="interest4">ショッピング</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="interest5" value="nightlife">
-                                                <label class="form-check-label" for="interest5">ナイトライフ</label>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="interest6" value="adventure">
-                                                <label class="form-check-label" for="interest6">アドベンチャー</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12">
-                                    <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-                                        <label class="form-check-label" for="agreeTerms">
-                                            <a href="#" onclick="showTerms(); return false;">利用規約</a>と<a href="#" onclick="showPrivacy(); return false;">プライバシーポリシー</a>に同意します <span class="text-danger">*</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal" style="border-radius: 25px;">
-                            <i class="bi bi-x-circle me-1"></i>キャンセル
-                        </button>
-                        <button type="button" class="btn btn-primary px-4" onclick="processTouristRegistration('${guideId}')" style="border-radius: 25px; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
-                            <i class="bi bi-check-circle me-1"></i>登録してガイド詳細を見る
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
+    // Store guide ID for return after registration
+    sessionStorage.setItem('returnToGuideId', guideId);
     
-    // Remove existing modal if it exists and add new one
-    const existingModal = document.getElementById('touristRegistrationModal');
-    if (existingModal) {
-        existingModal.remove();
+    // Show simple alert and redirect to complete registration system
+    const shouldRedirect = confirm(
+        'ガイド詳細をご覧いただくには観光客登録が必要です。\n\n' +
+        '登録は無料で、安全にガイドとやり取りできます。\n' +
+        '今すぐ登録ページに移動しますか？'
+    );
+    
+    if (shouldRedirect) {
+        // Redirect to the complete tourist registration page
+        window.location.href = 'tourist-registration-simple.html';
     }
-    
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
-    
-    // Show modal
-    const modal = new bootstrap.Modal(document.getElementById('touristRegistrationModal'));
-    modal.show();
 }
-
-// Process tourist registration form
-window.processTouristRegistration = function(guideId) {
-    const form = document.getElementById('touristRegistrationForm');
-    
-    // Validate required fields
-    const name = document.getElementById('touristName').value.trim();
-    const email = document.getElementById('touristEmail').value.trim();
-    const phone = document.getElementById('touristPhone').value.trim();
-    const agreeTerms = document.getElementById('agreeTerms').checked;
-    
-    if (!name || !email || !phone) {
-        alert('必須項目を入力してください。');
-        return;
-    }
-    
-    if (!agreeTerms) {
-        alert('利用規約とプライバシーポリシーに同意してください。');
-        return;
-    }
-    
-    // Collect form data
-    const age = document.getElementById('touristAge').value;
-    const interests = [];
-    
-    // Collect selected interests
-    for (let i = 1; i <= 6; i++) {
-        const checkbox = document.getElementById(`interest${i}`);
-        if (checkbox && checkbox.checked) {
-            interests.push(checkbox.value);
-        }
-    }
-    
-    const touristData = {
-        id: 'tourist_' + Date.now(),
-        name: name,
-        email: email,
-        phone: phone,
-        age: age,
-        interests: interests,
-        registeredAt: new Date().toISOString(),
-        status: 'active'
-    };
-    
-    // Save authentication status only (no PII stored)
-    sessionStorage.setItem('touristAuth', 'true');
-    sessionStorage.setItem('touristAuthTimestamp', Date.now().toString());
-    sessionStorage.setItem('pendingGuideId', guideId);
-    
-    // In production: Send to backend API, don't store PII locally
-    console.log('🛡️ Tourist authentication set (PII not stored locally)');
-    
-    // Log only non-PII metadata for debugging
-    console.log('✅ Tourist registered successfully:', {
-        id: touristData.id,
-        registeredAt: touristData.registeredAt,
-        interests: touristData.interests.length,
-        age: touristData.age || 'not specified'
-    });
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('touristRegistrationModal'));
-    if (modal) {
-        modal.hide();
-    }
-    
-    // Show success message and navigate to guide details
-    alert('観光客登録が完了しました！\\nガイド詳細ページに移動します。');
-    
-    // Same-tab navigation to avoid popup blockers
-    if (guideId) {
-        window.location.href = `guide-detail.html?id=${guideId}`;
-    } else {
-        console.log('✅ Tourist registration completed successfully');
-    }
-};
 
 // Legacy redirect function for compatibility
 window.redirectToRegistration = function(guideId) {
-    sessionStorage.setItem('pendingGuideId', guideId);
-    window.location.href = '/tourist-registration-simple.html';
+    sessionStorage.setItem('returnToGuideId', guideId);
+    window.location.href = 'tourist-registration-simple.html';
 };
 
 // Make function globally available
@@ -592,7 +395,7 @@ function setupDataActionHandlers() {
                 showGuideRegistrationModal();
                 break;
             case 'show-tourist-registration-modal':
-                showTouristRegistrationModal();
+                showTouristRegistrationPrompt(guideId);
                 break;
             case 'show-management-center':
                 showManagementCenter();

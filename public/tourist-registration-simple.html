@@ -864,6 +864,11 @@
                     throw new Error(result.message || '登録に失敗しました');
                 }
 
+                // Set tourist authentication status FIRST
+                sessionStorage.setItem('touristAuth', 'true');
+                sessionStorage.setItem('touristAuthTimestamp', Date.now().toString());
+                console.log('✅ Tourist authentication set in sessionStorage');
+
                 // Save registration data locally as well for compatibility
                 const localData = {
                     ...touristData,
@@ -961,21 +966,19 @@
             }
         }
 
-        // Auto-fill if user has previous data
+        // Clear form data on page load to prevent data persistence issues
         window.addEventListener('load', function() {
-            const existingData = localStorage.getItem('touristRegistration');
-            if (existingData) {
-                try {
-                    const data = JSON.parse(existingData);
-                    document.getElementById('firstName').value = data.firstName || '';
-                    document.getElementById('lastName').value = data.lastName || '';
-                    document.getElementById('email').value = data.email || '';
-                    document.getElementById('phone').value = data.phone || '';
-                    document.getElementById('nationality').value = data.nationality || '';
-                } catch (e) {
-                    console.log('No previous registration data found');
-                }
-            }
+            // Clear all form fields to ensure fresh start
+            document.getElementById('firstName').value = '';
+            document.getElementById('lastName').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('nationality').value = '';
+            
+            // Clear any old localStorage data that might cause confusion
+            localStorage.removeItem('touristRegistration');
+            
+            console.log('✅ Form cleared for fresh registration');
         });
     </script>
 </body>

@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "id": "5ebc7df0-1b82-4af9-9af1-5fdd3626c71d",
+    "firstName": "倫太郎",
+    "lastName": "テスト",
+    "email": "yamada@gmail.com",
+    "nationality": "japan",
+    "documentType": "license",
+    "phoneVerified": true,
+    "documentUploaded": true,
+    "registrationDate": "2025-09-19T13:41:53.452Z",
+    "phoneNumber": "+819012345678",
+    "status": "active",
+    "registeredAt": "2025-09-19T13:41:53.910Z",
+    "updatedAt": "2025-09-19T13:41:53.910Z"
+  }
+]
