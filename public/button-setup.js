@@ -29,6 +29,9 @@ function setupAllButtons() {
     // Setup Guide Card Management Buttons (delegated event handling)
     setupGuideCardButtons();
     
+    // Setup Admin Mode Toggle Button
+    setupAdminModeToggle();
+    
     console.log('✅ All button event handlers setup complete');
 }
 
@@ -530,7 +533,46 @@ function setupGuideCardButtons() {
         }
     });
     
+    // Setup admin checkbox delegation  
+    document.addEventListener('change', function(event) {
+        if (event.target.matches('input[data-action="toggle-selection"]')) {
+            const guideId = event.target.getAttribute('data-guide-id');
+            if (guideId && window.toggleGuideSelection) {
+                window.toggleGuideSelection(guideId);
+                console.log('✅ Admin checkbox toggled for guide:', guideId);
+            }
+        }
+    });
+    
     console.log('✅ Guide card button delegation setup complete');
+}
+
+/**
+ * Setup Admin Mode Toggle Button
+ */
+function setupAdminModeToggle() {
+    const adminToggleBtn = document.getElementById('adminModeToggleBtn');
+    
+    if (adminToggleBtn) {
+        adminToggleBtn.removeEventListener('click', handleAdminModeToggle);
+        adminToggleBtn.addEventListener('click', handleAdminModeToggle);
+        console.log('✅ Admin mode toggle button handler attached');
+    } else {
+        console.warn('⚠️ Admin mode toggle button not found');
+    }
+}
+
+function handleAdminModeToggle(e) {
+    e.preventDefault();
+    console.log('⚙️ Admin mode toggle clicked');
+    
+    if (window.toggleAdminMode) {
+        window.toggleAdminMode();
+        console.log('✅ Admin mode toggled successfully');
+    } else {
+        console.error('❌ toggleAdminMode function not available');
+        alert('管理者モード機能が利用できません。');
+    }
 }
 
 function handleBookmarkClick(guideId, buttonElement) {

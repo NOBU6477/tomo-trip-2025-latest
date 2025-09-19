@@ -13,6 +13,7 @@ import { setupLocationNames } from './locations/location-setup.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
 import { APP_CONFIG } from '../../env/app-config.mjs';
 import { generatePrefectureOptions } from './ui/prefecture-selector.mjs';
+import './admin/guide-management.mjs';
 
 // Early detection for Replit preview iframe to suppress footer emergency logs
 const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
@@ -363,6 +364,16 @@ function showNewGuideNotification(count, isRegistrationComplete = false, customM
 // Make functions globally available for guide edit page and registration completion
 window.refreshGuideData = refreshGuideData;
 window.showNewGuideNotification = showNewGuideNotification;
+window.renderGuideCards = renderGuideCards;
+
+// Export pagination system globally for search integration
+window.getPaginationSystem = function() {
+    return window.paginationSystem;
+};
+
+window.setPaginationSystem = function(system) {
+    window.paginationSystem = system;
+};
 
 // Debug: Module loading confirmation
 console.log('🚀 app-init.mjs module loaded');

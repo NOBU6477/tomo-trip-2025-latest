@@ -1,10 +1,89 @@
 // Guide rendering module - CSP compliant
 // Removed defaultGuideData import to prevent duplicate rendering
 
-// Global guide rendering function with performance optimization
-export function renderGuideCards(guidesToRender = null) {
+// スケーラブルペジネーションのインポートと初期化
+let paginationSystem = null;
+
+// 大量データ対応の最適化されたガイドカード描画関数
+export function renderGuideCards(guidesToRender = null, usePagination = true, resetPagination = true) {
     const guides = guidesToRender ?? window.AppState?.guides ?? [];
     
+    // スケーラブルペジネーションシステムの初期化
+    if (usePagination && guides.length > 12) {
+        initializePaginationSystem(guides, resetPagination);
+        return; // ペジネーション使用時は早期リターン
+    }
+    
+    // 少数のガイドの場合は従来通りの表示
+    renderAllGuideCards(guides);
+}
+
+// ペジネーションシステムの初期化
+async function initializePaginationSystem(guides, resetPagination = true) {
+    if (!paginationSystem || resetPagination) {
+        // 動的にペジネーションモジュールを読み込み
+        const { ScalablePagination } = await import('./scalable-pagination.mjs');
+        
+        paginationSystem = new ScalablePagination({
+            itemsPerPage: window.innerWidth < 768 ? 6 : 12,
+            maxVisiblePages: 5,
+            container: '#paginationContainer',
+            onPageLoad: (pageItems, currentPage, totalPages) => {
+                renderAllGuideCards(pageItems);
+                console.log(`📄 Page ${currentPage}/${totalPages} loaded with ${pageItems.length} guides`);
+            }
+        });
+        
+        // グローバルアクセス用に保存
+        window.setPaginationSystem(paginationSystem);
+        
+        // ペジネーション用のコンテナを追加
+        ensurePaginationContainers();
+    }
+    
+    paginationSystem.setData(guides);
+    paginationSystem.renderPagination();
+    paginationSystem.updatePageInfo();
+    
+    // 最初のページを表示
+    const firstPageItems = paginationSystem.getCurrentPageItems();
+    renderAllGuideCards(firstPageItems);
+    
+    console.log(`✅ Pagination system initialized: ${guides.length} guides, ${paginationSystem.getState().totalPages} pages`);
+}
+
+// ペジネーション用コンテナを確保
+function ensurePaginationContainers() {
+    // ページ情報コンテナ
+    let pageInfo = document.getElementById('pageInfo');
+    if (!pageInfo) {
+        pageInfo = document.createElement('div');
+        pageInfo.id = 'pageInfo';
+        
+        const guidesContainer = document.getElementById('guidesContainer');
+        const parentContainer = guidesContainer?.parentElement;
+        if (parentContainer) {
+            parentContainer.insertBefore(pageInfo, guidesContainer);
+        }
+    }
+    
+    // ペジネーションコンテナ
+    let paginationContainer = document.getElementById('paginationContainer');
+    if (!paginationContainer) {
+        paginationContainer = document.createElement('div');
+        paginationContainer.id = 'paginationContainer';
+        paginationContainer.className = 'mt-4';
+        
+        const guidesContainer = document.getElementById('guidesContainer');
+        const parentContainer = guidesContainer?.parentElement;
+        if (parentContainer) {
+            parentContainer.appendChild(paginationContainer);
+        }
+    }
+}
+
+// 全ガイドカードの描画（既存の機能）
+function renderAllGuideCards(guides) {
     // Try multiple ways to find the container
     let container = document.getElementById('guidesContainer');
     
@@ -250,9 +329,30 @@ export function createGuideCardHTML(guide) {
         specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s).slice(0, 3).join(', ') :
         Array.isArray(specialties) ? specialties.slice(0, 3).join(', ') : '';
     
+    // 管理者モード用チェックボックスの表示判定
+    let adminModeEnabled = false;
+    
+    // まずgetAdminModeStateから取得を試行
+    if (window.getAdminModeState) {
+        adminModeEnabled = window.getAdminModeState().isAdminMode;
+    } 
+    // フォールバックとしてAppStateから取得
+    else if (window.AppState && window.AppState.adminMode) {
+        adminModeEnabled = window.AppState.adminMode.isAdminMode;
+    }
+    const adminCheckbox = adminModeEnabled ? `
+        <input type="checkbox" class="form-check-input admin-checkbox" 
+               data-guide-id="${guide.id}" 
+               data-action="toggle-selection"
+               style="position: absolute; top: 10px; left: 10px; z-index: 10; transform: scale(1.5);">
+    ` : '';
+
     return `
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="guide-card h-100" style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white;">
+            <div class="guide-card h-100 ${adminModeEnabled ? 'admin-mode' : ''}" 
+                 data-guide-id="${guide.id}"
+                 style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white; position: relative;">
+                ${adminCheckbox}
                 <div class="position-relative">
                     <img src="${guide.profilePhoto || '/assets/img/guides/default-1.svg'}" 
                          class="card-img-top" 
