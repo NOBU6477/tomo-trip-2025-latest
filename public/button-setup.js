@@ -565,23 +565,28 @@ function handleManagementClick(e) {
     console.log('🏆 Management center button clicked');
     
     try {
-        // Check if management modal exists
-        const managementModal = document.getElementById('managementModal');
-        if (managementModal) {
-            // Load management data if function exists
-            if (typeof loadManagementData === 'function') {
-                loadManagementData();
-            }
-            const modal = new bootstrap.Modal(managementModal);
-            modal.show();
-            console.log('✅ Management center opened');
+        // Use the dedicated management center function from management.js
+        if (typeof showManagementCenter === 'function') {
+            showManagementCenter();
+            console.log('✅ Management center opened via showManagementCenter()');
         } else {
-            // Fallback: show simple alert
-            alert('管理センターは準備中です。ブックマークと比較機能は各ガイドカードのボタンからご利用いただけます。');
+            // Fallback: try to load manually
+            const managementModal = document.getElementById('managementModal');
+            if (managementModal) {
+                if (typeof loadManagementData === 'function') {
+                    loadManagementData();
+                }
+                const modal = new bootstrap.Modal(managementModal);
+                modal.show();
+                console.log('✅ Management center opened via fallback');
+            } else {
+                console.error('❌ Management modal not found');
+                alert('管理センターが見つかりません。ページをリロードしてください。');
+            }
         }
     } catch (error) {
         console.error('❌ Management center error:', error);
-        alert('管理センターの表示に問題が発生しました。');
+        alert('管理センターの表示に問題が発生しました: ' + error.message);
     }
 }
 
