@@ -14,8 +14,9 @@ function setupAllButtons() {
     // Setup Login Dropdown
     setupLoginDropdown();
     
-    // Setup Search Button  
+    // Setup Search Button and Reset Button
     setupSearchButton();
+    setupResetButton();
     
     // Setup Contact Button
     setupContactButton();
@@ -32,7 +33,90 @@ function setupAllButtons() {
     // Setup Admin Mode Toggle Button
     setupAdminModeToggle();
     
+    // Setup filter input event listeners for real-time feedback
+    setupFilterInputListeners();
+    
     console.log('✅ All button event handlers setup complete');
+}
+
+/**
+ * Setup Reset Button - Clears all filters
+ */
+function setupResetButton() {
+    const resetBtn = document.getElementById('resetBtn');
+    
+    if (resetBtn) {
+        resetBtn.removeEventListener('click', handleResetClick);
+        resetBtn.addEventListener('click', handleResetClick);
+        console.log('✅ Reset button handler attached');
+    } else {
+        console.warn('⚠️ Reset button not found');
+    }
+}
+
+function handleResetClick(e) {
+    e.preventDefault();
+    console.log('🔄 Reset button clicked - clearing all filters');
+    
+    try {
+        // Clear all filter inputs
+        const locationFilter = document.getElementById('locationFilter');
+        const languageFilter = document.getElementById('languageFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        const keywordInput = document.getElementById('keywordInput');
+        
+        if (locationFilter) locationFilter.value = '';
+        if (languageFilter) languageFilter.value = '';
+        if (priceFilter) priceFilter.value = '';
+        if (keywordInput) keywordInput.value = '';
+        
+        // Use global reset function if available
+        if (window.resetFilters && typeof window.resetFilters === 'function') {
+            window.resetFilters();
+            console.log('✅ window.resetFilters() called successfully');
+        } else if (window.AppState && window.AppState.originalGuides && window.renderGuideCards) {
+            // Fallback: render all guides
+            window.renderGuideCards(window.AppState.originalGuides);
+            console.log('✅ Fallback reset completed');
+        } else {
+            console.warn('⚠️ Reset function not available');
+        }
+    } catch (error) {
+        console.error('❌ Reset button error:', error);
+        alert('フィルターのリセットに失敗しました。');
+    }
+}
+
+/**
+ * Setup Filter Input Event Listeners for real-time feedback
+ */
+function setupFilterInputListeners() {
+    console.log('🔧 Setting up filter input listeners...');
+    
+    // Add change event listeners to filter inputs for instant feedback
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    
+    if (locationFilter) {
+        locationFilter.addEventListener('change', () => {
+            console.log('📍 Location filter changed:', locationFilter.value);
+        });
+    }
+    
+    if (languageFilter) {
+        languageFilter.addEventListener('change', () => {
+            console.log('🗣️ Language filter changed:', languageFilter.value);
+        });
+    }
+    
+    if (priceFilter) {
+        priceFilter.addEventListener('change', () => {
+            console.log('💰 Price filter changed:', priceFilter.value);
+        });
+    }
+    
+    console.log('✅ Filter input listeners setup complete');
 }
 
 /**
@@ -137,23 +221,18 @@ function handleSearchClick(e) {
     console.log('🔍 Search button clicked - applying filters');
     
     try {
-        // Check if filterGuides function exists
-        if (typeof filterGuides === 'function') {
-            filterGuides();
-            console.log('✅ filterGuides() called successfully');
-        } else if (typeof applyCurrentFilters === 'function') {
-            applyCurrentFilters();
-            console.log('✅ applyCurrentFilters() called successfully');
-        } else if (window.AppState && window.renderGuideCards) {
+        // Use the global filterGuides function 
+        if (window.filterGuides && typeof window.filterGuides === 'function') {
+            window.filterGuides();
+            console.log('✅ window.filterGuides() called successfully');
+        } else {
+            console.warn('⚠️ window.filterGuides not available, using fallback');
             // Fallback: manual filter application
             handleManualSearch();
-        } else {
-            alert('検索機能は現在利用できません。');
-            console.error('❌ No search function available');
         }
     } catch (error) {
         console.error('❌ Search button error:', error);
-        alert('検索に失敗しました。');
+        alert('検索に失敗しました。もう一度お試しください。');
     }
 }
 
