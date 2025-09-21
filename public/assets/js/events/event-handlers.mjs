@@ -155,6 +155,28 @@ function normalizeLanguage(selectedValue) {
     return languageMapping[selectedValue] || [selectedValue];
 }
 
+// Location normalization function
+function normalizeLocation(selectedValue) {
+    if (!selectedValue) return [];
+    
+    // Location mapping for filter values to actual location strings (Prefecture System)
+    const locationMapping = {
+        'tokyo': ['東京都', '東京', 'tokyo', 'Tokyo'],
+        'osaka': ['大阪府', '大阪市', '大阪', 'osaka', 'Osaka'],
+        'kyoto': ['京都府', '京都市', '京都', 'kyoto', 'Kyoto'],
+        'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa', 'yokohama', 'Kanagawa', 'Yokohama'],
+        'hyogo': ['兵庫県', '神戸市', '兵庫', 'hyogo', 'kobe', 'Hyogo', 'Kobe'],
+        'aichi': ['愛知県', '名古屋市', '愛知', 'aichi', 'nagoya', 'Aichi', 'Nagoya'],
+        'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka', 'Fukuoka'],
+        'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa', 'naha', 'ishigaki', 'Okinawa'],
+        'hokkaido': ['北海道', '札幌市', 'hokkaido', 'sapporo', 'Hokkaido', 'Sapporo'],
+        'miyagi': ['宮城県', '仙台市', '宮城', 'miyagi', 'sendai', 'Miyagi', 'Sendai'],
+        'hiroshima': ['広島県', '広島市', '広島', 'hiroshima', 'Hiroshima']
+    };
+    
+    return locationMapping[selectedValue] || [selectedValue];
+}
+
 // Global filter functions for search functionality
 window.filterGuides = function() {
     console.log('🔍 Running guide filters...');
@@ -186,21 +208,6 @@ window.filterGuides = function() {
     
     // Start with all guides
     let filteredGuides = [...state.guides];
-    
-    // Location mapping for filter values to actual location strings (Prefecture System)
-    const locationMapping = {
-        'tokyo': ['東京都', '東京', 'tokyo'],
-        'osaka': ['大阪府', '大阪市', '大阪', 'osaka'],
-        'kyoto': ['京都府', '京都市', '京都', 'kyoto'],
-        'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa', 'yokohama'],
-        'hyogo': ['兵庫県', '神戸市', '兵庫', 'hyogo', 'kobe'],
-        'aichi': ['愛知県', '名古屋市', '愛知', 'aichi', 'nagoya'],
-        'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka'],
-        'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa', 'naha', 'ishigaki'],
-        'hokkaido': ['北海道', '札幌市', 'hokkaido', 'sapporo'],
-        'miyagi': ['宮城県', '仙台市', '宮城', 'miyagi', 'sendai'],
-        'hiroshima': ['広島県', '広島市', '広島', 'hiroshima']
-    };
     
     // Apply location filter using normalization
     if (selectedLocation && selectedLocation !== '') {
