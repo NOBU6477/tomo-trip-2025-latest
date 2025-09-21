@@ -32,7 +32,7 @@ function loadBookmarksList() {
         return;
     }
     
-    const allGuides = loadAllGuides();
+    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
     bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
         const guide = allGuides.find(g => g.id == guideId);
         if (!guide) return '';
@@ -79,7 +79,7 @@ function loadComparisonList() {
         return;
     }
     
-    const allGuides = loadAllGuides();
+    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
     comparisonList.innerHTML = comparisonGuides.map(guideId => {
         const guide = allGuides.find(g => g.id == guideId);
         if (!guide) return '';
