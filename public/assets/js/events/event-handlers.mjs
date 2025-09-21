@@ -492,7 +492,9 @@ function showToast(message, type = 'info') {
 
 // Export bookmark and comparison functions globally
 window.toggleBookmark = toggleBookmark;
-window.toggleComparison = toggleComparison;
+if (!window.toggleComparison) {
+    window.toggleComparison = toggleComparison;
+}
 window.updateBookmarkButtonState = updateBookmarkButtonState;
 window.updateCompareButtonState = updateCompareButtonState;
 window.showToast = showToast;

@@ -35,6 +35,7 @@
     <link rel="stylesheet" href="ocean_background.css">
     <link rel="stylesheet" href="assets/css/footer.css">
     <link rel="stylesheet" href="assets/css/auth-modal.css">
+    <link rel="stylesheet" href="assets/css/bugfixes.css">
 
     <style>
         .guide-card:hover {
@@ -3615,8 +3616,8 @@
     <!-- Management Center Modal -->
     <div class="modal fade" id="managementModal" tabindex="-1" aria-labelledby="managementModalLabel" aria-hidden="true" style="z-index: 2200;">
         <div class="modal-dialog modal-fullscreen-lg-down modal-xl">
-            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: none; backdrop-filter: blur(10px);">
-                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b9d 100%); color: white; border-radius: 20px 20px 0 0; padding: 25px 30px;">
+            <div class="modal-content" style="border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: none; backdrop-filter: blur(10px); max-height: 90vh; display: flex; flex-direction: column;">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b9d 100%); color: white; border-radius: 20px 20px 0 0; padding: 25px 30px; flex-shrink: 0;">
                     <h5 class="modal-title fw-bold d-flex align-items-center" id="managementModalLabel">
                         <div class="me-3" style="width: 45px; height: 45px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                             <i class="bi bi-gear-fill" style="font-size: 22px;"></i>
@@ -3628,9 +3629,9 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="閉じる"></button>
                 </div>
-                <div class="modal-body p-0">
+                <div class="modal-body p-0" style="flex: 1; overflow-y: auto;">
                     <!-- Tab Navigation -->
-                    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10;">
                         <ul class="nav nav-pills nav-fill" id="managementTabs" role="tablist" style="background: rgba(255,255,255,0.5); border-radius: 30px; padding: 8px;">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;">
@@ -3656,7 +3657,7 @@
                     </div>
                     
                     <!-- Tab Content -->
-                    <div class="tab-content p-4" id="managementTabContent" style="min-height: 500px;">
+                    <div class="tab-content p-4" id="managementTabContent" style="min-height: 400px; padding-bottom: 60px !important;">
                         <!-- Bookmarks Tab -->
                         <div class="tab-pane fade show active" id="bookmarks" role="tabpanel">
                             <div class="d-flex justify-content-between align-items-center mb-4">

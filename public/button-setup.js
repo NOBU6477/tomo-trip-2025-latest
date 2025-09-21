@@ -137,17 +137,126 @@ function setupDashboardButton() {
 
 function handleDashboardClick(e) {
     e.preventDefault();
-    console.log('🏪 Dashboard button clicked - opening sponsor dashboard');
+    console.log('🏢 Dashboard button clicked - showing sponsor login');
     
     try {
-        // Open sponsor dashboard page (for store owners/sponsors)
-        window.open('sponsor-dashboard.html', '_blank');
-        console.log('✅ Sponsor dashboard opened');
+        // Check if user is already authenticated for sponsor dashboard
+        const sponsorAuth = localStorage.getItem('sponsorAuth');
+        if (sponsorAuth) {
+            const authData = JSON.parse(sponsorAuth);
+            if (authData && authData.isAuthenticated && Date.now() < authData.expiresAt) {
+                console.log('✅ Already authenticated, redirecting to dashboard');
+                window.open('sponsor-dashboard.html', '_blank');
+                return;
+            }
+        }
+        
+        // Show sponsor login modal using existing auth flow
+        if (typeof window.showSponsorLoginModal === 'function') {
+            console.log('✅ Using window.showSponsorLoginModal');
+            window.showSponsorLoginModal();
+        } else {
+            console.log('🔧 Creating sponsor login modal manually');
+            showSponsorLoginModalManual();
+        }
     } catch (error) {
         console.error('❌ Dashboard button error:', error);
-        alert('ダッシュボードの表示に失敗しました。');
+        alert('ダッシュボードアクセスに問題が発生しました。しばらくお待ちください。');
     }
 }
+
+function showSponsorLoginModalManual() {
+    // Remove existing modal if present
+    const existingModal = document.getElementById('sponsorLoginModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    const modalHTML = `
+        <div class="modal fade" id="sponsorLoginModal" tabindex="-1" aria-hidden="true" style="z-index: 9999;">
+            <div class="modal-dialog modal-dialog-centered" style="max-width: 450px;">
+                <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                    <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title fw-bold">
+                            <i class="bi bi-building me-2"></i>協賛店管理画面ログイン
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>運営管理者専用</strong><br>
+                            この画面は TomoTrip 運営チームのアクセス対象です
+                        </div>
+                        
+                        <form id="sponsorLoginForm">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">管理者メールアドレス</label>
+                                <input type="email" class="form-control" id="sponsorEmail" placeholder="admin@tomotrip.com" required style="border-radius: 10px; padding: 12px;">
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">管理者パスワード</label>
+                                <input type="password" class="form-control" id="sponsorPassword" placeholder="管理者パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                            </div>
+                            
+                            <div class="alert alert-secondary small mb-3">
+                                <strong>テスト用認証情報:</strong><br>
+                                Email: admin@tomotrip.com<br>
+                                Password: TomoTrip2025!Admin
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100 fw-bold" style="border-radius: 10px; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>ログイン
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // Setup form handler
+    const form = document.getElementById('sponsorLoginForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('sponsorEmail').value;
+            const password = document.getElementById('sponsorPassword').value;
+            
+            // Simple authentication for testing
+            if ((email === 'admin@tomotrip.com' && password === 'TomoTrip2025!Admin') ||
+                (email === 'owner@tomotrip.com' && password === 'Owner2025!TomoTrip')) {
+                
+                // Store authentication
+                const authData = {
+                    isAuthenticated: true,
+                    userEmail: email,
+                    expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
+                };
+                localStorage.setItem('sponsorAuth', JSON.stringify(authData));
+                
+                // Close modal and redirect
+                const modal = bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal'));
+                if (modal) modal.hide();
+                
+                setTimeout(() => {
+                    window.open('sponsor-dashboard.html', '_blank');
+                }, 300);
+                
+            } else {
+                alert('認証に失敗しました。正しい認証情報を入力してください。');
+            }
+        });
+    }
+    
+    // Show modal
+    const modal = new bootstrap.Modal(document.getElementById('sponsorLoginModal'));
+    modal.show();
+}
+
 
 /**
  * Setup Login Dropdown - Toggles custom dropdown visibility
