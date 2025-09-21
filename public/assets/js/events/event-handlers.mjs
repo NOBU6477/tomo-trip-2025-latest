@@ -102,12 +102,28 @@ window.filterGuides = function() {
     // Apply location filter
     if (selectedLocation && selectedLocation !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            const guideLocation = guide.location || guide.guideLocation || '';
+            const guideLocation = guide.location || '';
+            
+            // Enhanced location mapping for prefecture-based filtering
+            const locationMapping = {
+                'tokyo': ['東京都', '東京', 'tokyo'],
+                'osaka': ['大阪府', '大阪市', '大阪', 'osaka'],
+                'kyoto': ['京都府', '京都市', '京都', 'kyoto'],
+                'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa'],
+                'hyogo': ['兵庫県', '神戸市', '兵庫', 'hyogo'],
+                'aichi': ['愛知県', '名古屋市', '愛知', 'aichi'],
+                'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka'],
+                'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa'],
+                'hokkaido': ['北海道', '札幌市', 'hokkaido'],
+                'hiroshima': ['広島県', '広島市', '広島', 'hiroshima']
+            };
+            
             const mappedLocations = locationMapping[selectedLocation] || [selectedLocation];
             
+            // Check if guide location contains any of the mapped location terms
             return mappedLocations.some(loc => 
-                guideLocation.toLowerCase().includes(loc.toLowerCase()) ||
-                guideLocation.includes(loc)
+                guideLocation.includes(loc) || 
+                guideLocation.toLowerCase().includes(loc.toLowerCase())
             );
         });
         console.log(`📍 Location filter applied: ${filteredGuides.length} guides match "${selectedLocation}"`);
@@ -116,10 +132,9 @@ window.filterGuides = function() {
     // Apply language filter
     if (selectedLanguage && selectedLanguage !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            // Use guideLanguages as per actual data structure
-            const languages = guide.guideLanguages || guide.languages || [];
+            const languages = guide.languages || [];
             
-            // Enhanced language mapping for both Japanese and English forms
+            // Enhanced language mapping for both English and Japanese forms
             const languageMapping = {
                 'japanese': ['japanese', 'ja', '日本語', 'japan', 'jpn'],
                 'english': ['english', 'en', '英語', 'eng'],
@@ -137,17 +152,19 @@ window.filterGuides = function() {
             
             const mappedLanguages = languageMapping[selectedLanguage] || [selectedLanguage];
             
-            if (Array.isArray(languages)) {
+            // Handle both array and empty array cases
+            if (Array.isArray(languages) && languages.length > 0) {
                 return languages.some(lang => 
                     mappedLanguages.some(mapped => 
-                        lang.toLowerCase().includes(mapped.toLowerCase())
+                        lang && lang.toLowerCase().includes(mapped.toLowerCase())
                     )
                 );
-            } else if (typeof languages === 'string') {
+            } else if (typeof languages === 'string' && languages.length > 0) {
                 return mappedLanguages.some(mapped => 
                     languages.toLowerCase().includes(mapped.toLowerCase())
                 );
             }
+            
             return false;
         });
         console.log(`🗣️ Language filter applied: ${filteredGuides.length} guides match "${selectedLanguage}"`);
@@ -156,31 +173,21 @@ window.filterGuides = function() {
     // Apply price filter
     if (selectedPrice && selectedPrice !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            // Use guideSessionRate as per actual data structure
-            const price = Number(guide.guideSessionRate || guide.sessionRate || guide.price || 0);
+            // Use sessionRate field from API data
+            const price = Number(guide.sessionRate || guide.price || 0);
             
             switch(selectedPrice) {
-                case '5000-10000':
-                    return price >= 5000 && price <= 10000;
-                case '10001-15000':
-                    return price >= 10001 && price <= 15000;
-                case '15001+':
-                    return price >= 15001;
+                case 'budget':  // ¥6,000～¥10,000
+                    return price >= 6000 && price <= 10000;
+                case 'premium': // ¥10,001～¥20,000  
+                    return price >= 10001 && price <= 20000;
+                case 'luxury':  // ¥20,001+
+                    return price >= 20001;
                 default:
-                    // Handle range format like "5000-10000"
-                    const priceRange = selectedPrice.split('-');
-                    if (priceRange.length === 2) {
-                        const minPrice = Number(priceRange[0]);
-                        const maxPrice = Number(priceRange[1]);
-                        return price >= minPrice && price <= maxPrice;
-                    } else if (selectedPrice.includes('+')) {
-                        const minPrice = Number(selectedPrice.replace('+', ''));
-                        return price >= minPrice;
-                    }
                     return true;
             }
         });
-        console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}"`);
+        console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}" (price range)`);
     }
     
     // Update state and display
