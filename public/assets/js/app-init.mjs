@@ -226,7 +226,10 @@ async function appInit() {
     // 3) Setup location names in AppState
     setupLocationNames(state);
 
-    // 4) Setup event listeners only - DISABLE LEGACY RENDERING to prevent duplicates
+    // 4) Initialize prefecture selector
+    await initializePrefectureSelector();
+
+    // 5) Setup event listeners only - DISABLE LEGACY RENDERING to prevent duplicates
     setupEventListeners(state);
     
     // Wait for DOM to be fully ready before rendering guides

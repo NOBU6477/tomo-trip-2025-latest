@@ -62,26 +62,64 @@ window.showGuideDetailModalById = showGuideDetailModalById;
 
 // Normalization functions for proper data matching
 function normalizeLocation(selectedValue) {
+    // Complete mapping of prefecture codes to actual API location strings
     const locationMapping = {
-        'tokyo': ['東京都', '東京', 'tokyo'],
-        'osaka': ['大阪府', '大阪市', '大阪', 'osaka'],
-        'kyoto': ['京都府', '京都市', '京都', 'kyoto'],
-        'hiroshima': ['広島県', '広島市', '広島', 'hiroshima'],
-        'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa'],
-        'hokkaido': ['北海道', '札幌市', 'hokkaido'],
-        'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa'],
-        'aichi': ['愛知県', '名古屋市', '愛知', 'aichi'],
-        'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka'],
-        // Direct prefecture mappings
-        '東京都': ['東京都', '東京', 'tokyo'],
-        '大阪府': ['大阪府', '大阪市', '大阪', 'osaka'],
-        '京都府': ['京都府', '京都市', '京都', 'kyoto'],
-        '広島県': ['広島県', '広島市', '広島', 'hiroshima'],
-        '沖縄県': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa'],
-        '北海道': ['北海道', '札幌市', 'hokkaido'],
-        '神奈川県': ['神奈川県', '横浜市', '神奈川', 'kanagawa'],
-        '愛知県': ['愛知県', '名古屋市', '愛知', 'aichi'],
-        '福岡県': ['福岡県', '福岡市', '福岡', 'fukuoka']
+        // Prefecture codes from UI (prefecture-selector.mjs)
+        'hokkaido': ['北海道'],
+        'aomori': ['青森県'],
+        'iwate': ['岩手県'],
+        'miyagi': ['宮城県'],
+        'akita': ['秋田県'],
+        'yamagata': ['山形県'],
+        'fukushima': ['福島県'],
+        'ibaraki': ['茨城県'],
+        'tochigi': ['栃木県'],
+        'gunma': ['群馬県'],
+        'saitama': ['埼玉県'],
+        'chiba': ['千葉県'],
+        'tokyo': ['東京都', '渋谷区'],
+        'kanagawa': ['神奈川県'],
+        'niigata': ['新潟県'],
+        'toyama': ['富山県'],
+        'ishikawa': ['石川県'],
+        'fukui': ['福井県'],
+        'yamanashi': ['山梨県'],
+        'nagano': ['長野県'],
+        'gifu': ['岐阜県'],
+        'shizuoka': ['静岡県'],
+        'aichi': ['愛知県'],
+        'mie': ['三重県'],
+        'shiga': ['滋賀県'],
+        'kyoto': ['京都府'],
+        'osaka': ['大阪府'],
+        'hyogo': ['兵庫県'],
+        'nara': ['奈良県'],
+        'wakayama': ['和歌山県'],
+        'tottori': ['鳥取県'],
+        'shimane': ['島根県'],
+        'okayama': ['岡山県'],
+        'hiroshima': ['広島県'],
+        'yamaguchi': ['山口県'],
+        'tokushima': ['徳島県'],
+        'kagawa': ['香川県'],
+        'ehime': ['愛媛県'],
+        'kochi': ['高知県'],
+        'fukuoka': ['福岡県'],
+        'saga': ['佐賀県'],
+        'nagasaki': ['長崎県'],
+        'kumamoto': ['熊本県'],
+        'oita': ['大分県'],
+        'miyazaki': ['宮崎県'],
+        'kagoshima': ['鹿児島県'],
+        'okinawa': ['沖縄県'],
+        'remote_islands': ['離島'],
+        // Direct prefecture mappings (fallback)
+        '東京都': ['東京都'],
+        '大阪府': ['大阪府'],
+        '京都府': ['京都府'],
+        '広島県': ['広島県'],
+        '沖縄県': ['沖縄県'],
+        '北海道': ['北海道']
     };
     
     return locationMapping[selectedValue] || [selectedValue];
@@ -89,22 +127,29 @@ function normalizeLocation(selectedValue) {
 
 function normalizeLanguage(selectedValue) {
     const languageMapping = {
-        // Japanese UI options
-        '日本語': ['japanese', 'ja', '日本語', 'japan'],
-        '英語': ['english', 'en', '英語', 'eng'],
-        '中国語': ['chinese', 'zh', '中国語', 'chn'],
-        '韓国語': ['korean', 'ko', '韓国語', 'kor'],
-        'タイ語': ['thai', 'th', 'タイ語'],
-        'スペイン語': ['spanish', 'es', 'スペイン語'],
-        'フランス語': ['french', 'fr', 'フランス語'],
-        // English API options
+        // UI option values (these come from HTML select)
         'japanese': ['japanese', 'ja', '日本語', 'japan'],
         'english': ['english', 'en', '英語', 'eng'],
         'chinese': ['chinese', 'zh', '中国語', 'chn'],
+        'chinese_traditional': ['chinese', 'zh-tw', '中国語（繁体）', '繁体中文'],
         'korean': ['korean', 'ko', '韓国語', 'kor'],
         'thai': ['thai', 'th', 'タイ語'],
+        'vietnamese': ['vietnamese', 'vi', 'ベトナム語'],
+        'indonesian': ['indonesian', 'id', 'インドネシア語'],
+        'tagalog': ['tagalog', 'tl', 'タガログ語'],
+        'hindi': ['hindi', 'hi', 'ヒンディー語'],
         'spanish': ['spanish', 'es', 'スペイン語'],
-        'french': ['french', 'fr', 'フランス語']
+        'french': ['french', 'fr', 'フランス語'],
+        'german': ['german', 'de', 'ドイツ語'],
+        'italian': ['italian', 'it', 'イタリア語'],
+        'portuguese': ['portuguese', 'pt', 'ポルトガル語'],
+        'russian': ['russian', 'ru', 'ロシア語'],
+        'arabic': ['arabic', 'ar', 'アラビア語'],
+        // Direct API values (fallback mapping)
+        '日本語': ['japanese', 'ja', '日本語', 'japan'],
+        '英語': ['english', 'en', '英語', 'eng'],
+        '中国語': ['chinese', 'zh', '中国語', 'chn'],
+        '韓国語': ['korean', 'ko', '韓国語', 'kor']
     };
     
     return languageMapping[selectedValue] || [selectedValue];
@@ -130,12 +175,14 @@ window.filterGuides = function() {
     const locationFilter = document.getElementById('locationFilter');
     const languageFilter = document.getElementById('languageFilter');
     const priceFilter = document.getElementById('priceFilter');
+    const keywordInput = document.getElementById('keywordInput');
     
     const selectedLocation = locationFilter?.value || '';
     const selectedLanguage = languageFilter?.value || '';
     const selectedPrice = priceFilter?.value || '';
+    const keyword = keywordInput?.value?.trim().toLowerCase() || '';
     
-    console.log('🎯 Filter criteria:', { selectedLocation, selectedLanguage, selectedPrice });
+    console.log('🎯 Filter criteria:', { selectedLocation, selectedLanguage, selectedPrice, keyword });
     
     // Start with all guides
     let filteredGuides = [...state.guides];
@@ -219,6 +266,31 @@ window.filterGuides = function() {
             }
         });
         console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}" (price range)`);
+    }
+    
+    // Apply keyword search (NEW - missing functionality)
+    if (keyword && keyword !== '') {
+        filteredGuides = filteredGuides.filter(guide => {
+            // Search in multiple fields
+            const searchFields = [
+                guide.name || '',
+                guide.guideName || '',
+                guide.specialties || '',
+                guide.introduction || '',
+                guide.location || ''
+            ];
+            
+            const searchText = searchFields.join(' ').toLowerCase();
+            const matches = searchText.includes(keyword);
+            
+            console.log(`🔍 Keyword "${keyword}" check for ${guide.name}:`, {
+                searchText: searchText.substring(0, 100),
+                matches
+            });
+            
+            return matches;
+        });
+        console.log(`🔍 Keyword filter applied: ${filteredGuides.length} guides match "${keyword}"`);
     }
     
     // Store original guides if not already stored

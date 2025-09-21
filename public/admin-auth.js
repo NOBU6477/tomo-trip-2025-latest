@@ -124,13 +124,33 @@ async function submitAdminLogin() {
         const result = await window.AdminAuth.login(email, password);
 
         if (result.success) {
-            // Close modal and reload page
+            // Close modal and show content
             const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
             modal.hide();
             
-            // Show success and reload
+            // Show success and make content visible
             document.body.classList.add('admin-authenticated');
-            location.reload();
+            document.documentElement.style.visibility = 'visible';
+            
+            // Show success message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed';
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; max-width: 300px;';
+            alertDiv.innerHTML = `
+                <i class="bi bi-check-circle me-2"></i>
+                <strong>認証成功</strong><br>
+                管理画面にアクセスしました
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            // Auto-remove success message
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+            
         } else {
             showAdminError(result.error || '認証に失敗しました');
         }

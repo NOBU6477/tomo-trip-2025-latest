@@ -7,39 +7,55 @@
     
     <!-- Admin Authentication Required -->
     <script>
+        // Hide content by default until authenticated
+        document.documentElement.style.visibility = 'hidden';
+        
         // Admin authentication check on page load
         (function() {
             const adminToken = localStorage.getItem('admin_auth_token');
             const adminSession = sessionStorage.getItem('admin_session');
             
             if (!adminToken || !adminSession) {
-                // Show admin login modal instead of redirect for UX
+                // Show admin login modal and keep content hidden
                 showAdminLoginModal();
                 return;
             }
             
             // Verify token validity (simplified for demo)
-            const tokenData = JSON.parse(atob(adminToken.split('.')[1] || '{}'));
-            const currentTime = Math.floor(Date.now() / 1000);
-            
-            if (tokenData.exp && tokenData.exp < currentTime) {
-                console.warn('❌ Admin token expired');
-                localStorage.removeItem('admin_auth_token');
-                sessionStorage.removeItem('admin_session');
+            try {
+                const tokenData = JSON.parse(atob(adminToken.split('.')[1] || '{}'));
+                const currentTime = Math.floor(Date.now() / 1000);
+                
+                if (tokenData.exp && tokenData.exp < currentTime) {
+                    console.warn('❌ Admin token expired');
+                    localStorage.removeItem('admin_auth_token');
+                    sessionStorage.removeItem('admin_session');
+                    showAdminLoginModal();
+                    return;
+                }
+                
+                console.log('✅ Admin authentication verified');
+                document.body.classList.add('admin-authenticated');
+                document.documentElement.style.visibility = 'visible';
+            } catch (error) {
+                console.error('❌ Token validation error:', error);
                 showAdminLoginModal();
                 return;
             }
-            
-            console.log('✅ Admin authentication verified');
-            document.body.classList.add('admin-authenticated');
         })();
         
         function showAdminLoginModal() {
             document.addEventListener('DOMContentLoaded', function() {
                 const loginModal = document.getElementById('adminLoginModal');
                 if (loginModal) {
-                    const modal = new bootstrap.Modal(loginModal);
+                    const modal = new bootstrap.Modal(loginModal, {
+                        backdrop: 'static',
+                        keyboard: false
+                    });
                     modal.show();
+                    
+                    // Show page content with modal open
+                    document.documentElement.style.visibility = 'visible';
                 }
             });
         }
