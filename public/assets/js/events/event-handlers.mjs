@@ -104,24 +104,25 @@ window.filterGuides = function() {
         filteredGuides = filteredGuides.filter(guide => {
             const guideLocation = guide.location || '';
             
-            // Enhanced location mapping for prefecture-based filtering
-            const locationMapping = {
-                'tokyo': ['東京都', '東京', 'tokyo'],
-                'osaka': ['大阪府', '大阪市', '大阪', 'osaka'],
-                'kyoto': ['京都府', '京都市', '京都', 'kyoto'],
-                'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa'],
-                'hyogo': ['兵庫県', '神戸市', '兵庫', 'hyogo'],
-                'aichi': ['愛知県', '名古屋市', '愛知', 'aichi'],
-                'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka'],
-                'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa'],
-                'hokkaido': ['北海道', '札幌市', 'hokkaido'],
-                'hiroshima': ['広島県', '広島市', '広島', 'hiroshima']
-            };
+            // Direct matching for prefecture selection - API returns full prefecture names
+            // Support both prefecture codes and direct prefecture names
+            const locationMatches = [
+                selectedLocation, // Direct match
+                // Add prefecture mapping for UI values
+                ...(selectedLocation === '東京都' ? ['東京都', '東京'] :
+                   selectedLocation === '大阪府' ? ['大阪府', '大阪市', '大阪'] :
+                   selectedLocation === '京都府' ? ['京都府', '京都市', '京都'] :
+                   selectedLocation === '沖縄県' ? ['沖縄県', '那覇市', '石垣市', '沖縄'] :
+                   selectedLocation === '広島県' ? ['広島県', '広島市', '広島'] :
+                   selectedLocation === '北海道' ? ['北海道', '札幌市'] :
+                   selectedLocation === '神奈川県' ? ['神奈川県', '横浜市', '神奈川'] :
+                   selectedLocation === '愛知県' ? ['愛知県', '名古屋市', '愛知'] :
+                   selectedLocation === '福岡県' ? ['福岡県', '福岡市', '福岡'] :
+                   [selectedLocation])
+            ];
             
-            const mappedLocations = locationMapping[selectedLocation] || [selectedLocation];
-            
-            // Check if guide location contains any of the mapped location terms
-            return mappedLocations.some(loc => 
+            // Check if guide location contains any of the location matches
+            return locationMatches.some(loc => 
                 guideLocation.includes(loc) || 
                 guideLocation.toLowerCase().includes(loc.toLowerCase())
             );
@@ -134,35 +135,35 @@ window.filterGuides = function() {
         filteredGuides = filteredGuides.filter(guide => {
             const languages = guide.languages || [];
             
-            // Enhanced language mapping for both English and Japanese forms
+            // Comprehensive language mapping for API data formats
             const languageMapping = {
-                'japanese': ['japanese', 'ja', '日本語', 'japan', 'jpn'],
+                'japanese': ['japanese', 'ja', '日本語', 'japan'],
                 'english': ['english', 'en', '英語', 'eng'],
-                'chinese': ['chinese', 'zh', '中国語', 'chinese', 'chn', '中国語（簡体）'],
-                'chinese_traditional': ['chinese_traditional', 'zh-tw', '中国語（繁体）', 'traditional chinese'],
-                'korean': ['korean', 'ko', '韓国語', 'korea', 'kor'],
-                'thai': ['thai', 'th', 'タイ語', 'thailand'],
-                'vietnamese': ['vietnamese', 'vi', 'ベトナム語', 'vietnam'],
-                'indonesian': ['indonesian', 'id', 'インドネシア語', 'indonesia'],
-                'spanish': ['spanish', 'es', 'スペイン語', 'spain'],
-                'french': ['french', 'fr', 'フランス語', 'france'],
-                'german': ['german', 'de', 'ドイツ語', 'germany'],
-                'portuguese': ['portuguese', 'pt', 'ポルトガル語', 'portugal']
+                'chinese': ['chinese', 'zh', '中国語', 'chn'],
+                'chinese_traditional': ['chinese_traditional', 'zh-tw', '中国語（繁体）'],
+                'korean': ['korean', 'ko', '韓国語', 'kor'],
+                'thai': ['thai', 'th', 'タイ語'],
+                'vietnamese': ['vietnamese', 'vi', 'ベトナム語'],
+                'indonesian': ['indonesian', 'id', 'インドネシア語'],
+                'spanish': ['spanish', 'es', 'スペイン語'],
+                'french': ['french', 'fr', 'フランス語'],
+                'german': ['german', 'de', 'ドイツ語'],
+                'portuguese': ['portuguese', 'pt', 'ポルトガル語']
             };
             
             const mappedLanguages = languageMapping[selectedLanguage] || [selectedLanguage];
             
-            // Handle both array and empty array cases
+            // Handle array of languages (API format: ["japanese","chinese","korean"])
             if (Array.isArray(languages) && languages.length > 0) {
-                return languages.some(lang => 
-                    mappedLanguages.some(mapped => 
-                        lang && lang.toLowerCase().includes(mapped.toLowerCase())
-                    )
-                );
-            } else if (typeof languages === 'string' && languages.length > 0) {
-                return mappedLanguages.some(mapped => 
-                    languages.toLowerCase().includes(mapped.toLowerCase())
-                );
+                return languages.some(lang => {
+                    if (!lang) return false;
+                    return mappedLanguages.some(mapped => {
+                        // Exact match or contains match (case insensitive)
+                        return lang.toLowerCase() === mapped.toLowerCase() ||
+                               lang.toLowerCase().includes(mapped.toLowerCase()) ||
+                               mapped.toLowerCase().includes(lang.toLowerCase());
+                    });
+                });
             }
             
             return false;
@@ -173,8 +174,11 @@ window.filterGuides = function() {
     // Apply price filter
     if (selectedPrice && selectedPrice !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            // Use sessionRate field from API data
-            const price = Number(guide.sessionRate || guide.price || 0);
+            // Parse sessionRate from API (comes as string)
+            const priceString = guide.sessionRate || guide.price || '0';
+            const price = parseInt(priceString, 10) || 0;
+            
+            console.log(`💰 Checking guide ${guide.name}: sessionRate=${guide.sessionRate}, parsed=${price}`);
             
             switch(selectedPrice) {
                 case 'budget':  // ¥6,000～¥10,000
