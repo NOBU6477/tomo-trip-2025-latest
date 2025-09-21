@@ -45,6 +45,16 @@
                 console.log('✅ Admin authentication verified');
                 document.body.classList.add('admin-authenticated');
                 document.documentElement.style.visibility = 'visible';
+                
+                // Debug: Force content visibility
+                const dashboardContent = document.querySelector('.dashboard-content');
+                if (dashboardContent) {
+                    dashboardContent.style.visibility = 'visible';
+                    dashboardContent.style.opacity = '1';
+                    console.log('🔓 Dashboard content made visible');
+                } else {
+                    console.warn('⚠️ Dashboard content element not found');
+                }
             } catch (error) {
                 console.error('❌ Token validation error:', error);
                 localStorage.removeItem('admin_auth_token');
@@ -81,10 +91,11 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        /* Hide content until authenticated */
-        body:not(.admin-authenticated) .dashboard-content {
-            visibility: hidden !important;
-            opacity: 0 !important;
+        /* Hide content until authenticated - Debug version */
+        .dashboard-content {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
         
         /* Show content only after authentication */
