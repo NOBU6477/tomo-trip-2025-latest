@@ -60,6 +60,47 @@ window.redirectToRegistration = function(guideId) {
 // Make function globally available
 window.showGuideDetailModalById = showGuideDetailModalById;
 
+// Normalization functions for proper data matching
+function normalizeLocation(selectedValue) {
+    const locationMapping = {
+        'tokyo': ['東京都', '東京', 'tokyo'],
+        'osaka': ['大阪府', '大阪市', '大阪', 'osaka'],
+        'kyoto': ['京都府', '京都市', '京都', 'kyoto'],
+        'hiroshima': ['広島県', '広島市', '広島', 'hiroshima'],
+        'okinawa': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa'],
+        'hokkaido': ['北海道', '札幌市', 'hokkaido'],
+        'kanagawa': ['神奈川県', '横浜市', '神奈川', 'kanagawa'],
+        'aichi': ['愛知県', '名古屋市', '愛知', 'aichi'],
+        'fukuoka': ['福岡県', '福岡市', '福岡', 'fukuoka'],
+        // Direct prefecture mappings
+        '東京都': ['東京都', '東京', 'tokyo'],
+        '大阪府': ['大阪府', '大阪市', '大阪', 'osaka'],
+        '京都府': ['京都府', '京都市', '京都', 'kyoto'],
+        '広島県': ['広島県', '広島市', '広島', 'hiroshima'],
+        '沖縄県': ['沖縄県', '那覇市', '石垣市', '沖縄', 'okinawa'],
+        '北海道': ['北海道', '札幌市', 'hokkaido'],
+        '神奈川県': ['神奈川県', '横浜市', '神奈川', 'kanagawa'],
+        '愛知県': ['愛知県', '名古屋市', '愛知', 'aichi'],
+        '福岡県': ['福岡県', '福岡市', '福岡', 'fukuoka']
+    };
+    
+    return locationMapping[selectedValue] || [selectedValue];
+}
+
+function normalizeLanguage(selectedValue) {
+    const languageMapping = {
+        'japanese': ['japanese', 'ja', '日本語', 'japan'],
+        'english': ['english', 'en', '英語', 'eng'],
+        'chinese': ['chinese', 'zh', '中国語', 'chn'],
+        'korean': ['korean', 'ko', '韓国語', 'kor'],
+        'thai': ['thai', 'th', 'タイ語'],
+        'spanish': ['spanish', 'es', 'スペイン語'],
+        'french': ['french', 'fr', 'フランス語']
+    };
+    
+    return languageMapping[selectedValue] || [selectedValue];
+}
+
 // Global filter functions for search functionality
 window.filterGuides = function() {
     console.log('🔍 Running guide filters...');
@@ -99,30 +140,16 @@ window.filterGuides = function() {
         'hiroshima': ['広島県', '広島市', '広島', 'hiroshima']
     };
     
-    // Apply location filter
+    // Apply location filter using normalization
     if (selectedLocation && selectedLocation !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const guideLocation = guide.location || '';
+            const normalizedLocations = normalizeLocation(selectedLocation);
             
-            // Direct matching for prefecture selection - API returns full prefecture names
-            // Support both prefecture codes and direct prefecture names
-            const locationMatches = [
-                selectedLocation, // Direct match
-                // Add prefecture mapping for UI values
-                ...(selectedLocation === '東京都' ? ['東京都', '東京'] :
-                   selectedLocation === '大阪府' ? ['大阪府', '大阪市', '大阪'] :
-                   selectedLocation === '京都府' ? ['京都府', '京都市', '京都'] :
-                   selectedLocation === '沖縄県' ? ['沖縄県', '那覇市', '石垣市', '沖縄'] :
-                   selectedLocation === '広島県' ? ['広島県', '広島市', '広島'] :
-                   selectedLocation === '北海道' ? ['北海道', '札幌市'] :
-                   selectedLocation === '神奈川県' ? ['神奈川県', '横浜市', '神奈川'] :
-                   selectedLocation === '愛知県' ? ['愛知県', '名古屋市', '愛知'] :
-                   selectedLocation === '福岡県' ? ['福岡県', '福岡市', '福岡'] :
-                   [selectedLocation])
-            ];
+            console.log(`📍 Checking guide location "${guideLocation}" against normalized locations:`, normalizedLocations);
             
-            // Check if guide location contains any of the location matches
-            return locationMatches.some(loc => 
+            // Check if guide location contains any of the normalized location terms
+            return normalizedLocations.some(loc => 
                 guideLocation.includes(loc) || 
                 guideLocation.toLowerCase().includes(loc.toLowerCase())
             );
@@ -130,34 +157,19 @@ window.filterGuides = function() {
         console.log(`📍 Location filter applied: ${filteredGuides.length} guides match "${selectedLocation}"`);
     }
     
-    // Apply language filter
+    // Apply language filter using normalization
     if (selectedLanguage && selectedLanguage !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const languages = guide.languages || [];
+            const normalizedLanguages = normalizeLanguage(selectedLanguage);
             
-            // Comprehensive language mapping for API data formats
-            const languageMapping = {
-                'japanese': ['japanese', 'ja', '日本語', 'japan'],
-                'english': ['english', 'en', '英語', 'eng'],
-                'chinese': ['chinese', 'zh', '中国語', 'chn'],
-                'chinese_traditional': ['chinese_traditional', 'zh-tw', '中国語（繁体）'],
-                'korean': ['korean', 'ko', '韓国語', 'kor'],
-                'thai': ['thai', 'th', 'タイ語'],
-                'vietnamese': ['vietnamese', 'vi', 'ベトナム語'],
-                'indonesian': ['indonesian', 'id', 'インドネシア語'],
-                'spanish': ['spanish', 'es', 'スペイン語'],
-                'french': ['french', 'fr', 'フランス語'],
-                'german': ['german', 'de', 'ドイツ語'],
-                'portuguese': ['portuguese', 'pt', 'ポルトガル語']
-            };
-            
-            const mappedLanguages = languageMapping[selectedLanguage] || [selectedLanguage];
+            console.log(`🗣️ Checking guide languages:`, languages, `against normalized:`, normalizedLanguages);
             
             // Handle array of languages (API format: ["japanese","chinese","korean"])
             if (Array.isArray(languages) && languages.length > 0) {
                 return languages.some(lang => {
                     if (!lang) return false;
-                    return mappedLanguages.some(mapped => {
+                    return normalizedLanguages.some(mapped => {
                         // Exact match or contains match (case insensitive)
                         return lang.toLowerCase() === mapped.toLowerCase() ||
                                lang.toLowerCase().includes(mapped.toLowerCase()) ||
@@ -194,18 +206,24 @@ window.filterGuides = function() {
         console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}" (price range)`);
     }
     
-    // Update state and display
-    state.guides = filteredGuides;
+    // Store original guides if not already stored
+    if (!state.originalGuides) {
+        state.originalGuides = [...state.guides];
+    }
+    
+    // Update state with filtered results and persistence
+    state.filteredGuides = filteredGuides;
+    state.isFiltered = true;
     state.currentPage = 1; // Reset to first page
     
     // Render with new modular system
     if (window.renderGuideCards) {
-        window.renderGuideCards(filteredGuides);
+        window.renderGuideCards(filteredGuides, true, true);
     }
     
     // Update counters
     if (window.updateGuideCounters) {
-        window.updateGuideCounters(filteredGuides.length, state.originalGuides ? state.originalGuides.length : filteredGuides.length);
+        window.updateGuideCounters(filteredGuides.length, state.originalGuides.length);
     }
     
     console.log(`✅ Filter complete: ${filteredGuides.length} guides found`);
@@ -226,11 +244,13 @@ window.resetFilters = function() {
     // Reload all guides
     if (window.AppState && window.AppState.originalGuides) {
         window.AppState.guides = [...window.AppState.originalGuides];
+        window.AppState.filteredGuides = null;
+        window.AppState.isFiltered = false;
         window.AppState.currentPage = 1;
         
         // Render with new modular system
         if (window.renderGuideCards) {
-            window.renderGuideCards(window.AppState.guides);
+            window.renderGuideCards(window.AppState.guides, true, true);
         }
         
         // Update counters
