@@ -3,7 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>協賛店管理画面 - TomoTrip</title>
+    <title>協賛店管理画面 (運営側) - TomoTrip 運営管理ポータル</title>
+    
+    <!-- Admin Authentication Required -->
+    <script>
+        // Admin authentication check on page load
+        (function() {
+            const adminToken = localStorage.getItem('admin_auth_token');
+            const adminSession = sessionStorage.getItem('admin_session');
+            
+            if (!adminToken || !adminSession) {
+                // Show admin login modal instead of redirect for UX
+                showAdminLoginModal();
+                return;
+            }
+            
+            // Verify token validity (simplified for demo)
+            const tokenData = JSON.parse(atob(adminToken.split('.')[1] || '{}'));
+            const currentTime = Math.floor(Date.now() / 1000);
+            
+            if (tokenData.exp && tokenData.exp < currentTime) {
+                console.warn('❌ Admin token expired');
+                localStorage.removeItem('admin_auth_token');
+                sessionStorage.removeItem('admin_session');
+                showAdminLoginModal();
+                return;
+            }
+            
+            console.log('✅ Admin authentication verified');
+            document.body.classList.add('admin-authenticated');
+        })();
+        
+        function showAdminLoginModal() {
+            document.addEventListener('DOMContentLoaded', function() {
+                const loginModal = document.getElementById('adminLoginModal');
+                if (loginModal) {
+                    const modal = new bootstrap.Modal(loginModal);
+                    modal.show();
+                }
+            });
+        }
+    </script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/icons.css">
     <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -408,6 +448,63 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="admin-auth.js"></script>
+    
+    <!-- Admin Login Modal -->
+    <div class="modal fade" id="adminLoginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <div class="modal-header border-0" style="background: linear-gradient(135deg, #2c5aa0, #1e3a8a); color: white; border-radius: 20px 20px 0 0;">
+                    <h5 class="modal-title">
+                        <i class="bi bi-shield-lock me-2"></i>運営管理者認証
+                    </h5>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="alert alert-info border-0" style="background: linear-gradient(135deg, #e3f2fd, #bbdefb);">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>運営管理者専用</strong><br>
+                        この画面は TomoTrip 運営チームのみアクセス可能です
+                    </div>
+                    
+                    <div id="adminLoginError" class="alert alert-danger border-0" style="display: none;"></div>
+                    
+                    <form id="adminLoginForm" onsubmit="event.preventDefault(); submitAdminLogin();">
+                        <div class="mb-3">
+                            <label for="adminEmail" class="form-label fw-bold">
+                                <i class="bi bi-person-badge me-2"></i>管理者メールアドレス
+                            </label>
+                            <input type="email" class="form-control" id="adminEmail" required 
+                                   style="border-radius: 12px; padding: 12px; border: 2px solid #e9ecef;"
+                                   placeholder="admin@tomotrip.com">
+                        </div>
+                        <div class="mb-4">
+                            <label for="adminPassword" class="form-label fw-bold">
+                                <i class="bi bi-key me-2"></i>管理者パスワード
+                            </label>
+                            <input type="password" class="form-control" id="adminPassword" required 
+                                   style="border-radius: 12px; padding: 12px; border: 2px solid #e9ecef;"
+                                   placeholder="管理者パスワードを入力">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="adminLoginBtn" 
+                                    style="border-radius: 12px; padding: 12px; background: linear-gradient(135deg, #2c5aa0, #1e3a8a); border: none;">
+                                <i class="bi bi-shield-lock me-2"></i>ログイン
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-4 p-3" style="background: #f8f9fa; border-radius: 12px;">
+                        <small class="text-muted">
+                            <i class="bi bi-lightbulb me-1"></i>
+                            <strong>開発環境用認証情報:</strong><br>
+                            Email: admin@tomotrip.com<br>
+                            Password: TomoTrip2025!Admin
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="sponsor-dashboard.js"></script>
     <script>
         // Check admin authentication on page load

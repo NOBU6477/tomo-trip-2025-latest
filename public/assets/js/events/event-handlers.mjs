@@ -89,6 +89,15 @@ function normalizeLocation(selectedValue) {
 
 function normalizeLanguage(selectedValue) {
     const languageMapping = {
+        // Japanese UI options
+        '日本語': ['japanese', 'ja', '日本語', 'japan'],
+        '英語': ['english', 'en', '英語', 'eng'],
+        '中国語': ['chinese', 'zh', '中国語', 'chn'],
+        '韓国語': ['korean', 'ko', '韓国語', 'kor'],
+        'タイ語': ['thai', 'th', 'タイ語'],
+        'スペイン語': ['spanish', 'es', 'スペイン語'],
+        'フランス語': ['french', 'fr', 'フランス語'],
+        // English API options
         'japanese': ['japanese', 'ja', '日本語', 'japan'],
         'english': ['english', 'en', '英語', 'eng'],
         'chinese': ['chinese', 'zh', '中国語', 'chn'],
@@ -106,10 +115,16 @@ window.filterGuides = function() {
     console.log('🔍 Running guide filters...');
     
     const state = window.AppState;
-    if (!state || !state.guides) {
-        console.warn('❌ No guides available for filtering');
+    if (!state || !state.guides || state.guides.length === 0) {
+        console.warn('❌ No guides available for filtering. Current state:', {
+            stateExists: !!state,
+            guidesExists: !!(state && state.guides),
+            guideCount: state && state.guides ? state.guides.length : 0
+        });
         return;
     }
+    
+    console.log('📊 Starting with guides:', state.guides.length, 'guides');
     
     // Get filter values - using correct element IDs
     const locationFilter = document.getElementById('locationFilter');
@@ -248,6 +263,8 @@ window.resetFilters = function() {
         window.AppState.isFiltered = false;
         window.AppState.currentPage = 1;
         
+        console.log('🔄 Reset to original guides:', window.AppState.guides.length);
+        
         // Render with new modular system
         if (window.renderGuideCards) {
             window.renderGuideCards(window.AppState.guides, true, true);
@@ -258,6 +275,7 @@ window.resetFilters = function() {
             window.updateGuideCounters(window.AppState.guides.length, window.AppState.guides.length);
         }
     } else {
+        console.warn('❌ No original guides found - forcing page reload');
         location.reload();
     }
     

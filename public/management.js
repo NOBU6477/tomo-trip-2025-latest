@@ -22,17 +22,21 @@ function loadBookmarksList() {
     const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
     const bookmarksList = document.getElementById('bookmarksList');
     
+    console.log('📋 Loading bookmarks:', { bookmarkedGuides, localStorage: localStorage.getItem('bookmarkedGuides') });
+    
     if (bookmarkedGuides.length === 0) {
         bookmarksList.innerHTML = `
             <div class="col-12 text-center py-5">
                 <i class="bi bi-bookmark text-muted" style="font-size: 3rem;"></i>
                 <p class="text-muted mt-3">保存されたガイドはありません</p>
+                <p class="small text-muted">ガイドカードの<i class="bi bi-bookmark"></i>ボタンをクリックして保存してください</p>
             </div>
         `;
         return;
     }
     
     const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
+    console.log('📋 All guides for bookmarks:', allGuides.length);
     bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
         const guide = allGuides.find(g => g.id == guideId);
         if (!guide) return '';
@@ -48,7 +52,7 @@ function loadBookmarksList() {
                             <div class="card-body p-3">
                                 <h6 class="card-title mb-1">${guide.name}</h6>
                                 <p class="card-text small text-muted mb-2">${window.locationNames[guide.location] || guide.location}</p>
-                                <p class="card-text"><strong>¥${Number(guide?.price || 0).toLocaleString()}</strong></p>
+                                <p class="card-text"><strong>¥${Number(guide?.price || guide?.sessionRate || 0).toLocaleString()}</strong></p>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">詳細</button>
                                     <button class="btn btn-outline-danger btn-sm" data-action="remove-bookmark" data-guide-id="${guide.id}">削除</button>
@@ -69,17 +73,21 @@ function loadComparisonList() {
     const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
     const comparisonList = document.getElementById('comparisonList');
     
+    console.log('📊 Loading comparisons:', { comparisonGuides, localStorage: localStorage.getItem('comparisonGuides') });
+    
     if (comparisonGuides.length === 0) {
         comparisonList.innerHTML = `
             <div class="col-12 text-center py-5">
                 <i class="bi bi-graph-up text-muted" style="font-size: 3rem;"></i>
                 <p class="text-muted mt-3">比較中のガイドはありません</p>
+                <p class="small text-muted">ガイドカードの<i class="bi bi-bar-chart"></i>ボタンをクリックして比較に追加してください</p>
             </div>
         `;
         return;
     }
     
     const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
+    console.log('📊 All guides for comparison:', allGuides.length);
     comparisonList.innerHTML = comparisonGuides.map(guideId => {
         const guide = allGuides.find(g => g.id == guideId);
         if (!guide) return '';
@@ -92,7 +100,7 @@ function loadComparisonList() {
                         <h6 class="card-title mb-1">${guide.name}</h6>
                         <p class="card-text small text-muted mb-1">${window.locationNames[guide.location] || guide.location}</p>
                         <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
-                        <p class="card-text mb-3"><strong>¥${Number(guide?.price || 0).toLocaleString()}</strong></p>
+                        <p class="card-text mb-3"><strong>¥${Number(guide?.price || guide?.sessionRate || 0).toLocaleString()}</strong></p>
                         <div class="mt-auto">
                             <div class="d-grid gap-2">
                                 <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">

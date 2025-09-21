@@ -71,21 +71,20 @@ async function loadGuidesFromAPI() {
 
             // Convert server format to frontend format  
             const apiGuides = result.guides.map(guide => {
-                // Handle languages properly with consistent mapping
-                let processedLanguages = ['日本語']; // Default
+                // Handle languages - keep API format for filtering compatibility
+                let processedLanguages = [];
                 
                 // Process API response languages field
                 if (Array.isArray(guide.languages) && guide.languages.length > 0) {
                     // Filter out empty strings and null values
                     const cleanLanguages = guide.languages.filter(lang => lang && lang.trim());
                     if (cleanLanguages.length > 0) {
-                        processedLanguages = cleanLanguages.map(lang => {
-                            if (typeof lang === 'string') {
-                                return languageMap[lang.toLowerCase()] || lang;
-                            }
-                            return '日本語';
-                        });
+                        // Keep original API format for filter compatibility
+                        processedLanguages = cleanLanguages;
                     }
+                } else {
+                    // Default fallback
+                    processedLanguages = ['japanese'];
                 }
 
                 // Normalize location data - use actual location from API now
