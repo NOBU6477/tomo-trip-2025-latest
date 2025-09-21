@@ -346,78 +346,48 @@ function handleSearchClick(e) {
 }
 
 function handleManualSearch() {
-    console.log('🔍 Manual search triggered');
+    console.log('🔍 Manual search triggered - delegating to main filter system');
     
-    // Get filter values
-    const locationFilter = document.getElementById('locationFilter');
-    const languageFilter = document.getElementById('languageFilter');
-    const priceFilter = document.getElementById('priceFilter');
-    
-    const locationValue = locationFilter?.value || '';
-    const languageValue = languageFilter?.value || '';
-    const priceValue = priceFilter?.value || '';
-    
-    console.log('🎯 Search filters:', { locationValue, languageValue, priceValue });
-    
-    // Apply filters if AppState is available
-    if (window.AppState && window.AppState.guides) {
-        let filteredGuides = [...window.AppState.guides];
-        
-        // Apply location filter with improved matching
-        if (locationValue) {
-            filteredGuides = filteredGuides.filter(guide => {
-                // Try to match location string to prefecture code
-                // This requires prefecture-selector.mjs to be loaded
-                try {
-                    // Basic matching for immediate filtering
-                    const prefectureName = window.locationNames[locationValue];
-                    return guide.location === locationValue || 
-                           guide.prefecture === locationValue ||
-                           (prefectureName && guide.location && guide.location.includes(prefectureName)) ||
-                           guide.location === prefectureName;
-                } catch (error) {
-                    console.warn('Location matching fallback:', error);
-                    return guide.location === locationValue || guide.prefecture === locationValue;
-                }
-            });
+    // Use the centralized filtering system from event-handlers.mjs
+    // This prevents duplicate filter logic and ensures consistency
+    try {
+        // Try to use the main filterGuides function from AppState
+        if (window.AppState?.filterGuides && typeof window.AppState.filterGuides === 'function') {
+            console.log('✅ Using AppState.filterGuides()');
+            window.AppState.filterGuides();
+            return;
         }
         
-        if (languageValue) {
-            filteredGuides = filteredGuides.filter(guide => 
-                guide.languages && guide.languages.includes(languageValue)
-            );
+        // Fallback to global filterGuides function
+        if (window.filterGuides && typeof window.filterGuides === 'function') {
+            console.log('✅ Using global filterGuides()');
+            window.filterGuides();
+            return;
         }
         
-        if (priceValue) {
-            filteredGuides = filteredGuides.filter(guide => {
-                // Handle different price field names
-                const price = parseInt(guide.sessionRate) || parseInt(guide.price) || 0;
-                switch(priceValue) {
-                    case 'budget': return price >= 6000 && price <= 10000;
-                    case 'premium': return price >= 10001 && price <= 20000;
-                    case 'luxury': return price >= 20001;
-                    default: return true;
-                }
-            });
+        console.warn('⚠️ No main filter function available - minimal fallback search');
+        
+        // Minimal fallback for basic search functionality
+        const locationFilter = document.getElementById('locationFilter');
+        const languageFilter = document.getElementById('languageFilter');
+        const priceFilter = document.getElementById('priceFilter');
+        
+        if (!locationFilter && !languageFilter && !priceFilter) {
+            console.warn('⚠️ No filter elements found');
+            return;
         }
         
-        console.log(`✅ Filtered: ${filteredGuides.length}/${window.AppState.guides.length} guides`);
-        
-        // Re-render guide cards if function is available
-        if (window.renderGuideCards) {
-            window.renderGuideCards(filteredGuides);
+        // Show simple message to user
+        const message = 'フィルター機能を読み込み中です。しばらくお待ちください。';
+        if (document.querySelector('.toast-container')) {
+            showToast(message, 'warning');
+        } else {
+            alert(message);
         }
         
-        // Update counters if function is available
-        if (window.updateGuideCounters) {
-            window.updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
-        }
-        
-        // Scroll to results
-        const guideSection = document.getElementById('guideSection') || document.querySelector('.guide-cards-container');
-        if (guideSection) {
-            guideSection.scrollIntoView({ behavior: 'smooth' });
-        }
+    } catch (error) {
+        console.error('❌ Manual search error:', error);
+        alert('検索に失敗しました。ページを再読み込みしてください。');
     }
 }
 
