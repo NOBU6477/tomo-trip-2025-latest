@@ -7,6 +7,13 @@ let selectedGuides = new Set();
 
 // 管理者モードの切り替え
 export function toggleAdminMode() {
+    // 管理者認証をチェック
+    if (!isAdminMode && !checkAdminAuthentication()) {
+        console.log('🔒 管理者認証が必要です');
+        showAdminLoginModal();
+        return false;
+    }
+    
     isAdminMode = !isAdminMode;
     selectedGuides.clear();
     
@@ -354,5 +361,168 @@ adminStyles.innerHTML = `
     }
 `;
 document.head.appendChild(adminStyles);
+
+// 管理者認証機能
+function checkAdminAuthentication() {
+    // セッションストレージから管理者認証状態を確認
+    const adminAuth = sessionStorage.getItem('adminAuth');
+    const adminAuthTimestamp = sessionStorage.getItem('adminAuthTimestamp');
+    
+    if (!adminAuth || !adminAuthTimestamp) {
+        return false;
+    }
+    
+    // 認証の有効期限チェック（2時間）
+    const authTime = parseInt(adminAuthTimestamp);
+    const currentTime = Date.now();
+    const twoHours = 2 * 60 * 60 * 1000;
+    
+    if (currentTime - authTime > twoHours) {
+        // 認証期限切れの場合、クリア
+        sessionStorage.removeItem('adminAuth');
+        sessionStorage.removeItem('adminAuthTimestamp');
+        return false;
+    }
+    
+    return adminAuth === 'authenticated';
+}
+
+function showAdminLoginModal() {
+    // 既存のモーダルがあれば削除
+    const existingModal = document.getElementById('adminLoginModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // 管理者ログインモーダルのHTML
+    const modalHTML = `
+        <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 15px; border: none; box-shadow: 0 15px 50px rgba(0,0,0,0.3);">
+                    <div class="modal-header" style="background: linear-gradient(135deg, #dc3545, #c82333); color: white; border-radius: 15px 15px 0 0;">
+                        <h5 class="modal-title" id="adminLoginModalLabel">
+                            <i class="bi bi-shield-lock me-2"></i>管理者認証
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <form id="adminLoginForm">
+                            <div class="mb-3">
+                                <label for="adminUsername" class="form-label">管理者ID</label>
+                                <input type="text" class="form-control" id="adminUsername" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="adminPassword" class="form-label">パスワード</label>
+                                <input type="password" class="form-control" id="adminPassword" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-key me-2"></i>ログイン
+                                </button>
+                            </div>
+                        </form>
+                        <div id="adminLoginError" class="alert alert-danger mt-3" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // モーダルをDOMに追加
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    // モーダルを表示
+    const modal = new bootstrap.Modal(document.getElementById('adminLoginModal'));
+    modal.show();
+    
+    // フォーム送信のイベントリスナー
+    document.getElementById('adminLoginForm').addEventListener('submit', handleAdminLogin);
+}
+
+async function handleAdminLogin(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+    const errorDiv = document.getElementById('adminLoginError');
+    
+    try {
+        // 管理者認証API呼び出し（現在は簡単な固定認証）
+        const isValidAdmin = await authenticateAdmin(username, password);
+        
+        if (isValidAdmin) {
+            // 認証成功
+            sessionStorage.setItem('adminAuth', 'authenticated');
+            sessionStorage.setItem('adminAuthTimestamp', Date.now().toString());
+            
+            // モーダルを閉じる
+            const modal = bootstrap.Modal.getInstance(document.getElementById('adminLoginModal'));
+            modal.hide();
+            
+            // 管理者モードを有効化
+            isAdminMode = true;
+            saveAdminState();
+            
+            // ガイドカードを再描画
+            if (window.AppState && window.AppState.guides && window.renderGuideCards) {
+                window.renderGuideCards(window.AppState.guides);
+            }
+            
+            updateAdminToolbar();
+            
+            console.log('✅ 管理者認証成功');
+            alert('管理者モードが有効になりました。');
+            
+        } else {
+            // 認証失敗
+            errorDiv.textContent = '管理者IDまたはパスワードが正しくありません。';
+            errorDiv.style.display = 'block';
+        }
+        
+    } catch (error) {
+        console.error('❌ 管理者認証エラー:', error);
+        errorDiv.textContent = '認証中にエラーが発生しました。';
+        errorDiv.style.display = 'block';
+    }
+}
+
+async function authenticateAdmin(username, password) {
+    // デモ用の固定認証（本番では適切なAPI認証を実装）
+    const validCredentials = [
+        { username: 'admin', password: 'tomotrip2024' },
+        { username: 'manager', password: 'guide_admin' },
+        { username: 'supervisor', password: 'secure_pass' }
+    ];
+    
+    // 簡単な遅延でAPI呼び出しをシミュレート
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    return validCredentials.some(cred => 
+        cred.username === username && cred.password === password
+    );
+}
+
+// 管理者ログアウト機能
+function logoutAdmin() {
+    sessionStorage.removeItem('adminAuth');
+    sessionStorage.removeItem('adminAuthTimestamp');
+    
+    isAdminMode = false;
+    selectedGuides.clear();
+    saveAdminState();
+    
+    // ガイドカードを再描画
+    if (window.AppState && window.AppState.guides && window.renderGuideCards) {
+        window.renderGuideCards(window.AppState.guides);
+    }
+    
+    updateAdminToolbar();
+    
+    console.log('👋 管理者ログアウト');
+    alert('管理者モードを終了しました。');
+}
+
+// グローバル関数として公開
+window.logoutAdmin = logoutAdmin;
 
 console.log('✅ Guide management module loaded');
