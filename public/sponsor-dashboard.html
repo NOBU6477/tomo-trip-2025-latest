@@ -81,6 +81,18 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        /* Hide content until authenticated */
+        body:not(.admin-authenticated) .dashboard-content {
+            visibility: hidden !important;
+            opacity: 0 !important;
+        }
+        
+        /* Show content only after authentication */
+        body.admin-authenticated .dashboard-content {
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        
         .dashboard-header {
             background: linear-gradient(135deg, #2c5aa0, #1e3a8a);
             color: white;
@@ -164,6 +176,7 @@
     </style>
 </head>
 <body>
+    <div class="dashboard-content">
     <!-- ヘッダー -->
     <div class="dashboard-header">
         <div class="container">
@@ -600,5 +613,6 @@
             }
         }
     </script>
+    </div> <!-- .dashboard-content -->
 </body>
 </html>

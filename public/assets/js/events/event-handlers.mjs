@@ -211,10 +211,28 @@ window.filterGuides = function() {
             console.log(`📍 Checking guide location "${guideLocation}" against normalized locations:`, normalizedLocations);
             
             // Check if guide location contains any of the normalized location terms
-            return normalizedLocations.some(loc => 
-                guideLocation.includes(loc) || 
-                guideLocation.toLowerCase().includes(loc.toLowerCase())
-            );
+            const matches = normalizedLocations.some(loc => {
+                // Direct contains match
+                if (guideLocation.includes(loc)) return true;
+                
+                // Case insensitive match
+                if (guideLocation.toLowerCase().includes(loc.toLowerCase())) return true;
+                
+                // Check if location starts with prefecture name (e.g., "京都府 京都市" matches "京都府")
+                if (guideLocation.startsWith(loc)) return true;
+                
+                // Check prefecture name without suffix (e.g., "京都" matches "京都府 京都市")
+                const prefectureNameOnly = loc.replace(/[都道府県]/g, '');
+                if (guideLocation.includes(prefectureNameOnly)) return true;
+                
+                return false;
+            });
+            
+            if (matches) {
+                console.log(`✅ Guide "${guide.name}" in "${guideLocation}" matches filter "${selectedLocation}"`);
+            }
+            
+            return matches;
         });
         console.log(`📍 Location filter applied: ${filteredGuides.length} guides match "${selectedLocation}"`);
     }
