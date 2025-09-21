@@ -13,15 +13,14 @@
         // Admin authentication check on page load
         (function() {
             const adminToken = localStorage.getItem('admin_auth_token');
-            const adminSession = sessionStorage.getItem('admin_session');
             
-            if (!adminToken || !adminSession) {
-                // Show admin login modal and keep content hidden
+            if (!adminToken) {
+                // No token - show login modal
                 showAdminLoginModal();
                 return;
             }
             
-            // Verify token validity (simplified for demo)
+            // Verify token validity
             try {
                 const tokenData = JSON.parse(atob(adminToken.split('.')[1] || '{}'));
                 const currentTime = Math.floor(Date.now() / 1000);
@@ -34,11 +33,22 @@
                     return;
                 }
                 
+                // Token is valid - check/restore session
+                let adminSession = sessionStorage.getItem('admin_session');
+                if (!adminSession) {
+                    // Session missing but token valid - recreate session (e.g., after browser refresh)
+                    adminSession = 'session_' + Math.random().toString(36).substr(2, 9);
+                    sessionStorage.setItem('admin_session', adminSession);
+                    console.log('🔄 Admin session restored after page refresh');
+                }
+                
                 console.log('✅ Admin authentication verified');
                 document.body.classList.add('admin-authenticated');
                 document.documentElement.style.visibility = 'visible';
             } catch (error) {
                 console.error('❌ Token validation error:', error);
+                localStorage.removeItem('admin_auth_token');
+                sessionStorage.removeItem('admin_session');
                 showAdminLoginModal();
                 return;
             }

@@ -6,8 +6,21 @@ let paginationSystem = null;
 
 // 大量データ対応の最適化されたガイドカード描画関数
 export function renderGuideCards(guidesToRender = null, usePagination = true, resetPagination = true) {
-    // Use filtered guides if available and no specific guides provided
-    const guides = guidesToRender ?? window.AppState?.filteredGuides ?? window.AppState?.guides ?? [];
+    // Use provided guides, or fall back based on filter state
+    let guides;
+    
+    if (guidesToRender !== null) {
+        // Explicit guides provided - use them even if empty (for filtered results)
+        guides = guidesToRender;
+    } else {
+        // No explicit guides - use filtered guides or all guides
+        const appState = window.AppState;
+        if (appState?.isFiltered && appState?.filteredGuides) {
+            guides = appState.filteredGuides;
+        } else {
+            guides = appState?.guides ?? [];
+        }
+    }
     
     // スケーラブルペジネーションシステムの初期化
     if (usePagination && guides.length > 12) {

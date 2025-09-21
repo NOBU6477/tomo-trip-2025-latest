@@ -58,9 +58,8 @@ class AdminAuth {
     // Check if admin is authenticated
     isAuthenticated() {
         const token = localStorage.getItem(this.tokenKey);
-        const session = sessionStorage.getItem(this.sessionKey);
 
-        if (!token || !session) {
+        if (!token) {
             return false;
         }
 
@@ -71,6 +70,14 @@ class AdminAuth {
             if (payload.exp < currentTime) {
                 this.logout();
                 return false;
+            }
+
+            // Token is valid - ensure session exists (restore if missing after refresh)
+            let session = sessionStorage.getItem(this.sessionKey);
+            if (!session) {
+                session = 'session_' + Math.random().toString(36).substr(2, 9);
+                sessionStorage.setItem(this.sessionKey, session);
+                console.log('🔄 Admin session restored');
             }
 
             return true;
