@@ -80,7 +80,9 @@ function createAdminToolbar() {
                 <button class="btn btn-outline-light btn-sm" data-action="clear-selection">クリア</button>
                 <button class="btn btn-warning btn-sm" data-action="bulk-approve">一括承認</button>
                 <button class="btn btn-danger btn-sm" data-action="bulk-reject">一括却下</button>
-                <button class="btn btn-outline-light btn-sm" data-action="toggle-admin">終了</button>
+                <button class="btn btn-outline-light btn-sm" data-action="logout-admin">
+                    <i class="bi bi-box-arrow-right"></i> ログアウト
+                </button>
             </div>
         </div>
     `;
@@ -105,8 +107,8 @@ function createAdminToolbar() {
             case 'bulk-reject':
                 bulkReject();
                 break;
-            case 'toggle-admin':
-                window.toggleAdminMode();
+            case 'logout-admin':
+                logoutAdmin();
                 break;
         }
     });
@@ -504,22 +506,30 @@ async function authenticateAdmin(username, password) {
 
 // 管理者ログアウト機能
 function logoutAdmin() {
+    // セッション情報を完全にクリア
     sessionStorage.removeItem('adminAuth');
     sessionStorage.removeItem('adminAuthTimestamp');
     
+    // 管理者モード状態をリセット
     isAdminMode = false;
     selectedGuides.clear();
+    
+    // AppStateも更新
     saveAdminState();
     
-    // ガイドカードを再描画
+    // ツールバーを非表示
+    const toolbar = document.getElementById('adminToolbar');
+    if (toolbar) {
+        toolbar.style.display = 'none';
+    }
+    
+    // ガイドカードを再描画（チェックボックスを非表示）
     if (window.AppState && window.AppState.guides && window.renderGuideCards) {
         window.renderGuideCards(window.AppState.guides);
     }
     
-    updateAdminToolbar();
-    
-    console.log('👋 管理者ログアウト');
-    alert('管理者モードを終了しました。');
+    console.log('👋 管理者ログアウト完了');
+    alert('管理者モードを終了しました。セキュリティ情報もクリアされました。');
 }
 
 // グローバル関数として公開
