@@ -6,7 +6,8 @@ let paginationSystem = null;
 
 // 大量データ対応の最適化されたガイドカード描画関数
 export function renderGuideCards(guidesToRender = null, usePagination = true, resetPagination = true) {
-    const guides = guidesToRender ?? window.AppState?.guides ?? [];
+    // Use filtered guides if available and no specific guides provided
+    const guides = guidesToRender ?? window.AppState?.filteredGuides ?? window.AppState?.guides ?? [];
     
     // スケーラブルペジネーションシステムの初期化
     if (usePagination && guides.length > 12) {
