@@ -3996,24 +3996,42 @@
                 console.error('Error loading settings:', error);
             }
             
-            // Add event listeners for management actions
-            document.getElementById('clearBookmarksBtn')?.addEventListener('click', function() {
-                if (confirm('本当にすべてのブックマークを削除しますか？')) {
-                    localStorage.removeItem('bookmarkedGuides');
-                    if (typeof loadBookmarksList === 'function') loadBookmarksList();
-                    if (typeof updateBookmarkButtons === 'function') updateBookmarkButtons();
-                    console.log('✅ All bookmarks cleared');
+            // Setup delete button event listeners for management center (improved timing)
+            const setupDeleteButtons = function() {
+                const clearBookmarksBtn = document.getElementById('clearBookmarksBtn');
+                if (clearBookmarksBtn && !clearBookmarksBtn.hasAttribute('data-listener-attached')) {
+                    clearBookmarksBtn.addEventListener('click', function() {
+                        if (typeof clearAllBookmarks === 'function') {
+                            clearAllBookmarks();
+                        } else {
+                            if (confirm('本当にすべてのブックマークを削除しますか？')) {
+                                localStorage.removeItem('bookmarkedGuides');
+                                if (typeof loadBookmarksList === 'function') loadBookmarksList();
+                                if (typeof updateBookmarkButtons === 'function') updateBookmarkButtons();
+                                console.log('✅ All bookmarks cleared');
+                            }
+                        }
+                    });
+                    clearBookmarksBtn.setAttribute('data-listener-attached', 'true');
                 }
-            });
             
-            document.getElementById('clearComparisonBtn')?.addEventListener('click', function() {
-                if (confirm('本当にすべての比較リストを削除しますか？')) {
-                    localStorage.removeItem('comparisonGuides');
-                    if (typeof loadComparisonList === 'function') loadComparisonList();
-                    if (typeof updateComparisonButtons === 'function') updateComparisonButtons();
-                    console.log('✅ All comparison guides cleared');
+                
+                const clearComparisonBtn = document.getElementById('clearComparisonBtn');
+                if (clearComparisonBtn && !clearComparisonBtn.hasAttribute('data-listener-attached')) {
+                    clearComparisonBtn.addEventListener('click', function() {
+                        if (typeof clearAllComparisons === 'function') {
+                            clearAllComparisons();
+                        } else {
+                            if (confirm('本当にすべての比較リストを削除しますか？')) {
+                                localStorage.removeItem('comparisonGuides');
+                                if (typeof loadComparisonList === 'function') loadComparisonList();
+                                if (typeof updateComparisonButtons === 'function') updateComparisonButtons();
+                                console.log('✅ All comparison guides cleared');
+                            }
+                        }
+                    });
+                    clearComparisonBtn.setAttribute('data-listener-attached', 'true');
                 }
-            });
             
             document.getElementById('clearBookingsBtn').addEventListener('click', function() {
                 if (confirm('Are you sure you want to clear all booking history?')) {
@@ -4022,16 +4040,29 @@
                 }
             });
             
-            document.getElementById('clearAllDataBtn')?.addEventListener('click', function() {
-                if (confirm('本当にすべてのデータを削除しますか？この操作は取り消せません。')) {
-                    localStorage.clear();
-                    alert('すべてのデータが削除されました。');
-                    if (typeof loadManagementData === 'function') loadManagementData();
-                    if (typeof updateBookmarkButtons === 'function') updateBookmarkButtons();
-                    if (typeof updateComparisonButtons === 'function') updateComparisonButtons();
-                    console.log('✅ All data cleared');
+                
+                const clearAllDataBtn = document.getElementById('clearAllDataBtn');
+                if (clearAllDataBtn && !clearAllDataBtn.hasAttribute('data-listener-attached')) {
+                    clearAllDataBtn.addEventListener('click', function() {
+                        if (confirm('本当にすべてのデータを削除しますか？この操作は取り消せません。')) {
+                            localStorage.clear();
+                            alert('すべてのデータが削除されました。');
+                            if (typeof loadManagementData === 'function') loadManagementData();
+                            if (typeof updateBookmarkButtons === 'function') updateBookmarkButtons();
+                            if (typeof updateComparisonButtons === 'function') updateComparisonButtons();
+                            console.log('✅ All data cleared');
+                        }
+                    });
+                    clearAllDataBtn.setAttribute('data-listener-attached', 'true');
                 }
-            });
+            };
+            
+            // Attach to modal events
+            const managementModal = document.getElementById('managementModal');
+            if (managementModal) {
+                managementModal.addEventListener('shown.bs.modal', setupDeleteButtons);
+                setTimeout(setupDeleteButtons, 100);
+            }
         }
         
         // Management functions
