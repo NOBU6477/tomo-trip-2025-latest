@@ -399,6 +399,23 @@ export function createGuideCardHTML(guide) {
                                 style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
                             詳しく見る
                         </button>
+                        
+                        <div class="row g-2 mt-1">
+                            <div class="col-6">
+                                <button class="btn btn-outline-warning bookmark-btn w-100" 
+                                        data-guide-id="${guide.id}"
+                                        style="border-radius: 8px; font-size: 12px; padding: 8px;">
+                                    <i class="bi bi-bookmark"></i> ブックマーク
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-success compare-btn w-100" 
+                                        data-guide-id="${guide.id}"
+                                        style="border-radius: 8px; font-size: 12px; padding: 8px;">
+                                    <i class="bi bi-check2-square"></i> 比較
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
