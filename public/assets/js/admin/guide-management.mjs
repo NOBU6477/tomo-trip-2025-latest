@@ -534,5 +534,8 @@ function logoutAdmin() {
 
 // グローバル関数として公開
 window.logoutAdmin = logoutAdmin;
+window.toggleAdminMode = toggleAdminMode;
+window.getAdminModeState = getAdminModeState;
+window.toggleGuideSelection = toggleGuideSelection;
 
 console.log('✅ Guide management module loaded');
