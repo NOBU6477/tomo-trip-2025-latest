@@ -263,10 +263,11 @@ export function updateGuideCounters(displayedCount, totalCount) {
     }
 }
 
-// Setup event listeners for view details buttons
+// Setup event listeners for view details, bookmark, and compare buttons
 export function setupViewDetailsEventListeners() {
-    console.log('🔧 Setting up view details event listeners...');
+    console.log('🔧 Setting up view details, bookmark, and compare event listeners...');
     
+    // Setup view details buttons
     const viewDetailButtons = document.querySelectorAll('.view-detail-btn, [data-action="view-details"]');
     console.log(`Found ${viewDetailButtons.length} view details buttons`);
     
@@ -296,6 +297,64 @@ export function setupViewDetailsEventListeners() {
             console.log(`✅ Setup button ${index + 1} for guide ID: ${guideId}`);
         } else {
             console.warn(`⚠️ Button ${index + 1} missing guide ID`);
+        }
+    });
+    
+    // Setup bookmark buttons
+    const bookmarkButtons = document.querySelectorAll('.bookmark-btn');
+    console.log(`Found ${bookmarkButtons.length} bookmark buttons`);
+    
+    bookmarkButtons.forEach((btn, index) => {
+        // Remove existing listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        const guideId = newBtn.getAttribute('data-guide-id');
+        
+        if (guideId) {
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔖 Bookmark clicked for guide:', guideId);
+                
+                if (window.toggleBookmark) {
+                    window.toggleBookmark(guideId);
+                } else {
+                    console.warn('❌ toggleBookmark function not available');
+                }
+            });
+            console.log(`✅ Setup bookmark button ${index + 1} for guide ID: ${guideId}`);
+        } else {
+            console.warn(`⚠️ Bookmark button ${index + 1} missing guide ID`);
+        }
+    });
+    
+    // Setup compare buttons
+    const compareButtons = document.querySelectorAll('.compare-btn');
+    console.log(`Found ${compareButtons.length} compare buttons`);
+    
+    compareButtons.forEach((btn, index) => {
+        // Remove existing listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+        
+        const guideId = newBtn.getAttribute('data-guide-id');
+        
+        if (guideId) {
+            newBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔄 Compare clicked for guide:', guideId);
+                
+                if (window.toggleComparison) {
+                    window.toggleComparison(guideId);
+                } else {
+                    console.warn('❌ toggleComparison function not available');
+                }
+            });
+            console.log(`✅ Setup compare button ${index + 1} for guide ID: ${guideId}`);
+        } else {
+            console.warn(`⚠️ Compare button ${index + 1} missing guide ID`);
         }
     });
 }

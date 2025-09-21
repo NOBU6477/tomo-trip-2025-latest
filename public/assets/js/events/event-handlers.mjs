@@ -240,6 +240,149 @@ window.resetFilters = function() {
     console.log('✅ Filters reset');
 };
 
+// Bookmark functionality
+function toggleBookmark(guideId) {
+    console.log('🔖 Toggle bookmark for guide:', guideId);
+    
+    // Get current bookmarks from localStorage
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    
+    if (bookmarks.includes(guideId)) {
+        // Remove from bookmarks
+        bookmarks = bookmarks.filter(id => id !== guideId);
+        showToast('ブックマークから削除しました', 'info');
+        console.log('📌 Removed from bookmarks');
+    } else {
+        // Add to bookmarks
+        bookmarks.push(guideId);
+        showToast('ブックマークに追加しました', 'success');
+        console.log('📌 Added to bookmarks');
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarks));
+    
+    // Update button state
+    updateBookmarkButtonState(guideId, bookmarks.includes(guideId));
+}
+
+// Comparison functionality
+function toggleComparison(guideId) {
+    console.log('🔄 Toggle comparison for guide:', guideId);
+    
+    // Get current comparison list from localStorage
+    let compareGuides = JSON.parse(localStorage.getItem('compareGuides') || '[]');
+    
+    if (compareGuides.includes(guideId)) {
+        // Remove from comparison
+        compareGuides = compareGuides.filter(id => id !== guideId);
+        showToast('比較リストから削除しました', 'info');
+        console.log('🔄 Removed from comparison');
+    } else {
+        // Check limit (max 3 guides for comparison)
+        if (compareGuides.length >= 3) {
+            showToast('比較は最大3名まで選択できます', 'warning');
+            return;
+        }
+        
+        // Add to comparison
+        compareGuides.push(guideId);
+        showToast('比較リストに追加しました', 'success');
+        console.log('🔄 Added to comparison');
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('compareGuides', JSON.stringify(compareGuides));
+    
+    // Update button state
+    updateCompareButtonState(guideId, compareGuides.includes(guideId));
+}
+
+// Update bookmark button visual state
+function updateBookmarkButtonState(guideId, isBookmarked) {
+    const bookmarkBtn = document.querySelector(`.bookmark-btn[data-guide-id="${guideId}"]`);
+    if (bookmarkBtn) {
+        if (isBookmarked) {
+            bookmarkBtn.classList.remove('btn-outline-warning');
+            bookmarkBtn.classList.add('btn-warning');
+            bookmarkBtn.innerHTML = '<i class="bi bi-bookmark-fill"></i> 保存済み';
+        } else {
+            bookmarkBtn.classList.remove('btn-warning');
+            bookmarkBtn.classList.add('btn-outline-warning');
+            bookmarkBtn.innerHTML = '<i class="bi bi-bookmark"></i> ブックマーク';
+        }
+    }
+}
+
+// Update compare button visual state
+function updateCompareButtonState(guideId, isCompared) {
+    const compareBtn = document.querySelector(`.compare-btn[data-guide-id="${guideId}"]`);
+    if (compareBtn) {
+        if (isCompared) {
+            compareBtn.classList.remove('btn-outline-success');
+            compareBtn.classList.add('btn-success');
+            compareBtn.innerHTML = '<i class="bi bi-check2-square-fill"></i> 比較中';
+        } else {
+            compareBtn.classList.remove('btn-success');
+            compareBtn.classList.add('btn-outline-success');
+            compareBtn.innerHTML = '<i class="bi bi-check2-square"></i> 比較';
+        }
+    }
+}
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    // Create toast if it doesn't exist
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.id = 'toastContainer';
+        toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+        toastContainer.style.zIndex = '9999';
+        document.body.appendChild(toastContainer);
+    }
+    
+    // Create toast element
+    const toastElement = document.createElement('div');
+    toastElement.className = 'toast show';
+    toastElement.setAttribute('role', 'alert');
+    
+    const bgColorClass = {
+        'success': 'bg-success',
+        'info': 'bg-info', 
+        'warning': 'bg-warning',
+        'error': 'bg-danger'
+    }[type] || 'bg-info';
+    
+    toastElement.innerHTML = `
+        <div class="toast-header ${bgColorClass} text-white">
+            <strong class="me-auto">TomoTrip</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+        </div>
+        <div class="toast-body">
+            ${message}
+        </div>
+    `;
+    
+    toastContainer.appendChild(toastElement);
+    
+    // Auto-remove after 3 seconds
+    setTimeout(() => {
+        if (toastElement.parentNode) {
+            toastElement.parentNode.removeChild(toastElement);
+        }
+    }, 3000);
+    
+    console.log(`📱 Toast: ${message}`);
+}
+
+// Export bookmark and comparison functions globally
+window.toggleBookmark = toggleBookmark;
+window.toggleComparison = toggleComparison;
+window.updateBookmarkButtonState = updateBookmarkButtonState;
+window.updateCompareButtonState = updateCompareButtonState;
+window.showToast = showToast;
+
 export function setupEventListeners(state) {
     console.log('%cSetting up event listeners...', 'color: #007bff;');
     
@@ -343,8 +486,14 @@ function setupDataActionHandlers() {
                 break;
                 
             // Bookmark & Comparison
+            case 'toggle-bookmark':
+                if (guideId) toggleBookmark(guideId);
+                break;
             case 'remove-bookmark':
                 if (guideId) removeBookmark(guideId);
+                break;
+            case 'toggle-comparison':
+                if (guideId) toggleComparison(guideId);
                 break;
             case 'remove-from-comparison':
                 if (guideId) removeFromComparison(guideId);
