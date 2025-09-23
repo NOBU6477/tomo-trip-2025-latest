@@ -262,6 +262,20 @@ async function appInit() {
     // Initialize prefecture selector  
     initializePrefectureSelector();
     
+    // 🔧 FIX: Setup search button AFTER modules are loaded to fix timing issue
+    console.log('🔧 Setting up search button after module initialization...');
+    setTimeout(() => {
+        const searchBtn = document.getElementById('searchBtn');
+        if (searchBtn) {
+            // Remove any existing listeners to prevent duplicates
+            searchBtn.removeEventListener('click', handleModuleSearchClick);
+            searchBtn.addEventListener('click', handleModuleSearchClick);
+            console.log('✅ Search button setup completed after module load');
+        } else {
+            console.warn('⚠️ Search button not found during module initialization');
+        }
+    }, 100); // Small delay to ensure button-setup.js has run
+    
     log.ok('✅ Application initialized successfully with dynamic guide data');
 }
 
@@ -401,6 +415,24 @@ if (!window.locationNames) {
         ogasawara: "小笠原諸島", izu: "伊豆諸島", sado: "佐渡島", awaji: "淡路島", yakushima: "屋久島", amami: "奄美大島", ishigaki: "石垣島", miyako: "宮古島"
     };
     console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
+}
+
+// Search handler for module-based setup to fix timing issue
+function handleModuleSearchClick(e) {
+    e.preventDefault();
+    console.log('🔍 Module search button clicked');
+    
+    try {
+        if (window.filterGuides && typeof window.filterGuides === 'function') {
+            console.log('✅ Calling window.filterGuides from module handler');
+            window.filterGuides();
+        } else {
+            console.error('❌ window.filterGuides not available in module handler');
+            console.log('Available window functions:', Object.keys(window).filter(k => k.includes('filter')));
+        }
+    } catch (error) {
+        console.error('❌ Error in module search handler:', error);
+    }
 }
 
 // Remove all global state variables - managed by AppState now
