@@ -53,6 +53,7 @@
     <script type="module" src="assets/js/app-init.mjs?v=emergency-cache-bust-20250923-1246-new" defer></script>
     
     
+    
     <!-- CSS Load Order: Bootstrap CSS → Local Icons → Custom CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/icons.css">
@@ -1034,7 +1035,7 @@
             </div>
 
             <!-- Guide Cards Section -->
-            <div class="row" id="guidesContainer">
+            <div class="row" id="guideCardsContainer">
                 <!-- Guide cards will be populated here -->
             </div>
             
@@ -5645,104 +5646,6 @@
     <!-- All JavaScript functionality handled by app-init.mjs ESM module system -->
     <!-- No inline scripts needed - CSP compliant architecture -->
     
-    <!-- EMERGENCY GUIDE RENDERER - Direct API Integration -->
-    <script>
-        console.log('🚨 EMERGENCY: Starting direct guide rendering system');
-        
-        // Function to create guide card HTML
-        function createGuideCardHTML(guide) {
-            const languages = Array.isArray(guide.languages) ? guide.languages.join(', ') : '日本語';
-            const rate = guide.sessionRate || guide.rate || 'お問い合わせ';
-            
-            return `
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100 border-0" style="border-radius: 15px; box-shadow: 0 8px 30px rgba(0,0,0,0.1); transition: all 0.3s ease; background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%); backdrop-filter: blur(10px);">
-                        <div class="card-body p-4">
-                            <h5 class="card-title text-primary mb-3" style="font-weight: 600;">${guide.name || guide.guideName}</h5>
-                            <div class="mb-2">
-                                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
-                                <span class="text-muted">${guide.location}</span>
-                            </div>
-                            <div class="mb-2">
-                                <i class="bi bi-translate text-info me-2"></i>
-                                <span class="text-muted">${languages}</span>
-                            </div>
-                            <div class="mb-3">
-                                <i class="bi bi-currency-yen text-success me-2"></i>
-                                <span class="fw-bold text-success">¥${rate}/日</span>
-                            </div>
-                            <p class="card-text text-muted small mb-3">${guide.introduction || guide.specialties || '地元の魅力をご案内します'}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-primary" onclick="alert('詳細機能は開発中です')">
-                                        <i class="bi bi-eye me-1"></i>詳細
-                                    </button>
-                                    <button type="button" class="btn btn-outline-warning">
-                                        <i class="bi bi-bookmark me-1"></i>保存
-                                    </button>
-                                </div>
-                                <small class="text-muted">⭐ ${guide.averageRating || 4.8}</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Function to render guides
-        function renderGuides(guides) {
-            const container = document.getElementById('guidesContainer');
-            if (!container) {
-                console.error('❌ guidesContainer not found');
-                return;
-            }
-            
-            if (!guides || guides.length === 0) {
-                container.innerHTML = '<div class="col-12 text-center p-5"><h4 class="text-muted">ガイドが見つかりません</h4></div>';
-                return;
-            }
-            
-            const cardsHTML = guides.map(createGuideCardHTML).join('');
-            container.innerHTML = cardsHTML;
-            
-            console.log(`✅ Rendered ${guides.length} guide cards successfully`);
-        }
-        
-        // Emergency guide loading
-        function loadGuides() {
-            console.log('🔄 Loading guides from API...');
-            fetch('/api/guides')
-                .then(response => {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('✅ API Response:', data);
-                    if (data.success && data.guides) {
-                        renderGuides(data.guides);
-                        console.log(`🎯 Successfully loaded ${data.guides.length} guides`);
-                    } else {
-                        throw new Error('Invalid API response format');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Failed to load guides:', error);
-                    const container = document.getElementById('guidesContainer');
-                    if (container) {
-                        container.innerHTML = '<div class="col-12 text-center p-5"><h4 class="text-danger">ガイド読み込みエラー</h4><p>' + error.message + '</p></div>';
-                    }
-                });
-        }
-        
-        // Start loading when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadGuides);
-        } else {
-            loadGuides();
-        }
-        
-        console.log('🔧 Emergency guide system initialized');
-    </script>
 
 </body>
 </html>
