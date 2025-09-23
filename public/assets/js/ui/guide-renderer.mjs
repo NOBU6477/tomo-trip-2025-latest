@@ -22,10 +22,10 @@ export function renderGuideCards(guidesToRender = null, usePagination = true, re
         }
     }
     
-    // 🔧 Fix: Reset currentPage when not using pagination or when resetPagination is true
-    if (window.AppState && (!usePagination || guides.length <= 12 || resetPagination)) {
+    // 🔧 Fix: Only reset currentPage when explicitly requested via resetPagination
+    if (window.AppState && resetPagination) {
         window.AppState.currentPage = 1;
-        console.log('🔄 Reset currentPage to 1 for non-pagination mode');
+        console.log('🔄 Reset currentPage to 1 (resetPagination=true)');
     }
     
     // スケーラブルペジネーションシステムの初期化
@@ -357,9 +357,10 @@ export function setupViewDetailsEventListeners() {
                 console.log('🔖 Bookmark clicked for guide:', guideId);
                 
                 toggleBookmark(guideId);
-                // Re-render guide cards to update button states
+                // Re-render guide cards to update button states WITHOUT resetting pagination
                 if (window.AppState && window.AppState.guides) {
-                    renderGuideCards(window.AppState.guides, false, false);
+                    const usePagination = window.AppState.guides.length > 12;
+                    renderGuideCards(window.AppState.guides, usePagination, false);
                 }
             });
             console.log(`✅ Setup bookmark button ${index + 1} for guide ID: ${guideId}`);
@@ -386,9 +387,10 @@ export function setupViewDetailsEventListeners() {
                 console.log('🔄 Compare clicked for guide:', guideId);
                 
                 toggleComparison(guideId);
-                // Re-render guide cards to update button states
+                // Re-render guide cards to update button states WITHOUT resetting pagination
                 if (window.AppState && window.AppState.guides) {
-                    renderGuideCards(window.AppState.guides, false, false);
+                    const usePagination = window.AppState.guides.length > 12;
+                    renderGuideCards(window.AppState.guides, usePagination, false);
                 }
             });
             console.log(`✅ Setup compare button ${index + 1} for guide ID: ${guideId}`);
