@@ -177,8 +177,8 @@ function normalizeLocation(selectedValue) {
     return locationMapping[selectedValue] || [selectedValue];
 }
 
-// Global filter functions for search functionality
-window.filterGuides = function() {
+// Make filterGuides function globally accessible immediately on module load
+function filterGuides() {
     console.log('🔍 Running guide filters...');
     
     const state = window.AppState;
@@ -1381,3 +1381,6 @@ function handleManagementCenter() {
         alert('管理センターは開発中です');
     }
 }
+
+// Export the main filterGuides function globally
+window.filterGuides = filterGuides;

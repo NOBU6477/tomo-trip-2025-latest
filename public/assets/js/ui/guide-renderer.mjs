@@ -452,12 +452,12 @@ export function createGuideCardHTML(guide) {
                  style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white; position: relative;">
                 ${adminCheckbox}
                 <div class="position-relative">
-                    <img src="${guide.profilePhoto || '/assets/img/guides/default-1.svg'}" 
+                    <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" 
                          class="card-img-top" 
                          alt="${guide.name || guide.guideName || 'ガイド'}" 
                          style="height: 250px; object-fit: cover;"
                          onerror="this.src='/assets/img/guides/default-1.svg';">
-                    ${guide.profilePhoto ? '' : '<div class="position-absolute top-0 start-0 bg-warning text-dark small px-2 py-1 rounded-end">Default Photo</div>'}
+                    ${guide.profilePhoto ? '' : '<div class="position-absolute top-0 start-0 bg-info text-white small px-2 py-1 rounded-end" style="opacity: 0.8;">写真未設定</div>'}
                     <div class="position-absolute top-0 end-0 m-2">
                         <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
                             評価 ${guide.rating || '4.8'} ⭐
