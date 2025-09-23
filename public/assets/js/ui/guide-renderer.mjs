@@ -306,8 +306,8 @@ export function updateGuideCounters(displayedCount, totalCount) {
 export function setupViewDetailsEventListeners() {
     console.log('🔧 Setting up view details, bookmark, and compare event listeners...');
     
-    // Setup view details buttons
-    const viewDetailButtons = document.querySelectorAll('.view-detail-btn, [data-action="view-details"]');
+    // Setup view details buttons - using the updated class name
+    const viewDetailButtons = document.querySelectorAll('.view-detail-btn');
     console.log(`Found ${viewDetailButtons.length} view details buttons`);
     
     viewDetailButtons.forEach((btn, index) => {
@@ -315,9 +315,7 @@ export function setupViewDetailsEventListeners() {
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
         
-        const guideId = newBtn.getAttribute('data-guide-id') || 
-                       newBtn.getAttribute('data-id') || 
-                       newBtn.closest('[data-guide-id]')?.getAttribute('data-guide-id');
+        const guideId = newBtn.getAttribute('data-guide-id');
         
         if (guideId) {
             newBtn.addEventListener('click', function(e) {
@@ -327,15 +325,17 @@ export function setupViewDetailsEventListeners() {
                 
                 if (window.showGuideDetailModalById) {
                     window.showGuideDetailModalById(guideId);
+                } else if (window.viewGuideDetail) {
+                    window.viewGuideDetail(guideId, e);
                 } else {
-                    console.warn('❌ showGuideDetailModalById not available');
+                    console.warn('❌ Guide detail function not available');
                     // Fallback: direct navigation
                     window.open(`guide-detail.html?id=${guideId}`, '_blank');
                 }
             });
-            console.log(`✅ Setup button ${index + 1} for guide ID: ${guideId}`);
+            console.log(`✅ Setup view detail button ${index + 1} for guide ID: ${guideId}`);
         } else {
-            console.warn(`⚠️ Button ${index + 1} missing guide ID`);
+            console.warn(`⚠️ View detail button ${index + 1} missing guide ID`);
         }
     });
     
@@ -356,10 +356,10 @@ export function setupViewDetailsEventListeners() {
                 e.stopPropagation();
                 console.log('🔖 Bookmark clicked for guide:', guideId);
                 
-                if (window.toggleBookmark) {
-                    window.toggleBookmark(guideId);
-                } else {
-                    console.warn('❌ toggleBookmark function not available');
+                toggleBookmark(guideId);
+                // Re-render guide cards to update button states
+                if (window.AppState && window.AppState.guides) {
+                    renderGuideCards(window.AppState.guides, false, false);
                 }
             });
             console.log(`✅ Setup bookmark button ${index + 1} for guide ID: ${guideId}`);
@@ -385,10 +385,10 @@ export function setupViewDetailsEventListeners() {
                 e.stopPropagation();
                 console.log('🔄 Compare clicked for guide:', guideId);
                 
-                if (window.toggleComparison) {
-                    window.toggleComparison(guideId);
-                } else {
-                    console.warn('❌ toggleComparison function not available');
+                toggleComparison(guideId);
+                // Re-render guide cards to update button states
+                if (window.AppState && window.AppState.guides) {
+                    renderGuideCards(window.AppState.guides, false, false);
                 }
             });
             console.log(`✅ Setup compare button ${index + 1} for guide ID: ${guideId}`);
@@ -398,34 +398,91 @@ export function setupViewDetailsEventListeners() {
     });
 }
 
-// Create HTML for individual guide card  
+// Toggle bookmark functionality
+function toggleBookmark(guideId) {
+    const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    const id = parseInt(guideId);
+    
+    if (bookmarkedGuides.includes(id) || bookmarkedGuides.includes(guideId)) {
+        // Remove from bookmarks
+        const updatedBookmarks = bookmarkedGuides.filter(bookmarkId => 
+            bookmarkId !== id && bookmarkId !== guideId
+        );
+        localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+        console.log('❌ Guide removed from bookmarks:', guideId);
+        
+        if (typeof safeShowToast === 'function') {
+            safeShowToast('ブックマークから削除しました', 'info');
+        }
+    } else {
+        // Add to bookmarks
+        bookmarkedGuides.push(id);
+        localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+        console.log('✅ Guide added to bookmarks:', guideId);
+        
+        if (typeof safeShowToast === 'function') {
+            safeShowToast('ブックマークに追加しました', 'success');
+        }
+    }
+}
+
+// Toggle comparison functionality
+function toggleComparison(guideId) {
+    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+    const id = parseInt(guideId);
+    
+    if (comparisonGuides.includes(id) || comparisonGuides.includes(guideId)) {
+        // Remove from comparison
+        const updatedComparison = comparisonGuides.filter(compareId => 
+            compareId !== id && compareId !== guideId
+        );
+        localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
+        console.log('❌ Guide removed from comparison:', guideId);
+        
+        if (typeof safeShowToast === 'function') {
+            safeShowToast('比較から削除しました', 'info');
+        }
+    } else {
+        // Check comparison limit (max 3)
+        if (comparisonGuides.length >= 3) {
+            if (typeof safeShowToast === 'function') {
+                safeShowToast('比較できるガイドは最大3人までです', 'warning');
+            }
+            return;
+        }
+        
+        // Add to comparison
+        comparisonGuides.push(id);
+        localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+        console.log('✅ Guide added to comparison:', guideId);
+        
+        if (typeof safeShowToast === 'function') {
+            safeShowToast('比較に追加しました', 'success');
+        }
+    }
+}
+
+// Create HTML for individual guide card - RESTORED FROM BACKUP
 export function createGuideCardHTML(guide) {
     // Use API response field names
     const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
-    const formattedPrice = isNaN(price) || price === 0 ? '料金応相談' : `¥${price.toLocaleString()}/時間`;
+    const formattedPrice = isNaN(price) || price === 0 ? `¥${price.toLocaleString()}` : `¥${price.toLocaleString()}`;
     
-    // Language mapping for Japanese display (International Standard)
-    const languageMap = {
-        'japanese': '日本語', 'english': '英語', 'chinese': '中国語', 'korean': '韓国語',
-        'spanish': 'スペイン語', 'french': 'フランス語', 'german': 'ドイツ語', 'italian': 'イタリア語',
-        'portuguese': 'ポルトガル語', 'russian': 'ロシア語', 'arabic': 'アラビア語', 'thai': 'タイ語'
-    };
+    // Location names mapping for Japanese display
+    const locationNames = window.locationNames || {};
     
-    let languages = '日本語'; // Default
-    // API returns languages field (already mapped from guideLanguages)
-    if (Array.isArray(guide.languages) && guide.languages.length > 0) {
-        languages = guide.languages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
-    } else if (Array.isArray(guide.guideLanguages) && guide.guideLanguages.length > 0) {
-        languages = guide.guideLanguages.map(lang => languageMap[lang.toLowerCase()] || lang).join(', ');
-    } else if (guide.languages && typeof guide.languages === 'string') {
-        languages = languageMap[guide.languages.toLowerCase()] || guide.languages;
-    }
+    // Check bookmark and comparison status
+    const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
     
-    // Handle specialties from API response
-    const specialties = guide.specialties || guide.guideSpecialties || '';
-    const tags = typeof specialties === 'string' ? 
-        specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s).slice(0, 3).join(', ') :
-        Array.isArray(specialties) ? specialties.slice(0, 3).join(', ') : '';
+    const isBookmarked = bookmarkedGuides.includes(guide.id) || bookmarkedGuides.includes(parseInt(guide.id));
+    const isInComparison = comparisonGuides.includes(guide.id) || comparisonGuides.includes(parseInt(guide.id));
+    
+    // Dynamic button states
+    const bookmarkBtnClass = isBookmarked ? 'btn btn-warning btn-sm' : 'btn btn-outline-warning btn-sm';
+    const compareBtnClass = isInComparison ? 'btn btn-success btn-sm' : 'btn btn-outline-success btn-sm';
+    const bookmarkIcon = isBookmarked ? '<i class="bi bi-bookmark-fill"></i>' : '<i class="bi bi-bookmark"></i>';
+    const compareIcon = isInComparison ? '<i class="bi bi-check2-square-fill"></i>' : '<i class="bi bi-check2-square"></i>';
     
     // 管理者モード用チェックボックスの表示判定
     let adminModeEnabled = false;
@@ -447,75 +504,42 @@ export function createGuideCardHTML(guide) {
 
     return `
         <div class="col-md-6 col-lg-4 mb-4">
-            <div class="guide-card h-100 ${adminModeEnabled ? 'admin-mode' : ''}" 
+            <div class="card h-100 guide-card ${adminModeEnabled ? 'admin-mode' : ''}" 
                  data-guide-id="${guide.id}"
-                 style="border: 1px solid #e3e6f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; background: white; position: relative;"
-                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'"
-                 onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08)'">
+                 style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
                 ${adminCheckbox}
-                <div class="position-relative">
-                    <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" 
-                         class="card-img-top" 
-                         alt="${guide.name || guide.guideName || 'ガイド'}" 
-                         style="height: 200px; object-fit: cover;"
-                         onerror="this.src='/assets/img/guides/default-1.svg';">
-                    ${guide.profilePhoto ? '' : '<div class="position-absolute top-0 start-0 bg-secondary text-white small px-2 py-1" style="opacity: 0.9; font-size: 11px;">写真未設定</div>'}
-                    <div class="position-absolute bottom-0 end-0 m-2">
-                        <span class="badge bg-warning text-dark" style="font-size: 11px; padding: 4px 8px; border-radius: 12px;">
-                            ⭐ ${guide.rating || guide.averageRating || '4.8'}
-                        </span>
+                <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" 
+                     class="card-img-top" 
+                     style="height: 200px; object-fit: cover;" 
+                     alt="${guide.name || guide.guideName || 'ガイド'}"
+                     onerror="this.src='/assets/img/guides/default-1.svg';">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-1">${guide.name || guide.guideName || 'ガイド'}</h5>
+                        <div class="d-flex gap-1">
+                            <button class="${bookmarkBtnClass} bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク">${bookmarkIcon}</button>
+                            <button class="${compareBtnClass} compare-btn" data-guide-id="${guide.id}" title="比較リストに追加">${compareIcon}</button>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body p-3">
-                    <h6 class="card-title fw-bold mb-2" style="color: #2c3e50; font-size: 16px;">${guide.name || guide.guideName || 'ガイド'}</h6>
-                    <p class="text-muted mb-2" style="font-size: 13px;">
-                        <i class="bi bi-geo-alt-fill text-primary"></i> ${guide.location || guide.city || '東京'}
-                    </p>
-                    <p class="card-text text-muted mb-3" style="font-size: 13px; line-height: 1.4; max-height: 40px; overflow: hidden;">
-                        ${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}
-                    </p>
-                    
-                    <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <small class="text-muted" style="font-size: 11px;">対応言語</small>
-                            <small class="fw-semibold text-info" style="font-size: 11px;">${languages}</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <small class="text-muted" style="font-size: 11px;">料金</small>
-                            <small class="fw-bold text-success" style="font-size: 12px;">${formattedPrice}</small>
-                        </div>
-                        ${tags ? `
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted" style="font-size: 11px;">特徴</small>
-                            <small class="text-warning" style="font-size: 11px;">${tags}</small>
-                        </div>
-                        ` : ''}
+                    <div class="mb-2">
+                        <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || '東京'}</span>
+                        <span class="badge bg-secondary">${guide.specialties || guide.guideSpecialties || guide.specialty || '観光案内'}</span>
                     </div>
-                    
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary view-details-btn" 
-                                data-action="view-details" 
-                                data-guide-id="${guide.id}"
-                                style="background: linear-gradient(135deg, #4e73df, #224abe); border: none; border-radius: 8px; padding: 8px; font-size: 13px;">
+                    <p class="card-text text-muted small mb-2">${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}</p>
+                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                        <div>
+                            <span class="text-warning">★</span>
+                            <span class="fw-bold">${guide.rating || guide.averageRating || '4.8'}</span>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-primary">${formattedPrice}</div>
+                            <small class="text-muted">1日ガイド</small>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
                             詳細を見る
                         </button>
-                        
-                        <div class="row g-1 mt-1">
-                            <div class="col-6">
-                                <button class="btn btn-outline-warning bookmark-btn w-100" 
-                                        data-guide-id="${guide.id}"
-                                        style="border-radius: 6px; font-size: 11px; padding: 6px;">
-                                    <i class="bi bi-bookmark"></i>
-                                </button>
-                            </div>
-                            <div class="col-6">
-                                <button class="btn btn-outline-success compare-btn w-100" 
-                                        data-guide-id="${guide.id}"
-                                        style="border-radius: 6px; font-size: 11px; padding: 6px;">
-                                    <i class="bi bi-check2-square"></i>
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
