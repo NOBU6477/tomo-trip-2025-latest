@@ -449,43 +449,45 @@ export function createGuideCardHTML(guide) {
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="guide-card h-100 ${adminModeEnabled ? 'admin-mode' : ''}" 
                  data-guide-id="${guide.id}"
-                 style="border: none; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.1); transition: all 0.3s ease; background: white; position: relative;">
+                 style="border: 1px solid #e3e6f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s ease; background: white; position: relative;"
+                 onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)'"
+                 onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.08)'">
                 ${adminCheckbox}
                 <div class="position-relative">
                     <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" 
                          class="card-img-top" 
                          alt="${guide.name || guide.guideName || 'ガイド'}" 
-                         style="height: 250px; object-fit: cover;"
+                         style="height: 200px; object-fit: cover;"
                          onerror="this.src='/assets/img/guides/default-1.svg';">
-                    ${guide.profilePhoto ? '' : '<div class="position-absolute top-0 start-0 bg-info text-white small px-2 py-1 rounded-end" style="opacity: 0.8;">写真未設定</div>'}
-                    <div class="position-absolute top-0 end-0 m-2">
-                        <span class="badge" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 12px; padding: 5px 10px; border-radius: 15px;">
-                            評価 ${guide.rating || '4.8'} ⭐
+                    ${guide.profilePhoto ? '' : '<div class="position-absolute top-0 start-0 bg-secondary text-white small px-2 py-1" style="opacity: 0.9; font-size: 11px;">写真未設定</div>'}
+                    <div class="position-absolute bottom-0 end-0 m-2">
+                        <span class="badge bg-warning text-dark" style="font-size: 11px; padding: 4px 8px; border-radius: 12px;">
+                            ⭐ ${guide.rating || guide.averageRating || '4.8'}
                         </span>
                     </div>
                 </div>
-                <div class="card-body p-4">
-                    <h5 class="card-title fw-bold mb-2" style="color: #2c3e50;">${guide.name}</h5>
-                    <p class="text-muted mb-2">
-                        <i class="bi bi-geo-alt"></i> ${guide.location || guide.city || '東京'}
+                <div class="card-body p-3">
+                    <h6 class="card-title fw-bold mb-2" style="color: #2c3e50; font-size: 16px;">${guide.name || guide.guideName || 'ガイド'}</h6>
+                    <p class="text-muted mb-2" style="font-size: 13px;">
+                        <i class="bi bi-geo-alt-fill text-primary"></i> ${guide.location || guide.city || '東京'}
                     </p>
-                    <p class="card-text text-muted mb-3" style="font-size: 14px; line-height: 1.4;">
+                    <p class="card-text text-muted mb-3" style="font-size: 13px; line-height: 1.4; max-height: 40px; overflow: hidden;">
                         ${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}
                     </p>
                     
                     <div class="mb-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-muted">対応言語</small>
-                            <small class="fw-semibold">${languages}</small>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted" style="font-size: 11px;">対応言語</small>
+                            <small class="fw-semibold text-info" style="font-size: 11px;">${languages}</small>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <small class="text-muted">料金</small>
-                            <small class="fw-bold text-primary">${formattedPrice}</small>
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted" style="font-size: 11px;">料金</small>
+                            <small class="fw-bold text-success" style="font-size: 12px;">${formattedPrice}</small>
                         </div>
                         ${tags ? `
                         <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">特徴</small>
-                            <small class="text-info">${tags}</small>
+                            <small class="text-muted" style="font-size: 11px;">特徴</small>
+                            <small class="text-warning" style="font-size: 11px;">${tags}</small>
                         </div>
                         ` : ''}
                     </div>
@@ -494,23 +496,23 @@ export function createGuideCardHTML(guide) {
                         <button class="btn btn-primary view-details-btn" 
                                 data-action="view-details" 
                                 data-guide-id="${guide.id}"
-                                style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 10px; padding: 10px;">
-                            詳しく見る
+                                style="background: linear-gradient(135deg, #4e73df, #224abe); border: none; border-radius: 8px; padding: 8px; font-size: 13px;">
+                            詳細を見る
                         </button>
                         
-                        <div class="row g-2 mt-1">
+                        <div class="row g-1 mt-1">
                             <div class="col-6">
                                 <button class="btn btn-outline-warning bookmark-btn w-100" 
                                         data-guide-id="${guide.id}"
-                                        style="border-radius: 8px; font-size: 12px; padding: 8px;">
-                                    <i class="bi bi-bookmark"></i> ブックマーク
+                                        style="border-radius: 6px; font-size: 11px; padding: 6px;">
+                                    <i class="bi bi-bookmark"></i>
                                 </button>
                             </div>
                             <div class="col-6">
                                 <button class="btn btn-outline-success compare-btn w-100" 
                                         data-guide-id="${guide.id}"
-                                        style="border-radius: 8px; font-size: 12px; padding: 8px;">
-                                    <i class="bi bi-check2-square"></i> 比較
+                                        style="border-radius: 6px; font-size: 11px; padding: 6px;">
+                                    <i class="bi bi-check2-square"></i>
                                 </button>
                             </div>
                         </div>
