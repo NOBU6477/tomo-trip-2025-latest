@@ -22,6 +22,12 @@ export function renderGuideCards(guidesToRender = null, usePagination = true, re
         }
     }
     
+    // 🔧 Fix: Reset currentPage when not using pagination or when resetPagination is true
+    if (window.AppState && (!usePagination || guides.length <= 12 || resetPagination)) {
+        window.AppState.currentPage = 1;
+        console.log('🔄 Reset currentPage to 1 for non-pagination mode');
+    }
+    
     // スケーラブルペジネーションシステムの初期化
     if (usePagination && guides.length > 12) {
         initializePaginationSystem(guides, resetPagination);
@@ -29,6 +35,7 @@ export function renderGuideCards(guidesToRender = null, usePagination = true, re
     }
     
     // 少数のガイドの場合は従来通りの表示
+    console.log('📊 Render kickoff:', {count: guides.length, currentPage: window.AppState?.currentPage});
     renderAllGuideCards(guides);
 }
 
@@ -152,16 +159,34 @@ function renderAllGuideCards(guides) {
     
     console.log(`🎨 Rendering ${guides.length} guide cards`, guides.map(g => g.name || g.guideName || 'Unknown'));
     
-    // Get pagination settings
-    const currentPage = window.AppState?.currentPage || 1;
+    // 🔧 Fix: Clamp currentPage to valid range before slicing
     const pageSize = 12; // Standard page size
+    const totalPages = Math.max(1, Math.ceil(guides.length / pageSize));
+    let currentPage = Math.min(Math.max(1, window.AppState?.currentPage || 1), totalPages);
+    
+    // Update AppState if currentPage was clamped
+    if (window.AppState && window.AppState.currentPage !== currentPage) {
+        console.log(`🔧 Clamping currentPage from ${window.AppState.currentPage} to ${currentPage}`);
+        window.AppState.currentPage = currentPage;
+    }
+    
     const startIndex = (currentPage - 1) * pageSize;
     const endIndex = startIndex + pageSize;
     
     // Slice guides for current page
     const guidesForPage = guides.slice(startIndex, endIndex);
     
-    console.log(`📄 Pagination: page ${currentPage}, showing ${guidesForPage.length} of ${guides.length} guides (${startIndex + 1}-${Math.min(endIndex, guides.length)})`);
+    // 🔧 Emergency fix: If guidesForPage is empty but guides exist, reset to page 1
+    if (guidesForPage.length === 0 && guides.length > 0) {
+        console.warn(`⚠️ Emergency reset: Page ${currentPage} resulted in empty guides, resetting to page 1`);
+        currentPage = 1;
+        if (window.AppState) window.AppState.currentPage = 1;
+        const newStartIndex = (currentPage - 1) * pageSize;
+        const newEndIndex = newStartIndex + pageSize;
+        guidesForPage.splice(0, 0, ...guides.slice(newStartIndex, newEndIndex));
+    }
+    
+    console.log(`📄 Pagination: page ${currentPage}/${totalPages}, showing ${guidesForPage.length} of ${guides.length} guides (${startIndex + 1}-${Math.min(endIndex, guides.length)})`);
     
     // Performance optimization for large guide lists
     if (guidesForPage.length > 30) {

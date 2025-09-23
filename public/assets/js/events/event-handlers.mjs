@@ -191,6 +191,12 @@ window.filterGuides = function() {
         return;
     }
     
+    // 🔧 Fix: Reset currentPage before filtering to prevent empty results
+    if (state.currentPage && state.currentPage > 1) {
+        console.log(`🔄 Resetting currentPage from ${state.currentPage} to 1 before filtering`);
+        state.currentPage = 1;
+    }
+    
     console.log('📊 Starting with guides:', state.guides.length, 'guides');
     
     // Get filter values - using correct element IDs
