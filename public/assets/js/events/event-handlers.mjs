@@ -62,67 +62,60 @@ window.showGuideDetailModalById = showGuideDetailModalById;
 
 // Normalization functions for proper data matching
 function normalizeLocation(selectedValue) {
-    // Complete mapping of prefecture codes to actual API location strings
+    // Complete mapping from prefecture codes to names
     const locationMapping = {
-        // Prefecture codes from UI (prefecture-selector.mjs)
-        'hokkaido': ['北海道'],
-        'aomori': ['青森県'],
-        'iwate': ['岩手県'],
-        'miyagi': ['宮城県'],
-        'akita': ['秋田県'],
-        'yamagata': ['山形県'],
-        'fukushima': ['福島県'],
-        'ibaraki': ['茨城県'],
-        'tochigi': ['栃木県'],
-        'gunma': ['群馬県'],
-        'saitama': ['埼玉県'],
-        'chiba': ['千葉県'],
-        'tokyo': ['東京都', '渋谷区'],
-        'kanagawa': ['神奈川県'],
-        'niigata': ['新潟県'],
-        'toyama': ['富山県'],
-        'ishikawa': ['石川県'],
-        'fukui': ['福井県'],
-        'yamanashi': ['山梨県'],
-        'nagano': ['長野県'],
-        'gifu': ['岐阜県'],
-        'shizuoka': ['静岡県'],
-        'aichi': ['愛知県'],
-        'mie': ['三重県'],
-        'shiga': ['滋賀県'],
-        'kyoto': ['京都府'],
-        'osaka': ['大阪府'],
-        'hyogo': ['兵庫県'],
-        'nara': ['奈良県'],
-        'wakayama': ['和歌山県'],
-        'tottori': ['鳥取県'],
-        'shimane': ['島根県'],
-        'okayama': ['岡山県'],
-        'hiroshima': ['広島県'],
-        'yamaguchi': ['山口県'],
-        'tokushima': ['徳島県'],
-        'kagawa': ['香川県'],
-        'ehime': ['愛媛県'],
-        'kochi': ['高知県'],
-        'fukuoka': ['福岡県'],
-        'saga': ['佐賀県'],
-        'nagasaki': ['長崎県'],
-        'kumamoto': ['熊本県'],
-        'oita': ['大分県'],
-        'miyazaki': ['宮崎県'],
-        'kagoshima': ['鹿児島県'],
-        'okinawa': ['沖縄県'],
-        'remote_islands': ['離島'],
-        // Direct prefecture mappings (fallback)
-        '東京都': ['東京都'],
-        '大阪府': ['大阪府'],
-        '京都府': ['京都府'],
-        '広島県': ['広島県'],
-        '沖縄県': ['沖縄県'],
-        '北海道': ['北海道']
+        'hokkaido': '北海道',
+        'aomori': '青森県',
+        'iwate': '岩手県',
+        'miyagi': '宮城県',
+        'akita': '秋田県',
+        'yamagata': '山形県',
+        'fukushima': '福島県',
+        'ibaraki': '茨城県',
+        'tochigi': '栃木県',
+        'gunma': '群馬県',
+        'saitama': '埼玉県',
+        'chiba': '千葉県',
+        'tokyo': '東京都',
+        'kanagawa': '神奈川県',
+        'niigata': '新潟県',
+        'toyama': '富山県',
+        'ishikawa': '石川県',
+        'fukui': '福井県',
+        'yamanashi': '山梨県',
+        'nagano': '長野県',
+        'gifu': '岐阜県',
+        'shizuoka': '静岡県',
+        'aichi': '愛知県',
+        'mie': '三重県',
+        'shiga': '滋賀県',
+        'kyoto': '京都府',
+        'osaka': '大阪府',
+        'hyogo': '兵庫県',
+        'nara': '奈良県',
+        'wakayama': '和歌山県',
+        'tottori': '鳥取県',
+        'shimane': '島根県',
+        'okayama': '岡山県',
+        'hiroshima': '広島県',
+        'yamaguchi': '山口県',
+        'tokushima': '徳島県',
+        'kagawa': '香川県',
+        'ehime': '愛媛県',
+        'kochi': '高知県',
+        'fukuoka': '福岡県',
+        'saga': '佐賀県',
+        'nagasaki': '長崎県',
+        'kumamoto': '熊本県',
+        'oita': '大分県',
+        'miyazaki': '宮崎県',
+        'kagoshima': '鹿児島県',
+        'okinawa': '沖縄県',
+        'remote_islands': '離島'
     };
     
-    return locationMapping[selectedValue] || [selectedValue];
+    // Return prefecture name if code is found, otherwise return original value
+    return locationMapping[selectedValue] || selectedValue;
 }
 
 function normalizeLanguage(selectedValue) {
@@ -198,12 +191,13 @@ function filterGuides() {
     if (selectedLocation && selectedLocation !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const guideLocation = guide.location || '';
-            const normalizedLocations = normalizeLocation(selectedLocation);
+            const normalizedLocationName = normalizeLocation(selectedLocation);
             
-            console.log(`📍 Checking guide location "${guideLocation}" against normalized locations:`, normalizedLocations);
+            console.log(`📍 Checking guide location "${guideLocation}" against normalized location "${normalizedLocationName}"`);
             
-            // Check if guide location contains any of the normalized location terms
-            const matches = normalizedLocations.some(loc => {
+            // Check if guide location matches the prefecture name
+            const matches = (() => {
+                const loc = normalizedLocationName;
                 // Direct contains match
                 if (guideLocation.includes(loc)) return true;
                 
@@ -218,10 +212,10 @@ function filterGuides() {
                 if (guideLocation.includes(prefectureNameOnly)) return true;
                 
                 return false;
-            });
+            })();
             
             if (matches) {
-                console.log(`✅ Guide "${guide.name}" in "${guideLocation}" matches filter "${selectedLocation}"`);
+                console.log(`✅ Guide "${guide.name}" in "${guideLocation}" matches filter "${selectedLocation}" -> "${normalizedLocationName}"`);
             }
             
             return matches;
