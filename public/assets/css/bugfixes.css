@@ -87,8 +87,8 @@
 /* Fix language switcher positioning */
 .language-switcher-center {
     box-sizing: border-box;
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(10px);
+    background: transparent;
+    backdrop-filter: none;
 }
 
 /* Management buttons positioning fixes */
