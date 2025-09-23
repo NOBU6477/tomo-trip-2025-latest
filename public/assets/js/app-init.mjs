@@ -5,7 +5,7 @@
 console.log('🔥 URGENT TEST: app-init.mjs is executing!');
 
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
-import './emergency-buttons.mjs';
+// import './emergency-buttons.mjs'; // COMMENTED OUT - FILE MISSING, CAUSING MODULE LOAD FAILURE
 import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
 // import { defaultGuideData } from './data/default-guides.mjs'; // REMOVED - prevents duplicate rendering
 import AppState from './state/app-state.mjs';

@@ -84,11 +84,24 @@
     overflow-x: hidden;
 }
 
-/* Fix language switcher positioning */
+/* Fix language switcher positioning - Complete white line removal */
 .language-switcher-center {
-    box-sizing: border-box;
-    background: transparent;
-    backdrop-filter: none;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.language-switcher-center::before,
+.language-switcher-center::after {
+    display: none !important;
+}
+
+.language-switcher-center .d-flex {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 /* Management buttons positioning fixes */
