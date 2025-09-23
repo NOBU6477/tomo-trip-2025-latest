@@ -105,12 +105,12 @@ function ensurePaginationContainers() {
 
 // 全ガイドカードの描画（既存の機能）
 function renderAllGuideCards(guides) {
-    // Try multiple ways to find the container
-    let container = document.getElementById('guidesContainer');
+    // Try multiple ways to find the container - support both old and new IDs
+    let container = document.getElementById('guideCardsContainer') || document.getElementById('guidesContainer');
     
     // Fallback: Try to find by class and create if needed
     if (!container) {
-        console.warn('⚠️ guidesContainer not found, searching for alternative...');
+        console.warn('⚠️ guideCardsContainer/guidesContainer not found, searching for alternative...');
         
         // Look for any div with class "row" that might be our container
         const rowContainers = document.querySelectorAll('div.row');
