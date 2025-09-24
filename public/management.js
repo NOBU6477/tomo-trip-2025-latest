@@ -15,11 +15,58 @@ function showManagementCenter() {
     }, 100);
 }
 
-function loadManagementData() {
+async function loadManagementData() {
+    // ガイドデータが読み込まれるまで待機
+    await waitForGuideData();
+    
     loadBookmarksList();
     loadComparisonList();
     loadBookingsList();
     loadSettingsData();
+}
+
+// ガイドデータの読み込み完了を待機する関数
+async function waitForGuideData(maxRetries = 10, delay = 500) {
+    console.log('🔄 Waiting for guide data to load...');
+    
+    for (let i = 0; i < maxRetries; i++) {
+        const appState = window.AppState;
+        const guides = appState?.originalGuides || appState?.guides || [];
+        
+        if (guides.length > 0) {
+            console.log('✅ Guide data loaded:', guides.length, 'guides available');
+            return guides;
+        }
+        
+        console.log(`⏳ Waiting for guide data... (attempt ${i + 1}/${maxRetries})`);
+        
+        // ローディング表示を更新
+        updateLoadingStatus(i + 1, maxRetries);
+        
+        // 待機
+        await new Promise(resolve => setTimeout(resolve, delay));
+    }
+    
+    console.warn('⚠️ Guide data not loaded after maximum retries, proceeding anyway');
+    return [];
+}
+
+// ローディング状態の表示
+function updateLoadingStatus(attempt, maxAttempts) {
+    const bookmarksList = document.getElementById('bookmarksList');
+    const comparisonList = document.getElementById('comparisonList');
+    
+    const loadingHTML = `
+        <div class="col-12 text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="text-muted mt-2">データ読込中... (${attempt}/${maxAttempts})</p>
+        </div>
+    `;
+    
+    if (bookmarksList) bookmarksList.innerHTML = loadingHTML;
+    if (comparisonList) comparisonList.innerHTML = loadingHTML;
 }
 
 function loadBookmarksList() {
