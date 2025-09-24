@@ -60,121 +60,11 @@ window.redirectToRegistration = function(guideId) {
 // Make function globally available
 window.showGuideDetailModalById = showGuideDetailModalById;
 
-// Prefecture name to code conversion function  
-function convertPrefectureNameToCode(prefectureName) {
-    if (!prefectureName) return '';
-    
-    // Reverse mapping: prefecture name -> code
-    const nameToCodeMap = {
-        '北海道': 'hokkaido',
-        '青森県': 'aomori',
-        '岩手県': 'iwate',
-        '宮城県': 'miyagi',
-        '秋田県': 'akita',
-        '山形県': 'yamagata',
-        '福島県': 'fukushima',
-        '茨城県': 'ibaraki',
-        '栃木県': 'tochigi',
-        '群馬県': 'gunma',
-        '埼玉県': 'saitama',
-        '千葉県': 'chiba',
-        '東京都': 'tokyo',
-        '神奈川県': 'kanagawa',
-        '新潟県': 'niigata',
-        '富山県': 'toyama',
-        '石川県': 'ishikawa',
-        '福井県': 'fukui',
-        '山梨県': 'yamanashi',
-        '長野県': 'nagano',
-        '岐阜県': 'gifu',
-        '静岡県': 'shizuoka',
-        '愛知県': 'aichi',
-        '三重県': 'mie',
-        '滋賀県': 'shiga',
-        '京都府': 'kyoto',
-        '大阪府': 'osaka',
-        '兵庫県': 'hyogo',
-        '奈良県': 'nara',
-        '和歌山県': 'wakayama',
-        '鳥取県': 'tottori',
-        '島根県': 'shimane',
-        '岡山県': 'okayama',
-        '広島県': 'hiroshima',
-        '山口県': 'yamaguchi',
-        '徳島県': 'tokushima',
-        '香川県': 'kagawa',
-        '愛媛県': 'ehime',
-        '高知県': 'kochi',
-        '福岡県': 'fukuoka',
-        '佐賀県': 'saga',
-        '長崎県': 'nagasaki',
-        '熊本県': 'kumamoto',
-        '大分県': 'oita',
-        '宮崎県': 'miyazaki',
-        '鹿児島県': 'kagoshima',
-        '沖縄県': 'okinawa'
-    };
-    
-    return nameToCodeMap[prefectureName] || prefectureName;
-}
+// Import unified location utilities
+import { normalizeLocationToCode, compareLocations, convertPrefectureNameToCode } from '../utils/location-utils.mjs';
 
-// Normalization functions for proper data matching
-function normalizeLocation(selectedValue) {
-    // Complete mapping from prefecture codes to names
-    const locationMapping = {
-        'hokkaido': '北海道',
-        'aomori': '青森県',
-        'iwate': '岩手県',
-        'miyagi': '宮城県',
-        'akita': '秋田県',
-        'yamagata': '山形県',
-        'fukushima': '福島県',
-        'ibaraki': '茨城県',
-        'tochigi': '栃木県',
-        'gunma': '群馬県',
-        'saitama': '埼玉県',
-        'chiba': '千葉県',
-        'tokyo': '東京都',
-        'kanagawa': '神奈川県',
-        'niigata': '新潟県',
-        'toyama': '富山県',
-        'ishikawa': '石川県',
-        'fukui': '福井県',
-        'yamanashi': '山梨県',
-        'nagano': '長野県',
-        'gifu': '岐阜県',
-        'shizuoka': '静岡県',
-        'aichi': '愛知県',
-        'mie': '三重県',
-        'shiga': '滋賀県',
-        'kyoto': '京都府',
-        'osaka': '大阪府',
-        'hyogo': '兵庫県',
-        'nara': '奈良県',
-        'wakayama': '和歌山県',
-        'tottori': '鳥取県',
-        'shimane': '島根県',
-        'okayama': '岡山県',
-        'hiroshima': '広島県',
-        'yamaguchi': '山口県',
-        'tokushima': '徳島県',
-        'kagawa': '香川県',
-        'ehime': '愛媛県',
-        'kochi': '高知県',
-        'fukuoka': '福岡県',
-        'saga': '佐賀県',
-        'nagasaki': '長崎県',
-        'kumamoto': '熊本県',
-        'oita': '大分県',
-        'miyazaki': '宮崎県',
-        'kagoshima': '鹿児島県',
-        'okinawa': '沖縄県',
-        'remote_islands': '離島'
-    };
-    
-    // Return prefecture name if code is found, otherwise return original value
-    return locationMapping[selectedValue] || selectedValue;
-}
+// 統一APIを使用した地域正規化（重複コード削除済み）
+// 以前のnormalizeLocation関数は統一のlocation-utils.mjsに移行
 
 function normalizeLanguage(selectedValue) {
     const languageMapping = {
@@ -273,10 +163,9 @@ function filterGuides() {
                     return true;
                 }
                 
-                // 4. Try with location name mapping (backwards compatibility)
-                const normalizedLocationName = normalizeLocation(selectedLocation);  
-                if (guideLocation.includes(normalizedLocationName)) {
-                    console.log(`✅ Normalized match: "${guideLocation}" includes "${normalizedLocationName}"`);
+                // 4. Use unified location comparison API
+                if (compareLocations(guideLocation, selectedLocation)) {
+                    console.log(`✅ Unified API match: "${guideLocation}" matches "${selectedLocation}"`);
                     return true;
                 }
                 
