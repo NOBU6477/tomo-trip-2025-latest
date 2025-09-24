@@ -60,6 +60,64 @@ window.redirectToRegistration = function(guideId) {
 // Make function globally available
 window.showGuideDetailModalById = showGuideDetailModalById;
 
+// Prefecture name to code conversion function  
+function convertPrefectureNameToCode(prefectureName) {
+    if (!prefectureName) return '';
+    
+    // Reverse mapping: prefecture name -> code
+    const nameToCodeMap = {
+        '北海道': 'hokkaido',
+        '青森県': 'aomori',
+        '岩手県': 'iwate',
+        '宮城県': 'miyagi',
+        '秋田県': 'akita',
+        '山形県': 'yamagata',
+        '福島県': 'fukushima',
+        '茨城県': 'ibaraki',
+        '栃木県': 'tochigi',
+        '群馬県': 'gunma',
+        '埼玉県': 'saitama',
+        '千葉県': 'chiba',
+        '東京都': 'tokyo',
+        '神奈川県': 'kanagawa',
+        '新潟県': 'niigata',
+        '富山県': 'toyama',
+        '石川県': 'ishikawa',
+        '福井県': 'fukui',
+        '山梨県': 'yamanashi',
+        '長野県': 'nagano',
+        '岐阜県': 'gifu',
+        '静岡県': 'shizuoka',
+        '愛知県': 'aichi',
+        '三重県': 'mie',
+        '滋賀県': 'shiga',
+        '京都府': 'kyoto',
+        '大阪府': 'osaka',
+        '兵庫県': 'hyogo',
+        '奈良県': 'nara',
+        '和歌山県': 'wakayama',
+        '鳥取県': 'tottori',
+        '島根県': 'shimane',
+        '岡山県': 'okayama',
+        '広島県': 'hiroshima',
+        '山口県': 'yamaguchi',
+        '徳島県': 'tokushima',
+        '香川県': 'kagawa',
+        '愛媛県': 'ehime',
+        '高知県': 'kochi',
+        '福岡県': 'fukuoka',
+        '佐賀県': 'saga',
+        '長崎県': 'nagasaki',
+        '熊本県': 'kumamoto',
+        '大分県': 'oita',
+        '宮崎県': 'miyazaki',
+        '鹿児島県': 'kagoshima',
+        '沖縄県': 'okinawa'
+    };
+    
+    return nameToCodeMap[prefectureName] || prefectureName;
+}
+
 // Normalization functions for proper data matching
 function normalizeLocation(selectedValue) {
     // Complete mapping from prefecture codes to names
@@ -202,10 +260,10 @@ function filterGuides() {
                     return true;
                 }
                 
-                // 2. Prefecture name match (for backwards compatibility)
-                const normalizedLocationName = normalizeLocation(selectedLocation);
-                if (guideLocation.includes(normalizedLocationName)) {
-                    console.log(`✅ Prefecture name match: "${guideLocation}" includes "${normalizedLocationName}"`);
+                // 2. Prefecture name to code conversion
+                const convertedLocation = convertPrefectureNameToCode(selectedLocation);
+                if (guideLocation === convertedLocation) {
+                    console.log(`✅ Prefecture name converted: "${selectedLocation}" -> "${convertedLocation}" matches "${guideLocation}"`);
                     return true;
                 }
                 
@@ -215,10 +273,10 @@ function filterGuides() {
                     return true;
                 }
                 
-                // 4. Reverse check: if guide has full prefecture name and we search by code
-                const prefectureNameOnly = normalizedLocationName.replace(/[都道府県]/g, '');
-                if (guideLocation.includes(prefectureNameOnly)) {
-                    console.log(`✅ Prefecture partial match: "${guideLocation}" includes "${prefectureNameOnly}"`);
+                // 4. Try with location name mapping (backwards compatibility)
+                const normalizedLocationName = normalizeLocation(selectedLocation);  
+                if (guideLocation.includes(normalizedLocationName)) {
+                    console.log(`✅ Normalized match: "${guideLocation}" includes "${normalizedLocationName}"`);
                     return true;
                 }
                 
@@ -428,32 +486,32 @@ function toggleBookmark(guideId) {
 function toggleComparison(guideId) {
     console.log('🔄 Toggle comparison for guide:', guideId);
     
-    // Get current comparison list from localStorage
-    let compareGuides = JSON.parse(localStorage.getItem('compareGuides') || '[]');
+    // Get current comparison list from localStorage (unified key: comparisonGuides)
+    let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
     
-    if (compareGuides.includes(guideId)) {
+    if (comparisonGuides.includes(guideId)) {
         // Remove from comparison
-        compareGuides = compareGuides.filter(id => id !== guideId);
+        comparisonGuides = comparisonGuides.filter(id => id !== guideId);
         showToast('比較リストから削除しました', 'info');
         console.log('🔄 Removed from comparison');
     } else {
         // Check limit (max 3 guides for comparison)
-        if (compareGuides.length >= 3) {
+        if (comparisonGuides.length >= 3) {
             showToast('比較は最大3名まで選択できます', 'warning');
             return;
         }
         
         // Add to comparison
-        compareGuides.push(guideId);
+        comparisonGuides.push(guideId);
         showToast('比較リストに追加しました', 'success');
         console.log('🔄 Added to comparison');
     }
     
-    // Save to localStorage
-    localStorage.setItem('compareGuides', JSON.stringify(compareGuides));
+    // Save to localStorage (unified key: comparisonGuides)
+    localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
     
     // Update button state
-    updateCompareButtonState(guideId, compareGuides.includes(guideId));
+    updateCompareButtonState(guideId, comparisonGuides.includes(guideId));
 }
 
 // Update bookmark button visual state

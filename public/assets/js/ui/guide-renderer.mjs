@@ -521,7 +521,9 @@ export function createGuideCardHTML(guide) {
                     </div>
                     <div class="mb-2">
                         <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || '東京'}</span>
-                        <span class="badge bg-secondary">${guide.specialties || guide.guideSpecialties || guide.specialty || '観光案内'}</span>
+                        <span class="badge bg-secondary me-1">${guide.specialties || guide.guideSpecialties || guide.specialty || '観光案内'}</span>
+                        ${Array.isArray(guide.languages) ? guide.languages.map(lang => `<span class="badge bg-info me-1">${lang}</span>`).join('') : 
+                          guide.languages ? `<span class="badge bg-info me-1">${guide.languages}</span>` : ''}
                     </div>
                     <p class="card-text text-muted small mb-2">${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}</p>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
