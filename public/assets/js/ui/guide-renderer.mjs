@@ -423,7 +423,7 @@ function toggleBookmark(guideId) {
         console.log('✅ Guide added to bookmarks:', guideId);
         
         if (typeof safeShowToast === 'function') {
-            safeShowToast('ブックマークに追加しました', 'success');
+            safeShowToast('ブックマークに追加しました', 'warning');
         }
     }
 }

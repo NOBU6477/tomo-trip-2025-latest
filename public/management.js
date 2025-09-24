@@ -6,9 +6,13 @@
 // Management Center Functions
 function showManagementCenter() {
     console.log('Opening Management Center...');
-    loadManagementData();
     const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
     managementModal.show();
+    
+    // Load data after modal is shown to ensure DOM is ready
+    setTimeout(() => {
+        loadManagementData();
+    }, 100);
 }
 
 function loadManagementData() {
@@ -247,6 +251,17 @@ function clearAllBookmarks() {
     if (confirm('すべてのブックマークを削除しますか？')) {
         localStorage.removeItem('bookmarkedGuides');
         loadBookmarksList();
+        
+        // Update all bookmark button states
+        if (typeof updateBookmarkButtons === 'function') {
+            updateBookmarkButtons();
+        }
+        
+        // Show success toast
+        if (typeof safeShowToast === 'function') {
+            safeShowToast('すべてのブックマークを削除しました', 'info');
+        }
+        
         console.log('All bookmarks cleared');
     }
 }
@@ -255,6 +270,17 @@ function clearAllComparisons() {
     if (confirm('すべての比較データを削除しますか？')) {
         localStorage.removeItem('comparisonGuides');
         loadComparisonList();
+        
+        // Update all comparison button states
+        if (typeof updateComparisonButtons === 'function') {
+            updateComparisonButtons();
+        }
+        
+        // Show success toast
+        if (typeof safeShowToast === 'function') {
+            safeShowToast('すべての比較データを削除しました', 'info');
+        }
+        
         console.log('All comparisons cleared');
     }
 }
@@ -282,3 +308,51 @@ function saveSettings() {
     
     console.log('Settings saved:', settings);
 }
+
+// Update all bookmark button states across the page
+function updateBookmarkButtons() {
+    const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    
+    document.querySelectorAll('.bookmark-btn').forEach(btn => {
+        const guideId = btn.getAttribute('data-guide-id');
+        const isBookmarked = bookmarkedGuides.includes(parseInt(guideId)) || bookmarkedGuides.includes(guideId);
+        
+        if (isBookmarked) {
+            btn.classList.remove('btn-outline-warning');
+            btn.classList.add('btn-warning');
+            btn.innerHTML = '<i class="bi bi-bookmark-fill"></i> <span class="ms-1">保存済み</span>';
+        } else {
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-outline-warning');
+            btn.innerHTML = '<i class="bi bi-bookmark"></i> <span class="ms-1">ブックマーク</span>';
+        }
+    });
+    
+    console.log('🔄 Updated all bookmark buttons');
+}
+
+// Update all comparison button states across the page
+function updateComparisonButtons() {
+    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+    
+    document.querySelectorAll('.compare-btn').forEach(btn => {
+        const guideId = btn.getAttribute('data-guide-id');
+        const isCompared = comparisonGuides.includes(parseInt(guideId)) || comparisonGuides.includes(guideId);
+        
+        if (isCompared) {
+            btn.classList.remove('btn-outline-success');
+            btn.classList.add('btn-success');
+            btn.innerHTML = '<i class="bi bi-check2-square-fill"></i> <span class="ms-1">比較中</span>';
+        } else {
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-success');
+            btn.innerHTML = '<i class="bi bi-check2-square"></i> <span class="ms-1">比較</span>';
+        }
+    });
+    
+    console.log('🔄 Updated all comparison buttons');
+}
+
+// Make functions globally available
+window.updateBookmarkButtons = updateBookmarkButtons;
+window.updateComparisonButtons = updateComparisonButtons;
