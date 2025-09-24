@@ -516,12 +516,8 @@ export function createGuideCardHTML(guide) {
                      alt="${guide.name || guide.guideName || 'ガイド'}"
                      onerror="this.src='/assets/img/guides/default-1.svg';">
                 <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="mb-2">
                         <h5 class="card-title mb-1">${guide.name || guide.guideName || 'ガイド'}</h5>
-                        <div class="d-flex gap-1">
-                            <button class="${bookmarkBtnClass} bookmark-btn" data-guide-id="${guide.id}" title="ブックマーク">${bookmarkIcon}</button>
-                            <button class="${compareBtnClass} compare-btn" data-guide-id="${guide.id}" title="比較リストに追加">${compareIcon}</button>
-                        </div>
                     </div>
                     <div class="mb-2">
                         <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || '東京'}</span>
@@ -539,9 +535,17 @@ export function createGuideCardHTML(guide) {
                         </div>
                     </div>
                     <div class="mt-3">
-                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px;">
+                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px; margin-bottom: 10px;">
                             詳細を見る
                         </button>
+                        <div class="d-flex gap-2 mt-2">
+                            <button class="${bookmarkBtnClass} bookmark-btn flex-fill" data-guide-id="${guide.id}" title="ブックマーク" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
+                                ${bookmarkIcon} <span class="ms-1">ブックマーク</span>
+                            </button>
+                            <button class="${compareBtnClass} compare-btn flex-fill" data-guide-id="${guide.id}" title="比較リストに追加" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
+                                ${compareIcon} <span class="ms-1">比較</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -463,11 +463,11 @@ function updateBookmarkButtonState(guideId, isBookmarked) {
         if (isBookmarked) {
             bookmarkBtn.classList.remove('btn-outline-warning');
             bookmarkBtn.classList.add('btn-warning');
-            bookmarkBtn.innerHTML = '<i class="bi bi-bookmark-fill"></i> 保存済み';
+            bookmarkBtn.innerHTML = '<i class="bi bi-bookmark-fill"></i> <span class="ms-1">保存済み</span>';
         } else {
             bookmarkBtn.classList.remove('btn-warning');
             bookmarkBtn.classList.add('btn-outline-warning');
-            bookmarkBtn.innerHTML = '<i class="bi bi-bookmark"></i> ブックマーク';
+            bookmarkBtn.innerHTML = '<i class="bi bi-bookmark"></i> <span class="ms-1">ブックマーク</span>';
         }
     }
 }
@@ -479,11 +479,11 @@ function updateCompareButtonState(guideId, isCompared) {
         if (isCompared) {
             compareBtn.classList.remove('btn-outline-success');
             compareBtn.classList.add('btn-success');
-            compareBtn.innerHTML = '<i class="bi bi-check2-square-fill"></i> 比較中';
+            compareBtn.innerHTML = '<i class="bi bi-check2-square-fill"></i> <span class="ms-1">比較中</span>';
         } else {
             compareBtn.classList.remove('btn-success');
             compareBtn.classList.add('btn-outline-success');
-            compareBtn.innerHTML = '<i class="bi bi-check2-square"></i> 比較';
+            compareBtn.innerHTML = '<i class="bi bi-check2-square"></i> <span class="ms-1">比較</span>';
         }
     }
 }
