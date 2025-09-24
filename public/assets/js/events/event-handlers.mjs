@@ -191,57 +191,83 @@ function filterGuides() {
     if (selectedLocation && selectedLocation !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const guideLocation = guide.location || '';
-            const normalizedLocationName = normalizeLocation(selectedLocation);
             
-            console.log(`📍 Checking guide location "${guideLocation}" against normalized location "${normalizedLocationName}"`);
+            console.log(`📍 Checking guide location "${guideLocation}" against filter "${selectedLocation}"`);
             
-            // Check if guide location matches the prefecture name
+            // Check if guide location matches the selected filter
             const matches = (() => {
-                const loc = normalizedLocationName;
-                // Direct contains match
-                if (guideLocation.includes(loc)) return true;
+                // 1. Direct code match (e.g., "okinawa" matches "okinawa")
+                if (guideLocation === selectedLocation) {
+                    console.log(`✅ Direct code match: "${guideLocation}" === "${selectedLocation}"`);
+                    return true;
+                }
                 
-                // Case insensitive match
-                if (guideLocation.toLowerCase().includes(loc.toLowerCase())) return true;
+                // 2. Prefecture name match (for backwards compatibility)
+                const normalizedLocationName = normalizeLocation(selectedLocation);
+                if (guideLocation.includes(normalizedLocationName)) {
+                    console.log(`✅ Prefecture name match: "${guideLocation}" includes "${normalizedLocationName}"`);
+                    return true;
+                }
                 
-                // Check if location starts with prefecture name (e.g., "京都府 京都市" matches "京都府")
-                if (guideLocation.startsWith(loc)) return true;
+                // 3. Case insensitive match
+                if (guideLocation.toLowerCase().includes(selectedLocation.toLowerCase())) {
+                    console.log(`✅ Case insensitive match: "${guideLocation}" includes "${selectedLocation}"`);
+                    return true;
+                }
                 
-                // Check prefecture name without suffix (e.g., "京都" matches "京都府 京都市")
-                const prefectureNameOnly = loc.replace(/[都道府県]/g, '');
-                if (guideLocation.includes(prefectureNameOnly)) return true;
+                // 4. Reverse check: if guide has full prefecture name and we search by code
+                const prefectureNameOnly = normalizedLocationName.replace(/[都道府県]/g, '');
+                if (guideLocation.includes(prefectureNameOnly)) {
+                    console.log(`✅ Prefecture partial match: "${guideLocation}" includes "${prefectureNameOnly}"`);
+                    return true;
+                }
                 
                 return false;
             })();
-            
-            if (matches) {
-                console.log(`✅ Guide "${guide.name}" in "${guideLocation}" matches filter "${selectedLocation}" -> "${normalizedLocationName}"`);
-            }
             
             return matches;
         });
         console.log(`📍 Location filter applied: ${filteredGuides.length} guides match "${selectedLocation}"`);
     }
     
-    // Apply language filter using normalization
+    // Apply language filter using normalization  
     if (selectedLanguage && selectedLanguage !== '') {
         filteredGuides = filteredGuides.filter(guide => {
             const languages = guide.languages || [];
             const normalizedLanguages = normalizeLanguage(selectedLanguage);
             
-            console.log(`🗣️ Checking guide languages:`, languages, `against normalized:`, normalizedLanguages);
+            console.log(`🗣️ Checking guide languages:`, languages, `against filter:`, selectedLanguage, `normalized:`, normalizedLanguages);
             
-            // Handle array of languages (API format: ["japanese","chinese","korean"])
+            // Handle array of languages (e.g., ["日本語", "English"])
             if (Array.isArray(languages) && languages.length > 0) {
-                return languages.some(lang => {
+                const matches = languages.some(lang => {
                     if (!lang) return false;
+                    
+                    // Direct match
+                    if (lang === selectedLanguage) {
+                        console.log(`✅ Direct language match: "${lang}" === "${selectedLanguage}"`);
+                        return true;
+                    }
+                    
+                    // Normalized match
                     return normalizedLanguages.some(mapped => {
-                        // Exact match or contains match (case insensitive)
-                        return lang.toLowerCase() === mapped.toLowerCase() ||
-                               lang.toLowerCase().includes(mapped.toLowerCase()) ||
-                               mapped.toLowerCase().includes(lang.toLowerCase());
+                        const match = lang.toLowerCase() === mapped.toLowerCase() ||
+                                     lang.toLowerCase().includes(mapped.toLowerCase()) ||
+                                     mapped.toLowerCase().includes(lang.toLowerCase());
+                        if (match) {
+                            console.log(`✅ Normalized language match: "${lang}" <-> "${mapped}"`);
+                        }
+                        return match;
                     });
                 });
+                return matches;
+            }
+            
+            // Handle string languages (fallback)
+            if (typeof languages === 'string') {
+                return normalizedLanguages.some(mapped => 
+                    languages.toLowerCase().includes(mapped.toLowerCase())
+                );
             }
             
             return false;
@@ -272,23 +298,37 @@ function filterGuides() {
         console.log(`💰 Price filter applied: ${filteredGuides.length} guides match "${selectedPrice}" (price range)`);
     }
     
-    // Apply keyword search (NEW - missing functionality)
+    // Apply keyword search (enhanced for array fields)
     if (keyword && keyword !== '') {
         filteredGuides = filteredGuides.filter(guide => {
-            // Search in multiple fields
+            // Search in multiple fields, handling arrays properly
             const searchFields = [
                 guide.name || '',
                 guide.guideName || '',
-                guide.specialties || '',
+                guide.guideIntroduction || '',
                 guide.introduction || '',
                 guide.location || ''
             ];
+            
+            // Handle array fields like specialties
+            if (Array.isArray(guide.specialties)) {
+                searchFields.push(...guide.specialties);
+            } else if (guide.specialties) {
+                searchFields.push(guide.specialties);
+            }
+            
+            // Handle array fields like languages  
+            if (Array.isArray(guide.languages)) {
+                searchFields.push(...guide.languages);
+            } else if (guide.languages) {
+                searchFields.push(guide.languages);
+            }
             
             const searchText = searchFields.join(' ').toLowerCase();
             const matches = searchText.includes(keyword);
             
             console.log(`🔍 Keyword "${keyword}" check for ${guide.name}:`, {
-                searchText: searchText.substring(0, 100),
+                searchFields: searchFields.slice(0, 5), // Show first 5 fields for debugging
                 matches
             });
             
