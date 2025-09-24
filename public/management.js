@@ -5,7 +5,7 @@
 
 // Management Center Functions
 function showManagementCenter() {
-    console.log('Opening Management Center...');
+    console.log('📊 Opening Management Center from management.js...');
     const managementModal = new bootstrap.Modal(document.getElementById('managementModal'));
     managementModal.show();
     
@@ -14,6 +14,9 @@ function showManagementCenter() {
         loadManagementData();
     }, 100);
 }
+
+// グローバルに公開してindex.htmlの関数を上書き
+window.showManagementCenter = showManagementCenter;
 
 async function loadManagementData() {
     // ガイドデータが読み込まれるまで待機

@@ -2582,10 +2582,10 @@
             const priceFilter = document.getElementById('priceFilter');
             const keywordInput = document.getElementById('keywordInput');
             
-            if (locationFilter) locationFilter.addEventListener('change', filterGuides);
-            if (languageFilter) languageFilter.addEventListener('change', filterGuides);
-            if (priceFilter) priceFilter.addEventListener('change', filterGuides);
-            if (keywordInput) keywordInput.addEventListener('input', filterGuides);
+            if (locationFilter) locationFilter.addEventListener('change', window.filterGuides);
+            if (languageFilter) languageFilter.addEventListener('change', window.filterGuides);
+            if (priceFilter) priceFilter.addEventListener('change', window.filterGuides);
+            if (keywordInput) keywordInput.addEventListener('input', window.filterGuides);
             
             // Registration button event - show choice modal (handled by app-init.mjs)
             // const regBtn = document.getElementById('registerBtn');

@@ -523,15 +523,21 @@ export function createGuideCardHTML(guide) {
                         <h5 class="card-title mb-1">${guide.name || guide.guideName || 'ガイド'}</h5>
                     </div>
                     <div class="mb-2">
-                        <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || '東京'}</span>
-                        <span class="badge bg-secondary me-1">${guide.specialties || guide.guideSpecialties || guide.specialty || '観光案内'}</span>
-                        ${(() => {
-                            // 統一APIを使用した日本語言語バッジ表示
-                            const localizedLanguages = localizeLanguageArray(guide.languages, 'ja');
-                            return localizedLanguages.map(lang => 
-                                `<span class="badge bg-success me-1" style="font-size: 0.75em;">${lang}</span>`
-                            ).join('');
-                        })()}
+                        <div class="mb-1">
+                            <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || '東京'}</span>
+                        </div>
+                        <div class="mb-1">
+                            <span class="badge bg-secondary me-1">${guide.specialties || guide.guideSpecialties || guide.specialty || '観光案内'}</span>
+                        </div>
+                        <div class="mb-1">
+                            ${(() => {
+                                // 統一APIを使用した日本語言語バッジ表示
+                                const localizedLanguages = localizeLanguageArray(guide.languages, 'ja');
+                                return localizedLanguages.map(lang => 
+                                    `<span class="badge bg-success me-1" style="font-size: 0.75em;">${lang}</span>`
+                                ).join('');
+                            })()}
+                        </div>
                     </div>
                     <p class="card-text text-muted small mb-2">${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}</p>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
@@ -549,10 +555,10 @@ export function createGuideCardHTML(guide) {
                             詳細を見る
                         </button>
                         <div class="d-flex gap-2 mt-2">
-                            <button class="${bookmarkBtnClass} bookmark-btn flex-fill" data-guide-id="${guide.id}" title="ブックマーク" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
+                            <button class="${bookmarkBtnClass} bookmark-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-bookmark" title="ブックマーク" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
                                 ${bookmarkIcon} <span class="ms-1">ブックマーク</span>
                             </button>
-                            <button class="${compareBtnClass} compare-btn flex-fill" data-guide-id="${guide.id}" title="比較リストに追加" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
+                            <button class="${compareBtnClass} compare-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-comparison" title="比較リストに追加" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
                                 ${compareIcon} <span class="ms-1">比較</span>
                             </button>
                         </div>
