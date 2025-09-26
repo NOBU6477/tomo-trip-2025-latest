@@ -108,22 +108,27 @@ function loadBookmarksList() {
             .catch(err => console.error('❌ API fallback failed:', err));
         return;
     }
-    bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
-        const guide = allGuides.find(g => g.id == guideId);
-        if (!guide) return '';
+    // ✅ FIX: ブックマーク表示を修正 - ID型の互換性を改善
+    const bookmarkCards = [];
+    for (const guideId of bookmarkedGuides) {
+        const guide = allGuides.find(g => g.id == guideId || g.id == parseInt(guideId) || String(g.id) == String(guideId));
+        if (!guide) {
+            console.warn('⚠️ Bookmarked guide not found:', guideId);
+            continue;
+        }
         
-        return `
+        bookmarkCards.push(`
             <div class="col-md-6 mb-3">
                 <div class="card h-100">
                     <div class="row g-0">
                         <div class="col-4">
-                            <img src="attached_assets/image_1754398586272.png" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="ガイド">
+                            <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="ガイド" onerror="this.src='/assets/img/guides/default-1.svg'">
                         </div>
                         <div class="col-8">
                             <div class="card-body p-3">
-                                <h6 class="card-title mb-1">${guide.name}</h6>
-                                <p class="card-text small text-muted mb-2">${window.locationNames[guide.location] || guide.location}</p>
-                                <p class="card-text"><strong>¥${Number(guide?.price || guide?.sessionRate || 0).toLocaleString()}</strong></p>
+                                <h6 class="card-title mb-1">${guide.name || guide.guideName || 'ガイド'}</h6>
+                                <p class="card-text small text-muted mb-2">${window.locationNames?.[guide.location] || guide.location || guide.city || '東京'}</p>
+                                <p class="card-text"><strong>¥${Number(guide?.price || guide?.sessionRate || guide?.guideSessionRate || 0).toLocaleString()}</strong></p>
                                 <div class="d-flex gap-2">
                                     <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">詳細</button>
                                     <button class="btn btn-outline-danger btn-sm" data-action="remove-bookmark" data-guide-id="${guide.id}">削除</button>
@@ -133,8 +138,18 @@ function loadBookmarksList() {
                     </div>
                 </div>
             </div>
-        `;
-    }).join('');
+        `);
+    }
+    
+    bookmarksList.innerHTML = bookmarkCards.length > 0 ? bookmarkCards.join('') : `
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-bookmark text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">保存されたガイドはありません</p>
+            <p class="small text-muted">ガイドカードの<i class="bi bi-bookmark"></i>ボタンをクリックして保存してください</p>
+        </div>
+    `;
+    
+    console.log('✅ Bookmarks loaded:', bookmarkCards.length, 'guides displayed');
     
     // Setup event listeners for dynamically created buttons
     setupManagementEventListeners();
@@ -211,19 +226,24 @@ function loadComparisonList() {
             .catch(err => console.error('❌ API fallback failed:', err));
         return;
     }
-    comparisonList.innerHTML = comparisonGuides.map(guideId => {
-        const guide = allGuides.find(g => g.id == guideId);
-        if (!guide) return '';
+    // ✅ FIX: 比較リストの表示を修正 - ID型の互換性を改善
+    const comparisonCards = [];
+    for (const guideId of comparisonGuides) {
+        const guide = allGuides.find(g => g.id == guideId || g.id == parseInt(guideId) || String(g.id) == String(guideId));
+        if (!guide) {
+            console.warn('⚠️ Comparison guide not found:', guideId);
+            continue;
+        }
         
-        return `
+        comparisonCards.push(`
             <div class="col-md-4 mb-3">
                 <div class="card h-100 border-success">
-                    <img src="attached_assets/image_1754398586272.png" class="card-img-top" style="height: 120px; object-fit: cover;" alt="ガイド">
+                    <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" class="card-img-top" style="height: 120px; object-fit: cover;" alt="ガイド" onerror="this.src='/assets/img/guides/default-1.svg'">
                     <div class="card-body p-3 d-flex flex-column">
-                        <h6 class="card-title mb-1">${guide.name}</h6>
-                        <p class="card-text small text-muted mb-1">${window.locationNames[guide.location] || guide.location}</p>
-                        <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
-                        <p class="card-text mb-3"><strong>¥${Number(guide?.price || guide?.sessionRate || 0).toLocaleString()}</strong></p>
+                        <h6 class="card-title mb-1">${guide.name || guide.guideName || 'ガイド'}</h6>
+                        <p class="card-text small text-muted mb-1">${window.locationNames?.[guide.location] || guide.location || guide.city || '東京'}</p>
+                        <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating || guide.averageRating || '4.8'}</p>
+                        <p class="card-text mb-3"><strong>¥${Number(guide?.price || guide?.sessionRate || guide?.guideSessionRate || 0).toLocaleString()}</strong></p>
                         <div class="mt-auto">
                             <div class="d-grid gap-2">
                                 <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">
@@ -237,8 +257,18 @@ function loadComparisonList() {
                     </div>
                 </div>
             </div>
-        `;
-    }).join('');
+        `);
+    }
+    
+    comparisonList.innerHTML = comparisonCards.length > 0 ? comparisonCards.join('') : `
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-bar-chart text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">比較中のガイドはありません</p>
+            <p class="small text-muted">ガイドカードの<i class="bi bi-check2-square"></i>ボタンをクリックして追加してください</p>
+        </div>
+    `;
+    
+    console.log('✅ Comparisons loaded:', comparisonCards.length, 'guides displayed');
     
     // Setup event listeners for dynamically created buttons
     setupManagementEventListeners();

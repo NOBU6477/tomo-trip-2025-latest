@@ -30,7 +30,7 @@ async function loadGuidesFromAPI() {
     try {
         // Add timeout and cache-busting for reliability
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // ⚡ 5秒に短縮して遅延を解決
         
         const response = await fetch('/api/guides?' + new Date().getTime(), {
             signal: controller.signal,
