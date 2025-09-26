@@ -308,9 +308,15 @@ async function refreshGuideData(maxRetries = 3) {
             // Always update guides data
             AppState.guides = finalGuides;
             
-            // Re-render guide cards
+            // 🔧 FIX: フィルター状態を保持してレンダリング
             if (typeof renderGuideCards === 'function') {
-                renderGuideCards(AppState.guides, false, false);
+                // フィルターが適用されている場合は、フィルターを再適用
+                if (AppState.isFiltered && typeof window.filterGuides === 'function') {
+                    console.log('🔧 Re-applying filters after data refresh to maintain filter state');
+                    window.filterGuides(); // 同期的にフィルターを再適用
+                } else {
+                    renderGuideCards(AppState.guides, false, false);
+                }
             }
             
             // Update display

@@ -291,8 +291,14 @@ function filterGuides() {
     
     // Update state with filtered results and persistence
     state.filteredGuides = filteredGuides;
-    state.isFiltered = true;
+    state.isFiltered = filteredGuides.length !== state.guides.length; // より正確な判定
     state.currentPage = 1; // Reset to first page
+    
+    console.log('📊 Filter state updated:', {
+        totalGuides: state.guides.length,
+        filteredGuides: filteredGuides.length,
+        isFiltered: state.isFiltered
+    });
     
     // Render with new modular system
     if (window.renderGuideCards) {
@@ -314,14 +320,19 @@ window.resetFilters = function() {
     const locationFilter = document.getElementById('locationFilter');
     const languageFilter = document.getElementById('languageFilter');
     const priceFilter = document.getElementById('priceFilter');
+    const keywordInput = document.getElementById('keywordInput');
     
     if (locationFilter) locationFilter.value = '';
     if (languageFilter) languageFilter.value = '';
     if (priceFilter) priceFilter.value = '';
+    if (keywordInput) keywordInput.value = '';
     
-    // Reload all guides
+    // Clear filter state and reload all guides
     if (window.AppState && window.AppState.originalGuides) {
         window.AppState.guides = [...window.AppState.originalGuides];
+        window.AppState.isFiltered = false;
+        window.AppState.filteredGuides = [];
+        console.log('✅ Filter state cleared and original guides restored');
         window.AppState.filteredGuides = null;
         window.AppState.isFiltered = false;
         window.AppState.currentPage = 1;
@@ -1342,5 +1353,11 @@ function handleManagementCenter() {
     }
 }
 
-// Export the main filterGuides function globally
+// Export the main filterGuides function globally - ensure it's always available
 window.filterGuides = filterGuides;
+
+// 確実にグローバル関数として登録されることを保証
+if (typeof window !== 'undefined') {
+    window.filterGuides = filterGuides;
+    console.log('✅ window.filterGuides function registered globally');
+}

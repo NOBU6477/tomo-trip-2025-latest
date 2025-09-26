@@ -15,13 +15,16 @@ export function renderGuideCards(guidesToRender = null, usePagination = true, re
     if (guidesToRender !== null) {
         // Explicit guides provided - use them even if empty (for filtered results)
         guides = guidesToRender;
+        console.log('🎯 Using provided guides:', guides.length);
     } else {
         // No explicit guides - use filtered guides or all guides
         const appState = window.AppState;
-        if (appState?.isFiltered && appState?.filteredGuides) {
+        if (appState?.isFiltered && appState?.filteredGuides != null) {
             guides = appState.filteredGuides;
+            console.log('🔍 Using filtered guides from AppState:', guides.length);
         } else {
             guides = appState?.guides ?? [];
+            console.log('📦 Using all guides from AppState:', guides.length);
         }
     }
     
