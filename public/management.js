@@ -140,6 +140,41 @@ function loadBookmarksList() {
     setupManagementEventListeners();
 }
 
+// APIガイドデータでブックマークリストを作成するフォールバック関数
+function loadBookmarksListWithGuides(bookmarkedGuides, allGuides) {
+    const bookmarksList = document.getElementById('bookmarksList');
+    
+    bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
+        const guide = allGuides.find(g => g.id == guideId);
+        if (!guide) return '';
+        
+        return `
+            <div class="col-md-6 mb-3">
+                <div class="card h-100">
+                    <div class="row g-0">
+                        <div class="col-4">
+                            <img src="attached_assets/image_1754398586272.png" class="img-fluid rounded-start h-100" style="object-fit: cover;" alt="ガイド">
+                        </div>
+                        <div class="col-8">
+                            <div class="card-body p-3">
+                                <h6 class="card-title mb-1">${guide.name}</h6>
+                                <p class="card-text small text-muted mb-2">${guide.location}</p>
+                                <p class="card-text"><strong>¥${Number(guide?.price || guide?.sessionRate || 0).toLocaleString()}</strong></p>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">詳細</button>
+                                    <button class="btn btn-outline-danger btn-sm" data-action="remove-bookmark" data-guide-id="${guide.id}">削除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    setupManagementEventListeners();
+}
+
 function loadComparisonList() {
     const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
     const comparisonList = document.getElementById('comparisonList');
@@ -206,6 +241,42 @@ function loadComparisonList() {
     }).join('');
     
     // Setup event listeners for dynamically created buttons
+    setupManagementEventListeners();
+}
+
+// APIガイドデータで比較リストを作成するフォールバック関数
+function loadComparisonListWithGuides(comparisonGuides, allGuides) {
+    const comparisonList = document.getElementById('comparisonList');
+    
+    comparisonList.innerHTML = comparisonGuides.map(guideId => {
+        const guide = allGuides.find(g => g.id == guideId);
+        if (!guide) return '';
+        
+        return `
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 border-success">
+                    <img src="attached_assets/image_1754398586272.png" class="card-img-top" style="height: 120px; object-fit: cover;" alt="ガイド">
+                    <div class="card-body p-3 d-flex flex-column">
+                        <h6 class="card-title mb-1">${guide.name}</h6>
+                        <p class="card-text small text-muted mb-1">${guide.location}</p>
+                        <p class="card-text small mb-2"><span class="text-warning">★</span> ${guide.rating}</p>
+                        <p class="card-text mb-3"><strong>¥${Number(guide?.price || guide?.sessionRate || 0).toLocaleString()}</strong></p>
+                        <div class="mt-auto">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" data-action="show-guide-detail" data-guide-id="${guide.id}">
+                                    <i class="bi bi-info-circle me-1"></i>詳細
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" data-action="remove-from-comparison" data-guide-id="${guide.id}">
+                                    <i class="bi bi-x me-1"></i>比較から除外
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
     setupManagementEventListeners();
 }
 

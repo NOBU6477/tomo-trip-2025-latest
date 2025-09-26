@@ -12,7 +12,7 @@ export function generatePrefectureOptions() {
     "中国地方": ["tottori", "shimane", "okayama", "hiroshima", "yamaguchi"],
     "四国地方": ["tokushima", "kagawa", "ehime", "kochi"],
     "九州地方": ["fukuoka", "saga", "nagasaki", "kumamoto", "oita", "miyazaki", "kagoshima"],
-    "沖縄・離島": ["okinawa", "remote_islands"]
+    "沖縄地方": ["okinawa"]
   };
 
   let optionsHTML = '<option value="">活動地域を選択してください</option>\n';
@@ -29,6 +29,32 @@ export function generatePrefectureOptions() {
     
     optionsHTML += `</optgroup>\n`;
   });
+
+  // 離島選択肢を詳細化して追加
+  const remoteIslandsData = prefecturesData["remote_islands"];
+  if (remoteIslandsData && remoteIslandsData.subregions) {
+    optionsHTML += '<optgroup label="離島地域（詳細選択）">\n';
+    
+    // 全離島オプション
+    optionsHTML += '    <option value="remote_islands">離島地域（全体）</option>\n';
+    
+    // 地域別離島オプション
+    Object.entries(remoteIslandsData.subregions).forEach(([subregionCode, subregionData]) => {
+      optionsHTML += `    <option value="${subregionCode}">${subregionData.name}</option>\n`;
+    });
+    
+    optionsHTML += '</optgroup>\n';
+    
+    // 個別離島選択オプション
+    optionsHTML += '<optgroup label="個別離島選択">\n';
+    Object.entries(remoteIslandsData.subregions).forEach(([subregionCode, subregionData]) => {
+      subregionData.islands.forEach(island => {
+        const islandCode = `island_${island.replace(/[^\w]/g, '_')}`;
+        optionsHTML += `    <option value="${islandCode}">${island}</option>\n`;
+      });
+    });
+    optionsHTML += '</optgroup>\n';
+  }
 
   return optionsHTML;
 }
