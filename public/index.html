@@ -899,19 +899,19 @@
                 TomoTrip
             </a>
             
-            <div class="d-flex">
-                <button class="btn btn-success me-2" id="dashboardBtn" title="Sponsor Management Dashboard">
-                    <i class="bi bi-shop"></i> <span class="d-none d-md-inline">Dashboard</span>
+            <div class="d-flex align-items-center justify-content-end gap-2" style="flex-grow: 1;">
+                <button class="btn btn-success btn-sm" id="dashboardBtn" title="Sponsor Management Dashboard" style="font-size: 0.8rem; padding: 6px 10px;">
+                    <i class="bi bi-shop"></i> <span class="d-none d-lg-inline">Dashboard</span>
                 </button>
-                <div class="login-buttons-container d-flex gap-2 me-2">
-                    <button class="btn login-btn-tourist" id="directTouristLoginBtn" type="button" style="background: linear-gradient(135deg, #4fd1c7, #00b4d8); color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; box-shadow: 0 4px 15px rgba(79, 209, 199, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden;">
-                        <i class="bi bi-person-circle me-1"></i>観光客
+                <div class="login-buttons-container d-flex gap-1">
+                    <button class="btn login-btn-tourist btn-sm" id="directTouristLoginBtn" type="button" style="background: linear-gradient(135deg, #4fd1c7, #00b4d8); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: 500; font-size: 0.8rem; transition: all 0.3s ease;">
+                        <i class="bi bi-person-circle me-1"></i><span class="d-none d-md-inline">観光客</span>
                     </button>
-                    <button class="btn login-btn-guide" id="directGuideLoginBtn" type="button" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); transition: all 0.3s ease; position: relative; overflow: hidden;">
-                        <i class="bi bi-person-badge me-1"></i>ガイド
+                    <button class="btn login-btn-guide btn-sm" id="directGuideLoginBtn" type="button" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 6px 12px; border-radius: 20px; font-weight: 500; font-size: 0.8rem; transition: all 0.3s ease;">
+                        <i class="bi bi-person-badge me-1"></i><span class="d-none d-md-inline">ガイド</span>
                     </button>
                 </div>
-                <button class="btn btn-primary" id="registerBtn">新規登録</button>
+                <button class="btn btn-primary btn-sm" id="registerBtn" style="font-size: 0.8rem; padding: 6px 12px; border-radius: 20px;">新規登録</button>
             </div>
         </div>
     </nav>
@@ -1976,31 +1976,8 @@
         
         // 検索数表示カウンターシステム
         function updateSearchCounters() {
-            const guideCounterElement = document.getElementById('guideCounter');
-            const totalGuideCounterElement = document.getElementById('totalGuideCounter');
-            
-            // 全登録ガイド数（デフォルト15 + 新規登録）
-            const totalRegisteredGuides = (typeof allGuides !== 'undefined') ? allGuides.length : (currentGuides?.length || 15);
-            
-            // 現在表示されている（フィルター後の）ガイド数
-            const filteredGuides = currentGuides.length;
-            
-            // 現在のページで表示されているガイド数
-            const displayedCount = Math.min(guidesPerPage, filteredGuides - (currentPage - 1) * guidesPerPage);
-            const startIndex = (currentPage - 1) * guidesPerPage + 1;
-            const endIndex = Math.min(currentPage * guidesPerPage, filteredGuides);
-            
-            if (guideCounterElement && totalGuideCounterElement) {
-                // 言語に応じたカウンター表示
-                const lang = getCurrentPageLanguage();
-                if (lang === 'ja') {
-                    guideCounterElement.textContent = `${startIndex}-${endIndex}件表示中 (${filteredGuides}件中)`;
-                    totalGuideCounterElement.textContent = `全体: ${totalRegisteredGuides}名のガイドが登録済み`;
-                } else {
-                    guideCounterElement.textContent = `${startIndex}-${endIndex} shown (${filteredGuides} total)`;
-                    totalGuideCounterElement.textContent = `Total: ${totalRegisteredGuides} guides registered`;
-                }
-            }
+            // 🔧 FIX: カウンター更新は統一されたupdateGuideCounters関数を使用
+            // （guide-renderer.mjsのupdateGuideCounters関数に委託して重複を避ける）
         }
 
         // Add event listeners to cards

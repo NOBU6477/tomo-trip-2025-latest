@@ -158,8 +158,26 @@ function renderAllGuideCards(guides) {
     
     if (!Array.isArray(guides) || guides.length === 0) {
         console.warn('⚠️ No guides to render');
-        container.innerHTML = '<div class="text-center p-4"><p class="text-muted">ガイドが見つかりません</p></div>';
-        updateGuideCounters(0, 0);
+        // 🔧 FIX: フィルター処理中かどうかを確認して適切なメッセージを表示
+        const isFilteringInProgress = window.AppState?.isFiltered;
+        const message = isFilteringInProgress ? 
+            '<div class="text-center p-4"><div class="spinner-border spinner-border-sm me-2" role="status"></div><p class="text-muted mt-2">フィルター処理中...</p></div>' :
+            '<div class="text-center p-4"><p class="text-muted">ガイドが見つかりません</p></div>';
+        
+        // 短い遅延を設けて、フィルター処理の完了を待つ
+        if (isFilteringInProgress) {
+            setTimeout(() => {
+                // フィルター処理が完了しても結果が空の場合のみ「見つかりません」を表示
+                if (container && (!Array.isArray(guides) || guides.length === 0)) {
+                    container.innerHTML = '<div class="text-center p-4"><p class="text-muted">条件に一致するガイドが見つかりません</p></div>';
+                }
+            }, 300);
+            container.innerHTML = message;
+        } else {
+            container.innerHTML = message;
+        }
+        
+        updateGuideCounters(0, window.AppState?.guides?.length || 0);
         return;
     }
     
@@ -294,17 +312,53 @@ export function updateGuideCounters(displayedCount, totalCount) {
     const guideCounterElement = document.getElementById('guideCounter');
     const totalGuideCounterElement = document.getElementById('totalGuideCounter');
     
+    console.log('🔢 Updating counters:', { displayedCount, totalCount, guideCounterElement: !!guideCounterElement, totalGuideCounterElement: !!totalGuideCounterElement });
+    
     if (guideCounterElement && totalGuideCounterElement) {
         // Language detection for proper counter display
         const isEnglish = window.location.pathname.includes('index-en.html');
         
-        if (isEnglish) {
-            guideCounterElement.textContent = `${displayedCount || totalCount} guides shown`;
-            totalGuideCounterElement.textContent = `Total: ${totalCount} guides registered`;
-        } else {
-            guideCounterElement.textContent = `${displayedCount || totalCount}件表示中`;
-            totalGuideCounterElement.textContent = `全体: ${totalCount}名のガイドが登録済み`;
+        // Get accurate data from AppState
+        const appState = window.AppState || {};
+        const currentPage = appState.currentPage || 1;
+        const isFiltered = appState.isFiltered || false;
+        
+        // Get accurate totals
+        const allGuidesCount = appState.originalGuides?.length || appState.guides?.length || totalCount || displayedCount;
+        const filteredTotal = isFiltered ? (appState.filteredGuides?.length || appState.guides?.length || totalCount || displayedCount) : allGuidesCount;
+        
+        // Determine page size based on viewport and pagination system
+        let itemsPerPage = 12; // Default for desktop
+        if (window.innerWidth <= 768) {
+            itemsPerPage = 6; // Mobile/tablet
         }
+        // Override with actual pagination system if available
+        if (window.paginationSystem?.itemsPerPage) {
+            itemsPerPage = window.paginationSystem.itemsPerPage;
+        }
+        
+        // Calculate accurate ranges
+        const startIndex = (currentPage - 1) * itemsPerPage + 1;
+        const endIndex = Math.min(startIndex + displayedCount - 1, filteredTotal);
+        
+        if (isEnglish) {
+            guideCounterElement.textContent = `${startIndex}-${endIndex} shown (${filteredTotal} total)`;
+            totalGuideCounterElement.textContent = `Total: ${allGuidesCount} guides registered`;
+        } else {
+            if (filteredTotal === 0) {
+                guideCounterElement.textContent = `0件表示中`;
+            } else {
+                guideCounterElement.textContent = `${startIndex}-${endIndex}件表示中 (${filteredTotal}件中)`;
+            }
+            totalGuideCounterElement.textContent = `全体: ${allGuidesCount}名のガイドが登録済み`;
+        }
+        
+        console.log(`📊 Counters updated: ${startIndex}-${endIndex} shown (${filteredTotal} filtered, ${allGuidesCount} total), itemsPerPage: ${itemsPerPage}, viewport: ${window.innerWidth}px`);
+    } else {
+        console.warn('⚠️ Counter elements not found:', {
+            guideCounter: !!guideCounterElement,
+            totalGuideCounter: !!totalGuideCounterElement
+        });
     }
 }
 
@@ -479,12 +533,24 @@ export function createGuideCardHTML(guide) {
     // Location names mapping for Japanese display
     const locationNames = window.locationNames || {};
     
-    // Check bookmark and comparison status
+    // Check bookmark and comparison status with enhanced debugging
     const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
     const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+    const guideIdInt = parseInt(guide.id);
+    const guideIdStr = String(guide.id);
     
-    const isBookmarked = bookmarkedGuides.includes(guide.id) || bookmarkedGuides.includes(parseInt(guide.id));
-    const isInComparison = comparisonGuides.includes(guide.id) || comparisonGuides.includes(parseInt(guide.id));
+    const isBookmarked = bookmarkedGuides.includes(guide.id) || bookmarkedGuides.includes(guideIdInt) || bookmarkedGuides.includes(guideIdStr);
+    const isInComparison = comparisonGuides.includes(guide.id) || comparisonGuides.includes(guideIdInt) || comparisonGuides.includes(guideIdStr);
+    
+    console.log('🔍 Guide card button states:', {
+        guideId: guide.id,
+        guideIdInt,
+        guideIdStr,
+        bookmarkedGuides,
+        comparisonGuides,
+        isBookmarked,
+        isInComparison
+    });
     
     // Dynamic button states
     const bookmarkBtnClass = isBookmarked ? 'btn btn-warning btn-sm' : 'btn btn-outline-warning btn-sm';
