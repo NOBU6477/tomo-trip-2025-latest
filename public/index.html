@@ -2582,10 +2582,20 @@
             const priceFilter = document.getElementById('priceFilter');
             const keywordInput = document.getElementById('keywordInput');
             
-            if (locationFilter) locationFilter.addEventListener('change', window.filterGuides);
-            if (languageFilter) languageFilter.addEventListener('change', window.filterGuides);
-            if (priceFilter) priceFilter.addEventListener('change', window.filterGuides);
-            if (keywordInput) keywordInput.addEventListener('input', window.filterGuides);
+            // フィルターイベントリスナーの設定（タイミング問題を解決）
+            function safeFilterGuides() {
+                if (window.filterGuides && typeof window.filterGuides === 'function') {
+                    window.filterGuides();
+                } else {
+                    console.warn('⚠️ window.filterGuides not ready, retrying in 100ms...');
+                    setTimeout(safeFilterGuides, 100);
+                }
+            }
+            
+            if (locationFilter) locationFilter.addEventListener('change', safeFilterGuides);
+            if (languageFilter) languageFilter.addEventListener('change', safeFilterGuides);
+            if (priceFilter) priceFilter.addEventListener('change', safeFilterGuides);
+            if (keywordInput) keywordInput.addEventListener('input', safeFilterGuides);
             
             // Registration button event - show choice modal (handled by app-init.mjs)
             // const regBtn = document.getElementById('registerBtn');

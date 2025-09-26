@@ -89,8 +89,25 @@ function loadBookmarksList() {
         return;
     }
     
-    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
+    // ガイドデータを複数のソースから取得（フォールバック機能付き）
+    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || window.guidesData || [];
     console.log('📋 All guides for bookmarks:', allGuides.length);
+    
+    // APIから直接ガイドデータを取得するフォールバック
+    if (allGuides.length === 0) {
+        console.warn('⚠️ No guide data in AppState, trying API fallback...');
+        fetch('/api/guides')
+            .then(res => res.json())
+            .then(apiGuides => {
+                console.log('📋 Loaded guides from API:', apiGuides.length);
+                if (apiGuides.length > 0) {
+                    // APIガイドデータでブックマークリストを再作成
+                    loadBookmarksListWithGuides(bookmarkedGuides, apiGuides);
+                }
+            })
+            .catch(err => console.error('❌ API fallback failed:', err));
+        return;
+    }
     bookmarksList.innerHTML = bookmarkedGuides.map(guideId => {
         const guide = allGuides.find(g => g.id == guideId);
         if (!guide) return '';
@@ -140,8 +157,25 @@ function loadComparisonList() {
         return;
     }
     
-    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
+    // ガイドデータを複数のソースから取得（フォールバック機能付き）
+    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || window.guidesData || [];
     console.log('📊 All guides for comparison:', allGuides.length);
+    
+    // APIから直接ガイドデータを取得するフォールバック
+    if (allGuides.length === 0) {
+        console.warn('⚠️ No guide data in AppState, trying API fallback...');
+        fetch('/api/guides')
+            .then(res => res.json())
+            .then(apiGuides => {
+                console.log('📊 Loaded guides from API:', apiGuides.length);
+                if (apiGuides.length > 0) {
+                    // APIガイドデータで比較リストを再作成
+                    loadComparisonListWithGuides(comparisonGuides, apiGuides);
+                }
+            })
+            .catch(err => console.error('❌ API fallback failed:', err));
+        return;
+    }
     comparisonList.innerHTML = comparisonGuides.map(guideId => {
         const guide = allGuides.find(g => g.id == guideId);
         if (!guide) return '';
