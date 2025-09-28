@@ -2269,6 +2269,93 @@
             return window.AppState?.originalGuides || window.AppState?.guides || window.guidesData || [];
         };
 
+        // ✅ localStorage形式統一マイグレーション機能
+        window.migrateStorageFormats = function() {
+            console.log('🔄 Starting localStorage migration...');
+            
+            try {
+                // マイグレーション済みフラグをチェック
+                const migrationKey = 'tomotrip_storage_migrated_v1';
+                if (localStorage.getItem(migrationKey) === 'true') {
+                    console.log('✅ Storage already migrated, skipping');
+                    return;
+                }
+                
+                // ブックマークのマイグレーション
+                const migrateBookmarks = () => {
+                    const bookmarkKey = 'bookmarkedGuides';
+                    const currentBookmarks = localStorage.getItem(bookmarkKey);
+                    
+                    if (currentBookmarks) {
+                        try {
+                            const parsed = JSON.parse(currentBookmarks);
+                            
+                            // ID配列に正規化（オブジェクト配列の場合）
+                            const normalizedIds = parsed.map(item => {
+                                if (typeof item === 'object' && item !== null) {
+                                    return parseInt(item.id) || item.id;
+                                }
+                                return parseInt(item) || item;
+                            }).filter(id => id !== null && id !== undefined);
+                            
+                            // 重複除去
+                            const uniqueIds = [...new Set(normalizedIds)];
+                            
+                            localStorage.setItem(bookmarkKey, JSON.stringify(uniqueIds));
+                            console.log('✅ Migrated bookmarks:', uniqueIds.length, 'items');
+                        } catch (error) {
+                            console.warn('⚠️ Bookmark migration error:', error);
+                            localStorage.setItem(bookmarkKey, '[]');
+                        }
+                    } else {
+                        localStorage.setItem(bookmarkKey, '[]');
+                    }
+                };
+                
+                // 比較リストのマイグレーション
+                const migrateComparisons = () => {
+                    const comparisonKey = 'comparisonGuides';
+                    const currentComparisons = localStorage.getItem(comparisonKey);
+                    
+                    if (currentComparisons) {
+                        try {
+                            const parsed = JSON.parse(currentComparisons);
+                            
+                            // ID配列に正規化（オブジェクト配列の場合）
+                            const normalizedIds = parsed.map(item => {
+                                if (typeof item === 'object' && item !== null) {
+                                    return parseInt(item.id) || item.id;
+                                }
+                                return parseInt(item) || item;
+                            }).filter(id => id !== null && id !== undefined);
+                            
+                            // 重複除去 & 3件制限
+                            const uniqueIds = [...new Set(normalizedIds)].slice(0, 3);
+                            
+                            localStorage.setItem(comparisonKey, JSON.stringify(uniqueIds));
+                            console.log('✅ Migrated comparisons:', uniqueIds.length, 'items');
+                        } catch (error) {
+                            console.warn('⚠️ Comparison migration error:', error);
+                            localStorage.setItem(comparisonKey, '[]');
+                        }
+                    } else {
+                        localStorage.setItem(comparisonKey, '[]');
+                    }
+                };
+                
+                // マイグレーション実行
+                migrateBookmarks();
+                migrateComparisons();
+                
+                // マイグレーション完了フラグを設定
+                localStorage.setItem(migrationKey, 'true');
+                console.log('✅ Storage migration completed successfully');
+                
+            } catch (error) {
+                console.error('❌ Storage migration failed:', error);
+            }
+        };
+
         // Filter functions moved to app-init.mjs to prevent conflicts
 
         // Reset function moved to app-init.mjs to prevent conflicts

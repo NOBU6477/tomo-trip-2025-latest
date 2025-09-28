@@ -19,6 +19,11 @@ function showManagementCenter() {
 window.showManagementCenter = showManagementCenter;
 
 async function loadManagementData() {
+    // ✅ マイグレーション実行（最初に一度のみ）
+    if (window.migrateStorageFormats) {
+        window.migrateStorageFormats();
+    }
+    
     // ガイドデータが読み込まれるまで待機
     await waitForGuideData();
     
@@ -73,11 +78,11 @@ function updateLoadingStatus(attempt, maxAttempts) {
 }
 
 function loadBookmarksList() {
-    // ✅ 統一されたBookmarkManagerを使用
-    const bookmarkedGuides = window.BookmarkManager ? window.BookmarkManager.getAll() : JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    // ✅ Manager経由でのみアクセス（直接localStorage読み取り除去）
+    const bookmarkedGuides = window.BookmarkManager ? window.BookmarkManager.getAll() : [];
     const bookmarksList = document.getElementById('bookmarksList');
     
-    console.log('📋 Loading bookmarks:', { bookmarkedGuides, count: bookmarkedGuides.length });
+    console.log('📋 Loading bookmarks via Manager:', { bookmarkedGuides, count: bookmarkedGuides.length });
     
     if (bookmarkedGuides.length === 0) {
         bookmarksList.innerHTML = `
@@ -208,11 +213,11 @@ function loadBookmarksListWithGuides(bookmarkedGuides, allGuides) {
 }
 
 function loadComparisonList() {
-    // ✅ 統一されたComparisonManagerを使用
-    const comparisonGuides = window.ComparisonManager ? window.ComparisonManager.getAll() : JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+    // ✅ Manager経由でのみアクセス（直接localStorage読み取り除去）
+    const comparisonGuides = window.ComparisonManager ? window.ComparisonManager.getAll() : [];
     const comparisonList = document.getElementById('comparisonList');
     
-    console.log('📊 Loading comparisons:', { comparisonGuides, count: comparisonGuides.length });
+    console.log('📊 Loading comparisons via Manager:', { comparisonGuides, count: comparisonGuides.length });
     
     if (comparisonGuides.length === 0) {
         comparisonList.innerHTML = `
