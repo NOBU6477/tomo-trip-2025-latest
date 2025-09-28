@@ -2024,62 +2024,226 @@
 
         // Removed empty viewGuideDetail function - full implementation exists later
 
-        // Add to bookmarks - Real implementation
-        function addToBookmarks(guideId) {
-            console.log('Adding to bookmarks:', guideId);
-            
-            // Get current bookmarks
-            let bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-            
-            // Check if already bookmarked
-            if (!bookmarkedGuides.includes(guideId) && !bookmarkedGuides.includes(parseInt(guideId))) {
-                bookmarkedGuides.push(guideId);
-                localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+        // ✅ 統一されたブックマーク管理システム
+        window.BookmarkManager = {
+            add: function(guideId) {
+                console.log('📌 Adding to bookmarks:', guideId);
                 
-                // Update button state
-                document.querySelectorAll(`.bookmark-btn[data-guide-id="${guideId}"]`).forEach(btn => {
-                    btn.classList.remove('btn-outline-warning');
-                    btn.classList.add('btn-warning');
+                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+                const id = parseInt(guideId);
+                
+                if (!bookmarkedGuides.includes(id) && !bookmarkedGuides.includes(guideId)) {
+                    bookmarkedGuides.push(id);
+                    localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+                    
+                    this.updateButtonStates();
+                    this.showNotification('ブックマークに追加しました', 'success');
+                    
+                    console.log('✅ Bookmark added:', id, 'Total bookmarks:', bookmarkedGuides.length);
+                    return true;
+                } else {
+                    console.log('⚠️ Guide already bookmarked:', guideId);
+                    return false;
+                }
+            },
+            
+            remove: function(guideId) {
+                console.log('📌 Removing from bookmarks:', guideId);
+                
+                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+                const id = parseInt(guideId);
+                
+                const updatedBookmarks = bookmarkedGuides.filter(bookmarkId => 
+                    bookmarkId !== id && bookmarkId !== guideId
+                );
+                
+                if (updatedBookmarks.length !== bookmarkedGuides.length) {
+                    localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+                    
+                    this.updateButtonStates();
+                    this.showNotification('ブックマークから削除しました', 'info');
+                    
+                    console.log('✅ Bookmark removed:', id, 'Remaining bookmarks:', updatedBookmarks.length);
+                    return true;
+                } else {
+                    console.log('⚠️ Guide not in bookmarks:', guideId);
+                    return false;
+                }
+            },
+            
+            toggle: function(guideId) {
+                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+                const id = parseInt(guideId);
+                
+                if (bookmarkedGuides.includes(id) || bookmarkedGuides.includes(guideId)) {
+                    return this.remove(guideId);
+                } else {
+                    return this.add(guideId);
+                }
+            },
+            
+            isBookmarked: function(guideId) {
+                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+                const id = parseInt(guideId);
+                return bookmarkedGuides.includes(id) || bookmarkedGuides.includes(guideId);
+            },
+            
+            getAll: function() {
+                return JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            },
+            
+            updateButtonStates: function() {
+                document.querySelectorAll('.bookmark-btn').forEach(btn => {
+                    const guideId = btn.getAttribute('data-guide-id');
+                    const isBookmarked = this.isBookmarked(guideId);
+                    
+                    if (isBookmarked) {
+                        btn.classList.remove('btn-outline-warning');
+                        btn.classList.add('btn-warning');
+                        btn.innerHTML = '<i class="bi bi-bookmark-fill"></i> <span class="ms-1">保存済み</span>';
+                    } else {
+                        btn.classList.remove('btn-warning');
+                        btn.classList.add('btn-outline-warning');
+                        btn.innerHTML = '<i class="bi bi-bookmark"></i> <span class="ms-1">ブックマーク</span>';
+                    }
                 });
-                
-                console.log('✅ Guide added to bookmarks');
+            },
+            
+            showNotification: function(message, type = 'info') {
                 if (typeof safeShowToast === 'function') {
-                    safeShowToast('ブックマークに追加しました', 'success');
+                    safeShowToast(message, type);
+                } else {
+                    // フォールバック通知システム
+                    const notification = document.createElement('div');
+                    notification.className = `alert alert-${type === 'success' ? 'success' : 'info'} position-fixed`;
+                    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+                    notification.innerHTML = `${message} <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>`;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        if (notification.parentElement) notification.remove();
+                    }, 3000);
                 }
             }
+        };
+        
+        // 後方互換性のための関数エイリアス
+        function addToBookmarks(guideId) {
+            return window.BookmarkManager.add(guideId);
         }
 
-        // Add to comparison - Real implementation
-        function addToComparison(guideId) {
-            console.log('Adding to comparison:', guideId);
-            
-            // Get current comparison list
-            let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-            
-            // Check comparison limit
-            if (comparisonGuides.length >= 3) {
-                if (typeof safeShowToast === 'function') {
-                    safeShowToast('比較リストは最大3件までです', 'warning');
-                }
-                return;
-            }
-            
-            // Check if already in comparison
-            if (!comparisonGuides.includes(guideId) && !comparisonGuides.includes(parseInt(guideId))) {
-                comparisonGuides.push(guideId);
-                localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+        // ✅ 統一された比較管理システム
+        window.ComparisonManager = {
+            add: function(guideId) {
+                console.log('📊 Adding to comparison:', guideId);
                 
-                // Update button state
-                document.querySelectorAll(`.compare-btn[data-guide-id="${guideId}"]`).forEach(btn => {
-                    btn.classList.remove('btn-outline-success');
-                    btn.classList.add('btn-success');
+                const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+                const id = parseInt(guideId);
+                
+                // 比較リストの上限チェック
+                if (comparisonGuides.length >= 3) {
+                    this.showNotification('比較リストは最大3件までです', 'warning');
+                    return false;
+                }
+                
+                if (!comparisonGuides.includes(id) && !comparisonGuides.includes(guideId)) {
+                    comparisonGuides.push(id);
+                    localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+                    
+                    this.updateButtonStates();
+                    this.showNotification('比較リストに追加しました', 'success');
+                    
+                    console.log('✅ Comparison added:', id, 'Total comparisons:', comparisonGuides.length);
+                    return true;
+                } else {
+                    console.log('⚠️ Guide already in comparison:', guideId);
+                    return false;
+                }
+            },
+            
+            remove: function(guideId) {
+                console.log('📊 Removing from comparison:', guideId);
+                
+                const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+                const id = parseInt(guideId);
+                
+                const updatedComparison = comparisonGuides.filter(compareId => 
+                    compareId !== id && compareId !== guideId
+                );
+                
+                if (updatedComparison.length !== comparisonGuides.length) {
+                    localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
+                    
+                    this.updateButtonStates();
+                    this.showNotification('比較リストから削除しました', 'info');
+                    
+                    console.log('✅ Comparison removed:', id, 'Remaining comparisons:', updatedComparison.length);
+                    return true;
+                } else {
+                    console.log('⚠️ Guide not in comparison:', guideId);
+                    return false;
+                }
+            },
+            
+            toggle: function(guideId) {
+                const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+                const id = parseInt(guideId);
+                
+                if (comparisonGuides.includes(id) || comparisonGuides.includes(guideId)) {
+                    return this.remove(guideId);
+                } else {
+                    return this.add(guideId);
+                }
+            },
+            
+            isInComparison: function(guideId) {
+                const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+                const id = parseInt(guideId);
+                return comparisonGuides.includes(id) || comparisonGuides.includes(guideId);
+            },
+            
+            getAll: function() {
+                return JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+            },
+            
+            updateButtonStates: function() {
+                document.querySelectorAll('.compare-btn').forEach(btn => {
+                    const guideId = btn.getAttribute('data-guide-id');
+                    const isInComparison = this.isInComparison(guideId);
+                    
+                    if (isInComparison) {
+                        btn.classList.remove('btn-outline-success');
+                        btn.classList.add('btn-success');
+                        btn.innerHTML = '<i class="bi bi-check2-square-fill"></i> <span class="ms-1">比較中</span>';
+                    } else {
+                        btn.classList.remove('btn-success');
+                        btn.classList.add('btn-outline-success');
+                        btn.innerHTML = '<i class="bi bi-check2-square"></i> <span class="ms-1">比較</span>';
+                    }
                 });
-                
-                console.log('✅ Guide added to comparison');
+            },
+            
+            showNotification: function(message, type = 'info') {
                 if (typeof safeShowToast === 'function') {
-                    safeShowToast('比較リストに追加しました', 'success');
+                    safeShowToast(message, type);
+                } else {
+                    // フォールバック通知システム
+                    const notification = document.createElement('div');
+                    notification.className = `alert alert-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'info')} position-fixed`;
+                    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 250px;';
+                    notification.innerHTML = `${message} <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>`;
+                    document.body.appendChild(notification);
+                    
+                    setTimeout(() => {
+                        if (notification.parentElement) notification.remove();
+                    }, 3000);
                 }
             }
+        };
+        
+        // 後方互換性のための関数エイリアス
+        function addToComparison(guideId) {
+            return window.ComparisonManager.add(guideId);
         }
 
         // Filter functions moved to app-init.mjs to prevent conflicts

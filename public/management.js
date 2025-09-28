@@ -73,10 +73,11 @@ function updateLoadingStatus(attempt, maxAttempts) {
 }
 
 function loadBookmarksList() {
-    const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+    // ✅ 統一されたBookmarkManagerを使用
+    const bookmarkedGuides = window.BookmarkManager ? window.BookmarkManager.getAll() : JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
     const bookmarksList = document.getElementById('bookmarksList');
     
-    console.log('📋 Loading bookmarks:', { bookmarkedGuides, localStorage: localStorage.getItem('bookmarkedGuides') });
+    console.log('📋 Loading bookmarks:', { bookmarkedGuides, count: bookmarkedGuides.length });
     
     if (bookmarkedGuides.length === 0) {
         bookmarksList.innerHTML = `
@@ -207,10 +208,11 @@ function loadBookmarksListWithGuides(bookmarkedGuides, allGuides) {
 }
 
 function loadComparisonList() {
-    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+    // ✅ 統一されたComparisonManagerを使用
+    const comparisonGuides = window.ComparisonManager ? window.ComparisonManager.getAll() : JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
     const comparisonList = document.getElementById('comparisonList');
     
-    console.log('📊 Loading comparisons:', { comparisonGuides, localStorage: localStorage.getItem('comparisonGuides') });
+    console.log('📊 Loading comparisons:', { comparisonGuides, count: comparisonGuides.length });
     
     if (comparisonGuides.length === 0) {
         comparisonList.innerHTML = `
