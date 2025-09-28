@@ -83,37 +83,92 @@ export function getCurrentFilterValues() {
     };
 }
 
-// 検索実行
-export function executeSearch() {
-    if (!window.AppState || !window.AppState.guides) {
-        console.warn('❌ AppState or guides not available for search');
-        return;
+// ✅ 修正版: ガイドデータ準備完了を待つ非同期検索実行
+export async function executeSearch() {
+    console.log('🔍 Executing search with data readiness check...');
+    
+    try {
+        // ✅ AppState.isFiltering フラグを設定
+        if (window.AppState) {
+            window.AppState.isFiltering = true;
+            window.AppState.isFiltered = false;
+        }
+        
+        // ✅ ガイドデータの読み込み完了を待機
+        let guides = [];
+        if (window.waitForGuideData) {
+            guides = await window.waitForGuideData(5000); // 5秒待機
+        } else {
+            // フォールバック: 従来の方法
+            guides = window.AppState?.originalGuides || window.AppState?.guides || window.guidesData || [];
+        }
+        
+        console.log('📋 Available guides for search:', guides.length);
+        
+        if (guides.length === 0) {
+            console.warn('⚠️ No guides available for search');
+            
+            // ✅ AppState更新
+            if (window.AppState) {
+                window.AppState.isFiltering = false;
+                window.AppState.isFiltered = true;
+                window.AppState.filteredGuides = [];
+                window.AppState.guides = [];
+            }
+            
+            if (window.renderGuideCards) {
+                window.renderGuideCards([]);
+            }
+            return [];
+        }
+        
+        const filters = getCurrentFilterValues();
+        console.log('🔍 Applying filters:', filters);
+        
+        const filteredGuides = applyAdvancedFilters(guides, filters);
+        
+        console.log(`✅ Search completed: ${filteredGuides.length}/${guides.length} guides found`);
+        
+        // ✅ AppState with filtered results を適切に設定
+        if (window.AppState) {
+            window.AppState.isFiltering = false;
+            window.AppState.isFiltered = true;
+            window.AppState.filteredGuides = filteredGuides;
+            window.AppState.guides = filteredGuides;
+            window.AppState.currentPage = 1; // Reset to first page
+        }
+        
+        // ガイドカードを再描画
+        if (window.renderGuideCards) {
+            window.renderGuideCards(filteredGuides);
+        }
+        
+        // 結果セクションにスクロール
+        const guideSection = document.getElementById('guideSection') || document.querySelector('.guide-cards-container');
+        if (guideSection) {
+            guideSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        return filteredGuides;
+        
+    } catch (error) {
+        console.error('❌ Search execution error:', error);
+        
+        // ✅ エラー時のAppState更新
+        if (window.AppState) {
+            window.AppState.isFiltering = false;
+            window.AppState.isFiltered = true;
+            window.AppState.filteredGuides = [];
+            window.AppState.guides = [];
+        }
+        
+        // Show error state
+        if (window.renderGuideCards) {
+            window.renderGuideCards([]);
+        }
+        
+        return [];
     }
-    
-    const filters = getCurrentFilterValues();
-    console.log('🔍 Applying filters:', filters);
-    
-    const filteredGuides = applyAdvancedFilters(window.AppState.guides, filters);
-    
-    console.log(`✅ Search completed: ${filteredGuides.length}/${window.AppState.guides.length} guides found`);
-    
-    // ガイドカードを再描画
-    if (window.renderGuideCards) {
-        window.renderGuideCards(filteredGuides);
-    }
-    
-    // カウンターを更新
-    if (window.updateGuideCounters) {
-        window.updateGuideCounters(filteredGuides.length, window.AppState.guides.length);
-    }
-    
-    // 結果セクションにスクロール
-    const guideSection = document.getElementById('guideSection') || document.querySelector('.guide-cards-container');
-    if (guideSection) {
-        guideSection.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    return filteredGuides;
 }
 
 // フィルターリセット  

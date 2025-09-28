@@ -2246,6 +2246,29 @@
             return window.ComparisonManager.add(guideId);
         }
 
+        // ✅ 共有ガイドデータ待機ユーティリティ
+        window.waitForGuideData = async function(maxWaitTime = 10000) {
+            console.log('⏳ Waiting for guide data to be ready...');
+            
+            const startTime = Date.now();
+            
+            while (Date.now() - startTime < maxWaitTime) {
+                // 複数のソースからガイドデータを確認
+                const guides = window.AppState?.originalGuides || window.AppState?.guides || window.guidesData || [];
+                
+                if (guides && guides.length > 0) {
+                    console.log('✅ Guide data ready:', guides.length, 'guides loaded');
+                    return guides;
+                }
+                
+                // 短い間隔で再チェック
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            console.warn('⚠️ Guide data not ready after', maxWaitTime, 'ms, proceeding with available data');
+            return window.AppState?.originalGuides || window.AppState?.guides || window.guidesData || [];
+        };
+
         // Filter functions moved to app-init.mjs to prevent conflicts
 
         // Reset function moved to app-init.mjs to prevent conflicts
