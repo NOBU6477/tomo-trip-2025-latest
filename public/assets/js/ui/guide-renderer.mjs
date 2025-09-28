@@ -222,8 +222,9 @@ function renderAllGuideCards(guides) {
         container.innerHTML = cardsHTML;
     }
     
-    // Update counters with pagination info  
-    updateGuideCounters(guidesForPage.length, guides.length);
+    // ✅ 実際のDOM表示数でカウンター更新
+    const actualRenderedCount = container.children.length;
+    updateGuideCounters(actualRenderedCount, guides.length);
     
     // Setup view details event listeners
     setupViewDetailsEventListeners();
