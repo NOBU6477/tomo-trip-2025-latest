@@ -24,8 +24,23 @@ async function loadManagementData() {
         window.migrateStorageFormats();
     }
     
-    // ガイドデータが読み込まれるまで待機
-    await waitForGuideData();
+    // ✅ 同一タブでの状態変更にも対応するカスタムイベントリスナー
+    window.addEventListener('bookmarkChanged', function() {
+        console.log('🔄 Bookmark change detected, reloading management data...');
+        loadBookmarksList();
+    });
+    
+    window.addEventListener('comparisonChanged', function() {
+        console.log('🔄 Comparison change detected, reloading management data...');
+        loadComparisonList();
+    });
+    
+    // ガイドデータが読み込まれるまで待機（正しい引数で統一されたwaitForGuideDataを使用）
+    if (window.waitForGuideData) {
+        await window.waitForGuideData(5000); // maxWaitTime=5000ms
+    } else {
+        await waitForGuideData(10, 500); // maxRetries=10, delay=500ms
+    }
     
     loadBookmarksList();
     loadComparisonList();

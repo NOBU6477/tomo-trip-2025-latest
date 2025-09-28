@@ -1,26 +1,27 @@
 // 検索・フィルター機能モジュール
-import { matchLocationToCode, getPrefectureName } from '../ui/prefecture-selector.mjs';
+import { normalizeLocationToCode } from '../utils/location-utils.mjs';
 
 // 改良された検索フィルター関数
 export function applyAdvancedFilters(guides, filters) {
     let filteredGuides = [...guides];
     
-    // 地域フィルター（改良版）
+    // ✅ 地域フィルター（高速化版: O(N)計算量）
     if (filters.location) {
+        // フィルタ値を事前に正規化（1回のみ）
+        const filterLocationCode = normalizeLocationToCode(filters.location);
+        
         filteredGuides = filteredGuides.filter(guide => {
-            // 1. 直接コードマッチ
-            const guideLocationCode = matchLocationToCode(guide.location);
-            if (guideLocationCode === filters.location) {
+            // ガイドの位置情報をキャッシュ付きで正規化
+            if (!guide._locCode) {
+                guide._locCode = normalizeLocationToCode(guide.location || guide.prefecture || '');
+            }
+            
+            // 正規化コードで高速比較
+            if (guide._locCode === filterLocationCode) {
                 return true;
             }
             
-            // 2. 都道府県名での部分マッチ
-            const prefectureName = getPrefectureName(filters.location);
-            if (guide.location && guide.location.includes(prefectureName)) {
-                return true;
-            }
-            
-            // 3. レガシーサポート
+            // レガシーサポート（直接マッチ）
             return guide.location === filters.location || 
                    guide.prefecture === filters.location;
         });

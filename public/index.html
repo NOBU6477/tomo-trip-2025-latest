@@ -2024,22 +2024,38 @@
 
         // Removed empty viewGuideDetail function - full implementation exists later
 
+        // ✅ AppState にSet ベースのブックマーク状態を初期化
+        if (!window.AppState) {
+            window.AppState = {};
+        }
+        if (!window.AppState.bookmarkedSet) {
+            // localStorage からブックマークを読み込んでSet を作成
+            const stored = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+            window.AppState.bookmarkedSet = new Set(stored.map(id => String(id)));
+        }
+
         // ✅ 統一されたブックマーク管理システム
         window.BookmarkManager = {
             add: function(guideId) {
                 console.log('📌 Adding to bookmarks:', guideId);
                 
-                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-                const id = parseInt(guideId);
+                const id = String(guideId);
                 
-                if (!bookmarkedGuides.includes(id) && !bookmarkedGuides.includes(guideId)) {
-                    bookmarkedGuides.push(id);
-                    localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+                // ✅ Set ベースの状態管理
+                if (!window.AppState.bookmarkedSet.has(id)) {
+                    window.AppState.bookmarkedSet.add(id);
+                    
+                    // localStorage に配列として永続化
+                    const bookmarkedArray = Array.from(window.AppState.bookmarkedSet).map(id => parseInt(id) || id);
+                    localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedArray));
                     
                     this.updateButtonStates();
                     this.showNotification('ブックマークに追加しました', 'success');
                     
-                    console.log('✅ Bookmark added:', id, 'Total bookmarks:', bookmarkedGuides.length);
+                    // ✅ 管理センター同期用カスタムイベント発火
+                    window.dispatchEvent(new CustomEvent('bookmarkChanged'));
+                    
+                    console.log('✅ Bookmark added:', id, 'Total bookmarks:', window.AppState.bookmarkedSet.size);
                     return true;
                 } else {
                     console.log('⚠️ Guide already bookmarked:', guideId);
@@ -2050,20 +2066,23 @@
             remove: function(guideId) {
                 console.log('📌 Removing from bookmarks:', guideId);
                 
-                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-                const id = parseInt(guideId);
+                const id = String(guideId);
                 
-                const updatedBookmarks = bookmarkedGuides.filter(bookmarkId => 
-                    bookmarkId !== id && bookmarkId !== guideId
-                );
-                
-                if (updatedBookmarks.length !== bookmarkedGuides.length) {
-                    localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+                // ✅ Set ベースの状態管理
+                if (window.AppState.bookmarkedSet.has(id)) {
+                    window.AppState.bookmarkedSet.delete(id);
+                    
+                    // localStorage に配列として永続化
+                    const bookmarkedArray = Array.from(window.AppState.bookmarkedSet).map(id => parseInt(id) || id);
+                    localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedArray));
                     
                     this.updateButtonStates();
                     this.showNotification('ブックマークから削除しました', 'info');
                     
-                    console.log('✅ Bookmark removed:', id, 'Remaining bookmarks:', updatedBookmarks.length);
+                    // ✅ 管理センター同期用カスタムイベント発火
+                    window.dispatchEvent(new CustomEvent('bookmarkChanged'));
+                    
+                    console.log('✅ Bookmark removed:', id, 'Remaining bookmarks:', window.AppState.bookmarkedSet.size);
                     return true;
                 } else {
                     console.log('⚠️ Guide not in bookmarks:', guideId);
@@ -2072,10 +2091,10 @@
             },
             
             toggle: function(guideId) {
-                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-                const id = parseInt(guideId);
+                // ✅ Set ベースでの高速チェック
+                const id = String(guideId);
                 
-                if (bookmarkedGuides.includes(id) || bookmarkedGuides.includes(guideId)) {
+                if (window.AppState.bookmarkedSet.has(id)) {
                     return this.remove(guideId);
                 } else {
                     return this.add(guideId);
@@ -2083,13 +2102,13 @@
             },
             
             isBookmarked: function(guideId) {
-                const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-                const id = parseInt(guideId);
-                return bookmarkedGuides.includes(id) || bookmarkedGuides.includes(guideId);
+                // ✅ Set ベースの高速チェック
+                return window.AppState.bookmarkedSet.has(String(guideId));
             },
             
             getAll: function() {
-                return JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+                // ✅ Set から配列に変換
+                return Array.from(window.AppState.bookmarkedSet).map(id => parseInt(id) || id);
             },
             
             updateButtonStates: function() {

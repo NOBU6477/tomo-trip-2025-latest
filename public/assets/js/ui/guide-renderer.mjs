@@ -57,7 +57,12 @@ async function initializePaginationSystem(guides, resetPagination = true) {
             container: '#paginationContainer',
             onPageLoad: (pageItems, currentPage, totalPages) => {
                 renderAllGuideCards(pageItems);
-                console.log(`📄 Page ${currentPage}/${totalPages} loaded with ${pageItems.length} guides`);
+                
+                // ✅ 正確なカウンター更新: ページアイテム数と全体データ数
+                const totalCount = guides.length; // 現在処理中の全データ数
+                updateGuideCounters(pageItems.length, totalCount);
+                
+                console.log(`📄 Page ${currentPage}/${totalPages} loaded with ${pageItems.length}/${totalCount} guides`);
             }
         });
         
