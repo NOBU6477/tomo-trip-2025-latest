@@ -97,10 +97,21 @@ function normalizeLanguage(selectedValue) {
 }
 
 
-// Make filterGuides function globally accessible immediately on module load
-function filterGuides() {
-    console.log('🔍 Running guide filters...');
+// ✅ 修正: executeSearchを使用するfilterGuides関数
+async function filterGuides() {
+    console.log('🔍 Running guide filters via executeSearch...');
     
+    // executeSearchが利用可能な場合はそれを使用
+    if (window.executeSearch && typeof window.executeSearch === 'function') {
+        try {
+            await window.executeSearch();
+            return;
+        } catch (error) {
+            console.error('❌ executeSearch failed, falling back to legacy filter:', error);
+        }
+    }
+    
+    // フォールバック: 古いロジック（executeSearchが利用できない場合のみ）
     const state = window.AppState;
     if (!state || !state.guides || state.guides.length === 0) {
         console.warn('❌ No guides available for filtering. Current state:', {
@@ -1246,7 +1257,7 @@ function handleManagementCenter() {
     }
 }
 
-// Export the main filterGuides function globally - ensure it's always available
+// ✅ Export the updated filterGuides function globally - ensure it's always available
 window.filterGuides = filterGuides;
 
 // 確実にグローバル関数として登録されることを保証

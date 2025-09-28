@@ -7,6 +7,8 @@ console.log('🔥 URGENT TEST: app-init.mjs is executing!');
 import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs';
 // import './emergency-buttons.mjs'; // COMMENTED OUT - FILE MISSING, CAUSING MODULE LOAD FAILURE
 import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
+// ✅ 修正済み検索機能をインポート
+import { executeSearch } from './search/search-filter.mjs';
 // import { defaultGuideData } from './data/default-guides.mjs'; // REMOVED - prevents duplicate rendering
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
@@ -276,6 +278,10 @@ async function appInit() {
         }
     }, 100); // Small delay to ensure button-setup.js has run
     
+    // ✅ executeSearchをグローバルに登録
+    window.executeSearch = executeSearch;
+    console.log('✅ window.executeSearch registered globally');
+    
     log.ok('✅ Application initialized successfully with dynamic guide data');
 }
 
@@ -429,11 +435,11 @@ function handleModuleSearchClick(e) {
     console.log('🔍 Module search button clicked');
     
     try {
-        if (window.filterGuides && typeof window.filterGuides === 'function') {
-            console.log('✅ Calling window.filterGuides from module handler');
-            window.filterGuides();
+        if (window.executeSearch && typeof window.executeSearch === 'function') {
+            console.log('✅ Calling window.executeSearch from module handler');
+            await window.executeSearch();
         } else {
-            console.error('❌ window.filterGuides not available in module handler');
+            console.error('❌ window.executeSearch not available in module handler');
             console.log('Available window functions:', Object.keys(window).filter(k => k.includes('filter')));
         }
     } catch (error) {

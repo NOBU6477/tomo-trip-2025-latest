@@ -325,19 +325,21 @@ function setupSearchButton() {
     }
 }
 
-function handleSearchClick(e) {
+async function handleSearchClick(e) {
     e.preventDefault();
-    console.log('🔍 Search button clicked - applying filters');
+    console.log('🔍 Search button clicked - using executeSearch');
     
     try {
-        // Use the global filterGuides function 
-        if (window.filterGuides && typeof window.filterGuides === 'function') {
-            window.filterGuides();
-            console.log('✅ window.filterGuides() called successfully');
+        // ✅ 修正済みのexecuteSearchを使用
+        if (window.executeSearch && typeof window.executeSearch === 'function') {
+            await window.executeSearch();
+            console.log('✅ window.executeSearch() called successfully');
         } else {
-            console.warn('⚠️ window.filterGuides not available, using fallback');
-            // Fallback: manual filter application
-            handleManualSearch();
+            console.warn('⚠️ window.executeSearch not available, using dynamic import');
+            // 動的インポートでexecuteSearchを取得
+            const { executeSearch } = await import('./assets/js/search/search-filter.mjs');
+            window.executeSearch = executeSearch;
+            await executeSearch();
         }
     } catch (error) {
         console.error('❌ Search button error:', error);
