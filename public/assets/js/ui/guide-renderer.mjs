@@ -306,7 +306,7 @@ function renderGuideCardsOptimized(guides, container) {
     renderChunk();
 }
 
-// Update guide counters for display
+// Update guide counters for display - 🔧 完全修正版
 export function updateGuideCounters(displayedCount, totalCount) {
     // Update main counter displays
     const guideCounterElement = document.getElementById('guideCounter');
@@ -318,42 +318,25 @@ export function updateGuideCounters(displayedCount, totalCount) {
         // Language detection for proper counter display
         const isEnglish = window.location.pathname.includes('index-en.html');
         
-        // Get accurate data from AppState
-        const appState = window.AppState || {};
-        const currentPage = appState.currentPage || 1;
-        const isFiltered = appState.isFiltered || false;
-        
-        // Get accurate totals
-        const allGuidesCount = appState.originalGuides?.length || appState.guides?.length || totalCount || displayedCount;
-        const filteredTotal = isFiltered ? (appState.filteredGuides?.length || appState.guides?.length || totalCount || displayedCount) : allGuidesCount;
-        
-        // Determine page size based on viewport and pagination system
-        let itemsPerPage = 12; // Default for desktop
-        if (window.innerWidth <= 768) {
-            itemsPerPage = 6; // Mobile/tablet
-        }
-        // Override with actual pagination system if available
-        if (window.paginationSystem?.itemsPerPage) {
-            itemsPerPage = window.paginationSystem.itemsPerPage;
-        }
-        
-        // Calculate accurate ranges
-        const startIndex = (currentPage - 1) * itemsPerPage + 1;
-        const endIndex = Math.min(startIndex + displayedCount - 1, filteredTotal);
+        // ✅ 簡素化されたカウンター計算: 実際の表示数をそのまま使用
+        const actualDisplayed = displayedCount || 0;
+        const actualTotal = totalCount || displayedCount || 0;
         
         if (isEnglish) {
-            guideCounterElement.textContent = `${startIndex}-${endIndex} shown (${filteredTotal} total)`;
-            totalGuideCounterElement.textContent = `Total: ${allGuidesCount} guides registered`;
+            guideCounterElement.textContent = `1-${actualDisplayed} shown (${actualTotal} total)`;
+            totalGuideCounterElement.textContent = `Total: ${actualTotal} guides registered`;
         } else {
-            if (filteredTotal === 0) {
+            if (actualTotal === 0) {
                 guideCounterElement.textContent = `0件表示中`;
+            } else if (actualDisplayed === actualTotal) {
+                guideCounterElement.textContent = `1-${actualDisplayed}件表示中 (${actualTotal}件中)`;
             } else {
-                guideCounterElement.textContent = `${startIndex}-${endIndex}件表示中 (${filteredTotal}件中)`;
+                guideCounterElement.textContent = `1-${actualDisplayed}件表示中 (${actualTotal}件中)`;
             }
-            totalGuideCounterElement.textContent = `全体: ${allGuidesCount}名のガイドが登録済み`;
+            totalGuideCounterElement.textContent = `全体: ${actualTotal}名のガイドが登録済み`;
         }
         
-        console.log(`📊 Counters updated: ${startIndex}-${endIndex} shown (${filteredTotal} filtered, ${allGuidesCount} total), itemsPerPage: ${itemsPerPage}, viewport: ${window.innerWidth}px`);
+        console.log(`✅ Simple counters updated: 1-${actualDisplayed} shown (${actualTotal} total)`);
     } else {
         console.warn('⚠️ Counter elements not found:', {
             guideCounter: !!guideCounterElement,
