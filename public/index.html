@@ -2778,6 +2778,7 @@
         // Run emergency setup immediately and after DOM loads
         setupEmergencyButtons();
         
+        // ✅ 修正: DOMContentLoadedイベントリスナーを分離して構文エラーを解決
         // Initialize page - manual event listeners (app-init.mjs handles main initialization)
         document.addEventListener('DOMContentLoaded', function() {
             setupEmergencyButtons(); // Run again after DOM loads
@@ -3336,7 +3337,7 @@
             });
 
             console.log('✅ TomoTrip English Version Loaded Successfully - All Features Active');
-        });
+        }); // ✅ DOMContentLoadedイベントリスナー終了
 
         // Sponsor Registration and Login Functions
         function handleSponsorRegistration() {

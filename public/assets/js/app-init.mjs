@@ -429,8 +429,8 @@ if (!window.locationNames) {
     console.log('%cLocationNames Object Initialized:', 'color: #28a745;', Object.keys(window.locationNames).length, 'locations');
 }
 
-// Search handler for module-based setup to fix timing issue
-function handleModuleSearchClick(e) {
+// ✅ 修正: async関数として宣言
+async function handleModuleSearchClick(e) {
     e.preventDefault();
     console.log('🔍 Module search button clicked');
     
