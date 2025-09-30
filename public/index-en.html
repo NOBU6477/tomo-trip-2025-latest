@@ -1021,8 +1021,8 @@
                     <!-- Language Switcher - Perfectly Centered -->
                     <div class="language-switcher-center text-center mb-4" style="display: flex !important; justify-content: center !important; align-items: center !important; width: 100% !important;">
                         <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-3" style="margin: 0 auto !important; width: fit-content !important;">
-                            <button class="lang-btn-jp btn" id="jpBtn" onclick="window.location.href='index.html'" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px; text-align: center !important; cursor: pointer;">🇯🇵 Japanese</button>
-                            <button class="lang-btn-en btn" id="enBtn" onclick="window.location.href='index-en.html'" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px; text-align: center !important; cursor: pointer;">🇺🇸 English</button>
+                            <button class="lang-btn-jp btn" id="jpBtn" style="background: linear-gradient(135deg, #ff6b9d, #ff6b35); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3); transition: all 0.3s ease; min-width: 150px; text-align: center !important; cursor: pointer;">🇯🇵 Japanese</button>
+                            <button class="lang-btn-en btn" id="enBtn" style="background: linear-gradient(135deg, #4ecdc4, #44a08d); color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 500; box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3); transition: all 0.3s ease; min-width: 150px; text-align: center !important; cursor: pointer;">🇺🇸 English</button>
                         </div>
                     </div>
 
@@ -3086,7 +3086,9 @@
             // initializeChatListeners(); // Handled by app-init.mjs
             
             // Registration form submission
-            document.getElementById('registerSubmitBtn').addEventListener('click', function() {
+            const registerSubmitBtn = document.getElementById('registerSubmitBtn');
+            if (registerSubmitBtn) {
+                registerSubmitBtn.addEventListener('click', function() {
                 const form = document.getElementById('registrationForm');
                 const formData = {
                     realName: {
@@ -3138,10 +3140,13 @@
                     console.error('Registration error:', error);
                     alert('An error occurred during registration. Please try again.');
                 }
-            });
+                });
+            }
 
             // Login form submission
-            document.getElementById('loginSubmitBtn').addEventListener('click', function() {
+            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            if (loginSubmitBtn) {
+                loginSubmitBtn.addEventListener('click', function() {
                 const email = document.getElementById('loginEmail').value.trim();
                 const password = document.getElementById('loginPassword').value.trim();
                 
@@ -3157,10 +3162,13 @@
                 setTimeout(() => {
                     alert('Login successful!\n\nNote: Login functionality is currently under development. Actual authentication will be implemented soon.');
                 }, 500);
-            });
+                });
+            }
 
             // Contact form submission
-            document.getElementById('contactSubmitBtn').addEventListener('click', function() {
+            const contactSubmitBtn = document.getElementById('contactSubmitBtn');
+            if (contactSubmitBtn) {
+                contactSubmitBtn.addEventListener('click', function() {
                 const name = document.getElementById('contactName').value.trim();
                 const email = document.getElementById('contactEmail').value.trim();
                 const subject = document.getElementById('contactSubject').value;
@@ -3178,13 +3186,16 @@
                 setTimeout(() => {
                     alert('Thank you for your message!\n\nWe will respond to your inquiry within 24 hours.');
                 }, 500);
-            });
+                });
+            }
 
             // Guide Registration Functions
             let isGuidePhoneVerified = false;
 
             // Profile photo preview for guide
-            document.getElementById('guideProfilePhoto').addEventListener('change', function(e) {
+            const guideProfilePhoto = document.getElementById('guideProfilePhoto');
+            if (guideProfilePhoto) {
+                guideProfilePhoto.addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 const preview = document.getElementById('guideProfilePreview');
                 const placeholder = document.getElementById('guidePhotoPlaceholder');
@@ -3198,10 +3209,13 @@
                     };
                     reader.readAsDataURL(file);
                 }
-            });
+                });
+            }
 
             // Guide phone verification
-            document.getElementById('guideSendVerificationBtn').addEventListener('click', function() {
+            const guideSendVerificationBtn = document.getElementById('guideSendVerificationBtn');
+            if (guideSendVerificationBtn) {
+                guideSendVerificationBtn.addEventListener('click', function() {
                 const phone = document.getElementById('guidePhoneLogin').value;
                 if (phone.match(/^[0-9+\-()]+$/)) {
                     document.getElementById('guideVerificationCodeSection').style.display = 'block';
@@ -3213,9 +3227,12 @@
                 } else {
                     alert('Please enter a valid phone number');
                 }
-            });
+                });
+            }
 
-            document.getElementById('guideVerifyCodeBtn').addEventListener('click', function() {
+            const guideVerifyCodeBtn = document.getElementById('guideVerifyCodeBtn');
+            if (guideVerifyCodeBtn) {
+                guideVerifyCodeBtn.addEventListener('click', function() {
                 const code = document.getElementById('guideVerificationCode').value;
                 if (code === '123456') {
                     isGuidePhoneVerified = true;
@@ -3228,10 +3245,13 @@
                 } else {
                     alert('Invalid verification code');
                 }
-            });
+                });
+            }
 
             // Guide price handling
-            document.getElementById('guidePriceRange').addEventListener('change', function() {
+            const guidePriceRange = document.getElementById('guidePriceRange');
+            if (guidePriceRange) {
+                guidePriceRange.addEventListener('change', function() {
                 const priceInput = document.getElementById('guidePriceInput');
                 if (this.value) {
                     priceInput.value = '';
@@ -3239,9 +3259,12 @@
                 } else {
                     priceInput.disabled = false;
                 }
-            });
+                });
+            }
 
-            document.getElementById('guidePriceInput').addEventListener('input', function() {
+            const guidePriceInput = document.getElementById('guidePriceInput');
+            if (guidePriceInput) {
+                guidePriceInput.addEventListener('input', function() {
                 const priceRange = document.getElementById('guidePriceRange');
                 if (this.value) {
                     priceRange.value = '';
@@ -3249,7 +3272,8 @@
                 } else {
                     priceRange.disabled = false;
                 }
-            });
+                });
+            }
 
             // Detailed guide registration form submission
             const detailedGuideForm = document.getElementById('detailedGuideForm');

@@ -1052,22 +1052,46 @@ export function wireLanguageSwitcher() {
     const jpBtn = document.getElementById('jpBtn');
     const enBtn = document.getElementById('enBtn');
     
+    // Detect current page language
+    const isEnglishPage = window.location.pathname.includes('index-en.html');
+    const isJapanesePage = !isEnglishPage; // Default to Japanese
+    
+    console.log(`🌐 Language switcher setup: ${isEnglishPage ? 'English' : 'Japanese'} page`);
+    
     if (jpBtn) {
-        jpBtn.addEventListener('click', switchToJapanese);
+        if (isJapanesePage) {
+            // Already on Japanese page - show alert
+            jpBtn.addEventListener('click', function() {
+                console.log('🇯🇵 Already on Japanese page');
+                alert('既に日本語版を表示しています');
+            });
+        } else {
+            // On English page - switch to Japanese
+            jpBtn.addEventListener('click', switchToJapanese);
+        }
     }
     
     if (enBtn) {
-        enBtn.addEventListener('click', switchToEnglish);
+        if (isEnglishPage) {
+            // Already on English page - show alert
+            enBtn.addEventListener('click', function() {
+                console.log('🇺🇸 Already on English page');
+                alert('Already displaying English version');
+            });
+        } else {
+            // On Japanese page - switch to English
+            enBtn.addEventListener('click', switchToEnglish);
+        }
     }
 }
 
 function switchToJapanese() {
-    console.log('Switching to Japanese');
+    console.log('🇯🇵 Switching to Japanese');
     window.location.href = 'index.html';
 }
 
 function switchToEnglish() {
-    console.log('Switching to English');
+    console.log('🇺🇸 Switching to English');
     window.location.href = 'index-en.html';
 }
 
