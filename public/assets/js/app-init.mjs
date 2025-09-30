@@ -152,12 +152,23 @@ async function loadGuidesFromAPI() {
             // Use API guides exclusively when available (no merging with defaults)
             const deduplicatedApiGuides = removeDuplicateGuides(approvedGuides);
             
+            // If API returned empty results, fall back to default guides for this language
+            if (deduplicatedApiGuides.length === 0) {
+                console.log('📋 API returned 0 guides - using filtered default guides as fallback');
+                const filteredDefaults = defaultGuideData.filter(guide => {
+                    const guideRegLang = guide.registrationLanguage || 'ja';
+                    return guideRegLang === currentLang;
+                });
+                console.log(`🔄 Fallback: Using ${filteredDefaults.length} default guides for language: ${currentLang}`);
+                return filteredDefaults;
+            }
+            
             // Performance warning for very large guide lists
             if (deduplicatedApiGuides.length > 100) {
                 console.warn(`⚠️ Large guide list (${deduplicatedApiGuides.length} guides) - performance optimizations active`);
             }
             
-            console.log(`🎯 Using API guides ONLY: ${deduplicatedApiGuides.length} guides (no default merging)`);
+            console.log(`🎯 Using API guides: ${deduplicatedApiGuides.length} guides`);
             return deduplicatedApiGuides;
         }
         

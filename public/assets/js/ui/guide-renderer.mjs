@@ -165,9 +165,11 @@ function renderAllGuideCards(guides) {
         console.warn('⚠️ No guides to render');
         // 🔧 FIX: フィルター処理中かどうかを確認して適切なメッセージを表示
         const isFilteringInProgress = window.AppState?.isFiltered;
+        const filteringMsg = getText('フィルター処理中...', 'Filtering...');
+        const noGuidesMsg = getText('ガイドが見つかりません', 'No guides found');
         const message = isFilteringInProgress ? 
-            '<div class="text-center p-4"><div class="spinner-border spinner-border-sm me-2" role="status"></div><p class="text-muted mt-2">フィルター処理中...</p></div>' :
-            '<div class="text-center p-4"><p class="text-muted">ガイドが見つかりません</p></div>';
+            `<div class="text-center p-4"><div class="spinner-border spinner-border-sm me-2" role="status"></div><p class="text-muted mt-2">${filteringMsg}</p></div>` :
+            `<div class="text-center p-4"><p class="text-muted">${noGuidesMsg}</p></div>`;
         
         // 短い遅延を設けて、フィルター処理の完了を待つ
         if (isFilteringInProgress) {
