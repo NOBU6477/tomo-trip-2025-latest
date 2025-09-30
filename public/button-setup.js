@@ -746,19 +746,21 @@ function handleBookmarkClick(guideId, buttonElement) {
     try {
         // Get current bookmarks
         let bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+        // ✅ UUID対応: 文字列のまま保存・比較
+        const id = String(guideId);
         
         // Check if already bookmarked
-        const isBookmarked = bookmarkedGuides.includes(guideId) || bookmarkedGuides.includes(parseInt(guideId));
+        const isBookmarked = bookmarkedGuides.map(b => String(b)).includes(id);
         
         if (isBookmarked) {
             // Remove from bookmarks
-            bookmarkedGuides = bookmarkedGuides.filter(id => id != guideId && id != parseInt(guideId));
+            bookmarkedGuides = bookmarkedGuides.filter(b => String(b) !== id);
             buttonElement.classList.remove('btn-warning');
             buttonElement.classList.add('btn-outline-warning');
             console.log('📌 Guide removed from bookmarks');
         } else {
             // Add to bookmarks
-            bookmarkedGuides.push(guideId);
+            bookmarkedGuides.push(id);
             buttonElement.classList.remove('btn-outline-warning');
             buttonElement.classList.add('btn-warning');
             console.log('⭐ Guide added to bookmarks');
@@ -770,6 +772,9 @@ function handleBookmarkClick(guideId, buttonElement) {
         // Show feedback
         const action = isBookmarked ? '削除しました' : '追加しました';
         safeShowToast(`ブックマークに${action}`, 'success');
+        
+        // ✅ カスタムイベントを発火して管理センターを更新
+        window.dispatchEvent(new Event('bookmarkChanged'));
         
     } catch (error) {
         console.error('❌ Bookmark error:', error);
@@ -783,13 +788,15 @@ function handleCompareClick(guideId, buttonElement) {
     try {
         // Get current comparison list
         let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+        // ✅ UUID対応: 文字列のまま保存・比較
+        const id = String(guideId);
         
         // Check if already in comparison
-        const isInComparison = comparisonGuides.includes(guideId) || comparisonGuides.includes(parseInt(guideId));
+        const isInComparison = comparisonGuides.map(c => String(c)).includes(id);
         
         if (isInComparison) {
             // Remove from comparison
-            comparisonGuides = comparisonGuides.filter(id => id != guideId && id != parseInt(guideId));
+            comparisonGuides = comparisonGuides.filter(c => String(c) !== id);
             buttonElement.classList.remove('btn-success');
             buttonElement.classList.add('btn-outline-success');
             console.log('📊 Guide removed from comparison');
@@ -801,7 +808,7 @@ function handleCompareClick(guideId, buttonElement) {
             }
             
             // Add to comparison
-            comparisonGuides.push(guideId);
+            comparisonGuides.push(id);
             buttonElement.classList.remove('btn-outline-success');
             buttonElement.classList.add('btn-success');
             console.log('✓ Guide added to comparison');
@@ -813,6 +820,9 @@ function handleCompareClick(guideId, buttonElement) {
         // Show feedback
         const action = isInComparison ? '削除しました' : '追加しました';
         safeShowToast(`比較リストに${action}`, 'success');
+        
+        // ✅ カスタムイベントを発火して管理センターを更新
+        window.dispatchEvent(new Event('comparisonChanged'));
         
     } catch (error) {
         console.error('❌ Compare error:', error);

@@ -452,42 +452,52 @@ export function setupViewDetailsEventListeners() {
 // Toggle bookmark functionality
 function toggleBookmark(guideId) {
     const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-    const id = parseInt(guideId);
+    // ✅ UUID対応 + 正規化: すべてを文字列として比較・保存
+    const id = String(guideId);
     
-    if (bookmarkedGuides.includes(id) || bookmarkedGuides.includes(guideId)) {
-        // Remove from bookmarks
-        const updatedBookmarks = bookmarkedGuides.filter(bookmarkId => 
-            bookmarkId !== id && bookmarkId !== guideId
-        );
-        localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+    // ✅ 正規化: 既存のIDを文字列に変換して重複チェック
+    const normalizedList = bookmarkedGuides.map(b => String(b));
+    const exists = normalizedList.includes(id);
+    
+    let updatedBookmarks;
+    if (exists) {
+        // Remove from bookmarks (正規化済みリストから削除)
+        updatedBookmarks = bookmarkedGuides.filter(b => String(b) !== id);
         console.log('❌ Guide removed from bookmarks:', guideId);
         
         if (typeof safeShowToast === 'function') {
             safeShowToast('ブックマークから削除しました', 'info');
         }
     } else {
-        // Add to bookmarks
-        bookmarkedGuides.push(id);
-        localStorage.setItem('bookmarkedGuides', JSON.stringify(bookmarkedGuides));
+        // Add to bookmarks and de-duplicate
+        updatedBookmarks = [...new Set([...normalizedList, id])];
         console.log('✅ Guide added to bookmarks:', guideId);
         
         if (typeof safeShowToast === 'function') {
             safeShowToast('ブックマークに追加しました', 'warning');
         }
     }
+    
+    localStorage.setItem('bookmarkedGuides', JSON.stringify(updatedBookmarks));
+    
+    // ✅ カスタムイベントを発火して管理センターを更新
+    window.dispatchEvent(new Event('bookmarkChanged'));
 }
 
 // Toggle comparison functionality
 function toggleComparison(guideId) {
     const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-    const id = parseInt(guideId);
+    // ✅ UUID対応 + 正規化: すべてを文字列として比較・保存
+    const id = String(guideId);
     
-    if (comparisonGuides.includes(id) || comparisonGuides.includes(guideId)) {
-        // Remove from comparison
-        const updatedComparison = comparisonGuides.filter(compareId => 
-            compareId !== id && compareId !== guideId
-        );
-        localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
+    // ✅ 正規化: 既存のIDを文字列に変換して重複チェック
+    const normalizedList = comparisonGuides.map(c => String(c));
+    const exists = normalizedList.includes(id);
+    
+    let updatedComparison;
+    if (exists) {
+        // Remove from comparison (正規化済みリストから削除)
+        updatedComparison = comparisonGuides.filter(c => String(c) !== id);
         console.log('❌ Guide removed from comparison:', guideId);
         
         if (typeof safeShowToast === 'function') {
@@ -495,22 +505,26 @@ function toggleComparison(guideId) {
         }
     } else {
         // Check comparison limit (max 3)
-        if (comparisonGuides.length >= 3) {
+        if (normalizedList.length >= 3) {
             if (typeof safeShowToast === 'function') {
                 safeShowToast('比較できるガイドは最大3人までです', 'warning');
             }
             return;
         }
         
-        // Add to comparison
-        comparisonGuides.push(id);
-        localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
+        // Add to comparison and de-duplicate
+        updatedComparison = [...new Set([...normalizedList, id])];
         console.log('✅ Guide added to comparison:', guideId);
         
         if (typeof safeShowToast === 'function') {
             safeShowToast('比較に追加しました', 'success');
         }
     }
+    
+    localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
+    
+    // ✅ カスタムイベントを発火して管理センターを更新
+    window.dispatchEvent(new Event('comparisonChanged'));
 }
 
 // Create HTML for individual guide card - RESTORED FROM BACKUP
@@ -522,18 +536,17 @@ export function createGuideCardHTML(guide) {
     // Location names mapping for Japanese display
     const locationNames = window.locationNames || {};
     
-    // Check bookmark and comparison status with enhanced debugging
+    // Check bookmark and comparison status (UUID対応)
     const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
     const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-    const guideIdInt = parseInt(guide.id);
     const guideIdStr = String(guide.id);
     
-    const isBookmarked = bookmarkedGuides.includes(guide.id) || bookmarkedGuides.includes(guideIdInt) || bookmarkedGuides.includes(guideIdStr);
-    const isInComparison = comparisonGuides.includes(guide.id) || comparisonGuides.includes(guideIdInt) || comparisonGuides.includes(guideIdStr);
+    // ✅ 文字列比較のみ（UUIDをparseIntしない）
+    const isBookmarked = bookmarkedGuides.map(id => String(id)).includes(guideIdStr);
+    const isInComparison = comparisonGuides.map(id => String(id)).includes(guideIdStr);
     
     console.log('🔍 Guide card button states:', {
         guideId: guide.id,
-        guideIdInt,
         guideIdStr,
         bookmarkedGuides,
         comparisonGuides,

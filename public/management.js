@@ -18,22 +18,30 @@ function showManagementCenter() {
 // グローバルに公開してindex.htmlの関数を上書き
 window.showManagementCenter = showManagementCenter;
 
+// ✅ イベントリスナー重複登録を防ぐフラグ
+let managementListenersAttached = false;
+
 async function loadManagementData() {
     // ✅ マイグレーション実行（最初に一度のみ）
     if (window.migrateStorageFormats) {
         window.migrateStorageFormats();
     }
     
-    // ✅ 同一タブでの状態変更にも対応するカスタムイベントリスナー
-    window.addEventListener('bookmarkChanged', function() {
-        console.log('🔄 Bookmark change detected, reloading management data...');
-        loadBookmarksList();
-    });
-    
-    window.addEventListener('comparisonChanged', function() {
-        console.log('🔄 Comparison change detected, reloading management data...');
-        loadComparisonList();
-    });
+    // ✅ イベントリスナーを一度だけ登録（重複防止）
+    if (!managementListenersAttached) {
+        window.addEventListener('bookmarkChanged', function() {
+            console.log('🔄 Bookmark change detected, reloading management data...');
+            loadBookmarksList();
+        });
+        
+        window.addEventListener('comparisonChanged', function() {
+            console.log('🔄 Comparison change detected, reloading management data...');
+            loadComparisonList();
+        });
+        
+        managementListenersAttached = true;
+        console.log('✅ Management event listeners attached (one-time setup)');
+    }
     
     // ガイドデータが読み込まれるまで待機（正しい引数で統一されたwaitForGuideDataを使用）
     if (window.waitForGuideData) {
@@ -93,11 +101,11 @@ function updateLoadingStatus(attempt, maxAttempts) {
 }
 
 function loadBookmarksList() {
-    // ✅ Manager経由でのみアクセス（直接localStorage読み取り除去）
-    const bookmarkedGuides = window.BookmarkManager ? window.BookmarkManager.getAll() : [];
+    // ✅ 直接localStorage読み取り（UUID対応）
+    const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
     const bookmarksList = document.getElementById('bookmarksList');
     
-    console.log('📋 Loading bookmarks via Manager:', { bookmarkedGuides, count: bookmarkedGuides.length });
+    console.log('📋 Loading bookmarks:', { bookmarkedGuides, count: bookmarkedGuides.length });
     
     if (bookmarkedGuides.length === 0) {
         bookmarksList.innerHTML = `
@@ -131,10 +139,10 @@ function loadBookmarksList() {
             .catch(err => console.error('❌ API fallback failed:', err));
         return;
     }
-    // ✅ FIX: ブックマーク表示を修正 - ID型の互換性を改善
+    // ✅ FIX: ブックマーク表示を修正 - UUID対応（文字列比較のみ）
     const bookmarkCards = [];
     for (const guideId of bookmarkedGuides) {
-        const guide = allGuides.find(g => g.id == guideId || g.id == parseInt(guideId) || String(g.id) == String(guideId));
+        const guide = allGuides.find(g => String(g.id) === String(guideId));
         if (!guide) {
             console.warn('⚠️ Bookmarked guide not found:', guideId);
             continue;
@@ -182,10 +190,10 @@ function loadBookmarksList() {
 function loadBookmarksListWithGuides(bookmarkedGuides, allGuides) {
     const bookmarksList = document.getElementById('bookmarksList');
     
-    // ✅ FIX: APIガイドデータでブックマーク表示を修正
+    // ✅ FIX: APIガイドデータでブックマーク表示を修正（UUID対応）
     const bookmarkCards = [];
     for (const guideId of bookmarkedGuides) {
-        const guide = allGuides.find(g => g.id == guideId || g.id == parseInt(guideId) || String(g.id) == String(guideId));
+        const guide = allGuides.find(g => String(g.id) === String(guideId));
         if (!guide) {
             console.warn('⚠️ Bookmarked guide not found:', guideId);
             continue;
@@ -228,11 +236,11 @@ function loadBookmarksListWithGuides(bookmarkedGuides, allGuides) {
 }
 
 function loadComparisonList() {
-    // ✅ Manager経由でのみアクセス（直接localStorage読み取り除去）
-    const comparisonGuides = window.ComparisonManager ? window.ComparisonManager.getAll() : [];
+    // ✅ 直接localStorage読み取り（UUID対応）
+    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
     const comparisonList = document.getElementById('comparisonList');
     
-    console.log('📊 Loading comparisons via Manager:', { comparisonGuides, count: comparisonGuides.length });
+    console.log('📊 Loading comparisons:', { comparisonGuides, count: comparisonGuides.length });
     
     if (comparisonGuides.length === 0) {
         comparisonList.innerHTML = `
@@ -266,10 +274,10 @@ function loadComparisonList() {
             .catch(err => console.error('❌ API fallback failed:', err));
         return;
     }
-    // ✅ FIX: 比較リストの表示を修正 - ID型の互換性を改善
+    // ✅ FIX: 比較リストの表示を修正 - UUID対応（文字列比較のみ）
     const comparisonCards = [];
     for (const guideId of comparisonGuides) {
-        const guide = allGuides.find(g => g.id == guideId || g.id == parseInt(guideId) || String(g.id) == String(guideId));
+        const guide = allGuides.find(g => String(g.id) === String(guideId));
         if (!guide) {
             console.warn('⚠️ Comparison guide not found:', guideId);
             continue;
@@ -318,10 +326,10 @@ function loadComparisonList() {
 function loadComparisonListWithGuides(comparisonGuides, allGuides) {
     const comparisonList = document.getElementById('comparisonList');
     
-    // ✅ FIX: APIガイドデータで比較表示を修正
+    // ✅ FIX: APIガイドデータで比較表示を修正（UUID対応）
     const comparisonCards = [];
     for (const guideId of comparisonGuides) {
-        const guide = allGuides.find(g => g.id == guideId || g.id == parseInt(guideId) || String(g.id) == String(guideId));
+        const guide = allGuides.find(g => String(g.id) === String(guideId));
         if (!guide) {
             console.warn('⚠️ Comparison guide not found:', guideId);
             continue;
