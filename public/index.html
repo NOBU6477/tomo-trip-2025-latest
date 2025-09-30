@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; img-src 'self' data: blob: https://images.unsplash.com https://*.unsplash.com; font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://cdn.jsdelivr.net https://replit.com https://*.replit.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'self' https://*.replit.dev https://replit.com; report-uri /csp-report;">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+    <!-- Force browser refresh: 2025-09-30-v2 -->
     <title>TomoTrip - 地元ガイドと特別な旅を発見</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <!-- CSP compatibility fixes -->
@@ -64,6 +65,7 @@
     <link rel="stylesheet" href="assets/css/bugfixes.css?v=cache-bust-20250923-1245">
 
     <style>
+        /* Cache bust: 2025-09-30-v2 */
         .guide-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -139,33 +141,35 @@
         }
         
         .brand-text {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 3px !important;
         }
         
         .brand-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            line-height: 1.2;
+            font-size: 1.5rem !important;
+            font-weight: bold !important;
+            line-height: 1.2 !important;
         }
         
         .brand-tagline {
-            font-size: 0.9rem;
-            font-weight: 700;
-            color: #333;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            line-height: 1.3;
+            font-size: 0.9rem !important;
+            font-weight: 700 !important;
+            color: #333 !important;
+            letter-spacing: 0.3px !important;
+            white-space: nowrap !important;
+            line-height: 1.3 !important;
+            display: block !important;
         }
         
         .brand-subtitle {
-            font-size: 0.7rem;
-            font-weight: 400;
-            color: #666;
-            letter-spacing: 0.3px;
-            white-space: nowrap;
-            line-height: 1.3;
+            font-size: 0.7rem !important;
+            font-weight: 400 !important;
+            color: #666 !important;
+            letter-spacing: 0.3px !important;
+            white-space: nowrap !important;
+            line-height: 1.3 !important;
+            display: block !important;
         }
         
         /* ナビゲーションバー全体を中央寄せ */
