@@ -104,7 +104,12 @@ async function loadGuidesFromAPI() {
                 }
 
                 // Normalize location data - use actual location from API now
-                const locationData = guide.location || '東京都 東京';
+                const locationData = guide.location || (currentLang === 'en' ? 'Tokyo, Japan' : '東京都 東京');
+                
+                // Use language-specific fallback text
+                const defaultIntro = currentLang === 'en' ? 
+                    'I will guide you to the best local highlights' : 
+                    '地域の魅力をご案内します';
                 
                 return {
                     id: guide.id,
@@ -126,8 +131,8 @@ async function loadGuidesFromAPI() {
                         [],
                     availability: guide.availability || 'weekdays',
                     experience: guide.experience || 'intermediate', 
-                    introduction: guide.introduction || '地域の魅力をご案内します',
-                    description: guide.introduction || '地域の魅力をご案内します',
+                    introduction: guide.introduction || defaultIntro,
+                    description: guide.introduction || defaultIntro,
                     email: guide.email,
                     phone: guide.phone,
                     status: guide.status || 'approved',
