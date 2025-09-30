@@ -68,6 +68,7 @@ export const tourismGuides = pgTable("tourism_guides", {
   gender: varchar("gender", { length: 10 }), // male, female, other
   age: integer("age"),
   languages: jsonb("languages").notNull(), // Array of supported languages
+  registrationLanguage: varchar("registration_language", { length: 5 }).notNull().default('ja'), // Language used during registration (ja or en)
   experience: varchar("experience", { length: 20 }), // beginner, intermediate, advanced
   introduction: text("introduction"),
   specialties: text("specialties"),
