@@ -393,36 +393,13 @@ function toggleBookmark(guideId) {
     updateBookmarkButtonState(guideId, bookmarks.includes(guideId));
 }
 
-// Comparison functionality
+// ⚠️ DEPRECATED: Comparison functionality (moved to button-setup.js)
+// This function is kept for backward compatibility but is no longer used
+// All comparison logic is now handled by button-setup.js > handleCompareClick()
 function toggleComparison(guideId) {
-    console.log('🔄 Toggle comparison for guide:', guideId);
-    
-    // Get current comparison list from localStorage (unified key: comparisonGuides)
-    let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-    
-    if (comparisonGuides.includes(guideId)) {
-        // Remove from comparison
-        comparisonGuides = comparisonGuides.filter(id => id !== guideId);
-        showToast('比較リストから削除しました', 'info');
-        console.log('🔄 Removed from comparison');
-    } else {
-        // Check limit (max 3 guides for comparison)
-        if (comparisonGuides.length >= 3) {
-            showToast('比較は最大3名まで選択できます', 'warning');
-            return;
-        }
-        
-        // Add to comparison
-        comparisonGuides.push(guideId);
-        showToast('比較リストに追加しました', 'success');
-        console.log('🔄 Added to comparison');
-    }
-    
-    // Save to localStorage (unified key: comparisonGuides)
-    localStorage.setItem('comparisonGuides', JSON.stringify(comparisonGuides));
-    
-    // Update button state
-    updateCompareButtonState(guideId, comparisonGuides.includes(guideId));
+    console.warn('⚠️ toggleComparison called from event-handlers.mjs (deprecated). Use button-setup.js handleCompareClick instead.');
+    // No-op to prevent duplicate toast messages and conflicting state changes
+    // The actual functionality is in button-setup.js > handleCompareClick()
 }
 
 // Update bookmark button visual state

@@ -674,7 +674,16 @@ function handleManagementClick(e) {
 /**
  * Setup Guide Card Management Buttons - Bookmark and Compare (delegated event handling)
  */
+// ✅ フラグで重複登録を防止
+let guideCardButtonsSetup = false;
+
 function setupGuideCardButtons() {
+    // ✅ 既にセットアップ済みなら何もしない（重複防止）
+    if (guideCardButtonsSetup) {
+        console.log('ℹ️ Guide card button delegation already setup, skipping');
+        return;
+    }
+    
     // Use delegated event handling since guide cards are dynamically generated
     document.addEventListener('click', function(e) {
         // Handle bookmark button clicks (use closest for better event targeting)
@@ -685,6 +694,7 @@ function setupGuideCardButtons() {
             
             const guideId = bookmarkBtn.getAttribute('data-guide-id');
             handleBookmarkClick(guideId, bookmarkBtn);
+            return; // ✅ 処理完了後はすぐに戻る
         }
         
         // Handle compare button clicks (use closest for better event targeting)
@@ -695,6 +705,7 @@ function setupGuideCardButtons() {
             
             const guideId = compareBtn.getAttribute('data-guide-id');
             handleCompareClick(guideId, compareBtn);
+            return; // ✅ 処理完了後はすぐに戻る
         }
     });
     
@@ -709,7 +720,9 @@ function setupGuideCardButtons() {
         }
     });
     
-    console.log('✅ Guide card button delegation setup complete');
+    // ✅ セットアップ完了フラグを設定
+    guideCardButtonsSetup = true;
+    console.log('✅ Guide card button delegation setup complete (one-time)');
 }
 
 /**
