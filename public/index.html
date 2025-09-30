@@ -4085,22 +4085,22 @@
                     <div style="background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 10;">
                         <ul class="nav nav-pills nav-fill" id="managementTabs" role="tablist" style="background: rgba(255,255,255,0.5); border-radius: 30px; padding: 8px;">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none;">
+                                <button class="nav-link active management-tab" id="bookmarks-tab" data-bs-toggle="pill" data-bs-target="#bookmarks" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
                                     <i class="bi bi-bookmark-star-fill me-2"></i>📌 ブックマーク
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="comparison-tab" data-bs-toggle="pill" data-bs-target="#comparison" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
+                                <button class="nav-link management-tab" id="comparison-tab" data-bs-toggle="pill" data-bs-target="#comparison" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
                                     <i class="bi bi-bar-chart-line-fill me-2"></i>📊 比較リスト
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="bookings-tab" data-bs-toggle="pill" data-bs-target="#bookings" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
+                                <button class="nav-link management-tab" id="bookings-tab" data-bs-toggle="pill" data-bs-target="#bookings" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
                                     <i class="bi bi-calendar-check-fill me-2"></i>📅 予約履歴
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
+                                <button class="nav-link management-tab" id="settings-tab" data-bs-toggle="pill" data-bs-target="#settings" type="button" role="tab" style="border-radius: 25px; margin: 0 5px; font-weight: 600; transition: all 0.3s ease; border: none;">
                                     <i class="bi bi-gear-fill me-2"></i>⚙️ 設定
                                 </button>
                             </li>
@@ -5672,6 +5672,25 @@
         }
     </script>
 
+    
+    <!-- Management Center Tab CSS -->
+    <style>
+        /* Management Center Tab Styling */
+        .management-tab {
+            background: rgba(255,255,255,0.3) !important;
+            color: #6c757d !important;
+        }
+        
+        .management-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2) !important;
+            color: white !important;
+        }
+        
+        .management-tab:hover:not(.active) {
+            background: rgba(255,255,255,0.6) !important;
+            color: #495057 !important;
+        }
+    </style>
     
     <!-- Footer Force CSS -->
     <style>
