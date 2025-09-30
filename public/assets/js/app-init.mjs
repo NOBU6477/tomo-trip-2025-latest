@@ -9,7 +9,7 @@ import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from '.
 import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
 // ✅ 修正済み検索機能をインポート
 import { executeSearch } from './search/search-filter.mjs';
-// import { defaultGuideData } from './data/default-guides.mjs'; // REMOVED - prevents duplicate rendering
+import { defaultGuideData } from './data/default-guides.mjs'; // Import for fallback when API returns no results
 import AppState from './state/app-state.mjs';
 import { setupLocationNames } from './locations/location-setup.mjs';
 import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
@@ -29,16 +29,16 @@ if (isReplitIframe) {
 
 // Dynamic guide data loading from API with error handling and caching
 async function loadGuidesFromAPI() {
+    // Detect current page language for filtering (declare once for entire function)
+    const isEnglish = window.location.pathname.includes('index-en.html');
+    const currentLang = isEnglish ? 'en' : 'ja';
+    
     try {
-        // Detect current page language for filtering
-        const isEnglish = window.location.pathname.includes('index-en.html');
-        const lang = isEnglish ? 'en' : 'ja';
-        
         // Add timeout and cache-busting for reliability
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // ⚡ 5秒に短縮して遅延を解決
         
-        const response = await fetch(`/api/guides?lang=${lang}&${new Date().getTime()}`, {
+        const response = await fetch(`/api/guides?lang=${currentLang}&${new Date().getTime()}`, {
             signal: controller.signal,
             headers: {
                 'Cache-Control': 'no-cache',
@@ -61,8 +61,6 @@ async function loadGuidesFromAPI() {
         
         if (result.success && Array.isArray(result.guides)) {
             // Client-side language filtering as safety measure
-            const isEnglish = window.location.pathname.includes('index-en.html');
-            const currentLang = isEnglish ? 'en' : 'ja';
             
             // Filter guides by registrationLanguage on client side (safety check)
             const filteredByLang = result.guides.filter(guide => {
@@ -163,8 +161,14 @@ async function loadGuidesFromAPI() {
             return deduplicatedApiGuides;
         }
         
-        console.log('📋 API returned no results - returning empty array');
-        return [];
+        console.log('📋 API returned no results - using filtered default guides as fallback');
+        // Fallback to filtered default guides when API returns no results
+        const filteredDefaults = defaultGuideData.filter(guide => {
+            const guideRegLang = guide.registrationLanguage || 'ja';
+            return guideRegLang === currentLang;
+        });
+        console.log(`🔄 Fallback: Using ${filteredDefaults.length} default guides for language: ${currentLang}`);
+        return filteredDefaults;
         
     } catch (error) {
         if (error.name === 'AbortError') {
@@ -172,8 +176,14 @@ async function loadGuidesFromAPI() {
         } else {
             console.error('❌ Error loading guides from API:', error);
         }
-        console.log('📋 API error - returning empty array');
-        return [];
+        console.log('📋 API error - using filtered default guides as fallback');
+        // Fallback to filtered default guides on error (using currentLang declared at function start)
+        const filteredDefaults = defaultGuideData.filter(guide => {
+            const guideRegLang = guide.registrationLanguage || 'ja';
+            return guideRegLang === currentLang;
+        });
+        console.log(`🔄 Error fallback: Using ${filteredDefaults.length} default guides for language: ${currentLang}`);
+        return filteredDefaults;
     }
 }
 
