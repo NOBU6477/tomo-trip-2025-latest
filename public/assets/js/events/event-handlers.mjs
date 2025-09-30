@@ -1,6 +1,7 @@
 // Event handlers - centralized setup with AppState support
 import { showSponsorLoginModal, showSponsorRegistrationModal } from '../ui/modal.mjs';
 import { createGuideCardHTML } from '../ui/guide-renderer.mjs';
+import { getText } from '../utils/language-utils.mjs';
 
 // Global guide detail function - opens guide detail page with auth check
 async function showGuideDetailModalById(guideId) {
@@ -29,7 +30,8 @@ async function showGuideDetailModalById(guideId) {
         
     } catch (error) {
         console.error('❌ Error opening guide details:', error);
-        alert('ガイド詳細を開けませんでした。もう一度お試しください。');
+        const errorMsg = getText('ガイド詳細を開けませんでした。もう一度お試しください。', 'Could not open guide details. Please try again.');
+        alert(errorMsg);
     }
 }
 
@@ -39,10 +41,11 @@ function showTouristRegistrationPrompt(guideId) {
     sessionStorage.setItem('returnToGuideId', guideId);
     
     // Show simple alert and redirect to complete registration system
-    const shouldRedirect = confirm(
-        'ガイド詳細をご覧いただくには観光客登録が必要です。\n\n' +
-        '登録は無料で、安全にガイドとやり取りできます。\n' +
-        '今すぐ登録ページに移動しますか？'
+    const msg = getText(
+        'ガイド詳細をご覧いただくには観光客登録が必要です。\n\n登録は無料で、安全にガイドとやり取りできます。\n今すぐ登録ページに移動しますか？',
+        'Tourist registration is required to view guide details.\n\nRegistration is free and allows you to safely communicate with guides.\nWould you like to go to the registration page now?'
+    );
+    const shouldRedirect = confirm(msg
     );
     
     if (shouldRedirect) {
@@ -776,7 +779,8 @@ function setupSponsorButtonEvents() {
                 modal.show();
             } else {
                 console.warn('Tourist login modal not found');
-                alert('観光客ログイン機能を準備中です。');
+                const msg = getText('観光客ログイン機能を準備中です。', 'Tourist login feature is under development.');
+                alert(msg);
             }
         });
     }
@@ -792,7 +796,8 @@ function setupSponsorButtonEvents() {
                 modal.show();
             } else {
                 console.warn('Guide login modal not found');
-                alert('ガイドログイン機能を準備中です。');
+                const msg = getText('ガイドログイン機能を準備中です。', 'Guide login feature is under development.');
+                alert(msg);
             }
         });
     }
@@ -1032,7 +1037,8 @@ function handleSponsorRegistration() {
         window.location.href = 'sponsor-registration.html';
     } catch (error) {
         console.error('Redirect failed:', error);
-        alert('リダイレクトに失敗しました');
+        const msg = getText('リダイレクトに失敗しました', 'Redirect failed');
+        alert(msg);
     }
 }
 
@@ -1043,7 +1049,8 @@ function handleSponsorLogin() {
         showSponsorLoginModal();
     } catch (error) {
         console.error('Modal failed:', error);
-        alert('モーダル表示に失敗しました');
+        const msg = getText('モーダル表示に失敗しました', 'Failed to display modal');
+        alert(msg);
     }
 }
 
@@ -1254,7 +1261,8 @@ function handleManagementCenter() {
     if (window.showManagementCenter) {
         window.showManagementCenter();
     } else {
-        alert('管理センターは開発中です');
+        const msg = getText('管理センターは開発中です', 'Management center is under development');
+        alert(msg);
     }
 }
 
