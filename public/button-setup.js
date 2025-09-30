@@ -199,10 +199,8 @@ function showSponsorLoginModalManual() {
                                 <input type="password" class="form-control" id="sponsorPassword" placeholder="管理者パスワードを入力" required style="border-radius: 10px; padding: 12px;">
                             </div>
                             
-                            <div class="alert alert-secondary small mb-3">
-                                <strong>テスト用認証情報:</strong><br>
-                                Email: admin@tomotrip.com<br>
-                                Password: TomoTrip2025!Admin
+                            <div class="alert alert-info small mb-3">
+                                <strong>Note:</strong> Please use your administrator credentials to log in.
                             </div>
                             
                             <button type="submit" class="btn btn-primary w-100 fw-bold" style="border-radius: 10px; padding: 12px; background: linear-gradient(135deg, #667eea, #764ba2); border: none;">
@@ -226,29 +224,28 @@ function showSponsorLoginModalManual() {
             const email = document.getElementById('sponsorEmail').value;
             const password = document.getElementById('sponsorPassword').value;
             
-            // Simple authentication for testing
-            if ((email === 'admin@tomotrip.com' && password === 'TomoTrip2025!Admin') ||
-                (email === 'owner@tomotrip.com' && password === 'Owner2025!TomoTrip')) {
-                
-                // Store authentication
-                const authData = {
-                    isAuthenticated: true,
-                    userEmail: email,
-                    expiresAt: Date.now() + (24 * 60 * 60 * 1000) // 24 hours
-                };
-                localStorage.setItem('sponsorAuth', JSON.stringify(authData));
-                
-                // Close modal and redirect
-                const modal = bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal'));
-                if (modal) modal.hide();
-                
-                setTimeout(() => {
-                    window.open('sponsor-dashboard.html', '_blank');
-                }, 300);
-                
-            } else {
-                alert('認証に失敗しました。正しい認証情報を入力してください。');
-            }
+            // TODO: Replace with proper server-side authentication
+            // SECURITY: Never hardcode credentials in client code
+            // Call server-side API endpoint for authentication
+            alert('Authentication system is being upgraded. Please contact the administrator for access.');
+            
+            // Example of proper implementation (requires backend):
+            // fetch('/api/auth/admin-login', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({ email, password })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.authenticated) {
+            //         localStorage.setItem('sponsorAuth', JSON.stringify(data.authData));
+            //         const modal = bootstrap.Modal.getInstance(document.getElementById('sponsorLoginModal'));
+            //         if (modal) modal.hide();
+            //         setTimeout(() => window.open('sponsor-dashboard.html', '_blank'), 300);
+            //     } else {
+            //         alert('Authentication failed. Please check your credentials.');
+            //     }
+            // });
         });
     }
     

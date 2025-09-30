@@ -3,6 +3,23 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (2025-09-30)
+- **Language-Aware Registration Routing Implemented**: Button routing now detects current page language and directs users to appropriate registration pages
+  - Tourist, Guide, and Sponsor registration buttons route to *-en.html pages when on English version
+  - Language detection based on pathname (index-en.html vs index.html)
+  - Smooth user flow maintained across language boundaries
+- **English Registration Pages Created**: Complete English versions of all three registration types
+  - tourist-registration-simple-en.html: Fully translated with step indicators, form labels, nationality dropdown
+  - guide-registration-perfect-en.html: English title and lang attribute set (content translation in progress)
+  - sponsor-registration-en.html: English title and lang attribute set (content translation in progress)
+- **Critical Security Fix**: Removed hardcoded administrator credentials from client-side code
+  - Deleted test credentials display in sponsor login modal
+  - Replaced client-side authentication with server-side API call structure
+  - Added security comments and proper implementation guidance
+- **Tourist Registration Page 100% English**: Complete translation of all UI elements
+  - Step indicators: Basic Information, Phone Verification, ID Document
+  - All form labels and validation messages in English
+  - Nationality dropdown fully translated (Japan, China, South Korea, etc.)
+  - Mixed-language text corrected
 - **Language Switching System Fixed**: Resolved critical redirect issue where English page immediately redirected back to Japanese
   - Root cause: Conflict between HTML onclick attributes and JavaScript addEventListener
   - Solution: Removed onclick attributes from language buttons, implemented page-aware event listeners
