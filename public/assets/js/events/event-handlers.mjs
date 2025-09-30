@@ -1060,10 +1060,10 @@ export function wireLanguageSwitcher() {
     
     if (jpBtn) {
         if (isJapanesePage) {
-            // Already on Japanese page - show alert
-            jpBtn.addEventListener('click', function() {
-                console.log('🇯🇵 Already on Japanese page');
-                alert('既に日本語版を表示しています');
+            // Already on Japanese page - do nothing
+            jpBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🇯🇵 Already on Japanese page - no action');
             });
         } else {
             // On English page - switch to Japanese
@@ -1073,10 +1073,10 @@ export function wireLanguageSwitcher() {
     
     if (enBtn) {
         if (isEnglishPage) {
-            // Already on English page - show alert
-            enBtn.addEventListener('click', function() {
-                console.log('🇺🇸 Already on English page');
-                alert('Already displaying English version');
+            // Already on English page - do nothing
+            enBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🇺🇸 Already on English page - no action');
             });
         } else {
             // On Japanese page - switch to English
