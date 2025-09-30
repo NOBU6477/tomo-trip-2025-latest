@@ -800,11 +800,20 @@ class GuideAPIService {
   // Get public guide list (approved guides only)
   async getGuides(req, res) {
     try {
+      // Get language filter from query params (for language-specific page filtering)
+      const { lang } = req.query;
+      const requestedLang = (lang === 'en') ? 'en' : 'ja'; // Default to Japanese
+      
       // Get all approved guides from file storage
       const allGuides = this.loadGuides();
       
       const approvedGuides = allGuides
         .filter(guide => guide.status === 'approved')
+        .filter(guide => {
+          // Filter by registration language if specified
+          const guideRegLang = guide.registrationLanguage || 'ja'; // Default to 'ja' for old data
+          return guideRegLang === requestedLang;
+        })
         .map(guide => ({
           id: guide.id,
           name: guide.guideName,
@@ -816,6 +825,7 @@ class GuideAPIService {
           experience: guide.guideExperience,
           sessionRate: guide.guideSessionRate,
           availability: guide.guideAvailability,
+          registrationLanguage: guide.registrationLanguage || 'ja', // Include in response
           // Generate proper profile photo URL
           profilePhoto: this.generateProfilePhotoUrl(guide.profilePhoto),
           introduction: guide.guideIntroduction,
@@ -824,6 +834,8 @@ class GuideAPIService {
           registeredAt: guide.registeredAt
         }))
         .sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt)); // Newest first
+
+      console.log(`📋 API returning ${approvedGuides.length} guides for language: ${requestedLang}`);
 
       res.json({
         success: true,
