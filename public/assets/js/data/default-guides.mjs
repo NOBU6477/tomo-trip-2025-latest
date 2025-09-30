@@ -8,7 +8,8 @@ export const defaultGuideData = [
         price: 8000,
         image: "/assets/img/guides/default-1.svg",
         languages: ["ja", "en"],
-        specialties: ["history", "culture"]
+        specialties: ["history", "culture"],
+        registrationLanguage: "ja"
     },
     {
         id: 2,
@@ -18,7 +19,8 @@ export const defaultGuideData = [
         price: 7500,
         image: "/assets/img/guides/default-2.svg",
         languages: ["ja", "en", "zh"],
-        specialties: ["food", "local"]
+        specialties: ["food", "local"],
+        registrationLanguage: "ja"
     },
     {
         id: 3,
@@ -28,7 +30,8 @@ export const defaultGuideData = [
         price: 9000,
         image: "/assets/img/guides/default-3.svg",
         languages: ["ja", "en"],
-        specialties: ["temples", "traditional"]
+        specialties: ["temples", "traditional"],
+        registrationLanguage: "ja"
     },
     {
         id: 4,
@@ -38,7 +41,8 @@ export const defaultGuideData = [
         price: 7000,
         image: "/assets/img/guides/default-4.svg",
         languages: ["ja", "en"],
-        specialties: ["shopping", "food"]
+        specialties: ["shopping", "food"],
+        registrationLanguage: "ja"
     },
     {
         id: 5,
@@ -48,7 +52,8 @@ export const defaultGuideData = [
         price: 8500,
         image: "/assets/img/guides/default-5.svg",
         languages: ["en", "ja"],
-        specialties: ["business", "modern"]
+        specialties: ["business", "modern"],
+        registrationLanguage: "en"
     },
     {
         id: 6,
@@ -58,7 +63,8 @@ export const defaultGuideData = [
         price: 8800,
         image: "attached_assets/image_1754399234136.png",
         languages: ["zh", "ja", "en"],
-        specialties: ["culture", "temples"]
+        specialties: ["culture", "temples"],
+        registrationLanguage: "ja"
     },
     {
         id: 7,
@@ -68,7 +74,8 @@ export const defaultGuideData = [
         price: 9500,
         image: "attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
-        specialties: ["nature", "skiing"]
+        specialties: ["nature", "skiing"],
+        registrationLanguage: "ja"
     },
     {
         id: 8,
@@ -78,7 +85,8 @@ export const defaultGuideData = [
         price: 8200,
         image: "attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
-        specialties: ["fashion", "youth"]
+        specialties: ["fashion", "youth"],
+        registrationLanguage: "en"
     },
     {
         id: 9,
@@ -88,7 +96,8 @@ export const defaultGuideData = [
         price: 7300,
         image: "attached_assets/image_1754399234136.png",
         languages: ["ja", "ko"],
-        specialties: ["food", "local"]
+        specialties: ["food", "local"],
+        registrationLanguage: "ja"
     },
     {
         id: 10,
@@ -98,7 +107,8 @@ export const defaultGuideData = [
         price: 7800,
         image: "attached_assets/image_1754399234136.png",
         languages: ["es", "en", "ja"],
-        specialties: ["nightlife", "entertainment"]
+        specialties: ["nightlife", "entertainment"],
+        registrationLanguage: "en"
     },
     {
         id: 11,
@@ -108,7 +118,8 @@ export const defaultGuideData = [
         price: 8600,
         image: "attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
-        specialties: ["history", "peace"]
+        specialties: ["history", "peace"],
+        registrationLanguage: "ja"
     },
     {
         id: 12,
@@ -118,7 +129,8 @@ export const defaultGuideData = [
         price: 9200,
         image: "attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
-        specialties: ["zen", "meditation"]
+        specialties: ["zen", "meditation"],
+        registrationLanguage: "en"
     }
 ];
 
