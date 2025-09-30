@@ -65,7 +65,7 @@
     <link rel="stylesheet" href="assets/css/bugfixes.css?v=cache-bust-20250923-1245">
 
     <style>
-        /* Cache bust: 2025-09-30-v3-horizontal-layout */
+        /* Cache bust: 2025-09-30-v4-large-text-balanced */
         .guide-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -133,7 +133,7 @@
         .navbar-brand {
             display: flex !important;
             align-items: center !important;
-            gap: 15px !important;
+            gap: 20px !important;
             font-weight: bold;
             font-size: 1.5rem;
             color: #333 !important;
@@ -144,7 +144,7 @@
         .brand-text {
             display: flex !important;
             flex-direction: column !important;
-            gap: 0px !important;
+            gap: 4px !important;
             justify-content: center !important;
         }
         
@@ -153,21 +153,20 @@
         }
         
         .brand-tagline {
-            font-size: 1.1rem !important;
+            font-size: 1.4rem !important;
             font-weight: 700 !important;
             color: #333 !important;
-            letter-spacing: 0.5px !important;
+            letter-spacing: 0.8px !important;
             white-space: nowrap !important;
-            line-height: 1.4 !important;
+            line-height: 1.3 !important;
             display: block !important;
-            margin-bottom: 2px !important;
         }
         
         .brand-subtitle {
-            font-size: 0.75rem !important;
-            font-weight: 400 !important;
-            color: #666 !important;
-            letter-spacing: 0.3px !important;
+            font-size: 0.9rem !important;
+            font-weight: 500 !important;
+            color: #555 !important;
+            letter-spacing: 0.5px !important;
             white-space: nowrap !important;
             line-height: 1.3 !important;
             display: block !important;
@@ -177,7 +176,28 @@
         .navbar .container,
         .navbar .container-fluid {
             justify-content: center;
-            gap: 40px;
+            gap: 50px;
+        }
+        
+        .navbar {
+            padding-top: 12px;
+            padding-bottom: 12px;
+        }
+        
+        /* タブレット対応 */
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .brand-tagline {
+                font-size: 1.1rem !important;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.75rem !important;
+            }
+            
+            .navbar .container,
+            .navbar .container-fluid {
+                gap: 30px !important;
+            }
         }
         
         /* モバイル対応：サブタイトルを非表示 */
@@ -187,18 +207,18 @@
             }
             
             .brand-tagline {
-                font-size: 0.7rem !important;
+                font-size: 0.85rem !important;
                 white-space: normal !important;
-                max-width: 150px !important;
+                max-width: 180px !important;
             }
             
             .navbar-brand {
-                gap: 8px !important;
+                gap: 12px !important;
             }
             
             .navbar .container,
             .navbar .container-fluid {
-                gap: 10px !important;
+                gap: 15px !important;
             }
         }
         
@@ -210,17 +230,6 @@
             
             .brand-text {
                 display: none !important;
-            }
-        }
-        
-        /* タブレット対応 */
-        @media (min-width: 769px) and (max-width: 992px) {
-            .brand-tagline {
-                font-size: 0.9rem !important;
-            }
-            
-            .brand-subtitle {
-                font-size: 0.65rem !important;
             }
         }
 
