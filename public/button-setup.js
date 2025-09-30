@@ -627,36 +627,77 @@ function showRegistrationChoiceManual() {
     console.log('✅ Registration choice displayed manually');
 }
 
-// Helper functions for registration choices
+// Helper functions for registration choices with language-aware routing
 function openTouristRegistration() {
     console.log('🎯 Tourist registration selected');
     hideRegistrationChoice();
-    window.open('tourist-registration-simple.html', '_blank');
+    
+    // Detect current language
+    const getCurrentLang = () => {
+        const pathname = window.location.pathname;
+        return pathname.includes('index-en.html') ? 'en' : 'ja';
+    };
+    const currentLang = getCurrentLang();
+    
+    // Route to language-appropriate page
+    const registrationPage = currentLang === 'en' 
+        ? 'tourist-registration-simple-en.html' 
+        : 'tourist-registration-simple.html';
+    
+    window.open(registrationPage, '_blank');
 }
 
 function openGuideRegistration() {
     console.log('🎯 Guide registration selected - opening PERFECT detailed form');
     hideRegistrationChoice();
     
-    // Open the PERFECT guide registration form in new window
+    // Detect current language
+    const getCurrentLang = () => {
+        const pathname = window.location.pathname;
+        return pathname.includes('index-en.html') ? 'en' : 'ja';
+    };
+    const currentLang = getCurrentLang();
+    
+    // Route to language-appropriate page
+    const registrationPage = currentLang === 'en'
+        ? 'guide-registration-perfect-en.html'
+        : 'guide-registration-perfect.html';
+    
+    // Open the guide registration form in new window
     try {
-        const newWindow = window.open('guide-registration-perfect.html', '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
+        const newWindow = window.open(registrationPage, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
         if (newWindow) {
-            console.log('✅ PERFECT guide registration form opened in new window');
+            console.log('✅ Guide registration form opened in new window');
         } else {
             // Fallback: redirect in same window
-            window.location.href = 'guide-registration-perfect.html';
+            window.location.href = registrationPage;
         }
     } catch (error) {
-        console.error('❌ Error opening PERFECT guide registration form:', error);
-        alert('ガイド登録フォームの表示に問題が発生しました。');
+        console.error('❌ Error opening guide registration form:', error);
+        const errorMsg = currentLang === 'en' 
+            ? 'There was a problem displaying the guide registration form.'
+            : 'ガイド登録フォームの表示に問題が発生しました。';
+        alert(errorMsg);
     }
 }
 
 function handleSponsorRegistration() {
     console.log('🎯 Sponsor registration selected');
     hideRegistrationChoice();
-    window.open('sponsor-registration.html', '_blank');
+    
+    // Detect current language
+    const getCurrentLang = () => {
+        const pathname = window.location.pathname;
+        return pathname.includes('index-en.html') ? 'en' : 'ja';
+    };
+    const currentLang = getCurrentLang();
+    
+    // Route to language-appropriate page
+    const registrationPage = currentLang === 'en'
+        ? 'sponsor-registration-en.html'
+        : 'sponsor-registration.html';
+    
+    window.open(registrationPage, '_blank');
 }
 
 function hideRegistrationChoice() {
