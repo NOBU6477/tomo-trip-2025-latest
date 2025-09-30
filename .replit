@@ -1,6 +1,6 @@
 # ルートの .replit（最小でOK）
 run = "node github-migration-ready/server.js"
-modules = ["nodejs-20", "python-3.11"]
+modules = ["nodejs-20", "python-3.11", "postgresql-16"]
 
 [interpreter]
 language = "nodejs"
