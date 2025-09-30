@@ -216,17 +216,17 @@
         <div class="step-indicator">
             <div class="step-item active" id="step1-indicator">
                 <span class="badge bg-primary rounded-circle me-2">1</span>
-                基本情報
+                Basic Information
             </div>
             <div class="mx-3">→</div>
             <div class="step-item" id="step2-indicator">
                 <span class="badge bg-secondary rounded-circle me-2">2</span>
-                電話認証
+                Phone Verification
             </div>
             <div class="mx-3">→</div>
             <div class="step-item" id="step3-indicator">
                 <span class="badge bg-secondary rounded-circle me-2">3</span>
-                身分証明書
+                ID Document
             </div>
         </div>
 
@@ -235,37 +235,37 @@
             <h4 class="mb-3">Please enter your basic information</h4>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="firstName" class="form-label">名</label>
+                    <label for="firstName" class="form-label">First Name</label>
                     <input type="text" class="form-control" id="firstName" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="lastName" class="form-label">姓</label>
+                    <label for="lastName" class="form-label">Last Name</label>
                     <input type="text" class="form-control" id="lastName" required>
                 </div>
             </div>
             
             <div class="mb-3">
-                <label for="email" class="form-label">メールアドレス</label>
+                <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="email" required>
             </div>
             
             <div class="mb-3">
-                <label for="phone" class="form-label">電話番号</label>
+                <label for="phone" class="form-label">Phone Number</label>
                 <input type="tel" class="form-control" id="phone" placeholder="090-1234-5678" required 
                        style="font-size: 16px; padding: 12px;" autocomplete="tel">
                 <div class="form-text">Enter the phone number to receive SMS verification code</div>
             </div>
             
             <div class="mb-3">
-                <label for="nationality" class="form-label">国籍</label>
+                <label for="nationality" class="form-label">Nationality</label>
                 <select class="form-control" id="nationality" required>
                     <option value="">Please select</option>
-                    <option value="japan">日本</option>
+                    <option value="japan">Japan</option>
                     <option value="usa">United States</option>
-                    <option value="china">中国</option>
-                    <option value="korea">韓国</option>
-                    <option value="taiwan">台湾</option>
-                    <option value="thailand">タイ</option>
+                    <option value="china">China</option>
+                    <option value="korea">South Korea</option>
+                    <option value="taiwan">Taiwan</option>
+                    <option value="thailand">Thailand</option>
                     <option value="singapore">Singapore</option>
                     <option value="australia">Australia</option>
                     <option value="uk">United Kingdom</option>
@@ -287,13 +287,13 @@
             
             <div class="alert alert-info mb-4">
                 <i class="bi bi-info-circle me-2"></i>
-                入力された電話番号にSMSSend Verification Codeします
+                SMS verification code will be sent to the phone number entered
             </div>
             
             <div class="bg-light rounded p-3 mb-3">
                 <div class="text-center">
                     <i class="bi bi-phone me-2 text-primary"></i>
-                    <strong>認証対象電話番号:</strong>
+                    <strong>Phone Number for Verification:</strong>
                     <span class="ms-2 text-primary" id="phoneDisplay"></span>
                 </div>
             </div>
@@ -303,7 +303,7 @@
                     <label for="verificationPhone" class="form-label">Phone Number for Verification</label>
                     <input type="tel" class="form-control" id="verificationPhone" placeholder="090-1234-5678" 
                            style="font-size: 16px; padding: 12px;">
-                    <div class="form-text">Phone Number Verificationが必要です</div>
+                    <div class="form-text">Phone number verification required</div>
                 </div>
                 
                 <button type="button" class="btn btn-primary w-100 mb-3" id="sendSMSBtn">
@@ -315,11 +315,11 @@
                         <label for="verificationCode" class="form-label">Verification Code (6 digits)</label>
                         <input type="text" class="form-control verification-code-input" id="verificationCode" 
                                maxlength="6" placeholder="123456">
-                        <div class="form-text">SMSで送信された6桁のコードを入力してください</div>
+                        <div class="form-text">Enter the 6-digit code sent via SMS</div>
                     </div>
                     
                     <button type="button" class="btn btn-success w-100 mb-3" id="verifyCodeBtn">
-                        <i class="bi bi-check-circle me-2"></i>認証Verify Code
+                        <i class="bi bi-check-circle me-2"></i>Verify Code
                     </button>
                 </div>
             </div>
@@ -341,14 +341,14 @@
 
             <!-- Document Type Selection -->
             <div class="mb-4">
-                <h6 class="mb-3">証明書の種類をPlease select</h6>
+                <h6 class="mb-3">Please select document type</h6>
                 
                 <div class="document-type-card" onclick="selectDocumentType('passport')">
                     <div class="d-flex align-items-center">
                         <i class="bi bi-passport text-primary me-3" style="font-size: 2rem;"></i>
                         <div>
                             <h6 class="mb-1">Passport</h6>
-                            <small class="text-muted">外国籍の方</small>
+                            <small class="text-muted">For foreign nationals</small>
                         </div>
                     </div>
                     <i class="bi bi-check-circle-fill selection-check"></i>
@@ -359,7 +359,7 @@
                         <i class="bi bi-credit-card text-primary me-3" style="font-size: 2rem;"></i>
                         <div>
                             <h6 class="mb-1">Driver License</h6>
-                            <small class="text-muted">日本国内有効</small>
+                            <small class="text-muted">Valid in Japan</small>
                         </div>
                     </div>
                     <i class="bi bi-check-circle-fill selection-check"></i>
@@ -370,7 +370,7 @@
                         <i class="bi bi-card-text text-primary me-3" style="font-size: 2rem;"></i>
                         <div>
                             <h6 class="mb-1">Residence Card</h6>
-                            <small class="text-muted">外国人登録証</small>
+                            <small class="text-muted">Foreign registration card</small>
                         </div>
                     </div>
                     <i class="bi bi-check-circle-fill selection-check"></i>
@@ -381,7 +381,7 @@
                         <i class="bi bi-award text-primary me-3" style="font-size: 2rem;"></i>
                         <div>
                             <h6 class="mb-1">Special Permanent Resident Certificate</h6>
-                            <small class="text-muted">韓国・朝鮮等</small>
+                            <small class="text-muted">Korea, etc.</small>
                         </div>
                     </div>
                     <i class="bi bi-check-circle-fill selection-check"></i>
@@ -392,7 +392,7 @@
                         <i class="bi bi-mortarboard text-primary me-3" style="font-size: 2rem;"></i>
                         <div>
                             <h6 class="mb-1">Student ID</h6>
-                            <small class="text-muted">有効期限内のもの</small>
+                            <small class="text-muted">Valid documents</small>
                         </div>
                     </div>
                     <i class="bi bi-check-circle-fill selection-check"></i>
@@ -402,7 +402,7 @@
             <!-- Document Upload Area -->
             <div class="mb-4" id="uploadSection" style="display: none;">
                 <div class="bg-light rounded p-3 mb-3">
-                    提出方法：上で選択した証明書の種類に応じて、必要な面をアップロードしてください
+                    Upload method: Please upload the required sides according to the document type selected above
                 </div>
                 
                 <div class="document-upload-area" id="uploadArea">
@@ -514,7 +514,7 @@
 
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
-                alert('有効なメールアドレスを入力してください。');
+                alert('有効なEmail Addressを入力してください。');
                 return false;
             }
 
@@ -533,7 +533,7 @@
         document.getElementById('sendSMSBtn').addEventListener('click', async function() {
             const phone = document.getElementById('verificationPhone').value;
             if (!phone) {
-                alert('電話番号を入力してください。');
+                alert('Phone Numberを入力してください。');
                 return;
             }
 
@@ -630,7 +630,7 @@
                 
                 // Re-enable button
                 this.disabled = false;
-                this.innerHTML = '<i class="bi bi-check-circle me-2"></i>認証Verify Code';
+                this.innerHTML = '<i class="bi bi-check-circle me-2"></i>Verify Code';
             }
         });
 
