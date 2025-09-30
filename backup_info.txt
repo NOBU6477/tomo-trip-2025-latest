@@ -1,3 +1,0 @@
-🎯 BACKUP CREATED: Wed Sep 10 12:03:44 PM UTC 2025
--rw-r--r-- 1 runner runner   5774 Sep 10 12:03 public/assets/js/ui/guide-renderer_backup_20250910_120342.mjs
--rw-r--r-- 1 runner runner 349487 Sep 10 12:03 public/index_backup_20250910_120341.html
