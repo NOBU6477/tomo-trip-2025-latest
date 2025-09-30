@@ -2966,13 +2966,24 @@
                     // AppStateをリセット
                     if (window.AppState) {
                         window.AppState.isFiltered = false;
+                        window.AppState.isFiltering = false;
                         window.AppState.filteredGuides = null;
-                    }
-                    
-                    // すべてのガイドを表示
-                    const allGuides = window.AppState?.originalGuides || window.AppState?.guides || [];
-                    if (window.renderGuideCards) {
-                        window.renderGuideCards(allGuides);
+                        
+                        // 元のガイドデータから復元
+                        const originalGuides = window.AppState.originalGuides || [];
+                        window.AppState.guides = [...originalGuides];
+                        window.AppState.currentPage = 1;
+                        
+                        console.log(`✅ Reset complete - restoring ${originalGuides.length} guides`);
+                        
+                        // すべてのガイドを表示
+                        if (window.renderGuideCards) {
+                            window.renderGuideCards(originalGuides);
+                        }
+                        
+                        if (window.updateGuideCounters) {
+                            window.updateGuideCounters(originalGuides.length, originalGuides.length);
+                        }
                     }
                     
                     console.log('✅ Filters reset successfully');
@@ -3310,7 +3321,8 @@
                         console.error('Guide registration error:', error);
                         alert('登録中にエラーが発生しました。もう一度お試しください。');
                     }
-            });
+                });
+            }
 
             // Setup dropdown listeners
             setupCustomDropdownListeners();

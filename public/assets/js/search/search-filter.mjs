@@ -174,17 +174,41 @@ export async function executeSearch() {
 
 // フィルターリセット  
 export function resetFilters() {
-    document.getElementById('locationFilter').value = '';
-    document.getElementById('languageFilter').value = '';
-    document.getElementById('priceFilter').value = '';
+    console.log('🔄 resetFilters called - clearing all filters');
+    
+    // フィルター入力をクリア
+    const locationFilter = document.getElementById('locationFilter');
+    const languageFilter = document.getElementById('languageFilter');
+    const priceFilter = document.getElementById('priceFilter');
     const keywordInput = document.getElementById('keywordInput');
+    
+    if (locationFilter) locationFilter.value = '';
+    if (languageFilter) languageFilter.value = '';
+    if (priceFilter) priceFilter.value = '';
     if (keywordInput) keywordInput.value = '';
     
-    // 全ガイドを再表示
-    if (window.AppState && window.AppState.guides && window.renderGuideCards) {
-        window.renderGuideCards(window.AppState.guides);
-        if (window.updateGuideCounters) {
-            window.updateGuideCounters(window.AppState.guides.length, window.AppState.guides.length);
+    // AppStateをリセット
+    if (window.AppState) {
+        window.AppState.isFiltered = false;
+        window.AppState.isFiltering = false;
+        window.AppState.filteredGuides = null;
+        
+        // 元のガイドデータから復元
+        const originalGuides = window.AppState.originalGuides || [];
+        window.AppState.guides = [...originalGuides];
+        window.AppState.currentPage = 1;
+        
+        console.log(`✅ Reset complete - restoring ${originalGuides.length} guides`);
+        
+        // 全ガイドを再表示
+        if (window.renderGuideCards) {
+            window.renderGuideCards(originalGuides);
         }
+        
+        if (window.updateGuideCounters) {
+            window.updateGuideCounters(originalGuides.length, originalGuides.length);
+        }
+    } else {
+        console.warn('⚠️ AppState not available for reset');
     }
 }
