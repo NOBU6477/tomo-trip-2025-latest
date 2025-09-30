@@ -2520,7 +2520,7 @@
             const dropdown = document.getElementById('customLoginDropdown');
             const button = document.getElementById('loginDropdown');
             
-            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            if (dropdown && button && !button.contains(event.target) && !dropdown.contains(event.target)) {
                 dropdown.style.display = 'none';
             }
         });

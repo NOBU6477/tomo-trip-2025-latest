@@ -2,7 +2,7 @@
 // Removed defaultGuideData import to prevent duplicate rendering
 
 // Import language utilities for proper localization
-import { localizeLanguageArray } from '../utils/language-utils.mjs';
+import { localizeLanguageArray, isEnglishPage, getText } from '../utils/language-utils.mjs';
 
 // スケーラブルペジネーションのインポートと初期化
 let paginationSystem = null;
@@ -174,7 +174,8 @@ function renderAllGuideCards(guides) {
             setTimeout(() => {
                 // フィルター処理が完了しても結果が空の場合のみ「見つかりません」を表示
                 if (container && (!Array.isArray(guides) || guides.length === 0)) {
-                    container.innerHTML = '<div class="text-center p-4"><p class="text-muted">条件に一致するガイドが見つかりません</p></div>';
+                    const noMatchMsg = getText('条件に一致するガイドが見つかりません', 'No guides match your criteria');
+                    container.innerHTML = `<div class="text-center p-4"><p class="text-muted">${noMatchMsg}</p></div>`;
                 }
             }, 300);
             container.innerHTML = message;
@@ -247,7 +248,8 @@ function updatePaginationDisplay(currentPage, totalGuides, pageSize) {
     // Update page info
     const pageInfo = document.getElementById('pageInfo');
     if (pageInfo) {
-        pageInfo.textContent = `ページ ${currentPage}`;
+        const pageText = getText(`ページ ${currentPage}`, `Page ${currentPage}`);
+        pageInfo.textContent = pageText;
     }
     
     // Update display range
@@ -442,7 +444,8 @@ function toggleBookmark(guideId) {
         console.log('❌ Guide removed from bookmarks:', guideId);
         
         if (typeof safeShowToast === 'function') {
-            safeShowToast('ブックマークから削除しました', 'info');
+            const removeMsg = getText('ブックマークから削除しました', 'Removed from bookmarks');
+            safeShowToast(removeMsg, 'info');
         }
     } else {
         // Add to bookmarks and de-duplicate
@@ -450,7 +453,8 @@ function toggleBookmark(guideId) {
         console.log('✅ Guide added to bookmarks:', guideId);
         
         if (typeof safeShowToast === 'function') {
-            safeShowToast('ブックマークに追加しました', 'warning');
+            const addMsg = getText('ブックマークに追加しました', 'Added to bookmarks');
+            safeShowToast(addMsg, 'warning');
         }
     }
     
@@ -520,6 +524,19 @@ export function createGuideCardHTML(guide) {
                style="position: absolute; top: 10px; left: 10px; z-index: 10; transform: scale(1.5);">
     ` : '';
 
+    // Get language-appropriate text
+    const currentLang = isEnglishPage() ? 'en' : 'ja';
+    const defaultName = getText('ガイド', 'Guide');
+    const defaultLocation = getText('東京', 'Tokyo');
+    const defaultSpecialty = getText('観光案内', 'Sightseeing');
+    const defaultIntro = getText('地域の魅力をご案内します', 'I will show you the charm of the area');
+    const perDayText = getText('1日ガイド', 'Full-day guide');
+    const viewDetailsText = getText('詳細を見る', 'View Details');
+    const bookmarkText = getText('ブックマーク', 'Bookmark');
+    const compareText = getText('比較', 'Compare');
+    const bookmarkTitle = getText('ブックマーク', 'Bookmark');
+    const compareTitle = getText('比較リストに追加', 'Add to comparison list');
+
     return `
         <div class="col-md-6 col-lg-4 mb-4">
             <div class="card h-100 guide-card ${adminModeEnabled ? 'admin-mode' : ''}" 
@@ -529,30 +546,30 @@ export function createGuideCardHTML(guide) {
                 <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" 
                      class="card-img-top" 
                      style="height: 200px; object-fit: cover;" 
-                     alt="${guide.name || guide.guideName || 'ガイド'}"
+                     alt="${guide.name || guide.guideName || defaultName}"
                      onerror="this.src='/assets/img/guides/default-1.svg';">
                 <div class="card-body d-flex flex-column">
                     <div class="mb-2">
-                        <h5 class="card-title mb-1">${guide.name || guide.guideName || 'ガイド'}</h5>
+                        <h5 class="card-title mb-1">${guide.name || guide.guideName || defaultName}</h5>
                     </div>
                     <div class="mb-2">
                         <div class="mb-1">
-                            <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || '東京'}</span>
+                            <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || defaultLocation}</span>
                         </div>
                         <div class="mb-1">
-                            <span class="badge bg-secondary me-1">${guide.specialties || guide.guideSpecialties || guide.specialty || '観光案内'}</span>
+                            <span class="badge bg-secondary me-1">${guide.specialties || guide.guideSpecialties || guide.specialty || defaultSpecialty}</span>
                         </div>
                         <div class="mb-1">
                             ${(() => {
-                                // 統一APIを使用した日本語言語バッジ表示
-                                const localizedLanguages = localizeLanguageArray(guide.languages, 'ja');
+                                // Use current page language for badge display
+                                const localizedLanguages = localizeLanguageArray(guide.languages, currentLang);
                                 return localizedLanguages.map(lang => 
                                     `<span class="badge bg-success me-1" style="font-size: 0.75em;">${lang}</span>`
                                 ).join('');
                             })()}
                         </div>
                     </div>
-                    <p class="card-text text-muted small mb-2">${guide.introduction || guide.guideIntroduction || guide.description || '地域の魅力をご案内します'}</p>
+                    <p class="card-text text-muted small mb-2">${guide.introduction || guide.guideIntroduction || guide.description || defaultIntro}</p>
                     <div class="d-flex justify-content-between align-items-center mt-auto">
                         <div>
                             <span class="text-warning">★</span>
@@ -560,19 +577,19 @@ export function createGuideCardHTML(guide) {
                         </div>
                         <div class="text-end">
                             <div class="fw-bold text-primary">${formattedPrice}</div>
-                            <small class="text-muted">1日ガイド</small>
+                            <small class="text-muted">${perDayText}</small>
                         </div>
                     </div>
                     <div class="mt-3">
                         <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px; margin-bottom: 10px;">
-                            詳細を見る
+                            ${viewDetailsText}
                         </button>
                         <div class="d-flex gap-2 mt-2">
-                            <button class="${bookmarkBtnClass} bookmark-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-bookmark" title="ブックマーク" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
-                                ${bookmarkIcon} <span class="ms-1">ブックマーク</span>
+                            <button class="${bookmarkBtnClass} bookmark-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-bookmark" title="${bookmarkTitle}" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
+                                ${bookmarkIcon} <span class="ms-1">${bookmarkText}</span>
                             </button>
-                            <button class="${compareBtnClass} compare-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-comparison" title="比較リストに追加" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
-                                ${compareIcon} <span class="ms-1">比較</span>
+                            <button class="${compareBtnClass} compare-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-comparison" title="${compareTitle}" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
+                                ${compareIcon} <span class="ms-1">${compareText}</span>
                             </button>
                         </div>
                     </div>

@@ -235,6 +235,33 @@ export function languageArrayIncludes(languageArray, targetLanguage) {
     return languageArray.some(lang => compareLanguages(lang, targetLanguage));
 }
 
+/**
+ * 現在のページの言語を検出
+ * @returns {string} 'ja' または 'en'
+ */
+export function getCurrentPageLanguage() {
+    const pathname = window.location.pathname;
+    return pathname.includes('index-en.html') ? 'en' : 'ja';
+}
+
+/**
+ * 現在のページが英語版かどうか
+ * @returns {boolean}
+ */
+export function isEnglishPage() {
+    return getCurrentPageLanguage() === 'en';
+}
+
+/**
+ * 言語に応じたテキストを取得
+ * @param {string} jaText - 日本語テキスト
+ * @param {string} enText - 英語テキスト
+ * @returns {string} 現在の言語に応じたテキスト
+ */
+export function getText(jaText, enText) {
+    return isEnglishPage() ? enText : jaText;
+}
+
 // デバッグ用
 console.log('🗣️ Language Utils loaded with Japanese localization support');
 
