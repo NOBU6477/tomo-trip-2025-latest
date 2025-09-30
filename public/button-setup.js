@@ -502,6 +502,54 @@ function showRegistrationChoiceManual() {
     // Clear any existing content
     formContainer.innerHTML = '';
     
+    // Detect current language using standardized method
+    const getCurrentLang = () => {
+        const pathname = window.location.pathname;
+        return pathname.includes('index-en.html') ? 'en' : 'ja';
+    };
+    const isEnglish = getCurrentLang() === 'en';
+    
+    // Language-specific text
+    const text = isEnglish ? {
+        title: 'Select Registration Type',
+        subtitle: 'Please choose the registration type that suits your needs',
+        tourist: {
+            title: 'Tourist Registration',
+            desc: 'Register to use local guide services',
+            badge: 'Individual'
+        },
+        guide: {
+            title: 'Guide Registration',
+            desc: 'Provide services to tourists as a local guide',
+            badge: 'Freelance'
+        },
+        sponsor: {
+            title: 'Sponsor Registration',
+            desc: 'Register your shop or facility as a sponsor and promote to tourists',
+            badge: 'Business'
+        },
+        cancel: 'Cancel'
+    } : {
+        title: '登録タイプを選択',
+        subtitle: 'お客様の用途に合わせて適切な登録タイプをお選びください',
+        tourist: {
+            title: '観光客登録',
+            desc: '地元ガイドサービスを利用するための登録です',
+            badge: '個人向け'
+        },
+        guide: {
+            title: 'ガイド登録',
+            desc: '地元ガイドとして観光客にサービスを提供します',
+            badge: 'フリーランス'
+        },
+        sponsor: {
+            title: '協賛店登録',
+            desc: 'お店や施設を協賛店として登録し、観光客にPRできます',
+            badge: 'ビジネス向け'
+        },
+        cancel: 'キャンセル'
+    };
+    
     // Create registration choice content
     const choiceContent = `
     <div class="container">
@@ -509,8 +557,8 @@ function showRegistrationChoiceManual() {
             <div class="col-lg-8">
                 <div class="choice-container" style="background: white; border-radius: 20px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15); margin: 2rem 0;">
                     <div class="choice-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
-                        <h1><i class="bi bi-person-plus me-2"></i>登録タイプを選択</h1>
-                        <p class="mb-0">お客様の用途に合わせて適切な登録タイプをお選びください</p>
+                        <h1><i class="bi bi-person-plus me-2"></i>${text.title}</h1>
+                        <p class="mb-0">${text.subtitle}</p>
                     </div>
                     
                     <div class="choice-body" style="padding: 2.5rem;">
@@ -520,10 +568,10 @@ function showRegistrationChoiceManual() {
                                 <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openTouristRegistration()">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-person-check text-primary mb-3" style="font-size: 3rem;"></i>
-                                        <h6 class="fw-bold text-primary mb-2">観光客登録</h6>
-                                        <p class="text-muted small mb-3">地元ガイドサービスを利用するための登録です</p>
+                                        <h6 class="fw-bold text-primary mb-2">${text.tourist.title}</h6>
+                                        <p class="text-muted small mb-3">${text.tourist.desc}</p>
                                         <div class="mt-3">
-                                            <span class="badge bg-primary">個人向け</span>
+                                            <span class="badge bg-primary">${text.tourist.badge}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -534,10 +582,10 @@ function showRegistrationChoiceManual() {
                                 <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="window.open('guide-registration-perfect.html', '_blank')">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-person-badge text-success mb-3" style="font-size: 3rem;"></i>
-                                        <h6 class="fw-bold text-success mb-2">ガイド登録</h6>
-                                        <p class="text-muted small mb-3">地元ガイドとして観光客にサービスを提供します</p>
+                                        <h6 class="fw-bold text-success mb-2">${text.guide.title}</h6>
+                                        <p class="text-muted small mb-3">${text.guide.desc}</p>
                                         <div class="mt-3">
-                                            <span class="badge bg-success">フリーランス</span>
+                                            <span class="badge bg-success">${text.guide.badge}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -548,10 +596,10 @@ function showRegistrationChoiceManual() {
                                 <div class="card h-100 border-warning choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="handleSponsorRegistration()">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-building text-warning mb-3" style="font-size: 3rem;"></i>
-                                        <h6 class="fw-bold text-warning mb-2">協賛店登録</h6>
-                                        <p class="text-muted small mb-3">お店や施設を協賛店として登録し、観光客にPRできます</p>
+                                        <h6 class="fw-bold text-warning mb-2">${text.sponsor.title}</h6>
+                                        <p class="text-muted small mb-3">${text.sponsor.desc}</p>
                                         <div class="mt-3">
-                                            <span class="badge bg-warning">ビジネス向け</span>
+                                            <span class="badge bg-warning">${text.sponsor.badge}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -559,7 +607,7 @@ function showRegistrationChoiceManual() {
                         </div>
                         
                         <div class="text-center mt-4">
-                            <button type="button" class="btn btn-outline-secondary" onclick="hideRegistrationChoice()" style="border-radius: 25px; padding: 12px 30px;">キャンセル</button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="hideRegistrationChoice()" style="border-radius: 25px; padding: 12px 30px;">${text.cancel}</button>
                         </div>
                     </div>
                 </div>

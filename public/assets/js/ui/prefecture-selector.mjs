@@ -1,29 +1,69 @@
 // 都道府県選択UI生成モジュール
 import { prefecturesData, regionTypes } from '../data/prefectures-data.mjs';
+import { getCurrentPageLanguage } from '../utils/language-utils.mjs';
+import { convertCodeToDisplayName } from '../utils/location-utils.mjs';
+
+// 地域名の日英対応マッピング
+const regionNames = {
+  ja: {
+    "hokkaido": "北海道地方",
+    "tohoku": "東北地方",
+    "kanto": "関東地方",
+    "chubu": "中部地方",
+    "kinki": "近畿地方",
+    "chugoku": "中国地方",
+    "shikoku": "四国地方",
+    "kyushu": "九州地方",
+    "okinawa": "沖縄地方",
+    "remote_islands": "離島地域（詳細選択）",
+    "individual_islands": "個別離島選択",
+    "all_islands": "離島地域（全体）"
+  },
+  en: {
+    "hokkaido": "Hokkaido Region",
+    "tohoku": "Tohoku Region",
+    "kanto": "Kanto Region",
+    "chubu": "Chubu Region",
+    "kinki": "Kinki Region",
+    "chugoku": "Chugoku Region",
+    "shikoku": "Shikoku Region",
+    "kyushu": "Kyushu Region",
+    "okinawa": "Okinawa Region",
+    "remote_islands": "Remote Islands (Detailed)",
+    "individual_islands": "Individual Islands",
+    "all_islands": "Remote Islands (All)"
+  }
+};
 
 // 地域別にグループ化した都道府県選択HTMLを生成
 export function generatePrefectureOptions() {
+  const currentLang = getCurrentPageLanguage();
+  const regionLabels = regionNames[currentLang];
+  
   const regions = {
-    "北海道地方": ["hokkaido"],
-    "東北地方": ["aomori", "iwate", "miyagi", "akita", "yamagata", "fukushima"], 
-    "関東地方": ["ibaraki", "tochigi", "gunma", "saitama", "chiba", "tokyo", "kanagawa"],
-    "中部地方": ["niigata", "toyama", "ishikawa", "fukui", "yamanashi", "nagano", "gifu", "shizuoka", "aichi"],
-    "近畿地方": ["mie", "shiga", "kyoto", "osaka", "hyogo", "nara", "wakayama"], 
-    "中国地方": ["tottori", "shimane", "okayama", "hiroshima", "yamaguchi"],
-    "四国地方": ["tokushima", "kagawa", "ehime", "kochi"],
-    "九州地方": ["fukuoka", "saga", "nagasaki", "kumamoto", "oita", "miyazaki", "kagoshima"],
-    "沖縄地方": ["okinawa"]
+    "hokkaido": ["hokkaido"],
+    "tohoku": ["aomori", "iwate", "miyagi", "akita", "yamagata", "fukushima"], 
+    "kanto": ["ibaraki", "tochigi", "gunma", "saitama", "chiba", "tokyo", "kanagawa"],
+    "chubu": ["niigata", "toyama", "ishikawa", "fukui", "yamanashi", "nagano", "gifu", "shizuoka", "aichi"],
+    "kinki": ["mie", "shiga", "kyoto", "osaka", "hyogo", "nara", "wakayama"], 
+    "chugoku": ["tottori", "shimane", "okayama", "hiroshima", "yamaguchi"],
+    "shikoku": ["tokushima", "kagawa", "ehime", "kochi"],
+    "kyushu": ["fukuoka", "saga", "nagasaki", "kumamoto", "oita", "miyazaki", "kagoshima"],
+    "okinawa": ["okinawa"]
   };
 
-  let optionsHTML = '<option value="">活動地域を選択してください</option>\n';
+  const placeholderText = currentLang === 'en' ? 'Select Location' : '活動地域を選択してください';
+  let optionsHTML = `<option value="">${placeholderText}</option>\n`;
 
-  Object.entries(regions).forEach(([regionName, prefectureCodes]) => {
-    optionsHTML += `<optgroup label="${regionName}">\n`;
+  Object.entries(regions).forEach(([regionKey, prefectureCodes]) => {
+    const regionLabel = regionLabels[regionKey] || regionKey;
+    optionsHTML += `<optgroup label="${regionLabel}">\n`;
     
     prefectureCodes.forEach(code => {
       const prefecture = prefecturesData[code];
       if (prefecture) {
-        optionsHTML += `    <option value="${code}" data-region="${prefecture.region}" data-attributes='${JSON.stringify(prefecture.attributes)}'>${prefecture.name}</option>\n`;
+        const prefectureName = convertCodeToDisplayName(code, currentLang);
+        optionsHTML += `    <option value="${code}" data-region="${prefecture.region}" data-attributes='${JSON.stringify(prefecture.attributes)}'>${prefectureName}</option>\n`;
       }
     });
     
@@ -33,10 +73,10 @@ export function generatePrefectureOptions() {
   // 離島選択肢を詳細化して追加
   const remoteIslandsData = prefecturesData["remote_islands"];
   if (remoteIslandsData && remoteIslandsData.subregions) {
-    optionsHTML += '<optgroup label="離島地域（詳細選択）">\n';
+    optionsHTML += `<optgroup label="${regionLabels.remote_islands}">\n`;
     
     // 全離島オプション
-    optionsHTML += '    <option value="remote_islands">離島地域（全体）</option>\n';
+    optionsHTML += `    <option value="remote_islands">${regionLabels.all_islands}</option>\n`;
     
     // 地域別離島オプション
     Object.entries(remoteIslandsData.subregions).forEach(([subregionCode, subregionData]) => {
@@ -46,7 +86,7 @@ export function generatePrefectureOptions() {
     optionsHTML += '</optgroup>\n';
     
     // 個別離島選択オプション
-    optionsHTML += '<optgroup label="個別離島選択">\n';
+    optionsHTML += `<optgroup label="${regionLabels.individual_islands}">\n`;
     Object.entries(remoteIslandsData.subregions).forEach(([subregionCode, subregionData]) => {
       subregionData.islands.forEach(island => {
         const islandCode = `island_${island.replace(/[^\w]/g, '_')}`;

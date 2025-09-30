@@ -1,5 +1,57 @@
 // 統一地域正規化ユーティリティ - すべての地域マッピングの統一API
 import { prefecturesData, locationToCodeMap } from '../data/prefectures-data.mjs';
+import { getCurrentPageLanguage } from './language-utils.mjs';
+
+// 都道府県名の英語翻訳マッピング
+const prefectureNameTranslations = {
+  "北海道": "Hokkaido",
+  "青森県": "Aomori",
+  "岩手県": "Iwate",
+  "宮城県": "Miyagi",
+  "秋田県": "Akita",
+  "山形県": "Yamagata",
+  "福島県": "Fukushima",
+  "茨城県": "Ibaraki",
+  "栃木県": "Tochigi",
+  "群馬県": "Gunma",
+  "埼玉県": "Saitama",
+  "千葉県": "Chiba",
+  "東京都": "Tokyo",
+  "神奈川県": "Kanagawa",
+  "新潟県": "Niigata",
+  "富山県": "Toyama",
+  "石川県": "Ishikawa",
+  "福井県": "Fukui",
+  "山梨県": "Yamanashi",
+  "長野県": "Nagano",
+  "岐阜県": "Gifu",
+  "静岡県": "Shizuoka",
+  "愛知県": "Aichi",
+  "三重県": "Mie",
+  "滋賀県": "Shiga",
+  "京都府": "Kyoto",
+  "大阪府": "Osaka",
+  "兵庫県": "Hyogo",
+  "奈良県": "Nara",
+  "和歌山県": "Wakayama",
+  "鳥取県": "Tottori",
+  "島根県": "Shimane",
+  "岡山県": "Okayama",
+  "広島県": "Hiroshima",
+  "山口県": "Yamaguchi",
+  "徳島県": "Tokushima",
+  "香川県": "Kagawa",
+  "愛媛県": "Ehime",
+  "高知県": "Kochi",
+  "福岡県": "Fukuoka",
+  "佐賀県": "Saga",
+  "長崎県": "Nagasaki",
+  "熊本県": "Kumamoto",
+  "大分県": "Oita",
+  "宮崎県": "Miyazaki",
+  "鹿児島県": "Kagoshima",
+  "沖縄県": "Okinawa"
+};
 
 /**
  * 都道府県名をコードに変換（統一API）
@@ -79,11 +131,40 @@ export function normalizeLocationToCode(locationString) {
 /**
  * 地域コードを表示用の名前に変換（統一API）
  * @param {string} code - 地域コード
+ * @param {string} lang - 言語コード（'ja' または 'en'）、省略時は現在のページ言語
  * @returns {string} 表示用の地域名
  */
-export function convertCodeToDisplayName(code) {
+export function convertCodeToDisplayName(code, lang = null) {
+    const currentLang = lang || getCurrentPageLanguage();
     const data = prefecturesData[code];
-    return data ? data.name : code;
+    
+    if (!data) return code;
+    
+    // 英語ページの場合は英訳を返す
+    if (currentLang === 'en' && prefectureNameTranslations[data.name]) {
+        return prefectureNameTranslations[data.name];
+    }
+    
+    return data.name;
+}
+
+/**
+ * 都道府県名を現在の言語に翻訳
+ * @param {string} prefectureName - 都道府県名（日本語）
+ * @param {string} lang - 言語コード（'ja' または 'en'）、省略時は現在のページ言語
+ * @returns {string} 翻訳された都道府県名
+ */
+export function translatePrefectureName(prefectureName, lang = null) {
+    if (!prefectureName) return '';
+    
+    const currentLang = lang || getCurrentPageLanguage();
+    
+    // 英語ページの場合は英訳を返す
+    if (currentLang === 'en' && prefectureNameTranslations[prefectureName]) {
+        return prefectureNameTranslations[prefectureName];
+    }
+    
+    return prefectureName;
 }
 
 /**
