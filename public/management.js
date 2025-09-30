@@ -21,6 +21,59 @@ window.showManagementCenter = showManagementCenter;
 // ✅ イベントリスナー重複登録を防ぐフラグ
 let managementListenersAttached = false;
 
+// ✅ localStorage データ正規化関数（UUID対応）
+window.migrateStorageFormats = function() {
+    console.log('🔄 Starting localStorage migration for UUID compatibility...');
+    
+    // ブックマークの正規化
+    try {
+        const bookmarks = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
+        const validBookmarks = bookmarks
+            .map(id => String(id))
+            .filter(id => {
+                // UUID形式または有効な文字列のみ保持（数値やnullを除外）
+                const isValid = id && id !== 'null' && id !== 'undefined' && 
+                               (id.includes('-') || id.length > 10);
+                if (!isValid) {
+                    console.warn('⚠️ Removing invalid bookmark ID:', id);
+                }
+                return isValid;
+            });
+        
+        // 重複削除
+        const uniqueBookmarks = [...new Set(validBookmarks)];
+        localStorage.setItem('bookmarkedGuides', JSON.stringify(uniqueBookmarks));
+        console.log(`✅ Bookmarks migrated: ${bookmarks.length} → ${uniqueBookmarks.length}`);
+    } catch (e) {
+        console.error('❌ Bookmark migration failed:', e);
+    }
+    
+    // 比較リストの正規化
+    try {
+        const comparisons = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
+        const validComparisons = comparisons
+            .map(id => String(id))
+            .filter(id => {
+                // UUID形式または有効な文字列のみ保持（数値やnullを除外）
+                const isValid = id && id !== 'null' && id !== 'undefined' && 
+                               (id.includes('-') || id.length > 10);
+                if (!isValid) {
+                    console.warn('⚠️ Removing invalid comparison ID:', id);
+                }
+                return isValid;
+            });
+        
+        // 重複削除
+        const uniqueComparisons = [...new Set(validComparisons)];
+        localStorage.setItem('comparisonGuides', JSON.stringify(uniqueComparisons));
+        console.log(`✅ Comparisons migrated: ${comparisons.length} → ${uniqueComparisons.length}`);
+    } catch (e) {
+        console.error('❌ Comparison migration failed:', e);
+    }
+    
+    console.log('✅ localStorage migration complete');
+};
+
 async function loadManagementData() {
     // ✅ マイグレーション実行（最初に一度のみ）
     if (window.migrateStorageFormats) {

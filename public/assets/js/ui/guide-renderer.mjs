@@ -418,35 +418,11 @@ export function setupViewDetailsEventListeners() {
         }
     });
     
-    // Setup compare buttons
+    // Setup compare buttons - Use delegation via button-setup.js
+    // ✅ 比較ボタンはbutton-setup.jsの委譲ハンドラーで処理されるため、ここでは設定しない
+    // これにより、ボタンの視覚的フィードバック（色変更）が正しく動作する
     const compareButtons = document.querySelectorAll('.compare-btn');
-    console.log(`Found ${compareButtons.length} compare buttons`);
-    
-    compareButtons.forEach((btn, index) => {
-        // Remove existing listeners
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        const guideId = newBtn.getAttribute('data-guide-id');
-        
-        if (guideId) {
-            newBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🔄 Compare clicked for guide:', guideId);
-                
-                toggleComparison(guideId);
-                // Re-render guide cards to update button states WITHOUT resetting pagination
-                if (window.AppState && window.AppState.guides) {
-                    const usePagination = window.AppState.guides.length > 12;
-                    renderGuideCards(window.AppState.guides, usePagination, false);
-                }
-            });
-            console.log(`✅ Setup compare button ${index + 1} for guide ID: ${guideId}`);
-        } else {
-            console.warn(`⚠️ Compare button ${index + 1} missing guide ID`);
-        }
-    });
+    console.log(`Found ${compareButtons.length} compare buttons (handled by button-setup.js delegation)`);
 }
 
 // Toggle bookmark functionality
