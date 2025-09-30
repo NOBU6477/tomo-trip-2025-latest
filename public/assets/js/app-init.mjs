@@ -30,11 +30,15 @@ if (isReplitIframe) {
 // Dynamic guide data loading from API with error handling and caching
 async function loadGuidesFromAPI() {
     try {
+        // Detect current page language for filtering
+        const isEnglish = window.location.pathname.includes('index-en.html');
+        const lang = isEnglish ? 'en' : 'ja';
+        
         // Add timeout and cache-busting for reliability
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // ⚡ 5秒に短縮して遅延を解決
         
-        const response = await fetch('/api/guides?' + new Date().getTime(), {
+        const response = await fetch(`/api/guides?lang=${lang}&${new Date().getTime()}`, {
             signal: controller.signal,
             headers: {
                 'Cache-Control': 'no-cache',
@@ -56,6 +60,18 @@ async function loadGuidesFromAPI() {
         }
         
         if (result.success && Array.isArray(result.guides)) {
+            // Client-side language filtering as safety measure
+            const isEnglish = window.location.pathname.includes('index-en.html');
+            const currentLang = isEnglish ? 'en' : 'ja';
+            
+            // Filter guides by registrationLanguage on client side (safety check)
+            const filteredByLang = result.guides.filter(guide => {
+                const guideRegLang = guide.registrationLanguage || 'ja';
+                return guideRegLang === currentLang;
+            });
+            
+            console.log(`🌐 Client-side filter: ${filteredByLang.length}/${result.guides.length} guides match ${currentLang} language`);
+            
             // Language mapping helper
             const languageMap = {
                 'japanese': '日本語',
@@ -72,7 +88,7 @@ async function loadGuidesFromAPI() {
             };
 
             // Convert server format to frontend format  
-            const apiGuides = result.guides.map(guide => {
+            const apiGuides = filteredByLang.map(guide => {
                 // Handle languages - keep API format for filtering compatibility
                 let processedLanguages = [];
                 
