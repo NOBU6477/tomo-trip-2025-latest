@@ -785,6 +785,12 @@ function handleBookmarkClick(guideId, buttonElement) {
 function handleCompareClick(guideId, buttonElement) {
     console.log('✓ Compare button clicked for guide:', guideId);
     
+    // ✅ Null safety check for buttonElement
+    if (!buttonElement) {
+        console.error('❌ Button element is null, cannot update visual state');
+        return;
+    }
+    
     try {
         // Get current comparison list
         let comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
@@ -797,8 +803,12 @@ function handleCompareClick(guideId, buttonElement) {
         if (isInComparison) {
             // Remove from comparison
             comparisonGuides = comparisonGuides.filter(c => String(c) !== id);
-            buttonElement.classList.remove('btn-success');
-            buttonElement.classList.add('btn-outline-success');
+            
+            // ✅ Safe classList operations with null check
+            if (buttonElement && buttonElement.classList) {
+                buttonElement.classList.remove('btn-success');
+                buttonElement.classList.add('btn-outline-success');
+            }
             console.log('📊 Guide removed from comparison');
         } else {
             // Check comparison limit
@@ -809,8 +819,12 @@ function handleCompareClick(guideId, buttonElement) {
             
             // Add to comparison
             comparisonGuides.push(id);
-            buttonElement.classList.remove('btn-outline-success');
-            buttonElement.classList.add('btn-success');
+            
+            // ✅ Safe classList operations with null check
+            if (buttonElement && buttonElement.classList) {
+                buttonElement.classList.remove('btn-outline-success');
+                buttonElement.classList.add('btn-success');
+            }
             console.log('✓ Guide added to comparison');
         }
         

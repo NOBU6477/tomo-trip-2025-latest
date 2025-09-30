@@ -1983,43 +1983,13 @@
             }
         }
 
-        // Add event listeners to cards
+        // ⚠️ DEPRECATED: Old event listener system (replaced by button-setup.js delegation)
+        // This function is kept for legacy compatibility but should NOT add new listeners
+        // All guide card buttons are now handled by button-setup.js delegated event handlers
         function addCardEventListeners() {
-            console.log('🔧 Adding event listeners to View Details buttons...');
-            const viewDetailButtons = document.querySelectorAll('.view-detail-btn');
-            console.log(`Found ${viewDetailButtons.length} View Details buttons`);
-            
-            viewDetailButtons.forEach((btn, index) => {
-                const guideId = btn.getAttribute('data-guide-id');
-                console.log(`Setting up button ${index + 1} for guide ID: ${guideId}`);
-                
-                // Remove existing listeners
-                btn.replaceWith(btn.cloneNode(true));
-                const newBtn = document.querySelectorAll('.view-detail-btn')[index];
-                
-                newBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('🔥 View Details button clicked for guide:', guideId);
-                    viewGuideDetail(guideId);
-                });
-            });
-
-            document.querySelectorAll('.bookmark-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const guideId = this.getAttribute('data-guide-id');
-                    toggleBookmark(guideId);
-                });
-            });
-
-            document.querySelectorAll('.compare-btn').forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const guideId = this.getAttribute('data-guide-id');
-                    toggleComparison(guideId);
-                });
-            });
+            console.log('ℹ️ addCardEventListeners called (legacy - event delegation active in button-setup.js)');
+            // No-op: Delegated event handlers in button-setup.js now handle all button clicks
+            // This prevents duplicate event handlers and multiple toast messages
         }
 
         // Removed empty viewGuideDetail function - full implementation exists later

@@ -460,47 +460,13 @@ function toggleBookmark(guideId) {
     window.dispatchEvent(new Event('bookmarkChanged'));
 }
 
-// Toggle comparison functionality
+// ⚠️ DEPRECATED: Toggle comparison functionality (moved to button-setup.js)
+// This function is kept for backward compatibility but is no longer used
+// All comparison logic is now handled by button-setup.js > handleCompareClick()
 function toggleComparison(guideId) {
-    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-    // ✅ UUID対応 + 正規化: すべてを文字列として比較・保存
-    const id = String(guideId);
-    
-    // ✅ 正規化: 既存のIDを文字列に変換して重複チェック
-    const normalizedList = comparisonGuides.map(c => String(c));
-    const exists = normalizedList.includes(id);
-    
-    let updatedComparison;
-    if (exists) {
-        // Remove from comparison (正規化済みリストから削除)
-        updatedComparison = comparisonGuides.filter(c => String(c) !== id);
-        console.log('❌ Guide removed from comparison:', guideId);
-        
-        if (typeof safeShowToast === 'function') {
-            safeShowToast('比較から削除しました', 'info');
-        }
-    } else {
-        // Check comparison limit (max 3)
-        if (normalizedList.length >= 3) {
-            if (typeof safeShowToast === 'function') {
-                safeShowToast('比較できるガイドは最大3人までです', 'warning');
-            }
-            return;
-        }
-        
-        // Add to comparison and de-duplicate
-        updatedComparison = [...new Set([...normalizedList, id])];
-        console.log('✅ Guide added to comparison:', guideId);
-        
-        if (typeof safeShowToast === 'function') {
-            safeShowToast('比較に追加しました', 'success');
-        }
-    }
-    
-    localStorage.setItem('comparisonGuides', JSON.stringify(updatedComparison));
-    
-    // ✅ カスタムイベントを発火して管理センターを更新
-    window.dispatchEvent(new Event('comparisonChanged'));
+    console.warn('⚠️ toggleComparison called from deprecated location. Use handleCompareClick in button-setup.js instead.');
+    // No-op to prevent duplicate toast messages
+    // The actual functionality is in button-setup.js > handleCompareClick()
 }
 
 // Create HTML for individual guide card - RESTORED FROM BACKUP
