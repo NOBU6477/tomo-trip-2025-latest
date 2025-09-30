@@ -141,7 +141,7 @@
         .brand-text {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 3px;
         }
         
         .brand-name {
@@ -151,17 +151,40 @@
         }
         
         .brand-tagline {
-            font-size: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #333;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+        
+        .brand-subtitle {
+            font-size: 0.7rem;
             font-weight: 400;
             color: #666;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             white-space: nowrap;
+            line-height: 1.3;
+        }
+        
+        /* ナビゲーションバー全体を中央寄せ */
+        .navbar .container,
+        .navbar .container-fluid {
+            justify-content: center;
+            gap: 40px;
         }
         
         /* モバイル対応：タグラインを非表示 */
-        @media (max-width: 576px) {
-            .brand-tagline {
+        @media (max-width: 768px) {
+            .brand-subtitle {
                 display: none;
+            }
+            
+            .brand-tagline {
+                font-size: 0.65rem;
+                white-space: normal;
+                max-width: 200px;
             }
             
             .brand-name {
@@ -171,12 +194,28 @@
             .navbar-brand {
                 gap: 10px;
             }
+            
+            .navbar .container,
+            .navbar .container-fluid {
+                gap: 15px;
+            }
         }
         
-        /* タブレット対応：タグラインを小さく */
-        @media (min-width: 577px) and (max-width: 768px) {
+        /* 小さいモバイル：タグラインも非表示 */
+        @media (max-width: 576px) {
             .brand-tagline {
-                font-size: 0.65rem;
+                display: none;
+            }
+        }
+        
+        /* タブレット対応 */
+        @media (min-width: 769px) and (max-width: 992px) {
+            .brand-tagline {
+                font-size: 0.75rem;
+            }
+            
+            .brand-subtitle {
+                font-size: 0.6rem;
             }
             
             .brand-name {
@@ -945,10 +984,11 @@
                 <div class="brand-text">
                     <span class="brand-name">TomoTrip</span>
                     <span class="brand-tagline">特別な旅の体験を</span>
+                    <span class="brand-subtitle">地元ガイドと一緒に観光客が知らない隠れた名所を発見しよう</span>
                 </div>
             </a>
             
-            <div class="d-flex align-items-center justify-content-end gap-2" style="flex-grow: 1;">
+            <div class="d-flex align-items-center gap-2">
                 <button class="btn btn-success btn-sm" id="dashboardBtn" title="Sponsor Management Dashboard" style="font-size: 0.8rem; padding: 6px 10px;">
                     <i class="bi bi-shop"></i> <span class="d-none d-lg-inline">Dashboard</span>
                 </button>
