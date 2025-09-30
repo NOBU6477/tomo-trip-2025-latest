@@ -2,7 +2,17 @@
 
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
-## Recent Changes (2025-08-28)
+## Recent Changes (2025-09-30)
+- **Language Switching System Fixed**: Resolved critical redirect issue where English page immediately redirected back to Japanese
+  - Root cause: Conflict between HTML onclick attributes and JavaScript addEventListener
+  - Solution: Removed onclick attributes from language buttons, implemented page-aware event listeners
+  - Language buttons now correctly detect current page and prevent unnecessary redirects
+- **Console Errors Eliminated**: Fixed all TypeError null reference errors by adding proper element existence checks
+  - Added null checks for registerSubmitBtn, loginSubmitBtn, contactSubmitBtn, and other form elements
+  - Improved code robustness with defensive programming patterns
+- **Bilingual Interface Complete**: index.html (Japanese) and index-en.html (English) fully functional
+  - All static HTML text translated (100+ text elements)
+  - Smart language switching with user-friendly alerts when already on target language
 - **PostgreSQL Database Migration Complete**: Full transition from localStorage to PostgreSQL with Drizzle ORM integration
 - **Individual Store Account System**: Each sponsor now gets dedicated store account with UUID identification and data isolation
 - **Real Database Operations**: All store registrations, profile edits, and data management now persist to actual PostgreSQL database
@@ -10,9 +20,7 @@ Local Guide is a multilingual guide matching platform connecting tourists with l
 - **API Server Implementation**: Complete Express.js REST API with endpoints for stores, guides, and reservations
 - **Authentication System Overhaul**: Session-based authentication with database storage and proper logout functionality
 - **Store Listing Page**: Public sponsor-list.html page displaying all registered stores with statistics
-- **GitHub Migration Preparation**: Complete production-ready package created in github-migration-ready/ folder with all necessary files
 - **Production Architecture**: Node.js + Express + PostgreSQL stack ready for immediate deployment
-- **Documentation Complete**: Comprehensive README.md, DEPLOYMENT.md, and migration guides included
 
 # User Preferences
 
