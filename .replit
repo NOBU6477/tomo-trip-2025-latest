@@ -83,4 +83,4 @@ packages = ["nodejs"]
 
 [agent]
 expertMode = true
-integrations = ["twilio_send_message:1.0.0", "javascript_object_storage:1.0.0", "javascript_auth_all_persistance:1.0.0"]
+integrations = ["twilio_send_message:1.0.0", "javascript_object_storage:1.0.0", "javascript_auth_all_persistance:1.0.0", "github:1.0.0"]
