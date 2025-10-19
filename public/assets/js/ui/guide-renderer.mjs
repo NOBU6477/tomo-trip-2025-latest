@@ -117,7 +117,7 @@ function ensurePaginationContainers() {
 // 全ガイドカードの描画（既存の機能）
 function renderAllGuideCards(guides) {
     // Try multiple ways to find the container - support both old and new IDs
-    let container = document.getElementById('guideCardsContainer') || document.getElementById('guidesContainer');
+    let container = document.getElementById('guide-list') || document.getElementById('guideCardsContainer') || document.getElementById('guidesContainer');
     
     // Fallback: Try to find by class and create if needed
     if (!container) {
@@ -475,130 +475,84 @@ function toggleComparison(guideId) {
     // The actual functionality is in button-setup.js > handleCompareClick()
 }
 
-// Create HTML for individual guide card - RESTORED FROM BACKUP
+// HTMLを1枚のガイドカードとして組み立てる（重複タイトルや画像404を解消）
 export function createGuideCardHTML(guide) {
-    // Use API response field names
-    const price = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
-    const formattedPrice = isNaN(price) || price === 0 ? `¥${price.toLocaleString()}` : `¥${price.toLocaleString()}`;
-    
-    // Location names mapping for Japanese display
-    const locationNames = window.locationNames || {};
-    
-    // Check bookmark and comparison status (UUID対応)
-    const bookmarkedGuides = JSON.parse(localStorage.getItem('bookmarkedGuides') || '[]');
-    const comparisonGuides = JSON.parse(localStorage.getItem('comparisonGuides') || '[]');
-    const guideIdStr = String(guide.id);
-    
-    // ✅ 文字列比較のみ（UUIDをparseIntしない）
-    const isBookmarked = bookmarkedGuides.map(id => String(id)).includes(guideIdStr);
-    const isInComparison = comparisonGuides.map(id => String(id)).includes(guideIdStr);
-    
-    console.log('🔍 Guide card button states:', {
-        guideId: guide.id,
-        guideIdStr,
-        bookmarkedGuides,
-        comparisonGuides,
-        isBookmarked,
-        isInComparison
-    });
-    
-    // Dynamic button states
-    const bookmarkBtnClass = isBookmarked ? 'btn btn-warning btn-sm' : 'btn btn-outline-warning btn-sm';
-    const compareBtnClass = isInComparison ? 'btn btn-success btn-sm' : 'btn btn-outline-success btn-sm';
-    const bookmarkIcon = isBookmarked ? '<i class="bi bi-bookmark-fill"></i>' : '<i class="bi bi-bookmark"></i>';
-    const compareIcon = isInComparison ? '<i class="bi bi-check2-square-fill"></i>' : '<i class="bi bi-check2-square"></i>';
-    
-    // 管理者モード用チェックボックスの表示判定
-    let adminModeEnabled = false;
-    
-    // まずgetAdminModeStateから取得を試行
-    if (window.getAdminModeState) {
-        adminModeEnabled = window.getAdminModeState().isAdminMode;
-    } 
-    // フォールバックとしてAppStateから取得
-    else if (window.AppState && window.AppState.adminMode) {
-        adminModeEnabled = window.AppState.adminMode.isAdminMode;
-    }
-    const adminCheckbox = adminModeEnabled ? `
-        <input type="checkbox" class="form-check-input admin-checkbox" 
-               data-guide-id="${guide.id}" 
-               data-action="toggle-selection"
-               style="position: absolute; top: 10px; left: 10px; z-index: 10; transform: scale(1.5);">
-    ` : '';
+  // 表示用の名前（日本語ページなら guide.name 優先、英語ページなら guide.guideName 優先）
+  const defaultNameJa = 'ガイド';
+  const defaultNameEn = 'Guide';
+  const isEn = typeof isEnglishPage === 'function' ? isEnglishPage() : false;
 
-    // Get language-appropriate text
-    const currentLang = isEnglishPage() ? 'en' : 'ja';
-    const defaultName = getText('ガイド', 'Guide');
-    const defaultLocation = getText('東京', 'Tokyo');
-    const defaultSpecialty = getText('観光案内', 'Sightseeing');
-    const defaultIntro = getText('地域の魅力をご案内します', 'I will show you the charm of the area');
-    const perDayText = getText('1日ガイド', 'Full-day guide');
-    const viewDetailsText = getText('詳細を見る', 'View Details');
-    const bookmarkText = getText('ブックマーク', 'Bookmark');
-    const compareText = getText('比較', 'Compare');
-    const bookmarkTitle = getText('ブックマーク', 'Bookmark');
-    const compareTitle = getText('比較リストに追加', 'Add to comparison list');
+  const nameToShow = isEn
+    ? (guide.guideName || guide.name || defaultNameEn)
+    : (guide.name || guide.guideName || defaultNameJa);
 
-    return `
-        <div class="col-md-6 col-lg-4 mb-4">
-            <div class="card h-100 guide-card ${adminModeEnabled ? 'admin-mode' : ''}" 
-                 data-guide-id="${guide.id}"
-                 style="border-radius: 15px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease;">
-                ${adminCheckbox}
-                <img src="${guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg'}" 
-                     class="card-img-top" 
-                     style="height: 200px; object-fit: cover;" 
-                     alt="${guide.name || guide.guideName || defaultName}"
-                     onerror="this.src='/assets/img/guides/default-1.svg';">
-                <div class="card-body d-flex flex-column">
-                    <div class="mb-2">
-                        <h5 class="card-title mb-1">${guide.name || guide.guideName || defaultName}</h5>
-                    </div>
-                    <div class="mb-2">
-                        <div class="mb-1">
-                            <span class="badge bg-primary me-1">${locationNames[guide.location] || guide.location || guide.city || defaultLocation}</span>
-                        </div>
-                        <div class="mb-1">
-                            <span class="badge bg-secondary me-1">${guide.specialties || guide.guideSpecialties || guide.specialty || defaultSpecialty}</span>
-                        </div>
-                        <div class="mb-1">
-                            ${(() => {
-                                // Use current page language for badge display
-                                const localizedLanguages = localizeLanguageArray(guide.languages, currentLang);
-                                return localizedLanguages.map(lang => 
-                                    `<span class="badge bg-success me-1" style="font-size: 0.75em;">${lang}</span>`
-                                ).join('');
-                            })()}
-                        </div>
-                    </div>
-                    <p class="card-text text-muted small mb-2">${guide.introduction || guide.guideIntroduction || guide.description || defaultIntro}</p>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <div>
-                            <span class="text-warning">★</span>
-                            <span class="fw-bold">${guide.rating || guide.averageRating || '4.8'}</span>
-                        </div>
-                        <div class="text-end">
-                            <div class="fw-bold text-primary">${formattedPrice}</div>
-                            <small class="text-muted">${perDayText}</small>
-                        </div>
-                    </div>
-                    <div class="mt-3">
-                        <button class="btn btn-primary w-100 view-detail-btn" data-guide-id="${guide.id}" style="border-radius: 25px; margin-bottom: 10px;">
-                            ${viewDetailsText}
-                        </button>
-                        <div class="d-flex gap-2 mt-2">
-                            <button class="${bookmarkBtnClass} bookmark-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-bookmark" title="${bookmarkTitle}" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
-                                ${bookmarkIcon} <span class="ms-1">${bookmarkText}</span>
-                            </button>
-                            <button class="${compareBtnClass} compare-btn flex-fill" data-guide-id="${guide.id}" data-action="toggle-comparison" title="${compareTitle}" style="border-radius: 20px; padding: 8px 12px; font-size: 0.9rem;">
-                                ${compareIcon} <span class="ms-1">${compareText}</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  // 画像（先頭スラッシュを付けない → /public 配下で 404 にならない）
+  const photoSrc = guide.profilePhoto
+    ? `/uploads/${guide.profilePhoto}`
+    : `assets/img/guides/default-1.svg`;
+
+  // 価格表記
+  const priceNum = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);
+  const priceText = !isNaN(priceNum) && priceNum > 0
+    ? `¥${priceNum.toLocaleString('ja-JP')}`
+    : '¥0';
+
+  // 地域名
+  const locationNames = window.locationNames || {};
+  const locationText = locationNames[guide.location] || guide.location || '';
+
+  // 言語・専門分野（配列でない可能性にも対応）
+  const langs = Array.isArray(guide.languages)
+    ? guide.languages
+    : (guide.languages ? String(guide.languages).split(',') : []);
+  const specialties = Array.isArray(guide.specialties)
+    ? guide.specialties
+    : (guide.specialties ? String(guide.specialties).split(',') : []);
+
+  // ボタン文言
+  const viewDetailsText = typeof getText === 'function'
+    ? getText('詳細を見る', 'View Details')
+    : (isEn ? 'View Details' : '詳細を見る');
+
+  return `
+    <div class="col-md-6 col-lg-4 mb-4">
+      <div class="card h-100 guide-card" data-guide-id="${guide.id}"
+           style="border-radius:15px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.08);">
+        <img src="${photoSrc}" class="card-img-top"
+             style="height:200px; object-fit:cover;"
+             alt="${nameToShow}"
+             onerror="this.src='assets/img/guides/default-1.svg';">
+
+        <div class="card-body d-flex flex-column">
+          <!-- タイトルは1つだけ（重複表示を解消） -->
+          <h5 class="card-title mb-1">${nameToShow}</h5>
+
+          <div class="mb-2">
+            ${locationText ? `<span class="badge bg-primary me-1">${locationText}</span>` : ''}
+          </div>
+
+          <div class="mb-1">
+            ${langs.map(l => `<span class="badge bg-success me-1" style="font-size:.75rem">${l}</span>`).join('')}
+          </div>
+
+          <div class="mb-1">
+            ${specialties.map(s => `<span class="badge bg-secondary me-1" style="font-size:.75rem">${s}</span>`).join('')}
+          </div>
+
+          <p class="card-text text-muted small mb-2">${guide.introduction || ''}</p>
+
+          <div class="d-flex justify-content-between align-items-center mt-auto">
+            <span class="fw-bold">${priceText}</span>
+            <button type="button"
+                    class="btn btn-outline-primary btn-sm view-detail-btn"
+                    data-guide-id="${guide.id}">
+              ${viewDetailsText}
+            </button>
+          </div>
         </div>
-    `;
+      </div>
+    </div>
+  `;
 }
 
 // Duplicate function removed - using the one at line 168
