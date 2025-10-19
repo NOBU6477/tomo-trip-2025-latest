@@ -1,0 +1,116 @@
+============================================
+  AI レビュー依頼 - ガイドカード修正の確認
+============================================
+
+【依頼内容】
+TomoTripアプリのガイドカード表示で発生していた以下の問題を修正しました。
+レビューをお願いします。
+
+---
+
+【発生していた問題】
+1. ガイド名が二重に表示される
+2. ページ読み込み時にタイトルが点滅する
+3. デフォルト画像が404エラーになる
+
+---
+
+【修正内容サマリー】
+
+■ ファイル1: public/index.html（1行変更）
+  行番号: 1133
+  
+  変更前: <div class="row" id="guideCardsContainer">
+  変更後: <div class="row" id="guide-list">
+  
+  理由: コンテナIDを統一し、JavaScriptから明確に参照できるように
+
+---
+
+■ ファイル2: public/assets/js/ui/guide-renderer.mjs（関数置き換え）
+  行番号: 481-559
+  関数名: createGuideCardHTML(guide)
+  
+  主な変更点:
+  ① タイトル重複の解消
+     - nameToShow変数で名前を統一（guide.name または guide.guideName のどちらか1つ）
+     - HTMLテンプレート内でタイトルを1回だけ表示
+  
+  ② 画像404エラーの解消
+     変更前: onerror="this.src='/assets/img/guides/default-1.svg';"
+     変更後: onerror="this.src='assets/img/guides/default-1.svg';"
+     ※先頭のスラッシュを削除してパスを修正
+  
+  ③ 言語検出の改善
+     - 日本語ページ: guide.name 優先
+     - 英語ページ: guide.guideName 優先
+     - isEnglishPage()関数で自動判定
+  
+  ④ 配列処理の安全性向上
+     - languages と specialties が配列でない場合にも対応
+     - String().split(',') でフォールバック処理
+
+---
+
+■ ファイル2: public/assets/js/ui/guide-renderer.mjs（検索順序の最適化）
+  行番号: 123
+  
+  変更前: 
+  let container = document.getElementById('guideCardsContainer') || 
+                  document.getElementById('guidesContainer');
+  
+  変更後:
+  let container = document.getElementById('guide-list') || 
+                  document.getElementById('guideCardsContainer') || 
+                  document.getElementById('guidesContainer');
+  
+  理由: 新しいコンテナIDを優先的に検索
+
+---
+
+【確認URL】
+https://31176088-3ca0-49de-9098-7b5f0f0a1c9a-00-1jhrgwtjgmb39.kirk.replit.dev/
+
+【確認手順】
+1. 上記URLにアクセス
+2. ブラウザでハードリロード（Ctrl+Shift+R または Cmd+Shift+R）
+3. ヒーローセクション下のガイドカードセクションを確認
+
+【確認ポイント】
+✅ ガイド名が1つだけ表示される（重複なし）
+✅ タイトルが点滅しない
+✅ デフォルト画像が404エラーにならない
+✅ ブラウザコンソール（F12）にエラーが出ない
+✅ 8-9件のガイドカードが表示される
+
+---
+
+【技術スタック】
+- フロントエンド: Vanilla JavaScript (ESM), Bootstrap 5.3
+- バックエンド: Node.js + Express
+- データベース: PostgreSQL (Drizzle ORM)
+- 実行環境: Replit
+
+---
+
+【レビュー観点】
+1. コードの品質: 修正コードに問題がないか
+2. パフォーマンス: レンダリング処理に無駄がないか
+3. セキュリティ: XSS脆弱性などの問題がないか
+4. 保守性: コードが読みやすく、メンテナンスしやすいか
+5. 互換性: 既存機能に悪影響がないか
+
+---
+
+【詳細ドキュメント】
+プロジェクト内の GUIDE_CARD_FIX_SUMMARY.md に完全な修正報告書があります。
+
+---
+
+【期待する回答】
+- 修正内容の妥当性評価
+- 潜在的な問題点の指摘
+- 改善提案（あれば）
+- セキュリティ上の懸念（あれば）
+
+よろしくお願いします。
