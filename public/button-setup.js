@@ -1169,10 +1169,20 @@ async function handleTouristLogin(event) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
             if (modal) modal.hide();
             
-            // Reload page to update UI
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            // Check if there's a guide to return to
+            const returnToGuideId = sessionStorage.getItem('returnToGuideId');
+            if (returnToGuideId) {
+                console.log('🔗 Redirecting to guide detail after login:', returnToGuideId);
+                sessionStorage.removeItem('returnToGuideId'); // Clean up
+                setTimeout(() => {
+                    window.location.href = `/guide-detail.html?id=${returnToGuideId}`;
+                }, 1000);
+            } else {
+                // Reload page to update UI
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
         } else {
             console.error('❌ Tourist login failed:', result.message);
             showToast(result.message || 'ログインに失敗しました', 'error');

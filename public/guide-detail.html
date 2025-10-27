@@ -427,16 +427,17 @@
                 return;
             }
 
-            // Check authentication - unified check using correct key
-            const touristData = localStorage.getItem('touristRegistrationData');
+            // Check authentication - check both login (sessionStorage) and registration (localStorage)
+            const touristAuth = sessionStorage.getItem('touristAuth');
+            const touristData = sessionStorage.getItem('touristData') || localStorage.getItem('touristRegistrationData');
             
-            if (!touristData) {
-                alert('この機能をご利用いただくには観光客登録が必要です。');
-                window.location.href = '/tourist-registration-simple.html';
+            if (!touristAuth && !touristData) {
+                alert('この機能をご利用いただくには観光客ログインまたは登録が必要です。');
+                window.location.href = '/';
                 return;
             }
             
-            console.log('✅ Tourist registration verified:', JSON.parse(touristData));
+            console.log('✅ Tourist authentication verified');
 
             // Load guide data from API (with personal info removed)
             const guideData = await getGuideData(guideId);
@@ -724,12 +725,13 @@
         function bookGuide() {
             const guideId = getGuideId();
             
-            // Use the correct localStorage key for tourist registration
-            const touristData = localStorage.getItem('touristRegistrationData');
+            // Check authentication - check both login (sessionStorage) and registration (localStorage)
+            const touristAuth = sessionStorage.getItem('touristAuth');
+            const touristData = sessionStorage.getItem('touristData') || localStorage.getItem('touristRegistrationData');
             
-            if (!touristData) {
-                alert('予約機能をご利用いただくには観光客登録が必要です。');
-                window.location.href = '/tourist-registration-simple.html';
+            if (!touristAuth && !touristData) {
+                alert('予約機能をご利用いただくには観光客ログインまたは登録が必要です。');
+                window.location.href = '/';
                 return;
             }
             
@@ -742,12 +744,13 @@
         function contactGuide() {
             const guideId = getGuideId();
             
-            // Check if user is registered before allowing contact
-            const touristData = localStorage.getItem('touristRegistrationData');
+            // Check authentication - check both login (sessionStorage) and registration (localStorage)
+            const touristAuth = sessionStorage.getItem('touristAuth');
+            const touristData = sessionStorage.getItem('touristData') || localStorage.getItem('touristRegistrationData');
             
-            if (!touristData) {
-                alert('問い合わせ機能をご利用いただくには観光客登録が必要です。');
-                window.location.href = '/tourist-registration-simple.html';
+            if (!touristAuth && !touristData) {
+                alert('問い合わせ機能をご利用いただくには観光客ログインまたは登録が必要です。');
+                window.location.href = '/';
                 return;
             }
             
