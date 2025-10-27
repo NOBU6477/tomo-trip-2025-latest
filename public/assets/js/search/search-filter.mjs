@@ -34,9 +34,23 @@ export function applyAdvancedFilters(guides, filters) {
             
             // 配列の場合とそうでない場合を考慮
             if (Array.isArray(guide.languages)) {
-                return guide.languages.includes(filters.language);
+                // 配列の場合：直接比較またはトリム後の比較
+                return guide.languages.some(lang => {
+                    const normalizedLang = String(lang).trim().toLowerCase();
+                    const normalizedFilter = String(filters.language).trim().toLowerCase();
+                    return normalizedLang === normalizedFilter || 
+                           normalizedLang.includes(normalizedFilter) ||
+                           normalizedFilter.includes(normalizedLang);
+                });
             } else {
-                return guide.languages === filters.language;
+                // 文字列の場合：カンマ区切りで分割して比較
+                const langArray = String(guide.languages).split(',').map(l => l.trim().toLowerCase());
+                const normalizedFilter = String(filters.language).trim().toLowerCase();
+                return langArray.some(lang => 
+                    lang === normalizedFilter || 
+                    lang.includes(normalizedFilter) ||
+                    normalizedFilter.includes(lang)
+                );
             }
         });
     }

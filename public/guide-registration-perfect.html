@@ -151,18 +151,38 @@
                                         <div class="form-floating">
                                             <select class="form-control" id="guideLocation" name="location" required>
                                                 <option value="">活動地域を選択してください</option>
-                                                <option value="東京都 東京">東京都 東京</option>
-                                                <option value="大阪府 大阪市">大阪府 大阪市</option>
-                                                <option value="京都府 京都市">京都府 京都市</option>
-                                                <option value="神奈川県 横浜市">神奈川県 横浜市</option>
-                                                <option value="兵庫県 神戸市">兵庫県 神戸市</option>
-                                                <option value="愛知県 名古屋市">愛知県 名古屋市</option>
-                                                <option value="福岡県 福岡市">福岡県 福岡市</option>
-                                                <option value="沖縄県 那覇市">沖縄県 那覇市</option>
-                                                <option value="沖縄県 石垣市">沖縄県 石垣市</option>
-                                                <option value="北海道 札幌市">北海道 札幌市</option>
-                                                <option value="宮城県 仙台市">宮城県 仙台市</option>
-                                                <option value="広島県 広島市">広島県 広島市</option>
+                                                <optgroup label="北海道地方">
+                                                    <option value="hokkaido">北海道</option>
+                                                </optgroup>
+                                                <optgroup label="東北地方">
+                                                    <option value="miyagi">宮城県</option>
+                                                    <option value="fukushima">福島県</option>
+                                                </optgroup>
+                                                <optgroup label="関東地方">
+                                                    <option value="tokyo">東京都</option>
+                                                    <option value="kanagawa">神奈川県</option>
+                                                    <option value="saitama">埼玉県</option>
+                                                    <option value="chiba">千葉県</option>
+                                                </optgroup>
+                                                <optgroup label="中部地方">
+                                                    <option value="aichi">愛知県</option>
+                                                    <option value="shizuoka">静岡県</option>
+                                                    <option value="nagano">長野県</option>
+                                                </optgroup>
+                                                <optgroup label="近畿地方">
+                                                    <option value="osaka">大阪府</option>
+                                                    <option value="kyoto">京都府</option>
+                                                    <option value="hyogo">兵庫県</option>
+                                                </optgroup>
+                                                <optgroup label="中国地方">
+                                                    <option value="hiroshima">広島県</option>
+                                                </optgroup>
+                                                <optgroup label="九州地方">
+                                                    <option value="fukuoka">福岡県</option>
+                                                </optgroup>
+                                                <optgroup label="沖縄地方">
+                                                    <option value="okinawa">沖縄県</option>
+                                                </optgroup>
                                             </select>
                                             <label for="guideLocation"><i class="bi bi-geo-alt me-1"></i>活動地域</label>
                                         </div>

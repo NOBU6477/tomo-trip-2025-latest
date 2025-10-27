@@ -269,5 +269,41 @@
     "status": "approved",
     "registeredAt": "2025-09-16T16:41:38.808Z",
     "updatedAt": "2025-09-16T16:41:38.808Z"
+  },
+  {
+    "id": "5402ac63-02a9-40f4-ab73-5360a95830b4",
+    "guideName": "仲宗根　勇",
+    "guideEmail": "test1500@gmail.com",
+    "guideGender": "male",
+    "guideAge": "46",
+    "location": "東京都 東京",
+    "phoneNumber": "+818095956565",
+    "verificationCode": "217591",
+    "documentType": "drivers_license",
+    "documentFile": {},
+    "documentFront": {},
+    "documentBack": {},
+    "guideExperience": "beginner",
+    "guideLanguages": [
+      "日本語",
+      "英語",
+      "中国語"
+    ],
+    "guideIntroduction": "私も旅行が好きで地元の人との交流が旅での一番の楽しみです。是非一緒に楽しい旅にしていきましょう。",
+    "guideSpecialties": "グルメガイド, 写真撮影",
+    "guideSessionRate": "10500",
+    "guideAvailability": "both",
+    "agreeTerms": "on",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-10-27T14:56:01.226Z",
+    "updatedAt": "2025-10-27T14:57:41.946Z",
+    "guideType": "day",
+    "achievements": "ご案内10回以上",
+    "multiLingual": true,
+    "hospitalitySupport": false,
+    "emergencySupport": false,
+    "localExpert": true
   }
 ]

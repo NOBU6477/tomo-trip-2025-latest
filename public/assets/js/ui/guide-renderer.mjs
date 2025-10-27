@@ -502,9 +502,15 @@ export function createGuideCardHTML(guide) {
   const locationText = locationNames[guide.location] || guide.location || '';
 
   // 言語・専門分野（配列でない可能性にも対応）
-  const langs = Array.isArray(guide.languages)
+  let langs = Array.isArray(guide.languages)
     ? guide.languages
     : (guide.languages ? String(guide.languages).split(',') : []);
+  
+  // 言語をローカライズ（日本語版では日本語表示、英語版では英語表示）
+  if (typeof localizeLanguageArray === 'function') {
+    langs = localizeLanguageArray(langs);
+  }
+  
   const specialties = Array.isArray(guide.specialties)
     ? guide.specialties
     : (guide.specialties ? String(guide.specialties).split(',') : []);

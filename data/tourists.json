@@ -73,5 +73,20 @@
     "status": "active",
     "registeredAt": "2025-10-14T22:22:06.161Z",
     "updatedAt": "2025-10-14T22:22:06.161Z"
+  },
+  {
+    "id": "a7a0eb79-2d40-4932-9198-1dada2065660",
+    "firstName": "凛",
+    "lastName": "伊達",
+    "email": "test100@gmail.com",
+    "nationality": "japan",
+    "documentType": "passport",
+    "phoneVerified": true,
+    "documentUploaded": true,
+    "registrationDate": "2025-10-27T14:59:18.854Z",
+    "phoneNumber": "+818045665555",
+    "status": "active",
+    "registeredAt": "2025-10-27T14:59:18.533Z",
+    "updatedAt": "2025-10-27T14:59:18.533Z"
   }
 ]

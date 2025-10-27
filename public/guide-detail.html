@@ -588,21 +588,47 @@
             document.getElementById('guideRating').innerHTML = generateStars(rating);
             document.getElementById('reviewCount').textContent = reviewCount;
             
-            // Languages
-            const languagesHtml = (guide.languages || ['日本語']).map(lang => 
-                `<span class="language-badge">${lang}</span>`
-            ).join('');
+            // Languages - ローカライズして日本語表示
+            const languageMap = {
+                'japanese': '日本語',
+                'english': '英語',
+                'chinese': '中国語',
+                'korean': '韓国語',
+                'spanish': 'スペイン語',
+                'french': 'フランス語',
+                'german': 'ドイツ語',
+                'italian': 'イタリア語',
+                'portuguese': 'ポルトガル語',
+                'russian': 'ロシア語'
+            };
+            
+            let languages = guide.languages || ['日本語'];
+            if (!Array.isArray(languages)) {
+                languages = String(languages).split(',').map(l => l.trim());
+            }
+            
+            const languagesHtml = languages.map(lang => {
+                const langLower = String(lang).toLowerCase().trim();
+                const displayLang = languageMap[langLower] || lang;
+                return `<span class="language-badge">${displayLang}</span>`;
+            }).join('');
             document.getElementById('guideLanguages').innerHTML = languagesHtml;
             
             // Specialties
-            const specialtiesHtml = (guide.specialties || [guide.specialty || '一般ガイド']).map(spec => 
+            let specialties = guide.specialties || [guide.specialty || '一般ガイド'];
+            if (!Array.isArray(specialties)) {
+                specialties = String(specialties).split(',').map(s => s.trim());
+            }
+            
+            const specialtiesHtml = specialties.map(spec => 
                 `<span class="specialty-tag">${spec}</span>`
             ).join('');
             document.getElementById('guideSpecialties').innerHTML = specialtiesHtml;
             
-            // Description
-            document.getElementById('guideDescription').textContent = guide.description || 
+            // Description - introductionフィールドを優先
+            const description = guide.introduction || guide.description || 
                 `${guide.name}さんは経験豊富な地元ガイドです。この地域の魅力を知り尽くし、お客様に最高の体験をお届けします。`;
+            document.getElementById('guideDescription').textContent = description;
             
             // Experience
             document.getElementById('guideExperience').innerHTML = `
