@@ -769,43 +769,10 @@ function setupSponsorButtonEvents() {
     }
     
     // Setup login dropdown button events
-    const directTouristLoginBtn = document.getElementById('directTouristLoginBtn');
-    const directGuideLoginBtn = document.getElementById('directGuideLoginBtn');
+    // REMOVED: Moved to button-setup.js to avoid conflicts
+    // All tourist/guide login button handlers are now in button-setup.js
+    
     const sponsorLoginBtn = document.getElementById('sponsorLoginBtn');
-    
-    if (directTouristLoginBtn) {
-        directTouristLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🔑 Tourist login clicked');
-            // Show tourist login modal that should exist in HTML
-            const touristLoginModal = document.getElementById('touristLoginModal');
-            if (touristLoginModal) {
-                const modal = new bootstrap.Modal(touristLoginModal);
-                modal.show();
-            } else {
-                console.warn('Tourist login modal not found');
-                const msg = getText('観光客ログイン機能を準備中です。', 'Tourist login feature is under development.');
-                alert(msg);
-            }
-        });
-    }
-    
-    if (directGuideLoginBtn) {
-        directGuideLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('🔑 Guide login clicked');
-            // Show guide login modal that should exist in HTML
-            const guideLoginModal = document.getElementById('guideLoginModal');
-            if (guideLoginModal) {
-                const modal = new bootstrap.Modal(guideLoginModal);
-                modal.show();
-            } else {
-                console.warn('Guide login modal not found');
-                const msg = getText('ガイドログイン機能を準備中です。', 'Guide login feature is under development.');
-                alert(msg);
-            }
-        });
-    }
     
     if (sponsorLoginBtn) {
         sponsorLoginBtn.addEventListener('click', (e) => {

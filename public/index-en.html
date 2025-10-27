@@ -2731,38 +2731,11 @@
         
         // Guide registration is now handled by event-handlers.mjs - function removed to prevent conflicts
 
-        // Setup dropdown listeners (enhanced)
+        // Setup dropdown listeners - REMOVED
+        // All button handlers are now in button-setup.js to avoid conflicts
         function setupCustomDropdownListeners() {
-            const touristBtn = document.getElementById('directTouristLoginBtn');
-            const guideBtn = document.getElementById('directGuideLoginBtn');
-            const sponsorBtn = document.getElementById('sponsorLoginBtn');
-            
-            if (touristBtn && !touristBtn.hasAttribute('data-handler-added')) {
-                touristBtn.onclick = function() {
-                    console.log('🎯 Tourist login clicked - redirecting to full registration');
-                    window.open('tourist-registration-simple.html', '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
-                    return false;
-                };
-                touristBtn.setAttribute('data-handler-added', 'true');
-            }
-            
-            if (guideBtn && !guideBtn.hasAttribute('data-handler-added')) {
-                guideBtn.onclick = function() {
-                    console.log('🎯 Guide login clicked - redirecting to PERFECT guide registration/login');
-                    window.open('guide-registration-perfect.html', '_blank', 'width=900,height=1000,scrollbars=yes,resizable=yes');
-                    return false;
-                };
-                guideBtn.setAttribute('data-handler-added', 'true');
-            }
-            
-            if (sponsorBtn && !sponsorBtn.hasAttribute('data-handler-added')) {
-                sponsorBtn.onclick = function() {
-                    console.log('🎯 Sponsor login clicked');
-                    window.location.href = 'operations-login.html';
-                    return false;
-                };
-                sponsorBtn.setAttribute('data-handler-added', 'true');
-            }
+            // Deprecated: All handlers moved to button-setup.js
+            console.log('✅ Dropdown listeners handled by button-setup.js');
         }
 
         // Get price from range selection
@@ -5985,7 +5958,7 @@
             <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 15px 15px 0 0;">
                     <h5 class="modal-title fw-bold" id="touristLoginModalLabel">
-                        <i class="bi bi-person-circle me-2"></i>TouristLogin
+                        <i class="bi bi-person-circle me-2"></i>Tourist Login
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -5993,8 +5966,8 @@
                     <div class="text-center mb-4">
                         <div class="alert alert-info">
                             <i class="bi bi-info-circle me-2"></i>
-                            <strong>Tourist向けサービス</strong><br>
-                            <small>ガイドの詳細Informationを見るには、まずTouristとしてRegisterが必要です。</small>
+                            <strong>Tourist Services</strong><br>
+                            <small>To view guide details, you need to register as a tourist first.</small>
                         </div>
                     </div>
                     
@@ -6038,7 +6011,7 @@
             <div class="modal-content" style="border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
                 <div class="modal-header border-0" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 15px 15px 0 0;">
                     <h5 class="modal-title fw-bold" id="guideLoginModalLabel">
-                        <i class="bi bi-person-badge me-2"></i>ガイドLogin
+                        <i class="bi bi-person-badge me-2"></i>Guide Login
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -6046,18 +6019,18 @@
                     <div class="text-center mb-4">
                         <div class="alert alert-success">
                             <i class="bi bi-shield-check me-2"></i>
-                            <strong>ガイド専用</strong><br>
-                            <small>ガイドIDとPhone NumberでLoginしてください。</small>
+                            <strong>For Guides Only</strong><br>
+                            <small>Please login with your Guide ID and phone number.</small>
                         </div>
                     </div>
                     
                     <form id="guideLoginForm" onsubmit="handleGuideLogin(event)">
                         <div class="mb-3">
                             <label for="guideIdentifier" class="form-label fw-bold">
-                                <i class="bi bi-person me-1"></i>ガイドIDまたはEmail Address
+                                <i class="bi bi-person me-1"></i>Guide ID or Email Address
                             </label>
-                            <input type="text" class="form-control" id="guideIdentifier" placeholder="GuideIDまたはEmail Addressを入力" required style="border-radius: 10px; padding: 12px;">
-                            <small class="text-muted">Register時に発行されたガイドIDまたはRegisterEmail Address</small>
+                            <input type="text" class="form-control" id="guideIdentifier" placeholder="Enter Guide ID or Email Address" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">Guide ID issued during registration or registered email address</small>
                         </div>
                         
                         <div class="mb-4">
@@ -6065,7 +6038,7 @@
                                 <i class="bi bi-telephone me-1"></i>Phone Number
                             </label>
                             <input type="tel" class="form-control" id="guidePhoneLogin" placeholder="080-1234-5678" required style="border-radius: 10px; padding: 12px;">
-                            <small class="text-muted">Register時に使用したPhone Number</small>
+                            <small class="text-muted">Phone number used during registration</small>
                         </div>
                         
                         <div class="d-grid gap-2">
@@ -6073,9 +6046,9 @@
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Login
                             </button>
                             <div class="text-center mt-3">
-                                <small class="text-muted">ガイドRegisterがお済みでない場合は</small><br>
-                                <a href="guide-registration-perfect.html" class="btn btn-link" target="_blank">
-                                    <i class="bi bi-person-badge me-1"></i>ガイドRegisterはこちら
+                                <small class="text-muted">If you haven't registered as a guide</small><br>
+                                <a href="guide-registration-perfect-en.html" class="btn btn-link" target="_blank">
+                                    <i class="bi bi-person-badge me-1"></i>Register as a guide here
                                 </a>
                             </div>
                         </div>

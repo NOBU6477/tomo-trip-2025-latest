@@ -2731,38 +2731,11 @@
         
         // Guide registration is now handled by event-handlers.mjs - function removed to prevent conflicts
 
-        // Setup dropdown listeners (enhanced)
+        // Setup dropdown listeners - REMOVED
+        // All button handlers are now in button-setup.js to avoid conflicts
         function setupCustomDropdownListeners() {
-            const touristBtn = document.getElementById('directTouristLoginBtn');
-            const guideBtn = document.getElementById('directGuideLoginBtn');
-            const sponsorBtn = document.getElementById('sponsorLoginBtn');
-            
-            if (touristBtn && !touristBtn.hasAttribute('data-handler-added')) {
-                touristBtn.onclick = function() {
-                    console.log('🎯 Tourist login clicked - redirecting to full registration');
-                    window.open('tourist-registration-simple.html', '_blank', 'width=800,height=900,scrollbars=yes,resizable=yes');
-                    return false;
-                };
-                touristBtn.setAttribute('data-handler-added', 'true');
-            }
-            
-            if (guideBtn && !guideBtn.hasAttribute('data-handler-added')) {
-                guideBtn.onclick = function() {
-                    console.log('🎯 Guide login clicked - redirecting to PERFECT guide registration/login');
-                    window.open('guide-registration-perfect.html', '_blank', 'width=900,height=1000,scrollbars=yes,resizable=yes');
-                    return false;
-                };
-                guideBtn.setAttribute('data-handler-added', 'true');
-            }
-            
-            if (sponsorBtn && !sponsorBtn.hasAttribute('data-handler-added')) {
-                sponsorBtn.onclick = function() {
-                    console.log('🎯 Sponsor login clicked');
-                    window.location.href = 'operations-login.html';
-                    return false;
-                };
-                sponsorBtn.setAttribute('data-handler-added', 'true');
-            }
+            // Deprecated: All handlers moved to button-setup.js
+            console.log('✅ Dropdown listeners handled by button-setup.js');
         }
 
         // Get price from range selection
