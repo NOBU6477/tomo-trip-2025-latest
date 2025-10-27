@@ -2520,7 +2520,7 @@
             const dropdown = document.getElementById('customLoginDropdown');
             const button = document.getElementById('loginDropdown');
             
-            if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+            if (button && dropdown && !button.contains(event.target) && !dropdown.contains(event.target)) {
                 dropdown.style.display = 'none';
             }
         });
@@ -2829,7 +2829,7 @@
             
             // Close dropdown when clicking outside
             document.addEventListener('click', function(e) {
-                if (customLoginDropdown && !loginDropdown.contains(e.target) && !customLoginDropdown.contains(e.target)) {
+                if (customLoginDropdown && loginDropdown && !loginDropdown.contains(e.target) && !customLoginDropdown.contains(e.target)) {
                     customLoginDropdown.style.display = 'none';
                 }
             });
