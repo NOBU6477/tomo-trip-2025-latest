@@ -14,6 +14,9 @@ function setupAllButtons() {
     // Setup Login Dropdown
     setupLoginDropdown();
     
+    // Setup Direct Login Buttons
+    setupDirectLoginButtons();
+    
     // Setup Search Button and Reset Button
     setupSearchButton();
     setupResetButton();
@@ -303,6 +306,74 @@ function handleOutsideClick(e) {
         if (!loginDropdown.contains(e.target) && !customLoginDropdown.contains(e.target)) {
             customLoginDropdown.style.display = 'none';
         }
+    }
+}
+
+/**
+ * Setup Direct Login Buttons - Tourist and Guide login buttons in navbar
+ */
+function setupDirectLoginButtons() {
+    const touristLoginBtn = document.getElementById('directTouristLoginBtn');
+    const guideLoginBtn = document.getElementById('directGuideLoginBtn');
+    
+    if (touristLoginBtn) {
+        touristLoginBtn.removeEventListener('click', handleDirectTouristLogin);
+        touristLoginBtn.addEventListener('click', handleDirectTouristLogin);
+        console.log('✅ Direct tourist login button handler attached');
+    } else {
+        console.warn('⚠️ Direct tourist login button not found');
+    }
+    
+    if (guideLoginBtn) {
+        guideLoginBtn.removeEventListener('click', handleDirectGuideLogin);
+        guideLoginBtn.addEventListener('click', handleDirectGuideLogin);
+        console.log('✅ Direct guide login button handler attached');
+    } else {
+        console.warn('⚠️ Direct guide login button not found');
+    }
+}
+
+function handleDirectTouristLogin(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('🔐 Direct tourist login button clicked');
+    
+    try {
+        // Show tourist login modal
+        const touristLoginModal = document.getElementById('touristLoginModal');
+        if (touristLoginModal) {
+            const modal = new bootstrap.Modal(touristLoginModal);
+            modal.show();
+            console.log('✅ Tourist login modal opened');
+        } else {
+            console.error('❌ Tourist login modal not found');
+            alert('ログインモーダルが見つかりません。');
+        }
+    } catch (error) {
+        console.error('❌ Tourist login button error:', error);
+        alert('ログインモーダルを開けませんでした。');
+    }
+}
+
+function handleDirectGuideLogin(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('🔐 Direct guide login button clicked');
+    
+    try {
+        // Show guide login modal
+        const guideLoginModal = document.getElementById('guideLoginModal');
+        if (guideLoginModal) {
+            const modal = new bootstrap.Modal(guideLoginModal);
+            modal.show();
+            console.log('✅ Guide login modal opened');
+        } else {
+            console.error('❌ Guide login modal not found');
+            alert('ログインモーダルが見つかりません。');
+        }
+    } catch (error) {
+        console.error('❌ Guide login button error:', error);
+        alert('ログインモーダルを開けませんでした。');
     }
 }
 
