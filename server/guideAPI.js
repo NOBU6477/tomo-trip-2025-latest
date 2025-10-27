@@ -143,6 +143,7 @@ class GuideAPIService {
     app.post('/api/tourists/send-verification', this.sendPhoneVerification.bind(this));
     app.post('/api/tourists/verify-phone', this.verifyTouristPhone.bind(this));
     app.post('/api/tourists/register', this.registerTourist.bind(this));
+    app.post('/api/tourists/login', this.touristLogin.bind(this));
     
     // File upload endpoints for guides
     app.post('/api/guides/upload-document', upload.array('documents', 3), this.uploadDocuments.bind(this));
@@ -472,6 +473,71 @@ class GuideAPIService {
       
     } catch (error) {
       console.error('❌ Guide login error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'LOGIN_ERROR',
+        message: 'ログイン中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Tourist login authentication (email + phone number)
+  async touristLogin(req, res) {
+    try {
+      const { email, phone } = req.body;
+      
+      if (!email || !phone) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_CREDENTIALS',
+          message: 'メールアドレスと電話番号が必要です'
+        });
+      }
+      
+      // Normalize phone number
+      const normalizedPhone = this.normalizePhoneNumber(phone);
+      
+      // Load all tourists from storage
+      const tourists = this.loadTourists();
+      
+      // Find tourist by email and phone
+      const tourist = tourists.find(t => {
+        const matchesEmail = t.email && t.email.toLowerCase() === email.toLowerCase();
+        const matchesPhone = t.phoneNumber === normalizedPhone || t.phoneNumber === phone;
+        
+        return matchesEmail && matchesPhone;
+      });
+      
+      if (!tourist) {
+        return res.status(401).json({
+          success: false,
+          error: 'INVALID_CREDENTIALS',
+          message: 'メールアドレスまたは電話番号が正しくありません'
+        });
+      }
+      
+      // Return tourist data for login
+      const loginTouristData = {
+        id: tourist.id,
+        firstName: tourist.firstName,
+        lastName: tourist.lastName,
+        email: tourist.email,
+        nationality: tourist.nationality,
+        phoneNumber: tourist.phoneNumber,
+        status: tourist.status,
+        registeredAt: tourist.registeredAt
+      };
+      
+      console.log(`✅ Tourist login successful: ${tourist.firstName} ${tourist.lastName} (${tourist.id})`);
+      
+      res.json({
+        success: true,
+        message: 'ログインに成功しました',
+        tourist: loginTouristData
+      });
+      
+    } catch (error) {
+      console.error('❌ Tourist login error:', error);
       res.status(500).json({
         success: false,
         error: 'LOGIN_ERROR',

@@ -5998,19 +5998,21 @@
                         </div>
                     </div>
                     
-                    <form id="touristLoginForm">
+                    <form id="touristLoginForm" onsubmit="handleTouristLogin(event)">
                         <div class="mb-3">
-                            <label for="touristEmailRegister" class="form-label fw-bold">
+                            <label for="touristEmailLogin" class="form-label fw-bold">
                                 <i class="bi bi-envelope me-1"></i>Email Address
                             </label>
-                            <input type="email" class="form-control" id="touristEmailRegister" placeholder="your@email.com" required style="border-radius: 10px; padding: 12px;">
+                            <input type="email" class="form-control" id="touristEmailLogin" placeholder="your@email.com" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">Email address used during registration</small>
                         </div>
                         
                         <div class="mb-4">
-                            <label for="touristPassword" class="form-label fw-bold">
-                                <i class="bi bi-lock me-1"></i>Password
+                            <label for="touristPhoneLogin" class="form-label fw-bold">
+                                <i class="bi bi-telephone me-1"></i>Phone Number
                             </label>
-                            <input type="password" class="form-control" id="touristPassword" placeholder="Passwordを入力" required style="border-radius: 10px; padding: 12px;">
+                            <input type="tel" class="form-control" id="touristPhoneLogin" placeholder="080-1234-5678" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">Phone number used during registration</small>
                         </div>
                         
                         <div class="d-grid gap-2">
@@ -6018,9 +6020,9 @@
                                 <i class="bi bi-box-arrow-in-right me-2"></i>Login
                             </button>
                             <div class="text-center mt-3">
-                                <small class="text-muted">アカウントをお持ちでない場合は</small><br>
+                                <small class="text-muted">Don't have an account?</small><br>
                                 <button type="button" class="btn btn-link" id="showTouristRegistration">
-                                    <i class="bi bi-person-plus me-1"></i>Registerはこちら
+                                    <i class="bi bi-person-plus me-1"></i>Sign up here
                                 </button>
                             </div>
                         </div>

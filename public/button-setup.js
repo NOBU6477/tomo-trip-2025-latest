@@ -1012,6 +1012,106 @@ function initializeButtons() {
 // Auto-initialize if this script is loaded
 initializeButtons();
 
+// Guide Login Handler
+async function handleGuideLogin(event) {
+    event.preventDefault();
+    console.log('🔐 Guide login form submitted');
+    
+    const identifier = document.getElementById('guideIdentifier')?.value;
+    const phone = document.getElementById('guidePhoneLogin')?.value;
+    
+    if (!identifier || !phone) {
+        showToast('ガイドIDまたはメールアドレスと電話番号を入力してください', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/guides/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ identifier, phone })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Save guide data to session storage
+            sessionStorage.setItem('guideAuth', 'true');
+            sessionStorage.setItem('guideData', JSON.stringify(result.guide));
+            
+            console.log('✅ Guide login successful:', result.guide);
+            showToast('ログインに成功しました', 'success');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('guideLoginModal'));
+            if (modal) modal.hide();
+            
+            // Redirect to guide edit page
+            setTimeout(() => {
+                window.location.href = `/guide-edit.html?id=${result.guide.id}`;
+            }, 1000);
+        } else {
+            console.error('❌ Guide login failed:', result.message);
+            showToast(result.message || 'ログインに失敗しました', 'error');
+        }
+    } catch (error) {
+        console.error('❌ Guide login error:', error);
+        showToast('ログイン中にエラーが発生しました', 'error');
+    }
+}
+
+// Tourist Login Handler
+async function handleTouristLogin(event) {
+    event.preventDefault();
+    console.log('🔐 Tourist login form submitted');
+    
+    const email = document.getElementById('touristEmailLogin')?.value;
+    const phone = document.getElementById('touristPhoneLogin')?.value;
+    
+    if (!email || !phone) {
+        showToast('メールアドレスと電話番号を入力してください', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/tourists/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, phone })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Save tourist data to session storage
+            sessionStorage.setItem('touristAuth', 'true');
+            sessionStorage.setItem('touristData', JSON.stringify(result.tourist));
+            
+            console.log('✅ Tourist login successful:', result.tourist);
+            showToast('ログインに成功しました', 'success');
+            
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('touristLoginModal'));
+            if (modal) modal.hide();
+            
+            // Reload page to update UI
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            console.error('❌ Tourist login failed:', result.message);
+            showToast(result.message || 'ログインに失敗しました', 'error');
+        }
+    } catch (error) {
+        console.error('❌ Tourist login error:', error);
+        showToast('ログイン中にエラーが発生しました', 'error');
+    }
+}
+
 // Export functions for use in other scripts
 if (typeof window !== 'undefined') {
     window.setupAllButtons = setupAllButtons;
@@ -1022,4 +1122,6 @@ if (typeof window !== 'undefined') {
     window.handleRegisterClick = handleRegisterClick;
     window.showRegistrationChoice = showRegistrationChoiceManual;
     window.hideRegistrationChoice = hideRegistrationChoice;
+    window.handleGuideLogin = handleGuideLogin;
+    window.handleTouristLogin = handleTouristLogin;
 }

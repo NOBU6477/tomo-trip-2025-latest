@@ -5998,19 +5998,21 @@
                         </div>
                     </div>
                     
-                    <form id="touristLoginForm">
+                    <form id="touristLoginForm" onsubmit="handleTouristLogin(event)">
                         <div class="mb-3">
-                            <label for="touristEmailRegister" class="form-label fw-bold">
+                            <label for="touristEmailLogin" class="form-label fw-bold">
                                 <i class="bi bi-envelope me-1"></i>メールアドレス
                             </label>
-                            <input type="email" class="form-control" id="touristEmailRegister" placeholder="your@email.com" required style="border-radius: 10px; padding: 12px;">
+                            <input type="email" class="form-control" id="touristEmailLogin" placeholder="your@email.com" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">登録時に使用したメールアドレス</small>
                         </div>
                         
                         <div class="mb-4">
-                            <label for="touristPassword" class="form-label fw-bold">
-                                <i class="bi bi-lock me-1"></i>パスワード
+                            <label for="touristPhoneLogin" class="form-label fw-bold">
+                                <i class="bi bi-telephone me-1"></i>電話番号
                             </label>
-                            <input type="password" class="form-control" id="touristPassword" placeholder="パスワードを入力" required style="border-radius: 10px; padding: 12px;">
+                            <input type="tel" class="form-control" id="touristPhoneLogin" placeholder="080-1234-5678" required style="border-radius: 10px; padding: 12px;">
+                            <small class="text-muted">登録時に使用した電話番号</small>
                         </div>
                         
                         <div class="d-grid gap-2">
