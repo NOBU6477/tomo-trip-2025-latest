@@ -1020,4 +1020,6 @@ if (typeof window !== 'undefined') {
     window.handleSearchClick = handleSearchClick;
     window.handleContactClick = handleContactClick;
     window.handleRegisterClick = handleRegisterClick;
+    window.showRegistrationChoice = showRegistrationChoiceManual;
+    window.hideRegistrationChoice = hideRegistrationChoice;
 }

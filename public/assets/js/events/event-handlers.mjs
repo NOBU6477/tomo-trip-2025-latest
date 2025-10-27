@@ -716,7 +716,12 @@ function setupSponsorButtonEvents() {
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
             console.log('🎯 Header register button clicked - showing registration choices');
-            showRegistrationChoiceModal();
+            // Use global registration function from button-setup.js
+            if (typeof window.showRegistrationChoice === 'function') {
+                window.showRegistrationChoice();
+            } else {
+                console.warn('Registration choice function not available');
+            }
         });
     }
     
