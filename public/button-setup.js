@@ -1127,10 +1127,20 @@ async function handleGuideLogin(event) {
             const modal = bootstrap.Modal.getInstance(document.getElementById('guideLoginModal'));
             if (modal) modal.hide();
             
-            // Redirect to guide edit page
-            setTimeout(() => {
-                window.location.href = `/guide-edit.html?id=${result.guide.id}`;
-            }, 1000);
+            // Check if there's a guide detail page to return to
+            const returnToGuideId = sessionStorage.getItem('returnToGuideId');
+            if (returnToGuideId) {
+                console.log('🔗 Redirecting to guide detail after login:', returnToGuideId);
+                sessionStorage.removeItem('returnToGuideId'); // Clean up
+                setTimeout(() => {
+                    window.location.href = `/guide-detail.html?id=${returnToGuideId}`;
+                }, 1000);
+            } else {
+                // Redirect to guide edit page
+                setTimeout(() => {
+                    window.location.href = `/guide-edit.html?id=${result.guide.id}`;
+                }, 1000);
+            }
         } else {
             console.error('❌ Guide login failed:', result.message);
             showToast(result.message || 'ログインに失敗しました', 'error');

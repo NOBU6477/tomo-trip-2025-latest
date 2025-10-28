@@ -583,13 +583,17 @@ function handleViewDetailsClick(event) {
     checkTouristAuthAndRedirect(guideId);
 }
 
-// Tourist authentication check and redirect system
+// Tourist/Guide authentication check and redirect system
 function checkTouristAuthAndRedirect(guideId) {
-    console.log('🔐 Checking tourist authentication for guide:', guideId);
+    console.log('🔐 Checking authentication for guide:', guideId);
     
     // Check if tourist is logged in (check sessionStorage first, then localStorage)
     const touristAuth = sessionStorage.getItem('touristAuth') || localStorage.getItem('touristAuth');
     const touristData = sessionStorage.getItem('touristData') || sessionStorage.getItem('touristRegistrationData') || localStorage.getItem('touristRegistrationData');
+    
+    // Check if guide is logged in
+    const guideAuth = sessionStorage.getItem('guideAuth');
+    const guideData = sessionStorage.getItem('guideData');
     
     // Debug: Log all storage values
     console.log('🔍 Auth check details:', {
@@ -598,12 +602,19 @@ function checkTouristAuthAndRedirect(guideId) {
         sessionData: sessionStorage.getItem('touristData'),
         sessionRegData: sessionStorage.getItem('touristRegistrationData'),
         localRegData: localStorage.getItem('touristRegistrationData'),
-        finalAuth: touristAuth,
-        finalData: touristData
+        guideAuth: guideAuth,
+        guideData: guideData ? 'present' : 'null',
+        finalTouristAuth: touristAuth,
+        finalTouristData: touristData
     });
     
-    if (touristAuth || touristData) {
-        console.log('✅ Tourist is authenticated, redirecting to guide detail');
+    // Allow access if user is logged in as either tourist or guide
+    if (touristAuth || touristData || guideAuth || guideData) {
+        if (touristAuth || touristData) {
+            console.log('✅ Tourist is authenticated, redirecting to guide detail');
+        } else {
+            console.log('✅ Guide is authenticated, redirecting to guide detail');
+        }
         // User is authenticated, proceed to guide detail page
         redirectToGuideDetail(guideId);
     } else {
