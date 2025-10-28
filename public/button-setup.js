@@ -1132,8 +1132,13 @@ async function handleGuideLogin(event) {
             if (returnToGuideId) {
                 console.log('🔗 Redirecting to guide detail after login:', returnToGuideId);
                 sessionStorage.removeItem('returnToGuideId'); // Clean up
+                
+                // Detect current page language and redirect to appropriate detail page
+                const isEnglish = window.location.pathname.includes('-en.html');
+                const detailPage = isEnglish ? '/guide-detail-en.html' : '/guide-detail.html';
+                
                 setTimeout(() => {
-                    window.location.href = `/guide-detail.html?id=${returnToGuideId}`;
+                    window.location.href = `${detailPage}?id=${returnToGuideId}`;
                 }, 1000);
             } else {
                 // Redirect to guide edit page
@@ -1192,8 +1197,13 @@ async function handleTouristLogin(event) {
             if (returnToGuideId) {
                 console.log('🔗 Redirecting to guide detail after login:', returnToGuideId);
                 sessionStorage.removeItem('returnToGuideId'); // Clean up
+                
+                // Detect current page language and redirect to appropriate detail page
+                const isEnglish = window.location.pathname.includes('-en.html');
+                const detailPage = isEnglish ? '/guide-detail-en.html' : '/guide-detail.html';
+                
                 setTimeout(() => {
-                    window.location.href = `/guide-detail.html?id=${returnToGuideId}`;
+                    window.location.href = `${detailPage}?id=${returnToGuideId}`;
                 }, 1000);
             } else {
                 // Reload page to update UI

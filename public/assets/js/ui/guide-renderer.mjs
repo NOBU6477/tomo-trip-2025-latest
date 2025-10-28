@@ -382,8 +382,10 @@ export function setupViewDetailsEventListeners() {
                     window.viewGuideDetail(guideId, e);
                 } else {
                     console.warn('❌ Guide detail function not available');
-                    // Fallback: direct navigation
-                    window.open(`guide-detail.html?id=${guideId}`, '_blank');
+                    // Fallback: direct navigation with language detection
+                    const isEnglish = window.location.pathname.includes('-en.html');
+                    const detailPage = isEnglish ? 'guide-detail-en.html' : 'guide-detail.html';
+                    window.open(`${detailPage}?id=${guideId}`, '_blank');
                 }
             });
             console.log(`✅ Setup view detail button ${index + 1} for guide ID: ${guideId}`);
@@ -685,7 +687,13 @@ function showTouristRegistrationPrompt(guideId) {
 // Redirect to guide detail page
 function redirectToGuideDetail(guideId) {
     console.log('🔗 Redirecting to guide detail page for guide:', guideId);
-    window.location.href = `/guide-detail.html?id=${guideId}`;
+    
+    // Detect current page language and redirect to appropriate detail page
+    const isEnglish = window.location.pathname.includes('-en.html');
+    const detailPage = isEnglish ? '/guide-detail-en.html' : '/guide-detail.html';
+    
+    console.log(`🌐 Detected language: ${isEnglish ? 'English' : 'Japanese'}, redirecting to ${detailPage}`);
+    window.location.href = `${detailPage}?id=${guideId}`;
 }
 
 // Global functions for tourist registration with return capability
