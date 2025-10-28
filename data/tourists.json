@@ -88,5 +88,20 @@
     "status": "active",
     "registeredAt": "2025-10-27T14:59:18.533Z",
     "updatedAt": "2025-10-27T14:59:18.533Z"
+  },
+  {
+    "id": "572973a8-861e-435a-afb6-ff82ff6ca0bd",
+    "firstName": "大城",
+    "lastName": "星",
+    "email": "test200@gmail.com",
+    "nationality": "japan",
+    "documentType": "passport",
+    "phoneVerified": true,
+    "documentUploaded": true,
+    "registrationDate": "2025-10-28T11:54:05.196Z",
+    "phoneNumber": "+818045678901",
+    "status": "active",
+    "registeredAt": "2025-10-28T11:54:05.192Z",
+    "updatedAt": "2025-10-28T11:54:05.192Z"
   }
 ]
