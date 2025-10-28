@@ -608,8 +608,45 @@
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registering...';
             
             try {
+                // Upload profile photo first
+                const profilePhotoFile = document.getElementById('profilePhoto').files[0];
+                if (profilePhotoFile) {
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Uploading profile photo...';
+                    
+                    const photoFormData = new FormData();
+                    photoFormData.append('sessionId', sessionId);
+                    photoFormData.append('profilePhoto', profilePhotoFile);
+                    
+                    const uploadResponse = await fetch('/api/guides/upload-profile-photo', {
+                        method: 'POST',
+                        body: photoFormData
+                    });
+                    
+                    const uploadResult = await uploadResponse.json();
+                    if (!uploadResult.success) {
+                        showToast('Profile photo upload failed', 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                        return;
+                    }
+                    
+                    console.log('✅ Profile photo uploaded:', uploadResult.profileImageUrl);
+                    
+                    // Store uploaded photo URL in session storage
+                    sessionStorage.setItem(`profileImageUrl_${sessionId}`, uploadResult.profileImageUrl);
+                }
+                
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registering...';
+                
                 const formData = new FormData(this);
                 const data = Object.fromEntries(formData);
+                
+                // Add profile image URL if uploaded
+                const profileImageUrl = sessionStorage.getItem(`profileImageUrl_${sessionId}`);
+                if (profileImageUrl) {
+                    data.profileImageUrl = profileImageUrl;
+                    console.log('📸 Including profileImageUrl in registration:', profileImageUrl);
+                }
                 
                 // Get selected languages
                 const languageSelect = document.getElementById('guideLanguages');
