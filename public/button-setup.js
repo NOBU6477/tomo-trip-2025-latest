@@ -655,7 +655,7 @@ function showRegistrationChoiceManual() {
                             
                             <!-- Guide Registration -->
                             <div class="col-md-6 col-lg-4">
-                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="window.open('guide-registration-perfect.html', '_blank')">
+                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openGuideRegistration()">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-person-badge text-success mb-3" style="font-size: 3rem;"></i>
                                         <h6 class="fw-bold text-success mb-2">${text.guide.title}</h6>
