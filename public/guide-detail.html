@@ -427,17 +427,24 @@
                 return;
             }
 
-            // Check authentication - check both login (sessionStorage) and registration (localStorage)
+            // Check authentication - allow both tourist and guide login
             const touristAuth = sessionStorage.getItem('touristAuth');
             const touristData = sessionStorage.getItem('touristData') || localStorage.getItem('touristRegistrationData');
+            const guideAuth = sessionStorage.getItem('guideAuth');
+            const guideAuthData = sessionStorage.getItem('guideData');
             
-            if (!touristAuth && !touristData) {
-                alert('この機能をご利用いただくには観光客ログインまたは登録が必要です。');
+            // Allow access if user is logged in as either tourist or guide
+            if (!touristAuth && !touristData && !guideAuth && !guideAuthData) {
+                alert('この機能をご利用いただくには観光客またはガイドとしてログインする必要があります。');
                 window.location.href = '/';
                 return;
             }
             
-            console.log('✅ Tourist authentication verified');
+            if (touristAuth || touristData) {
+                console.log('✅ Tourist authentication verified');
+            } else if (guideAuth || guideAuthData) {
+                console.log('✅ Guide authentication verified');
+            }
 
             // Load guide data from API (with personal info removed)
             const guideData = await getGuideData(guideId);
@@ -725,12 +732,14 @@
         function bookGuide() {
             const guideId = getGuideId();
             
-            // Check authentication - check both login (sessionStorage) and registration (localStorage)
+            // Check authentication - allow both tourist and guide login
             const touristAuth = sessionStorage.getItem('touristAuth');
             const touristData = sessionStorage.getItem('touristData') || localStorage.getItem('touristRegistrationData');
+            const guideAuth = sessionStorage.getItem('guideAuth');
+            const guideAuthData = sessionStorage.getItem('guideData');
             
-            if (!touristAuth && !touristData) {
-                alert('予約機能をご利用いただくには観光客ログインまたは登録が必要です。');
+            if (!touristAuth && !touristData && !guideAuth && !guideAuthData) {
+                alert('予約機能をご利用いただくには観光客またはガイドとしてログインする必要があります。');
                 window.location.href = '/';
                 return;
             }
@@ -744,12 +753,14 @@
         function contactGuide() {
             const guideId = getGuideId();
             
-            // Check authentication - check both login (sessionStorage) and registration (localStorage)
+            // Check authentication - allow both tourist and guide login
             const touristAuth = sessionStorage.getItem('touristAuth');
             const touristData = sessionStorage.getItem('touristData') || localStorage.getItem('touristRegistrationData');
+            const guideAuth = sessionStorage.getItem('guideAuth');
+            const guideAuthData = sessionStorage.getItem('guideData');
             
-            if (!touristAuth && !touristData) {
-                alert('問い合わせ機能をご利用いただくには観光客ログインまたは登録が必要です。');
+            if (!touristAuth && !touristData && !guideAuth && !guideAuthData) {
+                alert('問い合わせ機能をご利用いただくには観光客またはガイドとしてログインする必要があります。');
                 window.location.href = '/';
                 return;
             }
