@@ -155,6 +155,80 @@ export function localizeLanguageArray(languages, locale = 'ja') {
 }
 
 /**
+ * 専門分野をローカライズして表示
+ * @param {string} specialty - 専門分野
+ * @param {string} locale - ロケール（'ja' or 'en'）
+ * @returns {string} ローカライズされた専門分野
+ */
+export function localizeSpecialty(specialty, locale = 'ja') {
+    if (!specialty) return '';
+    
+    const specialtyMap = {
+        'ja': {
+            'Culture・History': '文化・歴史',
+            'Food': 'グルメ',
+            'Nature': '自然・アウトドア',
+            'Shopping': 'ショッピング',
+            'Photography': '写真撮影',
+            '文化・歴史ガイド': '文化・歴史',
+            'グルメガイド': 'グルメ',
+            '自然ガイド': '自然・アウトドア',
+            'business': 'ビジネス',
+            'modern': 'モダン',
+            'fashion': 'ファッション',
+            'youth': '若者向け',
+            'nightlife': 'ナイトライフ',
+            'entertainment': 'エンターテイメント',
+            'night tour': 'ナイトツアー'
+        },
+        'en': {
+            '文化・歴史': 'Culture・History',
+            'グルメ': 'Food',
+            '自然・アウトドア': 'Nature',
+            'ショッピング': 'Shopping',
+            '写真撮影': 'Photography',
+            '文化・歴史ガイド': 'Culture・History',
+            'グルメガイド': 'Food',
+            '自然ガイド': 'Nature',
+            'ビジネス': 'business',
+            'モダン': 'modern',
+            'ファッション': 'fashion',
+            '若者向け': 'youth',
+            'ナイトライフ': 'nightlife',
+            'エンターテイメント': 'entertainment',
+            'ナイトツアー': 'night tour'
+        }
+    };
+    
+    const map = specialtyMap[locale] || specialtyMap['ja'];
+    return map[specialty] || specialty;
+}
+
+/**
+ * 専門分野配列をローカライズして表示
+ * @param {Array|string} specialties - 専門分野配列または単一専門分野
+ * @param {string} locale - ロケール（'ja' or 'en'）
+ * @returns {Array} ローカライズされた専門分野配列
+ */
+export function localizeSpecialtyArray(specialties, locale = 'ja') {
+    if (!specialties) return [];
+    
+    // 単一文字列の場合は配列に変換
+    if (typeof specialties === 'string') {
+        return [localizeSpecialty(specialties, locale)];
+    }
+    
+    // 配列の場合は各要素をローカライズ
+    if (Array.isArray(specialties)) {
+        return specialties
+            .filter(spec => spec && spec.trim())
+            .map(spec => localizeSpecialty(spec.trim(), locale));
+    }
+    
+    return [];
+}
+
+/**
  * 言語を正規化してフィルタリング用の値に変換
  * @param {string} language - 言語識別子
  * @returns {Array} 正規化された言語候補配列

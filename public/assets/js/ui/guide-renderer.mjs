@@ -2,7 +2,7 @@
 // Removed defaultGuideData import to prevent duplicate rendering
 
 // Import language utilities for proper localization
-import { localizeLanguageArray, isEnglishPage, getText } from '../utils/language-utils.mjs';
+import { localizeLanguageArray, localizeSpecialtyArray, isEnglishPage, getText } from '../utils/language-utils.mjs';
 
 // スケーラブルペジネーションのインポートと初期化
 let paginationSystem = null;
@@ -513,14 +513,19 @@ export function createGuideCardHTML(guide) {
     : (guide.languages ? String(guide.languages).split(',') : []);
   
   // 言語をローカライズ（日本語版では日本語表示、英語版では英語表示）
+  const currentLocale = isEn ? 'en' : 'ja';
   if (typeof localizeLanguageArray === 'function') {
-    const currentLocale = isEn ? 'en' : 'ja';
     langs = localizeLanguageArray(langs, currentLocale);
   }
   
-  const specialties = Array.isArray(guide.specialties)
+  let specialties = Array.isArray(guide.specialties)
     ? guide.specialties
-    : (guide.specialties ? String(guide.specialties).split(',') : []);
+    : (guide.specialties ? String(guide.specialties).split(',').map(s => s.trim()) : []);
+  
+  // 専門分野をローカライズ
+  if (typeof localizeSpecialtyArray === 'function') {
+    specialties = localizeSpecialtyArray(specialties, currentLocale);
+  }
 
   // ボタン文言
   const viewDetailsText = typeof getText === 'function'
