@@ -2,7 +2,24 @@
 
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
-## Recent Changes (2025-09-30)
+## Recent Changes (2025-10-28)
+- **Profile Photo System Complete**: Full implementation of guide profile photo upload and display using Google Cloud Storage
+  - Profile photos uploaded to GCS at `/objects/tomotrip-private/uploads/profiles/profile_{uuid}_{filename}`
+  - Direct file upload via ObjectStorageService.uploadFileBuffer method
+  - Multi-level fallback system: profileImageUrl → profilePhoto.profileImageUrl → profilePhoto → default image
+  - Fixed critical bug where uploaded photo URLs were not saved to guide records
+  - Profile photos now consistently displayed across both Japanese and English versions
+- **Guide Edit Page Localization**: Complete English version (guide-edit-en.html) fully translated
+  - All UI elements, labels, buttons, placeholders translated to English
+  - JavaScript alert/error messages localized
+  - Proper language-aware redirects (index-en.html vs index.html)
+  - English location defaults and language/specialty mappings
+- **Registration Flow Enhancement**: Profile photo upload integrated into guide registration
+  - Both guide-registration-perfect.html and guide-registration-perfect-en.html support photo upload
+  - Uploaded profileImageUrl properly stored in sessionStorage and included in registration data
+  - Seamless integration with existing registration workflow
+
+## Previous Changes (2025-09-30)
 - **Language-Aware Registration Routing Implemented**: Button routing now detects current page language and directs users to appropriate registration pages
   - Tourist, Guide, and Sponsor registration buttons route to *-en.html pages when on English version
   - Language detection based on pathname (index-en.html vs index.html)
