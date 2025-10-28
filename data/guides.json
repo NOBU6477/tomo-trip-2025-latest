@@ -305,5 +305,28 @@
     "hospitalitySupport": false,
     "emergencySupport": false,
     "localExpert": true
+  },
+  {
+    "id": "test-guide-001",
+    "guideName": "テスト太郎",
+    "guideEmail": "testguide@gmail.com",
+    "guideGender": "male",
+    "guideAge": "30",
+    "phoneNumber": "+819012345678",
+    "guideExperience": "intermediate",
+    "guideLanguages": [
+      "日本語",
+      "英語"
+    ],
+    "guideIntroduction": "TomoTripのテスト用ガイドアカウントです。地元の魅力をお伝えします。",
+    "guideSpecialties": "東京観光案内, 歴史",
+    "guideSessionRate": "12000",
+    "guideAvailability": "both",
+    "phoneVerified": true,
+    "documents": [],
+    "status": "approved",
+    "registeredAt": "2025-10-28T11:32:26.157Z",
+    "updatedAt": "2025-10-28T11:32:26.159Z",
+    "location": "東京都 渋谷区"
   }
 ]

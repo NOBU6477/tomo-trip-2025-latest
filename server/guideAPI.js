@@ -421,6 +421,10 @@ class GuideAPIService {
         });
       }
       
+      // Normalize phone number for comparison
+      const normalizedPhone = this.normalizePhoneNumber(phone);
+      console.log(`🔐 Guide login attempt - identifier: ${identifier}, phone: ${phone}, normalized: ${normalizedPhone}`);
+      
       // Load all guides from storage
       const guides = this.loadGuides();
       
@@ -434,10 +438,18 @@ class GuideAPIService {
           g.guideName === identifier
         );
         
+        // Normalize stored phone number for comparison
+        const storedPhone = g.phoneNumber || g.phone;
+        const normalizedStoredPhone = storedPhone ? this.normalizePhoneNumber(storedPhone) : null;
+        
         const matchesPhone = (
-          g.phoneNumber === phone || 
-          g.phone === phone
+          normalizedStoredPhone === normalizedPhone ||
+          storedPhone === phone
         );
+        
+        if (matchesIdentifier) {
+          console.log(`🔍 Found matching identifier - stored: ${storedPhone}, normalized: ${normalizedStoredPhone}, input: ${normalizedPhone}, matches: ${matchesPhone}`);
+        }
         
         return matchesIdentifier && matchesPhone;
       });
@@ -496,6 +508,7 @@ class GuideAPIService {
       
       // Normalize phone number
       const normalizedPhone = this.normalizePhoneNumber(phone);
+      console.log(`🔐 Tourist login attempt - email: ${email}, phone: ${phone}, normalized: ${normalizedPhone}`);
       
       // Load all tourists from storage
       const tourists = this.loadTourists();
@@ -503,7 +516,19 @@ class GuideAPIService {
       // Find tourist by email and phone
       const tourist = tourists.find(t => {
         const matchesEmail = t.email && t.email.toLowerCase() === email.toLowerCase();
-        const matchesPhone = t.phoneNumber === normalizedPhone || t.phoneNumber === phone;
+        
+        // Normalize stored phone number for comparison
+        const storedPhone = t.phoneNumber || t.phone;
+        const normalizedStoredPhone = storedPhone ? this.normalizePhoneNumber(storedPhone) : null;
+        
+        const matchesPhone = (
+          normalizedStoredPhone === normalizedPhone ||
+          storedPhone === phone
+        );
+        
+        if (matchesEmail) {
+          console.log(`🔍 Found matching email - stored: ${storedPhone}, normalized: ${normalizedStoredPhone}, input: ${normalizedPhone}, matches: ${matchesPhone}`);
+        }
         
         return matchesEmail && matchesPhone;
       });
