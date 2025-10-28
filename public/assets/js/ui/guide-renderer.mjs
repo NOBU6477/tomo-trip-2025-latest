@@ -488,10 +488,14 @@ export function createGuideCardHTML(guide) {
     ? (guide.guideName || guide.name || defaultNameEn)
     : (guide.name || guide.guideName || defaultNameJa);
 
-  // 画像（先頭スラッシュを付けない → /public 配下で 404 にならない）
-  const photoSrc = guide.profilePhoto
-    ? `/uploads/${guide.profilePhoto}`
-    : `assets/img/guides/default-1.svg`;
+  // 画像（profileImageUrl優先、フォールバックとしてprofilePhoto、最後にデフォルト）
+  const photoSrc = guide.profileImageUrl
+    ? guide.profileImageUrl
+    : (guide.profilePhoto?.profileImageUrl
+      ? guide.profilePhoto.profileImageUrl
+      : (guide.profilePhoto
+        ? `/uploads/${guide.profilePhoto}`
+        : `assets/img/guides/default-1.svg`));
 
   // 価格表記
   const priceNum = Number(guide.sessionRate || guide.guideSessionRate || guide.price || 0);

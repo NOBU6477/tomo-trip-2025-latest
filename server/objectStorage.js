@@ -118,6 +118,35 @@ class ObjectStorageService {
     });
   }
 
+  // Upload file buffer directly to object storage
+  async uploadFileBuffer(buffer, objectPath, contentType = 'application/octet-stream') {
+    try {
+      const { bucketName, objectName } = this.parseObjectPath(objectPath);
+      const bucket = objectStorageClient.bucket(bucketName);
+      const file = bucket.file(objectName);
+
+      // Upload file buffer
+      await file.save(buffer, {
+        contentType,
+        metadata: {
+          contentType,
+        },
+      });
+
+      console.log(`✅ File uploaded to ${bucketName}/${objectName}`);
+      
+      return {
+        success: true,
+        bucketName,
+        objectName,
+        path: objectPath
+      };
+    } catch (error) {
+      console.error('❌ Error uploading file buffer:', error);
+      throw error;
+    }
+  }
+
   // Download object to response
   async downloadObject(file, res, cacheTtlSec = 3600) {
     try {

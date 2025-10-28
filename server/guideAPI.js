@@ -377,26 +377,46 @@ class GuideAPIService {
         });
       }
 
-      const uploadUrl = await this.objectStorage.getObjectEntityUploadURL();
+      // Upload file directly to Google Cloud Storage
       const fileId = randomUUID();
       const fileName = `profile_${fileId}_${req.file.originalname}`;
+      const objectPath = `/tomotrip-private/uploads/profiles/${fileName}`;
 
-      // Update session with profile photo info
-      session.profilePhoto = {
-        fileId,
-        fileName,
-        originalName: req.file.originalname,
-        mimeType: req.file.mimetype,
-        size: req.file.size,
-        uploadUrl
-      };
-      this.pendingRegistrations.set(sessionId, session);
+      try {
+        // Upload file buffer to object storage
+        const uploadResult = await this.objectStorage.uploadFileBuffer(
+          req.file.buffer,
+          objectPath,
+          req.file.mimetype
+        );
 
-      res.json({
-        success: true,
-        message: 'プロフィール写真のアップロード準備が完了しました',
-        file: session.profilePhoto
-      });
+        // Construct public URL for the uploaded file
+        const profileImageUrl = `/objects${objectPath}`;
+
+        // Update session with profile photo info
+        session.profilePhoto = {
+          fileId,
+          fileName,
+          originalName: req.file.originalname,
+          mimeType: req.file.mimetype,
+          size: req.file.size,
+          profileImageUrl // Store the actual URL
+        };
+        this.pendingRegistrations.set(sessionId, session);
+
+        console.log(`✅ Profile photo uploaded successfully: ${profileImageUrl}`);
+
+        res.json({
+          success: true,
+          message: 'プロフィール写真のアップロードが完了しました',
+          file: session.profilePhoto,
+          profileImageUrl
+        });
+
+      } catch (uploadError) {
+        console.error('❌ Cloud storage upload error:', uploadError);
+        throw new Error('Failed to upload file to cloud storage');
+      }
 
     } catch (error) {
       console.error('❌ Profile photo upload error:', error);
@@ -657,6 +677,7 @@ class GuideAPIService {
         phoneVerified: true,
         documents: session.documents || [],
         profilePhoto: session.profilePhoto,
+        profileImageUrl: session.profilePhoto?.profileImageUrl || null, // Save profile image URL for easy access
         status: 'approved', // Auto-approve for development/demo
         registeredAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -917,8 +938,9 @@ class GuideAPIService {
           sessionRate: guide.guideSessionRate,
           availability: guide.guideAvailability,
           registrationLanguage: guide.registrationLanguage || 'ja', // Include in response
-          // Generate proper profile photo URL
-          profilePhoto: this.generateProfilePhotoUrl(guide.profilePhoto),
+          // Use profileImageUrl if available, fallback to generated URL
+          profileImageUrl: guide.profileImageUrl || this.generateProfilePhotoUrl(guide.profilePhoto),
+          profilePhoto: this.generateProfilePhotoUrl(guide.profilePhoto), // Keep for backward compatibility
           introduction: guide.guideIntroduction,
           averageRating: 4.8,
           status: guide.status,
