@@ -111,6 +111,10 @@ async function loadGuidesFromAPI() {
                     'I will guide you to the best local highlights' : 
                     '地域の魅力をご案内します';
                 
+                // Use profileImageUrl if available, fallback to profilePhoto
+                const imageUrl = guide.profileImageUrl || 
+                                (guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg');
+                
                 return {
                     id: guide.id,
                     name: guide.name,
@@ -119,8 +123,9 @@ async function loadGuidesFromAPI() {
                     rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.8,
                     price: parseInt(guide.sessionRate || 0),
                     sessionRate: parseInt(guide.sessionRate || 0),
-                    image: guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg',
-                    photo: guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg',
+                    image: imageUrl,
+                    photo: imageUrl,
+                    profileImageUrl: guide.profileImageUrl, // Keep original for reference
                     languages: processedLanguages,
                     // Process specialties string from API
                     specialties: guide.specialties ? 
