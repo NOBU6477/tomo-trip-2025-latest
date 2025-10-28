@@ -103,5 +103,20 @@
     "status": "active",
     "registeredAt": "2025-10-28T11:54:05.192Z",
     "updatedAt": "2025-10-28T11:54:05.192Z"
+  },
+  {
+    "id": "849397a1-55b5-4503-a7a7-8c3b7c902acb",
+    "firstName": "rin",
+    "lastName": "higa",
+    "email": "test1000@gmail.com",
+    "nationality": "usa",
+    "documentType": "passport",
+    "phoneVerified": true,
+    "documentUploaded": true,
+    "registrationDate": "2025-10-28T13:13:56.197Z",
+    "phoneNumber": "+819088885555",
+    "status": "active",
+    "registeredAt": "2025-10-28T13:13:56.134Z",
+    "updatedAt": "2025-10-28T13:13:56.134Z"
   }
 ]
