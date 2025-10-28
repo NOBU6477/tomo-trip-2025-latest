@@ -591,6 +591,17 @@ function checkTouristAuthAndRedirect(guideId) {
     const touristAuth = sessionStorage.getItem('touristAuth') || localStorage.getItem('touristAuth');
     const touristData = sessionStorage.getItem('touristData') || sessionStorage.getItem('touristRegistrationData') || localStorage.getItem('touristRegistrationData');
     
+    // Debug: Log all storage values
+    console.log('🔍 Auth check details:', {
+        sessionAuth: sessionStorage.getItem('touristAuth'),
+        localAuth: localStorage.getItem('touristAuth'),
+        sessionData: sessionStorage.getItem('touristData'),
+        sessionRegData: sessionStorage.getItem('touristRegistrationData'),
+        localRegData: localStorage.getItem('touristRegistrationData'),
+        finalAuth: touristAuth,
+        finalData: touristData
+    });
+    
     if (touristAuth || touristData) {
         console.log('✅ Tourist is authenticated, redirecting to guide detail');
         // User is authenticated, proceed to guide detail page

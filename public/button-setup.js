@@ -338,6 +338,10 @@ function handleDirectTouristLogin(e) {
     e.stopPropagation();
     console.log('🔐 Direct tourist login button clicked');
     
+    // Clear any previous guide return destination (navbar login shouldn't redirect to guide)
+    sessionStorage.removeItem('returnToGuideId');
+    console.log('🧹 Cleared returnToGuideId for direct navbar login');
+    
     try {
         // Show tourist login modal
         const touristLoginModal = document.getElementById('touristLoginModal');
@@ -359,6 +363,10 @@ function handleDirectGuideLogin(e) {
     e.preventDefault();
     e.stopPropagation();
     console.log('🔐 Direct guide login button clicked');
+    
+    // Clear any previous guide return destination (navbar login shouldn't redirect to guide)
+    sessionStorage.removeItem('returnToGuideId');
+    console.log('🧹 Cleared returnToGuideId for direct navbar login');
     
     try {
         // Show guide login modal
