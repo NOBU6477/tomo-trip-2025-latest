@@ -514,7 +514,8 @@ export function createGuideCardHTML(guide) {
   
   // 言語をローカライズ（日本語版では日本語表示、英語版では英語表示）
   if (typeof localizeLanguageArray === 'function') {
-    langs = localizeLanguageArray(langs);
+    const currentLocale = isEn ? 'en' : 'ja';
+    langs = localizeLanguageArray(langs, currentLocale);
   }
   
   const specialties = Array.isArray(guide.specialties)
