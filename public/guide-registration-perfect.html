@@ -673,6 +673,9 @@
                 const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
                 data.guideLanguages = selectedLanguages;
                 
+                // Set registration language (Japanese version)
+                data.registrationLanguage = 'ja';
+                
                 console.log('Complete guide registration data:', data);
                 console.log('FormData keys:', Object.keys(data));
                 
