@@ -171,13 +171,13 @@
 <body>
     <div class="registration-card">
         <button class="btn btn-home" onclick="window.location.href='index-en.html'">
-            <i class="bi bi-house"></i> ← ホームに戻る
+            <i class="bi bi-house"></i> ← Back to Home
         </button>
         
         <div class="update-notice" style="background: linear-gradient(90deg, #fd7f3d, #e55f24); color: white; text-align: center; padding: 10px; border-radius: 10px; margin-bottom: 20px; animation: pulse 2s infinite;">
-            ✨ 最新バージョンが読み込まれました - 2025年8月28日 16:38 ✨
+            ✨ Latest version loaded - August 28, 2025 16:38 ✨
         </div>
-        <h2 class="registration-title">🌊 スポンサー登録【Latest Version 2025】</h2>
+        <h2 class="registration-title">🌊 Sponsor Registration【Latest Version 2025】</h2>
         
         <form id="sponsorRegistrationForm" onsubmit="handleRegistration(event)">
             <div class="form-floating">
@@ -196,30 +196,30 @@
             </div>
             
             <div class="form-floating">
-                <textarea class="form-control" id="address" name="address" placeholder="住所" style="height: 110px;"></textarea>
+                <textarea class="form-control" id="address" name="address" placeholder="Address" style="height: 110px;"></textarea>
                 <label for="address"><i class="bi bi-geo-alt icon-enhanced"></i>Address</label>
             </div>
             
             <div class="form-floating">
-                <textarea class="form-control" id="description" name="description" placeholder="店舗説明" style="height: 130px;"></textarea>
-                <label for="description"><i class="bi bi-card-text icon-enhanced"></i>店舗説明</label>
+                <textarea class="form-control" id="description" name="description" placeholder="Store Description" style="height: 130px;"></textarea>
+                <label for="description"><i class="bi bi-card-text icon-enhanced"></i>Store Description</label>
             </div>
             
             <div class="form-floating">
                 <select class="form-control category-select" id="category" name="category" required>
                     <option value="">Please select</option>
-                    <option value="restaurant">🍽️ レストラン・飲食</option>
-                    <option value="retail">🛍️ 小売・ショッピング</option>
-                    <option value="hotel">🏨 宿泊・ホテル</option>
-                    <option value="entertainment">🎭 エンターテイメント</option>
-                    <option value="service">💼 サービス業</option>
-                    <option value="other">📝 その他</option>
+                    <option value="restaurant">🍽️ Restaurant・Dining</option>
+                    <option value="retail">🛍️ Retail・Shopping</option>
+                    <option value="hotel">🏨 Accommodation・Hotel</option>
+                    <option value="entertainment">🎭 Entertainment</option>
+                    <option value="service">💼 Service Industry</option>
+                    <option value="other">📝 Other</option>
                 </select>
-                <label for="category"><i class="bi bi-tags icon-enhanced"></i>カテゴリー</label>
+                <label for="category"><i class="bi bi-tags icon-enhanced"></i>Category</label>
             </div>
             
             <button type="submit" class="btn btn-register">
-                <i class="bi bi-check-circle me-2"></i>登録申請する
+                <i class="bi bi-check-circle me-2"></i>Submit Registration
             </button>
         </form>
     </div>
@@ -234,7 +234,7 @@
             if (notice) {
                 notice.style.animation = 'none';
                 notice.style.background = 'linear-gradient(90deg, #00b894, #00a085)';
-                notice.innerHTML = '✅ 新しいデザインが正常に読み込まれました ✅';
+                notice.innerHTML = '✅ New design loaded successfully ✅';
             }
         }, 3000);
         
@@ -270,7 +270,7 @@
             const submitBtn = event.target.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録処理中...';
+            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Processing registration...';
             
             // Send registration data to server
             fetch('/api/sponsor-stores', {
@@ -299,7 +299,7 @@
                 }));
                 
                 // Show success message
-                showSuccessMessage(`🎉 店舗ID: ${storeData.id.substring(0,8)} で登録完了！\n店舗管理画面に移動します...`);
+                showSuccessMessage(`🎉 Registration complete with Store ID: ${storeData.id.substring(0,8)}!\nRedirecting to store dashboard...`);
                 
                 // Redirect to store dashboard
                 setTimeout(() => {
@@ -309,7 +309,7 @@
             })
             .catch(error => {
                 console.error('Registration failed:', error);
-                alert('登録に失敗しました。もう一度お試しください。');
+                alert('Registration failed. Please try again.');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             });
@@ -325,7 +325,7 @@
                                 <div class="mb-4">
                                     <i class="bi bi-check-circle-fill" style="font-size: 5rem; color: white;"></i>
                                 </div>
-                                <h4 class="mb-3" style="color: white; font-weight: bold;">登録完了！</h4>
+                                <h4 class="mb-3" style="color: white; font-weight: bold;">Registration Complete!</h4>
                                 <p class="mb-4 text-white" style="white-space: pre-line; font-size: 1.1rem;">${message}</p>
                                 <div class="spinner-border text-white" role="status" style="width: 3rem; height: 3rem;">
                                     <span class="visually-hidden">Loading...</span>

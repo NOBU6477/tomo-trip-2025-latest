@@ -102,7 +102,7 @@
                 <div class="guide-container">
                     <div class="guide-header">
                         <h1><i class="bi bi-person-plus-fill me-2"></i>New Guide Registration</h1>
-                        <p class="mb-0">TomoTrip - Guide Recruitment（電話認証・身分証明書提出必須）</p>
+                        <p class="mb-0">TomoTrip - Guide Recruitment (Phone verification and ID document required)</p>
                     </div>
                     
                     <div class="p-4">
@@ -150,19 +150,19 @@
                                     <div class="col-md-12">
                                         <div class="form-floating">
                                             <select class="form-control" id="guideLocation" name="location" required>
-                                                <option value="">Activity RegionをPlease select</option>
-                                                <option value="東京都 東京">東京都 東京</option>
-                                                <option value="大阪府 大阪市">大阪府 大阪市</option>
-                                                <option value="京都府 京都市">京都府 京都市</option>
-                                                <option value="神奈川県 横浜市">神奈川県 横浜市</option>
-                                                <option value="兵庫県 神戸市">兵庫県 神戸市</option>
-                                                <option value="愛知県 名古屋市">愛知県 名古屋市</option>
-                                                <option value="福岡県 福岡市">福岡県 福岡市</option>
-                                                <option value="沖縄県 那覇市">沖縄県 那覇市</option>
-                                                <option value="沖縄県 石垣市">沖縄県 石垣市</option>
-                                                <option value="北海道 札幌市">北海道 札幌市</option>
-                                                <option value="宮城県 仙台市">宮城県 仙台市</option>
-                                                <option value="広島県 広島市">広島県 広島市</option>
+                                                <option value="">Please select activity region</option>
+                                                <option value="Tokyo">Tokyo</option>
+                                                <option value="Osaka">Osaka</option>
+                                                <option value="Kyoto">Kyoto</option>
+                                                <option value="Yokohama">Yokohama</option>
+                                                <option value="Kobe">Kobe</option>
+                                                <option value="Nagoya">Nagoya</option>
+                                                <option value="Fukuoka">Fukuoka</option>
+                                                <option value="Naha">Naha</option>
+                                                <option value="Ishigaki">Ishigaki</option>
+                                                <option value="Sapporo">Sapporo</option>
+                                                <option value="Sendai">Sendai</option>
+                                                <option value="Hiroshima">Hiroshima</option>
                                             </select>
                                             <label for="guideLocation"><i class="bi bi-geo-alt me-1"></i>Activity Region</label>
                                         </div>
@@ -183,7 +183,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <button type="button" class="btn btn-outline-success w-100" id="sendVerificationCode">
-                                        <i class="bi bi-send me-1"></i>認証コード送信
+                                        <i class="bi bi-send me-1"></i>Send Verification Code
                                     </button>
                                 </div>
                             </div>
@@ -191,13 +191,13 @@
                             <div class="row mt-3" id="verificationCodeArea" style="display:none;">
                                 <div class="col-md-6">
                                     <div class="form-floating">
-                                        <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder="6桁の認証コード">
-                                        <label for="verificationCode"><i class="bi bi-shield-check me-1"></i>認証コード</label>
+                                        <input type="text" class="form-control" id="verificationCode" name="verificationCode" placeholder="6-digit verification code">
+                                        <label for="verificationCode"><i class="bi bi-shield-check me-1"></i>Verification Code</label>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <button type="button" class="btn btn-success w-100" id="verifyPhone">
-                                        <i class="bi bi-check-circle me-1"></i>認証確認
+                                        <i class="bi bi-check-circle me-1"></i>Verify Code
                                     </button>
                                 </div>
                             </div>
@@ -210,46 +210,46 @@
                             <div class="form-floating mb-3">
                                 <select class="form-control" id="documentType" name="documentType" required>
                                     <option value="">Please select</option>
-                                    <option value="drivers_license">運転免許証（表面・裏面の2枚必須）</option>
-                                    <option value="passport">パスポート（写真ページ1枚）</option>
-                                    <option value="residence_card">住民票（1枚）</option>
-                                    <option value="insurance_card">健康保険証（表面・裏面の2枚必須）</option>
-                                    <option value="mynumber_card">マイナンバーカード（表面のみ1枚）</option>
+                                    <option value="drivers_license">Driver's License (Front & Back - 2 images required)</option>
+                                    <option value="passport">Passport (Photo page - 1 image)</option>
+                                    <option value="residence_card">Residence Certificate (1 image)</option>
+                                    <option value="insurance_card">Health Insurance Card (Front & Back - 2 images required)</option>
+                                    <option value="mynumber_card">My Number Card (Front only - 1 image)</option>
                                 </select>
-                                <label for="documentType"><i class="bi bi-card-list me-1"></i>提出する証明書タイプ</label>
+                                <label for="documentType"><i class="bi bi-card-list me-1"></i>ID Document Type to Submit</label>
                             </div>
 
                             <div id="documentUploadArea">
                                 <div class="document-upload" id="singleUpload">
                                     <i class="bi bi-cloud-upload text-success" style="font-size: 3rem;"></i>
-                                    <h6 class="mt-3">身分証明書をアップロード</h6>
-                                    <p class="text-muted">JPG、PNG形式対応（最大5MB）</p>
+                                    <h6 class="mt-3">Upload ID Document</h6>
+                                    <p class="text-muted">JPG, PNG format (max 5MB)</p>
                                     <input type="file" class="form-control" id="documentFile" name="documentFile" accept="image/*" capture="environment">
                                     <div id="documentPreview" class="mt-3" style="display:none;">
-                                        <img id="previewImage" class="photo-preview" alt="プレビュー">
-                                        <p class="text-success mt-2"><i class="bi bi-check-circle"></i> アップロード完了</p>
+                                        <img id="previewImage" class="photo-preview" alt="Preview">
+                                        <p class="text-success mt-2"><i class="bi bi-check-circle"></i> Upload Complete</p>
                                     </div>
                                 </div>
                                 
                                 <div id="dualUpload" style="display:none;">
-                                    <h6 class="text-center mb-3">表面と裏面の両方をアップロードしてください</h6>
+                                    <h6 class="text-center mb-3">Please upload both front and back</h6>
                                     <div class="dual-upload">
                                         <div class="upload-section">
                                             <i class="bi bi-card-image text-primary" style="font-size: 2rem;"></i>
-                                            <h6 class="mt-2">表面</h6>
+                                            <h6 class="mt-2">Front</h6>
                                             <input type="file" class="form-control" id="documentFront" name="documentFront" accept="image/*" capture="environment">
                                             <div id="frontPreview" class="mt-2" style="display:none;">
-                                                <img id="frontImage" class="photo-preview" alt="表面プレビュー">
-                                                <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
+                                                <img id="frontImage" class="photo-preview" alt="Front Preview">
+                                                <p class="text-success mt-1"><i class="bi bi-check"></i> Complete</p>
                                             </div>
                                         </div>
                                         <div class="upload-section">
                                             <i class="bi bi-card-image text-secondary" style="font-size: 2rem;"></i>
-                                            <h6 class="mt-2">裏面</h6>
+                                            <h6 class="mt-2">Back</h6>
                                             <input type="file" class="form-control" id="documentBack" name="documentBack" accept="image/*" capture="environment">
                                             <div id="backPreview" class="mt-2" style="display:none;">
-                                                <img id="backImage" class="photo-preview" alt="裏面プレビュー">
-                                                <p class="text-success mt-1"><i class="bi bi-check"></i> 完了</p>
+                                                <img id="backImage" class="photo-preview" alt="Back Preview">
+                                                <p class="text-success mt-1"><i class="bi bi-check"></i> Complete</p>
                                             </div>
                                         </div>
                                     </div>
@@ -259,78 +259,78 @@
 
                         <!-- Professional Information -->
                         <div class="mt-4">
-                            <h5 class="text-info mb-3"><i class="bi bi-briefcase-fill me-2"></i>ガイド情報</h5>
+                            <h5 class="text-info mb-3"><i class="bi bi-briefcase-fill me-2"></i>Guide Information</h5>
                             
                             <div class="form-floating">
                                 <select class="form-control" id="guideExperience" name="guideExperience" required>
                                     <option value="">Please select</option>
-                                    <option value="beginner">初心者（1年未満）</option>
-                                    <option value="intermediate">中級者（1-3年）</option>
-                                    <option value="advanced">上級者（3年以上）</option>
+                                    <option value="beginner">Beginner (Less than 1 year)</option>
+                                    <option value="intermediate">Intermediate (1-3 years)</option>
+                                    <option value="advanced">Advanced (3+ years)</option>
                                 </select>
-                                <label for="guideExperience"><i class="bi bi-award me-1"></i>経験レベル</label>
+                                <label for="guideExperience"><i class="bi bi-award me-1"></i>Experience Level</label>
                             </div>
                             
                             <div class="form-floating">
                                 <select class="form-control" id="guideLanguages" name="guideLanguages" multiple required style="min-height: 120px;">
-                                    <option value="japanese">日本語</option>
-                                    <option value="english">英語</option>
-                                    <option value="chinese">中国語</option>
-                                    <option value="korean">韓国語</option>
-                                    <option value="spanish">スペイン語</option>
-                                    <option value="french">フランス語</option>
-                                    <option value="german">ドイツ語</option>
-                                    <option value="italian">イタリア語</option>
-                                    <option value="portuguese">ポルトガル語</option>
-                                    <option value="russian">ロシア語</option>
-                                    <option value="arabic">アラビア語</option>
-                                    <option value="thai">タイ語</option>
+                                    <option value="japanese">Japanese</option>
+                                    <option value="english">English</option>
+                                    <option value="chinese">Chinese</option>
+                                    <option value="korean">Korean</option>
+                                    <option value="spanish">Spanish</option>
+                                    <option value="french">French</option>
+                                    <option value="german">German</option>
+                                    <option value="italian">Italian</option>
+                                    <option value="portuguese">Portuguese</option>
+                                    <option value="russian">Russian</option>
+                                    <option value="arabic">Arabic</option>
+                                    <option value="thai">Thai</option>
                                 </select>
-                                <label for="guideLanguages"><i class="bi bi-translate me-1"></i>対応言語（複数選択可）</label>
+                                <label for="guideLanguages"><i class="bi bi-translate me-1"></i>Supported Languages (Multiple Selection)</label>
                             </div>
                             
                             <div class="form-floating">
                                 <textarea class="form-control" id="guideIntroduction" name="guideIntroduction" style="height: 120px;" required></textarea>
-                                <label for="guideIntroduction"><i class="bi bi-chat-text me-1"></i>自己紹介・アピールポイント</label>
+                                <label for="guideIntroduction"><i class="bi bi-chat-text me-1"></i>Self Introduction / Appeal Points</label>
                             </div>
                             
                             <div class="form-floating">
                                 <textarea class="form-control" id="guideSpecialties" name="guideSpecialties" style="height: 100px;" required></textarea>
-                                <label for="guideSpecialties"><i class="bi bi-star me-1"></i>得意分野・専門エリア</label>
+                                <label for="guideSpecialties"><i class="bi bi-star me-1"></i>Specialties / Expert Areas</label>
                             </div>
                             
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <input type="number" class="form-control" id="guideSessionRate" name="guideSessionRate" min="6000" max="25000" step="500" required>
-                                        <label for="guideSessionRate"><i class="bi bi-currency-yen me-1"></i>希望セッション料金（円）</label>
-                                        <small class="text-muted">1セッション（2〜3時間程度）の料金を設定してください（￥6,000〜）</small>
+                                        <label for="guideSessionRate"><i class="bi bi-currency-yen me-1"></i>Desired Session Fee (JPY)</label>
+                                        <small class="text-muted">Set fee for 1 session (2-3 hours, ¥6,000~)</small>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-floating">
                                         <select class="form-control" id="guideAvailability" name="guideAvailability" required>
                                             <option value="">Please select</option>
-                                            <option value="weekdays">平日のみ</option>
-                                            <option value="weekends">週末のみ</option>
-                                            <option value="both">平日・週末両方</option>
+                                            <option value="weekdays">Weekdays Only</option>
+                                            <option value="weekends">Weekends Only</option>
+                                            <option value="both">Both Weekdays & Weekends</option>
                                         </select>
-                                        <label for="guideAvailability"><i class="bi bi-calendar-week me-1"></i>稼働可能日</label>
+                                        <label for="guideAvailability"><i class="bi bi-calendar-week me-1"></i>Availability</label>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Profile Photo Upload -->
                             <div class="mt-4">
-                                <h6 class="text-primary mb-3"><i class="bi bi-camera me-2"></i>プロフィール写真</h6>
+                                <h6 class="text-primary mb-3"><i class="bi bi-camera me-2"></i>Profile Photo</h6>
                                 <div class="document-upload">
                                     <i class="bi bi-person-square text-primary" style="font-size: 3rem;"></i>
-                                    <h6 class="mt-3">ガイドカードに表示される写真</h6>
-                                    <p class="text-muted">風景・人物・任意の写真OK（JPG、PNG対応）</p>
+                                    <h6 class="mt-3">Photo displayed on guide card</h6>
+                                    <p class="text-muted">Landscape, portrait, or any photo OK (JPG, PNG supported)</p>
                                     <input type="file" class="form-control" id="profilePhoto" name="profilePhoto" accept="image/*" capture="environment" required>
                                     <div id="profilePreview" class="mt-3" style="display:none;">
-                                        <img id="profileImage" class="photo-preview" alt="プロフィール写真プレビュー">
-                                        <p class="text-success mt-2"><i class="bi bi-check-circle"></i> プロフィール写真アップロード完了</p>
+                                        <img id="profileImage" class="photo-preview" alt="Profile Photo Preview">
+                                        <p class="text-success mt-2"><i class="bi bi-check-circle"></i> Profile Photo Upload Complete</p>
                                     </div>
                                 </div>
                             </div>
@@ -339,16 +339,16 @@
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="agreeTerms" name="agreeTerms" required>
                             <label class="form-check-label" for="agreeTerms">
-                                ガイド規約及び利用規約に同意します
+                                I agree to the Guide Terms and Conditions
                             </label>
                         </div>
                         
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-guide">
-                                <i class="bi bi-check-circle me-2"></i>完全なガイド登録申請
+                                <i class="bi bi-check-circle me-2"></i>Submit Complete Guide Registration
                             </button>
                             <button type="button" class="btn btn-outline-secondary" id="cancelRegistrationBtn">
-                                <i class="bi bi-arrow-left me-2"></i>キャンセル
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
                             </button>
                         </div>
                         </form>
@@ -431,14 +431,14 @@
                 if (file) {
                     // Validate file size (5MB max)
                     if (file.size > 5 * 1024 * 1024) {
-                        showToast('ファイルサイズが大きすぎます（最大5MB）', 'error');
+                        showToast('File size too large (max 5MB)', 'error');
                         input.value = '';
                         return;
                     }
                     
                     // Validate file type
                     if (!file.type.match('image.*')) {
-                        showToast('画像ファイルをPlease select', 'error');
+                        showToast('Please select an image file', 'error');
                         input.value = '';
                         return;
                     }
@@ -447,7 +447,7 @@
                     reader.onload = function(e) {
                         image.src = e.target.result;
                         preview.style.display = 'block';
-                        showToast('画像がアップロードされました', 'success');
+                        showToast('Image uploaded successfully', 'success');
                     };
                     reader.readAsDataURL(file);
                 }
@@ -460,21 +460,21 @@
         document.getElementById('sendVerificationCode').addEventListener('click', async function() {
             const phone = document.getElementById('guidePhone').value;
             if (!phone) {
-                showToast('Phone Numberを入力してください', 'error');
+                showToast('Please enter phone number', 'error');
                 return;
             }
             
             // Convert Japanese phone number to international format
             const formattedPhone = formatPhoneNumber(phone);
             if (!formattedPhone) {
-                showToast('有効なPhone Numberを入力してください（例：090-1234-5678）', 'error');
+                showToast('Please enter a valid phone number (e.g., 090-1234-5678)', 'error');
                 return;
             }
             
             // Disable button and show loading
             const sendBtn = this;
             sendBtn.disabled = true;
-            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>送信中...';
+            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Sending...';
             
             try {
                 const response = await fetch('/api/guides/send-verification', {
@@ -488,7 +488,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showToast(result.message || 'SMS認証コードを送信しました', 'success');
+                    showToast(result.message || 'SMS verification code sent', 'success');
                     document.getElementById('verificationCodeArea').style.display = 'block';
                     
                     // Lock phone input after successful send
@@ -496,17 +496,17 @@
                     
                     // Show simulation code if available (development mode)
                     if (result.simulationCode) {
-                        showToast(`開発モード: 認証コードは ${result.simulationCode} です`, 'info');
+                        showToast(`Development mode: Verification code is ${result.simulationCode}`, 'info');
                     }
                 } else {
-                    showToast(result.message || 'SMS送信に失敗しました', 'error');
+                    showToast(result.message || 'Failed to send SMS', 'error');
                 }
             } catch (error) {
-                console.error('SMS送信エラー:', error);
-                showToast('ネットワークエラーが発生しました', 'error');
+                console.error('SMS sending error:', error);
+                showToast('Network error occurred', 'error');
             } finally {
                 sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i class="bi bi-send me-1"></i>認証コード送信';
+                sendBtn.innerHTML = '<i class="bi bi-send me-1"></i>Send Verification Code';
             }
         });
 
@@ -516,12 +516,12 @@
             const code = document.getElementById('verificationCode').value;
             
             if (!phone) {
-                showToast('有効なPhone Numberを入力してください', 'error');
+                showToast('Please enter a valid phone number', 'error');
                 return;
             }
             
             if (!code) {
-                showToast('認証コードを入力してください', 'error');
+                showToast('Please enter verification code', 'error');
                 return;
             }
             
@@ -529,7 +529,7 @@
             const verifyBtn = this;
             let verificationResult;
             verifyBtn.disabled = true;
-            verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>認証中...';
+            verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
             
             try {
                 const response = await fetch('/api/guides/verify-phone', {
@@ -544,21 +544,21 @@
                 
                 if (verificationResult.success) {
                     sessionId = verificationResult.sessionId;
-                    showToast(verificationResult.message || '電話認証が完了しました！', 'success');
+                    showToast(verificationResult.message || 'Phone verification completed!', 'success');
                     verifyBtn.classList.remove('btn-primary');
                     verifyBtn.classList.add('btn-success');
-                    verifyBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                    verifyBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Verified';
                     verifyBtn.disabled = true;
                 } else {
-                    showToast(verificationResult.message || '認証コードが正しくありません', 'error');
+                    showToast(verificationResult.message || 'Verification code is incorrect', 'error');
                 }
             } catch (error) {
-                console.error('認証エラー:', error);
-                showToast('ネットワークエラーが発生しました', 'error');
+                console.error('Verification error:', error);
+                showToast('Network error occurred', 'error');
             } finally {
                 if (!verificationResult?.success) {
                     verifyBtn.disabled = false;
-                    verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証確認';
+                    verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>Verify Code';
                 }
             }
         });
@@ -568,14 +568,14 @@
             e.preventDefault();
             
             if (!sessionId) {
-                showToast('電話認証を完了してください', 'error', 'phoneNumber');
+                showToast('Please complete phone verification', 'error', 'phoneNumber');
                 return;
             }
             
             // Validate document upload based on type
             const documentType = document.getElementById('documentType').value;
             if (!documentType) {
-                showToast('証明書タイプをPlease select', 'error', 'documentType');
+                showToast('Please select ID document type', 'error', 'documentType');
                 return;
             }
             
@@ -585,18 +585,18 @@
                 const backFile = document.getElementById('documentBack').files[0];
                 
                 if (!frontFile) {
-                    showToast('証明書の表面写真をアップロードしてください', 'error', 'documentFront');
+                    showToast('Please upload front photo of ID document', 'error', 'documentFront');
                     return;
                 }
                 if (!backFile) {
-                    showToast('証明書の裏面写真をアップロードしてください', 'error', 'documentBack');
+                    showToast('Please upload back photo of ID document', 'error', 'documentBack');
                     return;
                 }
             } else {
                 // Single upload validation
                 const documentFile = document.getElementById('documentFile').files[0];
                 if (!documentFile) {
-                    showToast('証明書をアップロードしてください', 'error', 'documentFile');
+                    showToast('Please upload ID document', 'error', 'documentFile');
                     return;
                 }
             }
@@ -605,7 +605,7 @@
             const submitBtn = document.querySelector('button[type="submit"]');
             const originalText = submitBtn.innerHTML;
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registering...';
             
             try {
                 const formData = new FormData(this);
@@ -633,18 +633,18 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showToast(result.message || 'ガイド登録が完了しました！', 'success');
+                    showToast(result.message || 'Guide registration completed!', 'success');
                     
                     // Show beautiful success modal with edit option
                     setTimeout(() => {
                         showRegistrationCompleteModal(result.guideId, data.guideName, selectedLanguages, data.guideSessionRate);
                     }, 1000);
                 } else {
-                    processServerError(result.message || '登録に失敗しました');
+                    processServerError(result.message || 'Registration failed');
                 }
             } catch (error) {
-                console.error('登録エラー:', error);
-                showToast('ネットワークエラーが発生しました', 'error');
+                console.error('Registration error:', error);
+                showToast('Network error occurred', 'error');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
@@ -956,7 +956,7 @@
 
         // Cancel registration function
         function cancelRegistration() {
-            if (confirm('登録を中止しますか？入力したデータは保存されません。')) {
+            if (confirm('Cancel registration? Your entered data will not be saved.')) {
                 // Check if we came from another page
                 if (document.referrer && document.referrer !== window.location.href) {
                     window.history.back();
