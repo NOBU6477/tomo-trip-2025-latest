@@ -24,8 +24,12 @@ async function showGuideDetailModalById(guideId) {
     console.log('✅ Tourist authenticated - proceeding to guide details');
     
     try {
-        // Open guide detail page - it will load data from API
-        const detailUrl = `guide-detail.html?id=${guideId}`;
+        // Detect current page language and use appropriate detail page
+        const isEnglish = window.location.pathname.includes('-en.html');
+        const detailPage = isEnglish ? 'guide-detail-en.html' : 'guide-detail.html';
+        const detailUrl = `${detailPage}?id=${guideId}`;
+        
+        console.log(`🌐 Detected language: ${isEnglish ? 'English' : 'Japanese'}, opening ${detailPage}`);
         window.open(detailUrl, '_blank', 'width=1200,height=800,scrollbars=yes,resizable=yes');
         
     } catch (error) {
@@ -49,15 +53,24 @@ function showTouristRegistrationPrompt(guideId) {
     );
     
     if (shouldRedirect) {
-        // Redirect to the complete tourist registration page
-        window.location.href = 'tourist-registration-simple.html';
+        // Detect current page language and redirect to appropriate registration page
+        const isEnglish = window.location.pathname.includes('-en.html');
+        const registrationPage = isEnglish ? 'tourist-registration-simple-en.html' : 'tourist-registration-simple.html';
+        
+        console.log(`🌐 Redirecting to ${registrationPage}`);
+        window.location.href = registrationPage;
     }
 }
 
 // Legacy redirect function for compatibility
 window.redirectToRegistration = function(guideId) {
     sessionStorage.setItem('returnToGuideId', guideId);
-    window.location.href = 'tourist-registration-simple.html';
+    
+    // Detect current page language and redirect to appropriate registration page
+    const isEnglish = window.location.pathname.includes('-en.html');
+    const registrationPage = isEnglish ? 'tourist-registration-simple-en.html' : 'tourist-registration-simple.html';
+    
+    window.location.href = registrationPage;
 };
 
 // Make function globally available
