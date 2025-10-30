@@ -2,7 +2,20 @@
 
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
-## Recent Changes (2025-10-28)
+## Recent Changes (2025-10-30)
+- **Sponsor Registration Error Handling Fixed**: Complete fix for registration failure issues
+  - Added proper HTTP status code checking with `response.ok` validation
+  - Specific error messages for duplicate email addresses and server errors
+  - Success modal now includes navigation options: Store Dashboard, Sponsor List, and Home
+  - Both Japanese (sponsor-registration.html) and English (sponsor-registration-en.html) versions updated
+  - Direct links to sponsor-list.html added in registration completion flow
+- **Prefecture Selection System Verified**: Confirmed 124 location options working correctly
+  - All 47 prefectures + remote island regions loading properly
+  - English translations (Hokkaido, Aomori, Tokyo...) displaying on English pages
+  - Japanese names (北海道、青森県、東京都...) displaying on Japanese pages
+  - Debug logging added to track option generation and selection
+
+## Previous Changes (2025-10-28)
 - **Profile Photo System Complete**: Full implementation of guide profile photo upload and display using Google Cloud Storage
   - Profile photos uploaded to GCS at `/objects/tomotrip-private/uploads/profiles/profile_{uuid}_{filename}`
   - Direct file upload via ObjectStorageService.uploadFileBuffer method
