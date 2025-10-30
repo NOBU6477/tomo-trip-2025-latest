@@ -315,7 +315,8 @@ export function languageArrayIncludes(languageArray, targetLanguage) {
  */
 export function getCurrentPageLanguage() {
     const pathname = window.location.pathname;
-    return pathname.includes('index-en.html') ? 'en' : 'ja';
+    // Check if pathname includes '-en.' or '-en/' to detect English pages
+    return (pathname.includes('-en.') || pathname.includes('-en/')) ? 'en' : 'ja';
 }
 
 /**
