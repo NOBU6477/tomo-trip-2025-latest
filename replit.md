@@ -3,6 +3,13 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (2025-10-30)
+- **Sponsor Registration Redirect Fix**: Fixed critical issue where newly registered stores were not redirected to correct dashboard
+  - Modified sponsor-registration.html and sponsor-registration-en.html to pass storeId as URL parameter
+  - Enhanced store-dashboard.html to accept storeId from URL and save to localStorage
+  - New registration flow now correctly shows the newly created store's dashboard instead of default store
+  - Seamless transition from registration to personalized store management
+
+## Previous Changes (2025-10-30)
 - **Scalable Sponsor Store List Page**: Complete implementation of scalable display system for growing number of stores
   - Pagination system: 12 stores per page with smart page number display and navigation
   - Search functionality: Real-time store name search with debounce (300ms)
