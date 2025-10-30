@@ -805,8 +805,11 @@
                 const { generatePrefectureOptions } = await import('/assets/js/ui/prefecture-selector.mjs');
                 const locationSelect = document.getElementById('guideLocation');
                 if (locationSelect) {
-                    locationSelect.innerHTML = generatePrefectureOptions();
+                    const optionsHTML = generatePrefectureOptions();
+                    locationSelect.innerHTML = optionsHTML;
                     console.log('✅ Prefecture options initialized');
+                    console.log('📋 Option count:', locationSelect.options.length);
+                    console.log('🔍 First 3 options:', Array.from(locationSelect.options).slice(0, 3).map(opt => opt.text));
                 }
             } catch (error) {
                 console.error('❌ Failed to load prefecture options:', error);
