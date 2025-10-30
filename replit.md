@@ -3,6 +3,12 @@
 Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
 ## Recent Changes (2025-10-30)
+- **Sponsor Store API Implementation**: Complete server-side API for sponsor store management
+  - Created `server/sponsorStoreAPI.js` for sponsor store operations (create, read, update, list)
+  - File-based storage system using JSON (data/sponsor-stores.json) for persistence
+  - Integrated into main server (replit-server.js) alongside Guide API
+  - Endpoints: POST/GET /api/sponsor-stores, GET/PUT /api/sponsor-stores/:id
+  - Email duplication checking, proper error responses, logging
 - **Sponsor Registration Error Handling Fixed**: Complete fix for registration failure issues
   - Added proper HTTP status code checking with `response.ok` validation
   - Specific error messages for duplicate email addresses and server errors
