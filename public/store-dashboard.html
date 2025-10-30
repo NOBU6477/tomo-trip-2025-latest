@@ -135,7 +135,7 @@
                     <a href="index.html" class="btn btn-outline-light me-2">
                         <i class="bi bi-house me-1"></i>ホーム
                     </a>
-                    <button class="btn btn-light" id="logoutBtn" onclick="logout()">
+                    <button class="btn btn-light" id="logoutBtn">
                         <i class="bi bi-box-arrow-right me-1"></i>ログアウト
                     </button>
                 </div>
@@ -529,49 +529,54 @@
                         // Load store data
                         await loadStoreData(storeData.id);
                         console.log('🏪 店舗ダッシュボードが読み込まれました - ' + storeData.storeName);
-                        return;
+                        // Continue to setup event listeners below
+                    } else {
+                        throw new Error('Failed to load store data');
                     }
                 } catch (error) {
                     console.error('Error loading store from URL:', error);
+                    alert('店舗データの読み込みに失敗しました。');
+                    window.location.href = 'index.html';
+                    return;
                 }
-            }
-            
-            // Otherwise, check localStorage
-            const storeLogin = localStorage.getItem('storeLogin');
-            
-            if (!storeLogin) {
-                alert('店舗管理画面にアクセスするには協賛店登録またはログインが必要です。');
-                window.location.href = 'index.html';
-                return;
-            }
-            
-            try {
-                const storeData = JSON.parse(storeLogin);
-                if (storeData.userType !== 'store_owner') {
-                    alert('この画面は協賛店専用です。');
+            } else {
+                // Otherwise, check localStorage
+                const storeLogin = localStorage.getItem('storeLogin');
+                
+                if (!storeLogin) {
+                    alert('店舗管理画面にアクセスするには協賛店登録またはログインが必要です。');
                     window.location.href = 'index.html';
                     return;
                 }
                 
-                // Update store name in header if available
-                const storeNameElement = document.querySelector('h1');
-                if (storeNameElement && storeData.storeName) {
-                    storeNameElement.textContent = `${storeData.storeName} - 店舗管理画面`;
+                try {
+                    const storeData = JSON.parse(storeLogin);
+                    if (storeData.userType !== 'store_owner') {
+                        alert('この画面は協賛店専用です。');
+                        window.location.href = 'index.html';
+                        return;
+                    }
+                    
+                    // Update store name in header if available
+                    const storeNameElement = document.querySelector('h1');
+                    if (storeNameElement && storeData.storeName) {
+                        storeNameElement.textContent = `${storeData.storeName} - 店舗管理画面`;
+                    }
+                    
+                    // Load store data from server
+                    if (storeData.storeId) {
+                        loadStoreData(storeData.storeId);
+                    }
+                    
+                    console.log('🏪 店舗ダッシュボードが読み込まれました - ' + storeData.storeName);
+                    
+                } catch (error) {
+                    console.error('Store login data error:', error);
+                    localStorage.removeItem('storeLogin');
+                    alert('ログインデータに問題があります。再度ログインしてください。');
+                    window.location.href = 'index.html';
+                    return;
                 }
-                
-                // Load store data from server
-                if (storeData.storeId) {
-                    loadStoreData(storeData.storeId);
-                }
-                
-                console.log('🏪 店舗ダッシュボードが読み込まれました - ' + storeData.storeName);
-                
-            } catch (error) {
-                console.error('Store login data error:', error);
-                localStorage.removeItem('storeLogin');
-                alert('ログインデータに問題があります。再度ログインしてください。');
-                window.location.href = 'index.html';
-                return;
             }
             
             // プロフィール保存
@@ -588,6 +593,13 @@
                 });
             });
             
+            // ログアウトボタンのイベントリスナーを追加
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    logout();
+                });
+            }
         });
         
         // Tourism guide store management functions
