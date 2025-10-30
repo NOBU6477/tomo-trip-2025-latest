@@ -35,6 +35,32 @@ const regionNames = {
   }
 };
 
+// 離島サブリージョン名の日英対応マッピング
+const islandSubregionNames = {
+  ja: {
+    "hokkaido_islands": "北海道離島",
+    "tohoku_islands": "東北離島",
+    "kanto_islands": "関東離島",
+    "chubu_islands": "中部離島",
+    "kinki_islands": "近畿離島",
+    "chugoku_islands": "中国離島",
+    "shikoku_islands": "四国離島",
+    "kyushu_islands": "九州離島",
+    "okinawa_islands": "沖縄離島"
+  },
+  en: {
+    "hokkaido_islands": "Hokkaido Islands",
+    "tohoku_islands": "Tohoku Islands",
+    "kanto_islands": "Kanto Islands",
+    "chubu_islands": "Chubu Islands",
+    "kinki_islands": "Kinki Islands",
+    "chugoku_islands": "Chugoku Islands",
+    "shikoku_islands": "Shikoku Islands",
+    "kyushu_islands": "Kyushu Islands",
+    "okinawa_islands": "Okinawa Islands"
+  }
+};
+
 // 地域別にグループ化した都道府県選択HTMLを生成
 export function generatePrefectureOptions() {
   const currentLang = getCurrentPageLanguage();
@@ -73,6 +99,8 @@ export function generatePrefectureOptions() {
   // 離島選択肢を詳細化して追加
   const remoteIslandsData = prefecturesData["remote_islands"];
   if (remoteIslandsData && remoteIslandsData.subregions) {
+    const islandSubregionLabels = islandSubregionNames[currentLang];
+    
     optionsHTML += `<optgroup label="${regionLabels.remote_islands}">\n`;
     
     // 全離島オプション
@@ -80,7 +108,8 @@ export function generatePrefectureOptions() {
     
     // 地域別離島オプション
     Object.entries(remoteIslandsData.subregions).forEach(([subregionCode, subregionData]) => {
-      optionsHTML += `    <option value="${subregionCode}">${subregionData.name}</option>\n`;
+      const translatedName = islandSubregionLabels[subregionCode] || subregionData.name;
+      optionsHTML += `    <option value="${subregionCode}">${translatedName}</option>\n`;
     });
     
     optionsHTML += '</optgroup>\n';
