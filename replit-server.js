@@ -7,6 +7,7 @@ const cors = require('cors');
 // Import our new API services
 const { guideAPIService } = require('./server/guideAPI');
 const { adminAuthService } = require('./server/adminAuth');
+const { sponsorStoreAPIService } = require('./server/sponsorStoreAPI');
 
 // Replit-optimized server configuration
 const PORT = process.env.PORT || process.env.REPLIT_PORT || 5000;
@@ -149,6 +150,9 @@ app.get('/api/admin/verify', adminAuthService.requireAuth(), (req, res) => {
 
 // Setup Guide API routes
 guideAPIService.setupRoutes(app);
+
+// Setup Sponsor Store API routes
+sponsorStoreAPIService.setupRoutes(app);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public'), {
