@@ -85,9 +85,9 @@ function showSuccessModal(storeData) {
     let modal = document.getElementById('successModal');
     if (!modal) {
         const modalHTML = `
-            <div class="modal fade" id="successModal" tabindex="-1">
+            <div class="modal fade" id="successModal" tabindex="-1" style="z-index: 9999;">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden;">
+                    <div class="modal-content" style="border: none; border-radius: 20px; overflow: hidden; position: relative; z-index: 10000;">
                         <div class="modal-body p-0">
                             <div style="background: linear-gradient(135deg, #28a745, #20c997); padding: 3rem 2rem; text-align: center;">
                                 <div style="background: rgba(255,255,255,0.2); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
@@ -98,13 +98,13 @@ function showSuccessModal(storeData) {
                                 <p class="mb-4 text-white" style="font-size: 0.95rem;" id="modalStoreId"></p>
                                 
                                 <div class="d-grid gap-3 mt-4">
-                                    <button class="btn btn-light btn-lg" id="goToDashboardBtn" style="border-radius: 15px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                                    <button class="btn btn-light btn-lg" id="goToDashboardBtn" style="border-radius: 15px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer;">
                                         <i class="bi bi-speedometer2 me-2"></i>店舗管理画面へ
                                     </button>
-                                    <button class="btn btn-outline-light btn-lg" id="goToSponsorListBtn" style="border-radius: 15px; font-weight: 600; border: 2px solid white;">
+                                    <button class="btn btn-outline-light btn-lg" id="goToSponsorListBtn" style="border-radius: 15px; font-weight: 600; border: 2px solid white; cursor: pointer;">
                                         <i class="bi bi-shop me-2"></i>協賛店一覧を見る
                                     </button>
-                                    <button class="btn btn-outline-light" id="goToHomeBtn" style="border-radius: 15px; border: 2px solid white;">
+                                    <button class="btn btn-outline-light" id="goToHomeBtn" style="border-radius: 15px; border: 2px solid white; cursor: pointer;">
                                         <i class="bi bi-house me-2"></i>ホームへ戻る
                                     </button>
                                 </div>
@@ -156,6 +156,11 @@ function showSuccessModal(storeData) {
     }
     
     // Show the modal
-    const bootstrapModal = new bootstrap.Modal(modal);
+    const bootstrapModal = new bootstrap.Modal(modal, {
+        backdrop: 'static',
+        keyboard: false
+    });
     bootstrapModal.show();
+    
+    console.log('✅ Success modal shown');
 }
