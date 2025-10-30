@@ -8,6 +8,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const registrationForm = document.getElementById('sponsorRegistrationForm');
     if (registrationForm) {
         registrationForm.addEventListener('submit', handleRegistrationSubmit);
+        console.log('✅ Form submit handler registered');
+    } else {
+        console.error('❌ Form not found: sponsorRegistrationForm');
+    }
+    
+    // Setup home button handler
+    const homeButton = document.getElementById('homeButton');
+    if (homeButton) {
+        homeButton.addEventListener('click', function() {
+            // Detect language from current page
+            const isEnglish = window.location.pathname.includes('-en.html');
+            window.location.href = isEnglish ? 'index-en.html' : 'index.html';
+        });
     }
 });
 
@@ -19,17 +32,10 @@ async function handleRegistrationSubmit(e) {
     const formData = {
         storeName: document.getElementById('storeName').value,
         category: document.getElementById('category').value,
-        description: document.getElementById('description').value,
-        prefecture: document.getElementById('prefecture').value,
-        address: document.getElementById('address').value,
+        description: document.getElementById('description').value || '',
+        address: document.getElementById('address').value || '',
         phone: document.getElementById('phone').value,
         email: document.getElementById('email').value,
-        representativeName: document.getElementById('representativeName').value,
-        openingHours: document.getElementById('openingHours').value,
-        closedDays: document.getElementById('closedDays').value,
-        website: document.getElementById('website').value || '',
-        priceRange: document.getElementById('priceRange').value,
-        specialties: document.getElementById('specialties').value,
         isActive: true,
         registrationDate: new Date().toISOString()
     };
