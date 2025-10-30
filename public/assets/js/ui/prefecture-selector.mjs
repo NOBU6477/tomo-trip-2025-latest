@@ -80,6 +80,8 @@ export function generatePrefectureOptions() {
 
   const placeholderText = currentLang === 'en' ? 'Select Location' : '活動地域を選択してください';
   let optionsHTML = `<option value="">${placeholderText}</option>\n`;
+  
+  console.log('🏗️ Generating prefecture options for language:', currentLang);
 
   Object.entries(regions).forEach(([regionKey, prefectureCodes]) => {
     const regionLabel = regionLabels[regionKey] || regionKey;
@@ -125,6 +127,7 @@ export function generatePrefectureOptions() {
     optionsHTML += '</optgroup>\n';
   }
 
+  console.log('📊 Generated options HTML length:', optionsHTML.length);
   return optionsHTML;
 }
 

@@ -1007,13 +1007,8 @@
         // Cancel registration function
         function cancelRegistration() {
             if (confirm('Cancel registration? Your entered data will not be saved.')) {
-                // Check if we came from another page
-                if (document.referrer && document.referrer !== window.location.href) {
-                    window.history.back();
-                } else {
-                    // Go to main page if no referrer
-                    window.location.href = 'index-en.html';
-                }
+                // Always redirect to main English page
+                window.location.href = '/index-en.html';
             }
         }
         

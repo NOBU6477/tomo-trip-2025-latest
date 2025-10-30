@@ -1007,13 +1007,8 @@
         // Cancel registration function
         function cancelRegistration() {
             if (confirm('登録を中止しますか？入力したデータは保存されません。')) {
-                // Check if we came from another page
-                if (document.referrer && document.referrer !== window.location.href) {
-                    window.history.back();
-                } else {
-                    // Go to main page if no referrer
-                    window.location.href = 'index.html';
-                }
+                // Always redirect to main Japanese page
+                window.location.href = '/index.html';
             }
         }
         

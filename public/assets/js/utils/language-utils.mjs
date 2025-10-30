@@ -338,7 +338,10 @@ export function getText(jaText, enText) {
 }
 
 // デバッグ用
-console.log('🗣️ Language Utils loaded with Japanese localization support');
+console.log('🗣️ Language Utils loaded:', {
+    currentPage: window.location.pathname,
+    detectedLanguage: getCurrentPageLanguage()
+});
 
 // 使用例（デバッグ）
 console.log('📝 Language Utils Examples:', {
