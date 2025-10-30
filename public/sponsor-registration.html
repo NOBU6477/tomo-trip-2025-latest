@@ -179,7 +179,7 @@
         </div>
         <h2 class="registration-title">🌊 スポンサー登録【最新版 2025】</h2>
         
-        <form id="sponsorRegistrationForm" onsubmit="handleRegistration(event)">
+        <form id="sponsorRegistrationForm">
             <div class="form-floating">
                 <input type="text" class="form-control" id="storeName" name="storeName" placeholder="店舗名" required>
                 <label for="storeName"><i class="bi bi-shop icon-enhanced"></i>店舗名</label>
@@ -225,145 +225,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        console.log('🎯 Sponsor Registration Page Loaded - v2025.08.28-Enhanced-LATEST-16:38');
-        
-        // Show clear visual indicator that new version loaded
-        setTimeout(() => {
-            const notice = document.querySelector('.update-notice');
-            if (notice) {
-                notice.style.animation = 'none';
-                notice.style.background = 'linear-gradient(90deg, #00b894, #00a085)';
-                notice.innerHTML = '✅ 新しいデザインが正常に読み込まれました ✅';
-            }
-        }, 3000);
-        
-        // Get URL parameters on page load
-        window.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            // Pre-fill form if parameters exist
-            const storeName = urlParams.get('storeName');
-            const email = urlParams.get('email');
-            const phone = urlParams.get('phone');
-            const address = urlParams.get('address');
-            const description = urlParams.get('description');
-            const category = urlParams.get('category');
-            
-            if (storeName) document.getElementById('storeName').value = decodeURIComponent(storeName);
-            if (email) document.getElementById('email').value = decodeURIComponent(email);
-            if (phone) document.getElementById('phone').value = decodeURIComponent(phone);
-            if (address) document.getElementById('address').value = decodeURIComponent(address);
-            if (description) document.getElementById('description').value = decodeURIComponent(description);
-            if (category) document.getElementById('category').value = decodeURIComponent(category);
-        });
-
-        function handleRegistration(event) {
-            event.preventDefault();
-            
-            const formData = new FormData(event.target);
-            const data = Object.fromEntries(formData);
-            
-            console.log('🔄 Processing registration:', data.storeName);
-            
-            // Show loading state
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>登録処理中...';
-            
-            // Send registration data to server
-            fetch('/api/sponsor-stores', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.error || `サーバーエラー: ${response.status}`);
-                    });
-                }
-                return response.json();
-            })
-            .then(storeData => {
-                console.log('✅ Registration successful:', storeData);
-                
-                // Store authentication and store data
-                localStorage.setItem('tomotrip_auth_status', 'true');
-                localStorage.setItem('tomotrip_user_type', 'sponsor');
-                localStorage.setItem('tomotrip_auth_expiry', (new Date().getTime() + (30 * 24 * 60 * 60 * 1000)).toString());
-                
-                // Store login session with actual store data from database
-                localStorage.setItem('storeLogin', JSON.stringify({
-                    storeId: storeData.id,
-                    storeName: storeData.storeName,
-                    email: storeData.email,
-                    loginTime: new Date().toISOString(),
-                    userType: 'store_owner'
-                }));
-                
-                // Show success message with options
-                showSuccessMessage(storeData);
-                
-            })
-            .catch(error => {
-                console.error('❌ Registration failed:', error);
-                
-                // Show specific error messages
-                let errorMessage = '登録に失敗しました。';
-                if (error.message.includes('already exists')) {
-                    errorMessage = '⚠️ このメールアドレスは既に登録されています。\n別のメールアドレスをお試しください。';
-                } else if (error.message) {
-                    errorMessage = `❌ ${error.message}`;
-                }
-                
-                alert(errorMessage);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            });
-        }
-        
-        function showSuccessMessage(storeData) {
-            // Create success modal with navigation options
-            const modalHTML = `
-                <div class="modal fade" id="successModal" tabindex="-1" style="z-index: 10000;">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="border-radius: 25px; border: none; overflow: hidden;">
-                            <div class="modal-body text-center p-5" style="background: linear-gradient(135deg, #00b894, #00a085);">
-                                <div class="mb-4">
-                                    <i class="bi bi-check-circle-fill" style="font-size: 5rem; color: white;"></i>
-                                </div>
-                                <h4 class="mb-3" style="color: white; font-weight: bold;">🎉 登録完了！</h4>
-                                <p class="mb-2 text-white" style="font-size: 1.1rem; font-weight: 600;">${storeData.storeName || '店舗'}</p>
-                                <p class="mb-4 text-white" style="font-size: 0.95rem;">店舗ID: ${storeData.id.substring(0,8)}...</p>
-                                
-                                <div class="d-grid gap-3 mt-4">
-                                    <button class="btn btn-light btn-lg" onclick="window.location.href='store-dashboard.html?storeId=${storeData.id}'" style="border-radius: 15px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-                                        <i class="bi bi-speedometer2 me-2"></i>店舗管理画面へ
-                                    </button>
-                                    <button class="btn btn-outline-light btn-lg" onclick="window.location.href='sponsor-list.html'" style="border-radius: 15px; font-weight: 600; border: 2px solid white;">
-                                        <i class="bi bi-list-ul me-2"></i>協賛店一覧を見る
-                                    </button>
-                                    <button class="btn btn-outline-light" onclick="window.location.href='index.html'" style="border-radius: 15px; font-weight: 500; border: 2px solid rgba(255,255,255,0.5);">
-                                        <i class="bi bi-house me-2"></i>ホームに戻る
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            const modal = new bootstrap.Modal(document.getElementById('successModal'), {
-                backdrop: 'static',
-                keyboard: false
-            });
-            modal.show();
-        }
-    </script>
+    <!-- Sponsor Registration External JavaScript (CSP Compliant) -->
+    <script src="assets/js/sponsor-registration.js"></script>
 </body>
 </html>
