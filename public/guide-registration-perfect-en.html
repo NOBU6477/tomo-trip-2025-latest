@@ -145,26 +145,14 @@
                                     </div>
                                 </div>
                                 
-                                <!-- Location Selection -->
+                                <!-- Location Selection - Prefecture/Island Format -->
                                 <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-floating">
                                             <select class="form-control" id="guideLocation" name="location" required>
-                                                <option value="">Please select activity region</option>
-                                                <option value="Tokyo">Tokyo</option>
-                                                <option value="Osaka">Osaka</option>
-                                                <option value="Kyoto">Kyoto</option>
-                                                <option value="Yokohama">Yokohama</option>
-                                                <option value="Kobe">Kobe</option>
-                                                <option value="Nagoya">Nagoya</option>
-                                                <option value="Fukuoka">Fukuoka</option>
-                                                <option value="Naha">Naha</option>
-                                                <option value="Ishigaki">Ishigaki</option>
-                                                <option value="Sapporo">Sapporo</option>
-                                                <option value="Sendai">Sendai</option>
-                                                <option value="Hiroshima">Hiroshima</option>
+                                                <!-- Prefecture options will be dynamically generated -->
                                             </select>
-                                            <label for="guideLocation"><i class="bi bi-geo-alt me-1"></i>Activity Region</label>
+                                            <label for="guideLocation"><i class="bi bi-geo-alt me-1"></i>Activity Region (Prefecture/Island)</label>
                                         </div>
                                     </div>
                                 </div>
@@ -811,9 +799,31 @@
         }
         
         
+        // Initialize prefecture selection
+        async function initializePrefectureSelect() {
+            try {
+                const { generatePrefectureOptions } = await import('/assets/js/ui/prefecture-selector.mjs');
+                const locationSelect = document.getElementById('guideLocation');
+                if (locationSelect) {
+                    locationSelect.innerHTML = generatePrefectureOptions();
+                    console.log('✅ Prefecture options initialized');
+                }
+            } catch (error) {
+                console.error('❌ Failed to load prefecture options:', error);
+                // Fallback to basic options
+                document.getElementById('guideLocation').innerHTML = `
+                    <option value="">Select Location</option>
+                    <option value="tokyo">Tokyo</option>
+                    <option value="osaka">Osaka</option>
+                    <option value="kyoto">Kyoto</option>
+                `;
+            }
+        }
+        
         // Initialize document upload system
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Initializing TomoTrip guide registration...');
+            initializePrefectureSelect();
             setupDocumentUpload();
         });
         // Beautiful Registration Complete Modal
@@ -832,10 +842,10 @@
                                         </div>
                                     </div>
                                     <h2 class="text-white fw-bold mb-3" style="text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-                                        🎉 ガイド登録完了！
+                                        🎉 Registration Complete!
                                     </h2>
                                     <p class="text-white-50 mb-0" style="font-size: 1.1rem;">
-                                        ガイド情報の登録が正常に完了しました
+                                        Your guide information has been successfully registered
                                     </p>
                                 </div>
                                 
@@ -859,7 +869,7 @@
                                                     <i class="bi bi-currency-yen text-white"></i>
                                                 </div>
                                                 <div>
-                                                    <small class="text-muted">セッション料金</small>
+                                                    <small class="text-muted">Session Rate</small>
                                                     <div class="fw-bold">¥${Number(sessionRate).toLocaleString()}</div>
                                                 </div>
                                             </div>
@@ -870,7 +880,7 @@
                                                     <i class="bi bi-translate text-white"></i>
                                                 </div>
                                                 <div>
-                                                    <small class="text-muted">対応言語</small>
+                                                    <small class="text-muted">Languages</small>
                                                     <div class="fw-bold">${selectedLanguages.join(', ')}</div>
                                                 </div>
                                             </div>
@@ -881,7 +891,7 @@
                                                     <i class="bi bi-key text-white"></i>
                                                 </div>
                                                 <div>
-                                                    <small class="text-muted">ガイドID</small>
+                                                    <small class="text-muted">Guide ID</small>
                                                     <div class="fw-bold font-monospace">${guideId}</div>
                                                 </div>
                                             </div>
@@ -890,7 +900,7 @@
                                     
                                     <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px;">
                                         <i class="bi bi-info-circle me-2"></i>
-                                        <strong>次にやること：</strong> ガイド情報をさらに詳しく編集するか、メインページでガイド一覧を確認できます。
+                                        <strong>Next Steps:</strong> You can edit your guide profile in detail or view the guide list on the main page.
                                     </div>
                                 </div>
                                 
@@ -903,7 +913,7 @@
                                                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(102,126,234,0.4)'"
                                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(102,126,234,0.3)'">
                                                 <i class="bi bi-pencil-square me-2"></i>
-                                                ガイド情報を編集する
+                                                Edit Guide Profile
                                             </button>
                                         </div>
                                         <div class="col-md-6">
@@ -912,7 +922,7 @@
                                                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(108,117,125,0.4)'"
                                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(108,117,125,0.3)'">
                                                 <i class="bi bi-house me-2"></i>
-                                                メインページに戻る
+                                                Return to Main Page
                                             </button>
                                         </div>
                                     </div>
@@ -965,7 +975,7 @@
         }
         
         function redirectToEditPage(guideId) {
-            window.location.href = `guide-edit.html?id=${guideId}`;
+            window.location.href = `guide-edit-en.html?id=${guideId}`;
         }
         
         function redirectToMainPage() {
@@ -988,9 +998,9 @@
                 window.opener.location.reload();
                 setTimeout(() => window.close(), 500);
             } else {
-                // Redirect to root with cache-busting parameters
+                // Redirect to English main page with cache-busting parameters
                 console.log('🏠 Redirecting to main page with refresh');
-                window.location.href = '/?refresh=new_guide&t=' + Date.now();
+                window.location.href = '/index-en.html?refresh=new_guide&t=' + Date.now();
             }
         }
 
