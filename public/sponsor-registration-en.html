@@ -280,7 +280,14 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error || `Server error: ${response.status}`);
+                    });
+                }
+                return response.json();
+            })
             .then(storeData => {
                 console.log('✅ Registration successful:', storeData);
                 
@@ -298,25 +305,29 @@
                     userType: 'store_owner'
                 }));
                 
-                // Show success message
-                showSuccessMessage(`🎉 Registration complete with Store ID: ${storeData.id.substring(0,8)}!\nRedirecting to store dashboard...`);
-                
-                // Redirect to store dashboard
-                setTimeout(() => {
-                    window.location.href = 'store-dashboard.html';
-                }, 2500);
+                // Show success message with options
+                showSuccessMessage(storeData);
                 
             })
             .catch(error => {
-                console.error('Registration failed:', error);
-                alert('Registration failed. Please try again.');
+                console.error('❌ Registration failed:', error);
+                
+                // Show specific error messages
+                let errorMessage = 'Registration failed.';
+                if (error.message.includes('already exists')) {
+                    errorMessage = '⚠️ This email address is already registered.\nPlease try a different email address.';
+                } else if (error.message) {
+                    errorMessage = `❌ ${error.message}`;
+                }
+                
+                alert(errorMessage);
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
             });
         }
         
-        function showSuccessMessage(message) {
-            // Create success modal
+        function showSuccessMessage(storeData) {
+            // Create success modal with navigation options
             const modalHTML = `
                 <div class="modal fade" id="successModal" tabindex="-1" style="z-index: 10000;">
                     <div class="modal-dialog modal-dialog-centered">
@@ -325,10 +336,20 @@
                                 <div class="mb-4">
                                     <i class="bi bi-check-circle-fill" style="font-size: 5rem; color: white;"></i>
                                 </div>
-                                <h4 class="mb-3" style="color: white; font-weight: bold;">Registration Complete!</h4>
-                                <p class="mb-4 text-white" style="white-space: pre-line; font-size: 1.1rem;">${message}</p>
-                                <div class="spinner-border text-white" role="status" style="width: 3rem; height: 3rem;">
-                                    <span class="visually-hidden">Loading...</span>
+                                <h4 class="mb-3" style="color: white; font-weight: bold;">🎉 Registration Complete!</h4>
+                                <p class="mb-2 text-white" style="font-size: 1.1rem; font-weight: 600;">${storeData.storeName || 'Store'}</p>
+                                <p class="mb-4 text-white" style="font-size: 0.95rem;">Store ID: ${storeData.id.substring(0,8)}...</p>
+                                
+                                <div class="d-grid gap-3 mt-4">
+                                    <button class="btn btn-light btn-lg" onclick="window.location.href='store-dashboard.html'" style="border-radius: 15px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                                        <i class="bi bi-speedometer2 me-2"></i>Go to Store Dashboard
+                                    </button>
+                                    <button class="btn btn-outline-light btn-lg" onclick="window.location.href='sponsor-list.html'" style="border-radius: 15px; font-weight: 600; border: 2px solid white;">
+                                        <i class="bi bi-list-ul me-2"></i>View Sponsor List
+                                    </button>
+                                    <button class="btn btn-outline-light" onclick="window.location.href='index-en.html'" style="border-radius: 15px; font-weight: 500; border: 2px solid rgba(255,255,255,0.5);">
+                                        <i class="bi bi-house me-2"></i>Back to Home
+                                    </button>
                                 </div>
                             </div>
                         </div>

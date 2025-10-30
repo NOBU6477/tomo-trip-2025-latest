@@ -118,5 +118,20 @@
     "status": "active",
     "registeredAt": "2025-10-28T13:13:56.134Z",
     "updatedAt": "2025-10-28T13:13:56.134Z"
+  },
+  {
+    "id": "82e70348-e14c-412c-b347-27fca55a7056",
+    "firstName": "きらり",
+    "lastName": "中村",
+    "email": "test600@gmail.com",
+    "nationality": "japan",
+    "documentType": "passport",
+    "phoneVerified": true,
+    "documentUploaded": true,
+    "registrationDate": "2025-10-30T13:39:35.243Z",
+    "phoneNumber": "+819012345678",
+    "status": "active",
+    "registeredAt": "2025-10-30T13:39:32.031Z",
+    "updatedAt": "2025-10-30T13:39:32.031Z"
   }
 ]
