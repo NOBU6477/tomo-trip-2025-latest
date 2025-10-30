@@ -99,6 +99,36 @@ class SponsorStoreAPIService {
     return stores.filter(store => store.isActive);
   }
 
+  // Delete store (soft delete)
+  deleteStore(id) {
+    const stores = this.loadStores();
+    const index = stores.findIndex(s => s.id === id);
+    
+    if (index === -1) {
+      return null;
+    }
+
+    // Soft delete by setting isActive to false
+    stores[index].isActive = false;
+    stores[index].deletedAt = new Date().toISOString();
+    
+    this.saveStores(stores);
+    return stores[index];
+  }
+
+  // Hard delete store (permanently remove from file)
+  hardDeleteStore(id) {
+    const stores = this.loadStores();
+    const filteredStores = stores.filter(s => s.id !== id);
+    
+    if (stores.length === filteredStores.length) {
+      return null; // Store not found
+    }
+    
+    this.saveStores(filteredStores);
+    return true;
+  }
+
   // Setup Express routes
   setupRoutes(app) {
     // Create sponsor store
@@ -162,6 +192,21 @@ class SponsorStoreAPIService {
       } catch (error) {
         console.error('❌ Error fetching stores:', error);
         res.status(500).json({ error: 'Failed to fetch stores' });
+      }
+    });
+    
+    // Delete store
+    app.delete('/api/sponsor-stores/:id', async (req, res) => {
+      try {
+        const deleted = this.deleteStore(req.params.id);
+        if (!deleted) {
+          return res.status(404).json({ error: 'Store not found' });
+        }
+        console.log('✅ Store deleted:', req.params.id);
+        res.json({ message: 'Store deleted successfully', id: req.params.id });
+      } catch (error) {
+        console.error('❌ Error deleting store:', error);
+        res.status(500).json({ error: 'Failed to delete store' });
       }
     });
 
