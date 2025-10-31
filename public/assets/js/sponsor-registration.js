@@ -16,12 +16,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup home button handler
     const homeButton = document.getElementById('homeButton');
     if (homeButton) {
-        homeButton.addEventListener('click', function() {
+        homeButton.addEventListener('click', function(e) {
+            e.preventDefault();
             // Detect language from current page
             const isEnglish = window.location.pathname.includes('-en.html');
+            console.log('🏠 Navigating to home page:', isEnglish ? 'index-en.html' : 'index.html');
             window.location.href = isEnglish ? 'index-en.html' : 'index.html';
         });
+        console.log('✅ Home button handler registered');
     }
+    
+    console.log('✅ All event listeners initialized');
 });
 
 async function handleRegistrationSubmit(e) {
