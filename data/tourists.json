@@ -133,5 +133,20 @@
     "status": "active",
     "registeredAt": "2025-10-30T13:39:32.031Z",
     "updatedAt": "2025-10-30T13:39:32.031Z"
+  },
+  {
+    "id": "e0369f9e-8d32-4c0f-9ce8-3da8437e1bf4",
+    "firstName": "キラキラ",
+    "lastName": "大城",
+    "email": "test550@gmail.com",
+    "nationality": "japan",
+    "documentType": "passport",
+    "phoneVerified": true,
+    "documentUploaded": true,
+    "registrationDate": "2025-10-31T04:03:55.524Z",
+    "phoneNumber": "+817012364567",
+    "status": "active",
+    "registeredAt": "2025-10-31T04:03:52.539Z",
+    "updatedAt": "2025-10-31T04:03:52.539Z"
   }
 ]
