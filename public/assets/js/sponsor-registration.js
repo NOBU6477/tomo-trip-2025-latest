@@ -1,8 +1,9 @@
 // Sponsor Registration JavaScript
 // External file to comply with CSP (Content Security Policy)
+// VERSION: 2025-10-31-02:38 (CRITICAL UPDATE)
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('📝 Sponsor Registration Initializing...');
+    console.log('📝 Sponsor Registration Initializing... [Version 2025-10-31-02:38]');
     
     // Setup form submission handler
     const registrationForm = document.getElementById('sponsorRegistrationForm');
