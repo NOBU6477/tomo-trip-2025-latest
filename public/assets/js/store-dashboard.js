@@ -181,6 +181,34 @@ async function loadStoreData(storeId) {
         const storeData = await response.json();
         console.log('📊 Store data loaded:', storeData);
         
+        // Update header display elements
+        const storeNameHeader = document.querySelector('h1');
+        if (storeNameHeader) {
+            storeNameHeader.textContent = `${storeData.storeName} - 店舗管理画面`;
+        }
+        
+        // Update category display
+        const categoryDisplay = document.getElementById('storeCategory');
+        if (categoryDisplay && storeData.category) {
+            // Map category codes to Japanese labels
+            const categoryLabels = {
+                'restaurant': 'レストラン・飲食',
+                'tourism': '観光案内',
+                'culture': '文化体験',
+                'transportation': '交通・運輸',
+                'accommodation': '宿泊施設',
+                'shopping': 'ショッピング',
+                'other': 'その他'
+            };
+            categoryDisplay.textContent = categoryLabels[storeData.category] || storeData.category;
+        }
+        
+        // Update location display
+        const locationDisplay = document.getElementById('storeLocation');
+        if (locationDisplay && storeData.address) {
+            locationDisplay.innerHTML = `<i class="bi bi-geo-alt"></i> ${storeData.address}`;
+        }
+        
         // Populate form fields with store data
         const formFields = {
             'storeName': storeData.storeName,
@@ -189,20 +217,22 @@ async function loadStoreData(storeId) {
             'address': storeData.address,
             'phone': storeData.phone,
             'email': storeData.email,
-            'openingHours': storeData.openingHours,
-            'closedDays': storeData.closedDays,
-            'website': storeData.website,
-            'priceRange': storeData.priceRange,
-            'specialties': storeData.specialties
+            'openingHours': storeData.openingHours || '',
+            'closedDays': storeData.closedDays || '',
+            'website': storeData.website || '',
+            'priceRange': storeData.priceRange || '',
+            'specialties': storeData.specialties || ''
         };
         
         // Fill in the form
         for (const [fieldId, value] of Object.entries(formFields)) {
             const field = document.getElementById(fieldId);
-            if (field && value) {
+            if (field) {
                 field.value = value;
             }
         }
+        
+        console.log('✅ Store dashboard updated with:', storeData.storeName);
         
     } catch (error) {
         console.error('Error loading store data:', error);

@@ -81,6 +81,17 @@ async function handleRegistrationSubmit(e) {
 }
 
 function showSuccessModal(storeData) {
+    // Detect language from current page
+    const isEnglish = window.location.pathname.includes('-en.html');
+    
+    const translations = {
+        title: isEnglish ? 'Registration Complete!' : '登録完了！',
+        storeIdLabel: isEnglish ? 'Store ID:' : '店舗ID:',
+        dashboardBtn: isEnglish ? 'Go to Dashboard' : '店舗管理画面へ',
+        listBtn: isEnglish ? 'View Sponsor List' : '協賛店一覧を見る',
+        homeBtn: isEnglish ? 'Go to Home' : 'ホームへ戻る'
+    };
+    
     // Create modal if it doesn't exist
     let modal = document.getElementById('successModal');
     if (!modal) {
@@ -93,19 +104,19 @@ function showSuccessModal(storeData) {
                                 <div style="background: rgba(255,255,255,0.2); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
                                     <i class="bi bi-check-circle" style="font-size: 3rem; color: white;"></i>
                                 </div>
-                                <h4 class="text-white mb-3" style="font-weight: 700;">登録完了！</h4>
+                                <h4 class="text-white mb-3" style="font-weight: 700;" id="modalTitle">${translations.title}</h4>
                                 <p class="text-white mb-2" style="font-size: 1.1rem; font-weight: 600;" id="modalStoreName"></p>
                                 <p class="mb-4 text-white" style="font-size: 0.95rem;" id="modalStoreId"></p>
                                 
                                 <div class="d-grid gap-3 mt-4">
                                     <button class="btn btn-light btn-lg" id="goToDashboardBtn" style="border-radius: 15px; font-weight: 600; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer;">
-                                        <i class="bi bi-speedometer2 me-2"></i>店舗管理画面へ
+                                        <i class="bi bi-speedometer2 me-2"></i><span id="dashboardBtnText">${translations.dashboardBtn}</span>
                                     </button>
                                     <button class="btn btn-outline-light btn-lg" id="goToSponsorListBtn" style="border-radius: 15px; font-weight: 600; border: 2px solid white; cursor: pointer;">
-                                        <i class="bi bi-shop me-2"></i>協賛店一覧を見る
+                                        <i class="bi bi-shop me-2"></i><span id="listBtnText">${translations.listBtn}</span>
                                     </button>
                                     <button class="btn btn-outline-light" id="goToHomeBtn" style="border-radius: 15px; border: 2px solid white; cursor: pointer;">
-                                        <i class="bi bi-house me-2"></i>ホームへ戻る
+                                        <i class="bi bi-house me-2"></i><span id="homeBtnText">${translations.homeBtn}</span>
                                     </button>
                                 </div>
                             </div>
@@ -116,11 +127,20 @@ function showSuccessModal(storeData) {
         `;
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         modal = document.getElementById('successModal');
+    } else {
+        // Update existing modal text
+        document.getElementById('modalTitle').textContent = translations.title;
+        document.getElementById('dashboardBtnText').textContent = translations.dashboardBtn;
+        document.getElementById('listBtnText').textContent = translations.listBtn;
+        document.getElementById('homeBtnText').textContent = translations.homeBtn;
     }
     
-    // Update modal content
+    // Update modal content with language-aware text
+    const isEnglish = window.location.pathname.includes('-en.html');
+    const storeIdLabel = isEnglish ? 'Store ID:' : '店舗ID:';
+    
     document.getElementById('modalStoreName').textContent = storeData.storeName;
-    document.getElementById('modalStoreId').textContent = `店舗ID: ${storeData.id.substring(0,8)}...`;
+    document.getElementById('modalStoreId').textContent = `${storeIdLabel} ${storeData.id.substring(0,8)}...`;
     
     // Setup button event listeners
     const dashboardBtn = document.getElementById('goToDashboardBtn');
@@ -142,7 +162,8 @@ function showSuccessModal(storeData) {
         sponsorListBtn.parentNode.replaceChild(newSponsorListBtn, sponsorListBtn);
         
         newSponsorListBtn.addEventListener('click', function() {
-            window.location.href = 'sponsor-list.html';
+            const isEnglish = window.location.pathname.includes('-en.html');
+            window.location.href = isEnglish ? 'sponsor-list-en.html' : 'sponsor-list.html';
         });
     }
     
@@ -151,7 +172,8 @@ function showSuccessModal(storeData) {
         homeBtn.parentNode.replaceChild(newHomeBtn, homeBtn);
         
         newHomeBtn.addEventListener('click', function() {
-            window.location.href = 'index.html';
+            const isEnglish = window.location.pathname.includes('-en.html');
+            window.location.href = isEnglish ? 'index-en.html' : 'index.html';
         });
     }
     
