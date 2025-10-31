@@ -209,19 +209,16 @@ async function loadStoreData(storeId) {
             locationDisplay.innerHTML = `<i class="bi bi-geo-alt"></i> ${storeData.address}`;
         }
         
-        // Populate form fields with store data
+        // Populate form fields with store data (using correct edit* IDs)
         const formFields = {
-            'storeName': storeData.storeName,
-            'category': storeData.category,
-            'description': storeData.description,
-            'address': storeData.address,
-            'phone': storeData.phone,
-            'email': storeData.email,
-            'openingHours': storeData.openingHours || '',
-            'closedDays': storeData.closedDays || '',
-            'website': storeData.website || '',
-            'priceRange': storeData.priceRange || '',
-            'specialties': storeData.specialties || ''
+            'editStoreName': storeData.storeName,
+            'editStoreCategory': storeData.category,
+            'editStoreDescription': storeData.description || '',
+            'editStoreAddress': storeData.address,
+            'editStorePhone': storeData.phone,
+            'editStoreEmail': storeData.email,
+            'editStoreHours': storeData.openingHours || '',
+            'editStoreWebsite': storeData.website || ''
         };
         
         // Fill in the form
@@ -229,6 +226,9 @@ async function loadStoreData(storeId) {
             const field = document.getElementById(fieldId);
             if (field) {
                 field.value = value;
+                console.log(`✅ Updated field ${fieldId} with value:`, value);
+            } else {
+                console.warn(`⚠️ Field ${fieldId} not found in DOM`);
             }
         }
         
