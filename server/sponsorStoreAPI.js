@@ -4,8 +4,9 @@ const path = require('path');
 const { randomUUID } = require('crypto');
 
 class SponsorStoreAPIService {
-  constructor() {
+  constructor(objectStorage = null) {
     this.storesFilePath = path.join(__dirname, '../data/sponsor-stores.json');
+    this.objectStorage = objectStorage;
     this.ensureDataDirectory();
   }
 

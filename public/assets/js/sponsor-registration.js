@@ -158,7 +158,8 @@ function showSuccessModal(storeData) {
         dashboardBtn.parentNode.replaceChild(newDashboardBtn, dashboardBtn);
         
         newDashboardBtn.addEventListener('click', function() {
-            window.location.href = `store-dashboard.html?storeId=${storeData.id}`;
+            const langParam = isEnglish ? '&lang=en' : '';
+            window.location.href = `store-dashboard.html?storeId=${storeData.id}${langParam}`;
         });
     }
     
