@@ -141,8 +141,7 @@ function showSuccessModal(storeData) {
         document.getElementById('homeBtnText').textContent = translations.homeBtn;
     }
     
-    // Update modal content with language-aware text
-    const isEnglish = window.location.pathname.includes('-en.html');
+    // Update modal content with language-aware text (reuse isEnglish from above)
     const storeIdLabel = isEnglish ? 'Store ID:' : '店舗ID:';
     
     document.getElementById('modalStoreName').textContent = storeData.storeName;
