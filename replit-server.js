@@ -49,12 +49,15 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, curl, etc.)
     if (!origin) return callback(null, true);
     
-    // In development, allow all replit.dev domains and localhost
+    // Allow Replit domains (dev, deployed), localhost, and custom domain
     const allowedPatterns = [
-      /^https:\/\/.*\.replit\.dev$/,
-      /^https:\/\/.*\.repl\.co$/,
-      /^http:\/\/localhost:\d+$/,
-      /^http:\/\/127\.0\.0\.1:\d+$/
+      /^https:\/\/.*\.replit\.dev$/,     // Development environment
+      /^https:\/\/.*\.replit\.app$/,     // Deployed apps
+      /^https:\/\/.*\.repl\.co$/,        // Legacy domain
+      /^http:\/\/localhost:\d+$/,        // Local development
+      /^http:\/\/127\.0\.0\.1:\d+$/,     // Local development
+      /^https:\/\/tomotrip\.com$/,       // Custom domain (production)
+      /^https:\/\/www\.tomotrip\.com$/   // Custom domain with www
     ];
     
     const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
