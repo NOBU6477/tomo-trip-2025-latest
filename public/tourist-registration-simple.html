@@ -877,6 +877,18 @@
                 };
                 localStorage.setItem('touristRegistration', JSON.stringify(localData));
                 localStorage.setItem('isRegisteredTourist', 'true');
+                
+                // Save touristLogin data for access control (required by sponsor-list.html)
+                const touristLoginData = {
+                    touristId: result.touristId,
+                    name: touristData.name,
+                    email: touristData.email,
+                    phone: touristData.phone,
+                    userType: 'tourist',
+                    registeredAt: new Date().toISOString()
+                };
+                localStorage.setItem('touristLogin', JSON.stringify(touristLoginData));
+                console.log('✅ Tourist login data saved for access control:', touristLoginData);
 
                 console.log('Tourist registration completed:', result);
 
@@ -956,6 +968,19 @@
         }
 
         function returnToMainPage() {
+            // Check if there's a pending store view request
+            const pendingStoreId = localStorage.getItem('pendingStoreView');
+            
+            if (pendingStoreId) {
+                // Clear the pending request
+                localStorage.removeItem('pendingStoreView');
+                
+                // Redirect back to sponsor list (user can now view store details)
+                alert('登録が完了しました！協賛店詳細を閲覧できるようになりました。');
+                window.location.href = 'sponsor-list.html';
+                return;
+            }
+            
             // Close modal if in popup
             if (window.opener) {
                 window.opener.location.reload();

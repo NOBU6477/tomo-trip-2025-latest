@@ -3,11 +3,36 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const multer = require('multer');
 
 // Import our new API services
 const { guideAPIService } = require('./server/guideAPI');
 const { adminAuthService } = require('./server/adminAuth');
 const { sponsorStoreAPIService } = require('./server/sponsorStoreAPI');
+const { ObjectStorageService } = require('./server/objectStorage');
+
+// Setup multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 5 // Max 5 files per request
+  },
+  fileFilter: (req, file, cb) => {
+    // Allow images only for store uploads
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('画像ファイル（JPG, PNG, GIF）のみアップロード可能です'), false);
+    }
+  }
+});
+
+// Initialize object storage
+const objectStorage = new ObjectStorageService();
+
+// Initialize sponsorStoreAPIService with object storage
+sponsorStoreAPIService.objectStorage = objectStorage;
 
 // Replit-optimized server configuration
 const PORT = process.env.PORT || process.env.REPLIT_PORT || 5000;
@@ -151,8 +176,8 @@ app.get('/api/admin/verify', adminAuthService.requireAuth(), (req, res) => {
 // Setup Guide API routes
 guideAPIService.setupRoutes(app);
 
-// Setup Sponsor Store API routes
-sponsorStoreAPIService.setupRoutes(app);
+// Setup Sponsor Store API routes with multer upload
+sponsorStoreAPIService.setupRoutes(app, upload);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public'), {

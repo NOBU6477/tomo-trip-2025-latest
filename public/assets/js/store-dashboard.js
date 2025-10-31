@@ -322,13 +322,67 @@ function setupEventListeners() {
         });
     }
     
-    // 画像変更ボタン
+    // 画像変更ボタン - 実際のアップロード機能
     const changeImageBtn = document.querySelector('button.btn-outline-secondary');
     if (changeImageBtn) {
         changeImageBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            alert(t.imageUploadComing);
-            // TODO: Implement image upload with GCS integration
+            // Create hidden file input
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', async function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                // Validate file size (max 10MB)
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(isEnglish ? 'File size must be less than 10MB' : 'ファイルサイズは10MB以下にしてください');
+                    return;
+                }
+                
+                // Get store ID
+                const storeLogin = localStorage.getItem('storeLogin');
+                if (!storeLogin) {
+                    alert(t.noLoginInfo);
+                    return;
+                }
+                const { storeId } = JSON.parse(storeLogin);
+                
+                // Upload image
+                const formData = new FormData();
+                formData.append('storeImage', file);
+                formData.append('storeId', storeId);
+                
+                try {
+                    const response = await fetch('/api/sponsor-stores/upload-image', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Update image preview
+                        const storeImageElement = document.getElementById('storeImage');
+                        if (storeImageElement) {
+                            storeImageElement.src = result.imageUrl;
+                        }
+                        alert(isEnglish ? 'Image uploaded successfully!' : '画像がアップロードされました！');
+                    } else {
+                        alert(result.message || (isEnglish ? 'Failed to upload image' : '画像のアップロードに失敗しました'));
+                    }
+                } catch (error) {
+                    console.error('Image upload error:', error);
+                    alert(isEnglish ? 'Failed to upload image. Please try again.' : '画像のアップロードに失敗しました。もう一度お試しください。');
+                }
+            });
+            
+            document.body.appendChild(fileInput);
+            fileInput.click();
+            document.body.removeChild(fileInput);
         });
     }
     
@@ -454,6 +508,13 @@ async function loadStoreData(storeId) {
             } else {
                 console.warn(`⚠️ Field ${fieldId} not found in DOM`);
             }
+        }
+        
+        // Update store image if available
+        const storeImageElement = document.getElementById('storeImage');
+        if (storeImageElement && storeData.imageUrl) {
+            storeImageElement.src = storeData.imageUrl;
+            console.log('✅ Store image updated:', storeData.imageUrl);
         }
         
         console.log('✅ Store dashboard updated with:', storeData.storeName);

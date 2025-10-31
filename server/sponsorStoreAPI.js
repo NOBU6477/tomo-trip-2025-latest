@@ -65,6 +65,7 @@ class SponsorStoreAPIService {
       address: storeData.address || '',
       description: storeData.description || '',
       category: storeData.category || 'other',
+      imageUrl: storeData.imageUrl || '',
       isActive: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
@@ -130,8 +131,86 @@ class SponsorStoreAPIService {
     return true;
   }
 
+  // Upload store image
+  async uploadStoreImage(req, res) {
+    try {
+      const { storeId } = req.body;
+      
+      if (!storeId) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_STORE_ID',
+          message: '店舗IDが必要です'
+        });
+      }
+
+      const store = this.getStoreById(storeId);
+      if (!store) {
+        return res.status(404).json({
+          success: false,
+          error: 'STORE_NOT_FOUND',
+          message: '店舗が見つかりません'
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: 'NO_FILE',
+          message: '画像がアップロードされていません'
+        });
+      }
+
+      // Upload file to Google Cloud Storage
+      const fileId = randomUUID();
+      const fileName = `store_${fileId}_${req.file.originalname}`;
+      const objectPath = `/tomotrip-private/uploads/stores/${fileName}`;
+
+      try {
+        // Upload file buffer to object storage
+        const uploadResult = await this.objectStorage.uploadFileBuffer(
+          req.file.buffer,
+          objectPath,
+          req.file.mimetype
+        );
+
+        // Construct public URL for the uploaded file
+        const imageUrl = `/objects${objectPath}`;
+
+        // Update store with image URL
+        const updatedStore = this.updateStore(storeId, { imageUrl });
+
+        console.log(`✅ Store image uploaded successfully: ${imageUrl}`);
+
+        res.json({
+          success: true,
+          message: '店舗画像のアップロードが完了しました',
+          imageUrl,
+          store: updatedStore
+        });
+
+      } catch (uploadError) {
+        console.error('❌ Cloud storage upload error:', uploadError);
+        throw new Error('Failed to upload file to cloud storage');
+      }
+
+    } catch (error) {
+      console.error('❌ Store image upload error:', error);
+      res.status(500).json({
+        success: false,
+        error: 'UPLOAD_ERROR',
+        message: '画像アップロード中にエラーが発生しました'
+      });
+    }
+  }
+
   // Setup Express routes
-  setupRoutes(app) {
+  setupRoutes(app, upload) {
+    // Upload store image
+    app.post('/api/sponsor-stores/upload-image', upload.single('storeImage'), async (req, res) => {
+      await this.uploadStoreImage(req, res);
+    });
+    
     // Create sponsor store
     app.post('/api/sponsor-stores', async (req, res) => {
       try {

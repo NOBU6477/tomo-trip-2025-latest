@@ -491,12 +491,15 @@
                 const statusText = store.status === 'active' ? 'アクティブ' : '審査中';
                 const storeInitial = store.storeName.charAt(0);
                 
+                // 店舗画像またはデフォルトアイコン
+                const logoHtml = store.imageUrl 
+                    ? `<img src="${store.imageUrl}" alt="${escapeHtml(store.storeName)}" class="store-logo me-3" style="object-fit: cover;">` 
+                    : `<div class="store-logo me-3"><i class="bi bi-shop"></i></div>`;
+                
                 storeCard.innerHTML = `
                     <div class="store-card">
                         <div class="d-flex align-items-start mb-3">
-                            <div class="store-logo me-3">
-                                <i class="bi bi-shop"></i>
-                            </div>
+                            ${logoHtml}
                             <div class="flex-grow-1">
                                 <h5 class="mb-1">${escapeHtml(store.storeName)}</h5>
                                 <p class="text-muted small mb-1">${escapeHtml(store.category)}</p>
@@ -665,10 +668,42 @@
             applyFiltersAndSort();
         }
 
+        // 観光客登録チェック
+        function checkTouristRegistration() {
+            // Check if user is registered as tourist
+            const touristLogin = localStorage.getItem('touristLogin');
+            return touristLogin !== null;
+        }
+
         // 店舗詳細の表示
         function viewStoreDetails(storeId) {
-            alert(`店舗詳細ページ（店舗ID: ${storeId.substring(0,8)}...）は開発中です。`);
-            console.log('Viewing store details for:', storeId);
+            console.log('Attempting to view store details for:', storeId);
+            
+            // Check if user is registered as tourist
+            if (!checkTouristRegistration()) {
+                // Show registration prompt modal
+                showTouristRegistrationPrompt(storeId);
+                return;
+            }
+            
+            // User is registered - proceed to store details page
+            // TODO: Create store-details.html page
+            alert(`店舗詳細ページは開発中です。観光客登録済みのため、将来的にアクセス可能になります。\n店舗ID: ${storeId.substring(0,8)}...`);
+            console.log('Tourist registered - showing store details for:', storeId);
+        }
+
+        // 観光客登録促進モーダルの表示
+        function showTouristRegistrationPrompt(storeId) {
+            const confirmed = confirm(
+                '協賛店の詳細情報を閲覧するには観光客登録が必要です。\n\n登録ページへ移動しますか？'
+            );
+            
+            if (confirmed) {
+                // Save the store ID to localStorage so we can redirect back after registration
+                localStorage.setItem('pendingStoreView', storeId);
+                // Redirect to tourist registration page
+                window.location.href = 'tourist-registration-simple.html';
+            }
         }
 
         // HTMLエスケープ
