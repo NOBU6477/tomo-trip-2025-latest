@@ -56,8 +56,10 @@ app.use(cors({
       /^https:\/\/.*\.repl\.co$/,        // Legacy domain
       /^http:\/\/localhost:\d+$/,        // Local development
       /^http:\/\/127\.0\.0\.1:\d+$/,     // Local development
-      /^https:\/\/tomotrip\.com$/,       // Custom domain (production)
-      /^https:\/\/www\.tomotrip\.com$/   // Custom domain with www
+      /^https:\/\/tomotrip\.com$/,       // Custom domain HTTPS (production)
+      /^https:\/\/www\.tomotrip\.com$/,  // Custom domain HTTPS with www
+      /^http:\/\/tomotrip\.com$/,        // Custom domain HTTP (temporary until SSL)
+      /^http:\/\/www\.tomotrip\.com$/    // Custom domain HTTP with www (temporary)
     ];
     
     const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
