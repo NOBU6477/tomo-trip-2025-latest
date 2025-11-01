@@ -45,33 +45,7 @@ const app = express();
 
 // Middleware setup - Allow all origins for development (fix CORS issues)
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Allow Replit domains (dev, deployed), localhost, and custom domain
-    const allowedPatterns = [
-      /^https:\/\/.*\.replit\.dev$/,     // Development environment
-      /^https:\/\/.*\.replit\.app$/,     // Deployed apps
-      /^https:\/\/.*\.repl\.co$/,        // Legacy domain
-      /^http:\/\/localhost:\d+$/,        // Local development
-      /^http:\/\/127\.0\.0\.1:\d+$/,     // Local development
-      /^https:\/\/tomotrip\.com$/,       // Custom domain HTTPS (production)
-      /^https:\/\/www\.tomotrip\.com$/,  // Custom domain HTTPS with www
-      /^http:\/\/tomotrip\.com$/,        // Custom domain HTTP (temporary until SSL)
-      /^http:\/\/www\.tomotrip\.com$/    // Custom domain HTTP with www (temporary)
-    ];
-    
-    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
-    
-    if (isAllowed) {
-      console.log(`✅ CORS allowed origin: ${origin}`);
-      callback(null, true);
-    } else {
-      console.warn(`🚫 CORS blocked origin: ${origin}`);
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true,  // Allow all origins for development
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
