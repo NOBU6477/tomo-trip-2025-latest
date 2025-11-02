@@ -208,19 +208,19 @@ async function loadGuidesFromAPI() {
     }
 }
 
-// Remove duplicate guides based on ID or email (only for API guides with proper identifiers)
+// Remove duplicate guides based on ID only (email uniqueness enforced by API)
 function removeDuplicateGuides(guides) {
     const seen = new Set();
     return guides.filter(guide => {
-        const identifier = guide.id || guide.email;
-        // Only deduplicate guides that have valid identifiers
-        if (!identifier) {
-            return true; // Keep guides without identifiers (like default guides)
+        // Only check ID for duplicates (API now enforces unique emails)
+        if (!guide.id) {
+            return true; // Keep guides without ID (like default guides)
         }
-        if (seen.has(identifier)) {
+        if (seen.has(guide.id)) {
+            console.warn(`⚠️ Duplicate guide ID detected: ${guide.id} (${guide.name})`);
             return false;
         }
-        seen.add(identifier);
+        seen.add(guide.id);
         return true;
     });
 }

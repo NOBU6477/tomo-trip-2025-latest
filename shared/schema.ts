@@ -133,12 +133,29 @@ export const reviews = pgTable("reviews", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Sponsor referrals table - ガイドによる協賛店紹介の追跡
+export const sponsorReferrals = pgTable("sponsor_referrals", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  guideId: varchar("guide_id").references(() => tourismGuides.id).notNull(),
+  sponsorStoreId: varchar("sponsor_store_id").references(() => sponsorStores.id).notNull(),
+  referralDate: timestamp("referral_date").defaultNow().notNull(),
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 2 }).default('10.00'), // Default 10% commission
+  commissionAmount: decimal("commission_amount", { precision: 10, scale: 2 }),
+  commissionStatus: varchar("commission_status", { length: 20 }).default('pending'), // pending, approved, paid, cancelled
+  paymentDate: timestamp("payment_date"),
+  referralSource: varchar("referral_source", { length: 100 }), // どこから紹介されたか (web, app, direct, etc.)
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Define relations
 export const sponsorStoresRelations = relations(sponsorStores, ({ many }) => ({
   guides: many(tourismGuides),
   programs: many(experiencePrograms),
   reservations: many(reservations),
   reviews: many(reviews),
+  referrals: many(sponsorReferrals),
 }));
 
 export const tourismGuidesRelations = relations(tourismGuides, ({ one, many }) => ({
@@ -148,6 +165,7 @@ export const tourismGuidesRelations = relations(tourismGuides, ({ one, many }) =
   }),
   reservations: many(reservations),
   reviews: many(reviews),
+  referrals: many(sponsorReferrals),
 }));
 
 export const experienceProgramsRelations = relations(experiencePrograms, ({ one, many }) => ({
@@ -189,6 +207,17 @@ export const reviewsRelations = relations(reviews, ({ one }) => ({
   }),
 }));
 
+export const sponsorReferralsRelations = relations(sponsorReferrals, ({ one }) => ({
+  guide: one(tourismGuides, {
+    fields: [sponsorReferrals.guideId],
+    references: [tourismGuides.id],
+  }),
+  sponsorStore: one(sponsorStores, {
+    fields: [sponsorReferrals.sponsorStoreId],
+    references: [sponsorStores.id],
+  }),
+}));
+
 // Type exports
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
@@ -207,3 +236,6 @@ export type InsertReservation = typeof reservations.$inferInsert;
 
 export type Review = typeof reviews.$inferSelect;
 export type InsertReview = typeof reviews.$inferInsert;
+
+export type SponsorReferral = typeof sponsorReferrals.$inferSelect;
+export type InsertSponsorReferral = typeof sponsorReferrals.$inferInsert;

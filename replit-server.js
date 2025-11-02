@@ -9,6 +9,7 @@ const multer = require('multer');
 const { guideAPIService } = require('./server/guideAPI');
 const { adminAuthService } = require('./server/adminAuth');
 const { sponsorStoreAPIService } = require('./server/sponsorStoreAPI');
+const { sponsorReferralAPIService } = require('./server/sponsorReferralAPI');
 const { ObjectStorageService } = require('./server/objectStorage');
 
 // Setup multer for file uploads
@@ -158,6 +159,9 @@ guideAPIService.setupRoutes(app);
 // Setup Sponsor Store API routes with multer upload
 sponsorStoreAPIService.setupRoutes(app, upload);
 
+// Setup Sponsor Referral API routes
+sponsorReferralAPIService.setupRoutes(app);
+
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filepath) => {
@@ -189,6 +193,7 @@ app.listen(PORT, HOST, () => {
   console.log('   • File Upload: Object storage ready');
   console.log('   • Admin Auth: JWT-based security');
   console.log('   • Guide API: Full registration system');
+  console.log('   • Referral Tracking: Guide commission system');
 });
 
 // Error handling

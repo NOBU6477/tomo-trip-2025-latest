@@ -668,6 +668,24 @@ class GuideAPIService {
         }
       }
 
+      // Normalize email address (trim whitespace)
+      guideData.guideEmail = guideData.guideEmail.trim();
+      
+      // Check for duplicate email address
+      const existingGuides = this.loadGuides();
+      const normalizedEmail = guideData.guideEmail.toLowerCase();
+      const emailExists = existingGuides.some(guide => 
+        guide.guideEmail && guide.guideEmail.trim().toLowerCase() === normalizedEmail
+      );
+      
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          error: 'DUPLICATE_EMAIL',
+          message: 'このメールアドレスは既に登録されています。別のメールアドレスをご使用ください。'
+        });
+      }
+
       // Create guide record
       const guideId = randomUUID();
       const guide = {
@@ -1160,13 +1178,34 @@ class GuideAPIService {
         });
       }
 
+      // Check for email change and validate uniqueness
+      if (updates.guideEmail && updates.guideEmail.trim().toLowerCase() !== existingGuide.guideEmail.toLowerCase()) {
+        const normalizedNewEmail = updates.guideEmail.trim().toLowerCase();
+        const allGuides = this.loadGuides();
+        const emailExists = allGuides.some(guide => 
+          guide.id !== id && // Exclude current guide
+          guide.guideEmail && 
+          guide.guideEmail.toLowerCase() === normalizedNewEmail
+        );
+        
+        if (emailExists) {
+          return res.status(400).json({
+            success: false,
+            error: 'DUPLICATE_EMAIL',
+            message: 'このメールアドレスは既に登録されています。別のメールアドレスをご使用ください。'
+          });
+        }
+        
+        // Normalize email before saving
+        updates.guideEmail = updates.guideEmail.trim();
+      }
+
       // Update guide data while preserving critical fields
       const updatedGuide = this.updateGuideInStorage(id, {
         ...updates,
         // Preserve critical fields
         id: existingGuide.id,
         phoneNumber: existingGuide.phoneNumber,
-        guideEmail: existingGuide.guideEmail,
         phoneVerified: existingGuide.phoneVerified,
         documents: existingGuide.documents,
         registeredAt: existingGuide.registeredAt

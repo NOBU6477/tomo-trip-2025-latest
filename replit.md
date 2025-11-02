@@ -1,95 +1,29 @@
 # Overview
 
-Local Guide is a multilingual guide matching platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
+Local Guide is a multilingual platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
-## Recent Changes (2025-10-30)
-- **Sponsor Registration Redirect Fix**: Fixed critical issue where newly registered stores were not redirected to correct dashboard
-  - Modified sponsor-registration.html and sponsor-registration-en.html to pass storeId as URL parameter
-  - Enhanced store-dashboard.html to accept storeId from URL and save to localStorage
-  - New registration flow now correctly shows the newly created store's dashboard instead of default store
-  - Seamless transition from registration to personalized store management
-
-## Previous Changes (2025-10-30)
-- **Scalable Sponsor Store List Page**: Complete implementation of scalable display system for growing number of stores
-  - Pagination system: 12 stores per page with smart page number display and navigation
-  - Search functionality: Real-time store name search with debounce (300ms)
-  - Filter system: Category filter with active filter badges
-  - Sort options: Registration date (newest/oldest), store name, views, bookings
-  - Performance optimized: Only renders visible items, efficient DOM updates
-  - Responsive design: Mobile-friendly layout with adaptive cards
-  - Statistics dashboard: Total stores, displayed count, active stores
-- **Sponsor Store API Enhancement**: Complete CRUD operations with soft-delete support
-  - Created `server/sponsorStoreAPI.js` for sponsor store operations (create, read, update, delete, list)
-  - File-based storage system using JSON (data/sponsor-stores.json) for persistence
-  - Integrated into main server (replit-server.js) alongside Guide API
-  - Endpoints: POST/GET /api/sponsor-stores, GET/PUT/DELETE /api/sponsor-stores/:id
-  - Soft delete functionality: Sets isActive=false while preserving data
-  - Email duplication checking, proper error responses, logging
-- **Sponsor Registration Error Handling Fixed**: Complete fix for registration failure issues
-  - Added proper HTTP status code checking with `response.ok` validation
-  - Specific error messages for duplicate email addresses and server errors
-  - Success modal now includes navigation options: Store Dashboard, Sponsor List, and Home
-  - Both Japanese (sponsor-registration.html) and English (sponsor-registration-en.html) versions updated
-  - Direct links to sponsor-list.html added in registration completion flow
-- **Prefecture Selection System Verified**: Confirmed 124 location options working correctly
-  - All 47 prefectures + remote island regions loading properly
-  - English translations (Hokkaido, Aomori, Tokyo...) displaying on English pages
-  - Japanese names (北海道、青森県、東京都...) displaying on Japanese pages
-  - Debug logging added to track option generation and selection
-
-## Previous Changes (2025-10-28)
-- **Profile Photo System Complete**: Full implementation of guide profile photo upload and display using Google Cloud Storage
-  - Profile photos uploaded to GCS at `/objects/tomotrip-private/uploads/profiles/profile_{uuid}_{filename}`
-  - Direct file upload via ObjectStorageService.uploadFileBuffer method
-  - Multi-level fallback system: profileImageUrl → profilePhoto.profileImageUrl → profilePhoto → default image
-  - Fixed critical bug where uploaded photo URLs were not saved to guide records
-  - Profile photos now consistently displayed across both Japanese and English versions
-- **Guide Edit Page Localization**: Complete English version (guide-edit-en.html) fully translated
-  - All UI elements, labels, buttons, placeholders translated to English
-  - JavaScript alert/error messages localized
-  - Proper language-aware redirects (index-en.html vs index.html)
-  - English location defaults and language/specialty mappings
-- **Registration Flow Enhancement**: Profile photo upload integrated into guide registration
-  - Both guide-registration-perfect.html and guide-registration-perfect-en.html support photo upload
-  - Uploaded profileImageUrl properly stored in sessionStorage and included in registration data
-  - Seamless integration with existing registration workflow
-
-## Previous Changes (2025-09-30)
-- **Language-Aware Registration Routing Implemented**: Button routing now detects current page language and directs users to appropriate registration pages
-  - Tourist, Guide, and Sponsor registration buttons route to *-en.html pages when on English version
-  - Language detection based on pathname (index-en.html vs index.html)
-  - Smooth user flow maintained across language boundaries
-- **English Registration Pages Created**: Complete English versions of all three registration types
-  - tourist-registration-simple-en.html: Fully translated with step indicators, form labels, nationality dropdown
-  - guide-registration-perfect-en.html: English title and lang attribute set (content translation in progress)
-  - sponsor-registration-en.html: English title and lang attribute set (content translation in progress)
-- **Critical Security Fix**: Removed hardcoded administrator credentials from client-side code
-  - Deleted test credentials display in sponsor login modal
-  - Replaced client-side authentication with server-side API call structure
-  - Added security comments and proper implementation guidance
-- **Tourist Registration Page 100% English**: Complete translation of all UI elements
-  - Step indicators: Basic Information, Phone Verification, ID Document
-  - All form labels and validation messages in English
-  - Nationality dropdown fully translated (Japan, China, South Korea, etc.)
-  - Mixed-language text corrected
-- **Language Switching System Fixed**: Resolved critical redirect issue where English page immediately redirected back to Japanese
-  - Root cause: Conflict between HTML onclick attributes and JavaScript addEventListener
-  - Solution: Removed onclick attributes from language buttons, implemented page-aware event listeners
-  - Language buttons now correctly detect current page and prevent unnecessary redirects
-- **Console Errors Eliminated**: Fixed all TypeError null reference errors by adding proper element existence checks
-  - Added null checks for registerSubmitBtn, loginSubmitBtn, contactSubmitBtn, and other form elements
-  - Improved code robustness with defensive programming patterns
-- **Bilingual Interface Complete**: index.html (Japanese) and index-en.html (English) fully functional
-  - All static HTML text translated (100+ text elements)
-  - Smart language switching with user-friendly alerts when already on target language
-- **PostgreSQL Database Migration Complete**: Full transition from localStorage to PostgreSQL with Drizzle ORM integration
-- **Individual Store Account System**: Each sponsor now gets dedicated store account with UUID identification and data isolation
-- **Real Database Operations**: All store registrations, profile edits, and data management now persist to actual PostgreSQL database
-- **Store Dashboard Integration**: Individual store management dashboards now load and edit real store data from database
-- **API Server Implementation**: Complete Express.js REST API with endpoints for stores, guides, and reservations
-- **Authentication System Overhaul**: Session-based authentication with database storage and proper logout functionality
-- **Store Listing Page**: Public sponsor-list.html page displaying all registered stores with statistics
-- **Production Architecture**: Node.js + Express + PostgreSQL stack ready for immediate deployment
+## Recent Changes (2025-11-02)
+- **Guide Referral Commission System**: Complete implementation of guide-to-sponsor-store referral tracking for commission payment management
+  - Created `sponsor_referrals` table schema in shared/schema.ts with proper relations to guides and sponsor stores
+  - Implemented file-based storage system (data/sponsor-referrals.json) for immediate deployment, consistent with current architecture
+  - Built comprehensive API service (server/sponsorReferralAPI.js) with full CRUD operations
+  - API endpoints: POST /api/referrals (create), GET /api/referrals/guide/:guideId, GET /api/referrals/store/:storeId, GET /api/referrals (all), PUT /api/referrals/:id (update), GET /api/referrals/dashboard/:guideId (commission dashboard)
+  - Tracking fields: referral date, commission rate (default 10%), commission amount, payment status, payment date, referral source, notes
+  - Automated payment date tracking when status changes to 'paid'
+  - Dashboard provides statistics: total referrals, referrals by status, commission amounts by status
+  - Integrated into main server (replit-server.js) with complete API routing
+  - Designed for future PostgreSQL migration when database issues are resolved
+- **Guide Email Uniqueness Enforcement**: Architect-reviewed comprehensive email duplicate prevention system
+  - Added server-side email duplicate check in both registration and update endpoints (server/guideAPI.js)
+  - Email normalization with .trim() to prevent whitespace bypasses
+  - Case-insensitive duplicate detection for robust validation
+  - Returns clear error message: "このメールアドレスは既に登録されています" / "This email address is already registered"
+  - Frontend error handling in both Japanese and English registration pages with DUPLICATE_EMAIL error code
+  - Email field auto-focus and highlight on duplicate error for better UX
+  - Fixed existing duplicate email addresses in data/guides.json (4 duplicates resolved)
+  - Modified guides: test1500@gmail.com duplicates → test1500-2, test1500-3; test1600@gmail.com duplicates → test1600-2, test1600-3
+  - Updated frontend duplicate removal logic to check ID only (removed email-based deduplication)
+  - All 13 registered guides now have unique email addresses
 
 # User Preferences
 
@@ -124,15 +58,14 @@ User confirmed correct understanding of guide display system:
 # System Architecture
 
 ## Frontend
-- **Framework**: Vanilla JavaScript with Bootstrap 5.3, ESM module architecture with .mjs extensions.
-- **Styling**: Bootstrap CSS with custom CSS modules, responsive design with mobile-first approach, custom ocean background.
+- **Framework**: Vanilla JavaScript with Bootstrap 5.3, ESM module architecture.
+- **Styling**: Bootstrap CSS with custom CSS, responsive design with mobile-first approach.
 - **UI Components**: Responsive navigation, modal-based workflows, toast notifications, loading states, adaptive UI, touch-friendly interactions, swipe gestures.
-- **Security**: CSP-compliant architecture with zero inline scripts, all code externalized. Enhanced error suppression system.
-- **Module Structure**: Centralized data, event management, main ESM entry.
-- **Language Support**: Dynamic translation system with Japanese/English switching, language preference persistence, region-based detection.
+- **Security**: CSP-compliant architecture with zero inline scripts.
+- **Language Support**: Dynamic translation system with Japanese/English switching, language preference persistence.
 - **UI/UX Decisions**: Consistent modal designs, unified oval button styling, enhanced hover effects, dynamic content translation, dynamic guide card rendering with individual bookmark/compare buttons, visual feedback systems.
-- **Pagination**: "Show More" button (transitioning to traditional pagination), advanced UI with progress bars, page previews, quick jump, smart page number display, floating toolbar with bookmark system, comparison tool (3-guide limit), browsing history, quick page access, keyboard navigation, sort functionality (rating, price, name), memory efficiency (12 guides in DOM).
-- **Footer System**: Complete multilingual footer with 5 sections (Company Info, Services, Support, Legal, Contact Info) and detailed content modals. Dark theme with responsive Bootstrap layout, hover effects, and glass morphism elements.
+- **Pagination**: "Show More" button (transitioning to traditional pagination), advanced UI with progress bars, page previews, quick jump, smart page number display, floating toolbar with bookmark system, comparison tool (3-guide limit), browsing history, quick page access, keyboard navigation, sort functionality, memory efficiency (12 guides in DOM).
+- **Footer System**: Complete multilingual footer with 5 sections and detailed content modals, dark theme with responsive Bootstrap layout, hover effects, and glass morphism elements.
 - **Draft Management**: Public sponsor list for published stores. Draft management moved to individual store edit pages with auto-save, manual save/load, timestamp tracking, and distinct yellow gradient UI.
 
 ## Backend
@@ -142,20 +75,20 @@ User confirmed correct understanding of guide display system:
 
 ## Database
 - **ORM**: Drizzle (prepared for PostgreSQL integration).
-- **Storage**: Distributed LocalStorage system with smart capacity management for frontend data; browser session storage for authentication. SponsorStorageManager for distributed sponsor data with image compression, cleanup, and real-time monitoring.
-- **Backend Storage**: SQLite for scalable data management with bookmark/comparison persistence.
+- **Storage**: Distributed LocalStorage system for frontend data; browser session storage for authentication. SponsorStorageManager for distributed sponsor data with image compression, cleanup, and real-time monitoring. SQLite for scalable data management with bookmark/comparison persistence.
+- **Persistence**: File-based storage system using JSON (`data/sponsor-stores.json`, `data/guides.json`) for persistence for certain data, alongside PostgreSQL.
 
 ## Key Technical Components
 - **Camera Integration**: Document photo capture, profile photo upload, mobile camera optimization, file fallback system.
-- **Search & Filter System**: Multi-criteria filtering, real-time search, keyword-based matching, advanced filter combinations, location, language, price filtering, keyword checkboxes, custom keyword input.
+- **Search & Filter System**: Multi-criteria filtering, real-time search, keyword-based matching, advanced filter combinations, location, language, price filtering.
 - **Management Center**: Centralized management for bookmarks and comparisons, bulk data deletion, visual feedback.
 - **Access Control**: Guide detail viewing requires tourist registration, modal-based access prompts, header login differentiation.
 - **Booking Flow**: Complete multilingual system with language detection and translation across payment and confirmation pages. Consistent guide rate display and language inheritance.
-- **Login/Registration**: Unified sponsor login/registration concept requiring store name, email, phone. Login redirects to individual store edit page.
-- **Dual Dashboard System**: 
-  - sponsor-dashboard.html: Admin/operations dashboard for TomoTrip team to manage all stores
-  - store-dashboard.html: Individual store dashboard for each sponsor to manage their own store
-  - Role-based access control with different permission levels and feature sets
+- **Login/Registration**: Unified sponsor login/registration concept requiring store name, email, phone. Login redirects to individual store edit page. Guide email uniqueness enforcement.
+- **Dual Dashboard System**:
+  - `sponsor-dashboard.html`: Admin/operations dashboard for TomoTrip team to manage all stores.
+  - `store-dashboard.html`: Individual store dashboard for each sponsor to manage their own store.
+  - Role-based access control with different permission levels and feature sets.
 
 # External Dependencies
 
@@ -166,5 +99,6 @@ User confirmed correct understanding of guide display system:
 
 ## Third-party Integrations
 - Firebase (authentication services)
+- Google Cloud Storage (for profile photo uploads)
 - Camera API (document capture)
 - Geolocation services (location detection)

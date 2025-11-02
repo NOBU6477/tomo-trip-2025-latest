@@ -668,7 +668,12 @@
                         showRegistrationCompleteModal(result.guideId, data.guideName, selectedLanguages, data.guideSessionRate);
                     }, 1000);
                 } else {
-                    processServerError(result.message || '登録に失敗しました');
+                    // Handle duplicate email error specifically
+                    if (result.error === 'DUPLICATE_EMAIL') {
+                        showToast('このメールアドレスは既に登録されています。別のメールアドレスをご使用ください。', 'error', 'guideEmail');
+                    } else {
+                        processServerError(result.message || '登録に失敗しました');
+                    }
                 }
             } catch (error) {
                 console.error('登録エラー:', error);

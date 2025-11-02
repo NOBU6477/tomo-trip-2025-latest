@@ -668,7 +668,12 @@
                         showRegistrationCompleteModal(result.guideId, data.guideName, selectedLanguages, data.guideSessionRate);
                     }, 1000);
                 } else {
-                    processServerError(result.message || 'Registration failed');
+                    // Handle duplicate email error specifically
+                    if (result.error === 'DUPLICATE_EMAIL') {
+                        showToast('This email address is already registered. Please use a different email address.', 'error', 'guideEmail');
+                    } else {
+                        processServerError(result.message || 'Registration failed');
+                    }
                 }
             } catch (error) {
                 console.error('Registration error:', error);
