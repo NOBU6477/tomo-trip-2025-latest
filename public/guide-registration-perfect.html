@@ -596,9 +596,12 @@
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
             
             try {
-                // Upload profile photo first
+                // Check if profile photo already uploaded
+                let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${sessionId}`);
+                
+                // Upload profile photo only if not already uploaded
                 const profilePhotoFile = document.getElementById('profilePhoto').files[0];
-                if (profilePhotoFile) {
+                if (profilePhotoFile && !profileImageUrl) {
                     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>プロフィール写真アップロード中...';
                     
                     const photoFormData = new FormData();
@@ -621,7 +624,10 @@
                     console.log('✅ Profile photo uploaded:', uploadResult.profileImageUrl);
                     
                     // Store uploaded photo URL in session storage
-                    sessionStorage.setItem(`profileImageUrl_${sessionId}`, uploadResult.profileImageUrl);
+                    profileImageUrl = uploadResult.profileImageUrl;
+                    sessionStorage.setItem(`profileImageUrl_${sessionId}`, profileImageUrl);
+                } else if (profileImageUrl) {
+                    console.log('✅ Using previously uploaded profile photo:', profileImageUrl);
                 }
                 
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
