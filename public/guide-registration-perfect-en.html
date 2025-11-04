@@ -122,6 +122,7 @@
                                             <input type="email" class="form-control" id="guideEmail" name="guideEmail" required>
                                             <label for="guideEmail"><i class="bi bi-envelope me-1"></i>Email Address</label>
                                         </div>
+                                        <div id="emailFeedback" class="mt-1" style="font-size: 0.875rem;"></div>
                                     </div>
                                 </div>
                                 
@@ -441,6 +442,65 @@
                 }
             });
         }
+
+        // Real-time email validation
+        const emailInput = document.getElementById('guideEmail');
+        const emailFeedback = document.getElementById('emailFeedback');
+        let isEmailValid = false;
+        
+        emailInput.addEventListener('blur', async function() {
+            const email = this.value.trim();
+            
+            // Clear previous feedback
+            emailFeedback.innerHTML = '';
+            emailInput.classList.remove('is-valid', 'is-invalid');
+            
+            if (!email) {
+                return;
+            }
+            
+            // Basic email format validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                emailInput.classList.add('is-invalid');
+                emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Please enter a valid email address</span>';
+                isEmailValid = false;
+                return;
+            }
+            
+            // Check availability with server
+            try {
+                emailFeedback.innerHTML = '<span class="text-muted"><i class="bi bi-hourglass-split me-1"></i>Checking...</span>';
+                
+                const response = await fetch(`/api/guides/check-email?email=${encodeURIComponent(email)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    if (result.available) {
+                        emailInput.classList.add('is-valid');
+                        emailFeedback.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>This email address is available</span>';
+                        isEmailValid = true;
+                    } else {
+                        emailInput.classList.add('is-invalid');
+                        emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>This email address is already registered</span>';
+                        isEmailValid = false;
+                    }
+                }
+            } catch (error) {
+                console.error('Email check error:', error);
+                emailFeedback.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Failed to check email availability</span>';
+                isEmailValid = false;
+            }
+        });
+        
+        // Clear feedback when user starts typing again
+        emailInput.addEventListener('input', function() {
+            if (emailFeedback.innerHTML) {
+                emailFeedback.innerHTML = '';
+                emailInput.classList.remove('is-valid', 'is-invalid');
+                isEmailValid = false;
+            }
+        });
 
         // Phone verification with real API
         let sessionId = null;
