@@ -160,6 +160,9 @@ class GuideAPIService {
     app.post('/api/guides/login', this.guideLogin.bind(this));
     app.get('/api/guides', this.getGuides.bind(this));
     
+    // Real-time email validation endpoint
+    app.get('/api/guides/check-email', this.checkEmailAvailability.bind(this));
+    
     // Guide editing endpoints
     app.get('/api/guides/:id', this.getGuideById.bind(this));
     app.put('/api/guides/:id/edit', this.updateGuide.bind(this));
@@ -1234,6 +1237,41 @@ class GuideAPIService {
       res.status(500).json({
         success: false,
         message: 'ガイド情報の更新中にエラーが発生しました'
+      });
+    }
+  }
+
+  // Check email availability (real-time validation)
+  async checkEmailAvailability(req, res) {
+    try {
+      const { email } = req.query;
+      
+      if (!email || !email.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: 'メールアドレスを入力してください'
+        });
+      }
+
+      const normalizedEmail = email.trim().toLowerCase();
+      const allGuides = this.loadGuides();
+      
+      const emailExists = allGuides.some(guide => 
+        guide.guideEmail && 
+        guide.guideEmail.toLowerCase() === normalizedEmail
+      );
+
+      res.json({
+        success: true,
+        available: !emailExists,
+        message: emailExists ? 'このメールアドレスは既に登録されています' : 'このメールアドレスは使用可能です'
+      });
+
+    } catch (error) {
+      console.error('❌ Error checking email availability:', error);
+      res.status(500).json({
+        success: false,
+        message: 'メールアドレスの確認中にエラーが発生しました'
       });
     }
   }
