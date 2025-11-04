@@ -636,7 +636,6 @@
                 const data = Object.fromEntries(formData);
                 
                 // Add profile image URL if uploaded
-                const profileImageUrl = sessionStorage.getItem(`profileImageUrl_${sessionId}`);
                 if (profileImageUrl) {
                     data.profileImageUrl = profileImageUrl;
                     console.log('📸 Including profileImageUrl in registration:', profileImageUrl);
