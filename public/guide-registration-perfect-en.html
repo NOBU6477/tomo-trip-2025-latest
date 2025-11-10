@@ -458,49 +458,57 @@
             console.log('✅ Email validation initialized');
             
             emailInput.addEventListener('blur', async function() {
-            const email = this.value.trim();
-            
-            // Clear previous feedback
-            emailFeedback.innerHTML = '';
-            emailInput.classList.remove('is-valid', 'is-invalid');
-            
-            if (!email) {
-                return;
-            }
-            
-            // Basic email format validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                emailInput.classList.add('is-invalid');
-                emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Please enter a valid email address</span>';
-                isEmailValid = false;
-                return;
-            }
-            
-            // Check availability with server
-            try {
-                emailFeedback.innerHTML = '<span class="text-muted"><i class="bi bi-hourglass-split me-1"></i>Checking...</span>';
+                console.log('🔍 Email blur event triggered, checking:', this.value);
+                const email = this.value.trim();
                 
-                const response = await fetch(`/api/guides/check-email?email=${encodeURIComponent(email)}`);
-                const result = await response.json();
+                // Clear previous feedback
+                emailFeedback.innerHTML = '';
+                emailInput.classList.remove('is-valid', 'is-invalid');
                 
-                if (result.success) {
-                    if (result.available) {
-                        emailInput.classList.add('is-valid');
-                        emailFeedback.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>This email address is available</span>';
-                        isEmailValid = true;
-                    } else {
-                        emailInput.classList.add('is-invalid');
-                        emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>This email address is already registered</span>';
-                        isEmailValid = false;
-                    }
+                if (!email) {
+                    console.log('⚠️ Email field is empty, skipping validation');
+                    return;
                 }
-            } catch (error) {
-                console.error('Email check error:', error);
-                emailFeedback.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Failed to check email availability</span>';
-                isEmailValid = false;
-            }
-        });
+                
+                // Basic email format validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    console.log('❌ Invalid email format:', email);
+                    emailInput.classList.add('is-invalid');
+                    emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>Please enter a valid email address</span>';
+                    isEmailValid = false;
+                    return;
+                }
+                
+                // Check availability with server
+                console.log('📡 Checking email availability with API:', email);
+                try {
+                    emailFeedback.innerHTML = '<span class="text-muted"><i class="bi bi-hourglass-split me-1"></i>Checking...</span>';
+                    
+                    const response = await fetch(`/api/guides/check-email?email=${encodeURIComponent(email)}`);
+                    const result = await response.json();
+                    
+                    console.log('📥 API response:', result);
+                    
+                    if (result.success) {
+                        if (result.available) {
+                            console.log('✅ Email is available');
+                            emailInput.classList.add('is-valid');
+                            emailFeedback.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>This email address is available</span>';
+                            isEmailValid = true;
+                        } else {
+                            console.log('❌ Email is already registered');
+                            emailInput.classList.add('is-invalid');
+                            emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>This email address is already registered</span>';
+                            isEmailValid = false;
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Email check error:', error);
+                    emailFeedback.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>Failed to check email availability</span>';
+                    isEmailValid = false;
+                }
+            });
         
         // Clear feedback when user starts typing again
         emailInput.addEventListener('input', function() {
