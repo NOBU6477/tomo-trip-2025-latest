@@ -443,12 +443,21 @@
             });
         }
 
-        // Real-time email validation
-        const emailInput = document.getElementById('guideEmail');
-        const emailFeedback = document.getElementById('emailFeedback');
-        let isEmailValid = false;
-        
-        emailInput.addEventListener('blur', async function() {
+        // Real-time email validation - Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const emailInput = document.getElementById('guideEmail');
+            const emailFeedback = document.getElementById('emailFeedback');
+            
+            if (!emailInput || !emailFeedback) {
+                console.error('Email validation: Required elements not found');
+                return;
+            }
+            
+            let isEmailValid = false;
+            
+            console.log('✅ Email validation initialized');
+            
+            emailInput.addEventListener('blur', async function() {
             const email = this.value.trim();
             
             // Clear previous feedback
@@ -501,6 +510,7 @@
                 isEmailValid = false;
             }
         });
+        }); // End of DOMContentLoaded for email validation
 
         // Phone verification with real API
         let sessionId = null;
