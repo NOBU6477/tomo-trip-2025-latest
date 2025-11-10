@@ -443,13 +443,14 @@
             });
         }
 
-        // Real-time email validation - Wait for DOM to be ready
-        document.addEventListener('DOMContentLoaded', function() {
+        // Real-time email validation - Initialize immediately or wait for DOM
+        function initializeEmailValidation() {
             const emailInput = document.getElementById('guideEmail');
             const emailFeedback = document.getElementById('emailFeedback');
             
             if (!emailInput || !emailFeedback) {
-                console.error('Email validation: Required elements not found');
+                console.error('❌ Email validation: Required elements not found');
+                console.log('emailInput:', emailInput, 'emailFeedback:', emailFeedback);
                 return;
             }
             
@@ -510,15 +511,24 @@
                 }
             });
         
-        // Clear feedback when user starts typing again
-        emailInput.addEventListener('input', function() {
-            if (emailFeedback.innerHTML) {
-                emailFeedback.innerHTML = '';
-                emailInput.classList.remove('is-valid', 'is-invalid');
-                isEmailValid = false;
-            }
-        });
-        }); // End of DOMContentLoaded for email validation
+            // Clear feedback when user starts typing again
+            emailInput.addEventListener('input', function() {
+                if (emailFeedback.innerHTML) {
+                    emailFeedback.innerHTML = '';
+                    emailInput.classList.remove('is-valid', 'is-invalid');
+                    isEmailValid = false;
+                }
+            });
+        }
+        
+        // Call initialization function when DOM is ready
+        if (document.readyState === 'loading') {
+            console.log('📋 DOM still loading, waiting for DOMContentLoaded...');
+            document.addEventListener('DOMContentLoaded', initializeEmailValidation);
+        } else {
+            console.log('📋 DOM already loaded, initializing email validation immediately...');
+            initializeEmailValidation();
+        }
 
         // Phone verification with real API
         let sessionId = null;
