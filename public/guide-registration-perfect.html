@@ -454,6 +454,7 @@
             console.log('🚀 Initializing TomoTrip Guide Registration...');
             
             // Call all initialization functions
+            initializePrefectureSelect();
             setupDocumentUpload();
             initializeEmailValidation(appState);
             initializePhoneVerification(appState);
@@ -936,12 +937,6 @@
             }
         }
         
-        // Initialize document upload system
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Initializing TomoTrip guide registration...');
-            initializePrefectureSelect();
-            setupDocumentUpload();
-        });
         // Beautiful Registration Complete Modal
         function showRegistrationCompleteModal(guideId, guideName, selectedLanguages, sessionRate) {
             // Create modal HTML
