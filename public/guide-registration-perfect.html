@@ -443,18 +443,35 @@
             });
         }
 
-        // Real-time email validation - Initialize immediately or wait for DOM
-        function initializeEmailValidation() {
+        // Shared application state
+        let appState = {
+            isEmailValid: false,
+            phoneSessionId: null
+        };
+
+        // Initialize all event listeners when DOM is ready
+        function initializeApp() {
+            console.log('🚀 Initializing TomoTrip Guide Registration...');
+            
+            // Call all initialization functions
+            setupDocumentUpload();
+            initializeEmailValidation(appState);
+            initializePhoneVerification(appState);
+            initializeFormSubmission(appState);
+            initializeCancelButton();
+            
+            console.log('✅ All features initialized successfully');
+        }
+
+        // Email validation initialization
+        function initializeEmailValidation(state) {
             const emailInput = document.getElementById('guideEmail');
             const emailFeedback = document.getElementById('emailFeedback');
             
             if (!emailInput || !emailFeedback) {
                 console.error('❌ Email validation: Required elements not found');
-                console.log('emailInput:', emailInput, 'emailFeedback:', emailFeedback);
                 return;
             }
-            
-            let isEmailValid = false;
             
             console.log('✅ Email validation initialized');
             
@@ -477,7 +494,7 @@
                     console.log('❌ Invalid email format:', email);
                     emailInput.classList.add('is-invalid');
                     emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>有効なメールアドレスを入力してください</span>';
-                    isEmailValid = false;
+                    state.isEmailValid = false;
                     return;
                 }
                 
@@ -496,18 +513,18 @@
                             console.log('✅ Email is available');
                             emailInput.classList.add('is-valid');
                             emailFeedback.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>このメールアドレスは使用可能です</span>';
-                            isEmailValid = true;
+                            state.isEmailValid = true;
                         } else {
                             console.log('❌ Email is already registered');
                             emailInput.classList.add('is-invalid');
                             emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>このメールアドレスは既に登録されています</span>';
-                            isEmailValid = false;
+                            state.isEmailValid = false;
                         }
                     }
                 } catch (error) {
                     console.error('❌ Email check error:', error);
                     emailFeedback.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>メールアドレスの確認に失敗しました</span>';
-                    isEmailValid = false;
+                    state.isEmailValid = false;
                 }
             });
         
@@ -516,75 +533,73 @@
                 if (emailFeedback.innerHTML) {
                     emailFeedback.innerHTML = '';
                     emailInput.classList.remove('is-valid', 'is-invalid');
-                    isEmailValid = false;
+                    state.isEmailValid = false;
                 }
             });
         }
-        
-        // Call initialization function when DOM is ready
-        if (document.readyState === 'loading') {
-            console.log('📋 DOM still loading, waiting for DOMContentLoaded...');
-            document.addEventListener('DOMContentLoaded', initializeEmailValidation);
-        } else {
-            console.log('📋 DOM already loaded, initializing email validation immediately...');
-            initializeEmailValidation();
-        }
 
-        // Phone verification with real API
-        let sessionId = null;
-        
-        document.getElementById('sendVerificationCode').addEventListener('click', async function() {
-            const phone = document.getElementById('guidePhone').value;
-            if (!phone) {
-                showToast('電話番号を入力してください', 'error');
+        // Phone verification initialization
+        function initializePhoneVerification(state) {
+            const sendBtn = document.getElementById('sendVerificationCode');
+            if (!sendBtn) {
+                console.error('❌ Phone verification: sendVerificationCode button not found');
                 return;
             }
             
-            // Convert Japanese phone number to international format
-            const formattedPhone = formatPhoneNumber(phone);
-            if (!formattedPhone) {
-                showToast('有効な電話番号を入力してください（例：090-1234-5678）', 'error');
-                return;
-            }
+            console.log('✅ Phone verification initialized');
             
-            // Disable button and show loading
-            const sendBtn = this;
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>送信中...';
-            
-            try {
-                const response = await fetch('/api/guides/send-verification', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ phoneNumber: formattedPhone })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showToast(result.message || 'SMS認証コードを送信しました', 'success');
-                    document.getElementById('verificationCodeArea').style.display = 'block';
-                    
-                    // Lock phone input after successful send
-                    document.getElementById('guidePhone').readOnly = true;
-                    
-                    // Show simulation code if available (development mode)
-                    if (result.simulationCode) {
-                        showToast(`開発モード: 認証コードは ${result.simulationCode} です`, 'info');
-                    }
-                } else {
-                    showToast(result.message || 'SMS送信に失敗しました', 'error');
+            sendBtn.addEventListener('click', async function() {
+                const phone = document.getElementById('guidePhone').value;
+                if (!phone) {
+                    showToast('電話番号を入力してください', 'error');
+                    return;
                 }
-            } catch (error) {
-                console.error('SMS送信エラー:', error);
-                showToast('ネットワークエラーが発生しました', 'error');
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = '<i class="bi bi-send me-1"></i>認証コード送信';
-            }
-        });
+                
+                // Convert Japanese phone number to international format
+                const formattedPhone = formatPhoneNumber(phone);
+                if (!formattedPhone) {
+                    showToast('有効な電話番号を入力してください（例：090-1234-5678）', 'error');
+                    return;
+                }
+                
+                // Disable button and show loading
+                const sendBtn = this;
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>送信中...';
+                
+                try {
+                    const response = await fetch('/api/guides/send-verification', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ phoneNumber: formattedPhone })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showToast(result.message || 'SMS認証コードを送信しました', 'success');
+                        document.getElementById('verificationCodeArea').style.display = 'block';
+                        
+                        // Lock phone input after successful send
+                        document.getElementById('guidePhone').readOnly = true;
+                        
+                        // Show simulation code if available (development mode)
+                        if (result.simulationCode) {
+                            showToast(`開発モード: 認証コードは ${result.simulationCode} です`, 'info');
+                        }
+                    } else {
+                        showToast(result.message || 'SMS送信に失敗しました', 'error');
+                    }
+                } catch (error) {
+                    console.error('SMS送信エラー:', error);
+                    showToast('ネットワークエラーが発生しました', 'error');
+                } finally {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = '<i class="bi bi-send me-1"></i>認証コード送信';
+                }
+            });
 
         document.getElementById('verifyPhone').addEventListener('click', async function() {
             const phoneInput = document.getElementById('guidePhone').value;
@@ -619,7 +634,7 @@
                 verificationResult = await response.json();
                 
                 if (verificationResult.success) {
-                    sessionId = verificationResult.sessionId;
+                    state.phoneSessionId = verificationResult.sessionId;
                     showToast(verificationResult.message || '電話認証が完了しました！', 'success');
                     verifyBtn.classList.remove('btn-primary');
                     verifyBtn.classList.add('btn-success');
@@ -1105,6 +1120,24 @@
             }
         }
 
+        // Form submission initialization
+        function initializeFormSubmission(state) {
+            // Temporarily placeholder - form submission logic will be added
+            console.log('✅ Form submission initialized (placeholder)');
+        }
+
+        // Cancel button initialization  
+        function initializeCancelButton() {
+            const cancelBtn = document.getElementById('cancelRegistrationBtn');
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    cancelRegistration();
+                });
+                console.log('✅ Cancel button initialized');
+            }
+        }
+
         // Cancel registration function
         function cancelRegistration() {
             if (confirm('登録を中止しますか？入力したデータは保存されません。')) {
@@ -1113,17 +1146,8 @@
             }
         }
         
-        // Setup cancel button event listener (CSP compliant)
-        document.addEventListener('DOMContentLoaded', function() {
-            const cancelBtn = document.getElementById('cancelRegistrationBtn');
-            if (cancelBtn) {
-                cancelBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    cancelRegistration();
-                });
-                console.log('✅ Cancel button event listener setup complete');
-            }
-        });
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', initializeApp);
         
     </script>
 </body>
