@@ -162,15 +162,21 @@ sponsorStoreAPIService.setupRoutes(app, upload);
 // Setup Sponsor Referral API routes
 sponsorReferralAPIService.setupRoutes(app);
 
-// Serve static files
+// Serve static files with NO caching for HTML/JS files
 app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: 0,           // Disable memory caching
+  etag: false,         // Disable ETag caching
+  lastModified: true,  // Enable last-modified checks
   setHeaders: (res, filepath) => {
     // Set cache control headers with proper precedence for JavaScript modules
     if (filepath.endsWith('.mjs') || filepath.endsWith('.js')) {
       res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
       res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
     } else if (filepath.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
     } else {
       res.setHeader('Cache-Control', 'public, max-age=3600');
     }
