@@ -36,6 +36,9 @@ const upload = multer({
 // Initialize object storage
 const objectStorage = new ObjectStorageService();
 
+// Initialize guideAPIService with object storage
+guideAPIService.objectStorage = objectStorage;
+
 // Initialize sponsorStoreAPIService with object storage
 sponsorStoreAPIService.objectStorage = objectStorage;
 
