@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) {
             console.error('Error loading store from URL:', error);
             alert(t.errorLoadStore);
-            window.location.href = 'index.html';
+            window.location.href = '/sponsor-login.html';
             return;
         }
     } else {
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         if (!storeLogin) {
             alert(t.errorNeedLogin);
-            window.location.href = 'index.html';
+            window.location.href = '/sponsor-login.html';
             return;
         }
         
@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             const storeData = JSON.parse(storeLogin);
             if (storeData.userType !== 'store_owner') {
                 alert(t.errorNotOwner);
-                window.location.href = 'index.html';
+                window.location.href = '/sponsor-login.html';
                 return;
             }
             
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             console.error('Store login data error:', error);
             localStorage.removeItem('storeLogin');
             alert(t.errorLoginData);
-            window.location.href = 'index.html';
+            window.location.href = '/sponsor-login.html';
             return;
         }
     }
@@ -589,6 +589,6 @@ function logout() {
     if (confirmation) {
         console.log('🚪 Logging out...');
         localStorage.removeItem('storeLogin');
-        window.location.href = 'index.html';
+        window.location.href = '/sponsor-login.html';
     }
 }
