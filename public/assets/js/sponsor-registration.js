@@ -159,7 +159,7 @@ function showSuccessModal(storeData) {
         
         newDashboardBtn.addEventListener('click', function() {
             const langParam = isEnglish ? '&lang=en' : '';
-            window.location.href = `store-dashboard.html?storeId=${storeData.id}${langParam}`;
+            window.location.href = `store-dashboard.html?id=${storeData.id}${langParam}`;
         });
     }
     
