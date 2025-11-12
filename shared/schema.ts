@@ -79,9 +79,13 @@ export const tourismGuides = pgTable("tourism_guides", {
   totalBookings: integer("total_bookings").default(0),
   averageRating: decimal("average_rating", { precision: 3, scale: 2 }).default('0.00'),
   isAvailable: boolean("is_available").default(true),
+  rankName: varchar("rank_name", { length: 50 }).default('Bronze').references(() => ranks.name), // Current rank (references ranks.name)
+  rankScore: integer("rank_score").default(0), // Current rank score
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => [
+  index("idx_guides_rank").on(table.rankName, table.rankScore),
+]);
 
 // Experience programs table - 体験プログラム
 export const experiencePrograms = pgTable("experience_programs", {
@@ -148,6 +152,18 @@ export const sponsorReferrals = pgTable("sponsor_referrals", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+// Rank table - ガイドランク定義
+export const ranks = pgTable("ranks", {
+  name: varchar("name", { length: 50 }).primaryKey(), // Bronze, Silver, Gold, Platinum
+  minScore: integer("min_score").notNull(), // 昇格に必要な最低スコア
+  bonusRate: decimal("bonus_rate", { precision: 5, scale: 4 }).notNull(), // 配当ボーナス率 (0.0000 = 0%, 0.0500 = 5%)
+  maxStores: integer("max_stores").default(100), // ガイドが紹介できる上限店舗数
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+}, (table) => [
+  index("idx_ranks_min_score").on(table.minScore),
+]);
 
 // Define relations
 export const sponsorStoresRelations = relations(sponsorStores, ({ many }) => ({
@@ -239,3 +255,6 @@ export type InsertReview = typeof reviews.$inferInsert;
 
 export type SponsorReferral = typeof sponsorReferrals.$inferSelect;
 export type InsertSponsorReferral = typeof sponsorReferrals.$inferInsert;
+
+export type Rank = typeof ranks.$inferSelect;
+export type InsertRank = typeof ranks.$inferInsert;

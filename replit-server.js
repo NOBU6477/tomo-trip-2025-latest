@@ -11,6 +11,10 @@ const { adminAuthService } = require('./server/adminAuth');
 const { sponsorStoreAPIService } = require('./server/sponsorStoreAPI');
 const { sponsorReferralAPIService } = require('./server/sponsorReferralAPI');
 const { ObjectStorageService } = require('./server/objectStorage');
+const { storeDashboardAPIService } = require('./server/storeDashboardAPI');
+const { guideDashboardAPIService } = require('./server/guideDashboardAPI');
+const { adminAPIService } = require('./server/adminAPI');
+const { requireRole } = require('./server/rbac');
 
 // Setup multer for file uploads
 const upload = multer({
@@ -161,6 +165,102 @@ sponsorStoreAPIService.setupRoutes(app, upload);
 
 // Setup Sponsor Referral API routes
 sponsorReferralAPIService.setupRoutes(app);
+
+// Store Dashboard API routes
+app.get('/api/stores/:id/dashboard', async (req, res) => {
+  try {
+    const storeId = req.params.id;
+    const dashboard = await storeDashboardAPIService.getStoreDashboard(storeId);
+    res.json(dashboard);
+  } catch (error) {
+    console.error('Error getting store dashboard:', error);
+    res.status(500).json({ error: 'Failed to load store dashboard' });
+  }
+});
+
+// Guide Dashboard API routes
+app.get('/api/guides/:id/dashboard', async (req, res) => {
+  try {
+    const guideId = req.params.id;
+    const dashboard = await guideDashboardAPIService.getGuideDashboard(guideId);
+    res.json(dashboard);
+  } catch (error) {
+    console.error('Error getting guide dashboard:', error);
+    res.status(500).json({ error: 'Failed to load guide dashboard' });
+  }
+});
+
+// Admin API routes for Feature Flags
+app.get('/api/admin/flags', (req, res) => {
+  try {
+    const flags = adminAPIService.getFlags();
+    res.json(flags);
+  } catch (error) {
+    console.error('Error getting flags:', error);
+    res.status(500).json({ error: 'Failed to get flags' });
+  }
+});
+
+app.post('/api/admin/flags', (req, res) => {
+  try {
+    const flags = adminAPIService.updateFlags(req.body);
+    res.json(flags);
+  } catch (error) {
+    console.error('Error updating flags:', error);
+    res.status(500).json({ error: 'Failed to update flags' });
+  }
+});
+
+app.post('/api/admin/weights', (req, res) => {
+  try {
+    const weights = adminAPIService.updateWeights(req.body);
+    res.json(weights);
+  } catch (error) {
+    console.error('Error updating weights:', error);
+    res.status(500).json({ error: 'Failed to update weights' });
+  }
+});
+
+app.post('/api/admin/policies/top-guides', (req, res) => {
+  try {
+    const policy = adminAPIService.updateTopGuidesPolicy(req.body);
+    res.json(policy);
+  } catch (error) {
+    console.error('Error updating top guides policy:', error);
+    res.status(500).json({ error: 'Failed to update policy' });
+  }
+});
+
+// Admin API routes for Rank Management
+app.get('/api/admin/ranks', (req, res) => {
+  try {
+    const ranks = adminAPIService.getRanks();
+    res.json(ranks);
+  } catch (error) {
+    console.error('Error getting ranks:', error);
+    res.status(500).json({ error: 'Failed to get ranks' });
+  }
+});
+
+app.post('/api/admin/ranks', (req, res) => {
+  try {
+    const ranks = adminAPIService.updateRanks(req.body);
+    res.json(ranks);
+  } catch (error) {
+    console.error('Error updating ranks:', error);
+    res.status(500).json({ error: 'Failed to update ranks' });
+  }
+});
+
+app.delete('/api/admin/ranks/:name', (req, res) => {
+  try {
+    const result = adminAPIService.deleteRank(req.params.name);
+    res.json(result);
+  } catch (error) {
+    console.error('Error deleting rank:', error);
+    res.status(500).json({ error: 'Failed to delete rank' });
+  }
+});
 
 // Serve static files with NO caching for HTML/JS files
 app.use(express.static(path.join(__dirname, 'public'), {
