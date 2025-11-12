@@ -6,25 +6,7 @@ const { adminAuthService } = require('./adminAuth');
 // Database storage - use simple file storage for now
 const fs = require('fs');
 const path = require('path');
-const multer = require('multer');
 const { randomUUID } = require('crypto');
-
-// Multer configuration for file uploads
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB limit
-    files: 5 // Max 5 files per request
-  },
-  fileFilter: (req, file, cb) => {
-    // Allow images and PDFs
-    if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
-      cb(null, true);
-    } else {
-      cb(new Error('画像ファイル（JPG, PNG）またはPDFファイルのみアップロード可能です'), false);
-    }
-  }
-});
 
 class GuideAPIService {
   constructor() {

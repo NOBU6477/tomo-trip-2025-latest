@@ -24,11 +24,11 @@ const upload = multer({
     files: 5 // Max 5 files per request
   },
   fileFilter: (req, file, cb) => {
-    // Allow images only for store uploads
-    if (file.mimetype.startsWith('image/')) {
+    // Allow images and PDFs for guide/store uploads
+    if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
-      cb(new Error('画像ファイル（JPG, PNG, GIF）のみアップロード可能です'), false);
+      cb(new Error('画像ファイル（JPG, PNG）またはPDFファイルのみアップロード可能です'), false);
     }
   }
 });
@@ -58,6 +58,14 @@ app.use(cors({
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Request logging middleware
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    console.log(`📥 ${req.method} ${req.path}`);
+  }
+  next();
+});
 
 // Fix .mjs MIME type for ES6 modules
 app.use((req, res, next) => {
