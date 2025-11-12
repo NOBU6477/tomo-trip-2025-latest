@@ -166,8 +166,8 @@ app.get('/api/admin/verify', adminAuthService.requireAuth(), (req, res) => {
   });
 });
 
-// Setup Guide API routes
-guideAPIService.setupRoutes(app);
+// Setup Guide API routes with upload middleware
+guideAPIService.setupRoutes(app, upload);
 
 // Setup Sponsor Store API routes with multer upload
 sponsorStoreAPIService.setupRoutes(app, upload);
