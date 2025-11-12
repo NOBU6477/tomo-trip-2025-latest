@@ -602,58 +602,59 @@
                 }
             });
 
-        document.getElementById('verifyPhone').addEventListener('click', async function() {
-            const phoneInput = document.getElementById('guidePhone').value;
-            const phone = formatPhoneNumber(phoneInput);
-            const code = document.getElementById('verificationCode').value;
-            
-            if (!phone) {
-                showToast('有効な電話番号を入力してください', 'error');
-                return;
-            }
-            
-            if (!code) {
-                showToast('認証コードを入力してください', 'error');
-                return;
-            }
-            
-            // Disable button and show loading
-            const verifyBtn = this;
-            let verificationResult;
-            verifyBtn.disabled = true;
-            verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>認証中...';
-            
-            try {
-                const response = await fetch('/api/guides/verify-phone', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ phoneNumber: phone, code })
-                });
+            document.getElementById('verifyPhone').addEventListener('click', async function() {
+                const phoneInput = document.getElementById('guidePhone').value;
+                const phone = formatPhoneNumber(phoneInput);
+                const code = document.getElementById('verificationCode').value;
                 
-                verificationResult = await response.json();
+                if (!phone) {
+                    showToast('有効な電話番号を入力してください', 'error');
+                    return;
+                }
                 
-                if (verificationResult.success) {
-                    state.phoneSessionId = verificationResult.sessionId;
-                    showToast(verificationResult.message || '電話認証が完了しました！', 'success');
-                    verifyBtn.classList.remove('btn-primary');
-                    verifyBtn.classList.add('btn-success');
-                    verifyBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
-                    verifyBtn.disabled = true;
-                } else {
-                    showToast(verificationResult.message || '認証コードが正しくありません', 'error');
+                if (!code) {
+                    showToast('認証コードを入力してください', 'error');
+                    return;
                 }
-            } catch (error) {
-                console.error('認証エラー:', error);
-                showToast('ネットワークエラーが発生しました', 'error');
-            } finally {
-                if (!verificationResult?.success) {
-                    verifyBtn.disabled = false;
-                    verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証確認';
+                
+                // Disable button and show loading
+                const verifyBtn = this;
+                let verificationResult;
+                verifyBtn.disabled = true;
+                verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>認証中...';
+                
+                try {
+                    const response = await fetch('/api/guides/verify-phone', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ phoneNumber: phone, code })
+                    });
+                    
+                    verificationResult = await response.json();
+                    
+                    if (verificationResult.success) {
+                        state.phoneSessionId = verificationResult.sessionId;
+                        showToast(verificationResult.message || '電話認証が完了しました！', 'success');
+                        verifyBtn.classList.remove('btn-primary');
+                        verifyBtn.classList.add('btn-success');
+                        verifyBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>認証完了';
+                        verifyBtn.disabled = true;
+                    } else {
+                        showToast(verificationResult.message || '認証コードが正しくありません', 'error');
+                    }
+                } catch (error) {
+                    console.error('認証エラー:', error);
+                    showToast('ネットワークエラーが発生しました', 'error');
+                } finally {
+                    if (!verificationResult?.success) {
+                        verifyBtn.disabled = false;
+                        verifyBtn.innerHTML = '<i class="bi bi-shield-check me-1"></i>認証確認';
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // Form submission with real API
         document.getElementById('guideRegistrationForm').addEventListener('submit', async function(e) {
