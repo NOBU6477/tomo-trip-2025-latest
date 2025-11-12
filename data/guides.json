@@ -11,7 +11,7 @@
       "英語"
     ],
     "guideIntroduction": "地元の魅力をお伝えします",
-    "guideSpecialties": "グルメ, 歴史",
+    "guideSpecialties": "文化・歴史ガイド, グルメガイド, 写真撮影",
     "guideSessionRate": "8000",
     "guideAvailability": "both",
     "phoneNumber": "+819012345678",
@@ -19,8 +19,14 @@
     "documents": [],
     "status": "approved",
     "registeredAt": "2025-09-11T14:36:00.310Z",
-    "updatedAt": "2025-09-11T14:36:00.310Z",
-    "location": "東京都 渋谷区"
+    "updatedAt": "2025-11-12T13:07:16.366Z",
+    "location": "東京都 渋谷区",
+    "guideType": "day",
+    "achievements": "100回以上のご案内を住んでいます。",
+    "multiLingual": true,
+    "hospitalitySupport": true,
+    "emergencySupport": false,
+    "localExpert": true
   },
   {
     "id": "fa12dc14-1899-4bd5-bbd3-8ce0a2c359e9",
@@ -35,12 +41,9 @@
     "documentFront": {},
     "documentBack": {},
     "guideExperience": "intermediate",
-    "guideLanguages": [
-      "japanese",
-      "english"
-    ],
+    "guideLanguages": [],
     "guideIntroduction": "英語での案内も可能です",
-    "guideSpecialties": "グルメ・歴史",
+    "guideSpecialties": "グルメガイド",
     "guideSessionRate": "10000",
     "guideAvailability": "both",
     "agreeTerms": "on",
@@ -48,8 +51,14 @@
     "documents": [],
     "status": "approved",
     "registeredAt": "2025-09-14T12:32:57.229Z",
-    "updatedAt": "2025-09-14T12:32:57.229Z",
-    "location": "大阪府 大阪市"
+    "updatedAt": "2025-11-12T13:12:21.611Z",
+    "location": "大阪府 大阪市",
+    "guideType": "day",
+    "achievements": "",
+    "multiLingual": true,
+    "hospitalitySupport": false,
+    "emergencySupport": false,
+    "localExpert": false
   },
   {
     "id": "cc51ea1f-f285-440a-9159-fce867090e3b",
@@ -65,13 +74,12 @@
     "documentBack": {},
     "guideExperience": "intermediate",
     "guideLanguages": [
-      "japanese",
-      "english",
-      "chinese",
-      "korean"
+      "日本語",
+      "英語",
+      "中国語"
     ],
     "guideIntroduction": "英語・中国語・韓国語のご案内も可能です",
-    "guideSpecialties": "グルメ・写真スポット",
+    "guideSpecialties": "グルメガイド, 自然ガイド, 写真撮影",
     "guideSessionRate": "12000",
     "guideAvailability": "both",
     "agreeTerms": "on",
@@ -79,8 +87,14 @@
     "documents": [],
     "status": "approved",
     "registeredAt": "2025-09-14T12:51:14.413Z",
-    "updatedAt": "2025-09-14T12:51:14.413Z",
-    "location": "沖縄県 那覇市"
+    "updatedAt": "2025-11-12T13:18:58.716Z",
+    "location": "沖縄県 那覇市",
+    "guideType": "day",
+    "achievements": "",
+    "multiLingual": true,
+    "hospitalitySupport": false,
+    "emergencySupport": false,
+    "localExpert": false
   },
   {
     "id": "ee3b720e-1d72-4622-ad96-c8211438bd1d",
