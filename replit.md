@@ -2,6 +2,21 @@
 
 Local Guide is a multilingual platform connecting tourists with local guides for discovery, registration, and booking. The project aims to be a scalable, production-ready solution for a growing marketplace, prioritizing operational speed, stability, and real-world deployment.
 
+## Recent Changes (2025-11-12)
+- **Guide Rank & Payout Dashboard System**: Complete implementation of guide ranking, commission tracking, and store contribution analytics
+  - Created `ranks` table schema with Bronze/Silver/Gold/Platinum tiers (minScore: 0/60/120/200, bonusRate: 0%/5%/10%/15%)
+  - Added `rank_name` and `rank_score` fields to `tourism_guides` table with foreign key constraint
+  - Database indexes: `idx_ranks_min_score` on ranks, `idx_guides_rank` on tourism_guides (rank_name, rank_score)
+  - Feature Flags system (public/js/feature-flags.js): ENABLE_PAYOUTS, ENABLE_GUIDE_RANKING, SHOW_GUIDE_REAL_NAME_TO_STORE
+  - New guide dashboard (public/guide-dashboard.html) with monthly payout display, rank progress, and rank reference table
+  - Store effect card (public/js/store-effect-card.js): Shows store metrics (sent customers, bookings, visit rate, video views) and TOP 3 contributing guides
+  - Guide dashboard cards (public/js/guide-cards.js): Displays monthly payout breakdown, current rank, points to next rank, rank reference table
+  - API endpoints: GET /api/stores/:id/dashboard (store analytics), GET /api/guides/:id/dashboard (guide payout/rank), GET/POST /api/admin/ranks (rank management), GET/POST /api/admin/flags (feature flags)
+  - RBAC middleware (server/rbac.js) for role-based access control (admin/store/guide)
+  - Base payout: ¥5,000 per paid referral, multiplied by (1 + bonusRate) based on guide rank
+  - Integrated into store-dashboard.html with effect measurement and top contributor sections
+  - All APIs return real data from sponsor_referrals.json and guides.json for immediate deployment
+
 ## Recent Changes (2025-11-02)
 - **Guide Referral Commission System**: Complete implementation of guide-to-sponsor-store referral tracking for commission payment management
   - Created `sponsor_referrals` table schema in shared/schema.ts with proper relations to guides and sponsor stores
