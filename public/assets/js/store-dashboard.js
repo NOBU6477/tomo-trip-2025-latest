@@ -148,10 +148,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Apply translations to UI
     translateUI();
     
-    // Check for storeId in URL parameters (from registration)
-    const urlStoreId = urlParams.get('storeId');
+    // Check for store ID in URL parameters (accept both 'id' and 'storeId' for compatibility)
+    const urlStoreId = urlParams.get('id') || urlParams.get('storeId');
     
-    // If coming from registration with storeId, load that store
+    // If coming from registration with store ID, load that store
     if (urlStoreId) {
         console.log('📝 Loading store from URL parameter:', urlStoreId);
         try {

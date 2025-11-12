@@ -520,15 +520,20 @@
     <script src="/js/store-effect-card.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
+        // Accept both 'id' (new) and 'storeId' (legacy) parameters for compatibility
         const storeId = urlParams.get('id') || urlParams.get('storeId');
         if (storeId) {
             document.body.dataset.storeId = storeId;
             window.STORE_ID = storeId;
+            console.log('✅ Store ID loaded from URL:', storeId);
         } else {
             const storageId = localStorage.getItem('currentStoreId');
             if (storageId) {
                 document.body.dataset.storeId = storageId;
                 window.STORE_ID = storageId;
+                console.log('✅ Store ID loaded from localStorage:', storageId);
+            } else {
+                console.warn('⚠️ No store ID found in URL or localStorage');
             }
         }
     </script>
