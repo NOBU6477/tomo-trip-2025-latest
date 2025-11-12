@@ -1012,29 +1012,38 @@
                                     
                                     <div class="alert alert-success border-0" style="background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 15px;">
                                         <i class="bi bi-info-circle me-2"></i>
-                                        <strong>次にやること：</strong> ガイド情報をさらに詳しく編集するか、メインページでガイド一覧を確認できます。
+                                        <strong>次にやること：</strong> ダッシュボードで配当やランクを確認したり、プロフィール情報を編集できます。
                                     </div>
                                 </div>
                                 
                                 <!-- Action Buttons -->
                                 <div class="p-4" style="background: #f8f9fa;">
                                     <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <button type="button" class="btn btn-lg w-100 py-3" onclick="redirectToEditPage('${guideId}')" 
+                                        <div class="col-12">
+                                            <button type="button" class="btn btn-lg w-100 py-3" onclick="redirectToDashboard('${guideId}')" 
                                                     style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; border-radius: 15px; color: white; font-weight: 600; box-shadow: 0 8px 20px rgba(102,126,234,0.3); transition: all 0.3s ease;"
                                                     onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(102,126,234,0.4)'"
                                                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(102,126,234,0.3)'">
-                                                <i class="bi bi-pencil-square me-2"></i>
-                                                ガイド情報を編集する
+                                                <i class="bi bi-speedometer2 me-2"></i>
+                                                ダッシュボードを開く
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <button type="button" class="btn btn-lg w-100 py-3" onclick="redirectToMainPage()" 
-                                                    style="background: linear-gradient(135deg, #6c757d, #495057); border: none; border-radius: 15px; color: white; font-weight: 600; box-shadow: 0 8px 20px rgba(108,117,125,0.3); transition: all 0.3s ease;"
-                                                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 30px rgba(108,117,125,0.4)'"
-                                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(108,117,125,0.3)'">
+                                            <button type="button" class="btn btn-outline-secondary btn-lg w-100 py-3" onclick="redirectToEditPage('${guideId}')" 
+                                                    style="border: 2px solid #6c757d; border-radius: 15px; font-weight: 600; transition: all 0.3s ease;"
+                                                    onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white'"
+                                                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d'">
+                                                <i class="bi bi-pencil-square me-2"></i>
+                                                プロフィール編集
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <button type="button" class="btn btn-outline-secondary btn-lg w-100 py-3" onclick="redirectToMainPage()" 
+                                                    style="border: 2px solid #6c757d; border-radius: 15px; font-weight: 600; transition: all 0.3s ease;"
+                                                    onmouseover="this.style.backgroundColor='#6c757d'; this.style.color='white'"
+                                                    onmouseout="this.style.backgroundColor='transparent'; this.style.color='#6c757d'">
                                                 <i class="bi bi-house me-2"></i>
-                                                メインページに戻る
+                                                ホームページ
                                             </button>
                                         </div>
                                     </div>
@@ -1084,6 +1093,10 @@
                 keyboard: false
             });
             modal.show();
+        }
+        
+        function redirectToDashboard(guideId) {
+            window.location.href = `guide-dashboard.html?id=${guideId}`;
         }
         
         function redirectToEditPage(guideId) {
