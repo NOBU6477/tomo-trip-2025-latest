@@ -703,10 +703,16 @@
             try {
                 // Check if profile photo already uploaded
                 let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${sessionId}`);
+                console.log('🔍 Session ID:', sessionId);
+                console.log('🔍 Stored profile image URL:', profileImageUrl);
                 
                 // Upload profile photo only if not already uploaded
                 const profilePhotoFile = document.getElementById('profilePhoto').files[0];
+                console.log('🔍 Profile photo file selected:', profilePhotoFile ? 'Yes' : 'No');
+                console.log('🔍 Upload condition check - File exists:', !!profilePhotoFile, ', URL not stored:', !profileImageUrl);
+                
                 if (profilePhotoFile && !profileImageUrl) {
+                    console.log('📤 Starting profile photo upload...');
                     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>プロフィール写真アップロード中...';
                     
                     const photoFormData = new FormData();
@@ -718,9 +724,13 @@
                         body: photoFormData
                     });
                     
+                    console.log('📥 Upload response status:', uploadResponse.status);
                     const uploadResult = await uploadResponse.json();
+                    console.log('📥 Upload result:', uploadResult);
+                    
                     if (!uploadResult.success) {
-                        showToast('プロフィール写真のアップロードに失敗しました', 'error');
+                        console.error('❌ Upload failed:', uploadResult.error, uploadResult.message);
+                        showToast(`プロフィール写真のアップロードに失敗しました: ${uploadResult.message || uploadResult.error}`, 'error');
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalText;
                         return;
@@ -731,8 +741,11 @@
                     // Store uploaded photo URL in session storage
                     profileImageUrl = uploadResult.profileImageUrl;
                     sessionStorage.setItem(`profileImageUrl_${sessionId}`, profileImageUrl);
+                    console.log('💾 Saved to sessionStorage:', profileImageUrl);
                 } else if (profileImageUrl) {
                     console.log('✅ Using previously uploaded profile photo:', profileImageUrl);
+                } else if (!profilePhotoFile) {
+                    console.warn('⚠️ No profile photo file selected');
                 }
                 
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
