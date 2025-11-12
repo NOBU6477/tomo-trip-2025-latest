@@ -60,7 +60,7 @@
             <h1 class="text-white mb-0">
                 <i class="bi bi-speedometer2 me-2"></i>ガイドダッシュボード
             </h1>
-            <button class="btn btn-outline-light" onclick="window.location.href='/guide-edit.html'">
+            <button class="btn btn-outline-light" onclick="editProfile()">
                 <i class="bi bi-pencil me-2"></i>プロフィール編集
             </button>
         </div>
@@ -100,7 +100,7 @@
             <!-- アクションボタン -->
             <div class="row mt-4">
                 <div class="col-12 text-center">
-                    <button class="btn btn-primary me-2" onclick="window.location.href='/guide-edit.html'">
+                    <button class="btn btn-primary me-2" onclick="editProfile()">
                         <i class="bi bi-person-gear me-2"></i>プロフィール編集
                     </button>
                     <button class="btn btn-outline-secondary" onclick="window.location.href='/sponsor-registration.html'">
@@ -116,11 +116,26 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const guideId = urlParams.get('id');
+        
         if (guideId) {
             document.body.dataset.guideId = guideId;
             window.GUIDE_ID = guideId;
         } else {
             console.warn('No guide ID provided in URL');
+            // Show error if no guide ID
+            setTimeout(() => {
+                alert('ガイドIDが指定されていません。ガイド登録ページから登録してください。');
+                window.location.href = '/guide-registration-perfect.html';
+            }, 500);
+        }
+        
+        // Function to edit profile with guide ID
+        function editProfile() {
+            if (guideId) {
+                window.location.href = `/guide-edit.html?id=${guideId}`;
+            } else {
+                alert('ガイドIDが取得できません');
+            }
         }
     </script>
 </body>
