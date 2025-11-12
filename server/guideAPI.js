@@ -353,9 +353,15 @@ class GuideAPIService {
   // Upload profile photo
   async uploadProfilePhoto(req, res) {
     try {
+      console.log('📸 Profile photo upload request received');
+      console.log('Request body sessionId:', req.body.sessionId);
+      console.log('File received:', req.file ? 'Yes' : 'No');
+      console.log('Object storage initialized:', this.objectStorage ? 'Yes' : 'No');
+      
       const { sessionId } = req.body;
       
       if (!sessionId) {
+        console.error('❌ No session ID provided');
         return res.status(400).json({
           success: false,
           error: 'MISSING_SESSION',
@@ -365,6 +371,7 @@ class GuideAPIService {
 
       const session = this.pendingRegistrations.get(sessionId);
       if (!session) {
+        console.error('❌ Invalid session ID:', sessionId);
         return res.status(400).json({
           success: false,
           error: 'INVALID_SESSION',
@@ -373,6 +380,7 @@ class GuideAPIService {
       }
 
       if (!req.file) {
+        console.error('❌ No file in request');
         return res.status(400).json({
           success: false,
           error: 'NO_FILE',
@@ -380,10 +388,22 @@ class GuideAPIService {
         });
       }
 
+      if (!this.objectStorage) {
+        console.error('❌ CRITICAL: Object storage not initialized!');
+        return res.status(500).json({
+          success: false,
+          error: 'STORAGE_NOT_INITIALIZED',
+          message: 'ストレージサービスが初期化されていません'
+        });
+      }
+
       // Upload file directly to Google Cloud Storage
       const fileId = randomUUID();
       const fileName = `profile_${fileId}_${req.file.originalname}`;
       const objectPath = `/tomotrip-private/uploads/profiles/${fileName}`;
+
+      console.log('📤 Attempting to upload file:', fileName);
+      console.log('Object path:', objectPath);
 
       try {
         // Upload file buffer to object storage
@@ -418,15 +438,18 @@ class GuideAPIService {
 
       } catch (uploadError) {
         console.error('❌ Cloud storage upload error:', uploadError);
-        throw new Error('Failed to upload file to cloud storage');
+        console.error('Error stack:', uploadError.stack);
+        throw new Error(`Failed to upload file to cloud storage: ${uploadError.message}`);
       }
 
     } catch (error) {
       console.error('❌ Profile photo upload error:', error);
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
       res.status(500).json({
         success: false,
         error: 'UPLOAD_ERROR',
-        message: 'プロフィール写真アップロード中にエラーが発生しました'
+        message: `プロフィール写真のアップロードに失敗しました: ${error.message}`
       });
     }
   }
