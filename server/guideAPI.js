@@ -134,7 +134,7 @@ class GuideAPIService {
   }
 
   // Initialize API routes
-  setupRoutes(app) {
+  setupRoutes(app, upload) {
     // SMS verification endpoints - shared for guides and tourists
     app.post('/api/guides/send-verification', this.sendPhoneVerification.bind(this));
     app.post('/api/guides/verify-phone', this.verifyPhone.bind(this));
