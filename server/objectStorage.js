@@ -1,28 +1,10 @@
 // Object Storage Service for TomoTrip
-// Referenced from: blueprint:javascript_object_storage integration
-const { Storage } = require('@google-cloud/storage');
+// Uses Replit Object Storage (@replit/object-storage)
+const { Client } = require('@replit/object-storage');
 const { randomUUID } = require('crypto');
 
-const REPLIT_SIDECAR_ENDPOINT = "http://127.0.0.1:1106";
-
-// Object storage client for Replit's built-in storage
-const objectStorageClient = new Storage({
-  credentials: {
-    audience: "replit",
-    subject_token_type: "access_token",
-    token_url: `${REPLIT_SIDECAR_ENDPOINT}/token`,
-    type: "external_account",
-    credential_source: {
-      url: `${REPLIT_SIDECAR_ENDPOINT}/credential`,
-      format: {
-        type: "json",
-        subject_token_field_name: "access_token",
-      },
-    },
-    universe_domain: "googleapis.com",
-  },
-  projectId: "",
-});
+// Replit Object Storage client
+const objectStorageClient = new Client();
 
 class ObjectNotFoundError extends Error {
   constructor() {
@@ -35,110 +17,31 @@ class ObjectNotFoundError extends Error {
 class ObjectStorageService {
   constructor() {}
 
-  // Get public object search paths
-  getPublicObjectSearchPaths() {
-    const pathsStr = process.env.PUBLIC_OBJECT_SEARCH_PATHS || "/tomotrip-public";
-    const paths = Array.from(
-      new Set(
-        pathsStr
-          .split(",")
-          .map((path) => path.trim())
-          .filter((path) => path.length > 0)
-      )
-    );
-    return paths;
-  }
-
-  // Get private object directory
-  getPrivateObjectDir() {
-    const dir = process.env.PRIVATE_OBJECT_DIR || "/tomotrip-private";
-    return dir;
-  }
-
-  // Parse object path into bucket and object name
-  parseObjectPath(path) {
-    if (!path.startsWith("/")) {
-      path = `/${path}`;
-    }
-    const pathParts = path.split("/");
-    if (pathParts.length < 3) {
-      throw new Error("Invalid path: must contain at least a bucket name");
-    }
-
-    const bucketName = pathParts[1];
-    const objectName = pathParts.slice(2).join("/");
-
-    return { bucketName, objectName };
-  }
-
-  // Sign object URL for uploads
-  async signObjectURL({ bucketName, objectName, method, ttlSec }) {
-    const request = {
-      bucket_name: bucketName,
-      object_name: objectName,
-      method,
-      expires_at: new Date(Date.now() + ttlSec * 1000).toISOString(),
-    };
-    
-    const response = await fetch(
-      `${REPLIT_SIDECAR_ENDPOINT}/object-storage/signed-object-url`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(request),
-      }
-    );
-    
-    if (!response.ok) {
-      throw new Error(
-        `Failed to sign object URL, errorcode: ${response.status}, ` +
-        `make sure you're running on Replit`
-      );
-    }
-
-    const { signed_url: signedURL } = await response.json();
-    return signedURL;
-  }
-
-  // Get upload URL for object entity
-  async getObjectEntityUploadURL() {
-    const privateObjectDir = this.getPrivateObjectDir();
+  // Generate unique filename for uploads
+  generateUploadPath(prefix = 'uploads') {
     const objectId = randomUUID();
-    const fullPath = `${privateObjectDir}/uploads/${objectId}`;
-
-    const { bucketName, objectName } = this.parseObjectPath(fullPath);
-
-    return this.signObjectURL({
-      bucketName,
-      objectName,
-      method: "PUT",
-      ttlSec: 900, // 15 minutes
-    });
+    return `${prefix}/${objectId}`;
   }
 
   // Upload file buffer directly to object storage
   async uploadFileBuffer(buffer, objectPath, contentType = 'application/octet-stream') {
     try {
-      const { bucketName, objectName } = this.parseObjectPath(objectPath);
-      const bucket = objectStorageClient.bucket(bucketName);
-      const file = bucket.file(objectName);
+      // Remove leading slash and convert path to simple filename
+      const fileName = objectPath.startsWith('/') ? objectPath.substring(1) : objectPath;
+      
+      // Upload file buffer using Replit Object Storage
+      const result = await objectStorageClient.uploadFromBytes(fileName, buffer);
+      
+      if (!result.ok) {
+        console.error('❌ Upload failed:', result.error);
+        throw new Error(`Upload failed: ${result.error}`);
+      }
 
-      // Upload file buffer
-      await file.save(buffer, {
-        contentType,
-        metadata: {
-          contentType,
-        },
-      });
-
-      console.log(`✅ File uploaded to ${bucketName}/${objectName}`);
+      console.log(`✅ File uploaded to ${fileName}`);
       
       return {
         success: true,
-        bucketName,
-        objectName,
+        fileName,
         path: objectPath
       };
     } catch (error) {
@@ -147,101 +50,77 @@ class ObjectStorageService {
     }
   }
 
-  // Download object to response
-  async downloadObject(file, res, cacheTtlSec = 3600) {
+  // Download file from object storage and send to response
+  async downloadFile(fileName, res, cacheTtlSec = 3600) {
     try {
-      const [metadata] = await file.getMetadata();
+      // Download file as bytes
+      const result = await objectStorageClient.downloadAsBytes(fileName);
+      
+      if (!result.ok) {
+        console.error('❌ Download failed:', result.error);
+        throw new ObjectNotFoundError();
+      }
+
+      // Determine content type from file extension
+      const contentType = this.getContentType(fileName);
       
       res.set({
-        "Content-Type": metadata.contentType || "application/octet-stream",
-        "Content-Length": metadata.size,
+        "Content-Type": contentType,
+        "Content-Length": result.value.length,
         "Cache-Control": `public, max-age=${cacheTtlSec}`,
       });
 
-      const stream = file.createReadStream();
-      
-      stream.on("error", (err) => {
-        console.error("Stream error:", err);
-        if (!res.headersSent) {
-          res.status(500).json({ error: "Error streaming file" });
-        }
-      });
-
-      stream.pipe(res);
+      res.send(result.value);
     } catch (error) {
       console.error("Error downloading file:", error);
       if (!res.headersSent) {
-        res.status(500).json({ error: "Error downloading file" });
+        if (error instanceof ObjectNotFoundError) {
+          res.status(404).json({ error: "File not found" });
+        } else {
+          res.status(500).json({ error: "Error downloading file" });
+        }
       }
     }
   }
 
-  // Search for public object
-  async searchPublicObject(filePath) {
-    for (const searchPath of this.getPublicObjectSearchPaths()) {
-      const fullPath = `${searchPath}/${filePath}`;
-      const { bucketName, objectName } = this.parseObjectPath(fullPath);
-      const bucket = objectStorageClient.bucket(bucketName);
-      const file = bucket.file(objectName);
+  // Get content type from file extension
+  getContentType(fileName) {
+    const ext = fileName.split('.').pop().toLowerCase();
+    const contentTypes = {
+      'jpg': 'image/jpeg',
+      'jpeg': 'image/jpeg',
+      'png': 'image/png',
+      'gif': 'image/gif',
+      'webp': 'image/webp',
+      'pdf': 'application/pdf',
+      'json': 'application/json',
+      'txt': 'text/plain'
+    };
+    return contentTypes[ext] || 'application/octet-stream';
+  }
 
-      const [exists] = await file.exists();
-      if (exists) {
-        return file;
+  // Check if file exists
+  async fileExists(fileName) {
+    try {
+      const result = await objectStorageClient.list();
+      if (!result.ok) {
+        return false;
       }
+      return result.value.some(file => file.name === fileName);
+    } catch (error) {
+      console.error('Error checking file existence:', error);
+      return false;
     }
-    return null;
   }
 
-  // Get object entity file
-  async getObjectEntityFile(objectPath) {
-    if (!objectPath.startsWith("/objects/")) {
-      throw new ObjectNotFoundError();
+  // Get file path from URL path (removes /objects/ prefix)
+  getFileNameFromPath(urlPath) {
+    // /objects/uploads/abc-123 -> uploads/abc-123
+    if (urlPath.startsWith('/objects/')) {
+      return urlPath.substring(9); // Remove '/objects/'
     }
-
-    const parts = objectPath.slice(1).split("/");
-    if (parts.length < 2) {
-      throw new ObjectNotFoundError();
-    }
-
-    const entityId = parts.slice(1).join("/");
-    let entityDir = this.getPrivateObjectDir();
-    if (!entityDir.endsWith("/")) {
-      entityDir = `${entityDir}/`;
-    }
-    
-    const objectEntityPath = `${entityDir}${entityId}`;
-    const { bucketName, objectName } = this.parseObjectPath(objectEntityPath);
-    const bucket = objectStorageClient.bucket(bucketName);
-    const objectFile = bucket.file(objectName);
-    
-    const [exists] = await objectFile.exists();
-    if (!exists) {
-      throw new ObjectNotFoundError();
-    }
-    
-    return objectFile;
-  }
-
-  // Normalize object entity path
-  normalizeObjectEntityPath(rawPath) {
-    if (!rawPath.startsWith("https://storage.googleapis.com/")) {
-      return rawPath;
-    }
-
-    const url = new URL(rawPath);
-    const rawObjectPath = url.pathname;
-
-    let objectEntityDir = this.getPrivateObjectDir();
-    if (!objectEntityDir.endsWith("/")) {
-      objectEntityDir = `${objectEntityDir}/`;
-    }
-
-    if (!rawObjectPath.startsWith(objectEntityDir)) {
-      return rawObjectPath;
-    }
-
-    const entityId = rawObjectPath.slice(objectEntityDir.length);
-    return `/objects/${entityId}`;
+    // Remove leading slash
+    return urlPath.startsWith('/') ? urlPath.substring(1) : urlPath;
   }
 }
 

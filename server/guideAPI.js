@@ -362,10 +362,10 @@ class GuideAPIService {
         });
       }
 
-      // Upload file directly to Google Cloud Storage
+      // Upload file to Replit Object Storage
       const fileId = randomUUID();
       const fileName = `profile_${fileId}_${req.file.originalname}`;
-      const objectPath = `/tomotrip-private/uploads/profiles/${fileName}`;
+      const objectPath = `uploads/profiles/${fileName}`;
 
       try {
         // Upload file buffer to object storage
@@ -376,7 +376,7 @@ class GuideAPIService {
         );
 
         // Construct public URL for the uploaded file
-        const profileImageUrl = `/objects${objectPath}`;
+        const profileImageUrl = `/objects/${objectPath}`;
 
         // Update session with profile photo info
         session.profilePhoto = {
@@ -583,11 +583,11 @@ class GuideAPIService {
       
       console.log(`🖼️ Image request for: ${objectPath}`);
       
-      // Get the file from object storage
-      const file = await this.objectStorage.getObjectEntityFile(objectPath);
+      // Convert URL path to file name (/objects/uploads/abc -> uploads/abc)
+      const fileName = this.objectStorage.getFileNameFromPath(objectPath);
       
-      // Stream the file to response with proper headers
-      await this.objectStorage.downloadObject(file, res);
+      // Download and send the file to response
+      await this.objectStorage.downloadFile(fileName, res);
       
     } catch (error) {
       console.error('❌ Error serving image:', error);
