@@ -294,21 +294,33 @@ class GuideAPIService {
       const uploadedFiles = [];
       
       for (const file of req.files) {
-        const uploadUrl = await this.objectStorage.getObjectEntityUploadURL();
-        
-        // In a real implementation, you would upload the file to the signed URL
-        // For now, we'll simulate the upload
         const fileId = randomUUID();
         const fileName = `${documentType}_${fileId}_${file.originalname}`;
+        const objectPath = `uploads/documents/${fileName}`;
         
-        uploadedFiles.push({
-          fileId,
-          fileName,
-          originalName: file.originalname,
-          mimeType: file.mimetype,
-          size: file.size,
-          uploadUrl // Frontend will use this to upload the file
-        });
+        try {
+          // Upload file buffer to object storage
+          await this.objectStorage.uploadFileBuffer(
+            file.buffer,
+            objectPath,
+            file.mimetype
+          );
+          
+          // Construct public URL for the uploaded file
+          const documentUrl = `/objects/${objectPath}`;
+          
+          uploadedFiles.push({
+            fileId,
+            fileName,
+            originalName: file.originalname,
+            mimeType: file.mimetype,
+            size: file.size,
+            documentUrl
+          });
+        } catch (uploadError) {
+          console.error(`❌ Failed to upload document: ${file.originalname}`, uploadError);
+          throw new Error(`Failed to upload document: ${file.originalname}`);
+        }
       }
 
       // Update session with document info
@@ -610,12 +622,26 @@ class GuideAPIService {
 
   // Generate profile photo URL from profilePhoto object
   generateProfilePhotoUrl(profilePhoto) {
-    if (!profilePhoto || !profilePhoto.fileId) {
+    if (!profilePhoto) {
       return null;
     }
     
-    // Construct the URL using the fileId
-    return `/objects/uploads/${profilePhoto.fileId}`;
+    // Prefer new profileImageUrl field (full path)
+    if (profilePhoto.profileImageUrl) {
+      return profilePhoto.profileImageUrl;
+    }
+    
+    // Fallback to fileName for compatibility
+    if (profilePhoto.fileName) {
+      return `/objects/uploads/profiles/${profilePhoto.fileName}`;
+    }
+    
+    // Legacy fallback for old fileId-only records
+    if (profilePhoto.fileId) {
+      return `/objects/uploads/${profilePhoto.fileId}`;
+    }
+    
+    return null;
   }
 
   // Complete guide registration
