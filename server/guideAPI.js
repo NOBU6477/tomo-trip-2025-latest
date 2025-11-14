@@ -117,6 +117,13 @@ class GuideAPIService {
 
   // Initialize API routes
   setupRoutes(app, upload) {
+    // TEST ENDPOINT - NO MULTER
+    app.post('/api/guides/test-upload', (req, res) => {
+      console.log('🧪 TEST ENDPOINT CALLED - NO MULTER');
+      console.log('  - Body:', req.body);
+      res.json({ success: true, message: 'Test endpoint reached' });
+    });
+    
     // SMS verification endpoints - shared for guides and tourists
     app.post('/api/guides/send-verification', this.sendPhoneVerification.bind(this));
     app.post('/api/guides/verify-phone', this.verifyPhone.bind(this));
