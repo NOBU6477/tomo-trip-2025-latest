@@ -36,8 +36,9 @@ const upload = multer({
 // Initialize object storage
 const objectStorage = new ObjectStorageService();
 
-// Initialize sponsorStoreAPIService with object storage
+// Initialize API services with object storage
 sponsorStoreAPIService.objectStorage = objectStorage;
+guideAPIService.objectStorage = objectStorage;
 
 // Replit-optimized server configuration
 const PORT = process.env.PORT || process.env.REPLIT_PORT || 5000;
@@ -59,10 +60,13 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Request logging middleware
+// Request logging middleware - LOG EVERYTHING
 app.use((req, res, next) => {
-  if (req.path.startsWith('/api/')) {
-    console.log(`📥 ${req.method} ${req.path}`);
+  console.log(`📥 ${req.method} ${req.path}`);
+  if (req.path.includes('upload')) {
+    console.log('  - Body keys:', Object.keys(req.body || {}));
+    console.log('  - File present:', !!req.file);
+    console.log('  - Files present:', !!req.files);
   }
   next();
 });
