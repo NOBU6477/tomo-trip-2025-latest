@@ -291,6 +291,39 @@ app.use(express.static(path.join(__dirname, 'public'), {
   }
 }));
 
+// Error handling middleware (must be after all routes)
+app.use((err, req, res, next) => {
+  console.error('❌ Express Error Handler:', err);
+  console.error('  - Error message:', err.message);
+  console.error('  - Error stack:', err.stack);
+  console.error('  - Request path:', req.path);
+  console.error('  - Request method:', req.method);
+  
+  // Handle multer errors
+  if (err.code === 'LIMIT_FILE_SIZE') {
+    return res.status(400).json({
+      success: false,
+      error: 'FILE_TOO_LARGE',
+      message: 'ファイルサイズが大きすぎます（最大10MB）'
+    });
+  }
+  
+  if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+    return res.status(400).json({
+      success: false,
+      error: 'UNEXPECTED_FILE',
+      message: 'ファイルフィールド名が正しくありません'
+    });
+  }
+  
+  // Generic error response
+  res.status(err.status || 500).json({
+    success: false,
+    error: 'INTERNAL_ERROR',
+    message: err.message || 'サーバーエラーが発生しました'
+  });
+});
+
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
