@@ -26,8 +26,10 @@ class ObjectStorageService {
   // Upload file buffer directly to object storage
   async uploadFileBuffer(buffer, objectPath, contentType = 'application/octet-stream') {
     try {
-      // Remove leading slash and convert path to simple filename
+      // Normalize path: remove leading slash if present
       const fileName = objectPath.startsWith('/') ? objectPath.substring(1) : objectPath;
+      
+      console.log(`📤 Uploading file: objectPath="${objectPath}" → fileName="${fileName}"`);
       
       // Upload file buffer using Replit Object Storage
       const result = await objectStorageClient.uploadFromBytes(fileName, buffer);
@@ -37,7 +39,7 @@ class ObjectStorageService {
         throw new Error(`Upload failed: ${result.error}`);
       }
 
-      console.log(`✅ File uploaded to ${fileName}`);
+      console.log(`✅ File uploaded successfully to: ${fileName}`);
       
       return {
         success: true,
@@ -53,16 +55,20 @@ class ObjectStorageService {
   // Download file from object storage and send to response
   async downloadFile(fileName, res, cacheTtlSec = 3600) {
     try {
+      console.log(`📥 Downloading file: ${fileName}`);
+      
       // Download file as bytes
       const result = await objectStorageClient.downloadAsBytes(fileName);
       
       if (!result.ok) {
-        console.error('❌ Download failed:', result.error);
+        console.error(`❌ Download failed for ${fileName}:`, result.error);
         throw new ObjectNotFoundError();
       }
 
       // Determine content type from file extension
       const contentType = this.getContentType(fileName);
+      
+      console.log(`✅ File downloaded successfully: ${fileName} (${result.value.length} bytes, ${contentType})`);
       
       res.set({
         "Content-Type": contentType,
@@ -72,7 +78,7 @@ class ObjectStorageService {
 
       res.send(result.value);
     } catch (error) {
-      console.error("Error downloading file:", error);
+      console.error(`❌ Error downloading file ${fileName}:`, error);
       if (!res.headersSent) {
         if (error instanceof ObjectNotFoundError) {
           res.status(404).json({ error: "File not found" });
@@ -116,11 +122,15 @@ class ObjectStorageService {
   // Get file path from URL path (removes /objects/ prefix)
   getFileNameFromPath(urlPath) {
     // /objects/uploads/abc-123 -> uploads/abc-123
+    let fileName;
     if (urlPath.startsWith('/objects/')) {
-      return urlPath.substring(9); // Remove '/objects/'
+      fileName = urlPath.substring(9); // Remove '/objects/'
+    } else {
+      // Remove leading slash
+      fileName = urlPath.startsWith('/') ? urlPath.substring(1) : urlPath;
     }
-    // Remove leading slash
-    return urlPath.startsWith('/') ? urlPath.substring(1) : urlPath;
+    console.log(`🔄 Path conversion: "${urlPath}" → "${fileName}"`);
+    return fileName;
   }
 }
 
