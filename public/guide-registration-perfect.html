@@ -718,6 +718,9 @@
                         body: photoFormData
                     });
                     
+                    console.log('📡 Upload response status:', uploadResponse.status);
+                    console.log('📡 Upload response headers:', [...uploadResponse.headers.entries()]);
+                    
                     if (!uploadResponse.ok) {
                         console.error('Upload failed with status:', uploadResponse.status);
                         const errorText = await uploadResponse.text();
@@ -728,7 +731,20 @@
                         return;
                     }
                     
-                    const uploadResult = await uploadResponse.json();
+                    let uploadResult;
+                    try {
+                        const responseText = await uploadResponse.text();
+                        console.log('📡 Raw response:', responseText.substring(0, 500));
+                        uploadResult = JSON.parse(responseText);
+                    } catch (parseError) {
+                        console.error('❌ JSON parse error:', parseError);
+                        console.error('❌ Response was not valid JSON');
+                        showToast('プロフィール写真のアップロードに失敗しました', 'error');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                        return;
+                    }
+                    
                     if (!uploadResult.success) {
                         console.error('Upload result not successful:', uploadResult);
                         showToast('プロフィール写真のアップロードに失敗しました', 'error');

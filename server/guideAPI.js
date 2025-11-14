@@ -346,10 +346,16 @@ class GuideAPIService {
 
   // Upload profile photo
   async uploadProfilePhoto(req, res) {
+    console.log('📥 uploadProfilePhoto() called');
+    console.log('  - sessionId:', req.body?.sessionId);
+    console.log('  - file present:', !!req.file);
+    console.log('  - file details:', req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'none');
+    
     try {
       const { sessionId } = req.body;
       
       if (!sessionId) {
+        console.error('❌ Missing sessionId');
         return res.status(400).json({
           success: false,
           error: 'MISSING_SESSION',
