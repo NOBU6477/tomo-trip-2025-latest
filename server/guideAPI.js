@@ -346,10 +346,11 @@ class GuideAPIService {
 
   // Upload profile photo
   async uploadProfilePhoto(req, res) {
-    console.log('📥 uploadProfilePhoto() called');
+    console.log('🚨🚨🚨 uploadProfilePhoto() ENTRY POINT 🚨🚨🚨');
     console.log('  - sessionId:', req.body?.sessionId);
     console.log('  - file present:', !!req.file);
     console.log('  - file details:', req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'none');
+    console.log('  - objectStorage available:', !!this.objectStorage);
     
     try {
       const { sessionId } = req.body;
