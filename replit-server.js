@@ -10,7 +10,7 @@ const { guideAPIService } = require('./server/guideAPI');
 const { adminAuthService } = require('./server/adminAuth');
 const { sponsorStoreAPIService } = require('./server/sponsorStoreAPI');
 const { sponsorReferralAPIService } = require('./server/sponsorReferralAPI');
-const { ObjectStorageService } = require('./server/objectStorage');
+const { FileStorageService } = require('./server/fileStorage');
 const { storeDashboardAPIService } = require('./server/storeDashboardAPI');
 const { guideDashboardAPIService } = require('./server/guideDashboardAPI');
 const { adminAPIService } = require('./server/adminAPI');
@@ -33,12 +33,12 @@ const upload = multer({
   }
 });
 
-// Initialize object storage
-const objectStorage = new ObjectStorageService();
+// Initialize file storage
+const fileStorage = new FileStorageService();
 
-// Initialize API services with object storage
-sponsorStoreAPIService.objectStorage = objectStorage;
-guideAPIService.objectStorage = objectStorage;
+// Initialize API services with file storage
+sponsorStoreAPIService.fileStorage = fileStorage;
+guideAPIService.fileStorage = fileStorage;
 
 // Replit-optimized server configuration
 const PORT = process.env.PORT || process.env.REPLIT_PORT || 5000;

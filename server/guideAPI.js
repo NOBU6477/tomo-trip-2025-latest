@@ -357,7 +357,7 @@ class GuideAPIService {
     console.log('  - sessionId:', req.body?.sessionId);
     console.log('  - file present:', !!req.file);
     console.log('  - file details:', req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'none');
-    console.log('  - objectStorage available:', !!this.objectStorage);
+    console.log('  - fileStorage available:', !!this.fileStorage);
     
     try {
       const { sessionId } = req.body;
@@ -388,26 +388,21 @@ class GuideAPIService {
         });
       }
 
-      // Upload file to Replit Object Storage
-      const fileId = randomUUID();
-      const fileName = `profile_${fileId}_${req.file.originalname}`;
-      const objectPath = `uploads/profiles/${fileName}`;
-
       try {
-        // Upload file buffer to object storage
-        const uploadResult = await this.objectStorage.uploadFileBuffer(
+        // Upload file buffer to file storage
+        const uploadResult = await this.fileStorage.uploadFileBuffer(
           req.file.buffer,
-          objectPath,
-          req.file.mimetype
+          'profiles',
+          req.file.originalname
         );
 
         // Construct public URL for the uploaded file
-        const profileImageUrl = `/objects/${objectPath}`;
+        const profileImageUrl = uploadResult.publicUrl;
 
         // Update session with profile photo info
         session.profilePhoto = {
-          fileId,
-          fileName,
+          fileId: uploadResult.fileId,
+          fileName: uploadResult.fileName,
           originalName: req.file.originalname,
           mimeType: req.file.mimetype,
           size: req.file.size,
@@ -425,8 +420,8 @@ class GuideAPIService {
         });
 
       } catch (uploadError) {
-        console.error('❌ Cloud storage upload error:', uploadError);
-        throw new Error('Failed to upload file to cloud storage');
+        console.error('❌ File storage upload error:', uploadError);
+        throw new Error('Failed to upload file to storage');
       }
 
     } catch (error) {
