@@ -345,11 +345,16 @@ class GuideAPIService {
 
   // Upload profile photo
   async uploadProfilePhoto(req, res) {
-    console.log('🚨🚨🚨 uploadProfilePhoto() ENTRY POINT 🚨🚨🚨');
-    console.log('  - sessionId:', req.body?.sessionId);
-    console.log('  - file present:', !!req.file);
-    console.log('  - file details:', req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'none');
-    console.log('  - fileStorage available:', !!this.fileStorage);
+    console.log('🚨 uploadProfilePhoto ENTRY 🚨', {
+      body: req.body,
+      hasFile: !!req.file,
+      file: req.file ? {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      } : null,
+      hasFileStorage: !!this.fileStorage
+    });
     
     // Defensive check for fileStorage
     if (!this.fileStorage) {
@@ -426,12 +431,14 @@ class GuideAPIService {
         throw new Error('Failed to upload file to storage');
       }
 
-    } catch (error) {
-      console.error('❌ Profile photo upload error:', error);
+    } catch (err) {
+      console.error('Error in uploadProfilePhoto:', err);
+      console.error('Error stack:', err.stack);
       res.status(500).json({
         success: false,
         error: 'UPLOAD_ERROR',
-        message: 'プロフィール写真アップロード中にエラーが発生しました'
+        message: 'プロフィール写真アップロード中にエラーが発生しました',
+        details: err.message
       });
     }
   }
