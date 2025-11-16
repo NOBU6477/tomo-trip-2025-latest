@@ -300,28 +300,21 @@ class GuideAPIService {
       const uploadedFiles = [];
       
       for (const file of req.files) {
-        const fileId = randomUUID();
-        const fileName = `${documentType}_${fileId}_${file.originalname}`;
-        const objectPath = `uploads/documents/${fileName}`;
-        
         try {
-          // Upload file buffer to object storage
-          await this.objectStorage.uploadFileBuffer(
+          // Upload file buffer to filesystem storage
+          const uploadResult = await this.fileStorage.uploadFileBuffer(
             file.buffer,
-            objectPath,
-            file.mimetype
+            'documents',
+            file.originalname
           );
           
-          // Construct public URL for the uploaded file
-          const documentUrl = `/objects/${objectPath}`;
-          
           uploadedFiles.push({
-            fileId,
-            fileName,
+            fileId: uploadResult.fileId,
+            fileName: uploadResult.fileName,
             originalName: file.originalname,
             mimeType: file.mimetype,
             size: file.size,
-            documentUrl
+            documentUrl: `/${uploadResult.relativePath}`
           });
         } catch (uploadError) {
           console.error(`❌ Failed to upload document: ${file.originalname}`, uploadError);
@@ -607,29 +600,25 @@ class GuideAPIService {
   }
 
   // Serve uploaded images (profile photos, documents, etc.)
+  // NOTE: With filesystem storage, files are served directly by Express static middleware
+  // This method is kept for backward compatibility but may not be needed
   async serveUploadedImage(req, res) {
     try {
       const objectPath = req.path;
       
       console.log(`🖼️ Image request for: ${objectPath}`);
       
-      // Convert URL path to file name (/objects/uploads/abc -> uploads/abc)
-      const fileName = this.objectStorage.getFileNameFromPath(objectPath);
-      
-      // Download and send the file to response
-      await this.objectStorage.downloadFile(fileName, res);
+      // Files are now served from public/uploads/ by Express static middleware
+      // This is handled automatically by app.use('/uploads', express.static('public/uploads'))
+      // If we reach here, the file doesn't exist
+      res.status(404).json({
+        success: false,
+        error: 'IMAGE_NOT_FOUND',
+        message: '画像が見つかりません'
+      });
       
     } catch (error) {
       console.error('❌ Error serving image:', error);
-      
-      if (error.name === 'ObjectNotFoundError') {
-        return res.status(404).json({
-          success: false,
-          error: 'IMAGE_NOT_FOUND',
-          message: '画像が見つかりません'
-        });
-      }
-      
       res.status(500).json({
         success: false,
         error: 'IMAGE_SERVE_ERROR',
