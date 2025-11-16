@@ -30,9 +30,16 @@ class ObjectStorageService {
       const fileName = objectPath.startsWith('/') ? objectPath.substring(1) : objectPath;
       
       console.log(`📤 Uploading file: objectPath="${objectPath}" → fileName="${fileName}"`);
+      console.log(`📤 Buffer type: ${buffer.constructor.name}, size: ${buffer.length} bytes`);
+      
+      // Convert Buffer to Uint8Array if needed
+      const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+      console.log(`📤 Converted to Uint8Array: ${bytes.length} bytes`);
       
       // Upload file buffer using Replit Object Storage
-      const result = await objectStorageClient.uploadFromBytes(fileName, buffer);
+      const result = await objectStorageClient.uploadFromBytes(fileName, bytes);
+      
+      console.log(`📤 Upload result:`, { ok: result.ok, error: result.error });
       
       if (!result.ok) {
         console.error('❌ Upload failed:', result.error);
@@ -48,6 +55,7 @@ class ObjectStorageService {
       };
     } catch (error) {
       console.error('❌ Error uploading file buffer:', error);
+      console.error('❌ Error stack:', error.stack);
       throw error;
     }
   }
