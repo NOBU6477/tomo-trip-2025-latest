@@ -7,12 +7,14 @@ const { randomUUID } = require('crypto');
 class FileStorageService {
   constructor() {
     this.uploadDir = path.join(__dirname, '..', 'public', 'uploads');
-    this.ensureUploadDirectories();
+    // Synchronously ensure directories exist
+    this.ensureUploadDirectoriesSync();
   }
 
-  // Ensure upload directories exist
-  async ensureUploadDirectories() {
+  // Ensure upload directories exist (synchronous version for constructor)
+  ensureUploadDirectoriesSync() {
     try {
+      const fsSync = require('fs');
       const dirs = [
         this.uploadDir,
         path.join(this.uploadDir, 'profiles'),
@@ -20,10 +22,8 @@ class FileStorageService {
       ];
 
       for (const dir of dirs) {
-        try {
-          await fs.access(dir);
-        } catch {
-          await fs.mkdir(dir, { recursive: true });
+        if (!fsSync.existsSync(dir)) {
+          fsSync.mkdirSync(dir, { recursive: true });
           console.log(`✅ Created directory: ${dir}`);
         }
       }
