@@ -169,6 +169,15 @@ app.get('/api/admin/verify', adminAuthService.requireAuth(), (req, res) => {
   });
 });
 
+// Request logging middleware
+app.use('/api/guides/upload-profile-photo', (req, res, next) => {
+  console.log('🔵 INCOMING REQUEST: /api/guides/upload-profile-photo');
+  console.log('  - Method:', req.method);
+  console.log('  - Headers:', JSON.stringify(req.headers, null, 2));
+  console.log('  - Body:', req.body);
+  next();
+});
+
 // Setup Guide API routes with multer upload
 guideAPIService.setupRoutes(app, upload);
 
