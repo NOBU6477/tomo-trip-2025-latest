@@ -6,6 +6,15 @@ const { randomUUID } = require('crypto');
 // Replit Object Storage client
 const objectStorageClient = new Client();
 
+// Initialize the client asynchronously
+let clientReady = false;
+objectStorageClient.init().then(() => {
+  clientReady = true;
+  console.log('✅ Object Storage client initialized successfully');
+}).catch(error => {
+  console.error('❌ Failed to initialize Object Storage client:', error);
+});
+
 class ObjectNotFoundError extends Error {
   constructor() {
     super("Object not found");
@@ -16,6 +25,16 @@ class ObjectNotFoundError extends Error {
 
 class ObjectStorageService {
   constructor() {}
+  
+  // Ensure client is ready before operations
+  async ensureClientReady() {
+    if (!clientReady) {
+      console.log('⏳ Waiting for Object Storage client to initialize...');
+      await objectStorageClient.init();
+      clientReady = true;
+      console.log('✅ Object Storage client ready');
+    }
+  }
 
   // Generate unique filename for uploads
   generateUploadPath(prefix = 'uploads') {
@@ -26,6 +45,9 @@ class ObjectStorageService {
   // Upload file buffer directly to object storage
   async uploadFileBuffer(buffer, objectPath, contentType = 'application/octet-stream') {
     try {
+      // Ensure client is initialized
+      await this.ensureClientReady();
+      
       // Normalize path: remove leading slash if present
       const fileName = objectPath.startsWith('/') ? objectPath.substring(1) : objectPath;
       
@@ -63,6 +85,9 @@ class ObjectStorageService {
   // Download file from object storage and send to response
   async downloadFile(fileName, res, cacheTtlSec = 3600) {
     try {
+      // Ensure client is initialized
+      await this.ensureClientReady();
+      
       console.log(`📥 Downloading file: ${fileName}`);
       
       // Download file as bytes
