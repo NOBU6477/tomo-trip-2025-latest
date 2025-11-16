@@ -1,7 +1,6 @@
 // Guide Registration API for TomoTrip
 // Integrates SMS verification, file upload, and database storage
 const { smsService } = require('./smsService');
-const { ObjectStorageService } = require('./objectStorage');
 const { adminAuthService } = require('./adminAuth');
 // Database storage - use simple file storage for now
 const fs = require('fs');
@@ -10,7 +9,7 @@ const { randomUUID } = require('crypto');
 
 class GuideAPIService {
   constructor() {
-    this.objectStorage = new ObjectStorageService();
+    this.fileStorage = null; // Will be injected by server initialization
     this.guidesFilePath = path.join(__dirname, '../data/guides.json');
     this.touristsFilePath = path.join(__dirname, '../data/tourists.json');
     this.pendingRegistrations = new Map(); // Temporary storage for incomplete registrations
@@ -358,6 +357,16 @@ class GuideAPIService {
     console.log('  - file present:', !!req.file);
     console.log('  - file details:', req.file ? `${req.file.originalname} (${req.file.size} bytes)` : 'none');
     console.log('  - fileStorage available:', !!this.fileStorage);
+    
+    // Defensive check for fileStorage
+    if (!this.fileStorage) {
+      console.error('❌ CRITICAL: fileStorage not initialized!');
+      return res.status(500).json({
+        success: false,
+        error: 'STORAGE_NOT_INITIALIZED',
+        message: 'ファイルストレージが初期化されていません'
+      });
+    }
     
     try {
       const { sessionId } = req.body;
