@@ -349,6 +349,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Global state management
+        const state = {
+            phoneSessionId: null,
+            isEmailValid: false
+        };
+
         // Phone number formatting utility
         function formatPhoneNumber(phone) {
             // Remove all non-digits
