@@ -660,7 +660,7 @@
         document.getElementById('guideRegistrationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            if (!sessionId) {
+            if (!state.phoneSessionId) {
                 showToast('電話認証を完了してください', 'error', 'phoneNumber');
                 return;
             }
@@ -702,7 +702,7 @@
             
             try {
                 // Check if profile photo already uploaded
-                let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${sessionId}`);
+                let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${state.phoneSessionId}`);
                 
                 // Upload profile photo only if not already uploaded
                 const profilePhotoFile = document.getElementById('profilePhoto').files[0];
@@ -710,7 +710,7 @@
                     submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>プロフィール写真アップロード中...';
                     
                     const photoFormData = new FormData();
-                    photoFormData.append('sessionId', sessionId);
+                    photoFormData.append('sessionId', state.phoneSessionId);
                     photoFormData.append('profilePhoto', profilePhotoFile);
                     
                     const uploadResponse = await fetch('/api/guides/upload-profile-photo', {
@@ -757,7 +757,7 @@
                     
                     // Store uploaded photo URL in session storage
                     profileImageUrl = uploadResult.profileImageUrl;
-                    sessionStorage.setItem(`profileImageUrl_${sessionId}`, profileImageUrl);
+                    sessionStorage.setItem(`profileImageUrl_${state.phoneSessionId}`, profileImageUrl);
                 } else if (profileImageUrl) {
                     console.log('✅ Using previously uploaded profile photo:', profileImageUrl);
                 }
@@ -790,7 +790,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        sessionId: sessionId,
+                        sessionId: state.phoneSessionId,
                         guideData: data
                     })
                 });
