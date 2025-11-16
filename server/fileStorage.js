@@ -18,7 +18,8 @@ class FileStorageService {
       const dirs = [
         this.uploadDir,
         path.join(this.uploadDir, 'profiles'),
-        path.join(this.uploadDir, 'documents')
+        path.join(this.uploadDir, 'documents'),
+        path.join(this.uploadDir, 'stores')
       ];
 
       for (const dir of dirs) {

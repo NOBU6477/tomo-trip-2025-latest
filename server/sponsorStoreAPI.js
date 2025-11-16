@@ -4,9 +4,9 @@ const path = require('path');
 const { randomUUID } = require('crypto');
 
 class SponsorStoreAPIService {
-  constructor(objectStorage = null) {
+  constructor() {
     this.storesFilePath = path.join(__dirname, '../data/sponsor-stores.json');
-    this.objectStorage = objectStorage;
+    this.fileStorage = null; // Will be injected by server initialization
     this.ensureDataDirectory();
   }
 
@@ -161,21 +161,26 @@ class SponsorStoreAPIService {
         });
       }
 
-      // Upload file to Google Cloud Storage
-      const fileId = randomUUID();
-      const fileName = `store_${fileId}_${req.file.originalname}`;
-      const objectPath = `/tomotrip-private/uploads/stores/${fileName}`;
+      // Defensive check for fileStorage
+      if (!this.fileStorage) {
+        console.error('❌ CRITICAL: fileStorage not initialized!');
+        return res.status(500).json({
+          success: false,
+          error: 'STORAGE_NOT_INITIALIZED',
+          message: 'ファイルストレージが初期化されていません'
+        });
+      }
 
       try {
-        // Upload file buffer to object storage
-        const uploadResult = await this.objectStorage.uploadFileBuffer(
+        // Upload file buffer to filesystem storage
+        const uploadResult = await this.fileStorage.uploadFileBuffer(
           req.file.buffer,
-          objectPath,
-          req.file.mimetype
+          'stores',
+          req.file.originalname
         );
 
         // Construct public URL for the uploaded file
-        const imageUrl = `/objects${objectPath}`;
+        const imageUrl = uploadResult.publicUrl;
 
         // Update store with image URL
         const updatedStore = this.updateStore(storeId, { imageUrl });
@@ -190,8 +195,8 @@ class SponsorStoreAPIService {
         });
 
       } catch (uploadError) {
-        console.error('❌ Cloud storage upload error:', uploadError);
-        throw new Error('Failed to upload file to cloud storage');
+        console.error('❌ File storage upload error:', uploadError);
+        throw new Error('Failed to upload file to storage');
       }
 
     } catch (error) {
