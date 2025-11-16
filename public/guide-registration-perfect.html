@@ -450,7 +450,7 @@
         }
 
         // Shared application state
-        let appState = {
+        let state = {
             isEmailValid: false,
             phoneSessionId: null
         };
@@ -462,9 +462,9 @@
             // Call all initialization functions
             initializePrefectureSelect();
             setupDocumentUpload();
-            initializeEmailValidation(appState);
-            initializePhoneVerification(appState);
-            initializeFormSubmission(appState);
+            initializeEmailValidation(state);
+            initializePhoneVerification(state);
+            initializeFormSubmission(state);
             initializeCancelButton();
             
             console.log('✅ All features initialized successfully');
