@@ -661,171 +661,6 @@
                 }
             });
         }
-
-        // Form submission with real API
-        document.getElementById('guideRegistrationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (!state.phoneSessionId) {
-                showToast('電話認証を完了してください', 'error', 'phoneNumber');
-                return;
-            }
-            
-            // Validate document upload based on type
-            const documentType = document.getElementById('documentType').value;
-            if (!documentType) {
-                showToast('証明書タイプを選択してください', 'error', 'documentType');
-                return;
-            }
-            
-            if (documentType === 'drivers_license' || documentType === 'insurance_card') {
-                // Dual upload validation
-                const frontFile = document.getElementById('documentFront').files[0];
-                const backFile = document.getElementById('documentBack').files[0];
-                
-                if (!frontFile) {
-                    showToast('証明書の表面写真をアップロードしてください', 'error', 'documentFront');
-                    return;
-                }
-                if (!backFile) {
-                    showToast('証明書の裏面写真をアップロードしてください', 'error', 'documentBack');
-                    return;
-                }
-            } else {
-                // Single upload validation
-                const documentFile = document.getElementById('documentFile').files[0];
-                if (!documentFile) {
-                    showToast('証明書をアップロードしてください', 'error', 'documentFile');
-                    return;
-                }
-            }
-            
-            // Disable submit button
-            const submitBtn = document.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
-            
-            try {
-                // Check if profile photo already uploaded
-                let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${state.phoneSessionId}`);
-                
-                // Upload profile photo only if not already uploaded
-                const profilePhotoFile = document.getElementById('profilePhoto').files[0];
-                if (profilePhotoFile && !profileImageUrl) {
-                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>プロフィール写真アップロード中...';
-                    
-                    const photoFormData = new FormData();
-                    photoFormData.append('sessionId', state.phoneSessionId);
-                    photoFormData.append('profilePhoto', profilePhotoFile);
-                    
-                    const uploadResponse = await fetch('/api/guides/upload-profile-photo', {
-                        method: 'POST',
-                        body: photoFormData
-                    });
-                    
-                    console.log('📡 Upload response status:', uploadResponse.status);
-                    console.log('📡 Upload response headers:', [...uploadResponse.headers.entries()]);
-                    
-                    if (!uploadResponse.ok) {
-                        console.error('Upload failed with status:', uploadResponse.status);
-                        const errorText = await uploadResponse.text();
-                        console.error('Error response:', errorText);
-                        showToast('プロフィール写真のアップロードに失敗しました', 'error');
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalText;
-                        return;
-                    }
-                    
-                    let uploadResult;
-                    try {
-                        const responseText = await uploadResponse.text();
-                        console.log('📡 Raw response:', responseText.substring(0, 500));
-                        uploadResult = JSON.parse(responseText);
-                    } catch (parseError) {
-                        console.error('❌ JSON parse error:', parseError);
-                        console.error('❌ Response was not valid JSON');
-                        showToast('プロフィール写真のアップロードに失敗しました', 'error');
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalText;
-                        return;
-                    }
-                    
-                    if (!uploadResult.success) {
-                        console.error('Upload result not successful:', uploadResult);
-                        showToast('プロフィール写真のアップロードに失敗しました', 'error');
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalText;
-                        return;
-                    }
-                    
-                    console.log('✅ Profile photo uploaded:', uploadResult.profileImageUrl);
-                    
-                    // Store uploaded photo URL in session storage
-                    profileImageUrl = uploadResult.profileImageUrl;
-                    sessionStorage.setItem(`profileImageUrl_${state.phoneSessionId}`, profileImageUrl);
-                } else if (profileImageUrl) {
-                    console.log('✅ Using previously uploaded profile photo:', profileImageUrl);
-                }
-                
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
-                
-                const formData = new FormData(this);
-                const data = Object.fromEntries(formData);
-                
-                // Add profile image URL if uploaded
-                if (profileImageUrl) {
-                    data.profileImageUrl = profileImageUrl;
-                    console.log('📸 Including profileImageUrl in registration:', profileImageUrl);
-                }
-                
-                // Get selected languages
-                const languageSelect = document.getElementById('guideLanguages');
-                const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
-                data.guideLanguages = selectedLanguages;
-                
-                // Set registration language (Japanese version)
-                data.registrationLanguage = 'ja';
-                
-                console.log('Complete guide registration data:', data);
-                console.log('FormData keys:', Object.keys(data));
-                
-                const response = await fetch('/api/guides/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        sessionId: state.phoneSessionId,
-                        guideData: data
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showToast(result.message || 'ガイド登録が完了しました！', 'success');
-                    
-                    // Show beautiful success modal with edit option
-                    setTimeout(() => {
-                        showRegistrationCompleteModal(result.guideId, data.guideName, selectedLanguages, data.guideSessionRate);
-                    }, 1000);
-                } else {
-                    // Handle duplicate email error specifically
-                    if (result.error === 'DUPLICATE_EMAIL') {
-                        showToast('このメールアドレスは既に登録されています。別のメールアドレスをご使用ください。', 'error', 'guideEmail');
-                    } else {
-                        processServerError(result.message || '登録に失敗しました');
-                    }
-                }
-            } catch (error) {
-                console.error('登録エラー:', error);
-                showToast('ネットワークエラーが発生しました', 'error');
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-            }
-        });
         
         // Toast notification system with field scroll
         function showToast(message, type = 'info', fieldId = null) {
@@ -1164,8 +999,177 @@
 
         // Form submission initialization
         function initializeFormSubmission(state) {
-            // Temporarily placeholder - form submission logic will be added
-            console.log('✅ Form submission initialized (placeholder)');
+            const form = document.getElementById('guideRegistrationForm');
+            if (!form) {
+                console.error('❌ Form submission: Form element not found');
+                return;
+            }
+            
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                if (!state.phoneSessionId) {
+                    showToast('電話認証を完了してください', 'error', 'phoneNumber');
+                    return;
+                }
+                
+                // Validate document upload based on type
+                const documentType = document.getElementById('documentType').value;
+                if (!documentType) {
+                    showToast('証明書タイプを選択してください', 'error', 'documentType');
+                    return;
+                }
+                
+                if (documentType === 'drivers_license' || documentType === 'insurance_card') {
+                    // Dual upload validation
+                    const frontFile = document.getElementById('documentFront').files[0];
+                    const backFile = document.getElementById('documentBack').files[0];
+                    
+                    if (!frontFile) {
+                        showToast('証明書の表面写真をアップロードしてください', 'error', 'documentFront');
+                        return;
+                    }
+                    if (!backFile) {
+                        showToast('証明書の裏面写真をアップロードしてください', 'error', 'documentBack');
+                        return;
+                    }
+                } else {
+                    // Single upload validation
+                    const documentFile = document.getElementById('documentFile').files[0];
+                    if (!documentFile) {
+                        showToast('証明書をアップロードしてください', 'error', 'documentFile');
+                        return;
+                    }
+                }
+                
+                // Disable submit button
+                const submitBtn = document.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
+                
+                try {
+                    // Check if profile photo already uploaded
+                    let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${state.phoneSessionId}`);
+                    
+                    // Upload profile photo only if not already uploaded
+                    const profilePhotoFile = document.getElementById('profilePhoto').files[0];
+                    if (profilePhotoFile && !profileImageUrl) {
+                        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>プロフィール写真アップロード中...';
+                        
+                        const photoFormData = new FormData();
+                        photoFormData.append('sessionId', state.phoneSessionId);
+                        photoFormData.append('profilePhoto', profilePhotoFile);
+                        
+                        const uploadResponse = await fetch('/api/guides/upload-profile-photo', {
+                            method: 'POST',
+                            body: photoFormData
+                        });
+                        
+                        console.log('📡 Upload response status:', uploadResponse.status);
+                        console.log('📡 Upload response headers:', [...uploadResponse.headers.entries()]);
+                        
+                        if (!uploadResponse.ok) {
+                            console.error('Upload failed with status:', uploadResponse.status);
+                            const errorText = await uploadResponse.text();
+                            console.error('Error response:', errorText);
+                            showToast('プロフィール写真のアップロードに失敗しました', 'error');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                            return;
+                        }
+                        
+                        let uploadResult;
+                        try {
+                            const responseText = await uploadResponse.text();
+                            console.log('📡 Raw response:', responseText.substring(0, 500));
+                            uploadResult = JSON.parse(responseText);
+                        } catch (parseError) {
+                            console.error('❌ JSON parse error:', parseError);
+                            console.error('❌ Response was not valid JSON');
+                            showToast('プロフィール写真のアップロードに失敗しました', 'error');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                            return;
+                        }
+                        
+                        if (!uploadResult.success) {
+                            console.error('Upload result not successful:', uploadResult);
+                            showToast('プロフィール写真のアップロードに失敗しました', 'error');
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalText;
+                            return;
+                        }
+                        
+                        console.log('✅ Profile photo uploaded:', uploadResult.profileImageUrl);
+                        
+                        // Store uploaded photo URL in session storage
+                        profileImageUrl = uploadResult.profileImageUrl;
+                        sessionStorage.setItem(`profileImageUrl_${state.phoneSessionId}`, profileImageUrl);
+                    } else if (profileImageUrl) {
+                        console.log('✅ Using previously uploaded profile photo:', profileImageUrl);
+                    }
+                    
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>登録中...';
+                    
+                    const formData = new FormData(form);
+                    const data = Object.fromEntries(formData);
+                    
+                    // Add profile image URL if uploaded
+                    if (profileImageUrl) {
+                        data.profileImageUrl = profileImageUrl;
+                        console.log('📸 Including profileImageUrl in registration:', profileImageUrl);
+                    }
+                    
+                    // Get selected languages
+                    const languageSelect = document.getElementById('guideLanguages');
+                    const selectedLanguages = Array.from(languageSelect.selectedOptions).map(option => option.value);
+                    data.guideLanguages = selectedLanguages;
+                    
+                    // Set registration language (Japanese version)
+                    data.registrationLanguage = 'ja';
+                    
+                    console.log('Complete guide registration data:', data);
+                    console.log('FormData keys:', Object.keys(data));
+                    
+                    const response = await fetch('/api/guides/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            sessionId: state.phoneSessionId,
+                            guideData: data
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        showToast(result.message || 'ガイド登録が完了しました！', 'success');
+                        
+                        // Show beautiful success modal with edit option
+                        setTimeout(() => {
+                            showRegistrationCompleteModal(result.guideId, data.guideName, selectedLanguages, data.guideSessionRate);
+                        }, 1000);
+                    } else {
+                        // Handle duplicate email error specifically
+                        if (result.error === 'DUPLICATE_EMAIL') {
+                            showToast('このメールアドレスは既に登録されています。別のメールアドレスをご使用ください。', 'error', 'guideEmail');
+                        } else {
+                            processServerError(result.message || '登録に失敗しました');
+                        }
+                    }
+                } catch (error) {
+                    console.error('登録エラー:', error);
+                    showToast('ネットワークエラーが発生しました', 'error');
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            });
+            
+            console.log('✅ Form submission initialized');
         }
 
         // Cancel button initialization  
