@@ -736,8 +736,8 @@ function openGuideRegistration() {
     
     // Route to language-appropriate page
     const registrationPage = currentLang === 'en'
-        ? 'guide-registration-perfect-en.html'
-        : 'guide-registration-perfect.html';
+        ? 'guide-registration-v2.html'
+        : 'guide-registration-v2.html';
     
     // Open the guide registration form in new window
     try {
