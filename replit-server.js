@@ -71,6 +71,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// 開発用: すべての HTML と JS キャッシュを無効化
+app.use((req, res, next) => {
+  if (req.path.endsWith('.html') || req.path.endsWith('.js')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
 // Fix .mjs MIME type for ES6 modules
 app.use((req, res, next) => {
   if (req.path.endsWith('.mjs')) {
@@ -281,6 +291,16 @@ app.delete('/api/admin/ranks/:name', (req, res) => {
     console.error('Error deleting rank:', error);
     res.status(500).json({ error: 'Failed to delete rank' });
   }
+});
+
+// 明示的なルート: guide-registration-perfect.html を確実に配信
+app.get('/guide-registration-perfect.html', (req, res) => {
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+  res.sendFile(path.join(__dirname, 'public', 'guide-registration-perfect.html'));
 });
 
 // Serve static files with NO caching for HTML/JS files

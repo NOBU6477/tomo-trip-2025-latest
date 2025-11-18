@@ -349,8 +349,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Global state management
-        const state = {
+        // Global state management - window.TT_STATE で統一
+        window.TT_STATE = {
             phoneSessionId: null,
             isEmailValid: false
         };
@@ -452,22 +452,22 @@
         // Initialize all event listeners when DOM is ready
         function initializeApp() {
             console.log('[TomoTrip] initializeApp called');
-            console.log('[TomoTrip] state object:', state);
+            console.log('[TomoTrip] TT_STATE object:', window.TT_STATE);
             
-            // Call all initialization functions
+            // Call all initialization functions - 引数なし、window.TT_STATE を直接参照
             initializePrefectureSelect();
             setupDocumentUpload();
-            initializeEmailValidation(state);
-            initializePhoneVerification(state);
-            initializeFormSubmission(state);
+            initializeEmailValidation();
+            initializePhoneVerification();
+            initializeFormSubmission();
             initializeCancelButton();
             
             console.log('[TomoTrip] All features initialized successfully');
         }
 
         // Email validation initialization
-        function initializeEmailValidation(state) {
-            console.log('[TomoTrip] initializeEmailValidation called');
+        function initializeEmailValidation() {
+            console.log('[TomoTrip] initializeEmailValidation called, TT_STATE =', window.TT_STATE);
             const emailInput = document.getElementById('guideEmail');
             const emailFeedback = document.getElementById('emailFeedback');
             
@@ -497,7 +497,7 @@
                     console.log('❌ Invalid email format:', email);
                     emailInput.classList.add('is-invalid');
                     emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>有効なメールアドレスを入力してください</span>';
-                    state.isEmailValid = false;
+                    window.TT_STATE.isEmailValid = false;
                     return;
                 }
                 
@@ -516,18 +516,18 @@
                             console.log('✅ Email is available');
                             emailInput.classList.add('is-valid');
                             emailFeedback.innerHTML = '<span class="text-success"><i class="bi bi-check-circle me-1"></i>このメールアドレスは使用可能です</span>';
-                            state.isEmailValid = true;
+                            window.TT_STATE.isEmailValid = true;
                         } else {
                             console.log('❌ Email is already registered');
                             emailInput.classList.add('is-invalid');
                             emailFeedback.innerHTML = '<span class="text-danger"><i class="bi bi-x-circle me-1"></i>このメールアドレスは既に登録されています</span>';
-                            state.isEmailValid = false;
+                            window.TT_STATE.isEmailValid = false;
                         }
                     }
                 } catch (error) {
                     console.error('❌ Email check error:', error);
                     emailFeedback.innerHTML = '<span class="text-warning"><i class="bi bi-exclamation-triangle me-1"></i>メールアドレスの確認に失敗しました</span>';
-                    state.isEmailValid = false;
+                    window.TT_STATE.isEmailValid = false;
                 }
             });
         
@@ -536,14 +536,14 @@
                 if (emailFeedback.innerHTML) {
                     emailFeedback.innerHTML = '';
                     emailInput.classList.remove('is-valid', 'is-invalid');
-                    state.isEmailValid = false;
+                    window.TT_STATE.isEmailValid = false;
                 }
             });
         }
 
         // Phone verification initialization
-        function initializePhoneVerification(state) {
-            console.log('[TomoTrip] initializePhoneVerification called');
+        function initializePhoneVerification() {
+            console.log('[TomoTrip] initializePhoneVerification called, TT_STATE =', window.TT_STATE);
             const sendBtn = document.getElementById('sendVerificationCode');
             if (!sendBtn) {
                 console.error('[TomoTrip] Phone verification: sendVerificationCode button not found');
@@ -638,7 +638,9 @@
                     verificationResult = await response.json();
                     
                     if (verificationResult.success) {
-                        state.phoneSessionId = verificationResult.sessionId;
+                        console.log('[TomoTrip] before setting phoneSessionId, TT_STATE =', window.TT_STATE);
+                        window.TT_STATE.phoneSessionId = verificationResult.sessionId;
+                        console.log('[TomoTrip] after setting phoneSessionId, TT_STATE =', window.TT_STATE);
                         showToast(verificationResult.message || '電話認証が完了しました！', 'success');
                         verifyBtn.classList.remove('btn-primary');
                         verifyBtn.classList.add('btn-success');
@@ -996,8 +998,8 @@
         }
 
         // Form submission initialization
-        function initializeFormSubmission(state) {
-            console.log('[TomoTrip] initializeFormSubmission called, state =', state);
+        function initializeFormSubmission() {
+            console.log('[TomoTrip] initializeFormSubmission called, TT_STATE =', window.TT_STATE);
             const form = document.getElementById('guideRegistrationForm');
             console.log('[TomoTrip] form element =', form);
             if (!form) {
@@ -1006,10 +1008,10 @@
             }
             
             form.addEventListener('submit', async function(e) {
-                console.log('[TomoTrip] submit handler START');
+                console.log('[TomoTrip] submit handler START, TT_STATE =', window.TT_STATE);
                 e.preventDefault();
                 
-                if (!state.phoneSessionId) {
+                if (!window.TT_STATE.phoneSessionId) {
                     showToast('電話認証を完了してください', 'error', 'phoneNumber');
                     return;
                 }
@@ -1051,7 +1053,7 @@
                 
                 try {
                     // Check if profile photo already uploaded
-                    let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${state.phoneSessionId}`);
+                    let profileImageUrl = sessionStorage.getItem(`profileImageUrl_${window.TT_STATE.phoneSessionId}`);
                     
                     // Upload profile photo only if not already uploaded
                     const profilePhotoFile = document.getElementById('profilePhoto').files[0];
@@ -1059,7 +1061,7 @@
                         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>プロフィール写真アップロード中...';
                         
                         const photoFormData = new FormData();
-                        photoFormData.append('sessionId', state.phoneSessionId);
+                        photoFormData.append('sessionId', window.TT_STATE.phoneSessionId);
                         photoFormData.append('profilePhoto', profilePhotoFile);
                         
                         const uploadResponse = await fetch('/api/guides/upload-profile-photo', {
@@ -1106,7 +1108,7 @@
                         
                         // Store uploaded photo URL in session storage
                         profileImageUrl = uploadResult.profileImageUrl;
-                        sessionStorage.setItem(`profileImageUrl_${state.phoneSessionId}`, profileImageUrl);
+                        sessionStorage.setItem(`profileImageUrl_${window.TT_STATE.phoneSessionId}`, profileImageUrl);
                     } else if (profileImageUrl) {
                         console.log('✅ Using previously uploaded profile photo:', profileImageUrl);
                     }
@@ -1139,7 +1141,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            sessionId: state.phoneSessionId,
+                            sessionId: window.TT_STATE.phoneSessionId,
                             guideData: data
                         })
                     });
