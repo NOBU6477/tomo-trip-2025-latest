@@ -303,6 +303,21 @@ app.get('/guide-registration-perfect.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'guide-registration-perfect.html'));
 });
 
+// V2ルート: 完全にキャッシュをバイパスする新しいエンドポイント
+app.get('/guide-registration-v2.html', (req, res) => {
+  const filePath = path.join(__dirname, 'public', 'guide-registration-v2.html');
+  res.set({
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-cache, no-store, must-revalidate, private',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'Last-Modified': new Date().toUTCString(),
+    'ETag': Date.now().toString()
+  });
+  const content = fs.readFileSync(filePath, 'utf8');
+  res.send(content);
+});
+
 // Serve static files with NO caching for HTML/JS files
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: 0,           // Disable memory caching
