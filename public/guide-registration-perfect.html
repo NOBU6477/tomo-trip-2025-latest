@@ -449,15 +449,10 @@
             });
         }
 
-        // Shared application state
-        let state = {
-            isEmailValid: false,
-            phoneSessionId: null
-        };
-
         // Initialize all event listeners when DOM is ready
         function initializeApp() {
-            console.log('🚀 Initializing TomoTrip Guide Registration...');
+            console.log('[TomoTrip] initializeApp called');
+            console.log('[TomoTrip] state object:', state);
             
             // Call all initialization functions
             initializePrefectureSelect();
@@ -467,20 +462,21 @@
             initializeFormSubmission(state);
             initializeCancelButton();
             
-            console.log('✅ All features initialized successfully');
+            console.log('[TomoTrip] All features initialized successfully');
         }
 
         // Email validation initialization
         function initializeEmailValidation(state) {
+            console.log('[TomoTrip] initializeEmailValidation called');
             const emailInput = document.getElementById('guideEmail');
             const emailFeedback = document.getElementById('emailFeedback');
             
             if (!emailInput || !emailFeedback) {
-                console.error('❌ Email validation: Required elements not found');
+                console.error('[TomoTrip] Email validation: Required elements not found');
                 return;
             }
             
-            console.log('✅ Email validation initialized');
+            console.log('[TomoTrip] Email validation initialized');
             
             emailInput.addEventListener('blur', async function() {
                 console.log('🔍 Email blur event triggered, checking:', this.value);
@@ -547,13 +543,14 @@
 
         // Phone verification initialization
         function initializePhoneVerification(state) {
+            console.log('[TomoTrip] initializePhoneVerification called');
             const sendBtn = document.getElementById('sendVerificationCode');
             if (!sendBtn) {
-                console.error('❌ Phone verification: sendVerificationCode button not found');
+                console.error('[TomoTrip] Phone verification: sendVerificationCode button not found');
                 return;
             }
             
-            console.log('✅ Phone verification initialized');
+            console.log('[TomoTrip] Phone verification initialized');
             
             sendBtn.addEventListener('click', async function() {
                 const phone = document.getElementById('guidePhone').value;
@@ -784,6 +781,7 @@
         
         // Initialize prefecture selection
         async function initializePrefectureSelect() {
+            console.log('[TomoTrip] initializePrefectureSelect called');
             try {
                 const { generatePrefectureOptions } = await import('/assets/js/ui/prefecture-selector.mjs');
                 const locationSelect = document.getElementById('guideLocation');
@@ -999,13 +997,16 @@
 
         // Form submission initialization
         function initializeFormSubmission(state) {
+            console.log('[TomoTrip] initializeFormSubmission called, state =', state);
             const form = document.getElementById('guideRegistrationForm');
+            console.log('[TomoTrip] form element =', form);
             if (!form) {
-                console.error('❌ Form submission: Form element not found');
+                console.error('[TomoTrip] guideRegistrationForm not found in DOM');
                 return;
             }
             
             form.addEventListener('submit', async function(e) {
+                console.log('[TomoTrip] submit handler START');
                 e.preventDefault();
                 
                 if (!state.phoneSessionId) {
@@ -1161,26 +1162,29 @@
                         }
                     }
                 } catch (error) {
-                    console.error('登録エラー:', error);
+                    console.error('[TomoTrip] Error in submit handler:', error);
+                    console.error('[TomoTrip] Error stack:', error.stack);
                     showToast('ネットワークエラーが発生しました', 'error');
+                    alert('ガイド登録処理中にエラーが発生しました。コンソールログを確認してください。');
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = originalText;
                 }
             });
             
-            console.log('✅ Form submission initialized');
+            console.log('[TomoTrip] Form submission initialized');
         }
 
         // Cancel button initialization  
         function initializeCancelButton() {
+            console.log('[TomoTrip] initializeCancelButton called');
             const cancelBtn = document.getElementById('cancelRegistrationBtn');
             if (cancelBtn) {
                 cancelBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     cancelRegistration();
                 });
-                console.log('✅ Cancel button initialized');
+                console.log('[TomoTrip] Cancel button initialized');
             }
         }
 
