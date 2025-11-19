@@ -4,7 +4,7 @@
 // IMMEDIATE TEST: This should appear first in browser console
 console.log('🔥 URGENT TEST: app-init.mjs is executing!');
 
-import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs?v=20241119-debug';
+import { setupEventListeners, wireSponsorButtons, wireLanguageSwitcher } from './events/event-handlers.mjs?v=20251119-entry-fix';
 // import './emergency-buttons.mjs'; // COMMENTED OUT - FILE MISSING, CAUSING MODULE LOAD FAILURE
 import { renderGuideCards, updateGuideCounters } from './ui/guide-renderer.mjs';
 // ✅ 修正済み検索機能をインポート
