@@ -724,12 +724,12 @@ function setupSponsorButtonEvents() {
     const regBtnMobile = document.getElementById('sponsorRegBtnMobile');
     const loginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
     
-    // Header register button - SIMPLE DIRECT HANDLER (デバッグモード)
+    // Header register button - NEW ENTRY POINT (キャッシュ回避版)
     if (registerBtn) {
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('[TomoTrip] registerBtn clicked - SIMPLE DIRECT HANDLER');
-            const registrationPage = '/guide-registration-v2.html';
+            console.log('[TomoTrip] registerBtn clicked - opening entry page');
+            const registrationPage = '/guide-registration-entry.html';
             window.open(registrationPage, '_blank');
         });
     }

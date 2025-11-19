@@ -726,37 +726,26 @@ function openTouristRegistration() {
 }
 
 function openGuideRegistration() {
-    console.log('[TomoTrip] openGuideRegistration called');
+    console.log('[TomoTrip] openGuideRegistration called - using entry page');
     hideRegistrationChoice();
     
-    // Detect current language
-    const getCurrentLang = () => {
-        const pathname = window.location.pathname;
-        return pathname.includes('index-en.html') ? 'en' : 'ja';
-    };
-    const currentLang = getCurrentLang();
-    
-    // Route to language-appropriate page (両方v2.htmlを使用)
-    const registrationPage = 'guide-registration-v2.html';
+    // Use new entry point to avoid cache issues
+    const registrationPage = 'guide-registration-entry.html';
     console.log('[TomoTrip] openGuideRegistration - registrationPage =', registrationPage);
-    console.log('[TomoTrip] Current language detected:', currentLang);
     
-    // Open the guide registration form in new window
+    // Open the guide registration entry page in new window
     try {
         const newWindow = window.open(registrationPage, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
         if (newWindow) {
-            console.log('[TomoTrip] ✅ Guide registration form opened successfully');
+            console.log('[TomoTrip] ✅ Guide registration entry page opened successfully');
         } else {
             console.warn('[TomoTrip] ⚠️ Popup blocked, trying fallback redirect');
             // Fallback: redirect in same window
             window.location.href = registrationPage;
         }
     } catch (error) {
-        console.error('[TomoTrip] ❌ Error opening guide registration form:', error);
-        const errorMsg = currentLang === 'en' 
-            ? 'There was a problem displaying the guide registration form.'
-            : 'ガイド登録フォームの表示に問題が発生しました。';
-        alert(errorMsg);
+        console.error('[TomoTrip] ❌ Error opening guide registration entry page:', error);
+        alert('ガイド登録ページの表示に問題が発生しました。');
     }
 }
 
