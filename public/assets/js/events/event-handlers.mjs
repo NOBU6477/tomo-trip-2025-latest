@@ -724,13 +724,12 @@ function setupSponsorButtonEvents() {
     const regBtnMobile = document.getElementById('sponsorRegBtnMobile');
     const loginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
     
-    // Header register button - [DEBUG SIMPLE MODE] 直接v2を開く
+    // Header register button - SIMPLE DIRECT HANDLER (デバッグモード)
     if (registerBtn) {
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('[TomoTrip] registerBtn clicked - DEBUG SIMPLE HANDLER');
+            console.log('[TomoTrip] registerBtn clicked - SIMPLE DIRECT HANDLER');
             const registrationPage = '/guide-registration-v2.html';
-            console.log('[TomoTrip] Opening:', registrationPage);
             window.open(registrationPage, '_blank');
         });
     }
