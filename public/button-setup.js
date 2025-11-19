@@ -520,16 +520,18 @@ function showContactOptions() {
  * Setup Register Button - Opens registration options
  */
 function setupRegisterButton() {
-    const registerBtn = document.getElementById('registerBtn');
-    
-    if (registerBtn) {
-        // Remove any existing listeners to prevent duplicates
-        registerBtn.removeEventListener('click', handleRegisterClick);
-        registerBtn.addEventListener('click', handleRegisterClick);
-        console.log('✅ Register button handler attached');
-    } else {
-        console.warn('⚠️ Register button not found');
-    }
+    // [COMMENTED OUT] Duplicate handler - now handled in event-handlers.mjs  
+    // const registerBtn = document.getElementById('registerBtn');
+    // 
+    // if (registerBtn) {
+    //     // Remove any existing listeners to prevent duplicates
+    //     registerBtn.removeEventListener('click', handleRegisterClick);
+    //     registerBtn.addEventListener('click', handleRegisterClick);
+    //     console.log('✅ Register button handler attached');
+    // } else {
+    //     console.warn('⚠️ Register button not found');
+    // }
+    console.log('ℹ️ setupRegisterButton: Handler now in event-handlers.mjs');
 }
 
 function handleRegisterClick(e) {
@@ -724,7 +726,7 @@ function openTouristRegistration() {
 }
 
 function openGuideRegistration() {
-    console.log('🎯 Guide registration selected - opening PERFECT detailed form');
+    console.log('[TomoTrip] openGuideRegistration called');
     hideRegistrationChoice();
     
     // Detect current language
@@ -734,22 +736,23 @@ function openGuideRegistration() {
     };
     const currentLang = getCurrentLang();
     
-    // Route to language-appropriate page
-    const registrationPage = currentLang === 'en'
-        ? 'guide-registration-v2.html'
-        : 'guide-registration-v2.html';
+    // Route to language-appropriate page (両方v2.htmlを使用)
+    const registrationPage = 'guide-registration-v2.html';
+    console.log('[TomoTrip] openGuideRegistration - registrationPage =', registrationPage);
+    console.log('[TomoTrip] Current language detected:', currentLang);
     
     // Open the guide registration form in new window
     try {
         const newWindow = window.open(registrationPage, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
         if (newWindow) {
-            console.log('✅ Guide registration form opened in new window');
+            console.log('[TomoTrip] ✅ Guide registration form opened successfully');
         } else {
+            console.warn('[TomoTrip] ⚠️ Popup blocked, trying fallback redirect');
             // Fallback: redirect in same window
             window.location.href = registrationPage;
         }
     } catch (error) {
-        console.error('❌ Error opening guide registration form:', error);
+        console.error('[TomoTrip] ❌ Error opening guide registration form:', error);
         const errorMsg = currentLang === 'en' 
             ? 'There was a problem displaying the guide registration form.'
             : 'ガイド登録フォームの表示に問題が発生しました。';

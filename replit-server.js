@@ -293,15 +293,15 @@ app.delete('/api/admin/ranks/:name', (req, res) => {
   }
 });
 
-// 明示的なルート: guide-registration-perfect.html を確実に配信
-app.get('/guide-registration-perfect.html', (req, res) => {
-  res.set({
-    'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
-  });
-  res.sendFile(path.join(__dirname, 'public', 'guide-registration-perfect.html'));
-});
+// [DISABLED] 古い perfect.html ルートを無効化 - v2.html を使用
+// app.get('/guide-registration-perfect.html', (req, res) => {
+//   res.set({
+//     'Cache-Control': 'no-cache, no-store, must-revalidate',
+//     'Pragma': 'no-cache',
+//     'Expires': '0'
+//   });
+//   res.sendFile(path.join(__dirname, 'public', 'guide-registration-perfect.html'));
+// });
 
 // V2ルート: 完全にキャッシュをバイパスする新しいエンドポイント
 app.get('/guide-registration-v2.html', (req, res) => {

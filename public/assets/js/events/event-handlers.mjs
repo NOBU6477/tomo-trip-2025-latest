@@ -724,19 +724,29 @@ function setupSponsorButtonEvents() {
     const regBtnMobile = document.getElementById('sponsorRegBtnMobile');
     const loginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
     
-    // Header register button - show registration choice modal
+    // Header register button - [DEBUG SIMPLE MODE] 直接v2を開く
     if (registerBtn) {
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('🎯 Header register button clicked - showing registration choices');
-            // Use global registration function from button-setup.js
-            if (typeof window.showRegistrationChoice === 'function') {
-                window.showRegistrationChoice();
-            } else {
-                console.warn('Registration choice function not available');
-            }
+            console.log('[TomoTrip] registerBtn clicked - DEBUG SIMPLE HANDLER');
+            const registrationPage = '/guide-registration-v2.html';
+            console.log('[TomoTrip] Opening:', registrationPage);
+            window.open(registrationPage, '_blank');
         });
     }
+    
+    // [COMMENTED OUT] Original modal-based handler
+    // if (registerBtn) {
+    //     registerBtn.addEventListener('click', (e) => {
+    //         e.preventDefault();
+    //         console.log('🎯 Header register button clicked - showing registration choices');
+    //         if (typeof window.showRegistrationChoice === 'function') {
+    //             window.showRegistrationChoice();
+    //         } else {
+    //             console.warn('Registration choice function not available');
+    //         }
+    //     });
+    // }
     
     // Header login dropdown - setup toggle functionality
     if (loginDropdown) {
