@@ -382,10 +382,10 @@ export function setupViewDetailsEventListeners() {
                     window.viewGuideDetail(guideId, e);
                 } else {
                     console.warn('❌ Guide detail function not available');
-                    // Fallback: direct navigation with language detection
+                    // Fallback: same-window navigation (not new window)
                     const isEnglish = window.location.pathname.includes('-en.html');
                     const detailPage = isEnglish ? 'guide-detail-en.html' : 'guide-detail.html';
-                    window.open(`${detailPage}?id=${guideId}`, '_blank');
+                    window.location.href = `${detailPage}?id=${guideId}`;
                 }
             });
             console.log(`✅ Setup view detail button ${index + 1} for guide ID: ${guideId}`);
