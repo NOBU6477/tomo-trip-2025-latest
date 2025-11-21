@@ -643,7 +643,7 @@ function showRegistrationChoiceManual() {
                         <div class="row g-4">
                             <!-- Tourist Registration -->
                             <div class="col-md-6 col-lg-4">
-                                <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openTouristRegistration()">
+                                <div class="card h-100 border-primary choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" data-registration-type="tourist">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-person-check text-primary mb-3" style="font-size: 3rem;"></i>
                                         <h6 class="fw-bold text-primary mb-2">${text.tourist.title}</h6>
@@ -657,7 +657,7 @@ function showRegistrationChoiceManual() {
                             
                             <!-- Guide Registration -->
                             <div class="col-md-6 col-lg-4">
-                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="handleGuideRegistrationClick(event)">
+                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" data-registration-type="guide">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-person-badge text-success mb-3" style="font-size: 3rem;"></i>
                                         <h6 class="fw-bold text-success mb-2">${text.guide.title}</h6>
@@ -671,7 +671,7 @@ function showRegistrationChoiceManual() {
                             
                             <!-- Sponsor Registration -->
                             <div class="col-md-6 col-lg-4">
-                                <div class="card h-100 border-warning choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="handleSponsorRegistration()">
+                                <div class="card h-100 border-warning choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" data-registration-type="sponsor">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-building text-warning mb-3" style="font-size: 3rem;"></i>
                                         <h6 class="fw-bold text-warning mb-2">${text.sponsor.title}</h6>
@@ -685,7 +685,7 @@ function showRegistrationChoiceManual() {
                         </div>
                         
                         <div class="text-center mt-4">
-                            <button type="button" class="btn btn-outline-secondary" onclick="hideRegistrationChoice()" style="border-radius: 25px; padding: 12px 30px;">${text.cancel}</button>
+                            <button type="button" class="btn btn-outline-secondary" data-action="cancel" style="border-radius: 25px; padding: 12px 30px;">${text.cancel}</button>
                         </div>
                     </div>
                 </div>
@@ -697,40 +697,30 @@ function showRegistrationChoiceManual() {
     formContainer.innerHTML = choiceContent;
     formContainer.style.display = 'block';
     
-    // 🔥 CRITICAL: Attach handlers via JavaScript after HTML is created (bypasses onclick caching)
-    console.log('[TomoTrip] 🔥 Attaching event handlers to registration cards...');
+    // 🔥 CRITICAL: Attach handlers via JavaScript ONLY - NO onclick attributes (bypasses onclick caching)
+    console.log('[TomoTrip] 🔥 Attaching event handlers to registration cards via data attributes...');
     
-    // Find all guide registration cards and attach handler
-    const guideCards = formContainer.querySelectorAll('[onclick*="handleGuideRegistrationClick"]');
-    guideCards.forEach(card => {
-        card.removeEventListener('click', handleGuideRegistrationClick);
-        card.addEventListener('click', function(e) {
-            console.log('[TomoTrip] 🚀 CARD CLICK DETECTED - calling handleGuideRegistrationClick');
+    // Use data attributes + addEventListener for clean event handling (no onclick interference)
+    formContainer.addEventListener('click', function(e) {
+        const registrationType = e.target.closest('[data-registration-type]')?.getAttribute('data-registration-type');
+        const action = e.target.closest('[data-action]')?.getAttribute('data-action');
+        
+        if (registrationType === 'guide') {
+            console.log('[TomoTrip] 🚀 GUIDE CARD CLICKED - calling handleGuideRegistrationClick');
             handleGuideRegistrationClick(e);
-        });
-    });
-    
-    // Find tourist registration cards
-    const touristCards = formContainer.querySelectorAll('[onclick*="openTouristRegistration"]');
-    touristCards.forEach(card => {
-        card.removeEventListener('click', openTouristRegistration);
-        card.addEventListener('click', function(e) {
-            console.log('[TomoTrip] 🚀 TOURIST CARD CLICK');
+        } else if (registrationType === 'tourist') {
+            console.log('[TomoTrip] 🚀 TOURIST CARD CLICKED - calling openTouristRegistration');
             openTouristRegistration();
-        });
-    });
-    
-    // Find sponsor registration cards
-    const sponsorCards = formContainer.querySelectorAll('[onclick*="handleSponsorRegistration"]');
-    sponsorCards.forEach(card => {
-        card.removeEventListener('click', handleSponsorRegistration);
-        card.addEventListener('click', function(e) {
-            console.log('[TomoTrip] 🚀 SPONSOR CARD CLICK');
+        } else if (registrationType === 'sponsor') {
+            console.log('[TomoTrip] 🚀 SPONSOR CARD CLICKED - calling handleSponsorRegistration');
             handleSponsorRegistration();
-        });
+        } else if (action === 'cancel') {
+            console.log('[TomoTrip] 🚀 CANCEL CLICKED - hiding registration choice');
+            hideRegistrationChoice();
+        }
     });
     
-    console.log('[TomoTrip] ✅ Event handlers attached successfully');
+    console.log('[TomoTrip] ✅ Event handlers attached via data attributes - ready to handle clicks');
     
     // Scroll to the form container
     setTimeout(() => {
