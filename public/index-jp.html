@@ -1558,7 +1558,8 @@
         }
 
         function showSponsorRegistration() {
-            window.open('/sponsor-registration.html', '_blank');
+            // Same window redirect - no separate window
+            window.location.href = '/sponsor-registration.html';
         }
 
         function showFAQ() {
