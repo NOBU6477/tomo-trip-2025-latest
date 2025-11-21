@@ -742,7 +742,7 @@ function showRegistrationChoiceManual() {
 
 // Helper functions for registration choices with language-aware routing
 function openTouristRegistration() {
-    console.log('🎯 Tourist registration selected');
+    console.log('🎯 Tourist registration selected - SAME WINDOW');
     hideRegistrationChoice();
     
     // Detect current language
@@ -754,13 +754,14 @@ function openTouristRegistration() {
     
     // Route to language-appropriate page
     const registrationPage = currentLang === 'en' 
-        ? 'tourist-registration-simple-en.html' 
-        : 'tourist-registration-simple.html';
+        ? '/tourist-registration-simple-en.html' 
+        : '/tourist-registration-simple.html';
     
-    window.open(registrationPage, '_blank');
+    // Same-window redirect (fixes DevTools + interaction issues)
+    window.location.href = registrationPage;
 }
 
-// NEW: Secure handler with cache bust parameter
+// NEW: Secure handler with cache bust parameter - SAME WINDOW redirect (fixes DevTools issue)
 function handleGuideRegistrationClick(event) {
     if (event) {
         event.preventDefault();
@@ -769,41 +770,32 @@ function handleGuideRegistrationClick(event) {
     console.log('[TomoTrip] 🎯 handleGuideRegistrationClick triggered');
     hideRegistrationChoice();
     
-    // Direct redirect to v2 with cache bust
+    // Direct redirect to v2 with cache bust - SAME WINDOW (not new window)
     const cacheBust = Date.now();
     const url = `/guide-registration-v2.html?cb=${cacheBust}`;
-    console.log('[TomoTrip] 🚀 Redirecting to:', url);
+    console.log('[TomoTrip] 🚀 Redirecting SAME WINDOW to:', url);
     
-    // Use location.href for reliable redirect (bypasses onclick issues)
+    // Use location.href for same-window redirect - no separate DevTools context
     window.location.href = url;
 }
 
 function openGuideRegistration() {
-    console.log('[TomoTrip] openGuideRegistration called - using entry page');
+    console.log('[TomoTrip] openGuideRegistration called - SAME WINDOW redirect');
     hideRegistrationChoice();
     
-    // Use new entry point to avoid cache issues
-    const registrationPage = 'guide-registration-entry.html';
-    console.log('[TomoTrip] openGuideRegistration - registrationPage =', registrationPage);
+    // Redirect in SAME WINDOW (fixes DevTools + email registration flow issues)
+    const registrationPage = '/guide-registration-v2.html';
+    const cacheBust = Date.now();
+    const url = registrationPage + '?cb=' + cacheBust;
     
-    // Open the guide registration entry page in new window
-    try {
-        const newWindow = window.open(registrationPage, '_blank', 'width=1000,height=800,scrollbars=yes,resizable=yes');
-        if (newWindow) {
-            console.log('[TomoTrip] ✅ Guide registration entry page opened successfully');
-        } else {
-            console.warn('[TomoTrip] ⚠️ Popup blocked, trying fallback redirect');
-            // Fallback: redirect in same window
-            window.location.href = registrationPage;
-        }
-    } catch (error) {
-        console.error('[TomoTrip] ❌ Error opening guide registration entry page:', error);
-        alert('ガイド登録ページの表示に問題が発生しました。');
-    }
+    console.log('[TomoTrip] openGuideRegistration - redirecting to:', url);
+    
+    // Direct same-window redirect - no separate DevTools context
+    window.location.href = url;
 }
 
 function handleSponsorRegistration() {
-    console.log('🎯 Sponsor registration selected');
+    console.log('🎯 Sponsor registration selected - SAME WINDOW');
     hideRegistrationChoice();
     
     // Detect current language
@@ -815,10 +807,11 @@ function handleSponsorRegistration() {
     
     // Route to language-appropriate page
     const registrationPage = currentLang === 'en'
-        ? 'sponsor-registration-en.html'
-        : 'sponsor-registration.html';
+        ? '/sponsor-registration-en.html'
+        : '/sponsor-registration.html';
     
-    window.open(registrationPage, '_blank');
+    // Same-window redirect (fixes DevTools + interaction issues)
+    window.location.href = registrationPage;
 }
 
 function hideRegistrationChoice() {
