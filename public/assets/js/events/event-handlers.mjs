@@ -727,13 +727,19 @@ function setupSponsorButtonEvents() {
     const regBtnMobile = document.getElementById('sponsorRegBtnMobile');
     const loginBtnMobile = document.getElementById('sponsorLoginBtnMobile');
     
-    // Header register button - NEW ENTRY POINT (キャッシュ回避版)
+    // Header register button - SAME WINDOW redirect (no separate window)
     if (registerBtn) {
         registerBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('[TomoTrip] registerBtn clicked - opening entry page');
-            const registrationPage = '/guide-registration-entry.html';
-            window.open(registrationPage, '_blank');
+            console.log('[TomoTrip] registerBtn clicked - showing registration choice modal');
+            // Show registration choice modal (handled by button-setup-v3.js)
+            if (typeof showRegistrationChoice === 'function') {
+                showRegistrationChoice();
+            } else if (typeof window.showRegistrationChoice === 'function') {
+                window.showRegistrationChoice();
+            } else {
+                console.warn('[TomoTrip] Registration choice function not available');
+            }
         });
     }
     
