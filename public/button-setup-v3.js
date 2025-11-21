@@ -657,7 +657,7 @@ function showRegistrationChoiceManual() {
                             
                             <!-- Guide Registration -->
                             <div class="col-md-6 col-lg-4">
-                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="openGuideRegistration()">
+                                <div class="card h-100 border-success choice-card" style="cursor: pointer; border-radius: 15px; border-width: 2px; transition: transform 0.2s;" onclick="handleGuideRegistrationClick(event)">
                                     <div class="card-body text-center p-4">
                                         <i class="bi bi-person-badge text-success mb-3" style="font-size: 3rem;"></i>
                                         <h6 class="fw-bold text-success mb-2">${text.guide.title}</h6>
@@ -723,6 +723,24 @@ function openTouristRegistration() {
         : 'tourist-registration-simple.html';
     
     window.open(registrationPage, '_blank');
+}
+
+// NEW: Secure handler with cache bust parameter
+function handleGuideRegistrationClick(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    console.log('[TomoTrip] 🎯 handleGuideRegistrationClick triggered');
+    hideRegistrationChoice();
+    
+    // Direct redirect to v2 with cache bust
+    const cacheBust = Date.now();
+    const url = `/guide-registration-v2.html?cb=${cacheBust}`;
+    console.log('[TomoTrip] 🚀 Redirecting to:', url);
+    
+    // Use location.href for reliable redirect (bypasses onclick issues)
+    window.location.href = url;
 }
 
 function openGuideRegistration() {
