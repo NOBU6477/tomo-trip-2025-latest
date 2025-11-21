@@ -569,7 +569,8 @@ function setupDataActionHandlers() {
                 
             // Sponsor Actions
             case 'open-sponsor-registration':
-                handleSponsorRegistration();
+                // Routing now handled by button-setup-v3.js - do not call old function
+                console.log('[TomoTrip] Sponsor registration routing via button-setup-v3.js');
                 break;
             case 'open-sponsor-login':
                 handleSponsorLogin();
@@ -583,10 +584,12 @@ function setupDataActionHandlers() {
                 toggleLoginDropdown();
                 break;
             case 'open-tourist-registration':
-                openTouristRegistration();
+                // Routing now handled by button-setup-v3.js - do not call old function
+                console.log('[TomoTrip] Tourist registration routing via button-setup-v3.js');
                 break;
             case 'open-guide-registration':
-                openGuideRegistration();
+                // Routing now handled by button-setup-v3.js - do not call old function
+                console.log('[TomoTrip] Guide registration routing via button-setup-v3.js');
                 break;
             case 'process-sponsor-login':
                 processSponsorLogin();
