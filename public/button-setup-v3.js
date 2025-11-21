@@ -697,6 +697,41 @@ function showRegistrationChoiceManual() {
     formContainer.innerHTML = choiceContent;
     formContainer.style.display = 'block';
     
+    // 🔥 CRITICAL: Attach handlers via JavaScript after HTML is created (bypasses onclick caching)
+    console.log('[TomoTrip] 🔥 Attaching event handlers to registration cards...');
+    
+    // Find all guide registration cards and attach handler
+    const guideCards = formContainer.querySelectorAll('[onclick*="handleGuideRegistrationClick"]');
+    guideCards.forEach(card => {
+        card.removeEventListener('click', handleGuideRegistrationClick);
+        card.addEventListener('click', function(e) {
+            console.log('[TomoTrip] 🚀 CARD CLICK DETECTED - calling handleGuideRegistrationClick');
+            handleGuideRegistrationClick(e);
+        });
+    });
+    
+    // Find tourist registration cards
+    const touristCards = formContainer.querySelectorAll('[onclick*="openTouristRegistration"]');
+    touristCards.forEach(card => {
+        card.removeEventListener('click', openTouristRegistration);
+        card.addEventListener('click', function(e) {
+            console.log('[TomoTrip] 🚀 TOURIST CARD CLICK');
+            openTouristRegistration();
+        });
+    });
+    
+    // Find sponsor registration cards
+    const sponsorCards = formContainer.querySelectorAll('[onclick*="handleSponsorRegistration"]');
+    sponsorCards.forEach(card => {
+        card.removeEventListener('click', handleSponsorRegistration);
+        card.addEventListener('click', function(e) {
+            console.log('[TomoTrip] 🚀 SPONSOR CARD CLICK');
+            handleSponsorRegistration();
+        });
+    });
+    
+    console.log('[TomoTrip] ✅ Event handlers attached successfully');
+    
     // Scroll to the form container
     setTimeout(() => {
         formContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
