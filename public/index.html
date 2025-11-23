@@ -689,18 +689,63 @@
             height: 300px;
         }
 
+        /* ✅ FIXED: Login buttons - Base styling for text visibility */
+        .login-btn-tourist,
+        .login-btn-guide {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: white !important;
+            font-weight: 600 !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Ensure text spans are always visible (override d-none d-md-inline) */
+        .login-btn-tourist span,
+        .login-btn-guide span {
+            display: inline !important;
+            color: white !important;
+            font-size: inherit !important;
+        }
+
         /* Mobile responsiveness for login buttons */
         @media (max-width: 768px) {
             .login-buttons-container {
-                flex-direction: column !important;
-                gap: 8px !important;
+                flex-direction: row !important;
+                gap: 6px !important;
+                width: 100%;
             }
             
             .login-btn-tourist,
             .login-btn-guide {
-                padding: 8px 16px !important;
-                font-size: 14px !important;
-                min-width: 120px;
+                flex: 1;
+                padding: 8px 10px !important;
+                font-size: 13px !important;
+                min-width: auto;
+                border-radius: 18px !important;
+            }
+
+            /* Show text on mobile for both buttons */
+            .login-btn-tourist span,
+            .login-btn-guide span {
+                display: inline !important;
+            }
+
+            /* Hide icon on very small screens to make room for text */
+            @media (max-width: 480px) {
+                .login-btn-tourist i,
+                .login-btn-guide i {
+                    display: none !important;
+                }
+
+                .login-btn-tourist,
+                .login-btn-guide {
+                    padding: 8px 8px !important;
+                    font-size: 12px !important;
+                }
             }
         }
 
