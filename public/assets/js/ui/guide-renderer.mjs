@@ -52,7 +52,7 @@ async function initializePaginationSystem(guides, resetPagination = true) {
         const { ScalablePagination } = await import('./scalable-pagination.mjs');
         
         paginationSystem = new ScalablePagination({
-            itemsPerPage: window.innerWidth < 768 ? 6 : 12,
+            itemsPerPage: 12,  // ✅ FIXED: Unified to 12 for both PC and mobile (responsive grid handles layout)
             maxVisiblePages: 5,
             container: '#paginationContainer',
             onPageLoad: (pageItems, currentPage, totalPages) => {

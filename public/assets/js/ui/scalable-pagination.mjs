@@ -3,7 +3,7 @@
 
 export class ScalablePagination {
     constructor(options = {}) {
-        this.itemsPerPage = options.itemsPerPage || 12; // 3列x4行のグリッド
+        this.itemsPerPage = options.itemsPerPage || 12; // 3列x4行のグリッド（PC）/ 2列x6行のグリッド（モバイル）
         this.currentPage = 1;
         this.totalItems = 0;
         this.totalPages = 0;
@@ -13,10 +13,9 @@ export class ScalablePagination {
         this.data = [];
         this.filteredData = [];
         
-        // モバイルでは表示数を調整
-        if (window.innerWidth < 768) {
-            this.itemsPerPage = 6; // 2列x3行
-        }
+        // ✅ FIXED: Unified itemsPerPage to 12 for both PC and mobile
+        // CSS responsive grid (guide-cards.css) handles layout adjustment based on viewport
+        // No need to change itemsPerPage - the layout is handled by CSS media queries
     }
     
     // データを設定
