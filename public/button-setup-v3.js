@@ -518,20 +518,19 @@ function showContactOptions() {
 
 /**
  * Setup Register Button - Opens registration options
+ * ✅ FIXED (per Codex analysis): Re-enabled after cache issue diagnosis
  */
 function setupRegisterButton() {
-    // [COMMENTED OUT] Duplicate handler - now handled in event-handlers.mjs  
-    // const registerBtn = document.getElementById('registerBtn');
-    // 
-    // if (registerBtn) {
-    //     // Remove any existing listeners to prevent duplicates
-    //     registerBtn.removeEventListener('click', handleRegisterClick);
-    //     registerBtn.addEventListener('click', handleRegisterClick);
-    //     console.log('✅ Register button handler attached');
-    // } else {
-    //     console.warn('⚠️ Register button not found');
-    // }
-    console.log('ℹ️ setupRegisterButton: Handler now in event-handlers.mjs');
+    const registerBtn = document.getElementById('registerBtn');
+    
+    if (registerBtn) {
+        // Remove any existing listeners to prevent duplicates
+        registerBtn.removeEventListener('click', handleRegisterClick);
+        registerBtn.addEventListener('click', handleRegisterClick);
+        console.log('✅ Register button handler attached (button-setup-v3.js)');
+    } else {
+        console.warn('⚠️ Register button not found');
+    }
 }
 
 function handleRegisterClick(e) {

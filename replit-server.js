@@ -319,24 +319,19 @@ app.get('/guide-registration-v2.html', (req, res) => {
   res.send(content);
 });
 
-// Serve static files with NO caching for HTML/JS files
+// Serve static files with STRICT NO-CACHE for all files (per Codex analysis)
 app.use(express.static(path.join(__dirname, 'public'), {
-  maxAge: 0,           // Disable memory caching
-  etag: false,         // Disable ETag caching
-  lastModified: true,  // Enable last-modified checks
+  maxAge: 0,            // Disable memory caching
+  etag: false,          // ✅ Disable ETag caching (per Codex)
+  lastModified: false,  // ✅ Disable last-modified checks (per Codex)
   setHeaders: (res, filepath) => {
-    // Set cache control headers with proper precedence for JavaScript modules
-    if (filepath.endsWith('.mjs') || filepath.endsWith('.js')) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
-    } else if (filepath.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
-      res.setHeader('Pragma', 'no-cache');
-      res.setHeader('Expires', '0');
-    } else {
-      res.setHeader('Cache-Control', 'public, max-age=3600');
-    }
+    // STRICT cache control - no-store for all files (per Codex analysis)
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '-1');
+    res.setHeader('Vary', 'Accept-Encoding');
+    
+    console.log(`📦 Serving ${filepath} - Cache: DISABLED (no-store)`);
   }
 }));
 
