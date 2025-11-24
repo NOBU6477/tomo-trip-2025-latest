@@ -8,7 +8,7 @@ import { localizeLanguageArray, localizeSpecialtyArray, isEnglishPage, getText }
 let paginationSystem = null;
 
 // 大量データ対応の最適化されたガイドカード描画関数
-export function renderGuideCards(guidesToRender = null, usePagination = true, resetPagination = true) {
+export async function renderGuideCards(guidesToRender = null, usePagination = true, resetPagination = true) {
     // Use provided guides, or fall back based on filter state
     let guides;
     
@@ -36,7 +36,8 @@ export function renderGuideCards(guidesToRender = null, usePagination = true, re
     
     // スケーラブルペジネーションシステムの初期化
     if (usePagination && guides.length > 12) {
-        initializePaginationSystem(guides, resetPagination);
+        // ✅ FIXED: Wait for async pagination initialization to complete
+        await initializePaginationSystem(guides, resetPagination);
         return; // ペジネーション使用時は早期リターン
     }
     
