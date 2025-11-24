@@ -1140,9 +1140,10 @@ function handleResetFilters() {
     if (window.AppState && window.AppState.guides) {
         console.log(`🔄 Displaying all ${window.AppState.guides.length} guides`);
         
-        // Re-render all guide cards 
+        // ✅ FIXED: Pass pagination parameters (true, true) to ensure pagination is applied
+        // This ensures all paths (initial/search/reset) use the same pagination logic
         if (window.renderGuideCards) {
-            window.renderGuideCards(window.AppState.guides);
+            window.renderGuideCards(window.AppState.guides, true, true);
         }
         
         // Update counters
@@ -1224,9 +1225,10 @@ function applyCurrentFilters(keyword = '') {
         
         console.log(`✅ Filtered: ${filteredGuides.length}/${window.AppState.guides.length} guides`);
         
-        // Re-render guide cards
+        // ✅ FIXED: Pass pagination parameters (true, true) to ensure pagination is applied
+        // This ensures all paths (initial/search/reset) use the same pagination logic
         if (window.renderGuideCards) {
-            window.renderGuideCards(filteredGuides);
+            window.renderGuideCards(filteredGuides, true, true);
         }
         
         // Update counters
