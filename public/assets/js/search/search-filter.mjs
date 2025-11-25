@@ -221,8 +221,11 @@ export async function resetFilters() {
             await window.renderGuideCards(originalGuides, true, true);
         }
         
+        // ✅ FIXED: Reset counters - displayedCount=up to 12 on page 1, totalCount=all original
         if (window.updateGuideCounters) {
-            window.updateGuideCounters(originalGuides.length, originalGuides.length);
+            const totalGuides = originalGuides.length;
+            const displayedOnFirstPage = Math.min(12, totalGuides);
+            window.updateGuideCounters(displayedOnFirstPage, totalGuides);
         }
     } else {
         console.warn('⚠️ AppState not available for reset');

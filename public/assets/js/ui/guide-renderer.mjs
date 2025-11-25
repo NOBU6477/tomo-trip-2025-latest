@@ -59,11 +59,13 @@ async function initializePaginationSystem(guides, resetPagination = true) {
             onPageLoad: (pageItems, currentPage, totalPages) => {
                 renderAllGuideCards(pageItems);
                 
-                // ✅ 正確なカウンター更新: ページアイテム数と全体データ数
-                const totalCount = guides.length; // 現在処理中の全データ数
-                updateGuideCounters(pageItems.length, totalCount);
+                // ✅ FIXED: totalCount must ALWAYS be the full guide list count
+                // displayedCount = current page items, totalCount = all guides
+                const totalCount = guides.length; // 全データ数（常に同じ）
+                const displayedCount = pageItems.length; // このページのアイテム数
+                updateGuideCounters(displayedCount, totalCount);
                 
-                console.log(`📄 Page ${currentPage}/${totalPages} loaded with ${pageItems.length}/${totalCount} guides`);
+                console.log(`📄 Page ${currentPage}/${totalPages} loaded with ${displayedCount}/${totalCount} guides`);
             }
         });
         
@@ -231,9 +233,9 @@ function renderAllGuideCards(guides) {
         container.innerHTML = cardsHTML;
     }
     
-    // ✅ 実際のDOM表示数でカウンター更新
-    const actualRenderedCount = container.children.length;
-    updateGuideCounters(actualRenderedCount, guides.length);
+    // ✅ FIXED: Always use totalCount (全ガイド総数) regardless of page
+    // Do NOT use actualRenderedCount for totalCount, only displayCount
+    updateGuideCounters(guidesForPage.length, guides.length);
     
     // Setup view details event listeners
     setupViewDetailsEventListeners();
@@ -323,31 +325,30 @@ export function updateGuideCounters(displayedCount, totalCount) {
     const guideCounterElement = document.getElementById('guideCounter');
     const totalGuideCounterElement = document.getElementById('totalGuideCounter');
     
-    console.log('🔢 Updating counters:', { displayedCount, totalCount, guideCounterElement: !!guideCounterElement, totalGuideCounterElement: !!totalGuideCounterElement });
+    // ✅ FIXED: Ensure totalCount is always the full count, never undefined
+    const safeDisplayed = displayedCount || 0;
+    const safeTotal = totalCount !== undefined ? totalCount : safeDisplayed;
+    
+    console.log('🔢 Updating counters:', { displayedCount: safeDisplayed, totalCount: safeTotal, guideCounterElement: !!guideCounterElement, totalGuideCounterElement: !!totalGuideCounterElement });
     
     if (guideCounterElement && totalGuideCounterElement) {
         // Language detection for proper counter display
         const isEnglish = window.location.pathname.includes('index-en.html');
         
-        // ✅ 簡素化されたカウンター計算: 実際の表示数をそのまま使用
-        const actualDisplayed = displayedCount || 0;
-        const actualTotal = totalCount || displayedCount || 0;
-        
+        // ✅ FIXED: Use safe values
         if (isEnglish) {
-            guideCounterElement.textContent = `1-${actualDisplayed} shown (${actualTotal} total)`;
-            totalGuideCounterElement.textContent = `Total: ${actualTotal} guides registered`;
+            guideCounterElement.textContent = `1-${safeDisplayed} shown (${safeTotal} total)`;
+            totalGuideCounterElement.textContent = `Total: ${safeTotal} guides registered`;
         } else {
-            if (actualTotal === 0) {
+            if (safeTotal === 0) {
                 guideCounterElement.textContent = `0件表示中`;
-            } else if (actualDisplayed === actualTotal) {
-                guideCounterElement.textContent = `1-${actualDisplayed}件表示中 (${actualTotal}件中)`;
             } else {
-                guideCounterElement.textContent = `1-${actualDisplayed}件表示中 (${actualTotal}件中)`;
+                guideCounterElement.textContent = `1-${safeDisplayed}件表示中 (${safeTotal}件中)`;
             }
-            totalGuideCounterElement.textContent = `全体: ${actualTotal}名のガイドが登録済み`;
+            totalGuideCounterElement.textContent = `全体: ${safeTotal}名のガイドが登録済み`;
         }
         
-        console.log(`✅ Simple counters updated: 1-${actualDisplayed} shown (${actualTotal} total)`);
+        console.log(`✅ Counters updated: 1-${safeDisplayed} shown (${safeTotal} total)`);
     } else {
         console.warn('⚠️ Counter elements not found:', {
             guideCounter: !!guideCounterElement,
