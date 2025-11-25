@@ -221,11 +221,17 @@ export async function resetFilters() {
             await window.renderGuideCards(originalGuides, true, true);
         }
         
-        // ✅ FIXED: Reset counters - displayedCount=up to 12 on page 1, totalCount=all original
+        // ✅ FIXED: Reset counters - use AppState.originalGuides as true total
         if (window.updateGuideCounters) {
-            const totalGuides = originalGuides.length;
-            const displayedOnFirstPage = Math.min(12, totalGuides);
+            const totalGuides = window.AppState?.originalGuides?.length ?? originalGuides.length ?? 0;
+            const displayedOnFirstPage = Math.min(12, originalGuides.length);
             window.updateGuideCounters(displayedOnFirstPage, totalGuides);
+            
+            console.log('[DEBUG COUNTERS] Search-filter resetFilters:', {
+                totalGuides,
+                originalGuidesLength: originalGuides.length,
+                displayedOnFirstPage
+            });
         }
     } else {
         console.warn('⚠️ AppState not available for reset');

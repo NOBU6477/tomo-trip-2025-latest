@@ -59,13 +59,18 @@ async function initializePaginationSystem(guides, resetPagination = true) {
             onPageLoad: (pageItems, currentPage, totalPages) => {
                 renderAllGuideCards(pageItems);
                 
-                // ✅ FIXED: totalCount must ALWAYS be the full guide list count
-                // displayedCount = current page items, totalCount = all guides
-                const totalCount = guides.length; // 全データ数（常に同じ）
+                // ✅ FIXED: totalCount must ALWAYS use AppState.originalGuides (the true total)
+                // displayedCount = current page items, totalCount = original guide count
+                const totalGuides = window.AppState?.originalGuides?.length ?? guides.length;
                 const displayedCount = pageItems.length; // このページのアイテム数
-                updateGuideCounters(displayedCount, totalCount);
+                updateGuideCounters(displayedCount, totalGuides);
                 
-                console.log(`📄 Page ${currentPage}/${totalPages} loaded with ${displayedCount}/${totalCount} guides`);
+                console.log(`[DEBUG COUNTERS] Page ${currentPage}/${totalPages}:`, {
+                    totalGuides,
+                    displayedOnPage: displayedCount,
+                    itemsPerPage: 12,
+                    guidesArrayLength: guides.length
+                });
             }
         });
         
@@ -325,17 +330,25 @@ export function updateGuideCounters(displayedCount, totalCount) {
     const guideCounterElement = document.getElementById('guideCounter');
     const totalGuideCounterElement = document.getElementById('totalGuideCounter');
     
-    // ✅ FIXED: Ensure totalCount is always the full count, never undefined
+    // ✅ FIXED: totalCount must be AppState.originalGuides.length (the true total)
+    // Never use displayedCount as a fallback for total
     const safeDisplayed = displayedCount || 0;
-    const safeTotal = totalCount !== undefined ? totalCount : safeDisplayed;
+    const totalGuides = window.AppState?.originalGuides?.length ?? 0;
+    const safeTotal = totalCount ?? totalGuides;
     
-    console.log('🔢 Updating counters:', { displayedCount: safeDisplayed, totalCount: safeTotal, guideCounterElement: !!guideCounterElement, totalGuideCounterElement: !!totalGuideCounterElement });
+    console.log('[DEBUG COUNTERS] updateGuideCounters called with:', { 
+        displayedCount, 
+        totalCount,
+        appStateOriginalGuidesLength: totalGuides,
+        safeTotal,
+        guideCounterElement: !!guideCounterElement, 
+        totalGuideCounterElement: !!totalGuideCounterElement 
+    });
     
     if (guideCounterElement && totalGuideCounterElement) {
         // Language detection for proper counter display
         const isEnglish = window.location.pathname.includes('index-en.html');
         
-        // ✅ FIXED: Use safe values
         if (isEnglish) {
             guideCounterElement.textContent = `1-${safeDisplayed} shown (${safeTotal} total)`;
             totalGuideCounterElement.textContent = `Total: ${safeTotal} guides registered`;

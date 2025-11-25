@@ -332,11 +332,17 @@ async function filterGuides() {
         window.renderGuideCards(filteredGuides, true, true);
     }
     
-    // ✅ FIXED: Update counters - displayedCount=up to 12 on page 1, totalCount=all original
+    // ✅ FIXED: Update counters - use AppState.originalGuides as true total
     if (window.updateGuideCounters) {
-        // On page 1 after filter, display up to 12 or less if fewer filtered guides
+        const totalGuides = window.AppState?.originalGuides?.length ?? window.AppState?.guides?.length ?? 0;
         const displayedOnFirstPage = Math.min(12, filteredGuides.length);
-        window.updateGuideCounters(displayedOnFirstPage, filteredGuides.length);
+        window.updateGuideCounters(displayedOnFirstPage, totalGuides);
+        
+        console.log('[DEBUG COUNTERS] Filter applied:', {
+            totalGuides,
+            filteredLength: filteredGuides.length,
+            displayedOnFirstPage
+        });
     }
     
     console.log(`✅ Filter complete: ${filteredGuides.length} guides found`);
@@ -373,11 +379,17 @@ window.resetFilters = function() {
             window.renderGuideCards(window.AppState.guides, true, true);
         }
         
-        // ✅ FIXED: Update counters - displayedCount=up to 12 on page 1, totalCount=all
+        // ✅ FIXED: Update counters - use AppState.originalGuides as true total
         if (window.updateGuideCounters) {
-            const totalGuides = window.AppState.guides.length;
-            const displayedOnFirstPage = Math.min(12, totalGuides);
+            const totalGuides = window.AppState?.originalGuides?.length ?? window.AppState?.guides?.length ?? 0;
+            const displayedOnFirstPage = Math.min(12, window.AppState.guides.length);
             window.updateGuideCounters(displayedOnFirstPage, totalGuides);
+            
+            console.log('[DEBUG COUNTERS] Global resetFilters:', {
+                totalGuides,
+                guidesLength: window.AppState.guides.length,
+                displayedOnFirstPage
+            });
         }
     } else {
         console.warn('❌ No original guides found - forcing page reload');
@@ -919,9 +931,16 @@ export function displayGuides(page, state) {
     
     container.innerHTML = cardsHTML;
     
-    // Update guide count displays with actual rendered card count
+    // ✅ FIXED: Update guide count displays - use AppState.originalGuides as true total
     if (window.updateGuideCounters) {
-        window.updateGuideCounters(guidesForPage.length, currentState.guides.length);
+        const totalGuides = currentState.originalGuides?.length ?? currentState.guides.length ?? 0;
+        window.updateGuideCounters(guidesForPage.length, totalGuides);
+        
+        console.log('[DEBUG COUNTERS] displayGuides:', {
+            totalGuides,
+            guidesForPageLength: guidesForPage.length,
+            currentStateGuidesLength: currentState.guides.length
+        });
     }
     
     // Environment debug log table
@@ -1151,12 +1170,17 @@ async function handleResetFilters() {
             await window.renderGuideCards(window.AppState.guides, true, true);
         }
         
-        // ✅ FIXED: Reset counters - displayedCount=all on page 1, totalCount=all
+        // ✅ FIXED: Reset counters - use AppState.originalGuides as true total
         if (window.updateGuideCounters) {
-            const totalGuides = window.AppState.guides.length;
-            // On page 1 after reset, display up to 12 or less if fewer guides
-            const displayedOnFirstPage = Math.min(12, totalGuides);
+            const totalGuides = window.AppState?.originalGuides?.length ?? window.AppState?.guides?.length ?? 0;
+            const displayedOnFirstPage = Math.min(12, window.AppState.guides.length);
             window.updateGuideCounters(displayedOnFirstPage, totalGuides);
+            
+            console.log('[DEBUG COUNTERS] Reset filters:', {
+                totalGuides,
+                guidesLength: window.AppState.guides.length,
+                displayedOnFirstPage
+            });
         }
     } else {
         console.warn('⚠️ AppState or guides not available for reset');
@@ -1240,11 +1264,17 @@ async function applyCurrentFilters(keyword = '') {
             await window.renderGuideCards(filteredGuides, true, true);
         }
         
-        // ✅ FIXED: Update counters - displayedCount=page items, totalCount=filtered results
+        // ✅ FIXED: Update counters - use AppState.originalGuides as true total
         if (window.updateGuideCounters) {
-            // On page 1 after filter, display up to 12 or less if fewer filtered guides
+            const totalGuides = window.AppState?.originalGuides?.length ?? window.AppState?.guides?.length ?? 0;
             const displayedOnFirstPage = Math.min(12, filteredGuides.length);
-            window.updateGuideCounters(displayedOnFirstPage, filteredGuides.length);
+            window.updateGuideCounters(displayedOnFirstPage, totalGuides);
+            
+            console.log('[DEBUG COUNTERS] ApplyCurrentFilters:', {
+                totalGuides,
+                filteredLength: filteredGuides.length,
+                displayedOnFirstPage
+            });
         }
         
         // Scroll to results
