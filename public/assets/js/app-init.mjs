@@ -32,12 +32,12 @@ async function loadGuidesFromAPI() {
     // Detect current page language for filtering (declare once for entire function)
     const isEnglish = window.location.pathname.includes('index-en.html');
     const currentLang = isEnglish ? 'en' : 'ja';
-    
+
     try {
         // Add timeout and cache-busting for reliability
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 5000); // ⚡ 5秒に短縮して遅延を解決
-        
+
         const response = await fetch(`/api/guides?lang=${currentLang}&${new Date().getTime()}`, {
             signal: controller.signal,
             headers: {
@@ -45,35 +45,35 @@ async function loadGuidesFromAPI() {
                 'Pragma': 'no-cache'
             }
         });
-        
+
         clearTimeout(timeoutId);
-        
+
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const result = await response.json();
-        
+
         // Validate API response structure
         if (!result || typeof result !== 'object') {
             throw new Error('Invalid API response format');
         }
-        
+
         if (result.success && Array.isArray(result.guides)) {
             // Client-side language filtering as safety measure
-            
+
             // Filter guides by registrationLanguage on client side (safety check)
             const filteredByLang = result.guides.filter(guide => {
                 const guideRegLang = guide.registrationLanguage || 'ja';
                 return guideRegLang === currentLang;
             });
-            
+
             console.log(`🌐 Client-side filter: ${filteredByLang.length}/${result.guides.length} guides match ${currentLang} language`);
-            
+
             // Language mapping helper
             const languageMap = {
                 'japanese': '日本語',
-                'english': '英語', 
+                'english': '英語',
                 'chinese': '中国語',
                 'korean': '韓国語',
                 'spanish': 'スペイン語',
@@ -89,7 +89,7 @@ async function loadGuidesFromAPI() {
             const apiGuides = filteredByLang.map(guide => {
                 // Handle languages - keep API format for filtering compatibility
                 let processedLanguages = [];
-                
+
                 // Process API response languages field
                 if (Array.isArray(guide.languages) && guide.languages.length > 0) {
                     // Filter out empty strings and null values
@@ -105,21 +105,21 @@ async function loadGuidesFromAPI() {
 
                 // Normalize location data - use actual location from API now
                 const locationData = guide.location || (currentLang === 'en' ? 'Tokyo, Japan' : '東京都 東京');
-                
+
                 // Use language-specific fallback text
-                const defaultIntro = currentLang === 'en' ? 
-                    'I will guide you to the best local highlights' : 
+                const defaultIntro = currentLang === 'en' ?
+                    'I will guide you to the best local highlights' :
                     '地域の魅力をご案内します';
-                
+
                 // Use profileImageUrl if available, fallback to profilePhoto
-                const imageUrl = guide.profileImageUrl || 
-                                (guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg');
-                
+                const imageUrl = guide.profileImageUrl ||
+                    (guide.profilePhoto ? `/uploads/${guide.profilePhoto}` : '/assets/img/guides/default-1.svg');
+
                 return {
                     id: guide.id,
                     name: guide.name,
                     city: locationData,
-                    location: locationData, 
+                    location: locationData,
                     rating: guide.averageRating ? parseFloat(guide.averageRating) : 4.8,
                     price: parseInt(guide.sessionRate || 0),
                     sessionRate: parseInt(guide.sessionRate || 0),
@@ -128,14 +128,14 @@ async function loadGuidesFromAPI() {
                     profileImageUrl: guide.profileImageUrl, // Keep original for reference
                     languages: processedLanguages,
                     // Process specialties string from API
-                    specialties: guide.specialties ? 
+                    specialties: guide.specialties ?
                         (typeof guide.specialties === 'string' ? guide.specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s) : guide.specialties) :
                         [],
-                    tags: guide.specialties ? 
+                    tags: guide.specialties ?
                         (typeof guide.specialties === 'string' ? guide.specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s) : guide.specialties) :
                         [],
                     availability: guide.availability || 'weekdays',
-                    experience: guide.experience || 'intermediate', 
+                    experience: guide.experience || 'intermediate',
                     introduction: guide.introduction || defaultIntro,
                     description: guide.introduction || defaultIntro,
                     email: guide.email,
@@ -144,24 +144,24 @@ async function loadGuidesFromAPI() {
                     registeredAt: guide.registeredAt
                 };
             });
-            
+
             console.log(`✅ Loaded ${apiGuides.length} guides from API`);
-            
+
             // Sort to put newest guides first (top-left positioning)
             const approvedGuides = apiGuides
                 .filter(guide => guide.status === 'approved')
                 .sort((a, b) => new Date(b.registeredAt) - new Date(a.registeredAt));
-            
+
             console.log(`📋 API Guides (newest first):`, approvedGuides.map(g => ({
-                name: g.name, 
+                name: g.name,
                 registeredAt: g.registeredAt,
                 languages: g.languages,
                 price: g.price
             })));
-            
+
             // Use API guides exclusively when available (no merging with defaults)
             const deduplicatedApiGuides = removeDuplicateGuides(approvedGuides);
-            
+
             // If API returned empty results, fall back to default guides for this language
             if (deduplicatedApiGuides.length === 0) {
                 console.log('📋 API returned 0 guides - using filtered default guides as fallback');
@@ -172,16 +172,16 @@ async function loadGuidesFromAPI() {
                 console.log(`🔄 Fallback: Using ${filteredDefaults.length} default guides for language: ${currentLang}`);
                 return filteredDefaults;
             }
-            
+
             // Performance warning for very large guide lists
             if (deduplicatedApiGuides.length > 100) {
                 console.warn(`⚠️ Large guide list (${deduplicatedApiGuides.length} guides) - performance optimizations active`);
             }
-            
+
             console.log(`🎯 Using API guides: ${deduplicatedApiGuides.length} guides`);
             return deduplicatedApiGuides;
         }
-        
+
         console.log('📋 API returned no results - using filtered default guides as fallback');
         // Fallback to filtered default guides when API returns no results
         const filteredDefaults = defaultGuideData.filter(guide => {
@@ -190,7 +190,7 @@ async function loadGuidesFromAPI() {
         });
         console.log(`🔄 Fallback: Using ${filteredDefaults.length} default guides for language: ${currentLang}`);
         return filteredDefaults;
-        
+
     } catch (error) {
         if (error.name === 'AbortError') {
             console.error('❌ API request timeout - server may be slow');
@@ -229,25 +229,25 @@ function removeDuplicateGuides(guides) {
 async function appInit() {
     console.log('🎯 appInit called - starting initialization');
     log.ok('🌴 TomoTrip Application Starting...');
-    
+
     // Check for refresh parameters from registration completion
     const urlParams = new URLSearchParams(window.location.search);
     const shouldRefresh = urlParams.get('refresh');
     const isNewGuide = shouldRefresh === 'new_guide';
-    
+
     if (shouldRefresh) {
         console.log('🔄 Page loaded with refresh parameter:', shouldRefresh);
         // Clean URL after processing
         window.history.replaceState({}, document.title, window.location.pathname);
     }
-    
+
     // 1) Load guides dynamically from API + default data
     const guides = await loadGuidesFromAPI();
-    
+
     // Clear any localStorage differences that might affect guide count
     localStorage.removeItem('registeredGuides');
     localStorage.removeItem('guideFilters');
-    
+
     console.log('🎯 Environment Data Sync:', {
         guides: guides.length,
         source: 'API-only (no default merging)',
@@ -261,13 +261,13 @@ async function appInit() {
         sessionStorage.clear();
         console.log('🧹 Storage cleared due to clear-cache parameter');
     }
-    
+
     AppState.guides = guides;
     AppState.originalGuides = [...guides]; // Keep original for reset
     AppState.pageSize = 12; // Fixed pageSize for all environments
     AppState.currentPage = 1;
     AppState.filters = {}; // Reset filters to default
-    
+
     // Ensure AppState is available globally
     window.AppState = AppState;
     const state = AppState;
@@ -280,7 +280,7 @@ async function appInit() {
 
     // 5) Setup event listeners only - DISABLE LEGACY RENDERING to prevent duplicates
     setupEventListeners(state);
-    
+
     // ✅ FIXED: Wait for DOM to be fully ready before rendering guides
     setTimeout(async () => {
         console.log('🎯 Starting guide rendering with delay for DOM readiness');
@@ -289,29 +289,29 @@ async function appInit() {
         // displayGuides is now integrated with renderGuideCards - no separate call needed
         // displayGuides(1, state); // DISABLED - causes container conflicts
     }, 500); // Small delay to ensure DOM is fully loaded
-    
+
     // Setup button handlers
     wireSponsorButtons();
     wireLanguageSwitcher();
-    
+
     // 5) Setup adaptive refresh intervals based on guide count
     const refreshInterval = guides.length > 50 ? 60000 : 30000; // Slower refresh for large lists
-    console.log(`⏰ Setting refresh interval to ${refreshInterval/1000} seconds`);
-    
+    console.log(`⏰ Setting refresh interval to ${refreshInterval / 1000} seconds`);
+
     setInterval(async () => {
         await refreshGuideData();
     }, refreshInterval);
-    
+
     // 6) Show notification if loaded after new guide registration
     if (isNewGuide) {
         setTimeout(() => {
             showNewGuideNotification(1, true); // Show with registration message
         }, 1000);
     }
-    
+
     // Initialize prefecture selector  
     initializePrefectureSelector();
-    
+
     // 🔧 FIX: Setup search button AFTER modules are loaded to fix timing issue
     console.log('🔧 Setting up search button after module initialization...');
     setTimeout(() => {
@@ -325,11 +325,11 @@ async function appInit() {
             console.warn('⚠️ Search button not found during module initialization');
         }
     }, 100); // Small delay to ensure button-setup.js has run
-    
+
     // ✅ executeSearchをグローバルに登録
     window.executeSearch = executeSearch;
     console.log('✅ window.executeSearch registered globally');
-    
+
     log.ok('✅ Application initialized successfully with dynamic guide data');
 }
 
@@ -347,21 +347,21 @@ async function refreshGuideData(maxRetries = 3) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
             console.log(`🔄 Refreshing guide data (attempt ${attempt}/${maxRetries})`);
-            
+
             // Reload API guides
             const apiGuides = await loadGuidesFromAPI();
-            
+
             // Use API guides exclusively when available (no fallback to defaults)
-            const finalGuides = apiGuides && apiGuides.length > 0 
+            const finalGuides = apiGuides && apiGuides.length > 0
                 ? apiGuides
                 : [];
-                
+
             const currentCount = AppState.guides.length;
             const newCount = finalGuides.length;
-            
+
             // Always update guides data
             AppState.guides = finalGuides;
-            
+
             // 🔧 FIX: フィルター状態を保持してレンダリング
             if (typeof renderGuideCards === 'function') {
                 // フィルターが適用されている場合は、フィルターを再適用
@@ -372,23 +372,27 @@ async function refreshGuideData(maxRetries = 3) {
                     renderGuideCards(AppState.guides, false, false);
                 }
             }
-            
+
             // Update display
             if (typeof displayGuides === 'function') {
                 displayGuides(AppState.currentPage, AppState);
             }
-            
+
             // Update counters
             if (typeof updateGuideCounters === 'function') {
-                updateGuideCounters(finalGuides.length, finalGuides.length);
+                const total = finalGuides.length;
+                const start = total > 0 ? 1 : 0;
+                const end = total;
+                updateGuideCounters(start, end, total);
+
             }
-            
+
             console.log(`✅ Guide data refreshed successfully: ${finalGuides.length} total guides (API-only)`);
             return true; // Success
-            
+
         } catch (error) {
             console.error(`❌ Error refreshing guide data (attempt ${attempt}):`, error);
-            
+
             if (attempt < maxRetries) {
                 // Wait before retry (exponential backoff)
                 await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
@@ -397,7 +401,7 @@ async function refreshGuideData(maxRetries = 3) {
             }
         }
     }
-    
+
     return false; // All attempts failed
 }
 
@@ -407,16 +411,16 @@ function showNewGuideNotification(count, isRegistrationComplete = false, customM
     const notification = document.createElement('div');
     notification.className = 'toast-container position-fixed top-0 end-0 p-3';
     notification.style.zIndex = '9999';
-    
-    const message = customMessage || 
-        (isRegistrationComplete 
+
+    const message = customMessage ||
+        (isRegistrationComplete
             ? 'ガイド登録が完了しました！新しいガイドカードが追加されました。'
             : `${count}名の新しいガイドが追加されました！`);
-    
-    const icon = isRegistrationComplete 
+
+    const icon = isRegistrationComplete
         ? 'bi-check-circle-fill text-success'
         : 'bi-person-plus-fill text-success';
-    
+
     notification.innerHTML = `
         <div class="toast show" role="alert" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white;">
             <div class="toast-header" style="background: rgba(255,255,255,0.1); border: none; color: white;">
@@ -429,9 +433,9 @@ function showNewGuideNotification(count, isRegistrationComplete = false, customM
             </div>
         </div>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 7000);
@@ -466,7 +470,7 @@ if (document.readyState === 'loading') {
 // Location mapping for display - unified to prevent conflicts with language support
 if (!window.locationNames) {
     const currentLang = window.location.pathname.includes('index-en.html') ? 'en' : 'ja';
-    
+
     if (currentLang === 'en') {
         window.locationNames = {
             hokkaido: "Hokkaido", aomori: "Aomori", iwate: "Iwate", miyagi: "Miyagi", akita: "Akita", yamagata: "Yamagata", fukushima: "Fukushima",
@@ -495,7 +499,7 @@ if (!window.locationNames) {
 async function handleModuleSearchClick(e) {
     e.preventDefault();
     console.log('🔍 Module search button clicked');
-    
+
     try {
         if (window.executeSearch && typeof window.executeSearch === 'function') {
             console.log('✅ Calling window.executeSearch from module handler');
