@@ -131,8 +131,9 @@ export async function executeSearch() {
                 window.AppState.guides = [];
             }
             
+            // ✅ FIXED: await を追加してレンダリング完了を待つ
             if (window.renderGuideCards) {
-                window.renderGuideCards([]);
+                await window.renderGuideCards([]);
             }
             return [];
         }
@@ -153,9 +154,9 @@ export async function executeSearch() {
             window.AppState.currentPage = 1; // Reset to first page
         }
         
-        // ガイドカードを再描画
+        // ✅ FIXED: await を追加してレンダリング完了を待つ
         if (window.renderGuideCards) {
-            window.renderGuideCards(filteredGuides);
+            await window.renderGuideCards(filteredGuides, true, true);
         }
         
         // 結果セクションにスクロール
@@ -177,9 +178,9 @@ export async function executeSearch() {
             window.AppState.guides = [];
         }
         
-        // Show error state
+        // ✅ FIXED: await を追加してレンダリング完了を待つ
         if (window.renderGuideCards) {
-            window.renderGuideCards([]);
+            await window.renderGuideCards([]);
         }
         
         return [];
@@ -187,7 +188,7 @@ export async function executeSearch() {
 }
 
 // フィルターリセット  
-export function resetFilters() {
+export async function resetFilters() {
     console.log('🔄 resetFilters called - clearing all filters');
     
     // フィルター入力をクリア
@@ -214,9 +215,10 @@ export function resetFilters() {
         
         console.log(`✅ Reset complete - restoring ${originalGuides.length} guides`);
         
-        // 全ガイドを再表示
+        // ✅ FIXED: await を追加してレンダリング完了を待つ
+        // itemsPerPage は常に 12 に固定 - resetPagination=true で初期化
         if (window.renderGuideCards) {
-            window.renderGuideCards(originalGuides);
+            await window.renderGuideCards(originalGuides, true, true);
         }
         
         if (window.updateGuideCounters) {

@@ -1120,7 +1120,7 @@ function handleSearchAction() {
     applyCurrentFilters(keyword);
 }
 
-function handleResetFilters() {
+async function handleResetFilters() {
     console.log('🔄 Reset filters triggered');
     
     // Reset all filter selects
@@ -1142,8 +1142,9 @@ function handleResetFilters() {
         
         // ✅ FIXED: Pass pagination parameters (true, true) to ensure pagination is applied
         // This ensures all paths (initial/search/reset) use the same pagination logic
+        // itemsPerPage は常に 12 に固定
         if (window.renderGuideCards) {
-            window.renderGuideCards(window.AppState.guides, true, true);
+            await window.renderGuideCards(window.AppState.guides, true, true);
         }
         
         // Update counters
@@ -1160,7 +1161,7 @@ function handleFilterChange() {
     applyCurrentFilters();
 }
 
-function applyCurrentFilters(keyword = '') {
+async function applyCurrentFilters(keyword = '') {
     console.log('🎯 Applying current filters with keyword:', keyword);
     
     // Get current filter values
@@ -1227,8 +1228,9 @@ function applyCurrentFilters(keyword = '') {
         
         // ✅ FIXED: Pass pagination parameters (true, true) to ensure pagination is applied
         // This ensures all paths (initial/search/reset) use the same pagination logic
+        // itemsPerPage は常に 12 に固定
         if (window.renderGuideCards) {
-            window.renderGuideCards(filteredGuides, true, true);
+            await window.renderGuideCards(filteredGuides, true, true);
         }
         
         // Update counters

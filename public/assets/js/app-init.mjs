@@ -281,10 +281,11 @@ async function appInit() {
     // 5) Setup event listeners only - DISABLE LEGACY RENDERING to prevent duplicates
     setupEventListeners(state);
     
-    // Wait for DOM to be fully ready before rendering guides
-    setTimeout(() => {
+    // ✅ FIXED: Wait for DOM to be fully ready before rendering guides
+    setTimeout(async () => {
         console.log('🎯 Starting guide rendering with delay for DOM readiness');
-        renderGuideCards(guides);
+        // ✅ FIXED: await を追加してレンダリング完了を待つ
+        await renderGuideCards(guides, true, true);
         // displayGuides is now integrated with renderGuideCards - no separate call needed
         // displayGuides(1, state); // DISABLED - causes container conflicts
     }, 500); // Small delay to ensure DOM is fully loaded

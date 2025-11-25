@@ -195,58 +195,19 @@ export class ScalablePagination {
             const startItem = (this.currentPage - 1) * this.itemsPerPage + 1;
             const endItem = Math.min(this.currentPage * this.itemsPerPage, this.totalItems);
             
+            // ✅ FIXED: itemsPerPage は常に 12 件に固定、変更不可
             pageInfo.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-muted">
                         ${startItem}-${endItem}件目 (全${this.totalItems}件中)
                     </span>
-                    <div class="d-flex align-items-center gap-2">
-                        <label for="itemsPerPageSelect" class="text-muted small">表示件数:</label>
-                        <select id="itemsPerPageSelect" class="form-select form-select-sm" style="width: auto;">
-                            <option value="6" ${this.itemsPerPage === 6 ? 'selected' : ''}>6件</option>
-                            <option value="12" ${this.itemsPerPage === 12 ? 'selected' : ''}>12件</option>
-                            <option value="24" ${this.itemsPerPage === 24 ? 'selected' : ''}>24件</option>
-                            <option value="48" ${this.itemsPerPage === 48 ? 'selected' : ''}>48件</option>
-                        </select>
-                    </div>
                 </div>
             `;
-            
-            // 表示件数変更のイベントリスナー
-            const itemsPerPageSelect = document.getElementById('itemsPerPageSelect');
-            if (itemsPerPageSelect) {
-                itemsPerPageSelect.addEventListener('change', (e) => {
-                    this.changeItemsPerPage(parseInt(e.target.value));
-                });
-            }
         }
     }
     
-    // 表示件数を変更
-    changeItemsPerPage(newItemsPerPage) {
-        const oldItemsPerPage = this.itemsPerPage;
-        this.itemsPerPage = newItemsPerPage;
-        
-        // 現在位置を保持するため、現在の最初のアイテムのインデックスを計算
-        const currentFirstItemIndex = (this.currentPage - 1) * oldItemsPerPage;
-        
-        // 新しいページサイズでの総ページ数を再計算
-        this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-        
-        // 新しいページ番号を計算
-        this.currentPage = Math.floor(currentFirstItemIndex / this.itemsPerPage) + 1;
-        this.currentPage = Math.min(this.currentPage, this.totalPages);
-        
-        // 表示を更新
-        if (this.loadingCallback) {
-            this.loadingCallback(this.getCurrentPageItems(), this.currentPage, this.totalPages);
-        }
-        
-        this.renderPagination();
-        this.updatePageInfo();
-        
-        console.log(`表示件数を${newItemsPerPage}件に変更`);
-    }
+    // ✅ REMOVED: changeItemsPerPage() メソッドは削除
+    // itemsPerPage は常に 12 に固定 - ユーザーが変更することはできない
     
     // 現在の状態を取得
     getState() {
