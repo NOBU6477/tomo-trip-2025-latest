@@ -16,6 +16,8 @@ import { log, isIframe, shouldSuppressLogs } from './utils/logger.mjs';
 import { APP_CONFIG } from '../../env/app-config.mjs';
 import { generatePrefectureOptions } from './ui/prefecture-selector.mjs';
 import './admin/guide-management.mjs';
+import { extractGuideGenres } from './data/guide-genres.mjs';
+import { setupGenreFilterUI, setupScrollToFilters } from './ui/genre-filter-ui.mjs';
 
 // Early detection for Replit preview iframe to suppress footer emergency logs
 const isReplitIframe = isIframe && !APP_CONFIG.ALLOW_IFRAME_LOG;
@@ -131,6 +133,7 @@ async function loadGuidesFromAPI() {
                     specialties: guide.specialties ?
                         (typeof guide.specialties === 'string' ? guide.specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s) : guide.specialties) :
                         [],
+                    genres: extractGuideGenres(guide),
                     tags: guide.specialties ?
                         (typeof guide.specialties === 'string' ? guide.specialties.split(/[,・・]/).map(s => s.trim()).filter(s => s) : guide.specialties) :
                         [],
@@ -278,6 +281,10 @@ async function appInit() {
     // 4) Initialize prefecture selector
     await initializePrefectureSelector();
 
+    // 4.5) Initialize genre chips and CTA scroll
+    setupGenreFilterUI();
+    setupScrollToFilters();
+
     // 5) Setup event listeners only - DISABLE LEGACY RENDERING to prevent duplicates
     setupEventListeners(state);
 
@@ -308,9 +315,6 @@ async function appInit() {
             showNewGuideNotification(1, true); // Show with registration message
         }, 1000);
     }
-
-    // Initialize prefecture selector  
-    initializePrefectureSelector();
 
     // 🔧 FIX: Setup search button AFTER modules are loaded to fix timing issue
     console.log('🔧 Setting up search button after module initialization...');

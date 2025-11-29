@@ -1,5 +1,6 @@
 // 検索・フィルター機能モジュール
 import { normalizeLocationToCode } from '../utils/location-utils.mjs';
+import { extractGuideGenres, normalizeGenreValue } from '../data/guide-genres.mjs';
 
 // 改良された検索フィルター関数
 export function applyAdvancedFilters(guides, filters) {
@@ -73,18 +74,19 @@ export function applyAdvancedFilters(guides, filters) {
         });
     }
     
-    // キーワード検索
-    if (filters.keyword) {
-        const keyword = filters.keyword.toLowerCase();
+    // ジャンルフィルター（複数選択対応）
+    if (Array.isArray(filters.genres) && filters.genres.length > 0) {
+        const normalizedSelected = filters.genres
+            .map(value => normalizeGenreValue(value) || value)
+            .filter(Boolean);
+
         filteredGuides = filteredGuides.filter(guide => {
-            return (guide.name && guide.name.toLowerCase().includes(keyword)) ||
-                   (guide.guideName && guide.guideName.toLowerCase().includes(keyword)) ||
-                   (guide.specialties && guide.specialties.toLowerCase().includes(keyword)) ||
-                   (guide.introduction && guide.introduction.toLowerCase().includes(keyword)) ||
-                   (guide.location && guide.location.toLowerCase().includes(keyword));
+            const guideGenres = extractGuideGenres(guide);
+            if (!guideGenres.length) return false;
+            return normalizedSelected.every(selected => guideGenres.includes(selected));
         });
     }
-    
+
     return filteredGuides;
 }
 
@@ -94,7 +96,7 @@ export function getCurrentFilterValues() {
         location: document.getElementById('locationFilter')?.value || '',
         language: document.getElementById('languageFilter')?.value || '',
         price: document.getElementById('priceFilter')?.value || '',
-        keyword: document.getElementById('keywordInput')?.value || ''
+        genres: Array.from(document.querySelectorAll('.genre-chip.active')).map(btn => btn.dataset.genre)
     };
 }
 
@@ -195,12 +197,10 @@ export async function resetFilters() {
     const locationFilter = document.getElementById('locationFilter');
     const languageFilter = document.getElementById('languageFilter');
     const priceFilter = document.getElementById('priceFilter');
-    const keywordInput = document.getElementById('keywordInput');
-    
     if (locationFilter) locationFilter.value = '';
     if (languageFilter) languageFilter.value = '';
     if (priceFilter) priceFilter.value = '';
-    if (keywordInput) keywordInput.value = '';
+    document.querySelectorAll('.genre-chip.active').forEach(btn => btn.classList.remove('active'));
     
     // AppStateをリセット
     if (window.AppState) {

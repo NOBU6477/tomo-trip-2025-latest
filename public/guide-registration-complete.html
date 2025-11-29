@@ -349,9 +349,96 @@
                                 </div>
                                 <small class="text-muted">500文字以内でご入力ください</small>
                                 
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="guideSpecialties" required placeholder="例: 歴史・文化, 食べ歩き, 自然散策">
-                                    <label for="guideSpecialties"><i class="bi bi-star me-1"></i>専門分野・得意ジャンル *</label>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold"><i class="bi bi-star me-1"></i>あなたが案内できるジャンルを選んでください（複数選択可） *</label>
+                                    <div class="row" id="genreOptions">
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="beach_views" id="genre1" name="guideGenres">
+                                                <label class="form-check-label" for="genre1">ビーチ・絶景案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="cafe_sweets" id="genre2" name="guideGenres">
+                                                <label class="form-check-label" for="genre2">カフェ巡り＆スイーツ案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="local_bar" id="genre3" name="guideGenres">
+                                                <label class="form-check-label" for="genre3">ローカル居酒屋・バー案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="market_walk" id="genre4" name="guideGenres">
+                                                <label class="form-check-label" for="genre4">朝市・市場・商店街さんぽ案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="history_culture" id="genre5" name="guideGenres">
+                                                <label class="form-check-label" for="genre5">歴史・文化・世界遺産案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="traditional_music" id="genre6" name="guideGenres">
+                                                <label class="form-check-label" for="genre6">三線・エイサー・伝統芸能体験案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="marine_activity" id="genre7" name="guideGenres">
+                                                <label class="form-check-label" for="genre7">マリンアクティビティ案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="fishing_boat" id="genre8" name="guideGenres">
+                                                <label class="form-check-label" for="genre8">釣り・ボート・海あそび案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="drive_photo" id="genre9" name="guideGenres">
+                                                <label class="form-check-label" for="genre9">ドライブ＆フォトスポット案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="nature_trek" id="genre10" name="guideGenres">
+                                                <label class="form-check-label" for="genre10">自然・トレッキング・滝案内</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="family_friendly" id="genre11" name="guideGenres">
+                                                <label class="form-check-label" for="genre11">ファミリー向け案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="rainy_day" id="genre12" name="guideGenres">
+                                                <label class="form-check-label" for="genre12">雨の日でも楽しめる案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="nightlife" id="genre13" name="guideGenres">
+                                                <label class="form-check-label" for="genre13">ナイトライフ案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="local_gourmet" id="genre14" name="guideGenres">
+                                                <label class="form-check-label" for="genre14">ローカルグルメ食べ歩き案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="agri_experience" id="genre15" name="guideGenres">
+                                                <label class="form-check-label" for="genre15">農業体験・フルーツ狩り案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="events_festivals" id="genre16" name="guideGenres">
+                                                <label class="form-check-label" for="genre16">イベント・ローカル祭り案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="workation" id="genre17" name="guideGenres">
+                                                <label class="form-check-label" for="genre17">ワーケーション・長期滞在案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="photo_support" id="genre18" name="guideGenres">
+                                                <label class="form-check-label" for="genre18">写真・動画撮影サポート案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="first_time" id="genre19" name="guideGenres">
+                                                <label class="form-check-label" for="genre19">初めての沖縄向け案内</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="deep_local" id="genre20" name="guideGenres">
+                                                <label class="form-check-label" for="genre20">ディープローカル・ディープ飲み案内</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-danger small mt-1" id="genreError" style="display:none;"></div>
+                                    <input type="hidden" id="guideSpecialties" value="">
                                 </div>
                                 
                                 <div class="row">
@@ -564,7 +651,25 @@
         // Step 1: Basic Information
         async function handleBasicInfoSubmit(e) {
             e.preventDefault();
-            
+
+            const selectedGenres = Array.from(document.querySelectorAll('input[name="guideGenres"]:checked')).map(option => option.value);
+            const genreError = document.getElementById('genreError');
+
+            if (selectedGenres.length === 0) {
+                genreError.textContent = '少なくとも1つは選択してください。';
+                genreError.style.display = 'block';
+                return;
+            }
+
+            if (selectedGenres.length > 5) {
+                genreError.textContent = 'ジャンルは最大5つまで選択できます。';
+                genreError.style.display = 'block';
+                return;
+            }
+
+            genreError.style.display = 'none';
+            document.getElementById('guideSpecialties').value = selectedGenres.join(', ');
+
             // Collect form data
             basicInfoData = {
                 guideName: document.getElementById('guideName').value,
@@ -577,12 +682,13 @@
                 guideLanguages: Array.from(document.getElementById('guideLanguages').selectedOptions).map(option => option.value),
                 guideIntroduction: document.getElementById('guideIntroduction').value,
                 guideSpecialties: document.getElementById('guideSpecialties').value,
+                guideGenres: selectedGenres,
                 guideSessionRate: parseInt(document.getElementById('guideSessionRate').value),
                 guideAvailability: document.getElementById('guideAvailability').value
             };
-            
+
             // Validate required fields
-            const requiredFields = ['guideName', 'guideEmail', 'guidePhone', 'guideGender', 'guideAge', 'guideExperience', 'guideLocation', 'guideLanguages', 'guideIntroduction', 'guideSpecialties', 'guideSessionRate', 'guideAvailability'];
+            const requiredFields = ['guideName', 'guideEmail', 'guidePhone', 'guideGender', 'guideAge', 'guideExperience', 'guideLocation', 'guideLanguages', 'guideIntroduction', 'guideSpecialties', 'guideSessionRate', 'guideAvailability', 'guideGenres'];
             
             for (const field of requiredFields) {
                 if (!basicInfoData[field] || (Array.isArray(basicInfoData[field]) && basicInfoData[field].length === 0)) {

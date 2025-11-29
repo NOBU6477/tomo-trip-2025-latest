@@ -209,6 +209,51 @@
                 </div>
             </div>
         </div>
+
+        <!-- 協賛店からガイドへのお知らせ送信（UIのみ） -->
+        <div class="container my-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-container">
+                        <h3 class="mb-3"><i class="bi bi-megaphone me-2"></i>ガイド向けお知らせを送信</h3>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">タイトル</label>
+                                <input type="text" class="form-control" id="noticeTitle" placeholder="例：新しい季節限定プランのご案内">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">送信対象</label>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="noticeTarget" id="targetLinked" value="linked" checked>
+                                        <label class="form-check-label" for="targetLinked">紐づいているガイドのみ</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="noticeTarget" id="targetFree" value="free">
+                                        <label class="form-check-label" for="targetFree">フリーガイドのみ</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="noticeTarget" id="targetAll" value="all">
+                                        <label class="form-check-label" for="targetAll">全ガイド</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">本文</label>
+                                <textarea class="form-control" id="noticeBody" rows="4" placeholder="協賛店からのメッセージ内容を入力してください"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-dashboard w-100" id="sendGuideNoticeBtn">
+                                    <i class="bi bi-send-fill me-2"></i>お知らせの下書きを保存
+                                </button>
+                                <small class="text-muted d-block mt-2">第1フェーズではUIと送信条件の保存のみを行い、通知連携は次フェーズで実装します。</small>
+                                <div class="alert alert-info mt-3 d-none" id="noticePreview"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="container my-5">
@@ -623,6 +668,29 @@
                 window.location.href = 'index.html';
             }
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const sendNoticeBtn = document.getElementById('sendGuideNoticeBtn');
+            const previewBox = document.getElementById('noticePreview');
+
+            if (sendNoticeBtn) {
+                sendNoticeBtn.addEventListener('click', () => {
+                    const title = document.getElementById('noticeTitle')?.value || '';
+                    const body = document.getElementById('noticeBody')?.value || '';
+                    const target = document.querySelector('input[name="noticeTarget"]:checked')?.value || 'linked';
+
+                    const payload = { title, body, targetType: target, createdAt: new Date().toISOString() };
+
+                    if (previewBox) {
+                        previewBox.classList.remove('d-none');
+                        previewBox.textContent = `送信対象: ${target} / タイトル: ${title || '（未入力）'}`;
+                    }
+
+                    console.log('Guide notice draft (UI only - backend pending):', payload);
+                    alert('お知らせ内容を保存しました。実際の通知送信は次フェーズで実装されます。');
+                });
+            }
+        });
     </script>
     </div> <!-- .dashboard-content -->
 </body>
