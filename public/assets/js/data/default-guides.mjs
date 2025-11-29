@@ -9,6 +9,7 @@ export const defaultGuideData = [
         image: "/assets/img/guides/default-1.svg",
         languages: ["ja", "en"],
         specialties: ["history", "culture"],
+        genres: ['history_culture', 'first_time'],
         registrationLanguage: "ja"
     },
     {
@@ -20,6 +21,7 @@ export const defaultGuideData = [
         image: "/assets/img/guides/default-2.svg",
         languages: ["ja", "en", "zh"],
         specialties: ["food", "local"],
+        genres: ['local_gourmet', 'cafe_sweets'],
         registrationLanguage: "ja"
     },
     {
@@ -31,6 +33,7 @@ export const defaultGuideData = [
         image: "/assets/img/guides/default-3.svg",
         languages: ["ja", "en"],
         specialties: ["temples", "traditional"],
+        genres: ['history_culture', 'nature_trek'],
         registrationLanguage: "ja"
     },
     {
@@ -42,6 +45,7 @@ export const defaultGuideData = [
         image: "/assets/img/guides/default-4.svg",
         languages: ["ja", "en"],
         specialties: ["shopping", "food"],
+        genres: ['market_walk', 'local_gourmet'],
         registrationLanguage: "ja"
     },
     {
@@ -53,6 +57,7 @@ export const defaultGuideData = [
         image: "/assets/img/guides/default-5.svg",
         languages: ["en", "ja"],
         specialties: ["business", "modern"],
+        genres: ['workation', 'nightlife'],
         registrationLanguage: "en"
     },
     {
@@ -64,6 +69,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["zh", "ja", "en"],
         specialties: ["culture", "temples"],
+        genres: ['history_culture', 'traditional_music'],
         registrationLanguage: "ja"
     },
     {
@@ -75,6 +81,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["nature", "skiing"],
+        genres: ['nature_trek', 'drive_photo'],
         registrationLanguage: "ja"
     },
     {
@@ -86,6 +93,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
         specialties: ["fashion", "youth"],
+        genres: ['cafe_sweets', 'photo_support'],
         registrationLanguage: "en"
     },
     {
@@ -97,6 +105,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["ja", "ko"],
         specialties: ["food", "local"],
+        genres: ['local_gourmet', 'market_walk'],
         registrationLanguage: "ja"
     },
     {
@@ -108,6 +117,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["es", "en", "ja"],
         specialties: ["nightlife", "entertainment"],
+        genres: ['nightlife', 'deep_local'],
         registrationLanguage: "en"
     },
     {
@@ -119,6 +129,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["ja", "en"],
         specialties: ["history", "peace"],
+        genres: ['history_culture', 'first_time'],
         registrationLanguage: "ja"
     },
     {
@@ -130,6 +141,7 @@ export const defaultGuideData = [
         image: "attached_assets/image_1754399234136.png",
         languages: ["en", "ja"],
         specialties: ["zen", "meditation"],
+        genres: ['nature_trek', 'photo_support'],
         registrationLanguage: "en"
     }
 ];

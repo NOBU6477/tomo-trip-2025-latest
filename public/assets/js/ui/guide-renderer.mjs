@@ -3,12 +3,13 @@
 
 // Import language utilities for proper localization
 import { localizeLanguageArray, localizeSpecialtyArray, isEnglishPage, getText } from '../utils/language-utils.mjs';
+import { GUIDE_GENRES, extractGuideGenres, getGenreLabel } from '../data/guide-genres.mjs';
 
 // スケーラブルペジネーションのインポートと初期化
 let paginationSystem = null;
 
 // 大量データ対応の最適化されたガイドカード描画関数
-export async function renderGuideCards(guidesToRender = null, usePagination = true, resetPagination = true) {
+export async function renderGuideCards(guidesToRender = null, usePagination = false, resetPagination = true) {
     // Use provided guides, or fall back based on filter state
     let guides;
     
@@ -35,11 +36,7 @@ export async function renderGuideCards(guidesToRender = null, usePagination = tr
     }
     
     // スケーラブルペジネーションシステムの初期化
-    if (usePagination && guides.length > 12) {
-        // ✅ FIXED: Wait for async pagination initialization to complete
-        await initializePaginationSystem(guides, resetPagination);
-        return; // ペジネーション使用時は早期リターン
-    }
+    // カルーセル表示を優先するため、ペジネーションは無効化
     
     // 少数のガイドの場合は従来通りの表示
     console.log('📊 Render kickoff:', {count: guides.length, currentPage: window.AppState?.currentPage});
@@ -122,25 +119,73 @@ function ensurePaginationContainers() {
     }
 }
 
+function buildGenreSections(guides) {
+    const grouped = new Map();
+    const fallbackKey = 'others';
+
+    guides.forEach(guide => {
+        const genres = extractGuideGenres(guide);
+        const targetGenres = genres.length ? genres : [fallbackKey];
+
+        targetGenres.forEach(value => {
+            const bucket = grouped.get(value) || [];
+            bucket.push(guide);
+            grouped.set(value, bucket);
+        });
+    });
+
+    const orderedKeys = [...GUIDE_GENRES.map(g => g.value)];
+    if (grouped.has(fallbackKey)) orderedKeys.push(fallbackKey);
+
+    const sections = orderedKeys
+        .filter(key => grouped.has(key))
+        .map(key => {
+            const guidesForGenre = grouped.get(key) || [];
+            const label = key === fallbackKey ? getText('その他のガイド', 'More Guides') : getGenreLabel(key);
+
+            const cards = guidesForGenre.map(guide => createGuideCardHTML(guide)).join('');
+
+            return `
+                <section class="genre-section" data-genre="${key}">
+                    <div class="genre-header">
+                        <div>
+                            <p class="genre-kicker">案内ジャンル</p>
+                            <h3 class="genre-title">${label}</h3>
+                        </div>
+                        <span class="badge rounded-pill bg-light text-dark">${guidesForGenre.length}名</span>
+                    </div>
+                    <div class="genre-carousel">${cards}</div>
+                </section>
+            `;
+        });
+
+    if (sections.length === 0) {
+        const noGuidesMsg = getText('ガイドが見つかりません', 'No guides found');
+        return `<div class="text-center p-4"><p class="text-muted">${noGuidesMsg}</p></div>`;
+    }
+
+    return sections.join('');
+}
+
 // 全ガイドカードの描画（既存の機能）
 function renderAllGuideCards(guides) {
     // Try multiple ways to find the container - support both old and new IDs
     let container = document.getElementById('guide-list') || document.getElementById('guideCardsContainer') || document.getElementById('guidesContainer');
-    
+
     // Fallback: Try to find by class and create if needed
     if (!container) {
         console.warn('⚠️ guideCardsContainer/guidesContainer not found, searching for alternative...');
-        
+
         // Look for any div with class "row" that might be our container
         const rowContainers = document.querySelectorAll('div.row');
         console.log(`🔍 Found ${rowContainers.length} row containers`);
-        
+
         for (let i = 0; i < rowContainers.length; i++) {
             const rowContainer = rowContainers[i];
             const content = rowContainer.innerHTML;
             console.log(`🔍 Row ${i}: id="${rowContainer.id}", content="${content.substring(0, 100)}..."`);
-            
-            if (content.includes('Guide cards will be populated') || 
+
+            if (content.includes('Guide cards will be populated') ||
                 content.includes('<!-- Guide cards will be populated here -->') ||
                 (content.trim() === '' && rowContainer.id === '') ||
                 rowContainer.previousElementSibling?.textContent?.includes('Guide Cards')) {
@@ -153,7 +198,7 @@ function renderAllGuideCards(guides) {
             }
         }
     }
-    
+
     // Last resort: Create the container if it still doesn't exist
     if (!container) {
         console.warn('⚠️ Creating guidesContainer element');
@@ -168,21 +213,18 @@ function renderAllGuideCards(guides) {
             return;
         }
     }
-    
+
     if (!Array.isArray(guides) || guides.length === 0) {
         console.warn('⚠️ No guides to render');
-        // 🔧 FIX: フィルター処理中かどうかを確認して適切なメッセージを表示
         const isFilteringInProgress = window.AppState?.isFiltered;
         const filteringMsg = getText('フィルター処理中...', 'Filtering...');
         const noGuidesMsg = getText('ガイドが見つかりません', 'No guides found');
-        const message = isFilteringInProgress ? 
+        const message = isFilteringInProgress ?
             `<div class="text-center p-4"><div class="spinner-border spinner-border-sm me-2" role="status"></div><p class="text-muted mt-2">${filteringMsg}</p></div>` :
             `<div class="text-center p-4"><p class="text-muted">${noGuidesMsg}</p></div>`;
-        
-        // 短い遅延を設けて、フィルター処理の完了を待つ
+
         if (isFilteringInProgress) {
             setTimeout(() => {
-                // フィルター処理が完了しても結果が空の場合のみ「見つかりません」を表示
                 if (container && (!Array.isArray(guides) || guides.length === 0)) {
                     const noMatchMsg = getText('条件に一致するガイドが見つかりません', 'No guides match your criteria');
                     container.innerHTML = `<div class="text-center p-4"><p class="text-muted">${noMatchMsg}</p></div>`;
@@ -192,63 +234,20 @@ function renderAllGuideCards(guides) {
         } else {
             container.innerHTML = message;
         }
-        
+
         updateGuideCounters(0, window.AppState?.guides?.length || 0);
         return;
     }
-    
+
     console.log(`🎨 Rendering ${guides.length} guide cards`, guides.map(g => g.name || g.guideName || 'Unknown'));
-    
-    // 🔧 Fix: Clamp currentPage to valid range before slicing
-    const pageSize = 12; // Standard page size
-    const totalPages = Math.max(1, Math.ceil(guides.length / pageSize));
-    let currentPage = Math.min(Math.max(1, window.AppState?.currentPage || 1), totalPages);
-    
-    // Update AppState if currentPage was clamped
-    if (window.AppState && window.AppState.currentPage !== currentPage) {
-        console.log(`🔧 Clamping currentPage from ${window.AppState.currentPage} to ${currentPage}`);
-        window.AppState.currentPage = currentPage;
-    }
-    
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    
-    // Slice guides for current page
-    const guidesForPage = guides.slice(startIndex, endIndex);
-    
-    // 🔧 Emergency fix: If guidesForPage is empty but guides exist, reset to page 1
-    if (guidesForPage.length === 0 && guides.length > 0) {
-        console.warn(`⚠️ Emergency reset: Page ${currentPage} resulted in empty guides, resetting to page 1`);
-        currentPage = 1;
-        if (window.AppState) window.AppState.currentPage = 1;
-        const newStartIndex = (currentPage - 1) * pageSize;
-        const newEndIndex = newStartIndex + pageSize;
-        guidesForPage.splice(0, 0, ...guides.slice(newStartIndex, newEndIndex));
-    }
-    
-    console.log(`📄 Pagination: page ${currentPage}/${totalPages}, showing ${guidesForPage.length} of ${guides.length} guides (${startIndex + 1}-${Math.min(endIndex, guides.length)})`);
-    
-    // Performance optimization for large guide lists
-    if (guidesForPage.length > 30) {
-        console.log('📊 Large guide page detected, using optimized rendering');
-        renderGuideCardsOptimized(guidesForPage, container);
-    } else {
-        // Standard rendering for current page
-        const cardsHTML = guidesForPage.map(guide => createGuideCardHTML(guide)).join('');
-        container.innerHTML = cardsHTML;
-    }
-    
-    // ✅ FIXED: Always use totalCount (全ガイド総数) regardless of page
-    // Do NOT use actualRenderedCount for totalCount, only displayCount
-    updateGuideCounters(guidesForPage.length, guides.length);
-    
-    // Setup view details event listeners
+
+    const sectionsHtml = buildGenreSections(guides);
+    container.innerHTML = sectionsHtml;
+
+    const totalCount = window.AppState?.originalGuides?.length ?? guides.length;
+    updateGuideCounters(guides.length, totalCount);
+
     setupViewDetailsEventListeners();
-    
-    // Update pagination display
-    updatePaginationDisplay(currentPage, guides.length, pageSize);
-    
-    console.log(`✅ Rendered ${guidesForPage.length} guide cards for page ${currentPage} of ${Math.ceil(guides.length / pageSize)}`);
 }
 
 // Update pagination display elements
@@ -522,6 +521,8 @@ export function createGuideCardHTML(guide) {
   const locationNames = window.locationNames || {};
   const locationText = locationNames[guide.location] || guide.location || '';
 
+  const genres = extractGuideGenres(guide).slice(0, 3).map(getGenreLabel);
+
   // 言語・専門分野（配列でない可能性にも対応）
   let langs = Array.isArray(guide.languages)
     ? guide.languages
@@ -548,39 +549,31 @@ export function createGuideCardHTML(guide) {
     : (isEn ? 'View Details' : '詳細を見る');
 
   return `
-    <div class="col-md-6 col-lg-4 mb-4">
-      <div class="card h-100 guide-card" data-guide-id="${guide.id}"
-           style="border-radius:15px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.08);">
-        <img src="${photoSrc}" class="card-img-top"
-             style="height:200px; object-fit:cover;"
-             alt="${nameToShow}"
-             onerror="this.src='assets/img/guides/default-1.svg';">
+    <div class="genre-card-slide">
+      <div class="compact-guide-card" data-guide-id="${guide.id}">
+        <div class="card-media">
+          <img src="${photoSrc}" alt="${nameToShow}" onerror="this.src='assets/img/guides/default-1.svg';">
+          ${locationText ? `<span class="location-pill">${locationText}</span>` : ''}
+        </div>
 
-        <div class="card-body d-flex flex-column">
-          <!-- タイトルは1つだけ（重複表示を解消） -->
-          <h5 class="card-title mb-1">${nameToShow}</h5>
-
-          <div class="mb-2">
-            ${locationText ? `<span class="badge bg-primary me-1">${locationText}</span>` : ''}
+        <div class="compact-card-body">
+          <div class="guide-headline">
+            <div class="guide-avatar">
+              <img src="${photoSrc}" alt="${nameToShow}" onerror="this.src='assets/img/guides/default-1.svg';">
+            </div>
+            <div class="guide-meta">
+              <h5 class="guide-name">${nameToShow}</h5>
+              <p class="guide-price">料金目安: 2時間 ${priceText}〜</p>
+            </div>
           </div>
 
-          <div class="mb-1">
-            ${langs.map(l => `<span class="badge bg-success me-1" style="font-size:.75rem">${l}</span>`).join('')}
-          </div>
+          <div class="genre-badges">${genres.map(label => `<span class="badge genre-badge">${label}</span>`).join('')}</div>
+          <div class="language-badges">${langs.map(l => `<span class="badge bg-success-subtle text-success-emphasis">${l}</span>`).join('')}</div>
+          <p class="guide-intro">${guide.introduction || guide.description || ''}</p>
 
-          <div class="mb-1">
-            ${specialties.map(s => `<span class="badge bg-secondary me-1" style="font-size:.75rem">${s}</span>`).join('')}
-          </div>
-
-          <p class="card-text text-muted small mb-2">${guide.introduction || ''}</p>
-
-          <div class="d-flex justify-content-between align-items-center mt-auto">
-            <span class="fw-bold">${priceText}</span>
-            <button type="button"
-                    class="btn btn-outline-primary btn-sm view-detail-btn"
-                    data-guide-id="${guide.id}">
-              ${viewDetailsText}
-            </button>
+          <div class="card-actions">
+            <div class="area-text">${specialties.slice(0, 2).map(s => `<span class="badge bg-light text-secondary">${s}</span>`).join('')}</div>
+            <button type="button" class="btn btn-outline-primary btn-sm view-detail-btn" data-guide-id="${guide.id}">${viewDetailsText}</button>
           </div>
         </div>
       </div>
