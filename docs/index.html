@@ -1,12 +1,188 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TomoTrip Web Test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TomoTrip（旅友） | 地元ガイドと旅をつなぐマッチング</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      color: #123;
+      background: #f5fbff;
+    }
+    header {
+      background: linear-gradient(135deg, #00a8ff, #00e0c6);
+      color: #fff;
+      padding: 32px 16px 40px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+    }
+    header p {
+      margin: 0 0 24px;
+      font-size: 0.95rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 999px;
+      background: #fff;
+      color: #0087c9;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .btn-primary:hover {
+      filter: brightness(0.95);
+    }
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+      background: #f5fbff;
+    }
+    section {
+      background: #fff;
+      margin-bottom: 24px;
+      padding: 20px 18px;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    section h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      border-left: 4px solid #00a8ff;
+      padding-left: 8px;
+    }
+    .features {
+      display: grid;
+      gap: 12px;
+    }
+    .feature-card {
+      padding: 12px 10px;
+      border-radius: 12px;
+      background: #f7fcff;
+      border: 1px solid #e0f3ff;
+    }
+    .feature-card h3 {
+      margin: 0 0 4px;
+      font-size: 1rem;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      border-radius: 999px;
+      background: #e0f7ff;
+      color: #0076a5;
+      margin-right: 4px;
+    }
+    .columns {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 720px) {
+      header h1 {
+        font-size: 2.4rem;
+      }
+      main {
+        padding: 32px 16px 64px;
+      }
+      .features {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      .columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #678;
+      padding: 16px;
+    }
+  </style>
 </head>
 <body>
-    <h1>TomoTrip（旅友）テストページ</h1>
-    <p>GitHub Pages の docs/index.html から表示されています！</p>
+  <header>
+    <h1>TomoTrip（旅友）</h1>
+    <p>地元の“人”に出会える、ローカルガイド・マッチングサービス</p>
+    <!-- ★★ ここをノブさんの本物アプリのURLに差し替えてください ★★ -->
+    <a class="btn-primary" href="https://example.com" target="_blank" rel="noopener">
+      アプリでガイドを探す
+    </a>
+  </header>
+
+  <main>
+    <section>
+      <h2>TomoTrip（旅友）とは？</h2>
+      <p>
+        観光地だけじゃなく、「地元の人の日常」にもふれながら旅ができるサービスです。  
+        地元在住のガイドさんが、ふだん使っているお店やスポット、ご近所さんしか知らない景色などを案内します。
+      </p>
+    </section>
+
+    <section>
+      <h2>3つのポイント</h2>
+      <div class="features">
+        <div class="feature-card">
+          <span class="tag">Point 1</span>
+          <h3>地元ガイドと直接マッチング</h3>
+          <p>プロフィールやレビューを見ながら、自分に合いそうなガイドさんを選べます。</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">Point 2</span>
+          <h3>観光地だけじゃない“日常”の体験</h3>
+          <p>ローカルな食堂・カフェ・ビーチ・イベントなど、ガイドさんおすすめのスポットへご案内。</p>
+        </div>
+        <div class="feature-card">
+          <span class="tag">Point 3</span>
+          <h3>小さなお店も一緒に応援</h3>
+          <p>協賛店と連携し、観光客・ガイド・地域のお店がみんな得をする仕組みを目指しています。</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>ご利用イメージ</h2>
+      <div class="columns">
+        <div>
+          <h3>観光客の流れ</h3>
+          <ol>
+            <li>アプリでエリアと日程をえらぶ</li>
+            <li>気になるガイドにチャットで相談</li>
+            <li>プランを決めて予約・決済</li>
+            <li>当日は集合場所でガイドと合流</li>
+          </ol>
+        </div>
+        <div>
+          <h3>地元ガイドの流れ</h3>
+          <ol>
+            <li>得意なエリア・体験内容を登録</li>
+            <li>予約リクエストに応えてプラン提案</li>
+            <li>当日案内し、体験後にレビューをもらう</li>
+            <li>報酬はアプリを通じて安全に受け取り</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>お問い合わせ・協賛店募集</h2>
+      <p>
+        ガイドとして参加したい方、協賛店として登録を検討されている方は、  
+        公式LINEまたはお問い合わせフォームからご連絡ください。
+      </p>
+      <p>※ このページは試験運用中のため、内容は今後変更される場合があります。</p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 TomoTrip（旅友） Project
+  </footer>
 </body>
 </html>
